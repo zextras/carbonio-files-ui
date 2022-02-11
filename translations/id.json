@@ -1,0 +1,396 @@
+{
+    "create": {
+        "options": {
+            "new": {
+                "folder": "Folder Baru",
+                "upload": "Unggah",
+                "document": "Dokumen Baru",
+                "presentation": "Presentasi Baru",
+                "spreadsheet": "Lembar Kerja Baru"
+            }
+        }
+    },
+    "folder": {
+        "create": {
+            "modal": {
+                "title": "Buat Folder Baru",
+                "input": {
+                    "label": {
+                        "name": "Nama Folder"
+                    }
+                },
+                "button": {
+                    "confirm": "Buat"
+                }
+            }
+        }
+    },
+    "modal": {
+        "button": {
+            "cancel": "Batal",
+            "confirm": "Konfirmasi"
+        },
+        "deletePermanently": {
+            "button": {
+                "confirm": "Hapus secara permanen"
+            },
+            "header": "Tindakan ini tidak dapat dibatalkan",
+            "body": "Anda akan menghapus item ini secara permanen. File tidak dapat dipulihkan lagi. Tindakan ini tidak dapat dibatalkan."
+        },
+        "roots": {
+            "driveHome": "Beranda",
+            "rootsList": "Drive",
+            "sharedWitMe": "Dibagikan dengan saya",
+            "trash": {
+                "trash": "Tempat Sampah",
+                "myElements": "Item saya",
+                "sharedWitMe": "Item bersama"
+            },
+            "filesHome": "Beranda"
+        },
+        "deleteShare": {
+            "button": {
+                "confirm": "Hapus"
+            },
+            "body": "Anda yakin ingin menghapus semua izin akses yang sebelumnya diberikan kepada {{shareTarget}} ?",
+            "yourShare": {
+                "body": {
+                    "permissionLost": "Semua izin akses yang sebelumnya diberikan kepada Anda akan hilang.",
+                    "answer": "Anda yakin ingin keluar dari kolaborasi ini?"
+                }
+            },
+            "header": "Hapus berbagi"
+        },
+        "removeLink": {
+            "button": {
+                "confirm": "Hapus"
+            }
+        },
+        "revokeLink": {
+            "button": {
+                "confirm": "Batalkan"
+            }
+        }
+    },
+    "node": {
+        "rename": {
+            "modal": {
+                "button": {
+                    "confirm": "Ganti nama"
+                },
+                "input": {
+                    "label": {
+                        "name": "Nama Item"
+                    }
+                },
+                "title": "Ubah nama item"
+            }
+        },
+        "alias": {
+            "name_LOCAL_CHAT_ROOT": "Tim",
+            "name_LOCAL_ROOT": "Drive Home",
+            "name_SHARED_WITH_ME_ROOT": "Dibagikan dengan saya",
+            "name_TRASH_ROOT": "Tempat Sampah"
+        },
+        "copy": {
+            "modal": {
+                "button": {
+                    "confirm": "Salin"
+                },
+                "title": "Salin {{node.name}}",
+                "title_plurals": "Salin item",
+                "title_plural": "Salin item"
+            }
+        },
+        "move": {
+            "modal": {
+                "button": {
+                    "confirm": "Pindahkan"
+                },
+                "input": {
+                    "filter": "Filter folder"
+                },
+                "subtitle": "Pilih folder tujuan:",
+                "title": "Pindahkan {{node.name}}",
+                "title_plurals": "Pindahkan item",
+                "title_plural": "Pindahkan item"
+            },
+            "error": {
+                "not": {
+                    "allowed": "Anda tidak dapat memindahkan banyak node dari filter atau pencarian"
+                }
+            }
+        },
+        "type": {
+            "folder": "Folder"
+        }
+    },
+    "primaryBar": {
+        "driveHome": ""
+    },
+    "secondaryBar": {
+        "driveHome": "Drive Home",
+        "filters": "Filter",
+        "filtersList": {
+            "flagged": "Diberi tanda bendera",
+            "sharedByMe": "Dibagikan oleh saya",
+            "sharedWithMe": "Dibagikan dengan saya",
+            "trash": "Tempat Sampah",
+            "myElements": "Elemen saya",
+            "sharedElements": "Elemen Bersama"
+        },
+        "team": "Tim",
+        "uploads": "Unggahan",
+        "filesHome": "Beranda"
+    },
+    "snackbar": {
+        "markForDeletion": {
+            "error": "Terjadi kesalahan, coba lagi",
+            "success": "Item dipindahkan ke tempat sampah",
+            "showTrash": "Buka folder Tempat Sampah"
+        },
+        "deleteShare": {
+            "error": "Kesalahan",
+            "success": "Berhasil"
+        },
+        "restore": {
+            "success": "Berhasil",
+            "error": "Terjadi kesalahan, coba lagi",
+            "showInFolder": "Tampilkan di folder"
+        },
+        "download": {
+            "start": "Unduhan Anda akan segera dimulai"
+        },
+        "moveNodes": {
+            "error": "Terjadi kesalahan, coba lagi",
+            "success": "Item dipindahkan ke folder tujuan",
+            "action": "Buka folder"
+        },
+        "upload": {
+            "goToFolder": "Buka folder"
+        },
+        "copyNodes": {
+            "action": "Buka folder",
+            "error": "Terjadi kesalahan, coba lagi"
+        },
+        "deletePermanently": {
+            "error": "Kesalahan",
+            "success": "Berhasil"
+        },
+        "publicLink": {
+            "actionLabel": {
+                "copyLink": "Salin Tautan"
+            }
+        },
+        "unflag": {
+            "success": "Tanda bendera pada item berhasil dihapus"
+        }
+    },
+    "empty": {
+        "folder": {
+            "hint": "Sepertinya tidak ada apa pun di sini.",
+            "state": "Seret file atau buat file baru dengan mengklik \"BARU\""
+        },
+        "filter": {
+            "hint": "Sepertinya tidak ada apa pun di sini."
+        }
+    },
+    "filter": {
+        "snackbar": {
+            "unflag": {
+                "error": "Terjadi kesalahan, coba lagi",
+                "success": "Tanda bendera pada item berhasil dihapus"
+            }
+        }
+    },
+    "actions": {
+        "copy": "Salin",
+        "cancelUpload": "Batalkan unggahan",
+        "download": "Unduh",
+        "markForDeletion": "Tandai untuk dihapus",
+        "move": "Pindahkan",
+        "openWithDocs": "Buka dengan Docs",
+        "rename": "Ganti nama",
+        "restore": "Pulihkan",
+        "deletePermanently": "Hapus Secara Permanen",
+        "flag": "Bendera",
+        "goToFolder": "Buka folder tujuan",
+        "moveToTrash": "Pindahkan ke Tempat Sampah",
+        "removeUpload": "Hapus unggahan",
+        "retryUpload": "Coba unggah lagi",
+        "unflag": "Hapus tanda bendera"
+    },
+    "displayer": {
+        "list": {
+            "you": "Anda"
+        },
+        "share": {
+            "chip": {
+                "you": "Anda",
+                "popover": {
+                    "save": "Simpan",
+                    "role": {
+                        "editorDescription": "Bisa melihat dan mengedit file atau folder",
+                        "viewerDescription": "Hanya bisa melihat atau mengunduh file atau folder",
+                        "editor": "Editor",
+                        "viewer": "Pemirsa"
+                    },
+                    "sharingAllowed": "Berbagi diperbolehkan",
+                    "sharingAllowedDescription": "Gambaran tentang hal yang akan terjadi jika bagian ini dicentang"
+                },
+                "owner": "Pemilik"
+            },
+            "addShare": {
+                "checkbox": {
+                    "label": "Tambahkan pesan kustom ke pemberitahuan email"
+                },
+                "input": {
+                    "label": "Tambahkan pesan kustom ke pemberitahuan ini",
+                    "placeholder": "Tambahkan orang atau grup baru"
+                }
+            },
+            "noSharePermissionHeader": "Anda tidak diperbolehkan membagikan item ini."
+        },
+        "details": {
+            "createdBy": "Dibuat oleh",
+            "description": "Deskripsi",
+            "size": "Ukuran",
+            "position": "Posisi",
+            "collaborators": "Kolaborator",
+            "content": "Konten",
+            "downloads": "Unduh melalui tautan publik",
+            "lastEdit": "Editan terakhir",
+            "showPath": "Tampilkan jalur",
+            "editDescription": {
+                "editIconTooltip": "Edit deskripsi"
+            }
+        },
+        "tabs": {
+            "details": "Detail",
+            "activities": "Aktivitas",
+            "sharing": "Berbagi",
+            "versioning": "Membuat versi"
+        },
+        "uploads": {
+            "title": "Unggah saran",
+            "message": "Semua item yang sedang diunggah ada di sini, dan Anda bisa mengelolanya dari sini"
+        }
+    },
+    "search": {
+        "header": {
+            "search": "Cari",
+            "result": "Hasil yang mengandung semua kata kunci:"
+        },
+        "search": {
+            "tooltip": {
+                "search": "Cari",
+                "edit": "Edit pencarian Anda untuk memulai yang baru",
+                "empty": "Ketik beberapa kata kunci untuk memulai pencarian"
+            }
+        },
+        "clear": {
+            "tooltip": {
+                "clear": "Bersihkan input pencarian",
+                "empty": "Input pencarian sudah dibersihkan"
+            }
+        },
+        "searchBar": {
+            "label": {
+                "default": "Ketik pencarian Anda",
+                "active": "Pisahkan kata kunci dengan koma, titik koma, atau tekan TAB"
+            }
+        },
+        "advancedSearch": {
+            "button": {
+                "noFilter": "Filter lanjutan"
+            },
+            "modal": {
+                "button": {
+                    "confirm": "Cari"
+                },
+                "folder": {
+                    "modal": {
+                        "title": "Pilih folder",
+                        "cancel": "Kembali"
+                    },
+                    "label": "Pilih folder"
+                },
+                "keywords": {
+                    "label": "Kata sandi"
+                },
+                "flagged": {
+                    "label": "Diberi tanda bendera"
+                },
+                "shared": {
+                    "label": "Dibagikan"
+                },
+                "title": "Filter Tingkat Lanjut"
+            }
+        },
+        "resultsFor": "Hasil untuk:"
+    },
+    "docs": {
+        "create": {
+            "modal": {
+                "input": {
+                    "label": {
+                        "name": {
+                            "document": "Nama dokumen",
+                            "presentation": "Nama presentasi",
+                            "spreadsheet": "Nama lembar kerja"
+                        }
+                    }
+                },
+                "title": {
+                    "document": "Buat Dokumen Baru",
+                    "presentation": "Buat Presentasi Baru",
+                    "spreadsheet": "Buat Lembar Kerja Baru"
+                }
+            }
+        }
+    },
+    "uploads": {
+        "clean": {
+            "completed": "Hapus unggahan yang sudah selesai"
+        },
+        "destination": {
+            "home": "Unggahan muncul di Drive Home"
+        },
+        "dropzone": {
+            "message": {
+                "disabled": "Anda tidak dapat meletakkan lampiran di area ini",
+                "folderView": {
+                    "disabled": "Anda tidak dapat meletakkan lampiran di area ini",
+                    "enabled": "Letakkan lampiran Anda di sini \n untuk menambahkannya dengan cepat ke folder ini"
+                },
+                "otherView": {
+                    "enabled": "Letakkan lampiran Anda di sini\nuntuk menambahkannya dengan cepat ke Drive Home Anda"
+                }
+            },
+            "title": {
+                "disabled": "Mode Seret & Lepas",
+                "enabled": "Mode Seret & Lepas"
+            }
+        }
+    },
+    "publicLink": {
+        "addLink": {
+            "generateLink": "Buat Tautan",
+            "undo": "Batalkan"
+        },
+        "link": {
+            "remove": "Hapus",
+            "edit": "Edit",
+            "revoke": "Batalkan",
+            "undo": "Batalkan"
+        }
+    },
+    "sortingDropdown": {
+        "name": "Nama",
+        "size": "Ukuran"
+    },
+    "errorCode": {
+        "code": "Terjadi masalah",
+        "code_Generic": "Terjadi masalah"
+    }
+}

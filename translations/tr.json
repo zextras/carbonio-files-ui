@@ -1,0 +1,511 @@
+{
+    "filter": {
+        "snackbar": {
+            "unflag": {
+                "success": "Öğe bayrağı başarıyla kaldırıldı",
+                "error": "Bir sorun oluştu, lütfen tekrar deneyin"
+            }
+        }
+    },
+    "folder": {
+        "create": {
+            "modal": {
+                "button": {
+                    "confirm": "Oluştur"
+                },
+                "title": "Yeni klasör oluştur",
+                "input": {
+                    "label": {
+                        "name": "Klasör Adı"
+                    }
+                }
+            }
+        }
+    },
+    "modal": {
+        "button": {
+            "cancel": "İptal",
+            "confirm": "Onayla"
+        },
+        "deletePermanently": {
+            "button": {
+                "confirm": "Kalıcı olarak sil"
+            },
+            "body": "Bu öğeyi / öğeleri kalıcı olarak sileceksiniz. Bu dosya / dosyaları sonra geri getiremeyeceksiniz. Bu işlemin geri dönüşü yoktur.",
+            "header": "Bu işlemin geri dönüşü yoktur"
+        },
+        "roots": {
+            "driveHome": "Giriş",
+            "rootsList": "Drive",
+            "sharedWitMe": "Benimle paylaşıldı",
+            "trash": {
+                "trash": "Çöp Kutusu",
+                "myElements": "Öğelerim",
+                "sharedWitMe": "Paylaşılan öğeler"
+            },
+            "filesHome": "Giriş"
+        },
+        "deleteShare": {
+            "body": "{{shareTarget}} için önceden verilen tüm erişim izinlerini kaldırmak istediğinizden emin misiniz?",
+            "button": {
+                "confirm": "Kaldır"
+            },
+            "header": "Paylaşımı kaldır",
+            "yourShare": {
+                "body": {
+                    "answer": "Kendinizi bu birlikte çalışmadan kaldırmak istediğinize emin misiniz?",
+                    "permissionLost": "Size daha önceden verilmiş tüm erişim izinleri kaybolacak."
+                }
+            }
+        },
+        "removeLink": {
+            "body": "Bu bağlantı iptal olduğundan artık öğeye erişim için kullanılamaz. Bağlantıyı listeden kaldırabilir veya kullanmaya devam etmek için son kullanma tarihini ve diğer bilgileri güncelleyebilirsiniz",
+            "button": {
+                "confirm": "Kaldır"
+            },
+            "header": "{{nodeName}} genel erişim bağlantısını kaldır"
+        },
+        "revokeLink": {
+            "body": "Bu bağlantıyı iptal ederek, dosyaya erişim için bağlantıyı kullanan herkesin {{nodeName}} öğesine erişimini bloke edeceksiniz",
+            "button": {
+                "confirm": "İptal et"
+            },
+            "header": "{{nodeName}} genel erişim bağlantısını iptal et"
+        }
+    },
+    "create": {
+        "options": {
+            "new": {
+                "folder": "Yeni Klasör",
+                "upload": "Yükle",
+                "document": "Yeni Doküman",
+                "presentation": "Yeni Sunum",
+                "spreadsheet": "Yeni Tablo"
+            }
+        }
+    },
+    "empty": {
+        "folder": {
+            "hint": "Bu klasör boş",
+            "state": "Bir dosya sürükleyin veya \"YENİ\" tuşuna tıklayıp yeni bir tane oluşturun",
+            "displayerContent": "Bu klasör boş"
+        },
+        "filter": {
+            "hint": "Burada hiçbir şey yok."
+        },
+        "search": {
+            "hint": "Aramanız ile eşleşen hiçbir dosya veya klasör bulunamadı"
+        }
+    },
+    "node": {
+        "rename": {
+            "modal": {
+                "button": {
+                    "confirm": "Yeniden adlandır"
+                },
+                "input": {
+                    "label": {
+                        "name": "Öğe Adı"
+                    }
+                },
+                "title": "Öğeyi yeniden adlandır"
+            }
+        },
+        "copy": {
+            "modal": {
+                "button": {
+                    "confirm": "Kopyala"
+                },
+                "title": "Kopyala {{node.name}}",
+                "title_plurals": "Öğeleri kopyala",
+                "title_plural": "Öğeleri kopyala"
+            }
+        },
+        "alias": {
+            "name_LOCAL_CHAT_ROOT": "Team ile gönderilmiş dosyalar",
+            "name_LOCAL_ROOT": "Giriş",
+            "name_SHARED_WITH_ME_ROOT": "Benimle paylaşıldı",
+            "name_TRASH_ROOT": "Çöp Kutusu"
+        },
+        "move": {
+            "modal": {
+                "button": {
+                    "confirm": "Taşı"
+                },
+                "input": {
+                    "filter": "Klasörleri filtrele"
+                },
+                "subtitle": "Hedef klasör seçin:",
+                "title": "Taşı {{node.name}}",
+                "title_plurals": "Öğeleri taşı",
+                "title_plural": "Öğeleri taşı"
+            },
+            "error": {
+                "not": {
+                    "allowed": "Bir filtre veya aramadan birden fazla nod taşıyamazsınız"
+                }
+            }
+        },
+        "type": {
+            "folder": "Klasör"
+        }
+    },
+    "primaryBar": {
+        "driveHome": ""
+    },
+    "secondaryBar": {
+        "driveHome": "Drive Giriş",
+        "filters": "Filtreler",
+        "filtersList": {
+            "flagged": "Bayraklı",
+            "sharedByMe": "Benim Paylaştıklarım",
+            "sharedWithMe": "Benimle paylaşıldı",
+            "trash": "Çöp Kutusu",
+            "myElements": "Öğelerim",
+            "sharedElements": "Paylaşılan Öğeler"
+        },
+        "team": "Team ile gönderilmiş dosyalar",
+        "uploads": "Yüklemeler",
+        "filesHome": "Giriş"
+    },
+    "snackbar": {
+        "markForDeletion": {
+            "error": "Bir sorun oluştu, lütfen tekrar deneyin",
+            "success": "Öğe çöp kutusuna taşındı",
+            "showTrash": "Çöp Kutusu klasörünü açın"
+        },
+        "deleteShare": {
+            "error": "Hata",
+            "success": "Başarılı"
+        },
+        "download": {
+            "start": "İndirme işlemi kısa sürede başlayacak"
+        },
+        "moveNodes": {
+            "error": "Bir sorun oluştu, lütfen tekrar deneyin",
+            "success": "Öğe taşındı",
+            "action": "Klasöre git"
+        },
+        "restore": {
+            "error": "Bir sorun oluştu, lütfen tekrar deneyin",
+            "showInFolder": "Klasörde göster",
+            "success": "Başarılı"
+        },
+        "upload": {
+            "goToFolder": "Klasöre git",
+            "success": "{{destination}} hedefine yükleme yapıldı"
+        },
+        "clipboard": {
+            "itemShortcutCopied": "Öğe kısayolu kopyalandı",
+            "email": "E-posta adresi kopyalandı"
+        },
+        "copyNodes": {
+            "action": "Klasöre git",
+            "success": "Öğe kopyalandı",
+            "error": "Bir sorun oluştu, tekrar deneyin"
+        },
+        "deletePermanently": {
+            "error": "Hata",
+            "success": "Başarılı"
+        },
+        "unflag": {
+            "success": "Öğe bayrağı başarıyla kaldırıldı"
+        },
+        "publicLink": {
+            "copyLink": "Genel bağlantı kopyalandı",
+            "linkUpdated": {
+                "label": "Genel bağlantı güncellendi"
+            },
+            "newPublicLinkGenerated": {
+                "label": "Yeni genel bağlantı oluşturuldu"
+            },
+            "actionLabel": {
+                "copyLink": "Bağlantıyı kopyala"
+            }
+        }
+    },
+    "actions": {
+        "download": "İndir",
+        "markForDeletion": "Silmek için işaretle",
+        "move": "Taşı",
+        "openWithDocs": "Docs ile Aç",
+        "rename": "Yeniden adlandır",
+        "restore": "Geri yükle",
+        "cancelUpload": "Yüklemeyi iptal et",
+        "copy": "Kopyala",
+        "deletePermanently": "Kalıcı olarak sil",
+        "flag": "Bayrak",
+        "goToFolder": "Hedef klasöre git",
+        "moveToTrash": "Çöp Kutusuna Taşı",
+        "removeUpload": "Yüklemeyi kaldır",
+        "retryUpload": "Yüklemeyi tekrar dene",
+        "unflag": "Bayrağı kaldır"
+    },
+    "displayer": {
+        "details": {
+            "size": "Boyut",
+            "createdBy": "Oluşturan",
+            "description": "Tanım",
+            "collaborators": "Birlikte Çalışanlar",
+            "content": "İçerik",
+            "downloads": "Genel bağlantıyı kullanarak indir",
+            "lastEdit": "En son düzenleme",
+            "position": "Yer",
+            "showPath": "Yolu göster",
+            "copyShortcut": "öğe kısayolunu kopyala",
+            "editDescription": {
+                "editIconTooltip": "Tanımı düzenle",
+                "saveIconTooltip": "Değişiklikleri kaydet",
+                "closeIconTooltip": "Kaydetmeden kapat",
+                "input": {
+                    "label": "İzin verilen maksimum uzunluk 4096 karakterdir"
+                }
+            },
+            "missingDescription": "Tanım eklemek için düzenle tuşuna tıklayın"
+        },
+        "list": {
+            "you": "Siz"
+        },
+        "share": {
+            "chip": {
+                "popover": {
+                    "save": "Kaydet",
+                    "role": {
+                        "editor": "Düzenleyici",
+                        "editorDescription": "Dosya veya klasörü görüntüleyip düzenleyebilecek",
+                        "viewer": "Görüntüleyici",
+                        "viewerDescription": "Dosya veya klasörü sadece görüntüleyecek veya indirebilecek"
+                    },
+                    "sharingAllowed": "Paylaşıma izin verildi",
+                    "sharingAllowedDescription": "Dosya veya klasör paylaşımlarını yönetin"
+                },
+                "you": "Siz",
+                "owner": "Sahibi",
+                "tooltip": {
+                    "edit": {
+                        "collaborator": "{{username}}'in birlikte çalışma özelliklerini düzenleyin",
+                        "you": "Birlikte çalışma özelliklerinizi düzenleyin"
+                    },
+                    "remove": {
+                        "collaborator": "{{username}} kullanıcısını kaldır",
+                        "yourself": "Birlikte çalışma özelliklerinizi kaldırın"
+                    }
+                }
+            },
+            "addShare": {
+                "checkbox": {
+                    "label": "Posta bildirimine özel mesaj ekle"
+                },
+                "input": {
+                    "label": "Bu bildirime özel bir mesaj ekleyin",
+                    "placeholder": "Yeni kişi veya gruplar ekle"
+                },
+                "note": "Not:",
+                "noteDescription": "Standart mesajda adınız, paylaşılan öğenin adı, alıcıya verilen izinler ve giriş bilgisi gösterilir."
+            },
+            "noSharePermissionHeader": "Bu öğeyi paylaşmak için izniniz yok."
+        },
+        "tabs": {
+            "activities": "Aktiviteler",
+            "details": "Detaylar",
+            "sharing": "Paylaşım",
+            "versioning": "Versiyonlama"
+        },
+        "uploads": {
+            "message": "Yüklenmesi devam eden her öğeyi burada görebilirsiniz, buradan yönetebilirsiniz",
+            "title": "Yükleme önerileri"
+        },
+        "generic": {
+            "message": "Seçmek için öğeye tıklayın",
+            "title": "Dosya ve klasörleri görün ve kişiler ile paylaşın"
+        }
+    },
+    "search": {
+        "header": {
+            "search": "Ara",
+            "result": "Bütün anahtar kelimeleri içeren sonuçlar:",
+            "start": "Aramayı başlat",
+            "close": "Aramadan çık"
+        },
+        "search": {
+            "tooltip": {
+                "search": "Ara",
+                "edit": "Yeni bir arama başlatmak için düzenleyin",
+                "empty": "Aramayı başlatmak için bazı anahtar kelimeleri yazın"
+            }
+        },
+        "searchBar": {
+            "label": {
+                "active": "Anahtar kelimeleri virgül, noktalı virgül veya TAB tuşu kullanarak ayırın",
+                "default": "Aramanızı yazın"
+            }
+        },
+        "clear": {
+            "tooltip": {
+                "clear": "Arama girişini sil",
+                "empty": "Arama girişi zaten silinmiş"
+            }
+        },
+        "advancedSearch": {
+            "button": {
+                "filters": "{{count}} gelişmiş filtre",
+                "filters_plural": "{{count}} gelişmiş filtre",
+                "noFilter": "Gelişmiş filtreler"
+            },
+            "modal": {
+                "button": {
+                    "confirm": "Ara",
+                    "reset": "Filtreleri sıfırla"
+                },
+                "flagged": {
+                    "description": "Sonuçları bayrak işareti eklediğiniz öğlere göre filtrele",
+                    "label": "Bayraklı"
+                },
+                "folder": {
+                    "label": "Klasör seçin",
+                    "modal": {
+                        "cancel": "Geriye git",
+                        "cascade": "alt klasörleri de ara",
+                        "confirm": "Klasör seç",
+                        "title": "Klasör seçin",
+                        "subtitle": "Sadece seçilen klasörde arama yapılacak"
+                    }
+                },
+                "keywords": {
+                    "label": "Anahtar kelimeler"
+                },
+                "shared": {
+                    "label": "Paylaşıldı",
+                    "description": "Sonuçları sizden başka en az bir katılımcı daha olan öğlere göre filtrele"
+                },
+                "title": "Gelişmiş Filtreler"
+            }
+        },
+        "resultsFor": "Sonuçlar:"
+    },
+    "docs": {
+        "create": {
+            "modal": {
+                "input": {
+                    "label": {
+                        "name": {
+                            "document": "Doküman adı",
+                            "presentation": "Sunum adı",
+                            "spreadsheet": "Tablo adı"
+                        }
+                    }
+                },
+                "title": {
+                    "document": "Yeni Doküman oluştur",
+                    "presentation": "Yeni Sunum oluştur",
+                    "spreadsheet": "Yeni Tablo oluştur"
+                }
+            }
+        }
+    },
+    "uploads": {
+        "clean": {
+            "completed": "Tamamlanmış yüklemeleri temizle"
+        },
+        "destination": {
+            "home": "Dosyalar Giriş'e yükleme yapıldı"
+        },
+        "dropzone": {
+            "message": {
+                "disabled": "Bu alana ek bırakamazsınız",
+                "folderView": {
+                    "disabled": "Bu alana ek bırakamazsınız",
+                    "enabled": "Klasöre hızlı eklemek için \neklerinizi buraya bırakın"
+                },
+                "otherView": {
+                    "enabled": "Giriş'e hızlı eklemek için \neklerinizi buraya bırakın"
+                }
+            },
+            "title": {
+                "disabled": "Sürükle ve Bırak Modu",
+                "enabled": "Sürükle ve Bırak Modu"
+            }
+        }
+    },
+    "breadcrumb": {
+        "expander": {
+            "show": "Klasör yolunu göster",
+            "hide": "Klasör yolunu gizle"
+        }
+    },
+    "selectionMode": {
+        "header": {
+            "exit": "Seçme modundan çık",
+            "selectAll": "Tümünü seç",
+            "unselectAll": "tümünden seçimi kaldır"
+        }
+    },
+    "sortingDropdown": {
+        "ascendingOrder": "Artan Sıralı",
+        "descendingOrder": "Azalan Sıralı",
+        "icon": {
+            "tooltip": {
+                "OrderLastUpdateAscending": "Son güncellemeye göre artan sıralı",
+                "OrderLastUpdateDescending": "Son güncellemeye göre azalan sıralı",
+                "OrderNameAscending": "Ada göre artan sıralı",
+                "OrderNameDescending": "Ada göre azalan sıralı",
+                "OrderSizeAscending": "Boyuta göre artan sıralı",
+                "OrderSizeDescending": "Boyuta göre azalan sıralı"
+            }
+        },
+        "lastUpdate": "Son Güncelleme",
+        "name": "Ad",
+        "size": "Boyut"
+    },
+    "errorCode": {
+        "code": "Bir hata oluştu",
+        "code_Generic": "Bir hata oluştu",
+        "code_LINK_NOT_FOUND": "İşlem yapılamadı. Bu bağlantı artık geçersiz",
+        "code_MISSING_FIELD": "Hata oluştu, bu öğeye ait tüm bilgi geri alınamadı",
+        "code_NODE_NOT_FOUND": "Bu öğe yok veya ona erişim izniniz bulunmuyor",
+        "code_NODE_WRITE_ERROR": "Bu öğe düzenlenemez veya onu düzenlemek için izniniz bulunmuyor",
+        "code_SHARE_CREATION_ERROR": "Üzgünüz, bu öğeyi bu kullanıcı ile paylaşamazsınız",
+        "code_SHARE_NOT_FOUND": "Üzgünüz, bu paylaşım bulunamadı",
+        "code_ACCOUNT_NOT_FOUND": "Bu kullanıcı Carbonio sisteminde bulunmuyor",
+        "code_FILE_VERSION_NOT_FOUND": "Üzgünüz, dosyanın bu versiyonu bulunamadı"
+    },
+    "publicLink": {
+        "addLink": {
+            "addLink": "Bağlantı ekle",
+            "limitReached": "Genel kullanım bağlantısı için maksimum değere ulaşıldı",
+            "title": "Genel bağlantı",
+            "undo": "Geri al",
+            "generateLink": "Bağlantı oluştur"
+        },
+        "dateTimePicker": {
+            "label": "İptal Tarihi"
+        },
+        "input": {
+            "description": {
+                "error": {
+                    "maxLengthAllowed": "İzin verilen maksimum uzunluk 300 karakterdir"
+                }
+            },
+            "label": "Bağlantı tanımı"
+        },
+        "link": {
+            "edit": "Düzenle",
+            "editLink": "Bağlantıyı düzenle",
+            "expireOn": "İptal tarihi:",
+            "expiredOn": "Bağlantının iptal olduğu tarih:",
+            "noExpirationDate": "Son kullanım tarihi yok",
+            "remove": "Kaldır",
+            "revoke": "İptal et",
+            "undo": "Geri al",
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Genel bağlantıyı kopyala",
+                    "expired": "Bağlantı iptal oldu"
+                }
+            }
+        },
+        "datePickerInput": {
+            "description": "Seçilen gün sonunda bağlantı iptal olur"
+        }
+    }
+}
