@@ -372,6 +372,13 @@
         "close": {
             "tooltip": "Close"
         },
+        "decreaseYourOwnSharePermissions": {
+            "body": "Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored",
+            "button": {
+                "confirm": "Confirm"
+            },
+            "header": "Decrease your current rights"
+        },
         "deletePermanently": {
             "body": "You will delete permanently this item/these items. You will not be able to recover this file/these files anymore. This action is irreversible.",
             "button": {
@@ -609,6 +616,9 @@
             "action": "Go to folder",
             "error": "Something went wrong, try again",
             "success": "Item copied"
+        },
+        "decreaseYourOwnShare": {
+            "success": "Rights updated successfully"
         },
         "deletePermanently": {
             "error": "Error",
