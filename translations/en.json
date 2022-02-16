@@ -344,6 +344,7 @@
         "code_Generic": "Something went wrong",
         "code_LINK_NOT_FOUND": "Action failed. This link no longer exists",
         "code_MISSING_FIELD": "An internal error occurred, not all information of this object has been recovered",
+        "code_NODE_DUPLICATED": "There is a file with the same name in this folder",
         "code_NODE_NOT_FOUND": "It seems that this object doesn't exist, or you do not have permission to access it",
         "code_NODE_WRITE_ERROR": "It seems that this object cannot be edited or that you do not have permission to edit it",
         "code_SHARE_CREATION_ERROR": "We are sorry, but it is not possible to share the item with this user",
@@ -371,6 +372,13 @@
         },
         "close": {
             "tooltip": "Close"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "body": "Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored",
+            "button": {
+                "confirm": "Confirm"
+            },
+            "header": "Decrease your current rights"
         },
         "deletePermanently": {
             "body": "You will delete permanently this item/these items. You will not be able to recover this file/these files anymore. This action is irreversible.",
@@ -609,6 +617,9 @@
             "action": "Go to folder",
             "error": "Something went wrong, try again",
             "success": "Item copied"
+        },
+        "decreaseYourOwnShare": {
+            "success": "Rights updated successfully"
         },
         "deletePermanently": {
             "error": "Error",

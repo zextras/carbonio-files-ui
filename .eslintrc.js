@@ -68,7 +68,7 @@ module.exports = {
 		'notice/notice': [
 			'error',
 			{
-				templateFile: '.reuse/template.js'
+				templateFile: './notice.template.js'
 			}
 		]
 	},
@@ -76,5 +76,6 @@ module.exports = {
 		react: {
 			version: 'detect'
 		}
-	}
+	},
+	ignorePatterns: ['notice.template.js']
 };

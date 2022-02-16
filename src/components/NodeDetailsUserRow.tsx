@@ -34,10 +34,14 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 	const openNewMailBoard = useCallback(() => {
 		if (user && user.email) {
 			const contact: Contact = {
-				type: 't',
 				address: user.email,
-				name: user.full_name,
-				fullName: user.full_name
+				email: {
+					email: {
+						mail: user.email
+					}
+				},
+				firstName: user.full_name || user.email,
+				middleName: ''
 			};
 			const { action, available } = getMailToAction(contact);
 			if (available && action) {
