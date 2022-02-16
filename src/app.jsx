@@ -17,7 +17,6 @@ import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
 import { UploadStatus } from './carbonio-files-ui-common/types/common';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
-import { useNavigation } from './hooks/useNavigation';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
@@ -74,7 +73,6 @@ export default function App() {
 		window.addEventListener('beforeunload', beforeunloadCallback);
 	}, [beforeunloadCallback]);
 	const { add } = useUpload();
-	const { navigateTo } = useNavigation();
 
 	const inputElementOnchange = useCallback(
 		(ev) => {
@@ -82,11 +80,8 @@ export default function App() {
 			// require to select 2 times the same file/files
 			// eslint-disable-next-line no-param-reassign
 			ev.target.value = '';
-			navigateTo('/uploads');
-			// use getBridgedFunctions if navigateTo do not works
-			// getBridgedFunctions().historyPush('/uploads');
 		},
-		[add, navigateTo]
+		[add]
 	);
 
 	const uploadClick = useCallback(() => {

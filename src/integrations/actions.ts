@@ -10,10 +10,14 @@ import { getAction, Action } from '@zextras/carbonio-shell-ui';
 import { OneOrMany } from '../carbonio-files-ui-common/types/utils';
 
 export type Contact = {
-	type: string;
 	address: string;
-	name?: string;
-	fullName?: string;
+	firstName: string;
+	middleName: string;
+	email: {
+		email: {
+			mail: string;
+		};
+	};
 };
 
 export function getMailToAction(contacts: OneOrMany<Contact>): {
