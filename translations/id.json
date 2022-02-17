@@ -311,13 +311,6 @@
             "sharing": "Berbagi",
             "versioning": "Membuat versi"
         },
-        "search": {
-            "message": "Atau klik tombol \"Filter lanjutan\" untuk mempersempit pencarian Anda saat ini",
-            "title": "Lihat hasil pencarian Anda"
-        },
-        "folder": {
-            "preview": "Anda di dalam folder"
-        },
         "uploads": {
             "title": "Unggah saran",
             "message": "Semua item yang sedang diunggah ada di sini, dan Anda bisa mengelolanya dari sini"

@@ -311,13 +311,6 @@
             "sharing": "Compartir",
             "versioning": "Versión"
         },
-        "folder": {
-            "preview": "Estás en una carpeta"
-        },
-        "search": {
-            "message": "O haz clic en \"Filtros avanzados\" para refinar tu búsqueda actual",
-            "title": "Ver tus resultados de búsqueda"
-        },
         "uploads": {
             "message": "Aquí puedes encontrar todos los elementos que se están subiendo, puedes administrarlos desde aquí",
             "title": "Subir sugerencias"

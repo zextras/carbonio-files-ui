@@ -308,13 +308,6 @@
             "message": "Qui sono elencati tutti gli elementi in caricamento, puoi gestirli direttamente da qui",
             "title": "Carica suggerimenti"
         },
-        "folder": {
-            "preview": "Sei in una cartella"
-        },
-        "search": {
-            "message": "Oppure seleziona il pulsante \"Filtro avanzato\" per perfezionare la tua ricerca",
-            "title": "Visualizza i risultati della tua ricerca"
-        },
         "tabs": {
             "activities": "Attività",
             "details": "Dettagli",

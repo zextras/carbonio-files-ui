@@ -311,13 +311,6 @@
             "sharing": "Wird geteilt",
             "versioning": "Versionierung"
         },
-        "folder": {
-            "preview": "Sie befinden sich in einem Ordner"
-        },
-        "search": {
-            "message": "Oder klicken Sie auf die Schaltfläche \"Erweiterter Filter\", um Ihre aktuelle Suche zu verfeinern",
-            "title": "Die Ergebnisse Ihrer Suche anzeigen"
-        },
         "uploads": {
             "message": "Here können Sie alle Elemente finden, die sie gerade hochladen, sie können diese hier verwalten",
             "title": "Upload Vorschläge"

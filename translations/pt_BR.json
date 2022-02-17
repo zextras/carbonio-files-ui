@@ -368,13 +368,6 @@
             },
             "noSharePermissionHeader": "Você não pode compartilhar este item."
         },
-        "folder": {
-            "preview": "Você está em uma pasta"
-        },
-        "search": {
-            "message": "Ou clique no botão \"Filtros Avançados\" para refinar sua busca atual",
-            "title": "Ver resultados da sua busca"
-        },
         "tabs": {
             "activities": "Atividades",
             "details": "Detalhes",
