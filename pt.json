@@ -1,0 +1,152 @@
+{
+    "create": {
+        "options": {
+            "new": {
+                "folder": "Novo diretório",
+                "upload": "Upload"
+            }
+        }
+    },
+    "empty": {
+        "folder": {
+            "hint": "",
+            "state": ""
+        }
+    },
+    "filter": {
+        "snackbar": {
+            "unflag": {
+                "error": "",
+                "success": ""
+            }
+        }
+    },
+    "folder": {
+        "create": {
+            "modal": {
+                "button": {
+                    "confirm": "Criar"
+                },
+                "title": "",
+                "input": {
+                    "label": {
+                        "name": ""
+                    }
+                }
+            }
+        }
+    },
+    "modal": {
+        "button": {
+            "cancel": "Cancelar",
+            "confirm": "Confirmar"
+        },
+        "deletePermanently": {
+            "button": {
+                "confirm": "Eliminar permanentemente"
+            }
+        },
+        "roots": {
+            "driveHome": "Home",
+            "rootsList": "Drive",
+            "sharedWitMe": "Partilhado comigo",
+            "trash": {
+                "trash": "Reciclagem"
+            }
+        }
+    },
+    "node": {
+        "rename": {
+            "modal": {
+                "button": {
+                    "confirm": "Renomear"
+                },
+                "input": {
+                    "label": {
+                        "name": ""
+                    }
+                },
+                "title": ""
+            }
+        },
+        "alias": {
+            "name_LOCAL_CHAT_ROOT": "Team",
+            "name_LOCAL_ROOT": "Drive Home"
+        },
+        "copy": {
+            "modal": {
+                "button": {
+                    "confirm": "Copiar"
+                }
+            }
+        },
+        "move": {
+            "modal": {
+                "button": {
+                    "confirm": "Mover"
+                }
+            }
+        }
+    },
+    "primaryBar": {
+        "driveHome": ""
+    },
+    "secondaryBar": {
+        "driveHome": "Drive Home",
+        "filters": "",
+        "filtersList": {
+            "flagged": "",
+            "sharedByMe": "Partilhados por mim",
+            "sharedWithMe": "Partilhado comigo",
+            "trash": "Reciclagem"
+        },
+        "team": "Team"
+    },
+    "snackbar": {
+        "markForDeletion": {
+            "error": "",
+            "success": ""
+        },
+        "deleteShare": {
+            "error": "Erro"
+        }
+    },
+    "actions": {
+        "cancelUpload": "Cancelar upload",
+        "copy": "Copiar",
+        "download": "Download",
+        "markForDeletion": "Eliminar",
+        "move": "Mover",
+        "openWithDocs": "Abrir com Docs",
+        "rename": "Renomear",
+        "restore": "Restaurar"
+    },
+    "displayer": {
+        "list": {
+            "you": "Você"
+        },
+        "share": {
+            "chip": {
+                "you": "Você",
+                "popover": {
+                    "save": "Salvar"
+                }
+            }
+        },
+        "details": {
+            "createdBy": "Criado por",
+            "description": "Descrição",
+            "size": "Tamanho"
+        }
+    },
+    "search": {
+        "header": {
+            "search": "Busca"
+        },
+        "search": {
+            "tooltip": {
+                "search": "Busca"
+            }
+        }
+    }
+}
