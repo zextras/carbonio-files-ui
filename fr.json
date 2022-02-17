@@ -368,13 +368,6 @@
             },
             "noSharePermissionHeader": "Vous n'êtes pas autorisé à partager cet élément."
         },
-        "folder": {
-            "preview": "Vous êtes dans un dossier"
-        },
-        "search": {
-            "message": "Ou cliquer sur le bouton \"Filtres avancés\" pour affiner votre recherche actuelle",
-            "title": "Voir vos résultats de recherche"
-        },
         "tabs": {
             "activities": "Activités",
             "details": "Détails",

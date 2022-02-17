@@ -8,7 +8,7 @@
         "markForDeletion": "Mark for deletion",
         "move": "Move",
         "moveToTrash": "Move to Trash",
-        "openWithDocs": "Open with Docs",
+        "openWithDocs": "Open document",
         "removeUpload": "Remove upload",
         "rename": "Rename",
         "restore": "Restore",
@@ -35,6 +35,7 @@
     "displayer": {
         "details": {
             "collaborators": "Collaborators",
+            "collaboratorsTooltip": "See the list of collaborators",
             "content": "Content",
             "copyShortcut": "copy item's shortcut",
             "createdBy": "Created by",
@@ -50,10 +51,140 @@
             },
             "lastEdit": "Last edit",
             "missingDescription": "Click the edit button to add a description",
+            "owner": "Owner",
             "position": "Position",
+            "sendMailTo": "Send e-mail to: {{email}}",
             "showPath": "Show path",
             "size": "Size"
         },
+        "filter": {
+            "flagged_empty": [
+                {
+                    "message": " You'll find it here whenever you'll need it.",
+                    "title": "Click the flag to mark an item."
+                },
+                {
+                    "message": "They'll be listed here.",
+                    "title": "Flag your most important items by clicking the flag."
+                }
+            ],
+            "flagged_full": [
+                {
+                    "message": "You'll find it here whenever you'll need it.",
+                    "title": "Click the flag to mark an item."
+                },
+                {
+                    "message": "They'll be listed here.",
+                    "title": "Flag your most important items by clicking the flag."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "message": "Select an item to proceed.",
+                    "title": "Review and edit the items you've shared with your contacts."
+                },
+                {
+                    "message": "Click an item to select it.",
+                    "title": "View details of folders you've shared."
+                },
+                {
+                    "message": "Click an item to select it.",
+                    "title": "Find here all the items shared with your contacts."
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "message": "Select an item to proceed.",
+                    "title": "Review and edit the items you've shared with your contacts. "
+                },
+                {
+                    "message": "Click an item to select it.",
+                    "title": "View details of folders you've shared."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "Click the \"NEW\" button to create a new document and share it with your contacts.",
+                    "title": "There are no items shared with you yet."
+                },
+                {
+                    "message": "Let other users know that you're ready to collaborate with them.",
+                    "title": "Click the \"NEW\" button and create a new e-mail."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "message": "Click an item to select it.",
+                    "title": "Start editing and sharing your files."
+                },
+                {
+                    "message": "Click an item to select it.",
+                    "title": "View your folders' details and share them with your contacts."
+                },
+                {
+                    "title": "Select an item and start working on it with other users."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "message": "Click on the trash icon to delete an item.",
+                    "title": "Move to trash everything you don't need."
+                },
+                {
+                    "message": "Click the trash icon to delete an item.",
+                    "title": "The trash is empty."
+                },
+                {
+                    "title": "Keep your workspace clean: delete all items you don't need anymore."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Select and restore your documents that are now in the trash."
+                },
+                {
+                    "message": "Select an item to restore it or delete it permanently.",
+                    "title": "Nothing is lost!"
+                },
+                {
+                    "message": "Or, when possible, select it and restore it in its original folder.",
+                    "title": "Select an item to delete it permanently."
+                }
+            ]
+        },
+        "folder_empty": [
+            {
+                "title": "Click the \"NEW\" button to create a new item and share it with your contacts."
+            },
+            {
+                "message": "Create a file by clicking the \"NEW\" button",
+                "title": "Start editing and sharing your works."
+            },
+            {
+                "message": "You'll be able to edit, flag and share it.",
+                "title": "Click the \"NEW\" button to create a new item."
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "Click an item to select it.",
+                "title": "Start editing and sharing your files."
+            },
+            {
+                "message": "Click an item to select it.",
+                "title": "View your folders' details and share them with your contacts."
+            },
+            {
+                "title": "Select a folder to edit or rename its content."
+            },
+            {
+                "message": "Select the item and then go to the \"Shares\" tab",
+                "title": "Provide your contacts with editing rights to let them edit an item."
+            },
+            {
+                "title": "Select an item to share or move it to another folder."
+            }
+        ],
         "generic": {
             "message": "Click an item to select it",
             "title": "View files and folders, share them with your contacts"
@@ -62,9 +193,31 @@
             "you": "You"
         },
         "search": {
-            "message": "Or click the \"Advanced filter\" button to refine your current search",
-            "title": "View your search's results"
+            "title": "Type some keywords to start a search."
         },
+        "search_empty": [
+            {
+                "message": "Or select “Advanced Filters” to refine your search.",
+                "title": "Start another search."
+            },
+            {
+                "message": "Don’t give up, keep searching!",
+                "title": "No results."
+            },
+            {
+                "message": "Try to start another search.",
+                "title": "We’re sorry but there are no results for your search."
+            },
+            {
+                "message": "Check the spelling and the filters' options or try with another keyword.",
+                "title": "There are no results for your search."
+            }
+        ],
+        "search_full": [
+            {
+                "title": "Select one or more results to perform actions or display details."
+            }
+        ],
         "share": {
             "addShare": {
                 "checkbox": {
@@ -113,6 +266,33 @@
         "uploads": {
             "message": "Here you can find all the items that are currently uploading, you can manage them from here",
             "title": "Upload suggestions"
+        },
+        "version": {
+            "actions": {
+                "cloneAsCurrent": "Clone as current",
+                "deleteVersion": "Delete version",
+                "downloadVersion": "Download version",
+                "keepVersion": "Keep this version forever",
+                "openDocumentVersion": "Open document version",
+                "removeKeepVersion": "Remove keep forever"
+            },
+            "button": {
+                "purgeAllVersions": "Purge all versions",
+                "upload": "Upload version"
+            },
+            "mainHint": "You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Cloned from version {{versionNumber}} ({{cloneDate}})",
+                    "tooltip2": "Cloned from version {{versionNumber}} (version deleted)"
+                },
+                "versionNumber": "Version {{versionNumber}}"
+            },
+            "rowHeaders": {
+                "currentVersion": "Current version",
+                "lastWeek": "Last week",
+                "olderVersions": "Older versions"
+            }
         }
     },
     "docs": {
@@ -137,7 +317,11 @@
     },
     "empty": {
         "filter": {
-            "hint": "It looks like there's nothing here."
+            "flagged": "There are no flagged items.",
+            "hint": "It looks like there's nothing here.",
+            "sharedByMe": "You haven't shared any item with your collaborators yet. ",
+            "sharedWithMe": "There are no items shared with you yet.",
+            "trash": "The trash is empty."
         },
         "folder": {
             "displayerContent": "This folder has no content",
@@ -145,7 +329,12 @@
             "state": "Drag a file or create a new one clicking \"NEW\""
         },
         "search": {
-            "hint": "Your search didn't match any files or folders"
+            "hint": "Your search didn't match any files or folders",
+            "noResults": [
+                "No results. Keep searching!",
+                "None of your items matches your search."
+            ],
+            "notRun": "No search was carried out yet."
         }
     },
     "errorCode": {
@@ -155,6 +344,7 @@
         "code_Generic": "Something went wrong",
         "code_LINK_NOT_FOUND": "Action failed. This link no longer exists",
         "code_MISSING_FIELD": "An internal error occurred, not all information of this object has been recovered",
+        "code_NODE_DUPLICATED": "There is a file with the same name in this folder",
         "code_NODE_NOT_FOUND": "It seems that this object doesn't exist, or you do not have permission to access it",
         "code_NODE_WRITE_ERROR": "It seems that this object cannot be edited or that you do not have permission to edit it",
         "code_SHARE_CREATION_ERROR": "We are sorry, but it is not possible to share the item with this user",
@@ -179,6 +369,16 @@
         "button": {
             "cancel": "Cancel",
             "confirm": "Confirm"
+        },
+        "close": {
+            "tooltip": "Close"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "body": "Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored",
+            "button": {
+                "confirm": "Confirm"
+            },
+            "header": "Decrease your current rights"
         },
         "deletePermanently": {
             "body": "You will delete permanently this item/these items. You will not be able to recover this file/these files anymore. This action is irreversible.",
@@ -235,7 +435,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Copy"
+                    "confirm": "Copy",
+                    "tooltip": {
+                        "confirm": "You can't perform this action here"
+                    }
                 },
                 "title": "Copy {{node.name}}",
                 "title_plural": "Copy items"
@@ -249,7 +452,10 @@
             },
             "modal": {
                 "button": {
-                    "confirm": "Move"
+                    "confirm": "Move",
+                    "tooltip": {
+                        "confirm": "You can't perform this action here"
+                    }
                 },
                 "input": {
                     "filter": "Filter folders"
@@ -328,7 +534,7 @@
                     "reset": "Reset filters"
                 },
                 "flagged": {
-                    "description": "Filter the results by items that you’ve flagged",
+                    "description": "Filter the results by items that you've flagged",
                     "label": "Flagged"
                 },
                 "folder": {
@@ -397,6 +603,9 @@
             "exit": "Exit selection mode",
             "selectAll": "Select all",
             "unselectAll": "Deselect all"
+        },
+        "node": {
+            "tooltip": "Activate selection mode"
         }
     },
     "snackbar": {
@@ -408,6 +617,9 @@
             "action": "Go to folder",
             "error": "Something went wrong, try again",
             "success": "Item copied"
+        },
+        "decreaseYourOwnShare": {
+            "success": "Rights updated successfully"
         },
         "deletePermanently": {
             "error": "Error",
@@ -453,6 +665,11 @@
         "upload": {
             "goToFolder": "Go to folder",
             "success": "Upload occurred in {{destination}}"
+        },
+        "version": {
+            "clone": "Version cloned as the current one",
+            "keepForeverAdded": "Version marked as to be kept forever",
+            "keepForeverRemoved": "Keep forever removed"
         }
     },
     "sortingDropdown": {

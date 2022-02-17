@@ -311,13 +311,6 @@
             "sharing": "Delen",
             "versioning": "Versiebeheer"
         },
-        "folder": {
-            "preview": "U bent in een folder"
-        },
-        "search": {
-            "message": "Of klik op de knop \"Uitgebreid filteren\" om uw huidige zoekopdracht te verfijnen",
-            "title": "Bekijk de resultaten van uw zoekopdracht"
-        },
         "uploads": {
             "message": "Hier vindt u alle items die momenteel aan het uploaden zijn, u kunt ze van hieruit beheren",
             "title": "Suggesties uploaden"
