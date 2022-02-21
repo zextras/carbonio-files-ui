@@ -7,7 +7,11 @@
 import React, { Component, useCallback } from 'react';
 
 // eslint-disable-next-line import/no-unresolved
-import { registerAppData, RuntimeAppData as ShellRuntimeAppData } from '@zextras/carbonio-shell-ui';
+import {
+	ActionFactory,
+	registerActions,
+	RuntimeAppData as ShellRuntimeAppData
+} from '@zextras/carbonio-shell-ui';
 
 // TODO: remove these types when implemented in shell
 export type SharedAction = {
@@ -27,16 +31,23 @@ type RuntimeAppData = ShellRuntimeAppData & {
 };
 
 export type CreateOptionsContent = {
-	createOptions?: Pick<RuntimeAppData, 'newButton'>;
-	setCreateOptions: (appCreateOptions: Pick<RuntimeAppData, 'newButton'>) => void;
+	createOptions?: Array<{ id: string; action: ActionFactory<unknown>; type: string }>;
+	setCreateOptions: (
+		appCreateOptions: Array<{ id: string; action: ActionFactory<unknown>; type: string }>
+	) => void;
 };
 
 export const useCreateOptions = (): {
-	setCreateOptions: (options: Pick<RuntimeAppData, 'newButton'>) => void;
+	setCreateOptions: (
+		...options: Array<{ id: string; action: ActionFactory<unknown>; type: string }>
+	) => void;
 } => {
-	const setCreateOptionsCallback = useCallback((options: Pick<RuntimeAppData, 'newButton'>) => {
-		registerAppData(options as ShellRuntimeAppData);
-	}, []);
+	const setCreateOptionsCallback = useCallback(
+		(...options: Array<{ id: string; action: ActionFactory<unknown>; type: string }>) => {
+			registerActions(...options);
+		},
+		[]
+	);
 	return {
 		setCreateOptions: setCreateOptionsCallback
 	};

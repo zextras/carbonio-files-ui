@@ -4,11 +4,10 @@
 	"description": "Files module for Zextras Carbonio",
 	"main": "src/app.jsx",
 	"scripts": {
-		"build": "node sdk build",
-		"start": "node sdk watch",
-		"deploy": "node sdk deploy",
+		"build": "sdk build",
+		"start": "sdk watch",
+		"deploy": "sdk deploy",
 		"test": "(is-ci && jest --runInBand) || jest --maxWorkers=4",
-		"preinstall": "is-ci || npm ci --prefix sdk",
 		"postinstall": "is-ci || husky install",
 		"prepublishOnly": "pinst --disable",
 		"postpublish": "pinst --enable",
@@ -48,6 +47,7 @@
 		"@types/react-router-dom": "^5.3.2",
 		"@types/styled-components": "^5.1.15",
 		"@zextras/carbonio-ui-configs": "0.1.11",
+		"@zextras/carbonio-ui-sdk": "github:Zextras/carbonio-ui-sdk#admin-refactor",
 		"babel-jest": "^26.6.3",
 		"babel-plugin-i18next-extract": "^0.8.3",
 		"babel-plugin-styled-components": "^1.13.3",
@@ -91,10 +91,12 @@
 		"Firefox ESR",
 		"not dead"
 	],
-	"zapp": {
+	"carbonio": {
 		"name": "carbonio-files-ui",
 		"display": "Files",
-		"route": "files",
-		"priority": 9
+		"priority": 9,
+		"icon": "DriveOutline",
+		"type": "carbonio",
+		"sentryDsn": "https://733fc9332b0e48f1a39b595296fc2280@feedback.zextras.tools/11"
 	}
 }

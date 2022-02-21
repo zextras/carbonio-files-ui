@@ -9,3 +9,5 @@ import React from 'react';
 import noop from 'lodash/noop';
 
 export const UpdateQueryContext = React.createContext<(arg: any) => void>(() => noop);
+
+export const FILES_ROUTE = 'files';

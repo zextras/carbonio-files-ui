@@ -365,6 +365,9 @@
             }
         }
     },
+    "label": {
+        "app_name": "Files"
+    },
     "modal": {
         "button": {
             "cancel": "Cancel",
