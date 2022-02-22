@@ -5,7 +5,7 @@
  */
 
 library(
-	identifier: 'zapp-jenkins-lib@github-pipeline',
+	identifier: 'zapp-jenkins-lib@github-pipeline-v2',
 	retriever: modernSCM([
 		$class: 'GitSCMSource',
    		remote: 'git@bitbucket.org:zextras/zapp-jenkins-lib.git',
