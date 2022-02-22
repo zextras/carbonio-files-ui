@@ -64,12 +64,16 @@
         "removeLink": {
             "button": {
                 "confirm": "Hapus"
-            }
+            },
+            "body": "Tautan ini sudah kedaluwarsa, jadi tidak bisa digunakan lagi untuk mengakses elemen. Anda bisa menghapus tautan dari daftar atau Anda bisa memperbarui tanggal berakhir dan informasi lain agar tetap bisa menggunakannya",
+            "header": "Hapus tautan publik {{nodeName}}"
         },
         "revokeLink": {
             "button": {
                 "confirm": "Batalkan"
-            }
+            },
+            "body": "Dengan mencabut tautan ini, Anda memblokir akses ke {{nodeName}} bagi siapa saja yang mencoba menggunakan tautan untuk mengakses file",
+            "header": "Cabut tautan publik {{nodeName}}"
         }
     },
     "node": {
@@ -87,8 +91,8 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Tim",
-            "name_LOCAL_ROOT": "Drive Home",
+            "name_LOCAL_CHAT_ROOT": "File dikirim melalui Team",
+            "name_LOCAL_ROOT": "Home",
             "name_SHARED_WITH_ME_ROOT": "Dibagikan dengan saya",
             "name_TRASH_ROOT": "Tempat Sampah"
         },
@@ -139,7 +143,7 @@
             "myElements": "Elemen saya",
             "sharedElements": "Elemen Bersama"
         },
-        "team": "Tim",
+        "team": "File dikirim melalui Team",
         "uploads": "Unggahan",
         "filesHome": "Beranda"
     },
@@ -163,15 +167,17 @@
         },
         "moveNodes": {
             "error": "Terjadi kesalahan, coba lagi",
-            "success": "Item dipindahkan ke folder tujuan",
+            "success": "Item dipindahkan",
             "action": "Buka folder"
         },
         "upload": {
-            "goToFolder": "Buka folder"
+            "goToFolder": "Buka folder",
+            "success": "Unggahan terjadi di {{destination}}"
         },
         "copyNodes": {
             "action": "Buka folder",
-            "error": "Terjadi kesalahan, coba lagi"
+            "error": "Terjadi kesalahan, coba lagi",
+            "success": "Item disalin"
         },
         "deletePermanently": {
             "error": "Kesalahan",
@@ -180,19 +186,34 @@
         "publicLink": {
             "actionLabel": {
                 "copyLink": "Salin Tautan"
-            }
+            },
+            "linkUpdated": {
+                "label": "Tautan Publik diperbarui"
+            },
+            "newPublicLinkGenerated": {
+                "label": "Tautan publik baru dibuat"
+            },
+            "copyLink": "Tautan publik disalin"
         },
         "unflag": {
             "success": "Tanda bendera pada item berhasil dihapus"
+        },
+        "clipboard": {
+            "email": "Alamat email disalin",
+            "itemShortcutCopied": "Pintasan item disalin"
         }
     },
     "empty": {
         "folder": {
-            "hint": "Sepertinya tidak ada apa pun di sini.",
-            "state": "Seret file atau buat file baru dengan mengklik \"BARU\""
+            "hint": "Sepertinya folder ini kosong",
+            "state": "Seret file atau buat file baru dengan mengklik \"BARU\"",
+            "displayerContent": "Folder ini tidak memiliki konten"
         },
         "filter": {
             "hint": "Sepertinya tidak ada apa pun di sini."
+        },
+        "search": {
+            "hint": "Pencarian Anda tidak cocok dengan file atau folder apa pun"
         }
     },
     "filter": {
@@ -236,9 +257,19 @@
                         "viewer": "Pemirsa"
                     },
                     "sharingAllowed": "Berbagi diperbolehkan",
-                    "sharingAllowedDescription": "Gambaran tentang hal yang akan terjadi jika bagian ini dicentang"
+                    "sharingAllowedDescription": "Ini bisa mengelola berbagi file atau folder"
                 },
-                "owner": "Pemilik"
+                "owner": "Pemilik",
+                "tooltip": {
+                    "edit": {
+                        "collaborator": "Edit kolaborasi {{username}}",
+                        "you": "Edit kolaborasi Anda"
+                    },
+                    "remove": {
+                        "collaborator": "Hapus {{username}}",
+                        "yourself": "Hapus kolaborasi Anda"
+                    }
+                }
             },
             "addShare": {
                 "checkbox": {
@@ -247,7 +278,9 @@
                 "input": {
                     "label": "Tambahkan pesan kustom ke pemberitahuan ini",
                     "placeholder": "Tambahkan orang atau grup baru"
-                }
+                },
+                "note": "Catatan:",
+                "noteDescription": "Pesan standar menampilkan nama Anda, nama item bersama, izin yang diberikan kepada penerima dan informasi masuk."
             },
             "noSharePermissionHeader": "Anda tidak diperbolehkan membagikan item ini."
         },
@@ -262,8 +295,15 @@
             "lastEdit": "Editan terakhir",
             "showPath": "Tampilkan jalur",
             "editDescription": {
-                "editIconTooltip": "Edit deskripsi"
-            }
+                "editIconTooltip": "Edit deskripsi",
+                "closeIconTooltip": "Tutup tanpa menyimpan",
+                "saveIconTooltip": "Simpan hasil edit",
+                "input": {
+                    "label": "Panjang maksimum yang diizinkan adalah 4096 karakter"
+                }
+            },
+            "copyShortcut": "salin pintasan item",
+            "missingDescription": "Klik tombol edit untuk menambahkan deskripsi"
         },
         "tabs": {
             "details": "Detail",
@@ -274,12 +314,18 @@
         "uploads": {
             "title": "Unggah saran",
             "message": "Semua item yang sedang diunggah ada di sini, dan Anda bisa mengelolanya dari sini"
+        },
+        "generic": {
+            "message": "Klik item untuk memilihnya",
+            "title": "Lihat file dan folder, bagikan dengan kontak Anda"
         }
     },
     "search": {
         "header": {
             "search": "Cari",
-            "result": "Hasil yang mengandung semua kata kunci:"
+            "result": "Hasil yang mengandung semua kata kunci:",
+            "close": "Keluar dari pencarian",
+            "start": "Mulai pencarian"
         },
         "search": {
             "tooltip": {
@@ -302,16 +348,22 @@
         },
         "advancedSearch": {
             "button": {
-                "noFilter": "Filter lanjutan"
+                "noFilter": "Filter lanjutan",
+                "filters": "{{count}} filter lanjutan",
+                "filters_plural": "{{count}} filter lanjutan"
             },
             "modal": {
                 "button": {
-                    "confirm": "Cari"
+                    "confirm": "Cari",
+                    "reset": "Atur ulang filter"
                 },
                 "folder": {
                     "modal": {
                         "title": "Pilih folder",
-                        "cancel": "Kembali"
+                        "cancel": "Kembali",
+                        "cascade": "cari juga di folder yang ada",
+                        "confirm": "Pilih folder",
+                        "subtitle": "Hasil akan dicari hanya jika berada di dalam folder terpilih"
                     },
                     "label": "Pilih folder"
                 },
@@ -319,10 +371,12 @@
                     "label": "Kata sandi"
                 },
                 "flagged": {
-                    "label": "Diberi tanda bendera"
+                    "label": "Diberi tanda bendera",
+                    "description": "Filter hasil berdasarkan item yang Anda tandai bendera"
                 },
                 "shared": {
-                    "label": "Dibagikan"
+                    "label": "Dibagikan",
+                    "description": "Filter hasil berdasarkan item yang berisi minimal satu kolaborator selain Anda"
                 },
                 "title": "Filter Tingkat Lanjut"
             }
@@ -354,7 +408,7 @@
             "completed": "Hapus unggahan yang sudah selesai"
         },
         "destination": {
-            "home": "Unggahan muncul di Drive Home"
+            "home": "Unggahan muncul di Files Home"
         },
         "dropzone": {
             "message": {
@@ -364,7 +418,7 @@
                     "enabled": "Letakkan lampiran Anda di sini \n untuk menambahkannya dengan cepat ke folder ini"
                 },
                 "otherView": {
-                    "enabled": "Letakkan lampiran Anda di sini\nuntuk menambahkannya dengan cepat ke Drive Home Anda"
+                    "enabled": "Letakkan lampiran Anda di sini\nuntuk menambahkannya dengan cepat ke Home Anda"
                 }
             },
             "title": {
@@ -376,21 +430,82 @@
     "publicLink": {
         "addLink": {
             "generateLink": "Buat Tautan",
-            "undo": "Batalkan"
+            "undo": "Batalkan",
+            "addLink": "Tambahkan Tautan",
+            "limitReached": "Maksimum jumlah tautan publik telah tercapai",
+            "title": "Tautan Publik"
         },
         "link": {
             "remove": "Hapus",
             "edit": "Edit",
             "revoke": "Batalkan",
-            "undo": "Batalkan"
+            "undo": "Batalkan",
+            "editLink": "Edit Tautan",
+            "expireOn": "Berakhir pada:",
+            "expiredOn": "Tautan ini berakhir pada:",
+            "noExpirationDate": "Tidak memiliki tanggal berakhir",
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Salin tautan publik",
+                    "expired": "Tautan ini kedaluwarsa"
+                }
+            }
+        },
+        "datePickerInput": {
+            "description": "Tautan kedaluwarsa di akhir hari yang dipilih"
+        },
+        "dateTimePicker": {
+            "label": "Tanggal Berakhir"
+        },
+        "input": {
+            "description": {
+                "error": {
+                    "maxLengthAllowed": "Panjang maksimum yang diizinkan adalah 300 karakter"
+                }
+            },
+            "label": "Deskripsi tautan"
         }
     },
     "sortingDropdown": {
         "name": "Nama",
-        "size": "Ukuran"
+        "size": "Ukuran",
+        "ascendingOrder": "Urutan Naik",
+        "descendingOrder": "Urutan Turun",
+        "icon": {
+            "tooltip": {
+                "OrderLastUpdateDescending": "Urutan turun berdasarkan pembaruan terakhir",
+                "OrderNameDescending": "Urutan turun berdasarkan nama",
+                "OrderSizeAscending": "Urutan naik berdasarkan ukuran",
+                "OrderSizeDescending": "Urutan turun berdasarkan ukuran",
+                "OrderLastUpdateAscending": "Urutan naik berdasarkan pembaruan terakhir",
+                "OrderNameAscending": "Urutan naik berdasarkan nama"
+            }
+        },
+        "lastUpdate": "Terakhir Diperbarui"
     },
     "errorCode": {
         "code": "Terjadi masalah",
-        "code_Generic": "Terjadi masalah"
+        "code_Generic": "Terjadi masalah",
+        "code_ACCOUNT_NOT_FOUND": "Tampaknya pengguna ini bukan bagian dari sistem Carbonio",
+        "code_FILE_VERSION_NOT_FOUND": "Maaf, versi file ini tidak bisa ditemukan",
+        "code_LINK_NOT_FOUND": "Tindakan gagal. Tautan ini sudah tidak ada",
+        "code_MISSING_FIELD": "Terjadi kesalahan internal. Tidak semua informasi objek ini telah dipulihkan",
+        "code_NODE_NOT_FOUND": "Tampaknya objek ini tidak ada atau Anda tidak memiliki izin mengaksesnya",
+        "code_NODE_WRITE_ERROR": "Tampaknya objek ini tidak dapat diedit atau Anda tidak memiliki izin mengeditnya",
+        "code_SHARE_CREATION_ERROR": "Maaf, Anda tidak bisa berbagi item dengan pengguna ini",
+        "code_SHARE_NOT_FOUND": "Maaf, berbagi ini tidak ditemukan"
+    },
+    "breadcrumb": {
+        "expander": {
+            "hide": "Sembunyikan jalur folder",
+            "show": "Tampilkan jalur folder"
+        }
+    },
+    "selectionMode": {
+        "header": {
+            "exit": "Keluar dari mode pemilihan",
+            "selectAll": "Pilih semua",
+            "unselectAll": "Hapus pilihan semua"
+        }
     }
 }

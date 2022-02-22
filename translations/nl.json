@@ -61,12 +61,16 @@
         "removeLink": {
             "button": {
                 "confirm": "Verwijderen"
-            }
+            },
+            "header": "Publieke link {{nodeName}} verwijderen",
+            "body": "Deze link is vervallen, daarom kan hij niet meer gebruikt worden om toegang te krijgen tot het element. U kunt de link uit de lijst verwijderen of u kunt de vervaldatum en andere informatie bijwerken om hem te blijven gebruiken"
         },
         "revokeLink": {
             "button": {
                 "confirm": "Intrekken"
-            }
+            },
+            "header": "Publieke link {{nodeName}} intrekken",
+            "body": "Door deze link in te trekken, blokkeert u de toegang tot {{nodeName}} voor iedereen die de link probeert te gebruiken om het bestand te openen"
         }
     },
     "primaryBar": {
@@ -74,7 +78,7 @@
     },
     "secondaryBar": {
         "driveHome": "Srive Startpagina",
-        "team": "Team",
+        "team": "Bestanden verstuurd via Team",
         "filters": "Filters",
         "filtersList": {
             "flagged": "Gevlagd",
@@ -107,15 +111,17 @@
         },
         "moveNodes": {
             "error": "Er is iets misgegaan, probeer het opnieuw",
-            "success": "Item verplaatst naar doelmap",
+            "success": "Item verplaatst",
             "action": "Ga naar map"
         },
         "upload": {
-            "goToFolder": "Ga naar map"
+            "goToFolder": "Ga naar map",
+            "success": "Uploaden gebeurde in {{destination}}"
         },
         "copyNodes": {
             "action": "Ga naar map",
-            "error": "Er is iets misgegaan, probeer het opnieuw"
+            "error": "Er is iets misgegaan, probeer het opnieuw",
+            "success": "Item gekopieerd"
         },
         "deletePermanently": {
             "error": "Fout",
@@ -127,7 +133,18 @@
         "publicLink": {
             "actionLabel": {
                 "copyLink": "Link kopiëren"
+            },
+            "copyLink": "Publieke link gekopieerd",
+            "linkUpdated": {
+                "label": "Publieke link bijgewerkt"
+            },
+            "newPublicLinkGenerated": {
+                "label": "Nieuwe publieke Link gegenereerd"
             }
+        },
+        "clipboard": {
+            "email": "E-mailadres gekopieerd",
+            "itemShortcutCopied": "Item snelkoppeling gekopieerd"
         }
     },
     "create": {
@@ -143,11 +160,15 @@
     },
     "empty": {
         "folder": {
-            "hint": "Het lijkt erop dat er hier niets is.",
-            "state": "Sleep een bestand of creëer een nieuw bestand door op \"NIEUW\" te klikken"
+            "hint": "Het lijkt erop dat de map leeg is",
+            "state": "Sleep een bestand of creëer een nieuw bestand door op \"NIEUW\" te klikken",
+            "displayerContent": "Deze map heeft geen inhoud"
         },
         "filter": {
             "hint": "Het lijkt erop dat er hier niets is."
+        },
+        "search": {
+            "hint": "Uw zoekopdracht kwam niet overeen met bestanden of mappen"
         }
     },
     "node": {
@@ -194,8 +215,8 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Team",
-            "name_LOCAL_ROOT": "Srive Startpagina",
+            "name_LOCAL_CHAT_ROOT": "Bestanden verstuurd via Team",
+            "name_LOCAL_ROOT": "Startpagina",
             "name_TRASH_ROOT": "Prullenbak",
             "name_SHARED_WITH_ME_ROOT": "Gedeeld met mij"
         },
@@ -232,8 +253,15 @@
             "lastEdit": "Laatste bewerking",
             "showPath": "Pad tonen",
             "editDescription": {
-                "editIconTooltip": "Omschrijving bewerken"
-            }
+                "editIconTooltip": "Omschrijving bewerken",
+                "closeIconTooltip": "Sluiten zonder op te slaan",
+                "input": {
+                    "label": "Maximaal toegestane lengte is 4096 tekens"
+                },
+                "saveIconTooltip": "Bewerkingen opslaan"
+            },
+            "copyShortcut": "snelkoppeling van het item kopiëren",
+            "missingDescription": "Klik op de bewerkknop om een beschrijving toe te voegen"
         },
         "list": {
             "you": "U"
@@ -249,10 +277,20 @@
                         "viewer": "Viewer"
                     },
                     "sharingAllowed": "Delen toegestaan",
-                    "sharingAllowedDescription": "Beschrijving van wat er gebeurt als dit is aangevinkt"
+                    "sharingAllowedDescription": "Het zal in staat zijn om delen van het bestand of de map te beheren"
                 },
                 "you": "U",
-                "owner": "Eigenaar"
+                "owner": "Eigenaar",
+                "tooltip": {
+                    "edit": {
+                        "you": "Uw samenwerking bewerken",
+                        "collaborator": "Samenwerking met {{username}} bewerken"
+                    },
+                    "remove": {
+                        "collaborator": "{{username}} verwijderen",
+                        "yourself": "Uw samenwerking verwijderen"
+                    }
+                }
             },
             "addShare": {
                 "checkbox": {
@@ -276,13 +314,18 @@
         "uploads": {
             "message": "Hier vindt u alle items die momenteel aan het uploaden zijn, u kunt ze van hieruit beheren",
             "title": "Suggesties uploaden"
+        },
+        "generic": {
+            "message": "Klik op een item om het te selecteren",
+            "title": "Bestanden en mappen bekijken, ze delen met uw contacten"
         }
     },
     "search": {
         "header": {
             "search": "Zoeken",
             "result": "Resultaten die alle trefwoorden bevatten:",
-            "start": "Start zoeken"
+            "start": "Start zoeken",
+            "close": "Stoppen met zoeken"
         },
         "search": {
             "tooltip": {
@@ -305,7 +348,9 @@
         },
         "advancedSearch": {
             "button": {
-                "noFilter": "Geavanceerde filters"
+                "noFilter": "Geavanceerde filters",
+                "filters": "{{count}} geavanceerde filter",
+                "filters_plural": "{{count}} geavanceerde filters"
             },
             "modal": {
                 "button": {
@@ -313,12 +358,16 @@
                     "reset": "Filters resetten"
                 },
                 "flagged": {
-                    "label": "Gevlagd"
+                    "label": "Gevlagd",
+                    "description": "Filter de resultaten op items die u hebt gemarkeerd"
                 },
                 "folder": {
                     "modal": {
                         "cancel": "Teruggaan",
-                        "title": "Een map selecteren"
+                        "title": "Een map selecteren",
+                        "cascade": "zoek ook in ingesloten mappen",
+                        "confirm": "Map kiezen",
+                        "subtitle": "Het resultaat wordt alleen in de geselecteerde map gezocht"
                     },
                     "label": "Een map selecteren"
                 },
@@ -326,7 +375,8 @@
                     "label": "Zoekwoorden"
                 },
                 "shared": {
-                    "label": "Gedeeld"
+                    "label": "Gedeeld",
+                    "description": "Filter de resultaten op items die ten minste één andere medewerker bevatten dan u"
                 },
                 "title": "Geavanceerde Filters"
             }
@@ -358,7 +408,7 @@
             "completed": "Voltooide uploads wissen"
         },
         "destination": {
-            "home": "Upload gebeurd in Drive Home"
+            "home": "Upload gebeurd in Files Home"
         },
         "dropzone": {
             "message": {
@@ -368,7 +418,7 @@
                     "enabled": "Plaats hier uw bijlagen \n om ze snel aan deze map toe te voegen"
                 },
                 "otherView": {
-                    "enabled": "Plaats hier uw bijlagen \n om ze snel aan uw Drive Home toe te voegen"
+                    "enabled": "Plaats hier uw bijlagen \n om ze snel aan uw Files Home toe te voegen"
                 }
             },
             "title": {
@@ -380,27 +430,82 @@
     "selectionMode": {
         "header": {
             "unselectAll": "Alles deselecteren",
-            "selectAll": "Alles selecteren"
+            "selectAll": "Alles selecteren",
+            "exit": "Selectiemodus verlaten"
         }
     },
     "sortingDropdown": {
         "size": "Grootte",
-        "name": "Naam"
+        "name": "Naam",
+        "lastUpdate": "Laatste update",
+        "icon": {
+            "tooltip": {
+                "OrderLastUpdateDescending": "Aflopende volgorde van laatste bijwerking",
+                "OrderNameAscending": "Oplopende volgorde op naam",
+                "OrderNameDescending": "Aflopende volgorde op naam",
+                "OrderSizeAscending": "Oplopende volgorde op grootte",
+                "OrderSizeDescending": "Aflopende volgorde op grootte",
+                "OrderLastUpdateAscending": "Oplopende volgorde volgens laatste bijwerking"
+            }
+        },
+        "ascendingOrder": "Oplopende volgorde",
+        "descendingOrder": "Aflopende volgorde"
     },
     "errorCode": {
         "code": "Er is iets fout gegaan",
-        "code_Generic": "Er ging iets mis."
+        "code_Generic": "Er ging iets mis",
+        "code_ACCOUNT_NOT_FOUND": "Het lijkt erop dat deze gebruiker geen deel uitmaakt van het Carbonio-systeem",
+        "code_LINK_NOT_FOUND": "Actie mislukt. Deze link bestaat niet meer",
+        "code_MISSING_FIELD": "Er is een interne fout opgetreden, niet alle informatie van dit object is hersteld",
+        "code_NODE_WRITE_ERROR": "Het lijkt erop dat dit object niet kan worden bewerkt of dat u geen toestemming hebt om het te bewerken",
+        "code_SHARE_CREATION_ERROR": "Het spijt ons, maar het is niet mogelijk om het item te delen met deze gebruiker",
+        "code_SHARE_NOT_FOUND": "Het spijt ons, maar dit aandeel kan niet gevonden worden",
+        "code_FILE_VERSION_NOT_FOUND": "Het spijt ons, maar deze versie van het bestand kan niet gevonden worden",
+        "code_NODE_NOT_FOUND": "Het lijkt erop dat dit object niet bestaat, of dat je geen toestemming hebt om het te openen"
     },
     "publicLink": {
         "addLink": {
             "generateLink": "Link genereren",
-            "undo": "Ongedaan maken"
+            "undo": "Ongedaan maken",
+            "addLink": "Link toevoegen",
+            "title": "Publieke link",
+            "limitReached": "Het maximum aantal publieke links is bereikt"
         },
         "link": {
             "edit": "Bewerken",
             "remove": "Verwijderen",
             "revoke": "Intrekken",
-            "undo": "Ongedaan maken"
+            "undo": "Ongedaan maken",
+            "editLink": "Link bewerken",
+            "expireOn": "Vervalt op:",
+            "noExpirationDate": "Heeft geen vervaldatum",
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Publieke link kopiëren",
+                    "expired": "Deze link is vervallen"
+                }
+            },
+            "expiredOn": "Deze link is vervallen op:"
+        },
+        "datePickerInput": {
+            "description": "De link vervalt aan het eind van de gekozen dag"
+        },
+        "dateTimePicker": {
+            "label": "Vervaldatum"
+        },
+        "input": {
+            "description": {
+                "error": {
+                    "maxLengthAllowed": "Maximaal toegestane lengte is 300 tekens"
+                }
+            },
+            "label": "Beschrijving van de link"
+        }
+    },
+    "breadcrumb": {
+        "expander": {
+            "show": "Pad van de map weergeven",
+            "hide": "Het pad van de map verbergen"
         }
     }
 }

@@ -12,11 +12,15 @@
     },
     "empty": {
         "folder": {
-            "hint": "Hier gibt es scheinbar nichts.",
-            "state": "Eine Datei ziehen oder eine neue erstellen, indem Sie auf \"NEU\" klicken"
+            "hint": "Es scheint, dass dieser Ordner leer ist",
+            "state": "Eine Datei ziehen oder eine neue erstellen, indem Sie auf \"NEU\" klicken",
+            "displayerContent": "Dieser Ordner hat keinen Inhalt"
         },
         "filter": {
             "hint": "Hier gibt es scheinbar nichts."
+        },
+        "search": {
+            "hint": "Ihre Suche ergab keine Treffer für Dateien oder Ordner"
         }
     },
     "filter": {
@@ -81,12 +85,16 @@
         "removeLink": {
             "button": {
                 "confirm": "Entfernen"
-            }
+            },
+            "body": "Dieser Link ist abgelaufen und kann daher nicht mehr für den Zugriff auf das Element verwendet werden. Sie können den Link aus der Liste entfernen oder sein Ablaufdatum und andere Informationen aktualisieren, um ihn weiter zu verwenden",
+            "header": "Öffentlichen Link {{nodeName}} entfernen"
         },
         "revokeLink": {
             "button": {
                 "confirm": "Widerrufen"
-            }
+            },
+            "body": "Indem Sie diesen Link widerrufen, blockieren Sie den Zugriff auf {{NodeName}} für jeden, der versucht, den Link zu benutzen, um auf die Datei zuzugreifen",
+            "header": "{{NodeName}} öffentlicher Link widerrufen"
         }
     },
     "node": {
@@ -114,8 +122,8 @@
             }
         },
         "alias": {
-            "name_LOCAL_ROOT": "Drive Home",
-            "name_LOCAL_CHAT_ROOT": "Team",
+            "name_LOCAL_ROOT": "Home",
+            "name_LOCAL_CHAT_ROOT": "Über Team gesendete Dateien",
             "name_TRASH_ROOT": "Papierkorb",
             "name_SHARED_WITH_ME_ROOT": "Mit mir geteilt"
         },
@@ -156,7 +164,7 @@
             "myElements": "Meine Elemente",
             "sharedElements": "Geteilte Elemente"
         },
-        "team": "Team",
+        "team": "Über Team gesendete Dateien",
         "uploads": "Uploads",
         "filesHome": "Home"
     },
@@ -180,15 +188,17 @@
         },
         "moveNodes": {
             "error": "Etwas ist schiefgegangen, bitte versuchen Sie es erneut",
-            "success": "Element in den Zielordner verschoben",
+            "success": "Element verschoben",
             "action": "Zum Ordner gehen"
         },
         "upload": {
-            "goToFolder": "Zum Ordner gehen"
+            "goToFolder": "Zum Ordner gehen",
+            "success": "Upload erfolgt in {{destination}}"
         },
         "copyNodes": {
             "action": "Zum Ordner gehen",
-            "error": "Etwas ist schiefgegangen, bitte versuchen Sie es erneut"
+            "error": "Etwas ist schiefgegangen, bitte versuchen Sie es erneut",
+            "success": "Element kopiert"
         },
         "deletePermanently": {
             "error": "Fehler",
@@ -200,7 +210,18 @@
         "publicLink": {
             "actionLabel": {
                 "copyLink": "Link kopieren"
-            }
+            },
+            "linkUpdated": {
+                "label": "Öffentlicher Link aktualisiert"
+            },
+            "newPublicLinkGenerated": {
+                "label": "Neuer öffentlicher Link generiert"
+            },
+            "copyLink": "Öffentlicher Link kopiert"
+        },
+        "clipboard": {
+            "itemShortcutCopied": "Artikelkürzel kopiert",
+            "email": "E-Mail Adresse kopiert"
         }
     },
     "actions": {
@@ -232,8 +253,15 @@
             "lastEdit": "Letzte Bearbeitung",
             "showPath": "Pfad anzeigen",
             "editDescription": {
-                "editIconTooltip": "Beschreibung bearbeiten"
-            }
+                "editIconTooltip": "Beschreibung bearbeiten",
+                "closeIconTooltip": "Schließen ohne Speichern",
+                "saveIconTooltip": "Bearbeitungen speichern",
+                "input": {
+                    "label": "Die maximal zulässige Länge beträgt 4096 Zeichen"
+                }
+            },
+            "copyShortcut": "Verknüpfung des Elements kopieren",
+            "missingDescription": "Klicken Sie auf die Schaltfläche \"Bearbeiten\", um eine Beschreibung hinzuzufügen"
         },
         "list": {
             "you": "Sie"
@@ -249,10 +277,20 @@
                         "viewerDescription": "Es wird nur in der Lage sein, die Datei oder den Ordner zu sehen oder herunterzuladen"
                     },
                     "sharingAllowed": "Teilen erlaubt",
-                    "sharingAllowedDescription": "Beschreibung, was passiert, wenn dies ausgewählt wurde"
+                    "sharingAllowedDescription": "Es kann Freigaben für die Datei oder den Ordner verwalten"
                 },
                 "you": "Sie",
-                "owner": "Besitzer"
+                "owner": "Besitzer",
+                "tooltip": {
+                    "edit": {
+                        "collaborator": "{{username}}'s Zusammenarbeit bearbeiten",
+                        "you": "Bearbeiten Sie Ihre Zusammenarbeit"
+                    },
+                    "remove": {
+                        "collaborator": "{{username}} entfernen",
+                        "yourself": "Ihre Zusammenarbeit beenden"
+                    }
+                }
             },
             "addShare": {
                 "checkbox": {
@@ -276,13 +314,18 @@
         "uploads": {
             "message": "Here können Sie alle Elemente finden, die sie gerade hochladen, sie können diese hier verwalten",
             "title": "Upload Vorschläge"
+        },
+        "generic": {
+            "message": "Klicken Sie auf ein Element, um es auszuwählen",
+            "title": "Ansicht von Dateien und Ordnern, gemeinsame Nutzung mit Ihren Kontakten"
         }
     },
     "search": {
         "header": {
             "search": "Suchen",
             "result": "Ergebnisse, die alle Schlüsselwörter enthalten:",
-            "start": "Suche starten"
+            "start": "Suche starten",
+            "close": "Die Suche beenden"
         },
         "search": {
             "tooltip": {
@@ -305,7 +348,9 @@
         },
         "advancedSearch": {
             "button": {
-                "noFilter": "Fortgeschrittene filter"
+                "noFilter": "Fortgeschrittene filter",
+                "filters": "Erweiterter Filter {{count}}",
+                "filters_plural": "Erweiterte Filter {{count}}"
             },
             "modal": {
                 "button": {
@@ -315,16 +360,21 @@
                 "folder": {
                     "modal": {
                         "cancel": "Zurück",
-                        "title": "Einen Ordner auswählen"
+                        "title": "Einen Ordner auswählen",
+                        "cascade": "Suche auch in enthaltenen Ordnern",
+                        "confirm": "Ordner auswählen",
+                        "subtitle": "Die Ergebnisse werden nur innerhalb des ausgewählten Ordners gesucht"
                     },
                     "label": "Einen Ordner auswählen"
                 },
                 "shared": {
-                    "label": "Geteilt"
+                    "label": "Geteilt",
+                    "description": "Filtern Sie die Ergebnisse nach Elementen, die außer Ihnen noch mindestens einen weiteren Mitarbeiter enthalten"
                 },
                 "title": "Fortgeschrittene Filter",
                 "flagged": {
-                    "label": "Markiert"
+                    "label": "Markiert",
+                    "description": "Filtern Sie die Ergebnisse nach den von Ihnen markierten Elementen"
                 },
                 "keywords": {
                     "label": "Schlüsselwörter"
@@ -362,7 +412,7 @@
                 },
                 "disabled": "Sie können in diesem Bereich keinen Anhang ablegen",
                 "otherView": {
-                    "enabled": "Legen Sie hier Ihre Anhänge ab\n um diese Ihrem Drive Home schnell hinzuzufügen"
+                    "enabled": "Legen Sie hier Ihre Anhänge ab\num sie schnell zu Ihrer Homepage hinzuzufügen"
                 }
             },
             "title": {
@@ -374,33 +424,88 @@
             "completed": "Beendete Uploads löschen"
         },
         "destination": {
-            "home": "Upload ausgeführt in Drive Home"
+            "home": "Upload erfolgt in Files Home"
         }
     },
     "selectionMode": {
         "header": {
             "selectAll": "Alle auswählen",
-            "unselectAll": "Alle abwählen"
+            "unselectAll": "Alle abwählen",
+            "exit": "Beenden des Auswahlmodus"
         }
     },
     "sortingDropdown": {
         "name": "Name",
-        "size": "Größe"
+        "size": "Größe",
+        "ascendingOrder": "Aufsteigende Reihenfolge",
+        "descendingOrder": "Absteigende Reihenfolge",
+        "icon": {
+            "tooltip": {
+                "OrderNameDescending": "Absteigende Reihenfolge nach Name",
+                "OrderSizeDescending": "Absteigende Reihenfolge nach Größe",
+                "OrderLastUpdateAscending": "Aufsteigende Reihenfolge nach letzter Aktualisierung",
+                "OrderLastUpdateDescending": "Absteigende Reihenfolge nach letzter Aktualisierung",
+                "OrderNameAscending": "Aufsteigende Reihenfolge nach Name",
+                "OrderSizeAscending": "Aufsteigende Reihenfolge nach Größe"
+            }
+        },
+        "lastUpdate": "Letzte Aktualisierung"
     },
     "errorCode": {
         "code": "Etwas ist schiefgegangen",
-        "code_Generic": "Etwas ist schiefgegangen"
+        "code_Generic": "Etwas ist schiefgegangen",
+        "code_ACCOUNT_NOT_FOUND": "Es scheint, dass dieser Benutzer nicht Teil des Carbonio-Systems ist",
+        "code_LINK_NOT_FOUND": "Aktion fehlgeschlagen. Dieser Link existiert nicht mehr",
+        "code_MISSING_FIELD": "Ein interner Fehler ist aufgetreten, nicht alle Informationen dieses Objekts wurden wiederhergestellt",
+        "code_NODE_WRITE_ERROR": "Es scheint, dass dieses Objekt nicht bearbeitet werden kann oder dass Sie keine Berechtigung haben, es zu bearbeiten",
+        "code_FILE_VERSION_NOT_FOUND": "Es tut uns leid, aber diese Version der Datei kann nicht gefunden werden",
+        "code_NODE_NOT_FOUND": "Es scheint, dass dieses Objekt nicht existiert, oder Sie haben keine Zugriffsberechtigung dafür",
+        "code_SHARE_CREATION_ERROR": "Es tut uns leid, aber es ist nicht möglich, den Artikel mit diesem Benutzer zu teilen",
+        "code_SHARE_NOT_FOUND": "Es tut uns leid, aber diese Aktie kann nicht gefunden werden"
     },
     "publicLink": {
         "addLink": {
             "generateLink": "Link erstellen",
-            "undo": "Rückgängig machen"
+            "undo": "Rückgängig machen",
+            "addLink": "Link hinzufügen",
+            "limitReached": "Die maximale Anzahl der öffentlichen Links ist erreicht",
+            "title": "Öffentlicher Link"
         },
         "link": {
             "edit": "Bearbeiten",
             "remove": "Entfernen",
             "revoke": "Widerrufen",
-            "undo": "Rückgängig machen"
+            "undo": "Rückgängig machen",
+            "editLink": "Link bearbeiten",
+            "expireOn": "Läuft ab am:",
+            "expiredOn": "Dieser Link ist am abgelaufen:",
+            "noExpirationDate": "Hat kein Verfallsdatum",
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Öffentlichen Link kopieren",
+                    "expired": "Dieser Link ist abgelaufen"
+                }
+            }
+        },
+        "dateTimePicker": {
+            "label": "Ablaufdatum"
+        },
+        "input": {
+            "description": {
+                "error": {
+                    "maxLengthAllowed": "Die maximal zulässige Länge beträgt 300 Zeichen"
+                }
+            },
+            "label": "Link Beschreibung"
+        },
+        "datePickerInput": {
+            "description": "Der Link läuft am Ende des gewählten Tages ab"
+        }
+    },
+    "breadcrumb": {
+        "expander": {
+            "hide": "Ordnerpfad ausblenden",
+            "show": "Ordnerpfad anzeigen"
         }
     }
 }

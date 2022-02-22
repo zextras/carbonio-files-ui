@@ -11,8 +11,15 @@
             "lastEdit": "上次编辑",
             "showPath": "显示路径",
             "editDescription": {
-                "editIconTooltip": "编辑描述"
-            }
+                "editIconTooltip": "编辑描述",
+                "closeIconTooltip": "关闭且不保存",
+                "input": {
+                    "label": "最大允许长度4096个字符"
+                },
+                "saveIconTooltip": "保存编辑"
+            },
+            "copyShortcut": "复制项目快捷方式",
+            "missingDescription": "点击编辑按钮以添加描述"
         },
         "list": {
             "you": "您"
@@ -28,10 +35,20 @@
                         "editorDescription": "其将可查看和编辑文件或文件夹"
                     },
                     "sharingAllowed": "允许共享",
-                    "sharingAllowedDescription": "勾选后会发生什么的描述"
+                    "sharingAllowedDescription": "其将可管理文件或文件夹的共享"
                 },
                 "you": "您",
-                "owner": "所有者"
+                "owner": "所有者",
+                "tooltip": {
+                    "edit": {
+                        "collaborator": "编辑{{username}}的协作",
+                        "you": "编辑您的协作"
+                    },
+                    "remove": {
+                        "collaborator": "移除{{username}}",
+                        "yourself": "移除您的协作"
+                    }
+                }
             },
             "noSharePermissionHeader": "您无法共享此项目。",
             "addShare": {
@@ -55,6 +72,10 @@
         "uploads": {
             "message": "在这里您可以找到当前正在上传的所有项目，并从此处对其进行管理",
             "title": "上传建议"
+        },
+        "generic": {
+            "message": "点击项目以将其选择",
+            "title": "查看文件与文件夹，并将其分享给您的联系人"
         }
     },
     "snackbar": {
@@ -76,20 +97,41 @@
             "start": "您的下载将很快开始"
         },
         "moveNodes": {
-            "success": "项目已移动至目标文件夹",
+            "success": "项目已移动",
             "error": "出现了一些错误，请重试",
             "action": "前往文件夹"
         },
         "upload": {
-            "goToFolder": "前往文件夹"
+            "goToFolder": "前往文件夹",
+            "success": "上传发生于{{destination}}"
         },
         "copyNodes": {
             "action": "前往文件夹",
-            "error": "出现了一些错误，请重试"
+            "error": "出现了一些错误，请重试",
+            "success": "项目已复制"
         },
         "deletePermanently": {
             "error": "错误",
             "success": "成功"
+        },
+        "clipboard": {
+            "itemShortcutCopied": "项目快捷方式已复制",
+            "email": "邮件地址已复制"
+        },
+        "publicLink": {
+            "actionLabel": {
+                "copyLink": "复制链接"
+            },
+            "copyLink": "公开链接已复制",
+            "linkUpdated": {
+                "label": "公开链接已更新"
+            },
+            "newPublicLinkGenerated": {
+                "label": "新公开链接已生成"
+            }
+        },
+        "unflag": {
+            "success": "项目取消标记成功"
         }
     },
     "actions": {
@@ -188,13 +230,28 @@
                 "trash": "回收站",
                 "myElements": "我的项目",
                 "sharedWitMe": "共享项目"
-            }
+            },
+            "filesHome": "主页"
+        },
+        "removeLink": {
+            "body": "此链接已过期，因此不能再用于访问元素。您可从列表中删除链接，也可更新其过期日期和其他信息以便继续使用",
+            "button": {
+                "confirm": "移除"
+            },
+            "header": "移除{{nodeName}}公开链接"
+        },
+        "revokeLink": {
+            "body": "撤销此链接将阻止所有尝试使用此链接访问{{nodeName}}的所有用户",
+            "button": {
+                "confirm": "撤销"
+            },
+            "header": "撤销{{nodeName}}公开链接"
         }
     },
     "node": {
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "团队",
-            "name_LOCAL_ROOT": "云盘主页",
+            "name_LOCAL_CHAT_ROOT": "文件已通过Team发送",
+            "name_LOCAL_ROOT": "主页",
             "name_SHARED_WITH_ME_ROOT": "同我分享的",
             "name_TRASH_ROOT": "回收站"
         },
@@ -204,7 +261,8 @@
                     "confirm": "复制"
                 },
                 "title": "复制{{node.name}}",
-                "title_plurals": "复制项目"
+                "title_plurals": "复制项目",
+                "title_plural": "复制项目"
             }
         },
         "move": {
@@ -217,7 +275,8 @@
                 },
                 "subtitle": "选择一个目标文件夹：",
                 "title": "移动{{node.name}}",
-                "title_plurals": "移动项目"
+                "title_plurals": "移动项目",
+                "title_plural": "移动项目"
             },
             "error": {
                 "not": {
@@ -246,7 +305,8 @@
         "header": {
             "search": "搜索",
             "result": "包含所有关键词的结果：",
-            "start": "开始搜索"
+            "start": "开始搜索",
+            "close": "退出搜索"
         },
         "search": {
             "tooltip": {
@@ -270,7 +330,9 @@
         "resultsFor": "结果：",
         "advancedSearch": {
             "button": {
-                "noFilter": "高级过滤条件"
+                "noFilter": "高级过滤条件",
+                "filters": "{{count}}高级过滤条件",
+                "filters_plural": "{{count}}高级过滤条件"
             },
             "modal": {
                 "button": {
@@ -278,18 +340,25 @@
                     "reset": "重置过滤条件"
                 },
                 "flagged": {
-                    "label": "已标记"
+                    "label": "已标记",
+                    "description": "按照您所标记的项目来对结果进行过滤"
                 },
                 "folder": {
                     "modal": {
-                        "cancel": "返回"
-                    }
+                        "cancel": "返回",
+                        "cascade": "也在其包含的文件夹中进行搜索",
+                        "confirm": "选择文件夹",
+                        "subtitle": "将仅在所选文件夹中搜索结果",
+                        "title": "选择一个文件夹"
+                    },
+                    "label": "选择一个文件夹"
                 },
                 "keywords": {
                     "label": "关键词"
                 },
                 "shared": {
-                    "label": "已分享"
+                    "label": "已分享",
+                    "description": "按照在您之外还包含至少一名协作者的项目过滤结果"
                 },
                 "title": "高级过滤条件"
             }
@@ -305,14 +374,22 @@
             "myElements": "我的元素",
             "sharedElements": "共享元素"
         },
-        "team": "团队",
+        "team": "文件已通过Team发送",
         "filters": "过滤",
-        "uploads": "上传"
+        "uploads": "上传",
+        "filesHome": "主页"
     },
     "empty": {
         "folder": {
-            "hint": "似乎这里什么都没有。",
-            "state": "拖入文件或点击“新建”创建新文件"
+            "hint": "似乎此文件夹中什么都没有",
+            "state": "拖入文件或点击“新建”创建新文件",
+            "displayerContent": "此文件夹中没有内容"
+        },
+        "filter": {
+            "hint": "似乎这里什么都没有。"
+        },
+        "search": {
+            "hint": "您的搜索未与任何文件或文件夹匹配"
         }
     },
     "filter": {
@@ -328,7 +405,7 @@
             "completed": "清除已完成的上传"
         },
         "destination": {
-            "home": "上传于云盘主页"
+            "home": "上传发生于文件主页"
         },
         "dropzone": {
             "message": {
@@ -338,7 +415,7 @@
                     "enabled": "在此处拖入您的附件\n以将其快速添加至此文件夹"
                 },
                 "otherView": {
-                    "enabled": "在此处拖入您的附件\n以将其快速添加至云盘主页"
+                    "enabled": "在此处拖入您的附件\n以将其快速添加至主页"
                 }
             },
             "title": {
@@ -349,12 +426,83 @@
     },
     "sortingDropdown": {
         "name": "名称",
-        "size": "大小"
+        "size": "大小",
+        "ascendingOrder": "升序排列",
+        "descendingOrder": "降序排列",
+        "icon": {
+            "tooltip": {
+                "OrderLastUpdateAscending": "按上次更新升序排列",
+                "OrderLastUpdateDescending": "按上次更新降序排列",
+                "OrderNameAscending": "按名称升序排列",
+                "OrderNameDescending": "按名称降序排列",
+                "OrderSizeAscending": "按大小升序排列",
+                "OrderSizeDescending": "按大小降序排列"
+            }
+        },
+        "lastUpdate": "上次更新"
     },
     "selectionMode": {
         "header": {
             "selectAll": "全选",
-            "unselectAll": "取消全选"
+            "unselectAll": "取消全选",
+            "exit": "退出选择模式"
+        }
+    },
+    "errorCode": {
+        "code": "出了一些问题",
+        "code_ACCOUNT_NOT_FOUND": "似乎此用户并不是 Carbonio 系统的一部分",
+        "code_FILE_VERSION_NOT_FOUND": "抱歉，但无法找到该版本的文件",
+        "code_Generic": "出了一些问题",
+        "code_LINK_NOT_FOUND": "操作失败。此链接不存在",
+        "code_MISSING_FIELD": "发生内部错误，此对象仅有部分信息已恢复",
+        "code_NODE_NOT_FOUND": "似乎此对象不存在，或者您没有访问权限",
+        "code_NODE_WRITE_ERROR": "似乎此对象无法编辑，或者您没有编辑权限",
+        "code_SHARE_CREATION_ERROR": "抱歉，无法同该用户分享此项目",
+        "code_SHARE_NOT_FOUND": "抱歉，无法找到此分享"
+    },
+    "publicLink": {
+        "addLink": {
+            "addLink": "添加链接",
+            "generateLink": "生成链接",
+            "limitReached": "已达到公开链接的最大数量",
+            "title": "公开链接",
+            "undo": "撤消"
+        },
+        "datePickerInput": {
+            "description": "链接将在所选日期结束时过期"
+        },
+        "dateTimePicker": {
+            "label": "过期日期"
+        },
+        "input": {
+            "description": {
+                "error": {
+                    "maxLengthAllowed": "最大允许长度300个字符"
+                }
+            },
+            "label": "链接描述"
+        },
+        "link": {
+            "edit": "编辑",
+            "editLink": "编辑链接",
+            "expireOn": "过期于：",
+            "expiredOn": "链接过期于：",
+            "noExpirationDate": "没有过期日期",
+            "remove": "移除",
+            "revoke": "撤销",
+            "undo": "撤消",
+            "urlChip": {
+                "tooltip": {
+                    "copy": "复制公开链接",
+                    "expired": "此链接已过期"
+                }
+            }
+        }
+    },
+    "breadcrumb": {
+        "expander": {
+            "hide": "隐藏文件夹路径",
+            "show": "显示文件夹路径"
         }
     }
 }
