@@ -6,11 +6,7 @@
 
 import { useCallback } from 'react';
 
-import {
-	goBackHistory,
-	pushHistory,
-	replaceHistory
-} from '@zextras/carbonio-shell-ui';
+import { goBackHistory, pushHistory, replaceHistory } from '@zextras/carbonio-shell-ui';
 
 export type UseNavigationHook = () => {
 	navigateToFolder: (id: string) => void;
@@ -19,13 +15,9 @@ export type UseNavigationHook = () => {
 };
 
 export const useNavigation: UseNavigationHook = () => {
-
-	const navigateToFolder: (id: string) => void = useCallback(
-		(id) => {
-			pushHistory(`/?folder=${id}`);
-		},
-		[]
-	);
+	const navigateToFolder: (id: string) => void = useCallback((id) => {
+		pushHistory(`/?folder=${id}`);
+	}, []);
 
 	const navigateTo: (location: string, replace?: boolean) => void = useCallback(
 		(location, replace = false) => {
