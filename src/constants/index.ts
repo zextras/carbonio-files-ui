@@ -11,3 +11,4 @@ import noop from 'lodash/noop';
 export const UpdateQueryContext = React.createContext<(arg: any) => void>(() => noop);
 
 export const FILES_ROUTE = 'files';
+export const FILES_APP_ID = 'carbonio-files-ui';

@@ -11,7 +11,8 @@ import {
 	addRoute,
 	addSearchView,
 	registerActions,
-	ACTION_TYPES
+	ACTION_TYPES,
+	SHELL_APP_ID
 } from '@zextras/carbonio-shell-ui';
 import filter from 'lodash/filter';
 import size from 'lodash/size';
@@ -112,7 +113,8 @@ export default function App() {
 				icon: 'CloudUploadOutline',
 				click: uploadClick,
 				disabled: false,
-				primary: true
+				primary: true,
+				group: SHELL_APP_ID
 			}),
 			id: 'upload-file',
 			type: ACTION_TYPES.NEW
