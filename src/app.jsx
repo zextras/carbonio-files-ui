@@ -11,20 +11,18 @@ import {
 	addRoute,
 	addSearchView,
 	registerActions,
-	ACTION_TYPES,
-	SHELL_APP_ID
+	ACTION_TYPES
 } from '@zextras/carbonio-shell-ui';
 import filter from 'lodash/filter';
 import size from 'lodash/size';
 import { useTranslation } from 'react-i18next';
 
 import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
-import { ROOTS } from './carbonio-files-ui-common/constants';
+import { FILES_APP_ID, FILES_ROUTE, ROOTS } from './carbonio-files-ui-common/constants';
 import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
 import { UploadStatus } from './carbonio-files-ui-common/types/common';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
-import { FILES_ROUTE } from './constants';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
@@ -107,39 +105,18 @@ export default function App() {
 			component: SearchView
 		});
 		registerActions({
-			action: (route) => ({
+			action: (activeRoute) => ({
 				id: 'upload-file',
 				label: t('create.options.new.upload', 'Upload'),
 				icon: 'CloudUploadOutline',
 				click: uploadClick,
 				disabled: false,
 				primary: true,
-				group: SHELL_APP_ID
+				group: FILES_APP_ID
 			}),
 			id: 'upload-file',
 			type: ACTION_TYPES.NEW
 		});
-		// 	registerAppData({
-		// 		icon: 'DriveOutline',
-		// 		views: {
-		// 			app: AppView,
-		// 			// settings: SettingsView,
-		// 			// board: BoardView,
-		// 			search: SearchView,
-		// 			sidebar: SidebarView
-		// 		},
-		// 		context: {},
-		// 		newButton: {
-		// 			primary: {
-		// 				id: 'upload-file',
-		// 				label: t('create.options.new.upload', 'Upload'),
-		// 				icon: 'CloudUploadOutline',
-		// 				disabled: false,
-		// 				click: uploadClick
-		// 			},
-		// 			secondaryItems: []
-		// 		}
-		// 	});
 	}, [uploadClick, t]);
 
 	return null;
