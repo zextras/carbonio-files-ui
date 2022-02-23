@@ -7,8 +7,7 @@
 import { useCallback, useContext } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-// eslint-disable-next-line import/no-unresolved
-import { QueryChip as ShellQueryChip } from '@zextras/carbonio-shell-ui';
+import type { QueryChip } from '@zextras/carbonio-shell-ui';
 import forEach from 'lodash/forEach';
 import includes from 'lodash/includes';
 import map from 'lodash/map';
@@ -16,12 +15,7 @@ import map from 'lodash/map';
 import { searchParamsVar } from '../carbonio-files-ui-common/apollo/searchVar';
 import { AdvancedFilters } from '../carbonio-files-ui-common/types/common';
 import { UpdateQueryContext } from '../constants';
-
-export type QueryChip = Omit<ShellQueryChip, 'label' | 'value'> & {
-	label?: string;
-	value?: unknown;
-	varKey?: keyof AdvancedFilters;
-};
+import { AdvancedSearchChip } from '../types';
 
 interface UseSearchReturnType {
 	searchParams: AdvancedFilters;
@@ -57,8 +51,8 @@ export function useSearch(): UseSearchReturnType {
 					reducedForQuery.push({
 						...value,
 						isQueryFilter: true,
-						varKey: key as keyof AdvancedFilters
-					});
+						varKey: key as keyof Omit<AdvancedFilters, 'keywords'>
+					} as AdvancedSearchChip);
 				}
 			});
 			updateQuery(reducedForQuery);

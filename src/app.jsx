@@ -12,6 +12,7 @@ import {
 	addSearchView,
 	registerActions,
 	ACTION_TYPES
+	// eslint-disable-next-line import/no-unresolved
 } from '@zextras/carbonio-shell-ui';
 import filter from 'lodash/filter';
 import size from 'lodash/size';
@@ -78,8 +79,7 @@ export default function App() {
 	const inputElementOnchange = useCallback(
 		(ev) => {
 			add(ev.currentTarget.files, ROOTS.LOCAL_ROOT);
-			// require to select 2 times the same file/files
-			// eslint-disable-next-line no-param-reassign
+			// required to select 2 times the same file/files
 			ev.target.value = '';
 		},
 		[add]
@@ -105,14 +105,15 @@ export default function App() {
 			component: SearchView
 		});
 		registerActions({
-			action: (activeRoute) => ({
+			action: () => ({
 				id: 'upload-file',
 				label: t('create.options.new.upload', 'Upload'),
 				icon: 'CloudUploadOutline',
 				click: uploadClick,
 				disabled: false,
 				primary: true,
-				group: FILES_APP_ID
+				group: FILES_APP_ID,
+				type: ACTION_TYPES.NEW
 			}),
 			id: 'upload-file',
 			type: ACTION_TYPES.NEW

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// eslint-disable-next-line import/no-unresolved
 import { report } from '@zextras/carbonio-shell-ui';
 
 export const captureException = report;

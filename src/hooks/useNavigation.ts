@@ -6,6 +6,7 @@
 
 import { useCallback } from 'react';
 
+// eslint-disable-next-line import/no-unresolved
 import { goBackHistory, pushHistory, replaceHistory } from '@zextras/carbonio-shell-ui';
 
 export type UseNavigationHook = () => {
