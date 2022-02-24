@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-rc.3](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.2...v0.1.0-rc.3) (2022-02-24)
+
+
+### Bug Fixes
+
+* fix edit public link expiration date  ([eacc9b2](https://github.com/zextras/carbonio-files-ui/commit/eacc9b2e8c7a0942fc07347a6b147e236230387b)), closes [#9](https://github.com/zextras/carbonio-files-ui/issues/9)
+
 ## [0.1.0-rc.2](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.1...v0.1.0-rc.2) (2022-02-16)
 
 
