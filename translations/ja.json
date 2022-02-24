@@ -57,12 +57,16 @@
         "removeLink": {
             "button": {
                 "confirm": "削除する"
-            }
+            },
+            "body": "このリンクは期限切れになっているため、要素にアクセスするために使用できなくなりました。リストからリンクを削除するか、リンクを継続して使用するために有効期限やその他の情報を更新してください",
+            "header": "{{nodeName}}パブリックリンクを削除する"
         },
         "revokeLink": {
             "button": {
                 "confirm": "取り消す"
-            }
+            },
+            "body": "このリンクを取り消すことで、リンクを使用してファイルへのアクセスを試みるユーザーの{{nodeName}}へのアクセスがブロックされます",
+            "header": "{{nodeName}}パブリックリンクを取り消す"
         }
     },
     "node": {
@@ -80,8 +84,8 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Team",
-            "name_LOCAL_ROOT": "Driveホーム",
+            "name_LOCAL_CHAT_ROOT": "チーム経由で送信されたファイル",
+            "name_LOCAL_ROOT": "ホーム",
             "name_SHARED_WITH_ME_ROOT": "共有されたファイル",
             "name_TRASH_ROOT": "ゴミ箱"
         },
@@ -123,7 +127,7 @@
     },
     "secondaryBar": {
         "driveHome": "Driveホーム",
-        "team": "Team",
+        "team": "チーム経由で送信されたファイル",
         "filters": "フィルター",
         "filtersList": {
             "flagged": "フラグを付けました",
@@ -156,15 +160,17 @@
         },
         "moveNodes": {
             "error": "エラーが発生しました。後ほど再度お試しください",
-            "success": "アイテムが宛先フォルダに移動されました",
+            "success": "アイテムが移動しました",
             "action": "フォルダに移動する"
         },
         "upload": {
-            "goToFolder": "フォルダに移動する"
+            "goToFolder": "フォルダに移動する",
+            "success": "{{destination}}でアップロードされました"
         },
         "copyNodes": {
             "action": "フォルダに移動する",
-            "error": "エラーが発生しました。後ほど再度お試しください"
+            "error": "エラーが発生しました。後ほど再度お試しください",
+            "success": "アイテムがコピーされました"
         },
         "deletePermanently": {
             "error": "エラー",
@@ -172,15 +178,35 @@
         },
         "unflag": {
             "success": "アイテムのフラグが解除されました"
+        },
+        "clipboard": {
+            "email": "メールアドレスがコピーされました",
+            "itemShortcutCopied": "アイテムのショートカットがコピーされました"
+        },
+        "publicLink": {
+            "actionLabel": {
+                "copyLink": "リンクをコピーする"
+            },
+            "copyLink": "パブリックリンクがコピーされました",
+            "linkUpdated": {
+                "label": "パブリックリンクが更新されました"
+            },
+            "newPublicLinkGenerated": {
+                "label": "新しいパブリックリンクが生成されました"
+            }
         }
     },
     "empty": {
         "folder": {
-            "hint": "ここには何もないようです。",
-            "state": "「新規」をクリックしてファイルをドラッグするか、新しいファイルを作成します"
+            "hint": "このフォルダは空のようです",
+            "state": "「新規」をクリックしてファイルをドラッグするか、新しいファイルを作成します",
+            "displayerContent": "このフォルダにはコンテンツがありません"
         },
         "filter": {
             "hint": "ここには何もないようです。"
+        },
+        "search": {
+            "hint": "検索結果がどのファイルまたはフォルダにも一致しませんでした"
         }
     },
     "folder": {
@@ -231,9 +257,19 @@
                         "viewerDescription": "ファイルまたはフォルダのみを表示またはダウンロードできます"
                     },
                     "sharingAllowed": "共有が許可されました",
-                    "sharingAllowedDescription": "これが確認された際に起こること"
+                    "sharingAllowedDescription": "ファイルまたはフォルダの共有を管理できるようになります"
                 },
-                "owner": "所有者:"
+                "owner": "所有者",
+                "tooltip": {
+                    "edit": {
+                        "collaborator": "{{username}}のコラボレーションを編集する",
+                        "you": "コラボレーションを編集する"
+                    },
+                    "remove": {
+                        "collaborator": "{{username}}を削除する",
+                        "yourself": "コラボレーションを削除する"
+                    }
+                }
             },
             "addShare": {
                 "checkbox": {
@@ -243,7 +279,8 @@
                     "label": "この通知にカスタムメッセージを追加する",
                     "placeholder": "新しい人またはグループを追加する"
                 },
-                "note": "メモ:"
+                "note": "メモ:",
+                "noteDescription": "標準メッセージには、名前、共有アイテムの名前、受信者に付与されたアクセス許可、サインイン情報が表示されます。"
             },
             "noSharePermissionHeader": "このアイテムの共有を許可されていません。"
         },
@@ -258,8 +295,15 @@
             "lastEdit": "最終編集",
             "showPath": "パスを表示する",
             "editDescription": {
-                "editIconTooltip": "概要を編集する"
-            }
+                "editIconTooltip": "概要を編集する",
+                "closeIconTooltip": "保存せずに閉じる",
+                "saveIconTooltip": "編集を保存する",
+                "input": {
+                    "label": "最大文字数は4096文字です"
+                }
+            },
+            "copyShortcut": "アイテムのショートカットをコピーする",
+            "missingDescription": "編集ボタンをクリックして説明を追加します"
         },
         "tabs": {
             "details": "詳細",
@@ -270,13 +314,18 @@
         "uploads": {
             "message": "ここで、現在アップロードされているアイテムをすべて見つけられ、ここから管理できます",
             "title": "提案をアップロードする"
+        },
+        "generic": {
+            "message": "アイテムをクリックして選択します",
+            "title": "ファイルとフォルダを表示し、連絡先と共有します"
         }
     },
     "search": {
         "header": {
             "search": "検索",
             "result": "すべてのキーワードを含む結果:",
-            "start": "検索を開始する"
+            "start": "検索を開始する",
+            "close": "検索を終了する"
         },
         "search": {
             "tooltip": {
@@ -304,12 +353,16 @@
                     "confirm": "検索"
                 },
                 "flagged": {
-                    "label": "フラグを付けました"
+                    "label": "フラグを付けました",
+                    "description": "フラグを付けたアイテムで結果をフィルタリングします"
                 },
                 "folder": {
                     "modal": {
                         "cancel": "戻る",
-                        "title": "フォルダを選択"
+                        "title": "フォルダを選択",
+                        "cascade": "含まれているフォルダも検索する",
+                        "confirm": "フォルダを選択してください",
+                        "subtitle": "結果は選択したフォルダ内でのみ検索されます"
                     },
                     "label": "フォルダを選択"
                 },
@@ -317,12 +370,15 @@
                     "label": "キーワード"
                 },
                 "shared": {
-                    "label": "共有"
+                    "label": "共有",
+                    "description": "自分以外に1人以上の共同編集者を含むアイテムで結果をフィルタリングします"
                 },
                 "title": "高度なフィルター"
             },
             "button": {
-                "noFilter": "高度なフィルタ"
+                "noFilter": "高度なフィルタ",
+                "filters": "{{count}}高度なフィルター",
+                "filters_plural": "{{count}}高度なフィルター"
             }
         },
         "resultsFor": "検索結果:"
@@ -352,7 +408,7 @@
             "completed": "完了したアップロードをクリーンアップする"
         },
         "destination": {
-            "home": "Drive Homeでアップロードが発生しました"
+            "home": "ファイルホームでアップロードされました"
         },
         "dropzone": {
             "message": {
@@ -362,7 +418,7 @@
                     "enabled": "ここに添付ファイルをドロップして\n このフォルダに素早く追加できます"
                 },
                 "otherView": {
-                    "enabled": "ここに添付ファイルをドロップして\nDrive Homeに素早く追加できます"
+                    "enabled": "ここに添付ファイルをドロップして\nホームに素早く追加できます"
                 }
             },
             "title": {
@@ -374,27 +430,82 @@
     "selectionMode": {
         "header": {
             "selectAll": "すべて選択",
-            "unselectAll": "すべての選択を解除する"
+            "unselectAll": "すべての選択を解除する",
+            "exit": "選択モードを終了する"
         }
     },
     "sortingDropdown": {
         "name": "名前",
-        "size": "サイズ"
+        "size": "サイズ",
+        "ascendingOrder": "昇順",
+        "descendingOrder": "降順",
+        "icon": {
+            "tooltip": {
+                "OrderNameAscending": "名前の昇順",
+                "OrderLastUpdateDescending": "最終更新の降順",
+                "OrderLastUpdateAscending": "最終更新の昇順",
+                "OrderNameDescending": "名前の降順",
+                "OrderSizeAscending": "サイズの昇順",
+                "OrderSizeDescending": "サイズの降順"
+            }
+        },
+        "lastUpdate": "最終更新"
     },
     "errorCode": {
         "code": "エラーが発生しました",
-        "code_Generic": "エラーが発生しました"
+        "code_Generic": "エラーが発生しました",
+        "code_ACCOUNT_NOT_FOUND": "このユーザーはCarbonioシステムの一部ではないようです",
+        "code_FILE_VERSION_NOT_FOUND": "申し訳ありませんが、このバージョンのファイルが見つかりません",
+        "code_LINK_NOT_FOUND": "操作が失敗しました。 このリンクはもう存在しません",
+        "code_MISSING_FIELD": "内部エラーが発生しました。このオブジェクトのあらゆる情報が回復されていません",
+        "code_NODE_NOT_FOUND": "このオブジェクトが存在しないか、アクセスする権限がないようです",
+        "code_NODE_WRITE_ERROR": "このオブジェクトは編集できないか、編集する権限がないようです",
+        "code_SHARE_CREATION_ERROR": "申し訳ありませんが、このユーザーとアイテムを共有することはできません",
+        "code_SHARE_NOT_FOUND": "申し訳ありませんが、この共有が見つかりません"
     },
     "publicLink": {
         "addLink": {
             "generateLink": "リンクを作成",
-            "undo": "元に戻す"
+            "undo": "元に戻す",
+            "addLink": "リンクを追加する",
+            "limitReached": "パブリックリンクの最大数に達しました",
+            "title": "パブリックリンク"
         },
         "link": {
             "edit": "編集",
             "remove": "削除する",
             "revoke": "取り消す",
-            "undo": "元に戻す"
+            "undo": "元に戻す",
+            "editLink": "リンクを編集する",
+            "expireOn": "有効期限:",
+            "expiredOn": "このリンクの有効期限は以下です:",
+            "noExpirationDate": "有効期限はありません",
+            "urlChip": {
+                "tooltip": {
+                    "copy": "パブリックリンクをコピーする",
+                    "expired": "このリンクの期限が切れています"
+                }
+            }
+        },
+        "datePickerInput": {
+            "description": "リンクは選択した日の終わりに期限切れになります"
+        },
+        "dateTimePicker": {
+            "label": "有効期限"
+        },
+        "input": {
+            "description": {
+                "error": {
+                    "maxLengthAllowed": "最大文字数は300文字です"
+                }
+            },
+            "label": "リンクの説明"
+        }
+    },
+    "breadcrumb": {
+        "expander": {
+            "hide": "フォルダのパスを非表示にする",
+            "show": "フォルダのパスを表示する"
         }
     }
 }

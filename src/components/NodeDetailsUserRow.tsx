@@ -31,24 +31,27 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 		[t, user.email]
 	);
 
-	const openNewMailBoard = useCallback(() => {
-		if (user && user.email) {
-			const contact: Contact = {
-				address: user.email,
-				email: {
+	const openNewMailBoard = useCallback<React.MouseEventHandler>(
+		(event) => {
+			if (user && user.email) {
+				const contact: Contact = {
+					address: user.email,
 					email: {
-						mail: user.email
-					}
-				},
-				firstName: user.full_name || user.email,
-				middleName: ''
-			};
-			const { action, available } = getMailToAction(contact);
-			if (available && action) {
-				action.click(contact);
+						email: {
+							mail: user.email
+						}
+					},
+					firstName: user.full_name || user.email,
+					middleName: ''
+				};
+				const { action, available } = getMailToAction(contact);
+				if (available && action) {
+					action.click(event);
+				}
 			}
-		}
-	}, [user]);
+		},
+		[user]
+	);
 
 	return (
 		<CommonNodeDetailsUserRow

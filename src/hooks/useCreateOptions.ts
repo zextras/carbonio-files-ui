@@ -4,38 +4,27 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { Component, useCallback } from 'react';
+import { useCallback } from 'react';
 
 // eslint-disable-next-line import/no-unresolved
-import { registerAppData, RuntimeAppData as ShellRuntimeAppData } from '@zextras/carbonio-shell-ui';
+import { ACTION_TYPES, ActionFactory, registerActions } from '@zextras/carbonio-shell-ui';
 
-// TODO: remove these types when implemented in shell
-export type SharedAction = {
+type CreateOption = {
 	id: string;
-	label: string;
-	icon: string | Component;
-	click: (event?: React.SyntheticEvent) => void;
-	disabled?: boolean;
-	getDisabledStatus?: (...args: unknown[]) => boolean;
-};
-
-type RuntimeAppData = ShellRuntimeAppData & {
-	newButton?: {
-		primary?: SharedAction;
-		secondaryItems?: Array<SharedAction>;
-	};
+	action: ActionFactory<unknown>;
+	type: typeof ACTION_TYPES.NEW;
 };
 
 export type CreateOptionsContent = {
-	createOptions?: Pick<RuntimeAppData, 'newButton'>;
-	setCreateOptions: (appCreateOptions: Pick<RuntimeAppData, 'newButton'>) => void;
+	createOptions?: Array<CreateOption>;
+	setCreateOptions: (appCreateOptions: Array<CreateOption>) => void;
 };
 
 export const useCreateOptions = (): {
-	setCreateOptions: (options: Pick<RuntimeAppData, 'newButton'>) => void;
+	setCreateOptions: (...options: Array<CreateOption>) => void;
 } => {
-	const setCreateOptionsCallback = useCallback((options: Pick<RuntimeAppData, 'newButton'>) => {
-		registerAppData(options as ShellRuntimeAppData);
+	const setCreateOptionsCallback = useCallback((...options: Array<CreateOption>) => {
+		registerActions(...options);
 	}, []);
 	return {
 		setCreateOptions: setCreateOptionsCallback

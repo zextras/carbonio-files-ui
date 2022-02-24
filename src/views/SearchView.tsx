@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { FC, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
+import type { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
 import forEach from 'lodash/forEach';
 import map from 'lodash/map';
 import partition from 'lodash/partition';
@@ -18,25 +19,27 @@ import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/c
 import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
 import { SearchView as CommonSearchView } from '../carbonio-files-ui-common/views/SearchView';
 import { UpdateQueryContext } from '../constants';
-
-interface SearchViewProps {
-	useQuery: () => [Array<any>, (arg: any) => void];
-	ResultsHeader: FC<{ label: string }>;
-}
+import { AdvancedSearchChip } from '../types';
 
 const SearchView: React.VFC<SearchViewProps> = ({ useQuery, ResultsHeader }) => {
-	const [query, updateQuery] = useQuery();
+	const [query, updateQuery] = useQuery() as [
+		ReturnType<SearchViewProps['useQuery']>[0],
+		(query: Array<QueryChip>) => void
+	];
 	const [t] = useTranslation();
 
 	useEffect(() => {
-		const [advanced, keywords] = partition(query, (item) => item?.isQueryFilter === true);
+		const [advanced, keywords] = partition<QueryChip, AdvancedSearchChip>(
+			query,
+			(item): item is AdvancedSearchChip => item.isQueryFilter === true
+		);
 		const updatedValue: AdvancedFilters = {};
 		if (keywords.length > 0) {
 			updatedValue.keywords = map(keywords, (k) => ({ ...k, value: k.label, background: 'gray2' }));
 		}
 		forEach(advanced, (value) => {
 			if (value.isQueryFilter === true && value.varKey) {
-				updatedValue[value.varKey as keyof AdvancedFilters] = value;
+				updatedValue[value.varKey] = value;
 			}
 		});
 		if (size(searchParamsVar()) === 0 && size(updatedValue) === 0) {

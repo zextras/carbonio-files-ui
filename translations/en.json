@@ -161,7 +161,7 @@
                 "title": "Start editing and sharing your works."
             },
             {
-                "message": "You'll be able to edit, flagged and share it.",
+                "message": "You'll be able to edit, flag and share it.",
                 "title": "Click the \"NEW\" button to create a new item."
             }
         ],
@@ -277,7 +277,7 @@
                 "removeKeepVersion": "Remove keep forever"
             },
             "button": {
-                "purgeAllVersions": "Purge all Versions",
+                "purgeAllVersions": "Purge all versions",
                 "upload": "Upload version"
             },
             "mainHint": "You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.",
@@ -364,6 +364,9 @@
                 "title": "Create New folder"
             }
         }
+    },
+    "label": {
+        "app_name": "Files"
     },
     "modal": {
         "button": {
