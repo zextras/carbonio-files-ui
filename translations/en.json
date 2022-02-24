@@ -485,6 +485,11 @@
             "folder": "Folder"
         }
     },
+    "previewer": {
+        "close": {
+            "tooltip": "Close"
+        }
+    },
     "publicLink": {
         "addLink": {
             "addLink": "Add Link",
