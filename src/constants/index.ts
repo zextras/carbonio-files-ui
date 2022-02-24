@@ -6,6 +6,7 @@
 
 import React from 'react';
 
+import type { QueryChip } from '@zextras/carbonio-shell-ui';
 import noop from 'lodash/noop';
 
-export const UpdateQueryContext = React.createContext<(arg: any) => void>(() => noop);
+export const UpdateQueryContext = React.createContext<(arg: Array<QueryChip>) => void>(() => noop);

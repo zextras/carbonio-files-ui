@@ -6,11 +6,10 @@
 
 import { useCallback } from 'react';
 
-import {
-	useGoBackHistoryCallback,
-	usePushHistoryCallback,
-	useReplaceHistoryCallback
-} from '@zextras/carbonio-shell-ui';
+// eslint-disable-next-line import/no-unresolved
+import { goBackHistory, pushHistory, replaceHistory } from '@zextras/carbonio-shell-ui';
+
+import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
 
 export type UseNavigationHook = () => {
 	navigateToFolder: (id: string) => void;
@@ -19,27 +18,31 @@ export type UseNavigationHook = () => {
 };
 
 export const useNavigation: UseNavigationHook = () => {
-	const pushHistory = usePushHistoryCallback();
-	const goBackHistory = useGoBackHistoryCallback();
-	const replaceHistory = useReplaceHistoryCallback();
-
-	const navigateToFolder: (id: string) => void = useCallback(
-		(id) => {
-			pushHistory(`/?folder=${id}`);
-		},
-		[pushHistory]
-	);
+	const navigateToFolder: (id: string) => void = useCallback((id) => {
+		pushHistory({
+			route: FILES_ROUTE,
+			path: `/?folder=${id}`
+		});
+	}, []);
 
 	const navigateTo: (location: string, replace?: boolean) => void = useCallback(
 		(location, replace = false) => {
-			replace ? replaceHistory(location) : pushHistory(location);
+			replace
+				? replaceHistory({
+						route: FILES_ROUTE,
+						path: location
+				  })
+				: pushHistory({
+						route: FILES_ROUTE,
+						path: location
+				  });
 		},
-		[pushHistory, replaceHistory]
+		[]
 	);
 
 	const navigateBack: () => void = useCallback(() => {
 		goBackHistory();
-	}, [goBackHistory]);
+	}, []);
 
 	return {
 		navigateToFolder,

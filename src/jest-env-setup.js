@@ -6,7 +6,6 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import { act, configure } from '@testing-library/react';
-import faker from 'faker';
 import failOnConsole from 'jest-fail-on-console';
 
 import buildClient from './carbonio-files-ui-common/apollo';
@@ -21,6 +20,7 @@ import {
 	uploadVar
 } from './carbonio-files-ui-common/apollo/uploadVar';
 import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
+import { LOGGED_USER, USER_SETTINGS } from './mocks/constants';
 import server from './mocks/server';
 
 configure({
@@ -117,16 +117,9 @@ beforeAll(() => {
 		}
 	});
 
-	global.mockedUserLogged = {
-		id: faker.datatype.uuid(),
-		name: faker.name.findName()
-	};
+	global.mockedUserLogged = LOGGED_USER;
 
-	global.userSettings = {
-		prefs: {
-			zimbraPrefTimeZoneId: 'UTC'
-		}
-	};
+	global.userSettings = USER_SETTINGS;
 
 	let mockedStore = {};
 	Object.defineProperty(window, 'localStorage', {
