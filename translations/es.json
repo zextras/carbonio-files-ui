@@ -63,6 +63,14 @@
             },
             "body": "Revocando este enlace, estás bloqueando el acceso a {{nodeName}} para cualquier persona que intente utilizar el enlace para acceder al archivo",
             "header": "Revocar enlace público {{nodeName}}"
+        },
+        "close": {
+            "tooltip": "Cerrar"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Confirmar"
+            }
         }
     },
     "node": {
@@ -213,7 +221,11 @@
             "hint": "Parece que no hay nada aquí."
         },
         "search": {
-            "hint": "Tu búsqueda no coincidió con ningún archivo ni carpeta"
+            "hint": "Tu búsqueda no coincidió con ningún archivo ni carpeta",
+            "noResults": [
+                "Ninguno de tus elementos coincide con tu búsqueda.",
+                "Ninguno de tus elementos coincide con tu búsqueda."
+            ]
         }
     },
     "filter": {
@@ -230,7 +242,7 @@
         "download": "Download",
         "markForDeletion": "Eliminar",
         "move": "Mover",
-        "openWithDocs": "Abrir con Docs",
+        "openWithDocs": "Abrir documento",
         "rename": "Renombrar",
         "restore": "Restaurar",
         "deletePermanently": "Borrar permanentemente",
@@ -303,7 +315,10 @@
                 }
             },
             "copyShortcut": "copiar el atajo al elemento",
-            "missingDescription": "Haz clic en el botón editar y añade una descripción"
+            "missingDescription": "Haz clic en el botón editar y añade una descripción",
+            "owner": "Propietario",
+            "sendMailTo": "Enviar por e-mail a: {{email}}",
+            "collaboratorsTooltip": "Ver la lista de colaboradores"
         },
         "tabs": {
             "details": "Detalles",
@@ -318,6 +333,51 @@
         "generic": {
             "message": "Haz clic en un elemento para seleccionarlo",
             "title": "Ver archivos y carpetas, compartirlas con tus contactos"
+        },
+        "search_empty": [
+            {
+                "message": "O elige \"Filtros avanzados\" para refinar tu búsqueda."
+            },
+            {},
+            {
+                "message": "Prueba a iniciar otra búsqueda."
+            },
+            {
+                "title": "No hay resultados para tu búsqueda.",
+                "message": "Comprueba la ortografía y las opciones de los filtros o prueba con otra palabra clave."
+            }
+        ],
+        "version": {
+            "actions": {
+                "deleteVersion": "Eliminar versión",
+                "downloadVersion": "Descargar versión",
+                "keepVersion": "Mantener esta versión para siempre",
+                "removeKeepVersion": "Deshacer mantener para siempre"
+            },
+            "button": {
+                "upload": "Cargar versión"
+            },
+            "rowHeaders": {
+                "currentVersion": "Versión actual",
+                "lastWeek": "Última semana"
+            }
+        },
+        "search_full": [
+            {
+                "title": "Elige uno o más resultados para realizar acciones o para mostrar los detalles."
+            }
+        ],
+        "filter": {
+            "flagged_empty": [
+                {
+                    "message": "Lo encontrarás aquí cuando lo necesites.",
+                    "title": "Haz clic en la bandera para marcar un elemento."
+                },
+                {
+                    "message": "Se listarán aquí.",
+                    "title": "Coloca una marca de seguimiento a los items más importantes haciendo clic en la bandera."
+                }
+            ]
         }
     },
     "search": {
@@ -432,6 +492,9 @@
             "selectAll": "Seleccionar todos",
             "unselectAll": "Deseleccionar todos",
             "exit": "Salir del modo de selección"
+        },
+        "node": {
+            "tooltip": "Activar modo de selección"
         }
     },
     "sortingDropdown": {

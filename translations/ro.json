@@ -52,6 +52,15 @@
             "sharedWitMe": "Partajate cu mine",
             "trash": {
                 "trash": "Cos gunoi"
+            },
+            "filesHome": "Acasa"
+        },
+        "close": {
+            "tooltip": "Inchide"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Confirmare"
             }
         }
     },
@@ -71,7 +80,9 @@
         },
         "alias": {
             "name_LOCAL_CHAT_ROOT": "Team",
-            "name_LOCAL_ROOT": "Drive Home"
+            "name_LOCAL_ROOT": "Acasa",
+            "name_SHARED_WITH_ME_ROOT": "Partajate cu mine",
+            "name_TRASH_ROOT": "Cos gunoi"
         },
         "copy": {
             "modal": {
@@ -86,6 +97,9 @@
                     "confirm": "Muta"
                 }
             }
+        },
+        "type": {
+            "folder": "Director"
         }
     },
     "primaryBar": {
@@ -100,7 +114,8 @@
             "sharedWithMe": "Partajate cu mine",
             "trash": "Cos gunoi"
         },
-        "team": "Team"
+        "team": "Team",
+        "filesHome": "Acasa"
     },
     "snackbar": {
         "markForDeletion": {
@@ -108,6 +123,9 @@
             "success": ""
         },
         "deleteShare": {
+            "error": "Eroare"
+        },
+        "deletePermanently": {
             "error": "Eroare"
         }
     },
@@ -124,13 +142,35 @@
         "details": {
             "createdBy": "Creat de catre",
             "description": "Descriere",
-            "size": "Marime"
+            "size": "Marime",
+            "owner": "Proprietar",
+            "position": "Pozitie"
         },
         "share": {
             "chip": {
                 "popover": {
                     "save": "Salveaza"
-                }
+                },
+                "owner": "Proprietar",
+                "you": "Tu"
+            }
+        },
+        "list": {
+            "you": "Tu"
+        },
+        "version": {
+            "actions": {
+                "deleteVersion": "Sterge versiunea",
+                "downloadVersion": "Versiune descarcare",
+                "keepVersion": "Pastreaza definitiv aceaasta versiune",
+                "removeKeepVersion": "Elimina optiunea de mentinere definitiva"
+            },
+            "button": {
+                "upload": "Incarca versiunea"
+            },
+            "rowHeaders": {
+                "currentVersion": "Versiune curenta",
+                "lastWeek": "Saptamana precedenta"
             }
         }
     },
@@ -142,6 +182,37 @@
             "tooltip": {
                 "search": "Cauta"
             }
+        },
+        "advancedSearch": {
+            "button": {
+                "noFilter": "Filtre avansate"
+            },
+            "modal": {
+                "button": {
+                    "confirm": "Cauta"
+                },
+                "folder": {
+                    "label": "Selecteaza un director",
+                    "modal": {
+                        "title": "Selecteaza un director"
+                    }
+                },
+                "shared": {
+                    "label": "Partajat"
+                }
+            }
         }
+    },
+    "publicLink": {
+        "addLink": {
+            "generateLink": "Genereaza legatura"
+        },
+        "link": {
+            "edit": "Editeaza"
+        }
+    },
+    "sortingDropdown": {
+        "name": "Nume",
+        "size": "Marime"
     }
 }

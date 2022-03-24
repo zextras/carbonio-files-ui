@@ -67,6 +67,14 @@
             },
             "body": "このリンクを取り消すことで、リンクを使用してファイルへのアクセスを試みるユーザーの{{nodeName}}へのアクセスがブロックされます",
             "header": "{{nodeName}}パブリックリンクを取り消す"
+        },
+        "close": {
+            "tooltip": "閉じる"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "確認"
+            }
         }
     },
     "node": {
@@ -206,7 +214,11 @@
             "hint": "ここには何もないようです。"
         },
         "search": {
-            "hint": "検索結果がどのファイルまたはフォルダにも一致しませんでした"
+            "hint": "検索結果がどのファイルまたはフォルダにも一致しませんでした",
+            "noResults": [
+                "検索に一致するアイテムはありません。",
+                "検索に一致するアイテムはありません。"
+            ]
         }
     },
     "folder": {
@@ -303,7 +315,8 @@
                 }
             },
             "copyShortcut": "アイテムのショートカットをコピーする",
-            "missingDescription": "編集ボタンをクリックして説明を追加します"
+            "missingDescription": "編集ボタンをクリックして説明を追加します",
+            "owner": "所有者"
         },
         "tabs": {
             "details": "詳細",
@@ -318,6 +331,39 @@
         "generic": {
             "message": "アイテムをクリックして選択します",
             "title": "ファイルとフォルダを表示し、連絡先と共有します"
+        },
+        "search_empty": [
+            {
+                "message": "または、「高度なフィルター」を選択して検索結果を絞り込みます。"
+            },
+            {},
+            {
+                "message": "別の検索を開始してみてください。"
+            },
+            {
+                "message": "綴りとフィルターのオプションを確認するか、別のキーワードを試してください。",
+                "title": "検索結果はありません。"
+            }
+        ],
+        "search_full": [
+            {
+                "title": "1つ以上の結果を選択して、操作を実行したり、詳細を表示したりします。"
+            }
+        ],
+        "version": {
+            "actions": {
+                "deleteVersion": "バージョンを削除する",
+                "downloadVersion": "バージョンをダウンロードする",
+                "keepVersion": "このバージョンを維持する",
+                "removeKeepVersion": "バージョンの維持を削除する"
+            },
+            "button": {
+                "upload": "バージョンをアップロードする"
+            },
+            "rowHeaders": {
+                "currentVersion": "現在のバージョン",
+                "lastWeek": "先週"
+            }
         }
     },
     "search": {
@@ -432,6 +478,9 @@
             "selectAll": "すべて選択",
             "unselectAll": "すべての選択を解除する",
             "exit": "選択モードを終了する"
+        },
+        "node": {
+            "tooltip": "選択モードを有効にする"
         }
     },
     "sortingDropdown": {

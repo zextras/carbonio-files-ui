@@ -68,6 +68,14 @@
             "newPublicLinkGenerated": {
                 "label": "Nuovo link pubblico generato"
             }
+        },
+        "decreaseYourOwnShare": {
+            "success": "Permessi aggiornati correttamente"
+        },
+        "version": {
+            "clone": "Versione clonata e impostata come quella corrente",
+            "keepForeverAdded": "Versione contrassegnata come da conservare per sempre",
+            "keepForeverRemoved": "\"Conserva per sempre\" rimosso"
         }
     },
     "secondaryBar": {
@@ -111,7 +119,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Copia"
+                    "confirm": "Copia",
+                    "tooltip": {
+                        "confirm": "Non puoi effettuare questa azione qui"
+                    }
                 },
                 "title": "Copia {{node.name}}",
                 "title_plurals": "Copia elementi",
@@ -121,7 +132,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "Sposta"
+                    "confirm": "Sposta",
+                    "tooltip": {
+                        "confirm": "Non puoi effettuare questa azione qui"
+                    }
                 },
                 "input": {
                     "filter": "Filtra cartelle"
@@ -190,6 +204,16 @@
                 "confirm": "Revoca"
             },
             "header": "Revoca link pubblico {{nodeName}}"
+        },
+        "close": {
+            "tooltip": "Chiudi"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Conferma"
+            },
+            "header": "Diminuisci i tuoi permessi attuali",
+            "body": "Vuoi diminuire i tuoi permessi su questa condivisione? L'azione è permanente e non sarà possibile ripristinare i permessi precedenti in maniera autonoma. Per ripristinare i tuoi permessi originali dovrai contattare il proprietario della condivisione per farli riabilitare"
         }
     },
     "filter": {
@@ -207,10 +231,18 @@
             "displayerContent": "Questa cartella non ha contenuto"
         },
         "search": {
-            "hint": "La tua ricerca non ha prodotto risultati per nessun file o cartella"
+            "hint": "La tua ricerca non ha prodotto risultati per nessun file o cartella",
+            "noResults": [
+                "Nessun risultato. Continua a cercare!"
+            ],
+            "notRun": "Nessuna ricerca effettuata."
         },
         "filter": {
-            "hint": "Sembra non ci sia niente qui."
+            "hint": "Sembra non ci sia niente qui.",
+            "sharedWithMe": "Non c'è ancora nessun elemento condiviso con te.",
+            "trash": "Il cestino è vuoto.",
+            "flagged": "Non ci sono elementi contrassegnati.",
+            "sharedByMe": "Non hai ancora condiviso nessun elemento con i tuoi collaboratori."
         }
     },
     "create": {
@@ -231,7 +263,7 @@
         "download": "Scarica",
         "markForDeletion": "Seleziona per la rimozione",
         "move": "Sposta",
-        "openWithDocs": "Apri con Docs",
+        "openWithDocs": "Apri documento",
         "rename": "Rinomina",
         "restore": "Ripristina",
         "flag": "Etichetta",
@@ -253,7 +285,8 @@
                     "role": {
                         "editorDescription": "Può visualizzare e modificare il file o la cartella",
                         "viewerDescription": "Può visualizzare e scaricare il file o la cartella",
-                        "editor": "Editor"
+                        "editor": "Editor",
+                        "viewer": "Vista"
                     },
                     "sharingAllowed": "Condivisione concessa",
                     "sharingAllowedDescription": "Potrà gestire le condivisioni di file e cartelle"
@@ -302,7 +335,10 @@
                 }
             },
             "missingDescription": "Clicca sul pulsante modifica per aggiungere una descrizione",
-            "copyShortcut": "Copia scorciatoia dell'elemento"
+            "copyShortcut": "Copia scorciatoia dell'elemento",
+            "owner": "Proprietario",
+            "collaboratorsTooltip": "Vedi la lista dei collaboratori",
+            "sendMailTo": "Invia e-mail a: {{email}}"
         },
         "uploads": {
             "message": "Qui sono elencati tutti gli elementi in caricamento, puoi gestirli direttamente da qui",
@@ -317,6 +353,187 @@
         "generic": {
             "message": "Clicca su un elemento per selezionarlo",
             "title": "Visualizza file e cartelle e condividile con i tuoi contatti"
+        },
+        "search_empty": [
+            {
+                "message": "O seleziona \"Filtri Avanzati\" per rifinire la tua ricerca.",
+                "title": "Inizia una nuova ricerca."
+            },
+            {
+                "message": "Non mollare, continua a cercare!",
+                "title": "Nessun risultato."
+            },
+            {
+                "message": "Prova a iniziare una nuova ricerca.",
+                "title": "Nessun risultato per la tua ricerca."
+            },
+            {
+                "message": "Controlla l'ortografia e i filtri oppure prova con un'altra parola chiave.",
+                "title": "Nessun risultato per la tua ricerca."
+            }
+        ],
+        "version": {
+            "actions": {
+                "deleteVersion": "Elimina versione",
+                "keepVersion": "Conserva questa versione per sempre",
+                "removeKeepVersion": "Disabilita mantieni per sempre",
+                "downloadVersion": "Scarica versione",
+                "cloneAsCurrent": "Clona come versione corrente",
+                "openDocumentVersion": "Apri la versione del documento"
+            },
+            "button": {
+                "upload": "Carica versione",
+                "purgeAllVersions": "Elimina tutte le versioni"
+            },
+            "rowHeaders": {
+                "currentVersion": "Versione corrente",
+                "lastWeek": "Una settimana fa",
+                "olderVersions": "Versioni più vecchie"
+            },
+            "mainHint": "Puoi eliminare manualmente qualsiasi versione di un file oppure ripristinarne una come quella corrente. Seleziona una o più versioni da conservare per sempre.",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Clonato da versione {{versionNumber}} ({{cloneDate}})",
+                    "tooltip2": "Clonato da versione {{versionNumber}} (version deleted)"
+                },
+                "versionNumber": "Versione {{versionNumber}}"
+            }
+        },
+        "search_full": [
+            {
+                "title": "Seleziona uno o più risultati per completare delle azioni o visualizzare i dettagli."
+            }
+        ],
+        "filter": {
+            "flagged_full": [
+                {
+                    "title": "Seleziona la bandierina per contrassegnare un elemento.",
+                    "message": "Lo troverai qui quando ne avrai bisogno."
+                },
+                {
+                    "message": "Verranno visualizzati qui.",
+                    "title": "Contrassegna gli elementi più importanti selezionando la bandierina."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "message": "Seleziona un elemento per procedere.",
+                    "title": "Rivedi e modifica gli elementi che hai condiviso con i tuoi contatti."
+                },
+                {
+                    "message": "Clicca su un elemento per selezionarlo.",
+                    "title": "Visualizza i dettagli della cartella che hai condiviso."
+                },
+                {
+                    "title": "Visualizza qui tutti gli elementi che hai condiviso con i tuoi contatti.",
+                    "message": "Clicca su un elemento per selezionarlo."
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "title": "Rivedi e modifica gli elementi che hai condiviso con i tuoi contatti.",
+                    "message": "Seleziona un elemento per procedere."
+                },
+                {
+                    "message": "Clicca su un elemento per selezionarlo.",
+                    "title": "Visualizza i dettagli della cartella che hai condiviso."
+                }
+            ],
+            "flagged_empty": [
+                {
+                    "title": "Seleziona la bandierina per contrassegnare un elemento.",
+                    "message": "Lo troverai qui quando ne avrai bisogno."
+                },
+                {
+                    "message": "Verranno visualizzati qui.",
+                    "title": "Contrassegna gli elementi più importanti selezionando la bandierina."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "title": "Non c'è ancora nessun elemento condiviso con te.",
+                    "message": "Clicca il pulsante \"NUOVO\" per creare un nuovo documento e condividilo anche con i tuoi contatti."
+                },
+                {
+                    "message": "Fai sapere agli altri utenti che puoi iniziare a collaborare con loro.",
+                    "title": "Clicca il pulsante \"NUOVO\" per creare una nuova e-mail."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "title": "Inizia a modificare e condividere i tuoi file.",
+                    "message": "Clicca su un elemento per selezionarlo."
+                },
+                {
+                    "title": "Visualizza i dettagli delle tue cartelle e condividile con i tuoi contatti.",
+                    "message": "Clicca su un elemento per selezionarlo."
+                },
+                {
+                    "title": "Seleziona un elemento e inizia a lavorarci con altri utenti."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "message": "Seleziona l'icona del cestino per eliminare un elemento.",
+                    "title": "Sposta nel cestino tutto quello che non ti serve più."
+                },
+                {
+                    "message": "Seleziona l'icona del cestino per eliminare un elemento.",
+                    "title": "Il cestino è vuoto."
+                },
+                {
+                    "title": "Mantieni ordinato il tuo spazio di lavoro: elimina tutti gli elementi che non ti servono più."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Seleziona e ripristina i tuoi documenti che sono attualmente nel cestino."
+                },
+                {
+                    "message": "Seleziona un elemento per ripristinarlo oppure per eliminarlo definitivamente.",
+                    "title": "Niente è perduto!"
+                },
+                {
+                    "message": "O, quando possibile, selezionalo e ripristinalo nella sua cartella originaria.",
+                    "title": "Seleziona un elemento per eliminarlo definitivamente."
+                }
+            ]
+        },
+        "folder_empty": [
+            {
+                "title": "Clicca il pulsante \"NUOVO\" per creare un nuovo elemento e condividilo anche con i tuoi contatti."
+            },
+            {
+                "message": "Crea un file cliccando il pulsante \"NUOVO\"",
+                "title": "Inizia a modificare e condividere i tuoi progetti."
+            },
+            {
+                "message": "Potrai modificare, contrassegnare e condividere.",
+                "title": "Clicca il pulsante \"NUOVO\" per creare un nuovo elemento."
+            }
+        ],
+        "folder_full": [
+            {
+                "title": "Inizia a modificare e condividere i tuoi file.",
+                "message": "Clicca su un elemento per selezionarlo."
+            },
+            {
+                "title": "Visualizza i dettagli delle tue cartelle e condividile con i tuoi contatti.",
+                "message": "Clicca su un elemento per selezionarlo."
+            },
+            {
+                "title": "Seleziona una cartella per modificarla o rinominarla."
+            },
+            {
+                "message": "Seleziona un elemento e poi vai alla finestra \"Condivisioni\"",
+                "title": "Dai ai tuoi contatti i privilegi di modifica per far sì che possano modificare un elemento."
+            },
+            {
+                "title": "Seleziona un elemento per condividerlo o spostarlo in un'altra cartella."
+            }
+        ],
+        "search": {
+            "title": "Digita alcune parole chiave per iniziare una ricerca."
         }
     },
     "search": {
@@ -375,7 +592,7 @@
                 },
                 "title": "Filtri Avanzati",
                 "flagged": {
-                    "description": "Filtri i risultati per gli elementi che hai contrassegnato",
+                    "description": "Filtra i risultati tra gli elementi che hai contrassegnato",
                     "label": "Contrassegnato"
                 }
             }
@@ -431,6 +648,9 @@
             "selectAll": "Seleziona tutto",
             "unselectAll": "Deseleziona tutto",
             "exit": "Esci dalla modalità selezione"
+        },
+        "node": {
+            "tooltip": "Attiva modalità selezione"
         }
     },
     "sortingDropdown": {
@@ -466,7 +686,8 @@
         "code_NODE_NOT_FOUND": "Sembra che questo oggetto non esista, o che tu non abbia i permessi per accedervi",
         "code_NODE_WRITE_ERROR": "Sembra che questo oggetto non possa essere modificato, o che tu non abbia i permessi per modificarlo",
         "code_SHARE_CREATION_ERROR": "Non è possibile condividere l'elemento con questo utente",
-        "code_SHARE_NOT_FOUND": "Impossibile trovare questa condivisione"
+        "code_SHARE_NOT_FOUND": "Impossibile trovare questa condivisione",
+        "code_NODE_DUPLICATED": "É già presente un file con lo stesso nome in questa cartella"
     },
     "publicLink": {
         "addLink": {

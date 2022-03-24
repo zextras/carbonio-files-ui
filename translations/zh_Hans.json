@@ -19,7 +19,8 @@
                 "saveIconTooltip": "保存编辑"
             },
             "copyShortcut": "复制项目快捷方式",
-            "missingDescription": "点击编辑按钮以添加描述"
+            "missingDescription": "点击编辑按钮以添加描述",
+            "owner": "所有者"
         },
         "list": {
             "you": "您"
@@ -76,6 +77,39 @@
         "generic": {
             "message": "点击项目以将其选择",
             "title": "查看文件与文件夹，并将其分享给您的联系人"
+        },
+        "search_empty": [
+            {
+                "message": "或选择“高级过滤”以精细化搜索。"
+            },
+            {},
+            {
+                "message": "尝试开始另一次搜索。"
+            },
+            {
+                "message": "检查拼写和过滤选项，或尝试使用其他关键字。",
+                "title": "搜索没有结果。"
+            }
+        ],
+        "search_full": [
+            {
+                "title": "选择一个或多个结果以进行操作或展示详情。"
+            }
+        ],
+        "version": {
+            "actions": {
+                "deleteVersion": "删除版本",
+                "downloadVersion": "下载版本",
+                "keepVersion": "永久保留该版本",
+                "removeKeepVersion": "移除永久保留"
+            },
+            "button": {
+                "upload": "上传版本"
+            },
+            "rowHeaders": {
+                "currentVersion": "当前版本",
+                "lastWeek": "上周"
+            }
         }
     },
     "snackbar": {
@@ -246,6 +280,14 @@
                 "confirm": "撤销"
             },
             "header": "撤销{{nodeName}}公开链接"
+        },
+        "close": {
+            "tooltip": "关闭"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "确认"
+            }
         }
     },
     "node": {
@@ -389,7 +431,11 @@
             "hint": "似乎这里什么都没有。"
         },
         "search": {
-            "hint": "您的搜索未与任何文件或文件夹匹配"
+            "hint": "您的搜索未与任何文件或文件夹匹配",
+            "noResults": [
+                "没有符合您搜索的项目。",
+                "没有符合您搜索的项目。"
+            ]
         }
     },
     "filter": {
@@ -446,6 +492,9 @@
             "selectAll": "全选",
             "unselectAll": "取消全选",
             "exit": "退出选择模式"
+        },
+        "node": {
+            "tooltip": "激活选择模式"
         }
     },
     "errorCode": {
