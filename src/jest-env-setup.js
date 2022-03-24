@@ -32,9 +32,7 @@ failOnConsole({
 	shouldFailOnError: true,
 	silenceMessage: (errorMessage) =>
 		// snackbar PropType error on Window type
-		/Invalid prop `target` of type `Window` supplied to `ForwardRef\(SnackbarFn\)`/.test(
-			errorMessage
-		) ||
+		/Invalid prop `\w+`(\sof type `\w+`)? supplied to `(\w+\(\w+\))`/.test(errorMessage) ||
 		// errors forced from the tests
 		/Controlled error/gi.test(errorMessage)
 });
