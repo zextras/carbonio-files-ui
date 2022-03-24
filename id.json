@@ -74,6 +74,14 @@
             },
             "body": "Dengan mencabut tautan ini, Anda memblokir akses ke {{nodeName}} bagi siapa saja yang mencoba menggunakan tautan untuk mengakses file",
             "header": "Cabut tautan publik {{nodeName}}"
+        },
+        "close": {
+            "tooltip": "Tutup"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Konfirmasi"
+            }
         }
     },
     "node": {
@@ -213,7 +221,11 @@
             "hint": "Sepertinya tidak ada apa pun di sini."
         },
         "search": {
-            "hint": "Pencarian Anda tidak cocok dengan file atau folder apa pun"
+            "hint": "Pencarian Anda tidak cocok dengan file atau folder apa pun",
+            "noResults": [
+                "Tak ada item yang cocok dengan pencarian Anda.",
+                "Tak ada item yang cocok dengan pencarian Anda."
+            ]
         }
     },
     "filter": {
@@ -303,7 +315,8 @@
                 }
             },
             "copyShortcut": "salin pintasan item",
-            "missingDescription": "Klik tombol edit untuk menambahkan deskripsi"
+            "missingDescription": "Klik tombol edit untuk menambahkan deskripsi",
+            "owner": "Pemilik"
         },
         "tabs": {
             "details": "Detail",
@@ -318,6 +331,39 @@
         "generic": {
             "message": "Klik item untuk memilihnya",
             "title": "Lihat file dan folder, bagikan dengan kontak Anda"
+        },
+        "search_empty": [
+            {
+                "message": "Atau pilih \"Filter Lanjutan\" untuk mempersempit pencarian."
+            },
+            {},
+            {
+                "message": "Coba mulai pencarian lain."
+            },
+            {
+                "message": "Perika ejaan dan opsi filter atau coba dengan kata kunci lain.",
+                "title": "Tidak ada hasil untuk pencarian Anda."
+            }
+        ],
+        "search_full": [
+            {
+                "title": "Pilih satu atau beberapa hasil untuk melakukan tindakan atau menampilkan detail."
+            }
+        ],
+        "version": {
+            "actions": {
+                "deleteVersion": "Hapus versi",
+                "downloadVersion": "Unduh versi",
+                "keepVersion": "Pertahankan versi ini seterusnya",
+                "removeKeepVersion": "Hapus pertahankan seterusnya"
+            },
+            "button": {
+                "upload": "Unggah versi"
+            },
+            "rowHeaders": {
+                "currentVersion": "Versi saat ini",
+                "lastWeek": "Minggu lalu"
+            }
         }
     },
     "search": {
@@ -506,6 +552,9 @@
             "exit": "Keluar dari mode pemilihan",
             "selectAll": "Pilih semua",
             "unselectAll": "Hapus pilihan semua"
+        },
+        "node": {
+            "tooltip": "Aktifkan mode pemilihan"
         }
     }
 }

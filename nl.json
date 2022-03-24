@@ -71,6 +71,14 @@
             },
             "header": "Publieke link {{nodeName}} intrekken",
             "body": "Door deze link in te trekken, blokkeert u de toegang tot {{nodeName}} voor iedereen die de link probeert te gebruiken om het bestand te openen"
+        },
+        "close": {
+            "tooltip": "Sluiten"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Bevestigen"
+            }
         }
     },
     "primaryBar": {
@@ -168,7 +176,11 @@
             "hint": "Het lijkt erop dat er hier niets is."
         },
         "search": {
-            "hint": "Uw zoekopdracht kwam niet overeen met bestanden of mappen"
+            "hint": "Uw zoekopdracht kwam niet overeen met bestanden of mappen",
+            "noResults": [
+                "Geen van uw items komt overeen met uw zoekopdracht.",
+                "Geen van uw items komt overeen met uw zoekopdracht."
+            ]
         }
     },
     "node": {
@@ -261,7 +273,8 @@
                 "saveIconTooltip": "Bewerkingen opslaan"
             },
             "copyShortcut": "snelkoppeling van het item kopiëren",
-            "missingDescription": "Klik op de bewerkknop om een beschrijving toe te voegen"
+            "missingDescription": "Klik op de bewerkknop om een beschrijving toe te voegen",
+            "owner": "Eigenaar"
         },
         "list": {
             "you": "U"
@@ -318,6 +331,39 @@
         "generic": {
             "message": "Klik op een item om het te selecteren",
             "title": "Bestanden en mappen bekijken, ze delen met uw contacten"
+        },
+        "search_empty": [
+            {
+                "message": "Of selecteer \"Geavanceerde filters\" om uw zoekopdracht te verfijnen."
+            },
+            {},
+            {
+                "message": "Probeer een andere zoekopdracht te starten."
+            },
+            {
+                "message": "Controleer de spelling en de opties van de filters of probeer het met een ander trefwoord.",
+                "title": "Er zijn geen resultaten voor uw zoekopdracht."
+            }
+        ],
+        "search_full": [
+            {
+                "title": "Selecteer een of meer resultaten om acties uit te voeren of details weer te geven."
+            }
+        ],
+        "version": {
+            "actions": {
+                "deleteVersion": "Versie verwijderen",
+                "downloadVersion": "Download-versie",
+                "keepVersion": "Bewaar deze versie voor altijd",
+                "removeKeepVersion": "Verwijder voor altijd bewaren"
+            },
+            "button": {
+                "upload": "Uploadversie"
+            },
+            "rowHeaders": {
+                "currentVersion": "Huidige versie",
+                "lastWeek": "Vorige week"
+            }
         }
     },
     "search": {
@@ -432,6 +478,9 @@
             "unselectAll": "Alles deselecteren",
             "selectAll": "Alles selecteren",
             "exit": "Selectiemodus verlaten"
+        },
+        "node": {
+            "tooltip": "Keuzemodus activeren"
         }
     },
     "sortingDropdown": {

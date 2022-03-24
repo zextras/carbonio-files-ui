@@ -35,7 +35,11 @@
             "hint": "Parece que não há nada aqui."
         },
         "search": {
-            "hint": "Sua busca não coincide com nenhum arquivo ou pasta"
+            "hint": "Sua busca não coincide com nenhum arquivo ou pasta",
+            "noResults": [
+                "Nenhum dos seus itens corresponde à sua busca.",
+                "Nenhum dos seus itens corresponde à sua busca."
+            ]
         }
     },
     "filter": {
@@ -110,6 +114,14 @@
             },
             "body": "Ao revogar este link, você está bloqueando o acesso a {{nodeName}} para qualquer pessoa que tente usar o link para acessar o arquivo",
             "header": "Revogar link público de {{nodeName}}"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Confirmar"
+            }
+        },
+        "close": {
+            "tooltip": "Fechar"
         }
     },
     "node": {
@@ -324,7 +336,8 @@
                 }
             },
             "missingDescription": "Clique no botão de edição para adicionar uma descrição",
-            "copyShortcut": "copiar atalho do item"
+            "copyShortcut": "copiar atalho do item",
+            "owner": "Proprietário"
         },
         "list": {
             "you": "Você"
@@ -381,7 +394,40 @@
         "generic": {
             "message": "Clique em um item para selecioná-lo",
             "title": "Veja arquivos e pasta, compartilhe-os com seus contatos"
-        }
+        },
+        "search_empty": [
+            {
+                "message": "Ou selecione \"Filtros Avançados\" para refinar sua busca."
+            },
+            {},
+            {
+                "message": "Tente iniciar uma nova busca."
+            },
+            {
+                "message": "Verifique a ortografia e as opções de filtros ou experimente uma nova palavra-chave.",
+                "title": "Não existem resultados para sua busca."
+            }
+        ],
+        "version": {
+            "actions": {
+                "keepVersion": "Manter esta versão para sempre",
+                "removeKeepVersion": "Remover manter para sempre",
+                "deleteVersion": "Excluir versão",
+                "downloadVersion": "Baixar versão"
+            },
+            "rowHeaders": {
+                "currentVersion": "Versão atual",
+                "lastWeek": "Última semana"
+            },
+            "button": {
+                "upload": "Upload versão"
+            }
+        },
+        "search_full": [
+            {
+                "title": "Selecione um ou mais resultados para realizar ações ou exibir os detalhes."
+            }
+        ]
     },
     "docs": {
         "create": {
@@ -432,6 +478,9 @@
             "selectAll": "Marcar todos",
             "unselectAll": "Desmarcar todos",
             "exit": "Sair do modo de seleção"
+        },
+        "node": {
+            "tooltip": "Ativar modo de seleção"
         }
     },
     "sortingDropdown": {
