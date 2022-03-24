@@ -53,6 +53,24 @@
             "trash": {
                 "trash": "Reciclagem"
             }
+        },
+        "close": {
+            "tooltip": "Fechar"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Confirmar"
+            }
+        },
+        "deleteShare": {
+            "button": {
+                "confirm": "Remover"
+            }
+        },
+        "removeLink": {
+            "button": {
+                "confirm": "Remover"
+            }
         }
     },
     "node": {
@@ -71,7 +89,9 @@
         },
         "alias": {
             "name_LOCAL_CHAT_ROOT": "Team",
-            "name_LOCAL_ROOT": "Drive Home"
+            "name_LOCAL_ROOT": "",
+            "name_SHARED_WITH_ME_ROOT": "Partilhado comigo",
+            "name_TRASH_ROOT": "Reciclagem"
         },
         "copy": {
             "modal": {
@@ -86,6 +106,9 @@
                     "confirm": "Mover"
                 }
             }
+        },
+        "type": {
+            "folder": "Diretório"
         }
     },
     "primaryBar": {
@@ -108,7 +131,15 @@
             "success": ""
         },
         "deleteShare": {
-            "error": "Erro"
+            "error": "Erro",
+            "success": "Êxito"
+        },
+        "deletePermanently": {
+            "error": "Erro",
+            "success": "Êxito"
+        },
+        "restore": {
+            "success": "Êxito"
         }
     },
     "actions": {
@@ -130,13 +161,37 @@
                 "you": "Você",
                 "popover": {
                     "save": "Salvar"
-                }
+                },
+                "owner": "Proprietário"
             }
         },
         "details": {
             "createdBy": "Criado por",
             "description": "Descrição",
-            "size": "Tamanho"
+            "size": "Tamanho",
+            "editDescription": {
+                "editIconTooltip": "Editar descrição"
+            },
+            "owner": "Proprietário",
+            "position": "Posição"
+        },
+        "version": {
+            "actions": {
+                "deleteVersion": "Eliminar versão",
+                "downloadVersion": "Descarregar versão",
+                "keepVersion": "Manter esta versão para sempre",
+                "removeKeepVersion": "Revogar manter para sempre"
+            },
+            "button": {
+                "upload": "Carregar versão"
+            },
+            "rowHeaders": {
+                "currentVersion": "Versão actual",
+                "lastWeek": "Última semana"
+            }
+        },
+        "tabs": {
+            "details": "Detalhes"
         }
     },
     "search": {
@@ -147,6 +202,57 @@
             "tooltip": {
                 "search": "Busca"
             }
+        },
+        "advancedSearch": {
+            "modal": {
+                "folder": {
+                    "modal": {
+                        "title": "Seleccione um directório"
+                    },
+                    "label": "Seleccione um directório"
+                },
+                "shared": {
+                    "label": "Partilhado"
+                },
+                "button": {
+                    "confirm": "Procurar"
+                }
+            },
+            "button": {
+                "noFilter": "Filtros avançados"
+            }
         }
+    },
+    "publicLink": {
+        "addLink": {
+            "generateLink": "Gerar Link",
+            "undo": "Desfazer"
+        },
+        "link": {
+            "edit": "Editar",
+            "remove": "Remover",
+            "undo": "Desfazer"
+        }
+    },
+    "sortingDropdown": {
+        "name": "Nome",
+        "size": "Tamanho"
+    },
+    "docs": {
+        "create": {
+            "modal": {
+                "input": {
+                    "label": {
+                        "name": {
+                            "document": "Nome do documento"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "errorCode": {
+        "code": "Algo correu mal",
+        "code_Generic": "Algo correu mal"
     }
 }

@@ -71,6 +71,16 @@
                 "confirm": "İptal et"
             },
             "header": "{{nodeName}} genel erişim bağlantısını iptal et"
+        },
+        "close": {
+            "tooltip": "Kapat"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Onayla"
+            },
+            "body": "Bu nod için izinlerinizi azaltmak istediğinizden emin misiniz? Bu işlem kalıcıdır ve daha önceki paylaşım izinlerini kendiniz geri alamazsınız. Daha önceki paylaşım izinlerini geri yüklemek isterseniz paylaşılan öğenin sahibi ile görüşmeniz gerekir",
+            "header": "Geçerli izinlerinizi azaltın"
         }
     },
     "create": {
@@ -91,10 +101,18 @@
             "displayerContent": "Bu klasör boş"
         },
         "filter": {
-            "hint": "Burada hiçbir şey yok."
+            "hint": "Burada hiçbir şey yok.",
+            "flagged": "Bayrak işaretli öğe yok.",
+            "sharedByMe": "Birlikte çalıştığınız kişilerle henüz hiç öğe paylaşmadınız.",
+            "sharedWithMe": "Henüz sizinle paylaşılan bir öğe yok.",
+            "trash": "Çöp kutusu boş."
         },
         "search": {
-            "hint": "Aramanız ile eşleşen hiçbir dosya veya klasör bulunamadı"
+            "hint": "Aramanız ile eşleşen hiçbir dosya veya klasör bulunamadı",
+            "noResults": [
+                "Sonuç bulunamadı. Aramaya devam edin!"
+            ],
+            "notRun": "Henüz hiç arama yapılmadı."
         }
     },
     "node": {
@@ -114,7 +132,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Kopyala"
+                    "confirm": "Kopyala",
+                    "tooltip": {
+                        "confirm": "Bu işlemi burada yapamazsınız"
+                    }
                 },
                 "title": "Kopyala {{node.name}}",
                 "title_plurals": "Öğeleri kopyala",
@@ -130,7 +151,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "Taşı"
+                    "confirm": "Taşı",
+                    "tooltip": {
+                        "confirm": "Bu işlemi burada yapamazsınız"
+                    }
                 },
                 "input": {
                     "filter": "Klasörleri filtrele"
@@ -222,13 +246,21 @@
             "actionLabel": {
                 "copyLink": "Bağlantıyı kopyala"
             }
+        },
+        "decreaseYourOwnShare": {
+            "success": "İzinler başarıyla güncellendi"
+        },
+        "version": {
+            "clone": "Kullanımda olan versiyon olarak kopyalandı",
+            "keepForeverAdded": "Versiyon sürekli saklamak üzere işaretlendi",
+            "keepForeverRemoved": "\"Sürekli sakla\" iptal edildi"
         }
     },
     "actions": {
         "download": "İndir",
         "markForDeletion": "Silmek için işaretle",
         "move": "Taşı",
-        "openWithDocs": "Docs ile Aç",
+        "openWithDocs": "Dokümanı aç",
         "rename": "Yeniden adlandır",
         "restore": "Geri yükle",
         "cancelUpload": "Yüklemeyi iptal et",
@@ -261,7 +293,10 @@
                     "label": "İzin verilen maksimum uzunluk 4096 karakterdir"
                 }
             },
-            "missingDescription": "Tanım eklemek için düzenle tuşuna tıklayın"
+            "missingDescription": "Tanım eklemek için düzenle tuşuna tıklayın",
+            "owner": "Sahibi",
+            "collaboratorsTooltip": "Katılımcıları görüntüleyin",
+            "sendMailTo": "E-posta gönder: {{email}}"
         },
         "list": {
             "you": "Siz"
@@ -318,6 +353,187 @@
         "generic": {
             "message": "Seçmek için öğeye tıklayın",
             "title": "Dosya ve klasörleri görün ve kişiler ile paylaşın"
+        },
+        "version": {
+            "actions": {
+                "deleteVersion": "Versiyonu sil",
+                "downloadVersion": "Versiyonu indir",
+                "keepVersion": "Bu versiyonu her zaman sakla",
+                "removeKeepVersion": "Her zaman saklamayı iptal et",
+                "cloneAsCurrent": "Kullanılan olarak kopyala",
+                "openDocumentVersion": "Doküman versiyonunu aç"
+            },
+            "button": {
+                "upload": "Versiyon yükle",
+                "purgeAllVersions": "Tüm versiyonları sil"
+            },
+            "rowHeaders": {
+                "currentVersion": "Güncel versiyon",
+                "lastWeek": "Geçen hafta",
+                "olderVersions": "Eski versiyonlar"
+            },
+            "mainHint": "Herhangi bir dosya versiyonunu manuel olarak silebilir veya güncel versiyon olarak geri alabilirsiniz. Her zaman saklamak istediğiniz bir veya daha fazla versiyonu seçin.",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Kopyalanan versiyon {{versionNumber}} ({{cloneDate}})",
+                    "tooltip2": "Kopyalanan versiyon {{versionNumber}} (version deleted)"
+                },
+                "versionNumber": "Versiyon {{versionNumber}}"
+            }
+        },
+        "search_empty": [
+            {
+                "message": "Veya aramanızı detaylandırmak için “Gelişmiş Filtreler”i seçin.",
+                "title": "Farklı arama başlat."
+            },
+            {
+                "message": "Vazgeçmeyin, aramaya devam!",
+                "title": "Sonuç bulunamadı."
+            },
+            {
+                "message": "Başka bir arama yapmayı deneyin.",
+                "title": "Üzgünüz, aramanız için sonuç bulunamadı."
+            },
+            {
+                "message": "Yazım hatalarını ve filtre seçeneklerini kontrol edin veya farklı kelimeler ile deneyin.",
+                "title": "Aramanız için sonuç bulunamadı."
+            }
+        ],
+        "search_full": [
+            {
+                "title": "Detayları görüntülemek veya işlem yapmak için bir veya daha fazla sonuç seçin."
+            }
+        ],
+        "filter": {
+            "flagged_empty": [
+                {
+                    "message": "Ne zaman gerekirse burada bulabilirsiniz.",
+                    "title": "Öğeyi işaretlemek için bayrağı tıklayın."
+                },
+                {
+                    "message": "Burada listelenecek.",
+                    "title": "Bayrağa tıklayıp önemli öğelerinizi işaretleyin."
+                }
+            ],
+            "flagged_full": [
+                {
+                    "title": "Öğeyi işaretlemek için bayrağı tıklayın.",
+                    "message": "Ne zaman gerekirse burada bulabilirsiniz."
+                },
+                {
+                    "message": "Burada listelenecek.",
+                    "title": "Bayrağa tıklayıp önemli öğelerinizi işaretleyin."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "title": "Kişileriniz ile paylaştığınız öğeleri gözden geçirin ve düzenleyin.",
+                    "message": "Devam etmek için bir öğe seçin."
+                },
+                {
+                    "message": "Seçmek için öğeye tıklayın.",
+                    "title": "Paylaştığınız klasörlerin detaylarını görüntüleyin."
+                },
+                {
+                    "title": "Kişileriniz ile paylaştığınız tüm öğeleri burada bulabilirsiniz.",
+                    "message": "Seçmek için öğeye tıklayın."
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "message": "Devam etmek için bir öğe seçin.",
+                    "title": "Kişileriniz ile paylaştığınız öğeleri gözden geçirin ve düzenleyin."
+                },
+                {
+                    "message": "Seçmek için öğeye tıklayın.",
+                    "title": "Paylaştığınız klasörlerin detaylarını görüntüleyin."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "Yeni bir doküman oluşturmak ve kişiler ile paylaşmak için \"YENİ\" tuşuna tıklayın.",
+                    "title": "Henüz sizinle paylaşılan bir öğe yok."
+                },
+                {
+                    "title": "Yeni bir e-posta oluşturmak için \"YENİ\" tuşuna tıklayın.",
+                    "message": "Diğer kullanıcılara birlikte çalışmak için hazır olduğunuzu bildirin."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "title": "Dosyalarınızı düzenlemeye ve paylaşmaya başlayın.",
+                    "message": "Seçmek için öğeye tıklayın."
+                },
+                {
+                    "message": "Seçmek için öğeye tıklayın.",
+                    "title": "Klasörlerin detaylarını görüntüleyin ve kişiler ile paylaşın."
+                },
+                {
+                    "title": "Bir öğe seçerek diğer kullanıcılar ile birlikte çalışmaya başlayın."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "message": "Öğeyi silmek için çöp kutusu simgesine tıklayın.",
+                    "title": "İhtiyacınız olmayan herşeyi çöp kutusuna taşıyın."
+                },
+                {
+                    "message": "Öğeyi silmek için çöp kutusu simgesine tıklayın.",
+                    "title": "Çöp kutusu boş."
+                },
+                {
+                    "title": "Çalışma alanınızı temiz tutun: ihtiyacınız olmayan herşeyi silin."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Çöp kutusunda olan dokümanlarınızı seçin ve geri yükleyin."
+                },
+                {
+                    "message": "Geri yüklemek veya tamamen silmek için bir öğe seçin.",
+                    "title": "Hiçbir şey kaybolmadı!"
+                },
+                {
+                    "title": "Tamamen silmek için bir öğe seçin.",
+                    "message": "Veya öğeyi seçin ve orijinal klasörüne geri yükleyin."
+                }
+            ]
+        },
+        "folder_empty": [
+            {
+                "title": "Yeni bir öğe oluşturmak ve kişiler ile paylaşmak için \"YENİ\" tuşuna tıklayın."
+            },
+            {
+                "message": "\"YENİ\" tuşuna tıklayıp yeni bir dosya oluşturun",
+                "title": "Çalışmalarınızı düzenlemeye ve paylaşmaya başlayın."
+            },
+            {
+                "title": "Yeni bir öğe oluşturmak için \"YENİ\" tuşuna tıklayın.",
+                "message": "Öğeyi düzenleyebilir, bayrakla işaretleyebilir ve paylaşabilirsiniz."
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "Seçmek için öğeye tıklayın.",
+                "title": "Dosyalarınızı düzenlemeye ve paylaşmaya başlayın."
+            },
+            {
+                "message": "Seçmek için öğeye tıklayın.",
+                "title": "Klasörlerin detaylarını görüntüleyin ve kişiler ile paylaşın."
+            },
+            {
+                "title": "Düzenlemek veya yeniden adlandırmak için bir klasör seçin."
+            },
+            {
+                "message": "Bir öğe seçin ve \"Paylaşımlar\" sekmesine gidin",
+                "title": "Bir öğeyi düzenlemesi için kişilere düzenleme yetkileri tanımlayın."
+            },
+            {
+                "title": "Başka klasöre taşımak veya paylaşmak için bir öğe seçin."
+            }
+        ],
+        "search": {
+            "title": "Aramayı başlatmak için bazı anahtar kelimeleri yazın."
         }
     },
     "search": {
@@ -438,6 +654,9 @@
             "exit": "Seçme modundan çık",
             "selectAll": "Tümünü seç",
             "unselectAll": "tümünden seçimi kaldır"
+        },
+        "node": {
+            "tooltip": "Seçim modunu aktive et"
         }
     },
     "sortingDropdown": {
@@ -467,7 +686,8 @@
         "code_SHARE_CREATION_ERROR": "Üzgünüz, bu öğeyi bu kullanıcı ile paylaşamazsınız",
         "code_SHARE_NOT_FOUND": "Üzgünüz, bu paylaşım bulunamadı",
         "code_ACCOUNT_NOT_FOUND": "Bu kullanıcı Carbonio sisteminde bulunmuyor",
-        "code_FILE_VERSION_NOT_FOUND": "Üzgünüz, dosyanın bu versiyonu bulunamadı"
+        "code_FILE_VERSION_NOT_FOUND": "Üzgünüz, dosyanın bu versiyonu bulunamadı",
+        "code_NODE_DUPLICATED": "Bu klasörde aynı isimde bir dosya var"
     },
     "publicLink": {
         "addLink": {
