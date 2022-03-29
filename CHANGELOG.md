@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-rc.4](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.3...v0.1.0-rc.4) (2022-03-24)
+
+
+### Features
+
+* add preview of images with previewer ([c9b6979](https://github.com/zextras/carbonio-files-ui/commit/c9b6979ecabaf220b7b4da2aaa0e5de5da362298)), closes [#19](https://github.com/zextras/carbonio-files-ui/issues/19)
+* handle enter key on description input ([0146ec4](https://github.com/zextras/carbonio-files-ui/commit/0146ec45aec4e9038f0c6cdb767c1fbb17144365)), closes [#14](https://github.com/zextras/carbonio-files-ui/issues/14)
+
+
+### Bug Fixes
+
+* encode filename in base64 for upload request  ([391238b](https://github.com/zextras/carbonio-files-ui/commit/391238bdacb3a7506a18339e921becdbdea1de91)), closes [#18](https://github.com/zextras/carbonio-files-ui/issues/18)
+
 ## [0.1.0-rc.3](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.2...v0.1.0-rc.3) (2022-02-24)
 
 

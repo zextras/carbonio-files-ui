@@ -20,7 +20,11 @@
             "hint": "Hier gibt es scheinbar nichts."
         },
         "search": {
-            "hint": "Ihre Suche ergab keine Treffer für Dateien oder Ordner"
+            "hint": "Ihre Suche ergab keine Treffer für Dateien oder Ordner",
+            "noResults": [
+                "Keiner Ihrer Artikel entspricht Ihrer Suche.",
+                "Keiner Ihrer Artikel entspricht Ihrer Suche."
+            ]
         }
     },
     "filter": {
@@ -95,6 +99,14 @@
             },
             "body": "Indem Sie diesen Link widerrufen, blockieren Sie den Zugriff auf {{NodeName}} für jeden, der versucht, den Link zu benutzen, um auf die Datei zuzugreifen",
             "header": "{{NodeName}} öffentlicher Link widerrufen"
+        },
+        "close": {
+            "tooltip": "Schließen"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Bestätigen"
+            }
         }
     },
     "node": {
@@ -261,7 +273,8 @@
                 }
             },
             "copyShortcut": "Verknüpfung des Elements kopieren",
-            "missingDescription": "Klicken Sie auf die Schaltfläche \"Bearbeiten\", um eine Beschreibung hinzuzufügen"
+            "missingDescription": "Klicken Sie auf die Schaltfläche \"Bearbeiten\", um eine Beschreibung hinzuzufügen",
+            "owner": "Besitzer"
         },
         "list": {
             "you": "Sie"
@@ -318,7 +331,40 @@
         "generic": {
             "message": "Klicken Sie auf ein Element, um es auszuwählen",
             "title": "Ansicht von Dateien und Ordnern, gemeinsame Nutzung mit Ihren Kontakten"
-        }
+        },
+        "search_empty": [
+            {
+                "message": "Oder wählen Sie \"Erweiterte Filter\", um Ihre Suche zu verfeinern."
+            },
+            {},
+            {
+                "message": "Versuchen Sie, eine weitere Suche zu starten."
+            },
+            {
+                "title": "Es gibt keine Ergebnisse für Ihre Suche.",
+                "message": "Überprüfen Sie die Rechtschreibung und die Filteroptionen oder versuchen Sie es mit einem anderen Stichwort."
+            }
+        ],
+        "version": {
+            "actions": {
+                "deleteVersion": "Version löschen",
+                "downloadVersion": "Version herunterladen",
+                "keepVersion": "Immer diese Version behalten",
+                "removeKeepVersion": "Für immer Behalten entfernen"
+            },
+            "button": {
+                "upload": "Version hochladen"
+            },
+            "rowHeaders": {
+                "currentVersion": "Aktuelle Version",
+                "lastWeek": "Letzte Woche"
+            }
+        },
+        "search_full": [
+            {
+                "title": "Wählen Sie ein oder mehrere Ergebnisse aus, um Aktionen durchzuführen oder Details anzuzeigen."
+            }
+        ]
     },
     "search": {
         "header": {
@@ -432,6 +478,9 @@
             "selectAll": "Alle auswählen",
             "unselectAll": "Alle abwählen",
             "exit": "Beenden des Auswahlmodus"
+        },
+        "node": {
+            "tooltip": "Auswahlmodus aktivieren"
         }
     },
     "sortingDropdown": {

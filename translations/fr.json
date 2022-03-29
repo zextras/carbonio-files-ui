@@ -20,7 +20,11 @@
             "hint": "Il semble qu'il n'y ait rien ici."
         },
         "search": {
-            "hint": "Votre recherche ne correspond à aucun fichier ou dossier"
+            "hint": "Votre recherche ne correspond à aucun fichier ou dossier",
+            "noResults": [
+                "Aucun de vos éléments ne correspond à votre recherche.",
+                "Aucun de vos éléments ne correspond à votre recherche."
+            ]
         }
     },
     "filter": {
@@ -95,6 +99,14 @@
                 "confirm": "Révoquer"
             },
             "header": "Révoquer le lien publique {{nodeName}}"
+        },
+        "close": {
+            "tooltip": "Fermer"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "Confirmer"
+            }
         }
     },
     "node": {
@@ -324,7 +336,8 @@
                     "label": "La longueur maximale autorisée est de 4096 caractères"
                 }
             },
-            "missingDescription": "Cliquer sur le bouton Modification pour ajouter une description"
+            "missingDescription": "Cliquer sur le bouton Modification pour ajouter une description",
+            "owner": "Propriétaire"
         },
         "list": {
             "you": "Vous"
@@ -381,7 +394,44 @@
         "generic": {
             "message": "Cliquer sur un élément pour le sélectionner",
             "title": "Visualiser les fichiers et les dossiers et les partager avec vos contacts"
-        }
+        },
+        "search_empty": [
+            {
+                "message": "Ou sélectionner \"Filtres avancés\" pour affiner votre recherche."
+            },
+            {},
+            {
+                "message": "Essayer de lancer une autre recherche."
+            },
+            {
+                "message": "Vérifiez l'orthographe et les options des filtres ou essayez avec un autre mot-clé.",
+                "title": "Il n'y a pas de résultats pour votre recherche."
+            }
+        ],
+        "version": {
+            "actions": {
+                "removeKeepVersion": "Supprimer l'option de garder définitivement",
+                "deleteVersion": "Supprimer cette version",
+                "downloadVersion": "Télécharger cette version",
+                "keepVersion": "Garder cette version définitivement",
+                "cloneAsCurrent": "Cloner comme actuel"
+            },
+            "button": {
+                "upload": "Téléverser une version",
+                "purgeAllVersions": "Purger toutes les versions"
+            },
+            "rowHeaders": {
+                "currentVersion": "Version en cours",
+                "lastWeek": "La semaine dernière",
+                "olderVersions": "Versions plus anciennes"
+            },
+            "mainHint": "Vous pouvez supprimer manuellement les versions du fichier ou en restaurer une comme version en cours. Sélectionnez une ou plusieurs versions que vous souhaitez garder pour toujours."
+        },
+        "search_full": [
+            {
+                "title": "Sélectionner un ou plusieurs résultats pour effectuer des actions ou afficher des détails."
+            }
+        ]
     },
     "docs": {
         "create": {
@@ -438,6 +488,9 @@
             "exit": "Sortir du mode de sélection",
             "unselectAll": "Tout désélectionner",
             "selectAll": "Tout sélectionner"
+        },
+        "node": {
+            "tooltip": "Activer le mode de sélection"
         }
     },
     "sortingDropdown": {

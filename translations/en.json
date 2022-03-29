@@ -60,7 +60,7 @@
         "filter": {
             "flagged_empty": [
                 {
-                    "message": " You'll find it here whenever you'll need it.",
+                    "message": "You'll find it here whenever you'll need it.",
                     "title": "Click the flag to mark an item."
                 },
                 {
@@ -95,7 +95,7 @@
             "sharedByMe_full": [
                 {
                     "message": "Select an item to proceed.",
-                    "title": "Review and edit the items you've shared with your contacts. "
+                    "title": "Review and edit the items you've shared with your contacts."
                 },
                 {
                     "message": "Click an item to select it.",
@@ -175,7 +175,7 @@
                 "title": "View your folders' details and share them with your contacts."
             },
             {
-                "title": "Select a folder to edit or rename its content."
+                "title": "Select a folder to edit or rename it."
             },
             {
                 "message": "Select the item and then go to the \"Shares\" tab",
@@ -319,7 +319,7 @@
         "filter": {
             "flagged": "There are no flagged items.",
             "hint": "It looks like there's nothing here.",
-            "sharedByMe": "You haven't shared any item with your collaborators yet. ",
+            "sharedByMe": "You haven't shared any item with your collaborators yet.",
             "sharedWithMe": "There are no items shared with you yet.",
             "trash": "The trash is empty."
         },
@@ -402,6 +402,10 @@
                     "permissionLost": "All the access permissions previously given to you will be lost."
                 }
             }
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} element selected",
+            "selectedCount_plural": "{{count}} elements selected"
         },
         "removeLink": {
             "body": "This link has expired, therefore it can't be used anymore to access the element. You can remove the link from the list or you can update its expiration date and other information in order to keep using it",
@@ -677,7 +681,7 @@
         "version": {
             "clone": "Version cloned as the current one",
             "keepForeverAdded": "Version marked as to be kept forever",
-            "keepForeverRemoved": "Keep forever removed"
+            "keepForeverRemoved": "\"Keep forever\" removed"
         }
     },
     "sortingDropdown": {

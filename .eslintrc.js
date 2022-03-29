@@ -14,7 +14,8 @@ module.exports = {
 			extends: ['plugin:jest-dom/recommended', 'plugin:testing-library/react'],
 			rules: {
 				'testing-library/no-node-access': 'off',
-				'jest-dom/prefer-enabled-disabled': 'off'
+				'jest-dom/prefer-enabled-disabled': 'off',
+				'testing-library/no-unnecessary-act': 'warn'
 			}
 		},
 		{
