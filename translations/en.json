@@ -490,6 +490,12 @@
         }
     },
     "previewer": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Add collaborator",
+                "download": "Download"
+            }
+        },
         "close": {
             "tooltip": "Close"
         }
