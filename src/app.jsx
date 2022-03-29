@@ -24,6 +24,7 @@ import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
 import { UploadStatus } from './carbonio-files-ui-common/types/common';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
+import { useIntegrations } from './integrations/useIntegrations';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
@@ -119,6 +120,8 @@ export default function App() {
 			type: ACTION_TYPES.NEW
 		});
 	}, [uploadClick, t]);
+
+	useIntegrations();
 
 	return null;
 }
