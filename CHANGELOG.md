@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-rc.5](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.4...v0.1.0-rc.5) (2022-04-01)
+
+
+### Features
+
+* create integration modal to select nodes ([86e68b3](https://github.com/zextras/carbonio-files-ui/commit/86e68b343497c4e985461e48670acdaf74827961)), closes [#17](https://github.com/zextras/carbonio-files-ui/issues/17)
+
+
+### Bug Fixes
+
+* remove shell references from common submodule ([27cf214](https://github.com/zextras/carbonio-files-ui/commit/27cf214591957919de56008e7b55ad01550b5188)), closes [#24](https://github.com/zextras/carbonio-files-ui/issues/24)
+
 ## [0.1.0-rc.4](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.3...v0.1.0-rc.4) (2022-03-24)
 
 
