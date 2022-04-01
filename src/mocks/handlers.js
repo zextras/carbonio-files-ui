@@ -8,7 +8,7 @@ import { graphql, rest } from 'msw';
 
 import {
 	DOCS_ENDPOINT,
-	DOCS_PATH,
+	CREATE_FILE_PATH,
 	REST_ENDPOINT,
 	UPLOAD_PATH,
 	UPLOAD_VERSION_PATH
@@ -85,7 +85,7 @@ if (!IS_SERVER) {
 	);
 	// rest
 	handlers.push(
-		rest.post(`${DOCS_ENDPOINT}${DOCS_PATH}`, handleCreateDocsFileRequest),
+		rest.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, handleCreateDocsFileRequest),
 		rest.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, handleUploadFileRequest),
 		rest.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, handleUploadVersionRequest)
 	);
