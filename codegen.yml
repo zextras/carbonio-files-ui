@@ -31,7 +31,7 @@ generates:
         DateTime: number
     hooks:
       afterOneFileWrite:
-        - eslint --fix --ext .js,.jsx,.ts,.tsx --resolve-plugins-relative-to node_modules/@zextras/zapp-cli
+        - eslint --fix --ext .js,.jsx,.ts,.tsx --resolve-plugins-relative-to node_modules/@zextras/carbonio-ui-configs
   src/carbonio-files-ui-common/types/graphql/possible-types.ts:
     documents:
       - "src/**/*.graphql"
@@ -42,4 +42,4 @@ generates:
       - fragment-matcher
     hooks:
       afterOneFileWrite:
-        - eslint --fix --ext .js,.jsx,.ts,.tsx --resolve-plugins-relative-to node_modules/@zextras/zapp-cli
+        - eslint --fix --ext .js,.jsx,.ts,.tsx --resolve-plugins-relative-to node_modules/@zextras/carbonio-ui-configs
