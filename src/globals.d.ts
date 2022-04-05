@@ -7,7 +7,6 @@
 /* eslint-disable no-var,vars-on-top */
 
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
-// eslint-disable-next-line import/no-unresolved
 import { Account, AccountSettings } from '@zextras/carbonio-shell-ui';
 
 import { NodeListItemType } from './carbonio-files-ui-common/types/common';

@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-// eslint-disable-next-line import/no-unresolved
 import { useUserAccounts, useUserSettings } from '@zextras/carbonio-shell-ui';
 
 const useUserInfo: () => { me: string; zimbraPrefTimeZoneId: string } = () => {
