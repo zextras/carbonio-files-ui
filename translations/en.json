@@ -489,7 +489,7 @@
             "folder": "Folder"
         }
     },
-    "previewer": {
+    "preview": {
         "actions": {
             "tooltip": {
                 "addCollaborator": "Add collaborator",
