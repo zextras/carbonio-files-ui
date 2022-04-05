@@ -12,11 +12,11 @@ import noop from 'lodash/noop';
 
 export const UpdateQueryContext = React.createContext<(arg: Array<QueryChip>) => void>(() => noop);
 
-export const ACTION_TYPES = {
+export const ACTION_TYPES: typeof SHELL_ACTION_TYPES = {
 	...SHELL_ACTION_TYPES,
 	FILES_ACTION: 'carbonio_files_action'
-};
+} as const;
 
 export const ACTION_IDS = {
 	SELECT_NODES: 'files-select-nodes'
-};
+} as const;
