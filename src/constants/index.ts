@@ -20,3 +20,7 @@ export const ACTION_TYPES: typeof SHELL_ACTION_TYPES = {
 export const ACTION_IDS = {
 	SELECT_NODES: 'files-select-nodes'
 } as const;
+
+export const FUNCTION_IDS = {
+	UPLOAD_TO_TARGET_AND_GET_TARGET_ID: 'upload-to-target-and-get-target-id'
+} as const;
