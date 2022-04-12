@@ -20,6 +20,9 @@ module.exports = {
 	],
 	coverageDirectory: 'coverage',
 	coverageReporters: ['text', 'cobertura'],
+	moduleNameMapper: {
+		'react-pdf/dist/esm/entry.webpack': 'react-pdf'
+	},
 	reporters: ['default', 'jest-junit'],
 	// testMatch: ['/test/**/*.js?(x)'],
 	setupFilesAfterEnv: ['<rootDir>/src/jest-env-setup.js', '<rootDir>/src/jest-mocks.ts'],
