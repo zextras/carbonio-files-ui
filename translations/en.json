@@ -489,7 +489,13 @@
             "folder": "Folder"
         }
     },
-    "previewer": {
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Add collaborator",
+                "download": "Download"
+            }
+        },
         "close": {
             "tooltip": "Close"
         }
