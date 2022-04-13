@@ -17,14 +17,19 @@
             "displayerContent": "Ce dossier est vide"
         },
         "filter": {
-            "hint": "Il semble qu'il n'y ait rien ici."
+            "hint": "Il semble qu'il n'y ait rien ici.",
+            "flagged": "Il n'y a pas d'éléments marqués.",
+            "sharedWithMe": "Il n'y a pas encore d'éléments partagés avec vous.",
+            "trash": "La corbeille est vide.",
+            "sharedByMe": "Vous n'avez pas encore partagé des éléments avec vos collaborateurs."
         },
         "search": {
             "hint": "Votre recherche ne correspond à aucun fichier ou dossier",
             "noResults": [
-                "Aucun de vos éléments ne correspond à votre recherche.",
+                "Aucun de vos éléments ne correspond à votre recherche. Continuez à chercher !",
                 "Aucun de vos éléments ne correspond à votre recherche."
-            ]
+            ],
+            "notRun": "Aucune recherche n'a encore été effectuée."
         }
     },
     "filter": {
@@ -106,7 +111,9 @@
         "decreaseYourOwnSharePermissions": {
             "button": {
                 "confirm": "Confirmer"
-            }
+            },
+            "body": "Êtes-vous sûr de souhaiter diminuer vos droits sur ce noeud ? L'action sera permanente et vous ne serez plus en mesure de restaurer vos précédents droits de partage vous-même. Il vous sera toutefois possible de contacter le propriétaire de l'élément partagé si vous avez besoin de restaurer vos précédentes permissions",
+            "header": "Diminuez vos droits actuels"
         }
     },
     "node": {
@@ -126,7 +133,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Copier"
+                    "confirm": "Copier",
+                    "tooltip": {
+                        "confirm": "Vous pouvez réaliser cette action ici"
+                    }
                 },
                 "title": "Copier {{node.name}}",
                 "title_plurals": "Copier les éléments",
@@ -142,7 +152,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "Déplacer"
+                    "confirm": "Déplacer",
+                    "tooltip": {
+                        "confirm": "Vous pouvez réaliser cette action ici"
+                    }
                 },
                 "input": {
                     "filter": "Filtrer les dossiers"
@@ -234,6 +247,14 @@
             "newPublicLinkGenerated": {
                 "label": "Nouveau lien publique généré"
             }
+        },
+        "decreaseYourOwnShare": {
+            "success": "Les droits ont été mis à jour avec succès"
+        },
+        "version": {
+            "clone": "Version clonée comme version courante",
+            "keepForeverAdded": "Version marquée comme à garder pour toujours",
+            "keepForeverRemoved": "\"Conservation définitive\" supprimée"
         }
     },
     "actions": {
@@ -337,7 +358,9 @@
                 }
             },
             "missingDescription": "Cliquer sur le bouton Modification pour ajouter une description",
-            "owner": "Propriétaire"
+            "owner": "Propriétaire",
+            "collaboratorsTooltip": "Voir la liste des collaborateurs",
+            "sendMailTo": "Envoyer un email à : {{email}}"
         },
         "list": {
             "you": "Vous"
@@ -397,11 +420,16 @@
         },
         "search_empty": [
             {
-                "message": "Ou sélectionner \"Filtres avancés\" pour affiner votre recherche."
+                "message": "Ou sélectionner \"Filtres avancés\" pour affiner votre recherche.",
+                "title": "Démarrer une autre recherche."
             },
-            {},
             {
-                "message": "Essayer de lancer une autre recherche."
+                "message": "N'abandonnez-pas, continuez de chercher !",
+                "title": "Aucun résultats."
+            },
+            {
+                "message": "Essayer de lancer une autre recherche.",
+                "title": "Nous sommes désolé, mais il n'y a pas de résultats pour votre recherche."
             },
             {
                 "message": "Vérifiez l'orthographe et les options des filtres ou essayez avec un autre mot-clé.",
@@ -414,7 +442,8 @@
                 "deleteVersion": "Supprimer cette version",
                 "downloadVersion": "Télécharger cette version",
                 "keepVersion": "Garder cette version définitivement",
-                "cloneAsCurrent": "Cloner comme actuel"
+                "cloneAsCurrent": "Cloner comme actuel",
+                "openDocumentVersion": "Ouvrir la version du document"
             },
             "button": {
                 "upload": "Téléverser une version",
@@ -425,13 +454,151 @@
                 "lastWeek": "La semaine dernière",
                 "olderVersions": "Versions plus anciennes"
             },
-            "mainHint": "Vous pouvez supprimer manuellement les versions du fichier ou en restaurer une comme version en cours. Sélectionnez une ou plusieurs versions que vous souhaitez garder pour toujours."
+            "mainHint": "Vous pouvez supprimer manuellement les versions du fichier ou en restaurer une comme version en cours. Sélectionnez une ou plusieurs versions que vous souhaitez garder pour toujours.",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Cloné de la version {{versionNumber}} ({{cloneDate}})",
+                    "tooltip2": "Cloné de la version {{versionNumber}} (version deleted)"
+                },
+                "versionNumber": "Version {{versionNumber}}"
+            }
         },
         "search_full": [
             {
                 "title": "Sélectionner un ou plusieurs résultats pour effectuer des actions ou afficher des détails."
             }
-        ]
+        ],
+        "filter": {
+            "flagged_empty": [
+                {
+                    "message": "Vous le trouverez ici lorsque vous en aurez besoin.",
+                    "title": "Cliquez sur le drapeau pour marquer un élément."
+                },
+                {
+                    "title": "Marquez vos éléments les plus important en cliquant sur le drapeau.",
+                    "message": "Ils seront listés ici."
+                }
+            ],
+            "flagged_full": [
+                {
+                    "message": "Vous le trouverez ici lorsque vous en aurez besoin.",
+                    "title": "Cliquez sur le drapeau pour marquer un élément."
+                },
+                {
+                    "title": "Marquez vos éléments les plus important en cliquant sur le drapeau.",
+                    "message": "Ils seront listés ici."
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "message": "Sélectionnez un élément pour continuer.",
+                    "title": "Révisez et éditez les éléments que vous avez partagé avec vos contacts."
+                },
+                {
+                    "message": "Cliquez sur un élément pour le sélectionner.",
+                    "title": "Voir les détails des dossiers que vous avez partagés."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "Cliquez sur le bouton \"NOUVEAU\" pour créer un nouveau document et partager-le avec vos contacts.",
+                    "title": "Il n'y a pas encore d'éléments partagés avec vous."
+                },
+                {
+                    "message": "Laissez les autres utilisateurs savoir si vous êtes disposé à collaborer avec eux.",
+                    "title": "Cliquez sur le bouton \"NOUVEAU\" et créez un nouvel email."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "title": "Commencez à éditer et partager vos fichiers.",
+                    "message": "Cliquez sur un élément pour le sélectionner."
+                },
+                {
+                    "message": "Cliquez sur un élément pour le sélectionner.",
+                    "title": "Affichez les détails de vos dossiers et partagez-les avec vos contacts."
+                },
+                {
+                    "title": "Sélectionnez un élément et commencez à travailler dessus avec d'autres utilisateurs."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "title": "Déplacez dans la corbeille tout les éléments dont vous n'avez plus besoin.",
+                    "message": "Cliquez sur l'icône corbeille pour supprimer un élément."
+                },
+                {
+                    "message": "Cliquez sur l'icône corbeille pour supprimer un élément.",
+                    "title": "La corbeille est vide."
+                },
+                {
+                    "title": "Gardez votre espace de travail propre : supprimez tous les éléments dont vous n'avez plus besoin."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Sélectionnez et restaurez vos documents qui sont actuellement dans la corbeille."
+                },
+                {
+                    "message": "Sélectionnez un élément pour le restaurer ou le supprimer définitivement.",
+                    "title": "Rien n'est perdu !"
+                },
+                {
+                    "message": "Ou, lorsque c'est possible, sélectionnez-le et restaurez-le dans son dossier d'origine.",
+                    "title": "Sélectionnez un élément pour le supprimer définitivement."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "message": "Sélectionnez un élément pour continuer.",
+                    "title": "Révisez et éditez les éléments que vous avez partagé avec vos contacts."
+                },
+                {
+                    "message": "Cliquez sur un élément pour le sélectionner.",
+                    "title": "Voir les détails des dossiers que vous avez partagés."
+                },
+                {
+                    "message": "Cliquez sur un élément pour le sélectionner.",
+                    "title": "Vous trouverez ici tous les éléments partagés avec vos contacts."
+                }
+            ]
+        },
+        "folder_empty": [
+            {
+                "title": "Cliquez sur le bouton \"NOUVEAU\" pour créer un nouvel élément et partagez-le avec vos contacts."
+            },
+            {
+                "message": "Créez un fichier en cliquant sur le bouton \"NOUVEAU\"",
+                "title": "Commencez à éditer et partager votre travail."
+            },
+            {
+                "message": "Vous serez en mesure de l'éditer, de le marquer et de le partager.",
+                "title": "Cliquez sur le bouton \"NOUVEAU\" pour créer un nouvel élément."
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "Cliquez sur un élément pour le sélectionner.",
+                "title": "Commencez à éditer et partager vos fichiers."
+            },
+            {
+                "message": "Cliquez sur un élément pour le sélectionner.",
+                "title": "Affichez les détails de vos dossiers et partagez-les avec vos contacts."
+            },
+            {
+                "title": "Sélectionner un dossier pour l'éditer ou le renommer."
+            },
+            {
+                "message": "Sélectionnez un élément et allez dans l'onglet \"Partages\"",
+                "title": "Fournissez les droits d'édition à vos contacts et permettez-leur d'éditer un élément."
+            },
+            {
+                "title": "Sélectionnez un élément pour le partager ou déplacer dans un autre dossier."
+            }
+        ],
+        "search": {
+            "title": "Saisissez des mots clés pour lancer la recherche."
+        }
     },
     "docs": {
         "create": {
@@ -520,7 +687,8 @@
         "code_SHARE_CREATION_ERROR": "Nous sommes désolés, mais il n'est pas possible de partager l'élément avec cet utilisateur",
         "code_SHARE_NOT_FOUND": "Nous sommes désolés, mais ce partage est introuvable",
         "code_FILE_VERSION_NOT_FOUND": "Nous sommes désolés, mais cette version du fichier est introuvable",
-        "code_NODE_NOT_FOUND": "Il semble que cet objet n'existe pas ou que vous n'avez pas la permission d'y accéder"
+        "code_NODE_NOT_FOUND": "Il semble que cet objet n'existe pas ou que vous n'avez pas la permission d'y accéder",
+        "code_NODE_DUPLICATED": "Il y a déjà un fichier portant le même nom dans ce dossier"
     },
     "publicLink": {
         "addLink": {

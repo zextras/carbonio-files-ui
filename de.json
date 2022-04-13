@@ -17,14 +17,19 @@
             "displayerContent": "Dieser Ordner hat keinen Inhalt"
         },
         "filter": {
-            "hint": "Hier gibt es scheinbar nichts."
+            "hint": "Hier gibt es scheinbar nichts.",
+            "flagged": "Es gibt keine markierten Einträge.",
+            "sharedByMe": "Sie haben noch keinen Artikel für Ihre Mitarbeiter freigegeben.",
+            "sharedWithMe": "Es sind noch keine Artikel für Sie freigegeben.",
+            "trash": "Der Papierkorb ist leer."
         },
         "search": {
             "hint": "Ihre Suche ergab keine Treffer für Dateien oder Ordner",
             "noResults": [
                 "Keiner Ihrer Artikel entspricht Ihrer Suche.",
                 "Keiner Ihrer Artikel entspricht Ihrer Suche."
-            ]
+            ],
+            "notRun": "Es wurde noch keine Durchsuchung durchgeführt."
         }
     },
     "filter": {
@@ -106,7 +111,9 @@
         "decreaseYourOwnSharePermissions": {
             "button": {
                 "confirm": "Bestätigen"
-            }
+            },
+            "body": "Sind Sie sicher, dass Sie Ihre Rechte an diesem Knoten verringern wollen? Die Aktion ist dauerhaft und Sie können die Rechte der vorherigen Freigabe nicht mehr selbst wiederherstellen. Sie können sich jederzeit an den Eigentümer des freigegebenen Objekts wenden, wenn Sie die vorherigen Rechte wiederherstellen möchten",
+            "header": "Ihre derzeitigen Rechte vermindern"
         }
     },
     "node": {
@@ -126,7 +133,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Kopieren"
+                    "confirm": "Kopieren",
+                    "tooltip": {
+                        "confirm": "Sie können diese Aktion hier nicht durchführen"
+                    }
                 },
                 "title": "Kopieren {{node.name}}",
                 "title_plurals": "Elemente kopieren",
@@ -142,7 +152,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "Verschieben"
+                    "confirm": "Verschieben",
+                    "tooltip": {
+                        "confirm": "Sie können diese Aktion hier nicht durchführen"
+                    }
                 },
                 "input": {
                     "filter": "Ordner filtern"
@@ -234,6 +247,14 @@
         "clipboard": {
             "itemShortcutCopied": "Artikelkürzel kopiert",
             "email": "E-Mail Adresse kopiert"
+        },
+        "version": {
+            "keepForeverAdded": "Version mit der Kennzeichnung, dass sie für immer aufbewahrt werden soll",
+            "keepForeverRemoved": "\"Für immer behalten\" entfernt",
+            "clone": "Geklonte Version als aktuelle Version"
+        },
+        "decreaseYourOwnShare": {
+            "success": "Rechte erfolgreich aktualisiert"
         }
     },
     "actions": {
@@ -242,7 +263,7 @@
         "download": "Download",
         "markForDeletion": "Zum Löschen kennzeichnen",
         "move": "Verschieben",
-        "openWithDocs": "Mit Docs öffnen",
+        "openWithDocs": "Dokument öffnen",
         "rename": "Umbenennen",
         "restore": "Wiederherstellen",
         "deletePermanently": "Endgültig löschen",
@@ -274,7 +295,9 @@
             },
             "copyShortcut": "Verknüpfung des Elements kopieren",
             "missingDescription": "Klicken Sie auf die Schaltfläche \"Bearbeiten\", um eine Beschreibung hinzuzufügen",
-            "owner": "Besitzer"
+            "owner": "Besitzer",
+            "collaboratorsTooltip": "Siehe die Liste der Mitarbeiter",
+            "sendMailTo": "Senden Sie eine E-Mail an: {{email}}"
         },
         "list": {
             "you": "Sie"
@@ -334,11 +357,16 @@
         },
         "search_empty": [
             {
-                "message": "Oder wählen Sie \"Erweiterte Filter\", um Ihre Suche zu verfeinern."
+                "message": "Oder wählen Sie \"Erweiterte Filter\", um Ihre Suche zu verfeinern.",
+                "title": "Starten Sie eine weitere Suche."
             },
-            {},
             {
-                "message": "Versuchen Sie, eine weitere Suche zu starten."
+                "message": "Geben Sie nicht auf, suchen Sie weiter!",
+                "title": "Keine Ergebnisse."
+            },
+            {
+                "message": "Versuchen Sie, eine weitere Suche zu starten.",
+                "title": "Es tut uns leid, aber es gibt keine Ergebnisse für Ihre Suche."
             },
             {
                 "title": "Es gibt keine Ergebnisse für Ihre Suche.",
@@ -350,21 +378,164 @@
                 "deleteVersion": "Version löschen",
                 "downloadVersion": "Version herunterladen",
                 "keepVersion": "Immer diese Version behalten",
-                "removeKeepVersion": "Für immer Behalten entfernen"
+                "removeKeepVersion": "Für immer Behalten entfernen",
+                "openDocumentVersion": "Version des Dokuments öffnen",
+                "cloneAsCurrent": "Klonen wie aktuell"
             },
             "button": {
-                "upload": "Version hochladen"
+                "upload": "Version hochladen",
+                "purgeAllVersions": "Alle Versionen bereinigen"
             },
             "rowHeaders": {
                 "currentVersion": "Aktuelle Version",
-                "lastWeek": "Letzte Woche"
+                "lastWeek": "Letzte Woche",
+                "olderVersions": "Ältere Versionen"
+            },
+            "mainHint": "Sie können jede beliebige Dateiversion manuell löschen oder eine Version als aktuelle Version wiederherstellen. Wählen Sie eine oder mehrere Versionen aus, die Sie für immer behalten möchten.",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Geklont von Version {{Versionsnummer}} ({{cloneDate}})",
+                    "tooltip2": "Geklont von Version {{Versionsnummer}} (Version gelöscht)"
+                },
+                "versionNumber": "Version {{versionNumber}}"
             }
         },
         "search_full": [
             {
                 "title": "Wählen Sie ein oder mehrere Ergebnisse aus, um Aktionen durchzuführen oder Details anzuzeigen."
             }
-        ]
+        ],
+        "filter": {
+            "flagged_empty": [
+                {
+                    "message": "Sie finden sie hier, wann immer Sie sie brauchen.",
+                    "title": "Klicken Sie auf die Fahne, um ein Element zu markieren."
+                },
+                {
+                    "message": "Sie werden hier aufgelistet.",
+                    "title": "Markieren Sie Ihre wichtigsten Elemente, indem Sie auf die Flagge klicken."
+                }
+            ],
+            "flagged_full": [
+                {
+                    "message": "Sie finden sie hier, wann immer Sie sie brauchen.",
+                    "title": "Klicken Sie auf die Fahne, um ein Element zu markieren."
+                },
+                {
+                    "message": "Sie werden hier aufgelistet.",
+                    "title": "Markieren Sie Ihre wichtigsten Elemente, indem Sie auf die Flagge klicken."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "title": "Überprüfen und bearbeiten Sie die Elemente, die Sie für Ihre Kontakte freigegeben haben.",
+                    "message": "Wählen Sie einen Artikel aus, um fortzufahren."
+                },
+                {
+                    "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                    "title": "Details zu freigegebenen Ordnern anzeigen."
+                },
+                {
+                    "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                    "title": "Hier finden Sie alle Elemente, die Sie mit Ihren Kontakten teilen."
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "title": "Überprüfen und bearbeiten Sie die Elemente, die Sie für Ihre Kontakte freigegeben haben.",
+                    "message": "Wählen Sie einen Artikel aus, um fortzufahren."
+                },
+                {
+                    "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                    "title": "Details zu freigegebenen Ordnern anzeigen."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "Klicken Sie auf die Schaltfläche \"NEU\", um ein neues Dokument zu erstellen und es mit Ihren Kontakten zu teilen.",
+                    "title": "Es sind noch keine Artikel für Sie freigegeben."
+                },
+                {
+                    "message": "Lassen Sie andere Nutzer wissen, dass Sie bereit sind, mit ihnen zusammenzuarbeiten.",
+                    "title": "Klicken Sie auf die Schaltfläche \"NEU\" und erstellen Sie eine neue E-Mail."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "title": "Beginnen Sie mit der Bearbeitung und Freigabe Ihrer Dateien.",
+                    "message": "Klicken Sie auf ein Element, um es auszuwählen."
+                },
+                {
+                    "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                    "title": "Zeigen Sie die Details Ihrer Ordner an und teilen Sie sie mit Ihren Kontakten."
+                },
+                {
+                    "title": "Wählen Sie ein Objekt aus und beginnen Sie, es gemeinsam mit anderen Benutzern zu bearbeiten."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "message": "Klicken Sie auf das Papierkorbsymbol, um ein Element zu löschen.",
+                    "title": "Schmeißen Sie alles weg, was Sie nicht brauchen."
+                },
+                {
+                    "message": "Klicken Sie auf das Papierkorbsymbol, um ein Element zu löschen.",
+                    "title": "Der Papierkorb ist leer."
+                },
+                {
+                    "title": "Halten Sie Ihren Arbeitsbereich sauber: Löschen Sie alle Gegenstände, die Sie nicht mehr brauchen."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Wählen Sie die Dokumente aus, die sich jetzt im Papierkorb befinden, und stellen Sie sie wieder her."
+                },
+                {
+                    "message": "Wählen Sie ein Element aus, um es wiederherzustellen oder es endgültig zu löschen.",
+                    "title": "Es ist nichts verloren!"
+                },
+                {
+                    "message": "Oder, wenn möglich, wählen Sie sie aus und stellen sie in ihrem ursprünglichen Ordner wieder her.",
+                    "title": "Wählen Sie ein Element aus, um es endgültig zu löschen."
+                }
+            ]
+        },
+        "folder_empty": [
+            {
+                "title": "Klicken Sie auf die Schaltfläche \"NEU\", um ein neues Element zu erstellen und es mit Ihren Kontakten zu teilen."
+            },
+            {
+                "message": "Erstellen Sie eine Datei, indem Sie auf die Schaltfläche \"NEU\" klicken",
+                "title": "Beginnen Sie mit der Bearbeitung und Weitergabe Ihrer Werke."
+            },
+            {
+                "message": "Sie können sie dann bearbeiten, kennzeichnen und weitergeben.",
+                "title": "Klicken Sie auf die Schaltfläche \"NEU\", um einen neuen Artikel zu erstellen."
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                "title": "Beginnen Sie mit der Bearbeitung und Freigabe Ihrer Dateien."
+            },
+            {
+                "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                "title": "Zeigen Sie die Details Ihrer Ordner an und teilen Sie sie mit Ihren Kontakten."
+            },
+            {
+                "title": "Wählen Sie einen Ordner aus, um ihn zu bearbeiten oder umzubenennen."
+            },
+            {
+                "message": "Wählen Sie den Artikel aus und gehen Sie dann auf die Registerkarte \" Freigaben \"",
+                "title": "Geben Sie Ihren Kontakten Bearbeitungsrechte, damit sie einen Artikel bearbeiten können."
+            },
+            {
+                "title": "Wählen Sie ein Element aus, um es freizugeben oder in einen anderen Ordner zu verschieben."
+            }
+        ],
+        "search": {
+            "title": "Geben Sie einige Schlüsselwörter ein, um eine Suche zu starten."
+        }
     },
     "search": {
         "header": {
@@ -420,7 +591,7 @@
                 "title": "Fortgeschrittene Filter",
                 "flagged": {
                     "label": "Markiert",
-                    "description": "Filtern Sie die Ergebnisse nach den von Ihnen markierten Elementen"
+                    "description": "Filtern Sie die Ergebnisse nach von Ihnen markierten Elementen"
                 },
                 "keywords": {
                     "label": "Schlüsselwörter"
@@ -510,7 +681,8 @@
         "code_FILE_VERSION_NOT_FOUND": "Es tut uns leid, aber diese Version der Datei kann nicht gefunden werden",
         "code_NODE_NOT_FOUND": "Es scheint, dass dieses Objekt nicht existiert, oder Sie haben keine Zugriffsberechtigung dafür",
         "code_SHARE_CREATION_ERROR": "Es tut uns leid, aber es ist nicht möglich, den Artikel mit diesem Benutzer zu teilen",
-        "code_SHARE_NOT_FOUND": "Es tut uns leid, aber diese Aktie kann nicht gefunden werden"
+        "code_SHARE_NOT_FOUND": "Es tut uns leid, aber diese Aktie kann nicht gefunden werden",
+        "code_NODE_DUPLICATED": "Es gibt eine Datei mit demselben Namen in diesem Ordner"
     },
     "publicLink": {
         "addLink": {
