@@ -81,7 +81,7 @@
     "secondaryBar": {
         "team": "File inviati via Team",
         "filtersList": {
-            "flagged": "Marcato",
+            "flagged": "Contrassegnato",
             "sharedByMe": "Condivisi da me",
             "sharedWithMe": "Condivisi con me",
             "trash": "Cestino",

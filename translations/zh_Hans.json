@@ -20,7 +20,9 @@
             },
             "copyShortcut": "复制项目快捷方式",
             "missingDescription": "点击编辑按钮以添加描述",
-            "owner": "所有者"
+            "owner": "所有者",
+            "collaboratorsTooltip": "查看协作者列表",
+            "sendMailTo": "发送邮件至：{{email}}"
         },
         "list": {
             "you": "您"
@@ -80,11 +82,16 @@
         },
         "search_empty": [
             {
-                "message": "或选择“高级过滤”以精细化搜索。"
+                "message": "或选择“高级过滤”以精细化搜索。",
+                "title": "开始另一次搜索。"
             },
-            {},
             {
-                "message": "尝试开始另一次搜索。"
+                "message": "不要放弃，继续搜索！",
+                "title": "无结果。"
+            },
+            {
+                "message": "尝试开始另一次搜索。",
+                "title": "抱歉，搜索未返回结果。"
             },
             {
                 "message": "检查拼写和过滤选项，或尝试使用其他关键字。",
@@ -101,16 +108,159 @@
                 "deleteVersion": "删除版本",
                 "downloadVersion": "下载版本",
                 "keepVersion": "永久保留该版本",
-                "removeKeepVersion": "移除永久保留"
+                "removeKeepVersion": "移除永久保留",
+                "cloneAsCurrent": "克隆为当前",
+                "openDocumentVersion": "打开文档版本"
             },
             "button": {
-                "upload": "上传版本"
+                "upload": "上传版本",
+                "purgeAllVersions": "清除所有版本"
             },
             "rowHeaders": {
                 "currentVersion": "当前版本",
-                "lastWeek": "上周"
+                "lastWeek": "上周",
+                "olderVersions": "旧版本"
+            },
+            "mainHint": "您可手动删除任意文件版本或将其还原为当前版本。选择想要保留的一个或多个版本。",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "克隆自版本 {{versionNumber}}（{{cloneDate}}）",
+                    "tooltip2": "克隆自版本 {{versionNumber}}（版本已删除）"
+                },
+                "versionNumber": "版本 {{versionNumber}}"
             }
-        }
+        },
+        "filter": {
+            "sharedByMe_empty": [
+                {
+                    "title": "查看并编辑已与联系人分享的项目。",
+                    "message": "选择一个项目以继续。"
+                },
+                {
+                    "message": "点击项目以将其选择。",
+                    "title": "查看已分享文件夹详情。"
+                },
+                {
+                    "message": "点击项目以将其选择。",
+                    "title": "在这里查看已与联系人分享的所有项目。"
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "message": "选择一个项目以继续。",
+                    "title": "查看并编辑已与联系人分享的项目。"
+                },
+                {
+                    "message": "点击项目以将其选择。",
+                    "title": "查看已分享文件夹详情。"
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "message": "点击项目以将其选择。",
+                    "title": "开始编辑并分享您的文件。"
+                },
+                {
+                    "message": "点击项目以将其选择。",
+                    "title": "查看文件夹详情并将其分享给联系人。"
+                },
+                {
+                    "title": "选择项目并与其他用户就其开展协作。"
+                }
+            ],
+            "flagged_empty": [
+                {
+                    "message": "您将在此处找到自己所需的东西。",
+                    "title": "点击以标记项目。"
+                },
+                {
+                    "message": "其将在此处列出。",
+                    "title": "点击标记以标记对您而言最重要的项目。"
+                }
+            ],
+            "flagged_full": [
+                {
+                    "message": "您将在此处找到自己所需的东西。",
+                    "title": "点击以标记项目。"
+                },
+                {
+                    "message": "其将在此处列出。",
+                    "title": "点击标记以标记对您而言最重要的项目。"
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "点击“新建”按钮创建一个新的文档并与联系人分享。",
+                    "title": "尚无与您分享的项目。"
+                },
+                {
+                    "message": "让其他用户了解您已做好同他们进行协作的准备。",
+                    "title": "点击“新建”按钮并创建新邮件。"
+                }
+            ],
+            "trash_empty": [
+                {
+                    "message": "点击垃圾箱图标以删除项目。",
+                    "title": "将您不需要的一切移动至垃圾箱。"
+                },
+                {
+                    "message": "点击垃圾箱图标以删除项目。",
+                    "title": "垃圾箱为空。"
+                },
+                {
+                    "title": "保持工作区整洁：删除所有不再需要的项目。"
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "选择并恢复垃圾箱中的文档。"
+                },
+                {
+                    "message": "选择项目以将其恢复或永久删除。",
+                    "title": "什么都没有丢失！"
+                },
+                {
+                    "message": "或在可能的情况下，选择并将其恢复至原始文件夹。",
+                    "title": "选择项目以将其永久删除。"
+                }
+            ]
+        },
+        "folder_full": [
+            {
+                "message": "点击项目以将其选择。",
+                "title": "开始编辑并分享您的文件。"
+            },
+            {
+                "message": "点击项目以将其选择。",
+                "title": "查看文件夹详情并将其分享给联系人。"
+            },
+            {
+                "title": "选择文件夹以对其进行编辑或重命名。"
+            },
+            {
+                "message": "选择项目并前往“分享”标签页",
+                "title": "为您的联系人提供编辑权限以使其能够编辑项目。"
+            },
+            {
+                "title": "选择项目以对其进行分享或将其移动至另一文件夹。"
+            }
+        ],
+        "search": {
+            "title": "输入一些关键词以开始搜索。"
+        },
+        "folder_empty": [
+            {
+                "title": "点击“新建”按钮创建一个新的项目并与联系人分享。"
+            },
+            {
+                "title": "开始编辑并分享您的工作。",
+                "message": "点击“新建”按钮以创建文件"
+            },
+            {
+                "message": "您将可对其进行编辑、标记以及分享。",
+                "title": "点击“新建”按钮以创建新项目。"
+            }
+        ]
     },
     "snackbar": {
         "restore": {
@@ -166,6 +316,14 @@
         },
         "unflag": {
             "success": "项目取消标记成功"
+        },
+        "decreaseYourOwnShare": {
+            "success": "权限更新成功"
+        },
+        "version": {
+            "clone": "版本已克隆为当前值",
+            "keepForeverAdded": "版本已标记以永久保留",
+            "keepForeverRemoved": "“永久保留”已移除"
         }
     },
     "actions": {
@@ -174,7 +332,7 @@
         "download": "下载",
         "markForDeletion": "标记以删除",
         "move": "移动",
-        "openWithDocs": "使用文档打开",
+        "openWithDocs": "打开文档",
         "rename": "重命名",
         "restore": "恢复",
         "deletePermanently": "永久删除",
@@ -287,7 +445,9 @@
         "decreaseYourOwnSharePermissions": {
             "button": {
                 "confirm": "确认"
-            }
+            },
+            "body": "确定要降低您在此节点上的权限吗？此操作将是永久性操作，您将无法自行恢复之前的共享权限。如果您需要恢复之前的共享权限，可随时联系共享项目的所有者",
+            "header": "降低您当前的权限"
         }
     },
     "node": {
@@ -300,7 +460,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "复制"
+                    "confirm": "复制",
+                    "tooltip": {
+                        "confirm": "您不能在此执行此操作"
+                    }
                 },
                 "title": "复制{{node.name}}",
                 "title_plurals": "复制项目",
@@ -310,7 +473,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "移动"
+                    "confirm": "移动",
+                    "tooltip": {
+                        "confirm": "您不能在此执行此操作"
+                    }
                 },
                 "input": {
                     "filter": "筛选文件夹"
@@ -428,14 +594,19 @@
             "displayerContent": "此文件夹中没有内容"
         },
         "filter": {
-            "hint": "似乎这里什么都没有。"
+            "hint": "似乎这里什么都没有。",
+            "flagged": "没有已标记项目。",
+            "sharedByMe": "您尚未与协作者分享任何项目。",
+            "sharedWithMe": "尚无与您分享的项目。",
+            "trash": "垃圾箱为空。"
         },
         "search": {
             "hint": "您的搜索未与任何文件或文件夹匹配",
             "noResults": [
-                "没有符合您搜索的项目。",
+                "无结果。继续搜索！",
                 "没有符合您搜索的项目。"
-            ]
+            ],
+            "notRun": "尚未进行搜索。"
         }
     },
     "filter": {
@@ -507,7 +678,8 @@
         "code_NODE_NOT_FOUND": "似乎此对象不存在，或者您没有访问权限",
         "code_NODE_WRITE_ERROR": "似乎此对象无法编辑，或者您没有编辑权限",
         "code_SHARE_CREATION_ERROR": "抱歉，无法同该用户分享此项目",
-        "code_SHARE_NOT_FOUND": "抱歉，无法找到此分享"
+        "code_SHARE_NOT_FOUND": "抱歉，无法找到此分享",
+        "code_NODE_DUPLICATED": "文件夹中有同名文件"
     },
     "publicLink": {
         "addLink": {
