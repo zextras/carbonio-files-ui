@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-rc.6](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.5...v0.1.0-rc.6) (2022-04-13)
+
+
+### Features
+
+* implement pdf preview ([0c8daff](https://github.com/zextras/carbonio-files-ui/commit/0c8daffca69169501cd5138b6ef9e782901eef65)), closes [#23](https://github.com/zextras/carbonio-files-ui/issues/23)
+* upload to target integrated function ([20fc60a](https://github.com/zextras/carbonio-files-ui/commit/20fc60aaa15fa217c168b6f6594ff7313ca8dc3b)), closes [#28](https://github.com/zextras/carbonio-files-ui/issues/28)
+
+
+### Bug Fixes
+
+* typo ([84d6e40](https://github.com/zextras/carbonio-files-ui/commit/84d6e406961168fd4c114f928ab6955b4cf0f269)), closes [#30](https://github.com/zextras/carbonio-files-ui/issues/30)
+
 ## [0.1.0-rc.5](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.4...v0.1.0-rc.5) (2022-04-01)
 
 
