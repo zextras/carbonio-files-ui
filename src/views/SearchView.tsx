@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import type { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
 import forEach from 'lodash/forEach';
@@ -22,11 +22,15 @@ import { UpdateQueryContext } from '../constants';
 import { AdvancedSearchChip } from '../types';
 
 const SearchView: React.VFC<SearchViewProps> = ({ useQuery, ResultsHeader }) => {
-	const [query, updateQuery] = useQuery() as [
-		ReturnType<SearchViewProps['useQuery']>[0],
-		(query: Array<QueryChip>) => void
-	];
+	const [query, updateQuery] = useQuery();
 	const [t] = useTranslation();
+
+	const updateQueryWrapper = useCallback<(args: QueryChip[]) => void>(
+		(args) => {
+			updateQuery(args);
+		},
+		[updateQuery]
+	);
 
 	useEffect(() => {
 		const [advanced, keywords] = partition<QueryChip, AdvancedSearchChip>(
@@ -51,7 +55,7 @@ const SearchView: React.VFC<SearchViewProps> = ({ useQuery, ResultsHeader }) => 
 	return (
 		<PreventDefaultDropContainer>
 			<ProvidersWrapper>
-				<UpdateQueryContext.Provider value={updateQuery}>
+				<UpdateQueryContext.Provider value={updateQueryWrapper}>
 					<CommonSearchView
 						resultsHeader={<ResultsHeader label={t('search.resultsFor', 'Results for:')} />}
 						listWidth="25%"
