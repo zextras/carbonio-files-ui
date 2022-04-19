@@ -103,6 +103,10 @@ describe('Search view', () => {
 				expect.anything()
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
+			act(() => {
+				// run timers of displayer
+				jest.runOnlyPendingTimers();
+			});
 		});
 
 		test('When user select shared, shared_by_me param is set', async () => {
@@ -163,6 +167,10 @@ describe('Search view', () => {
 				expect.anything()
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
+			act(() => {
+				// run timers of displayer
+				jest.runOnlyPendingTimers();
+			});
 		});
 
 		test('When user choose a folder and the sub-folders param, folder_id and cascade are set', async () => {
@@ -250,6 +258,10 @@ describe('Search view', () => {
 				expect.anything(),
 				expect.anything()
 			);
+			act(() => {
+				// run timers of displayer
+				jest.runOnlyPendingTimers();
+			});
 		});
 
 		test('When user choose a folder but not the sub-folders param, folder_id is set with selected folder id and cascade is set to false', async () => {
@@ -333,6 +345,10 @@ describe('Search view', () => {
 				expect.anything(),
 				expect.anything()
 			);
+			act(() => {
+				// run timers of displayer
+				jest.runOnlyPendingTimers();
+			});
 		});
 
 		test('When user types some keyword, keywords param is set with new keywords', async () => {
@@ -408,6 +424,10 @@ describe('Search view', () => {
 				expect.anything()
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
+			act(() => {
+				// run timers of displayer
+				jest.runOnlyPendingTimers();
+			});
 		});
 
 		test('All advanced filters together', async () => {
@@ -547,7 +567,11 @@ describe('Search view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
+			expect(screen.getByRole('button', { name: /4 advanced filter/i })).toBeVisible();
+			act(() => {
+				// run timers of displayer
+				jest.runOnlyPendingTimers();
+			});
 		});
 
 		test('search action run a search and results are shown in the list', async () => {
@@ -595,6 +619,10 @@ describe('Search view', () => {
 			await screen.findByText(nodes[0].name);
 			expect(screen.getByText(nodes[0].name)).toBeVisible();
 			expect(screen.getByText(nodes[nodes.length - 1].name)).toBeVisible();
+			act(() => {
+				// run timers of displayer
+				jest.runOnlyPendingTimers();
+			});
 		});
 
 		test('Close modal action does not run a search', async () => {
