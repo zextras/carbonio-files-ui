@@ -78,7 +78,9 @@
         "decreaseYourOwnSharePermissions": {
             "button": {
                 "confirm": "Bevestigen"
-            }
+            },
+            "header": "Verminder uw huidige rechten",
+            "body": "Ben je zeker dat je de rechten op deze node wil verminderen? De actie is permanent en je zal niet in staat zijn om de rechten van de vorige share zelf te herstellen. Je kan altijd contact opnemen met de eigenaar van het gedeelde item als je de vorige rechten wil herstellen"
         }
     },
     "primaryBar": {
@@ -153,6 +155,14 @@
         "clipboard": {
             "email": "E-mailadres gekopieerd",
             "itemShortcutCopied": "Item snelkoppeling gekopieerd"
+        },
+        "version": {
+            "keepForeverRemoved": "\"Voor altijd bewaren\" verwijderd",
+            "clone": "Versie gekloond als de huidige",
+            "keepForeverAdded": "Versie gemarkeerd als voor altijd te bewaren"
+        },
+        "decreaseYourOwnShare": {
+            "success": "Rechten met succes bijgewerkt"
         }
     },
     "create": {
@@ -173,14 +183,19 @@
             "displayerContent": "Deze map heeft geen inhoud"
         },
         "filter": {
-            "hint": "Het lijkt erop dat er hier niets is."
+            "hint": "Het lijkt erop dat er hier niets is.",
+            "flagged": "Er zijn geen gemarkeerde items.",
+            "sharedWithMe": "Er zijn nog geen items met u gedeeld.",
+            "trash": "De prullenbak is leeg.",
+            "sharedByMe": "U hebt nog geen item gedeeld met uw medewerkers."
         },
         "search": {
             "hint": "Uw zoekopdracht kwam niet overeen met bestanden of mappen",
             "noResults": [
-                "Geen van uw items komt overeen met uw zoekopdracht.",
+                "Geen van uw items komt overeen met uw zoekopdracht!",
                 "Geen van uw items komt overeen met uw zoekopdracht."
-            ]
+            ],
+            "notRun": "Er is nog geen zoekopdracht uitgevoerd."
         }
     },
     "node": {
@@ -200,7 +215,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "Verplaatsen"
+                    "confirm": "Verplaatsen",
+                    "tooltip": {
+                        "confirm": "U kunt deze actie hier niet uitvoeren"
+                    }
                 },
                 "input": {
                     "filter": "Mappen filteren"
@@ -219,7 +237,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Kopieren"
+                    "confirm": "Kopieren",
+                    "tooltip": {
+                        "confirm": "U kunt deze actie hier niet uitvoeren"
+                    }
                 },
                 "title": "{{node.name}} kopiëren",
                 "title_plurals": "Items kopiëren",
@@ -241,7 +262,7 @@
         "download": "Downloaden",
         "markForDeletion": "Voor verwijdering markeren",
         "move": "Verplaatsen",
-        "openWithDocs": "Openen met Docs",
+        "openWithDocs": "Document openen",
         "rename": "Naam veranderen",
         "copy": "Kopieren",
         "restore": "Herstellen",
@@ -274,7 +295,9 @@
             },
             "copyShortcut": "snelkoppeling van het item kopiëren",
             "missingDescription": "Klik op de bewerkknop om een beschrijving toe te voegen",
-            "owner": "Eigenaar"
+            "owner": "Eigenaar",
+            "collaboratorsTooltip": "De lijst van medewerkers bekijken",
+            "sendMailTo": "E-mail sturen naar: {{email}}"
         },
         "list": {
             "you": "U"
@@ -334,11 +357,16 @@
         },
         "search_empty": [
             {
-                "message": "Of selecteer \"Geavanceerde filters\" om uw zoekopdracht te verfijnen."
+                "message": "Of selecteer \"Geavanceerde filters\" om uw zoekopdracht te verfijnen.",
+                "title": "Start een andere zoekopdracht."
             },
-            {},
             {
-                "message": "Probeer een andere zoekopdracht te starten."
+                "message": "Geef niet op, blijf zoeken!",
+                "title": "Geen resultaten."
+            },
+            {
+                "message": "Probeer een andere zoekopdracht te starten.",
+                "title": "Het spijt ons maar er zijn geen resultaten voor uw zoekopdracht."
             },
             {
                 "message": "Controleer de spelling en de opties van de filters of probeer het met een ander trefwoord.",
@@ -355,15 +383,158 @@
                 "deleteVersion": "Versie verwijderen",
                 "downloadVersion": "Download-versie",
                 "keepVersion": "Bewaar deze versie voor altijd",
-                "removeKeepVersion": "Verwijder voor altijd bewaren"
+                "removeKeepVersion": "Verwijder voor altijd bewaren",
+                "cloneAsCurrent": "Als huidige clonen",
+                "openDocumentVersion": "Documentversie openen"
             },
             "button": {
-                "upload": "Uploadversie"
+                "upload": "Uploadversie",
+                "purgeAllVersions": "Alle versies verwijderen"
             },
             "rowHeaders": {
                 "currentVersion": "Huidige versie",
-                "lastWeek": "Vorige week"
+                "lastWeek": "Vorige week",
+                "olderVersions": "Oudere versies"
+            },
+            "mainHint": "U kunt handmatig elke bestandsversie verwijderen of een versie terugzetten als de huidige versie. Selecteer een of meer versies die u voor altijd wilt bewaren.",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Gekloond van versie {{versionNumber}} ({{cloneDate}})",
+                    "tooltip2": "Gekloond van versie {{versionNumber}} (geschrapte versie)"
+                },
+                "versionNumber": "Versie {{versionNumber}}"
             }
+        },
+        "filter": {
+            "flagged_empty": [
+                {
+                    "title": "Klik op de vlag om een item te markeren.",
+                    "message": "U zal het hier vinden wanneer u het nodig heeft."
+                },
+                {
+                    "message": "Ze zullen hier vermeld staan.",
+                    "title": "Markeer uw belangrijkste items door op de vlag te klikken."
+                }
+            ],
+            "flagged_full": [
+                {
+                    "message": "U zal het hier vinden wanneer u het nodig heeft.",
+                    "title": "Klik op de vlag om een item te markeren."
+                },
+                {
+                    "message": "Ze zullen hier vermeld staan.",
+                    "title": "Markeer uw belangrijkste items door op de vlag te klikken."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "message": "Selecteer een item om verder te gaan.",
+                    "title": "Bekijk en bewerk de items die u met uw contacten hebt gedeeld."
+                },
+                {
+                    "message": "Klik op een item om het te selecteren.",
+                    "title": "Bekijk details van mappen die u hebt gedeeld."
+                },
+                {
+                    "message": "Klik op een item om het te selecteren.",
+                    "title": "Hier vindt u alle items die u met uw contacten hebt gedeeld."
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "message": "Selecteer een item om verder te gaan.",
+                    "title": "Bekijk en bewerk de items die u met uw contacten hebt gedeeld."
+                },
+                {
+                    "message": "Klik op een item om het te selecteren.",
+                    "title": "Bekijk details van mappen die u hebt gedeeld."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "Klik op de knop \"NIEUW\" om een nieuw document te maken en het met uw contacten te delen.",
+                    "title": "Er zijn nog geen items met u gedeeld."
+                },
+                {
+                    "title": "Klik op de knop \"NIEUW\" en maak een nieuwe e-mail aan.",
+                    "message": "Laat andere gebruikers weten dat u bereid bent om met hen samen te werken."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "message": "Klik op een item om het te selecteren.",
+                    "title": "Begin met het bewerken en delen van uw bestanden."
+                },
+                {
+                    "message": "Klik op een item om het te selecteren.",
+                    "title": "Bekijk de details van uw mappen en deel ze met uw contacten."
+                },
+                {
+                    "title": "Selecteer een item en begin er samen met andere gebruikers aan te werken."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "message": "Klik op het prullenbakicoon om een item te verwijderen.",
+                    "title": "Verplaats alles wat u niet nodig hebt naar de prullenbak."
+                },
+                {
+                    "title": "De prullenbak is leeg.",
+                    "message": "Klik op het prullenbakicoon om een item te verwijderen."
+                },
+                {
+                    "title": "Houd uw werkruimte schoon: verwijder alle items die u niet meer nodig hebt."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Selecteer en herstel uw documenten die zich nu in de prullenbak bevinden."
+                },
+                {
+                    "message": "Selecteer een item om het te herstellen of definitief te verwijderen.",
+                    "title": "Er is niets verloren!"
+                },
+                {
+                    "message": "Of, indien mogelijk, selecteer het en herstel het in zijn oorspronkelijke map.",
+                    "title": "Selecteer een item om het definitief te verwijderen."
+                }
+            ]
+        },
+        "folder_empty": [
+            {
+                "title": "Klik op de knop \"NIEUW\" om een nieuw item te maken en het met uw contacten te delen."
+            },
+            {
+                "message": "Maak een nieuwe bestand aan door op de knop \"NIEUW\" te klikken",
+                "title": "Begin met het bewerken en delen van uw werk."
+            },
+            {
+                "message": "U kunt het bewerken, markeren en delen.",
+                "title": "Klik op de knop \"NIEUW\" om een nieuw item te creëren."
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "Klik op een item om het te selecteren.",
+                "title": "Begin met het bewerken en delen van uw bestanden."
+            },
+            {
+                "title": "Bekijk de details van uw mappen en deel ze met uw contacten.",
+                "message": "Klik op een item om het te selecteren."
+            },
+            {
+                "title": "Selecteer een map om deze te bewerken of een andere naam te geven."
+            },
+            {
+                "title": "Geef uw contactpersonen bewerkingsrechten om hen een item te laten bewerken.",
+                "message": "Selecteer het item en ga dan naar het tabblad \"Gedeelde items\""
+            },
+            {
+                "title": "Selecteer een item om te delen of verplaats het naar een andere map."
+            }
+        ],
+        "search": {
+            "title": "Typ enkele trefwoorden om een zoekopdracht te starten."
         }
     },
     "search": {
@@ -510,7 +681,8 @@
         "code_SHARE_CREATION_ERROR": "Het spijt ons, maar het is niet mogelijk om het item te delen met deze gebruiker",
         "code_SHARE_NOT_FOUND": "Het spijt ons, maar dit aandeel kan niet gevonden worden",
         "code_FILE_VERSION_NOT_FOUND": "Het spijt ons, maar deze versie van het bestand kan niet gevonden worden",
-        "code_NODE_NOT_FOUND": "Het lijkt erop dat dit object niet bestaat, of dat je geen toestemming hebt om het te openen"
+        "code_NODE_NOT_FOUND": "Het lijkt erop dat dit object niet bestaat, of dat je geen toestemming hebt om het te openen",
+        "code_NODE_DUPLICATED": "Er is een bestand met dezelfde naam in deze map"
     },
     "publicLink": {
         "addLink": {

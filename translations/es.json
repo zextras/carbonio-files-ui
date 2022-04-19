@@ -70,7 +70,9 @@
         "decreaseYourOwnSharePermissions": {
             "button": {
                 "confirm": "Confirmar"
-            }
+            },
+            "body": "¿Seguro que quieres reducir tus derechos en este nodo? Esta acción es permanente y no podrás restaurar los derechos de compartición anteriores por ti mismo. Siempre puedes contactar con el propietario del elemento compartido si necesitas restaurar la versión anterior",
+            "header": "Reducir tus derechos actuales"
         }
     },
     "node": {
@@ -96,7 +98,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Copiar"
+                    "confirm": "Copiar",
+                    "tooltip": {
+                        "confirm": "No puedes realizar esta acción aquí"
+                    }
                 },
                 "title": "Copiar {{node.name}}",
                 "title_plurals": "Copiar elementos",
@@ -106,7 +111,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "Mover"
+                    "confirm": "Mover",
+                    "tooltip": {
+                        "confirm": "No puedes realizar esta acción aquí"
+                    }
                 },
                 "input": {
                     "filter": "Filtrar carpetas"
@@ -198,6 +206,14 @@
         "clipboard": {
             "email": "Dirección email copiada",
             "itemShortcutCopied": "Atajo del elemento copiado"
+        },
+        "decreaseYourOwnShare": {
+            "success": "Derechos actualizados con éxito"
+        },
+        "version": {
+            "clone": "Versión clonada como versión actual",
+            "keepForeverAdded": "Versión marcada para guardarla para siempre",
+            "keepForeverRemoved": "\"Mantener para siempre\" eliminado"
         }
     },
     "create": {
@@ -218,14 +234,19 @@
             "displayerContent": "Esta carpeta no tiene contenido"
         },
         "filter": {
-            "hint": "Parece que no hay nada aquí."
+            "hint": "Parece que no hay nada aquí.",
+            "flagged": "No hay elementos marcados.",
+            "sharedByMe": "Aún no has compartido ningún elemento con tus colaboradores.",
+            "sharedWithMe": "Aún no hay elementos compartidos contigo.",
+            "trash": "La papelera está vacía."
         },
         "search": {
             "hint": "Tu búsqueda no coincidió con ningún archivo ni carpeta",
             "noResults": [
                 "Ninguno de tus elementos coincide con tu búsqueda.",
                 "Ninguno de tus elementos coincide con tu búsqueda."
-            ]
+            ],
+            "notRun": "Aún no se ha realizado ninguna búsqueda."
         }
     },
     "filter": {
@@ -336,11 +357,16 @@
         },
         "search_empty": [
             {
-                "message": "O elige \"Filtros avanzados\" para refinar tu búsqueda."
+                "message": "O elige \"Filtros avanzados\" para refinar tu búsqueda.",
+                "title": "Iniciar otra búsqueda."
             },
-            {},
             {
-                "message": "Prueba a iniciar otra búsqueda."
+                "message": "¡No te rindas, sigue buscando!",
+                "title": "Sin resultados."
+            },
+            {
+                "message": "Prueba a iniciar otra búsqueda.",
+                "title": "Lo sentimos pero no hay resultados para tu búsqueda."
             },
             {
                 "title": "No hay resultados para tu búsqueda.",
@@ -352,14 +378,26 @@
                 "deleteVersion": "Eliminar versión",
                 "downloadVersion": "Descargar versión",
                 "keepVersion": "Mantener esta versión para siempre",
-                "removeKeepVersion": "Deshacer mantener para siempre"
+                "removeKeepVersion": "Deshacer mantener para siempre",
+                "cloneAsCurrent": "Clonar como actual",
+                "openDocumentVersion": "Abrir versión del documento"
             },
             "button": {
-                "upload": "Cargar versión"
+                "upload": "Cargar versión",
+                "purgeAllVersions": "Eliminar todas las versiones"
             },
             "rowHeaders": {
                 "currentVersion": "Versión actual",
-                "lastWeek": "Última semana"
+                "lastWeek": "Última semana",
+                "olderVersions": "Versiones anteriores"
+            },
+            "mainHint": "Puedes borrar manualmente cualquier versión de un archivo o restaurar una anterior como versión actual. Elige una o más versiones que quieras conservar para siempre.",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Clonada de la versión {{versionNumber}} ({{cloneDate}})",
+                    "tooltip2": "Clonada de la versión {{versionNumber}} (versión borrada)"
+                },
+                "versionNumber": "Versión {{versionNumber}}"
             }
         },
         "search_full": [
@@ -377,7 +415,126 @@
                     "message": "Se listarán aquí.",
                     "title": "Coloca una marca de seguimiento a los items más importantes haciendo clic en la bandera."
                 }
+            ],
+            "flagged_full": [
+                {
+                    "message": "Lo encontrarás aquí cuando lo necesites.",
+                    "title": "Haz clic en la bandera para marcar un elemento."
+                },
+                {
+                    "message": "Se listarán aquí.",
+                    "title": "Coloca una marca de seguimiento a los items más importantes haciendo clic en la bandera."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "message": "Elige un objeto para proceder.",
+                    "title": "Revisa y edita los elementos compartidos con tus contactos."
+                },
+                {
+                    "message": "Haz clic sobre un elemento para seleccionarlo.",
+                    "title": "Ver los detalles de las carpetas que has compartido."
+                },
+                {
+                    "message": "Haz clic sobre un elemento para seleccionarlo.",
+                    "title": "Encuentra aquí todos los elementos que has compartido con tus contactos."
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "message": "Elegir un elemento para proceder.",
+                    "title": "Revisa y edita los elementos que has compartido con tus contactos."
+                },
+                {
+                    "message": "Haz clic en un elemento para seleccionarlo.",
+                    "title": "Ver detalles de las carpetas que has compartido."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "Haz clic en el botón \"NUEVO\" para crear un documento nuevo y compartirlo con tus contactos.",
+                    "title": "Aún no hay elementos compartidos contigo."
+                },
+                {
+                    "title": "Haz clic en el botón \"NUEVO\" y crea un correo electrónico nuevo.",
+                    "message": "Hacer saber a los otros usuarios que estás preparado para colaborar con ellos."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "message": "Haz clic sobre un elemento para seleccionarlo.",
+                    "title": "Empieza a editar y a compartir tus archivos."
+                },
+                {
+                    "message": "Haz clic en un elemento para seleccionarlo.",
+                    "title": "Ver los detalles de tus carpetas y compartirlos con tus contactos."
+                },
+                {
+                    "title": "Elige un elemento y empieza a trabajar en él con otros usuarios."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "title": "Mueve a la papelera todo lo que no necesitas.",
+                    "message": "Haz clic en el icono de la papelera para borrar un artículo."
+                },
+                {
+                    "message": "Haz clic en el icono de la papelera para borrar un elemento.",
+                    "title": "La papelera está vacía."
+                },
+                {
+                    "title": "Mantén limpio tu espacio de trabajo: borra todos los elementos que ya no necesites."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Elige y restaura tus documentos que están ahora en la papelera."
+                },
+                {
+                    "message": "Elige un artículo para restaurarlo o borrarlo permanentemente.",
+                    "title": "¡Nada está perdido!"
+                },
+                {
+                    "message": "O, cuando sea posible, selecciónalo y restáuralo a su carpeta original.",
+                    "title": "Elige un elemento para borrarlo permanentemente."
+                }
             ]
+        },
+        "folder_empty": [
+            {
+                "title": "Haz clic en el botón \"NUEVO\" para crear un nuevo artículo y compartirlo con tus contactos."
+            },
+            {
+                "title": "Empieza editando y compartiendo tus trabajos.",
+                "message": "Crea un archivo haciendo clic en el botón \"NUEVO\""
+            },
+            {
+                "title": "Haz clic en el botón \"NUEVO\" para crear un artículo nuevo.",
+                "message": "Podrás editarlo, marcarlo y compartirlo."
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "Haz clic en un artículo para seleccionarlo.",
+                "title": "Empieza por editar y compartir tus archivos."
+            },
+            {
+                "message": "Haz clic sobre un artículo para seleccionarlo.",
+                "title": "Ver los detalles de tus carpetas y compartirlos con tus contactos."
+            },
+            {
+                "title": "Elige una carpeta para editarla o renombrarla."
+            },
+            {
+                "title": "Otorga permisos de edición a tus contactos para permitirles editar un elemento.",
+                "message": "Elige el elemento y luego ve a la pestaña \"Comparticiones\""
+            },
+            {
+                "title": "Elige un elemento para compartirlo o moverlo a otra carpeta."
+            }
+        ],
+        "search": {
+            "title": "Introduce algunas palabras clave para iniciar una búsqueda."
         }
     },
     "search": {
@@ -419,7 +576,7 @@
                 },
                 "flagged": {
                     "label": "Marcado",
-                    "description": "Filtrar los resultados por los elementos que has etiquetado"
+                    "description": "Filtrar los resultados por los elementos que has marcado"
                 },
                 "folder": {
                     "modal": {
@@ -524,7 +681,8 @@
         "code_NODE_NOT_FOUND": "Parece que este objeto no existe, o no tienes permiso para acceder al mismo",
         "code_NODE_WRITE_ERROR": "Parece que este objeto no puede ser editado o que no tienes permiso para editarlo",
         "code_SHARE_CREATION_ERROR": "Lo sentimos, pero no es posible compartir el elemento con este usuario",
-        "code_SHARE_NOT_FOUND": "Lo sentimos, pero esta compartición no puede ser encontrada"
+        "code_SHARE_NOT_FOUND": "Lo sentimos, pero esta compartición no puede ser encontrada",
+        "code_NODE_DUPLICATED": "Hay un archivo con el mismo nombre en esta carpeta"
     },
     "publicLink": {
         "addLink": {

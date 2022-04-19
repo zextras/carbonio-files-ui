@@ -81,7 +81,9 @@
         "decreaseYourOwnSharePermissions": {
             "button": {
                 "confirm": "Konfirmasi"
-            }
+            },
+            "body": "Apakah Anda yakin untuk mengurangi hak Anda pada node ini? Tindakan ini bersifat permanen dan Anda tidak akan dapat memulihkan hak berbagi sebelumnya sendiri. Anda selalu dapat menghubungi pemilik item bersama jika memerlukan izin sebelumnya untuk dipulihkan",
+            "header": "Kurangi hak saat ini"
         }
     },
     "node": {
@@ -107,7 +109,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Salin"
+                    "confirm": "Salin",
+                    "tooltip": {
+                        "confirm": "Anda tidak dapat melakukan tindakan ini di sini"
+                    }
                 },
                 "title": "Salin {{node.name}}",
                 "title_plurals": "Salin item",
@@ -117,7 +122,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "Pindahkan"
+                    "confirm": "Pindahkan",
+                    "tooltip": {
+                        "confirm": "Anda tidak dapat melakukan tindakan ini di sini"
+                    }
                 },
                 "input": {
                     "filter": "Filter folder"
@@ -209,6 +217,14 @@
         "clipboard": {
             "email": "Alamat email disalin",
             "itemShortcutCopied": "Pintasan item disalin"
+        },
+        "decreaseYourOwnShare": {
+            "success": "Hak berhasil diperbarui"
+        },
+        "version": {
+            "clone": "Versi digandakan sebagai saat ini",
+            "keepForeverAdded": "Versi ditandai untuk disimpan selamanya",
+            "keepForeverRemoved": "\"Simpan selamanya\" dihapus"
         }
     },
     "empty": {
@@ -218,14 +234,19 @@
             "displayerContent": "Folder ini tidak memiliki konten"
         },
         "filter": {
-            "hint": "Sepertinya tidak ada apa pun di sini."
+            "hint": "Sepertinya tidak ada apa pun di sini.",
+            "flagged": "Tidak ada item yang ditandai bendera.",
+            "sharedByMe": "Anda belum berbagi item apa pun dengan kolaborator.",
+            "sharedWithMe": "Tidak ada item yang dibagikan kepada Anda.",
+            "trash": "Sampah kosong."
         },
         "search": {
             "hint": "Pencarian Anda tidak cocok dengan file atau folder apa pun",
             "noResults": [
-                "Tak ada item yang cocok dengan pencarian Anda.",
+                "Tidak ada hasil. Terus mencari!",
                 "Tak ada item yang cocok dengan pencarian Anda."
-            ]
+            ],
+            "notRun": "Tidak ada pencarian yang dilakukan."
         }
     },
     "filter": {
@@ -242,7 +263,7 @@
         "download": "Unduh",
         "markForDeletion": "Tandai untuk dihapus",
         "move": "Pindahkan",
-        "openWithDocs": "Buka dengan Docs",
+        "openWithDocs": "Buka dokumen",
         "rename": "Ganti nama",
         "restore": "Pulihkan",
         "deletePermanently": "Hapus Secara Permanen",
@@ -316,7 +337,9 @@
             },
             "copyShortcut": "salin pintasan item",
             "missingDescription": "Klik tombol edit untuk menambahkan deskripsi",
-            "owner": "Pemilik"
+            "owner": "Pemilik",
+            "collaboratorsTooltip": "Lihat daftar kolaborator",
+            "sendMailTo": "Kirim email ke: {{email}}"
         },
         "tabs": {
             "details": "Detail",
@@ -334,11 +357,16 @@
         },
         "search_empty": [
             {
-                "message": "Atau pilih \"Filter Lanjutan\" untuk mempersempit pencarian."
+                "message": "Atau pilih \"Filter Lanjutan\" untuk mempersempit pencarian.",
+                "title": "Mulai pencarian lain."
             },
-            {},
             {
-                "message": "Coba mulai pencarian lain."
+                "message": "Jangan menyerah, teruslah mencari!",
+                "title": "Tidak ada hasil."
+            },
+            {
+                "message": "Coba mulai pencarian lain.",
+                "title": "Maaf, tidak ada hasil untuk pencarian Anda."
             },
             {
                 "message": "Perika ejaan dan opsi filter atau coba dengan kata kunci lain.",
@@ -355,15 +383,158 @@
                 "deleteVersion": "Hapus versi",
                 "downloadVersion": "Unduh versi",
                 "keepVersion": "Pertahankan versi ini seterusnya",
-                "removeKeepVersion": "Hapus pertahankan seterusnya"
+                "removeKeepVersion": "Hapus pertahankan seterusnya",
+                "cloneAsCurrent": "Gandakan sebagai saat ini",
+                "openDocumentVersion": "Buka versi dokumen"
             },
             "button": {
-                "upload": "Unggah versi"
+                "upload": "Unggah versi",
+                "purgeAllVersions": "Hapus semua versi"
             },
             "rowHeaders": {
                 "currentVersion": "Versi saat ini",
-                "lastWeek": "Minggu lalu"
+                "lastWeek": "Minggu lalu",
+                "olderVersions": "Versi lama"
+            },
+            "mainHint": "Anda dapat menghapus versi file apa pun secara manual atau memulihkannya sebagai versi saat ini. Pilih satu atau beberapa versi yang ingin disimpan selamanya.",
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Digandakan dari versi {{versionNumber}} ({{cloneDate}})",
+                    "tooltip2": "Digandakan dari versi {{versionNumber}} (version deleted)"
+                },
+                "versionNumber": "Versi {{versionNumber}}"
             }
+        },
+        "filter": {
+            "flagged_empty": [
+                {
+                    "message": "Anda akan menemukannya di sini kapan pun Anda membutuhkannya.",
+                    "title": "Klik bendera untuk menandai item."
+                },
+                {
+                    "message": "Mereka akan dicantumkan di sini.",
+                    "title": "Beri bendera item terpenting Anda dengan mengklik bendera."
+                }
+            ],
+            "flagged_full": [
+                {
+                    "message": "Anda akan menemukannya di sini kapan pun Anda membutuhkannya.",
+                    "title": "Klik bendera untuk menandai item."
+                },
+                {
+                    "message": "Mereka akan dicantumkan di sini.",
+                    "title": "Beri bendera item terpenting Anda dengan mengklik bendera."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "message": "Pilih item untuk melanjutkan.",
+                    "title": "Tinjau dan edit item yang telah dibagikan ke kontak Anda."
+                },
+                {
+                    "title": "Lihat detail folder yang telah dibagikan.",
+                    "message": "Klik item untuk memilihnya."
+                },
+                {
+                    "message": "Klik item untuk memilihnya.",
+                    "title": "Temukan di sini semua item yang dibagikan dengan kontak Anda."
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "title": "Tinjau dan edit item yang telah dibagikan dengan kontak Anda.",
+                    "message": "Pilih item untuk melanjutkan."
+                },
+                {
+                    "message": "Klik item untuk memilihnya.",
+                    "title": "Lihat detail folder yang telah dibagikan."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "Klik tombol \"BARU\" untuk membuat dokumen baru dan bagikan dengan kontak Anda.",
+                    "title": "Tidak ada item yang belum dibagikan dengan Anda."
+                },
+                {
+                    "message": "Izinkan orang lain tahu bahwa Anda sudah siap berkolaborasi dengan mereka.",
+                    "title": "Klik tombol \"BARU\" dan buat email baru."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "message": "Klik item untuk memilihnya.",
+                    "title": "Mulai mengedit dan berbagi file."
+                },
+                {
+                    "message": "Klik item untuk memilihnya.",
+                    "title": "Lihat detail folder dan berbagi dengan kontak Anda."
+                },
+                {
+                    "title": "Pilih item dan mulailah bekerja dengan pengguna lain."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "message": "Klik ikon sampah untuk menghapus item.",
+                    "title": "Pindahkan ke sampah semua yang tidak Anda perlukan."
+                },
+                {
+                    "message": "Klik ikon sampah untuk menghapus item.",
+                    "title": "Sampah kosong."
+                },
+                {
+                    "title": "Buat ruang kerja bersih: hapus semua item yang tidak diperlukan lagi."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Pilih dan pulihkan dokumen Anda yang kini sedang ada di sampah."
+                },
+                {
+                    "message": "Pilih item untuk memulihkan atau menghapus permanen.",
+                    "title": "Tidak ada yang hilang!"
+                },
+                {
+                    "message": "Atau, jika memungkinkan, pilih dan pulihkan di folder aslinya.",
+                    "title": "Pilih item untuk menghapusnya permanen."
+                }
+            ]
+        },
+        "folder_empty": [
+            {
+                "title": "Klik tombol \"BARU\" untuk membuat item baru dan membagikannya kepada kontak Anda."
+            },
+            {
+                "message": "Buat file dengan mengklik tombol \"BARU\"",
+                "title": "Mulai mengedit dan berbagi pekerjaan Anda."
+            },
+            {
+                "title": "Klik tombol \"BARU\" untuk membuat item baru.",
+                "message": "Anda akan bisa mengedit, memberi bendera, dan membagikannya."
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "Klik item untuk memilihnya.",
+                "title": "Mulai mengedit dan berbagi file."
+            },
+            {
+                "message": "Klik item untuk memilihnya.",
+                "title": "Liaht detail folder Anda dan bagikan dengan kontak Anda."
+            },
+            {
+                "title": "Pilih folder untuk mengedit atau mengganti namanya."
+            },
+            {
+                "message": "Pilih item, lalu buka tab \"Berbagi\"",
+                "title": "Berikan kontak Anda dengan mengedit untuk mengizinkan mereka mengedit item."
+            },
+            {
+                "title": "Pilih item untuk dibagikan atau pindahkan ke folder lain."
+            }
+        ],
+        "search": {
+            "title": "Ketik beberapa kata kunci untuk mulai mencari."
         }
     },
     "search": {
@@ -539,7 +710,8 @@
         "code_NODE_NOT_FOUND": "Tampaknya objek ini tidak ada atau Anda tidak memiliki izin mengaksesnya",
         "code_NODE_WRITE_ERROR": "Tampaknya objek ini tidak dapat diedit atau Anda tidak memiliki izin mengeditnya",
         "code_SHARE_CREATION_ERROR": "Maaf, Anda tidak bisa berbagi item dengan pengguna ini",
-        "code_SHARE_NOT_FOUND": "Maaf, berbagi ini tidak ditemukan"
+        "code_SHARE_NOT_FOUND": "Maaf, berbagi ini tidak ditemukan",
+        "code_NODE_DUPLICATED": "Ada file dengan nama yang sama di folder ini"
     },
     "breadcrumb": {
         "expander": {
