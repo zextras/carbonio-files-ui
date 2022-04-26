@@ -27,5 +27,6 @@ export const ACTION_IDS = {
 } as const;
 
 export const FUNCTION_IDS = {
-	UPLOAD_TO_TARGET_AND_GET_TARGET_ID: 'upload-to-target-and-get-target-id'
+	UPLOAD_TO_TARGET_AND_GET_TARGET_ID: 'upload-to-target-and-get-target-id',
+	GET_LINK: 'get-link'
 } as const;
