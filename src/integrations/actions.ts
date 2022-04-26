@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-// eslint-disable-next-line import/no-unresolved
 import { getAction, Action } from '@zextras/carbonio-shell-ui';
 
 import { OneOrMany } from '../carbonio-files-ui-common/types/utils';

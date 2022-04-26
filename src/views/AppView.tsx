@@ -6,7 +6,6 @@
 
 import React, { lazy, Suspense } from 'react';
 
-// eslint-disable-next-line import/no-unresolved
 import { Spinner } from '@zextras/carbonio-shell-ui';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 

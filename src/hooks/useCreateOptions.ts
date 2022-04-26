@@ -6,7 +6,6 @@
 
 import { useCallback } from 'react';
 
-// eslint-disable-next-line import/no-unresolved
 import {
 	ACTION_TYPES,
 	ActionFactory,
