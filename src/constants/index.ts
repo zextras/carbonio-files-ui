@@ -18,7 +18,12 @@ export const ACTION_TYPES: typeof SHELL_ACTION_TYPES = {
 } as const;
 
 export const ACTION_IDS = {
-	SELECT_NODES: 'files-select-nodes'
+	SELECT_NODES: 'files-select-nodes',
+	UPLOAD_FILE: 'upload-file',
+	CREATE_FOLDER: 'create-folder',
+	CREATE_DOCS_DOCUMENT: 'create-docs-document',
+	CREATE_DOCS_SPREADSHEET: 'create-docs-spreadsheet',
+	CREATE_DOCS_PRESENTATION: 'create-docs-presentation'
 } as const;
 
 export const FUNCTION_IDS = {
