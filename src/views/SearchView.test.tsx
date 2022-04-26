@@ -24,7 +24,8 @@ import SearchView from './SearchView';
 
 jest.mock('../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn()
+		setCreateOptions: jest.fn(),
+		removeCreateOptions: jest.fn()
 	})
 }));
 
