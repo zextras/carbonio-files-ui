@@ -32,14 +32,19 @@
             "displayerContent": "Esta pasta não possui conteúdo"
         },
         "filter": {
-            "hint": "Parece que não há nada aqui."
+            "hint": "Parece que não há nada aqui.",
+            "sharedByMe": "Você ainda não compartilhou nenhum item com seus colaboradores.",
+            "trash": "A lixeira está vazia.",
+            "flagged": "Não existem itens sinalizados.",
+            "sharedWithMe": "Ainda não há itens compartilhados com você."
         },
         "search": {
             "hint": "Sua busca não coincide com nenhum arquivo ou pasta",
             "noResults": [
                 "Nenhum dos seus itens corresponde à sua busca.",
                 "Nenhum dos seus itens corresponde à sua busca."
-            ]
+            ],
+            "notRun": "Ainda não foi feita nenhuma busca."
         }
     },
     "filter": {
@@ -118,7 +123,9 @@
         "decreaseYourOwnSharePermissions": {
             "button": {
                 "confirm": "Confirmar"
-            }
+            },
+            "header": "Diminuir seus direitos atuais",
+            "body": "Tem certeza de diminuir seus direitos neste nó? A ação é permanente e você não poderá restaurar sozinho os direitos do compartilhamento anterior. Você sempre pode entrar em contato com o proprietário do item compartilhado caso precise que a permissão anterior seja restaurada"
         },
         "close": {
             "tooltip": "Fechar"
@@ -141,7 +148,10 @@
         "copy": {
             "modal": {
                 "button": {
-                    "confirm": "Copiar"
+                    "confirm": "Copiar",
+                    "tooltip": {
+                        "confirm": "Você não pode realizar esta ação aqui"
+                    }
                 },
                 "title": "Copiar {{node.name}}",
                 "title_plurals": "Copiar itens",
@@ -157,7 +167,10 @@
         "move": {
             "modal": {
                 "button": {
-                    "confirm": "Mover"
+                    "confirm": "Mover",
+                    "tooltip": {
+                        "confirm": "Você não pode realizar esta ação aqui"
+                    }
                 },
                 "input": {
                     "filter": "Filtrar pastas"
@@ -234,6 +247,14 @@
         "clipboard": {
             "email": "Endereço de e-mail copiado",
             "itemShortcutCopied": "Atalho do item copiado"
+        },
+        "version": {
+            "clone": "Versão clonada como a versão atual",
+            "keepForeverAdded": "Versão marcada para ser guardada para sempre",
+            "keepForeverRemoved": "\"Guardar para sempre\" removido"
+        },
+        "decreaseYourOwnShare": {
+            "success": "Direitos atualizados com sucesso"
         }
     },
     "actions": {
@@ -241,7 +262,7 @@
         "download": "Download",
         "markForDeletion": "Excluir",
         "move": "Mover",
-        "openWithDocs": "Abrir com o Docs",
+        "openWithDocs": "Abrir documento",
         "copy": "Copiar",
         "rename": "Renomear",
         "restore": "Restaurar",
@@ -337,7 +358,9 @@
             },
             "missingDescription": "Clique no botão de edição para adicionar uma descrição",
             "copyShortcut": "copiar atalho do item",
-            "owner": "Proprietário"
+            "owner": "Proprietário",
+            "sendMailTo": "Enviar e-mail para: {{email}}",
+            "collaboratorsTooltip": "Ver lista de colaboradores"
         },
         "list": {
             "you": "Você"
@@ -397,11 +420,16 @@
         },
         "search_empty": [
             {
-                "message": "Ou selecione \"Filtros Avançados\" para refinar sua busca."
+                "message": "Ou selecione \"Filtros Avançados\" para refinar sua busca.",
+                "title": "Inicie outra busca."
             },
-            {},
             {
-                "message": "Tente iniciar uma nova busca."
+                "message": "Não desista, continue procurando!",
+                "title": "Nenhum resultado."
+            },
+            {
+                "message": "Tente iniciar uma nova busca.",
+                "title": "Desculpe, mas não existem resultados para sua busca."
             },
             {
                 "message": "Verifique a ortografia e as opções de filtros ou experimente uma nova palavra-chave.",
@@ -413,19 +441,162 @@
                 "keepVersion": "Manter esta versão para sempre",
                 "removeKeepVersion": "Remover manter para sempre",
                 "deleteVersion": "Excluir versão",
-                "downloadVersion": "Baixar versão"
+                "downloadVersion": "Baixar versão",
+                "cloneAsCurrent": "Clonar como atual",
+                "openDocumentVersion": "Abrir versão do documento"
             },
             "rowHeaders": {
                 "currentVersion": "Versão atual",
-                "lastWeek": "Última semana"
+                "lastWeek": "Última semana",
+                "olderVersions": "Versões antigas"
             },
             "button": {
-                "upload": "Upload versão"
-            }
+                "upload": "Upload versão",
+                "purgeAllVersions": "Excluir todas as versões"
+            },
+            "row": {
+                "clonedIcon": {
+                    "tooltip1": "Clonado da versão {{versionNumber}} ({{cloneDate}})",
+                    "tooltip2": "Clonado da versão {{versionNumber}} (versão excluída)"
+                },
+                "versionNumber": "Versão {{versionNumber}}"
+            },
+            "mainHint": "Você pode excluir manualmente ou restaurar qualquer versão do arquivo para a versão atual. Selecione uma ou mais versões que você deseja manter para sempre."
         },
         "search_full": [
             {
                 "title": "Selecione um ou mais resultados para realizar ações ou exibir os detalhes."
+            }
+        ],
+        "filter": {
+            "sharedByMe_full": [
+                {
+                    "title": "Revise e edite os itens que você compartilhou com seus contatos.",
+                    "message": "Selecione um item para prosseguir."
+                },
+                {
+                    "title": "Veja os detalhes das pastas que você compartilhou.",
+                    "message": "Clique em um item para selecioná-lo."
+                }
+            ],
+            "flagged_empty": [
+                {
+                    "message": "Você vai encontrá-lo aqui sempre que precisar.",
+                    "title": "Clique na bandeira para marcar um item."
+                },
+                {
+                    "message": "Eles estarão listados aqui.",
+                    "title": "Marque seus itens mais importantes clicando na bandeira."
+                }
+            ],
+            "flagged_full": [
+                {
+                    "message": "Você vai encontrá-lo aqui sempre que precisar.",
+                    "title": "Clique na bandeira para marcar um item."
+                },
+                {
+                    "message": "Eles estarão listados aqui.",
+                    "title": "Marque seus itens mais importantes clicando na bandeira."
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "message": "Selecione um item para prosseguir.",
+                    "title": "Revise e edite os itens que você compartilhou com seus contatos."
+                },
+                {
+                    "message": "Clique em um item para selecioná-lo.",
+                    "title": "Veja os detalhes das pastas que você compartilhou."
+                },
+                {
+                    "message": "Clique em um item para selecioná-lo.",
+                    "title": "Encontre aqui todos os itens que você compartilhou com seus contatos."
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "message": "Clique no botão \"NOVO\" para criar um novo documento e compartilhe com seus contatos.",
+                    "title": "Ainda não há itens compartilhados com você."
+                },
+                {
+                    "title": "Clique no botão \"NOVO\" e crie um novo e-mail.",
+                    "message": "Deixe que os outros usuários saibam que você está pronto para colaborar com eles."
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "message": "Clique em um item para selecioná-lo.",
+                    "title": "Comece a editar e compartilhar seus arquivos."
+                },
+                {
+                    "message": "Clique em um item para selecioná-lo.",
+                    "title": "Veja os detalhes das suas pastas e compartilhe-as com seus contatos."
+                },
+                {
+                    "title": "Selecione um item e comece a trabalhar nele com outros usuários."
+                }
+            ],
+            "trash_empty": [
+                {
+                    "message": "Clique no ícone da lixeira para excluir um item.",
+                    "title": "Mova para a lixeira tudo que não precisar."
+                },
+                {
+                    "message": "Clique no ícone da lixeira para excluir um item.",
+                    "title": "A lixeira está vazia."
+                },
+                {
+                    "title": "Mantenha sua área de trabalho limpa: exclua todos os itens que você não precisa mais."
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "Selecione e restaure seus documentos que estão na lixeira."
+                },
+                {
+                    "message": "Selecione um item para restaurá-lo ou excluí-lo permanentemente.",
+                    "title": "Nada está perdido!"
+                },
+                {
+                    "message": "Ou, quanto possível, selecione-o e restaure-o em sua pasta original.",
+                    "title": "Selecione um item para excluí-lo permanentemente."
+                }
+            ]
+        },
+        "search": {
+            "title": "Digite algumas palavras-chave para iniciar uma pesquisa."
+        },
+        "folder_empty": [
+            {
+                "title": "Clique no botão \"NOVO\" para criar um novo item e compartilhe com seus contatos."
+            },
+            {
+                "message": "Crie um arquivo clicando no botão \"NOVO\"",
+                "title": "Comece editando e compartilhando seus trabalhos."
+            },
+            {
+                "message": "Você poderá editar, sinalizar ou compartilhar.",
+                "title": "Clique no botão \"NOVO\" para criar um novo item."
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "Clique em um item para selecioná-lo.",
+                "title": "Comece a editar e compartilhar seus arquivos."
+            },
+            {
+                "title": "Veja os detalhes das suas pastas e compartilhe-as com seus contatos.",
+                "message": "Clique em um item para selecioná-lo."
+            },
+            {
+                "title": "Selecione uma pasta para editá-la ou renomeá-la."
+            },
+            {
+                "message": "Selecione o item e acesse a aba \"Compartilhamentos\"",
+                "title": "Conceda aos seus contatos direitos de edição para permitir que eles editem um item."
+            },
+            {
+                "title": "Selecione um item para compartilhar ou mover para outra pasta."
             }
         ]
     },
@@ -510,7 +681,8 @@
         "code_SHARE_CREATION_ERROR": "Lamentamos, mas não é possível compartilhar um item com este usuário",
         "code_ACCOUNT_NOT_FOUND": "Parece que este usuário não pertence ao sistema Carbonio",
         "code_MISSING_FIELD": "Ocorreu um erro interno, nem todas as informações deste objeto foram recuperadas",
-        "code_SHARE_NOT_FOUND": "Lamentamos, mas este compartilhamento não pode ser encontrado"
+        "code_SHARE_NOT_FOUND": "Lamentamos, mas este compartilhamento não pode ser encontrado",
+        "code_NODE_DUPLICATED": "Há um arquivo com o mesmo nome nesta pasta"
     },
     "publicLink": {
         "addLink": {

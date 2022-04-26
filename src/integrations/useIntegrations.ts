@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 
 import { registerActions, registerFunctions } from '@zextras/carbonio-shell-ui';
 
+import { getGetLinkFunction } from './getGetLinkFunction';
 import { getUploadToTargetAndGetTargetIdFunction } from './getUploadToTargetAndGetTargetIdFunction';
 import { useSelectNodes } from './useSelectNodes';
 
@@ -16,5 +17,8 @@ export const useIntegrations = (): void => {
 	useEffect(() => {
 		registerActions(selectNodes);
 	}, [selectNodes]);
-	registerFunctions(getUploadToTargetAndGetTargetIdFunction());
+
+	useEffect(() => {
+		registerFunctions(getUploadToTargetAndGetTargetIdFunction(), getGetLinkFunction());
+	}, []);
 };

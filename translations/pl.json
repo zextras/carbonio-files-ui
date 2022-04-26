@@ -12,7 +12,7 @@
                 "confirm": "Potwierdź"
             },
             "header": "Obniż swoje aktualne uprawnienia",
-            "body": "Czy na pewno chcesz obniżyć swoje uprawnienia do tego obiektu? Tej czynności nie da się odwrócić, nie będziesz w stanie samemu przywrócić poprzednich uprawnień. Możesz zawsze skontaktować się z posiadaczem elementu jeśli będziesz jednak potrzebował to zrobić"
+            "body": "Czy na pewno chcesz obniżyć swoje uprawnienia do tego węzła? Tej czynności nie da się odwrócić, nie będziesz w stanie samemu przywrócić poprzednich uprawnień. Możesz zawsze skontaktować się z posiadaczem elementu jeśli będziesz jednak potrzebował to zrobić"
         },
         "removeLink": {
             "button": {
@@ -23,10 +23,10 @@
         },
         "revokeLink": {
             "button": {
-                "confirm": "Odbierz"
+                "confirm": "Deaktywuj"
             },
-            "body": "Odbierając ten link, zablokujesz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do tego pliku",
-            "header": "Odbierz publiczny link {{nodeName}}"
+            "body": "Deaktywując ten link, zablokujesz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do tego pliku",
+            "header": "Deaktywuj publiczny link {{nodeName}}"
         },
         "deletePermanently": {
             "button": {
@@ -467,7 +467,7 @@
     "publicLink": {
         "link": {
             "remove": "Usuń",
-            "revoke": "Odbierz",
+            "revoke": "Deaktywuj",
             "undo": "Cofnij",
             "edit": "Edytuj",
             "editLink": "Edytuj Link",
@@ -639,7 +639,7 @@
             },
             "error": {
                 "not": {
-                    "allowed": "Nie możesz przenosić więcej niż jednego obiektu z filtra lub wyszukiwania"
+                    "allowed": "Nie możesz przenosić więcej niż jednego węzła z filtrów lub wyszukiwania"
                 }
             }
         },

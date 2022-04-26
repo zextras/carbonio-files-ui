@@ -45,17 +45,19 @@ export function useSearch(): UseSearchReturnType {
 		(advancedFiltersPar: AdvancedFilters) => {
 			const reducedForQuery: Array<QueryChip> = [];
 			forEach(advancedFiltersPar, (value, key, _obj) => {
-				if (key === 'keywords') {
+				const $key = key as keyof AdvancedFilters;
+				if ($key === 'keywords') {
 					reducedForQuery.push(...map(value, (innerValue) => innerValue));
-				} else if (includes(['flagged', 'sharedByMe', 'folderId'], key)) {
+				} else if (includes(['flagged', 'sharedByMe', 'folderId'], $key)) {
 					reducedForQuery.push({
 						...value,
 						isQueryFilter: true,
-						varKey: key as keyof Omit<AdvancedFilters, 'keywords'>
+						varKey: $key
 					} as AdvancedSearchChip);
 				}
 			});
 			updateQuery(reducedForQuery);
+			searchParamsVar(advancedFiltersPar);
 		},
 		[updateQuery]
 	);
