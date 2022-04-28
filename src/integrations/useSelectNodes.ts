@@ -18,13 +18,22 @@ type ActionTarget = Parameters<
 >[number] & {
 	allowFolders?: boolean;
 	allowFiles?: boolean;
+	actionLabel?: string;
+	actionIcon?: string;
 };
 
 export const useSelectNodes = (): Parameters<typeof registerActions>[number] => {
 	const { openNodesSelectionModal } = useNodesSelectionModal();
 
 	const selectSelectNodesAction = useCallback<ActionFactory<ActionTarget>>(
-		({ allowFiles = true, allowFolders = true, isValidSelection, ...rest }): Action => {
+		({
+			allowFiles = true,
+			allowFolders = true,
+			isValidSelection,
+			actionLabel = 'Select nodes from Files',
+			actionIcon = 'DriveOutline',
+			...rest
+		}): Action => {
 			const checkIfNodeIsSelectable = (node: BaseNodeFragment | RootListItemType): boolean =>
 				(((allowFolders && isFolder(node)) || (allowFiles && isFile(node))) &&
 					(!isValidSelection || isValidSelection(node))) ||
@@ -32,8 +41,8 @@ export const useSelectNodes = (): Parameters<typeof registerActions>[number] => 
 
 			return {
 				id: ACTION_IDS.SELECT_NODES,
-				label: 'Select node from Files',
-				icon: 'DriveOutline',
+				label: actionLabel,
+				icon: actionIcon,
 				click: (): void =>
 					openNodesSelectionModal({ ...rest, isValidSelection: checkIfNodeIsSelectable }),
 				type: ACTION_TYPES.FILES_ACTION
