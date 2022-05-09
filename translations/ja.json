@@ -77,6 +77,10 @@
             },
             "header": "現在の権限を減らす",
             "body": "このノードでの権限を減らしてもよろしいですか？ このアクションは永続され、以前の共有権限を復元することができなくなります。 以前の権限を復元する必要がある場合は、いつでも共有アイテムの所有者に連絡できます"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}}選択された要素",
+            "selectedCount_plural": "{{count}}選択した要素"
         }
     },
     "node": {
@@ -728,5 +732,19 @@
             "hide": "フォルダのパスを非表示にする",
             "show": "フォルダのパスを表示する"
         }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "共同編集者を追加する",
+                "download": "ダウンロード"
+            }
+        },
+        "close": {
+            "tooltip": "閉じる"
+        }
+    },
+    "label": {
+        "app_name": "ファイル"
     }
 }
