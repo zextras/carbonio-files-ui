@@ -27,6 +27,7 @@ import {
 } from '../../carbonio-files-ui-common/views/components/SecondaryBarItem';
 import { useNavigation } from '../../hooks/useNavigation';
 
+// TODO: remove this customization when DS will have fixed spaces
 const CustomAccordion = styled(Accordion)`
 	justify-content: flex-start;
 	height: 100%;
@@ -35,6 +36,13 @@ const CustomAccordion = styled(Accordion)`
 		& > div[class*='Padding'] {
 			padding-right: 16px;
 		}
+	}
+	/* 
+	 * nested items should have left padding of 16px + (8 * level)
+	 * Since we only have 1 nested level, I'm setting all to 8px
+	 */
+	div[class*='Collapse'] div[class*='AccordionContainer'] {
+		padding-left: 8px;
 	}
 `;
 
