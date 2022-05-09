@@ -13,6 +13,7 @@
         "rename": "Rename",
         "restore": "Restore",
         "retryUpload": "Retry upload",
+        "sendViaMail": "Send via e-mail",
         "unflag": "Unflag"
     },
     "breadcrumb": {
@@ -403,6 +404,9 @@
                 }
             }
         },
+        "moreInfo": {
+            "title": "Additional information"
+        },
         "nodesSelection": {
             "selectedCount": "{{count}} selected item",
             "selectedCount_plural": "{{count}} selected items"
@@ -681,7 +685,10 @@
             "success": "Item unflagged successfully"
         },
         "upload": {
+            "foldersNotAllowed": "Folders cannot be uploaded",
             "goToFolder": "Go to folder",
+            "moreInfo": "More info",
+            "nodesNotAllowed": "Some items have not been uploaded",
             "success": "Upload occurred in {{destination}}"
         },
         "version": {
@@ -728,6 +735,11 @@
             "title": {
                 "disabled": "Drag&Drop Mode",
                 "enabled": "Drag&Drop Mode"
+            }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Folders cannot be uploaded. Instead, if you are trying to upload a file, the system may not have recognized it. Try again using the \"UPLOAD\" button."
             }
         }
     }
