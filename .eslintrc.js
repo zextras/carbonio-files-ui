@@ -15,7 +15,9 @@ module.exports = {
 			rules: {
 				'testing-library/no-node-access': 'off',
 				'jest-dom/prefer-enabled-disabled': 'off',
-				'testing-library/no-unnecessary-act': 'warn'
+				'testing-library/no-unnecessary-act': 'warn',
+				'testing-library/no-global-regexp-flag-in-query': 'error',
+				'testing-library/prefer-user-event': 'warn'
 			}
 		},
 		{

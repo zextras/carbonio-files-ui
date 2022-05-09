@@ -6,8 +6,12 @@
 
 import { useCallback } from 'react';
 
-// eslint-disable-next-line import/no-unresolved
-import { ACTION_TYPES, ActionFactory, registerActions } from '@zextras/carbonio-shell-ui';
+import {
+	ACTION_TYPES,
+	ActionFactory,
+	registerActions,
+	removeActions
+} from '@zextras/carbonio-shell-ui';
 
 type CreateOption = {
 	id: string;
@@ -18,15 +22,23 @@ type CreateOption = {
 export type CreateOptionsContent = {
 	createOptions?: Array<CreateOption>;
 	setCreateOptions: (appCreateOptions: Array<CreateOption>) => void;
+	removeCreateOptions: (ids: Array<string>) => void;
 };
 
 export const useCreateOptions = (): {
 	setCreateOptions: (...options: Array<CreateOption>) => void;
+	removeCreateOptions: (...ids: Array<string>) => void;
 } => {
 	const setCreateOptionsCallback = useCallback((...options: Array<CreateOption>) => {
 		registerActions(...options);
 	}, []);
+
+	const removeCreateOptionsCallback = useCallback((...ids: Array<string>) => {
+		removeActions(...ids);
+	}, []);
+
 	return {
-		setCreateOptions: setCreateOptionsCallback
+		setCreateOptions: setCreateOptionsCallback,
+		removeCreateOptions: removeCreateOptionsCallback
 	};
 };

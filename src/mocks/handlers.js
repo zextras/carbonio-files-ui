@@ -11,7 +11,8 @@ import {
 	CREATE_FILE_PATH,
 	REST_ENDPOINT,
 	UPLOAD_PATH,
-	UPLOAD_VERSION_PATH
+	UPLOAD_VERSION_PATH,
+	PREVIEW_PATH
 } from '../carbonio-files-ui-common/constants';
 import handleCopyNodesRequest from '../carbonio-files-ui-common/mocks/handleCopyNodesRequest';
 import handleCreateDocsFileRequest from '../carbonio-files-ui-common/mocks/handleCreateDocsFileRequest';
@@ -32,6 +33,7 @@ import handleGetNodeRequest from '../carbonio-files-ui-common/mocks/handleGetNod
 import handleGetParentRequest from '../carbonio-files-ui-common/mocks/handleGetParentsRequest';
 import handleGetPathRequest from '../carbonio-files-ui-common/mocks/handleGetPathRequest';
 import handleGetPermissionsRequest from '../carbonio-files-ui-common/mocks/handleGetPermissionsRequest';
+import handleGetPreviewRequest from '../carbonio-files-ui-common/mocks/handleGetPreviewRequest';
 import handleGetRootsListRequest from '../carbonio-files-ui-common/mocks/handleGetRootsListRequest';
 import handleGetSharesRequest from '../carbonio-files-ui-common/mocks/handleGetSharesRequest';
 import handleGetVersionsRequest from '../carbonio-files-ui-common/mocks/handleGetVersionsRequest';
@@ -87,7 +89,8 @@ if (!IS_SERVER) {
 	handlers.push(
 		rest.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, handleCreateDocsFileRequest),
 		rest.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, handleUploadFileRequest),
-		rest.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, handleUploadVersionRequest)
+		rest.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, handleUploadVersionRequest),
+		rest.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id`, handleGetPreviewRequest)
 	);
 }
 

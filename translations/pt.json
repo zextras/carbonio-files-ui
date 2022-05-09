@@ -254,5 +254,19 @@
     "errorCode": {
         "code": "Algo correu mal",
         "code_Generic": "Algo correu mal"
+    },
+    "label": {
+        "app_name": "Ficheiros"
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Adicionar colaborador",
+                "download": "Download"
+            }
+        },
+        "close": {
+            "tooltip": "Fechar"
+        }
     }
 }

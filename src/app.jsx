@@ -12,7 +12,6 @@ import {
 	addSearchView,
 	registerActions,
 	ACTION_TYPES
-	// eslint-disable-next-line import/no-unresolved
 } from '@zextras/carbonio-shell-ui';
 import filter from 'lodash/filter';
 import size from 'lodash/size';

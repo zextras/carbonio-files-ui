@@ -728,5 +728,16 @@
             "hide": "Ordnerpfad ausblenden",
             "show": "Ordnerpfad anzeigen"
         }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Mitarbeiter hinzufügen",
+                "download": "Download"
+            }
+        },
+        "close": {
+            "tooltip": "Schließen"
+        }
     }
 }

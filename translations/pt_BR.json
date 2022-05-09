@@ -129,6 +129,10 @@
         },
         "close": {
             "tooltip": "Fechar"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} item selecionado",
+            "selectedCount_plural": "{{count}} itens selecionados"
         }
     },
     "node": {
@@ -728,5 +732,19 @@
             "show": "Mostrar caminho da pasta",
             "hide": "Ocultar caminho da pasta"
         }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Adicionar colaborador",
+                "download": "Download"
+            }
+        },
+        "close": {
+            "tooltip": "Fechar"
+        }
+    },
+    "label": {
+        "app_name": "Drive"
     }
 }

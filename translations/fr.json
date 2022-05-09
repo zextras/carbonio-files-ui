@@ -114,6 +114,10 @@
             },
             "body": "Êtes-vous sûr de souhaiter diminuer vos droits sur ce noeud ? L'action sera permanente et vous ne serez plus en mesure de restaurer vos précédents droits de partage vous-même. Il vous sera toutefois possible de contacter le propriétaire de l'élément partagé si vous avez besoin de restaurer vos précédentes permissions",
             "header": "Diminuez vos droits actuels"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} élément sélectionné",
+            "selectedCount_plural": "{{count}} éléments sélectionnés"
         }
     },
     "node": {
@@ -728,5 +732,19 @@
                 }
             }
         }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Ajouter un collaborateur",
+                "download": "Télécharger"
+            }
+        },
+        "close": {
+            "tooltip": "Fermer"
+        }
+    },
+    "label": {
+        "app_name": "Drive"
     }
 }

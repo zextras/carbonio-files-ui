@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-// eslint-disable-next-line import/no-unresolved
 import { soapFetch as shellSoapFetch } from '@zextras/carbonio-shell-ui';
 
 export const soapFetch = <Req, Res>(request: string, args: Req): Promise<Res> =>
