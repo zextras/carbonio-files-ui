@@ -13,7 +13,7 @@
         "rename": "Rename",
         "restore": "Restore",
         "retryUpload": "Retry upload",
-        "sendViaMail": "Send via mail",
+        "sendViaMail": "Send via e-mail",
         "unflag": "Unflag"
     },
     "breadcrumb": {
@@ -405,7 +405,7 @@
             }
         },
         "moreInfo": {
-            "title": "Additional info"
+            "title": "Additional information"
         },
         "nodesSelection": {
             "selectedCount": "{{count}} selected item",
