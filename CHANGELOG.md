@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.6...v0.1.0) (2022-05-09)
+
+
+### Features
+
+* add thumbnails on list avatars ([4ad3f99](https://github.com/zextras/carbonio-files-ui/commit/4ad3f99c790d702958474c0cde674d7d38c9f63a)), closes [#36](https://github.com/zextras/carbonio-files-ui/issues/36)
+* allow send via mail ([21faeed](https://github.com/zextras/carbonio-files-ui/commit/21faeed59ec6846a966925a3548dd13dac04d2de)), closes [#46](https://github.com/zextras/carbonio-files-ui/issues/46)
+* get link function integration ([752d43d](https://github.com/zextras/carbonio-files-ui/commit/752d43dbe28021d2163f837a19ff22a0d6089e51)), closes [#40](https://github.com/zextras/carbonio-files-ui/issues/40)
+* support preview of documents  ([dda77e1](https://github.com/zextras/carbonio-files-ui/commit/dda77e16db269d1f941a7ca18083403eea286449)), closes [#41](https://github.com/zextras/carbonio-files-ui/issues/41)
+
+
+### Bug Fixes
+
+* add check for folders in upload with drag and drop ([09f2a83](https://github.com/zextras/carbonio-files-ui/commit/09f2a834bc69a50c0d2195746d871178522af730)), closes [#42](https://github.com/zextras/carbonio-files-ui/issues/42)
+* avoid to trigger a new request while the previous is still loading ([ca31427](https://github.com/zextras/carbonio-files-ui/commit/ca314278e3f61336f22ebc2dad4a5b35923bb43c)), closes [#45](https://github.com/zextras/carbonio-files-ui/issues/45)
+* fix upload folder content in update unordered items case ([77aa886](https://github.com/zextras/carbonio-files-ui/commit/77aa8864520ada5fcdb455a38f922777f1d5089a)), closes [#39](https://github.com/zextras/carbonio-files-ui/issues/39)
+* remove useless new actions on views unmount ([77a63af](https://github.com/zextras/carbonio-files-ui/commit/77a63af09a846264e24a0ce463d9ac7351041be3)), closes [#35](https://github.com/zextras/carbonio-files-ui/issues/35)
+* set value of hidden params on search queries ([5f90b7b](https://github.com/zextras/carbonio-files-ui/commit/5f90b7b5a705c7bd0db70d7b37765be9bb99421b)), closes [#37](https://github.com/zextras/carbonio-files-ui/issues/37)
+
 ## [0.1.0-rc.6](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.5...v0.1.0-rc.6) (2022-04-13)
 
 
