@@ -214,6 +214,10 @@
             },
             "header": "Diminuisci i tuoi permessi attuali",
             "body": "Vuoi diminuire i tuoi permessi su questa condivisione? L'azione è permanente e non sarà possibile ripristinare i permessi precedenti in maniera autonoma. Per ripristinare i tuoi permessi originali dovrai contattare il proprietario della condivisione per farli riabilitare"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} elemento selezionato",
+            "selectedCount_plural": "{{count}} elementi selezionati"
         }
     },
     "filter": {
@@ -233,7 +237,8 @@
         "search": {
             "hint": "La tua ricerca non ha prodotto risultati per nessun file o cartella",
             "noResults": [
-                "Nessun risultato. Continua a cercare!"
+                "Nessun risultato. Continua a cercare!",
+                "Nessun elemento corrisponde alla tua ricerca."
             ],
             "notRun": "Nessuna ricerca effettuata."
         },
@@ -726,6 +731,20 @@
                     "expired": "Questo link è scaduto"
                 }
             }
+        }
+    },
+    "label": {
+        "app_name": "File"
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Aggiungi collaboratore",
+                "download": "Scarica"
+            }
+        },
+        "close": {
+            "tooltip": "Chiudi"
         }
     }
 }

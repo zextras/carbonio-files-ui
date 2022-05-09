@@ -81,6 +81,10 @@
             },
             "header": "Verminder uw huidige rechten",
             "body": "Ben je zeker dat je de rechten op deze node wil verminderen? De actie is permanent en je zal niet in staat zijn om de rechten van de vorige share zelf te herstellen. Je kan altijd contact opnemen met de eigenaar van het gedeelde item als je de vorige rechten wil herstellen"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} geselecteerd item",
+            "selectedCount_plural": "{{count}} geselecteerde item"
         }
     },
     "primaryBar": {
@@ -727,6 +731,20 @@
         "expander": {
             "show": "Pad van de map weergeven",
             "hide": "Het pad van de map verbergen"
+        }
+    },
+    "label": {
+        "app_name": "Bestanden"
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Medewerker toevoegen",
+                "download": "Download"
+            }
+        },
+        "close": {
+            "tooltip": "Sluiten"
         }
     }
 }

@@ -84,6 +84,10 @@
             },
             "body": "Apakah Anda yakin untuk mengurangi hak Anda pada node ini? Tindakan ini bersifat permanen dan Anda tidak akan dapat memulihkan hak berbagi sebelumnya sendiri. Anda selalu dapat menghubungi pemilik item bersama jika memerlukan izin sebelumnya untuk dipulihkan",
             "header": "Kurangi hak saat ini"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} item dipilih",
+            "selectedCount_plural": "{{count}} item dipilih"
         }
     },
     "node": {
@@ -727,6 +731,20 @@
         },
         "node": {
             "tooltip": "Aktifkan mode pemilihan"
+        }
+    },
+    "label": {
+        "app_name": "File"
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Tambahkan kolaborator",
+                "download": "Unduh"
+            }
+        },
+        "close": {
+            "tooltip": "Tutup"
         }
     }
 }

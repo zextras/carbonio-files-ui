@@ -79,7 +79,7 @@
                     "label": "Słowa kluczowe"
                 },
                 "flagged": {
-                    "label": "Oflagowany",
+                    "label": "Oflagowane",
                     "description": "Filtruj wyniki wyszukiwania według oflagowanych elementów"
                 },
                 "title": "Zaawansowane Filtry",
@@ -439,7 +439,7 @@
                 "removeKeepVersion": "Usuń zachowanie tej wersji na zawsze"
             },
             "button": {
-                "purgeAllVersions": "Skasuj wszystkie wersje",
+                "purgeAllVersions": "Czystka wszystkich wersji",
                 "upload": "Wgraj wersję"
             },
             "row": {
@@ -506,7 +506,7 @@
     "secondaryBar": {
         "filters": "Filtry",
         "filtersList": {
-            "flagged": "Oflagowany",
+            "flagged": "Oflagowane",
             "trash": "Kosz",
             "myElements": "Moje elementy",
             "sharedByMe": "Udostępnione przeze mnie",
@@ -582,7 +582,8 @@
     "empty": {
         "search": {
             "noResults": [
-                "Brak wyników. Nie poddawaj się!"
+                "Brak wyników. Nie poddawaj się!",
+                "Żaden z elementów nie pasuje do kryteriów wyszukiwania."
             ],
             "hint": "Twoje wyszukiwanie nie pasuje do żadnych plików ani folderów",
             "notRun": "Nie przeprowadzono jeszcze żadnego wyszukiwania."
@@ -709,6 +710,20 @@
         "expander": {
             "hide": "Ukryj ścieżkę folderu",
             "show": "Pokaż ścieżkę folderu"
+        }
+    },
+    "label": {
+        "app_name": "Pliki"
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Dodaj współpracownika",
+                "download": "Pobierz"
+            }
+        },
+        "close": {
+            "tooltip": "Zamknij"
         }
     }
 }

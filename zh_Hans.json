@@ -448,6 +448,10 @@
             },
             "body": "确定要降低您在此节点上的权限吗？此操作将是永久性操作，您将无法自行恢复之前的共享权限。如果您需要恢复之前的共享权限，可随时联系共享项目的所有者",
             "header": "降低您当前的权限"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} 已选择项目",
+            "selectedCount_plural": "{{count}} 已选择项目"
         }
     },
     "node": {
@@ -725,5 +729,19 @@
             "hide": "隐藏文件夹路径",
             "show": "显示文件夹路径"
         }
+    },
+    "preview": {
+        "close": {
+            "tooltip": "关闭"
+        },
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "添加协作者",
+                "download": "下载"
+            }
+        }
+    },
+    "label": {
+        "app_name": "文件"
     }
 }

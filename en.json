@@ -365,6 +365,9 @@
             }
         }
     },
+    "label": {
+        "app_name": "Files"
+    },
     "modal": {
         "button": {
             "cancel": "Cancel",
@@ -399,6 +402,10 @@
                     "permissionLost": "All the access permissions previously given to you will be lost."
                 }
             }
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} selected item",
+            "selectedCount_plural": "{{count}} selected items"
         },
         "removeLink": {
             "body": "This link has expired, therefore it can't be used anymore to access the element. You can remove the link from the list or you can update its expiration date and other information in order to keep using it",
@@ -480,6 +487,17 @@
         },
         "type": {
             "folder": "Folder"
+        }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Add collaborator",
+                "download": "Download"
+            }
+        },
+        "close": {
+            "tooltip": "Close"
         }
     },
     "publicLink": {
