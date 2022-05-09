@@ -214,5 +214,19 @@
     "sortingDropdown": {
         "name": "Nume",
         "size": "Marime"
+    },
+    "label": {
+        "app_name": "Fisiere"
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Adauga colaborator",
+                "download": "Descarcare"
+            }
+        },
+        "close": {
+            "tooltip": "Inchide"
+        }
     }
 }

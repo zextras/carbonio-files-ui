@@ -81,6 +81,10 @@
             },
             "body": "Bu nod için izinlerinizi azaltmak istediğinizden emin misiniz? Bu işlem kalıcıdır ve daha önceki paylaşım izinlerini kendiniz geri alamazsınız. Daha önceki paylaşım izinlerini geri yüklemek isterseniz paylaşılan öğenin sahibi ile görüşmeniz gerekir",
             "header": "Geçerli izinlerinizi azaltın"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} seçilen öğe",
+            "selectedCount_plural": "{{count}} seçilen öğe"
         }
     },
     "create": {
@@ -110,7 +114,8 @@
         "search": {
             "hint": "Aramanız ile eşleşen hiçbir dosya veya klasör bulunamadı",
             "noResults": [
-                "Sonuç bulunamadı. Aramaya devam edin!"
+                "Sonuç bulunamadı. Aramaya devam edin!",
+                "Aramanız ile uyumlu öğe bulunamadı."
             ],
             "notRun": "Henüz hiç arama yapılmadı."
         }
@@ -727,5 +732,19 @@
         "datePickerInput": {
             "description": "Seçilen gün sonunda bağlantı iptal olur"
         }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Birlikte çalışan ekle",
+                "download": "İndir"
+            }
+        },
+        "close": {
+            "tooltip": "Kapat"
+        }
+    },
+    "label": {
+        "app_name": "Dosyalar"
     }
 }

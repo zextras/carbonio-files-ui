@@ -73,6 +73,10 @@
             },
             "body": "¿Seguro que quieres reducir tus derechos en este nodo? Esta acción es permanente y no podrás restaurar los derechos de compartición anteriores por ti mismo. Siempre puedes contactar con el propietario del elemento compartido si necesitas restaurar la versión anterior",
             "header": "Reducir tus derechos actuales"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} elemento seleccionado",
+            "selectedCount_plural": "{{count}} elementos seleccionados"
         }
     },
     "node": {
@@ -727,6 +731,20 @@
         "expander": {
             "hide": "Ocultar ruta de la carpeta",
             "show": "Mostrar ruta de la carpeta"
+        }
+    },
+    "label": {
+        "app_name": "Drive"
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "addCollaborator": "Agregar colaborador",
+                "download": "Download"
+            }
+        },
+        "close": {
+            "tooltip": "Cerrar"
         }
     }
 }
