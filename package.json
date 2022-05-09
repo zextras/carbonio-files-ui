@@ -99,6 +99,7 @@
 		"priority": 9,
 		"icon": "DriveOutline",
 		"type": "carbonio",
-		"sentryDsn": "https://733fc9332b0e48f1a39b595296fc2280@feedback.zextras.tools/11"
+		"sentryDsn": "https://733fc9332b0e48f1a39b595296fc2280@feedback.zextras.tools/11",
+		"translations_repository": "git@bitbucket.org:zextras/com_zextras_zapp_drive.git"
 	}
 }
