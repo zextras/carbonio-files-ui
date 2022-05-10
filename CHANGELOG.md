@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0...v0.1.1) (2022-05-09)
+
+
+### Bug Fixes
+
+* allow set of action label and icon for select nodes integration ([281236a](https://github.com/zextras/carbonio-files-ui/commit/281236a4058d485b8ae75b7d5ba57b00f80474e4))
+
 ## [0.1.0](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.6...v0.1.0) (2022-05-09)
 
 
