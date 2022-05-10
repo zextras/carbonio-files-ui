@@ -90,7 +90,10 @@ if (!IS_SERVER) {
 		rest.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, handleCreateDocsFileRequest),
 		rest.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, handleUploadFileRequest),
 		rest.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, handleUploadVersionRequest),
-		rest.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id`, handleGetPreviewRequest)
+		rest.get(
+			`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:version/:area/:thumbnail`,
+			handleGetPreviewRequest
+		)
 	);
 }
 
