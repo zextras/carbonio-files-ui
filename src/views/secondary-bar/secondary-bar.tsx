@@ -31,19 +31,6 @@ import { useNavigation } from '../../hooks/useNavigation';
 const CustomAccordion = styled(Accordion)`
 	justify-content: flex-start;
 	height: 100%;
-	div[class*='AccordionContainer'] {
-		& > div:only-child div[class*='CustomAccordionItem'],
-		& > div[class*='Padding'] {
-			padding-right: 16px;
-		}
-	}
-	/* 
-	 * nested items should have left padding of 16px + (8 * level)
-	 * Since we only have 1 nested level, I'm setting all to 8px
-	 */
-	div[class*='Collapse'] div[class*='AccordionContainer'] {
-		padding-left: 8px;
-	}
 `;
 
 interface ShellSecondaryBarProps {
