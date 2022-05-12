@@ -181,7 +181,8 @@
         },
         "upload": {
             "goToFolder": "Ir a carpeta",
-            "success": "Subida realizada en {{destination}}"
+            "success": "Subida realizada en {{destination}}",
+            "moreInfo": "Más información"
         },
         "copyNodes": {
             "error": "Algo fue mal, inténtalo de nuevo",

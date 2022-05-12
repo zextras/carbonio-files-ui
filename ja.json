@@ -185,7 +185,8 @@
         },
         "upload": {
             "goToFolder": "フォルダに移動する",
-            "success": "{{destination}}でアップロードされました"
+            "success": "{{destination}}でアップロードされました",
+            "moreInfo": "詳細"
         },
         "copyNodes": {
             "action": "フォルダに移動する",

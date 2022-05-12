@@ -222,7 +222,8 @@
         },
         "upload": {
             "goToFolder": "Ir para a pasta",
-            "success": "Carregamento ocorreu em {{destination}}"
+            "success": "Carregamento ocorreu em {{destination}}",
+            "moreInfo": "Mais informações"
         },
         "copyNodes": {
             "action": "Ir para a pasta",
@@ -745,6 +746,6 @@
         }
     },
     "label": {
-        "app_name": "Drive"
+        "app_name": "Files"
     }
 }

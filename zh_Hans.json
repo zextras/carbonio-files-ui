@@ -287,7 +287,8 @@
         },
         "upload": {
             "goToFolder": "前往文件夹",
-            "success": "上传发生于{{destination}}"
+            "success": "上传发生于{{destination}}",
+            "moreInfo": "更多信息"
         },
         "copyNodes": {
             "action": "前往文件夹",

@@ -222,7 +222,8 @@
         },
         "upload": {
             "goToFolder": "Aller dans le dossier",
-            "success": "Le téléchargement a eu lieu dans {{destination}}"
+            "success": "Le téléchargement a eu lieu dans {{destination}}",
+            "moreInfo": "Plus d'informations"
         },
         "clipboard": {
             "email": "Adresse e-mail copiée",

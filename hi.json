@@ -233,7 +233,8 @@
         },
         "upload": {
             "goToFolder": "फोल्डर में जाएँ",
-            "success": "अपलोड {{destination}} में हुआ"
+            "success": "अपलोड {{destination}} में हुआ",
+            "moreInfo": "और जानकारी"
         },
         "download": {
             "start": "आपका डाऊनलोड जल्दी ही शुरू होगा"
