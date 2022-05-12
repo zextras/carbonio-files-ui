@@ -222,7 +222,8 @@
         },
         "upload": {
             "goToFolder": "ไปที่โฟลเดอร์",
-            "success": "อัปโหลดเกิดขึ้นใน {{destination}}"
+            "success": "อัปโหลดเกิดขึ้นใน {{destination}}",
+            "moreInfo": "ข้อมูลเพิ่มเติม"
         },
         "copyNodes": {
             "action": "ไปที่โฟลเดอร์",

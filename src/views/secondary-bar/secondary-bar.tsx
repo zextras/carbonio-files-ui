@@ -27,15 +27,10 @@ import {
 } from '../../carbonio-files-ui-common/views/components/SecondaryBarItem';
 import { useNavigation } from '../../hooks/useNavigation';
 
+// TODO: remove this customization when DS will have fixed spaces
 const CustomAccordion = styled(Accordion)`
 	justify-content: flex-start;
 	height: 100%;
-	div[class*='AccordionContainer'] {
-		& > div:only-child div[class*='CustomAccordionItem'],
-		& > div[class*='Padding'] {
-			padding-right: 16px;
-		}
-	}
 `;
 
 interface ShellSecondaryBarProps {
@@ -77,7 +72,8 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			{
 				id: 'SharedWithMe',
 				priority: 1,
-				icon: 'ShareOutline',
+				icon: 'ArrowCircleLeftOutline',
+				iconCustomColor: '#AB47BC',
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
 				onClick: (ev: React.SyntheticEvent): void => {
 					ev.stopPropagation();
@@ -101,6 +97,8 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			items: [
 				{
 					id: 'Flagged',
+					icon: 'FlagOutline',
+					iconColor: 'error',
 					label: t('secondaryBar.filtersList.flagged', 'Flagged'),
 					onClick: (ev: React.SyntheticEvent): void => {
 						ev.stopPropagation();
@@ -111,6 +109,8 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				},
 				{
 					id: 'SharedByMe',
+					icon: 'ArrowCircleRightOutline',
+					iconColor: 'warning',
 					label: t('secondaryBar.filtersList.sharedByMe', 'Shared by me'),
 					onClick: (ev: React.SyntheticEvent): void => {
 						ev.stopPropagation();
@@ -141,6 +141,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			{
 				id: ROOTS.TRASH_MY_ELEMENTS,
 				label: t('secondaryBar.filtersList.myElements', 'My elements'),
+				icon: 'HardDriveOutline',
 				onClick: (ev: React.SyntheticEvent): void => {
 					ev.stopPropagation();
 					navigateTo('/filter/myTrash');
@@ -151,6 +152,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			{
 				id: ROOTS.TRASH_SHARED_ELEMENTS,
 				label: t('secondaryBar.filtersList.sharedElements', 'Shared elements'),
+				icon: 'ShareOutline',
 				onClick: (ev: React.SyntheticEvent): void => {
 					ev.stopPropagation();
 					navigateTo('/filter/sharedTrash');
