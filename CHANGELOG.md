@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/zextras/carbonio-files-ui/compare/v0.1.1...v0.1.2) (2022-05-12)
+
+
+### Features
+
+* add preview on displayer ([96c5a4a](https://github.com/zextras/carbonio-files-ui/commit/96c5a4a613072ff8f2fac5223d105ba9dc5b99e1)), closes [#55](https://github.com/zextras/carbonio-files-ui/issues/55)
+
+
+### Bug Fixes
+
+* remove custom paddings from secondary bar items ([686b621](https://github.com/zextras/carbonio-files-ui/commit/686b62176d5bb36eea2ef7c80a26aa3839474f82)), closes [#58](https://github.com/zextras/carbonio-files-ui/issues/58)
+* update secondary bar nested items indentation ([e5023d0](https://github.com/zextras/carbonio-files-ui/commit/e5023d0fd086b09ad4a9ca060be4e48e7b4f9f4f)), closes [#57](https://github.com/zextras/carbonio-files-ui/issues/57)
+* use error policy all on getChildren and findNodes queries ([c13017d](https://github.com/zextras/carbonio-files-ui/commit/c13017d42dea056c73c92df5525ba3efd3018690)), closes [#56](https://github.com/zextras/carbonio-files-ui/issues/56)
+
 ### [0.1.1](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0...v0.1.1) (2022-05-09)
 
 
