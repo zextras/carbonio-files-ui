@@ -39,7 +39,8 @@
         },
         "upload": {
             "goToFolder": "Vai alla cartella",
-            "success": "Caricamenti in {{destination}}"
+            "success": "Caricamenti in {{destination}}",
+            "moreInfo": "Maggiori informazioni"
         },
         "clipboard": {
             "email": "Indirizzo email copiato",

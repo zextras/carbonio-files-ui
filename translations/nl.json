@@ -130,7 +130,8 @@
         },
         "upload": {
             "goToFolder": "Ga naar map",
-            "success": "Uploaden gebeurde in {{destination}}"
+            "success": "Uploaden gebeurde in {{destination}}",
+            "moreInfo": "Meer info"
         },
         "copyNodes": {
             "action": "Ga naar map",
