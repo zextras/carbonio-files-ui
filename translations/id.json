@@ -192,7 +192,8 @@
         },
         "upload": {
             "goToFolder": "Buka folder",
-            "success": "Unggahan terjadi di {{destination}}"
+            "success": "Unggahan terjadi di {{destination}}",
+            "moreInfo": "Info lain"
         },
         "copyNodes": {
             "action": "Buka folder",

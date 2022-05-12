@@ -222,7 +222,8 @@
         },
         "upload": {
             "goToFolder": "Klasöre git",
-            "success": "{{destination}} hedefine yükleme yapıldı"
+            "success": "{{destination}} hedefine yükleme yapıldı",
+            "moreInfo": "Daha fazla bilgi"
         },
         "clipboard": {
             "itemShortcutCopied": "Öğe kısayolu kopyalandı",
