@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Account, AccountSettings } from '@zextras/carbonio-shell-ui';
+import type { Account, AccountSettings, AppRoute } from '@zextras/carbonio-shell-ui';
 import { createMemoryHistory, Location } from 'history';
 
+import { FILES_APP_ID, FILES_ROUTE } from '../../src/carbonio-files-ui-common/constants';
 import { LOGGED_USER, USER_SETTINGS } from '../../src/mocks/constants';
 
 const history = createMemoryHistory();
@@ -28,7 +29,7 @@ function pushHistoryMock(location: string | Location): void {
 }
 
 function goBackHistoryMock(): void {
-	history.goBack();
+	history.back();
 }
 
 function soapFetchMock(
@@ -56,3 +57,6 @@ export const report = jest.fn();
 export const ACTION_TYPES = {
 	NEW: 'new'
 };
+export const getCurrentRoute = jest
+	.fn<AppRoute, never>()
+	.mockReturnValue({ route: FILES_ROUTE, id: FILES_APP_ID, app: 'carbonio-files-ui' });
