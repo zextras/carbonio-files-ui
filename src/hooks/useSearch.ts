@@ -38,7 +38,6 @@ export function fromAdvancedFiltersToQueryChips(
 		} else if ($key === 'flagged') {
 			reducedForQuery.push({
 				...value,
-				isAdvancedFilter: true,
 				queryChipsToAdvancedFiltersValue: {
 					flagged: advancedFiltersPar.flagged
 				}
@@ -46,7 +45,6 @@ export function fromAdvancedFiltersToQueryChips(
 		} else if ($key === 'sharedByMe') {
 			reducedForQuery.push({
 				...value,
-				isAdvancedFilter: true,
 				queryChipsToAdvancedFiltersValue: {
 					sharedByMe: advancedFiltersPar.sharedByMe
 				}
@@ -58,7 +56,6 @@ export function fromAdvancedFiltersToQueryChips(
 			if ($value.value) {
 				reducedForQuery.push({
 					...value,
-					isAdvancedFilter: true,
 					queryChipsToAdvancedFiltersValue: {
 						cascade: advancedFiltersPar.cascade,
 						folderId: advancedFiltersPar.folderId
@@ -67,7 +64,6 @@ export function fromAdvancedFiltersToQueryChips(
 			} else {
 				reducedForQuery.push({
 					...value,
-					isAdvancedFilter: true,
 					queryChipsToAdvancedFiltersValue: {
 						cascade: advancedFiltersPar.cascade,
 						sharedWithMe: advancedFiltersPar.sharedWithMe,
@@ -83,7 +79,8 @@ export function fromAdvancedFiltersToQueryChips(
 export function fromQueryChipsToAdvancedFilters(queryChips: Array<QueryChip>): AdvancedFilters {
 	const [advanced, keywords] = partition<QueryChip, AdvancedSearchChip>(
 		queryChips,
-		(item): item is AdvancedSearchChip => (item as AdvancedSearchChip).isAdvancedFilter === true
+		(item): item is AdvancedSearchChip =>
+			(item as AdvancedSearchChip).queryChipsToAdvancedFiltersValue !== undefined
 	);
 	let updatedValue: AdvancedFilters = {};
 	if (keywords.length > 0) {
