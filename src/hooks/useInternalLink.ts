@@ -17,13 +17,16 @@ export type UseInternalLinkHook = (
 	id: string,
 	type: NodeType
 ) => {
-	internalLink: string;
+	internalLink: string | null;
 };
 
-export function buildInternalLink(id: string, type: NodeType): string {
+export function buildInternalLink(id: string, type: NodeType): string | null {
 	const appRoute = getCurrentRoute()?.route;
 	const path = head(split(window.location.pathname, appRoute));
 
+	if (type === NodeType.Root) {
+		return null;
+	}
 	if (type === NodeType.Folder) {
 		return `${window.location.origin}${path}${FILES_ROUTE}/?folder=${id}`;
 	}

@@ -18,7 +18,7 @@ import { FUNCTION_IDS } from '../constants';
 import { buildInternalLink } from '../hooks/useInternalLink';
 
 type GetNodeFunctionArgs = [GetNodeQueryVariables['node_id']];
-type GetNodeFunctionReturnType = NodeWithMetadata & { internal_link: string };
+type GetNodeFunctionReturnType = NodeWithMetadata & { internal_link: string | null };
 
 function getNodeWithClient(
 	apolloClient: ApolloClient<NormalizedCacheObject>
