@@ -93,7 +93,7 @@ describe('Search view', () => {
 					value: true,
 					avatarIcon: 'Flag',
 					label: 'Flagged',
-					isQueryFilter: true
+					isAdvancedFilter: true
 				})
 			]);
 			expect(mockedFindNodes).toHaveBeenCalledWith(
@@ -157,7 +157,7 @@ describe('Search view', () => {
 					value: true,
 					avatarIcon: 'Share',
 					label: 'Shared',
-					isQueryFilter: true
+					isAdvancedFilter: true
 				})
 			]);
 			expect(mockedFindNodes).toHaveBeenCalledWith(
@@ -248,8 +248,8 @@ describe('Search view', () => {
 				expect.objectContaining({
 					value: ROOTS.LOCAL_ROOT,
 					avatarIcon: 'Folder',
-					label: 'Home',
-					isQueryFilter: true
+					label: 'under:Home',
+					isAdvancedFilter: true
 				})
 			]);
 			expect(mockedFindNodes).toHaveBeenCalledWith(
@@ -335,8 +335,8 @@ describe('Search view', () => {
 				expect.objectContaining({
 					value: ROOTS.LOCAL_ROOT,
 					avatarIcon: 'Folder',
-					label: 'Home',
-					isQueryFilter: true
+					label: 'in:Home',
+					isAdvancedFilter: true
 				})
 			]);
 			expect(mockedFindNodes).toHaveBeenCalledWith(
@@ -540,19 +540,19 @@ describe('Search view', () => {
 					value: true,
 					avatarIcon: 'Flag',
 					label: 'Flagged',
-					isQueryFilter: true
+					isAdvancedFilter: true
 				}),
 				expect.objectContaining({
 					value: true,
 					avatarIcon: 'Share',
 					label: 'Shared',
-					isQueryFilter: true
+					isAdvancedFilter: true
 				}),
 				expect.objectContaining({
 					value: ROOTS.LOCAL_ROOT,
 					avatarIcon: 'Folder',
-					label: 'Home',
-					isQueryFilter: true
+					label: 'under:Home',
+					isAdvancedFilter: true
 				})
 			]);
 			expect(mockedFindNodes).toHaveBeenCalledWith(

@@ -9,11 +9,15 @@ import { useCallback, useContext } from 'react';
 import { useReactiveVar } from '@apollo/client';
 import type { QueryChip } from '@zextras/carbonio-shell-ui';
 import forEach from 'lodash/forEach';
-import includes from 'lodash/includes';
 import map from 'lodash/map';
+import partition from 'lodash/partition';
 
 import { searchParamsVar } from '../carbonio-files-ui-common/apollo/searchVar';
-import { AdvancedFilters } from '../carbonio-files-ui-common/types/common';
+import {
+	AdvancedFilters,
+	SearchChip,
+	SearchParams
+} from '../carbonio-files-ui-common/types/common';
 import { UpdateQueryContext } from '../constants';
 import { AdvancedSearchChip } from '../types';
 
@@ -21,6 +25,76 @@ interface UseSearchReturnType {
 	searchParams: AdvancedFilters;
 	search: (keywords: string[]) => void;
 	searchAdvancedFilters: (advancedFilters: AdvancedFilters) => void;
+}
+
+export function fromAdvancedFiltersToQueryChips(
+	advancedFiltersPar: AdvancedFilters
+): Array<QueryChip> {
+	const reducedForQuery: Array<QueryChip> = [];
+	forEach(advancedFiltersPar, (value, key) => {
+		const $key = key as keyof AdvancedFilters;
+		if ($key === 'keywords') {
+			reducedForQuery.push(...map(value, (innerValue) => innerValue));
+		} else if ($key === 'flagged') {
+			reducedForQuery.push({
+				...value,
+				isAdvancedFilter: true,
+				queryChipsToAdvancedFiltersValue: {
+					flagged: advancedFiltersPar.flagged
+				}
+			} as AdvancedSearchChip);
+		} else if ($key === 'sharedByMe') {
+			reducedForQuery.push({
+				...value,
+				isAdvancedFilter: true,
+				queryChipsToAdvancedFiltersValue: {
+					sharedByMe: advancedFiltersPar.sharedByMe
+				}
+			} as AdvancedSearchChip);
+		} else if ($key === 'folderId') {
+			const $value = value as SearchChip & {
+				value: SearchParams['folderId'];
+			};
+			if ($value.value) {
+				reducedForQuery.push({
+					...value,
+					isAdvancedFilter: true,
+					queryChipsToAdvancedFiltersValue: {
+						cascade: advancedFiltersPar.cascade,
+						folderId: advancedFiltersPar.folderId
+					}
+				} as AdvancedSearchChip);
+			} else {
+				reducedForQuery.push({
+					...value,
+					isAdvancedFilter: true,
+					queryChipsToAdvancedFiltersValue: {
+						cascade: advancedFiltersPar.cascade,
+						sharedWithMe: advancedFiltersPar.sharedWithMe,
+						folderId: advancedFiltersPar.folderId
+					}
+				} as AdvancedSearchChip);
+			}
+		}
+	});
+	return reducedForQuery;
+}
+
+export function fromQueryChipsToAdvancedFilters(queryChips: Array<QueryChip>): AdvancedFilters {
+	const [advanced, keywords] = partition<QueryChip, AdvancedSearchChip>(
+		queryChips,
+		(item): item is AdvancedSearchChip => (item as AdvancedSearchChip).isAdvancedFilter === true
+	);
+	let updatedValue: AdvancedFilters = {};
+	if (keywords.length > 0) {
+		updatedValue.keywords = map(keywords, (k) => ({ ...k, value: k.label }));
+	}
+	forEach(advanced, (value) => {
+		if (value.queryChipsToAdvancedFiltersValue) {
+			updatedValue = { ...updatedValue, ...value.queryChipsToAdvancedFiltersValue };
+		}
+	});
+	return updatedValue;
 }
 
 export function useSearch(): UseSearchReturnType {
@@ -43,21 +117,8 @@ export function useSearch(): UseSearchReturnType {
 
 	const searchAdvancedFilters = useCallback(
 		(advancedFiltersPar: AdvancedFilters) => {
-			const reducedForQuery: Array<QueryChip> = [];
-			forEach(advancedFiltersPar, (value, key, _obj) => {
-				const $key = key as keyof AdvancedFilters;
-				if ($key === 'keywords') {
-					reducedForQuery.push(...map(value, (innerValue) => innerValue));
-				} else if (includes(['flagged', 'sharedByMe', 'folderId'], $key)) {
-					reducedForQuery.push({
-						...value,
-						isQueryFilter: true,
-						varKey: $key
-					} as AdvancedSearchChip);
-				}
-			});
+			const reducedForQuery: Array<QueryChip> = fromAdvancedFiltersToQueryChips(advancedFiltersPar);
 			updateQuery(reducedForQuery);
-			searchParamsVar(advancedFiltersPar);
 		},
 		[updateQuery]
 	);
