@@ -73,7 +73,7 @@
 		"react-test-renderer": "^17.0.2"
 	},
 	"dependencies": {
-		"@apollo/client": "~3.5.10",
+		"@apollo/client": "~3.6.5",
 		"@zextras/carbonio-design-system": "~0.3.4",
 		"@zextras/carbonio-shell-ui": "~0.4.25",
 		"@zextras/carbonio-ui-preview": "^0.1.5",
