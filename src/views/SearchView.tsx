@@ -7,12 +7,7 @@
 import React, { useEffect } from 'react';
 
 import type { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
-import { intersectionBy } from 'lodash';
-import forEach from 'lodash/forEach';
-import map from 'lodash/map';
-import partition from 'lodash/partition';
 import size from 'lodash/size';
-import some from 'lodash/some';
 import { useTranslation } from 'react-i18next';
 
 import { searchParamsVar } from '../carbonio-files-ui-common/apollo/searchVar';
@@ -21,45 +16,19 @@ import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/c
 import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
 import { SearchView as CommonSearchView } from '../carbonio-files-ui-common/views/SearchView';
 import { UpdateQueryContext } from '../constants';
-import { AdvancedSearchChip } from '../types';
+import { fromQueryChipsToAdvancedFilters } from '../hooks/useSearch';
 
 const SearchView: React.VFC<SearchViewProps> = ({ useQuery, ResultsHeader }) => {
 	const [query, updateQuery] = useQuery();
 	const [t] = useTranslation();
 
 	useEffect(() => {
-		const [advanced, keywords] = partition<QueryChip, AdvancedSearchChip>(
-			query,
-			(item): item is AdvancedSearchChip => item.isQueryFilter === true
-		);
-		const updatedValue: AdvancedFilters = {};
-		if (keywords.length > 0) {
-			updatedValue.keywords = map(keywords, (k) => ({ ...k, value: k.label, background: 'gray2' }));
-		}
-		forEach(advanced, (value) => {
-			updatedValue[value.varKey] = value;
-		});
-		// check if values in query are different from values in searchParamsVar. If so, update searchParamsVar in order
-		// to keep the searches synced.
-		const searchParamsVarKeywords = searchParamsVar().keywords || [];
+		const updatedValue: AdvancedFilters = fromQueryChipsToAdvancedFilters(query);
 
 		if (size(updatedValue) === 0 && size(searchParamsVar()) > 0) {
-			// if query is updated from outside and is empty (no keywords and no advanced)
-			// then a "clear" has been executed, so clear also searchParamsVar
 			searchParamsVar({});
-		} else if (
-			keywords.length !== searchParamsVarKeywords.length ||
-			intersectionBy(keywords, searchParamsVarKeywords, 'value').length !== keywords.length ||
-			some(advanced, (value) => searchParamsVar()[value.varKey]?.value !== value.value)
-		) {
-			// FIXME: since we cannot set hidden chips in query, we need to manually set the hidden params in
-			//  the new ones received by the shell
-			const newParamsVar = {
-				...updatedValue,
-				cascade: searchParamsVar().cascade,
-				sharedWithMe: searchParamsVar().sharedWithMe
-			};
-			searchParamsVar(newParamsVar);
+		} else {
+			searchParamsVar(updatedValue);
 		}
 	}, [query]);
 
