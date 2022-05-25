@@ -193,6 +193,9 @@
         "nodesSelection": {
             "selectedCount_plural": "{{count}} आइटम चुने गए",
             "selectedCount": "{{count}} आइटम चुने गए"
+        },
+        "moreInfo": {
+            "title": "अतिरिक्त जानकारी"
         }
     },
     "snackbar": {
@@ -234,7 +237,9 @@
         "upload": {
             "goToFolder": "फोल्डर में जाएँ",
             "success": "अपलोड {{destination}} में हुआ",
-            "moreInfo": "और जानकारी"
+            "moreInfo": "और जानकारी",
+            "foldersNotAllowed": "फोल्डर अपलोड नहीं किए जा सकते",
+            "nodesNotAllowed": "कुछ आइटम अपलोड नहीं किए जा सके"
         },
         "download": {
             "start": "आपका डाऊनलोड जल्दी ही शुरू होगा"
@@ -275,7 +280,8 @@
         "moveToTrash": "रद्दी में डालें",
         "removeUpload": "अपलोड हटाएँ",
         "retryUpload": "अपलोड की दोबारा कोशिश करें",
-        "unflag": "फ्लैग हटाएँ"
+        "unflag": "फ्लैग हटाएँ",
+        "sendViaMail": "ई-मेल के द्वारा भेजा"
     },
     "displayer": {
         "details": {
@@ -645,6 +651,11 @@
         },
         "destination": {
             "home": "Files होम में अपलोड हुआ"
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "फोल्डर अपलोड नहीं किए जा सकते।हाँ, यदि आप कोई फाइल अपलोड करना चाह रहे हों तो हो सकता है सिस्टम इसे पहचान न पाया हो। \"अपलोड\" बटन इस्तेमाल करके दोबारा कोशिश करें।"
+            }
         }
     },
     "selectionMode": {

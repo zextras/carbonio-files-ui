@@ -40,7 +40,9 @@
         "upload": {
             "goToFolder": "Vai alla cartella",
             "success": "Caricamenti in {{destination}}",
-            "moreInfo": "Maggiori informazioni"
+            "moreInfo": "Maggiori informazioni",
+            "nodesNotAllowed": "Alcuni elementi non sono stati caricati",
+            "foldersNotAllowed": "Le cartelle non possono essere caricate"
         },
         "clipboard": {
             "email": "Indirizzo email copiato",
@@ -219,6 +221,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}} elemento selezionato",
             "selectedCount_plural": "{{count}} elementi selezionati"
+        },
+        "moreInfo": {
+            "title": "Ulteriori informazioni"
         }
     },
     "filter": {
@@ -277,7 +282,8 @@
         "moveToTrash": "Sposta nel Cestino",
         "removeUpload": "rimuovi caricamento",
         "retryUpload": "Riprova caricamento",
-        "unflag": "Deseleziona"
+        "unflag": "Deseleziona",
+        "sendViaMail": "Invia via e-mail"
     },
     "displayer": {
         "list": {
@@ -647,6 +653,11 @@
         },
         "destination": {
             "home": "Caricamenti in Home di Files"
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Le cartelle non possono essere caricate. Se invece stai cercando di caricare un file, il sistema potrebbe non averlo riconosciuto correttamente. Riprova utilizzando il bottone \"CARICA\"."
+            }
         }
     },
     "selectionMode": {
