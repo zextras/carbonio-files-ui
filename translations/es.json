@@ -77,6 +77,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}} elemento seleccionado",
             "selectedCount_plural": "{{count}} elementos seleccionados"
+        },
+        "moreInfo": {
+            "title": "Información adicional"
         }
     },
     "node": {
@@ -182,7 +185,9 @@
         "upload": {
             "goToFolder": "Ir a carpeta",
             "success": "Subida realizada en {{destination}}",
-            "moreInfo": "Más información"
+            "moreInfo": "Más información",
+            "foldersNotAllowed": "Las carpetas no se pueden actualizar",
+            "nodesNotAllowed": "Algunos elementos no han sido actualizados"
         },
         "copyNodes": {
             "error": "Algo fue mal, inténtalo de nuevo",
@@ -277,7 +282,8 @@
         "moveToTrash": "Mover a la papelera",
         "removeUpload": "Eliminar subida",
         "retryUpload": "Reintentar subida",
-        "unflag": "Quitar etiqueta"
+        "unflag": "Quitar etiqueta",
+        "sendViaMail": "Enviar por e-mail"
     },
     "displayer": {
         "list": {
@@ -646,6 +652,11 @@
             "title": {
                 "disabled": "Modo Arrastrar y Soltar",
                 "enabled": "Modo Arrastrar y Soltar"
+            }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Las carpetas no se pueden subir. En lugar de eso, si estás intentando subir un archivo, puede que el sistema no lo haya reconocido. Prueba de nuevo dándole al botón \"SUBIR\"."
             }
         }
     },
