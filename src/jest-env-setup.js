@@ -28,7 +28,7 @@ configure({
 });
 
 failOnConsole({
-	shouldFailOnWarn: false,
+	shouldFailOnWarn: true,
 	shouldFailOnError: true,
 	silenceMessage: (errorMessage) =>
 		// snackbar PropType error on Window type
