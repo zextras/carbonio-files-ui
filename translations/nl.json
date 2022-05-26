@@ -85,6 +85,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}} geselecteerd item",
             "selectedCount_plural": "{{count}} geselecteerde item"
+        },
+        "moreInfo": {
+            "title": "Aanvullende informatie"
         }
     },
     "primaryBar": {
@@ -131,7 +134,9 @@
         "upload": {
             "goToFolder": "Ga naar map",
             "success": "Uploaden gebeurde in {{destination}}",
-            "moreInfo": "Meer info"
+            "moreInfo": "Meer info",
+            "foldersNotAllowed": "Mappen kunnen niet worden geüpload",
+            "nodesNotAllowed": "Sommige items zijn niet geüpload"
         },
         "copyNodes": {
             "action": "Ga naar map",
@@ -277,7 +282,8 @@
         "moveToTrash": "Naar Trash verplaatsen",
         "removeUpload": "Upload verwijderen",
         "retryUpload": "Upload opnieuw proberen",
-        "unflag": "Vlag verwijderen"
+        "unflag": "Vlag verwijderen",
+        "sendViaMail": "Verzenden via e-mail"
     },
     "displayer": {
         "details": {
@@ -646,6 +652,11 @@
             "title": {
                 "disabled": "Drag&Drop-modus",
                 "enabled": "Drag&Drop-modus"
+            }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Mappen kunnen niet worden geüpload. Als u een bestand probeert te uploaden, kan het zijn dat het systeem het niet herkend heeft. Probeer het opnieuw met de knop \"UPLOAD\"."
             }
         }
     },

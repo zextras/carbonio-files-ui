@@ -85,6 +85,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}} seçilen öğe",
             "selectedCount_plural": "{{count}} seçilen öğe"
+        },
+        "moreInfo": {
+            "title": "Ek Bilgi"
         }
     },
     "create": {
@@ -223,7 +226,9 @@
         "upload": {
             "goToFolder": "Klasöre git",
             "success": "{{destination}} hedefine yükleme yapıldı",
-            "moreInfo": "Daha fazla bilgi"
+            "moreInfo": "Daha fazla bilgi",
+            "nodesNotAllowed": "Bazı öğeler yüklenemedi",
+            "foldersNotAllowed": "Klasörler yüklenemedi"
         },
         "clipboard": {
             "itemShortcutCopied": "Öğe kısayolu kopyalandı",
@@ -277,7 +282,8 @@
         "moveToTrash": "Çöp Kutusuna Taşı",
         "removeUpload": "Yüklemeyi kaldır",
         "retryUpload": "Yüklemeyi tekrar dene",
-        "unflag": "Bayrağı kaldır"
+        "unflag": "Bayrağı kaldır",
+        "sendViaMail": "E-posta ile gönder"
     },
     "displayer": {
         "details": {
@@ -646,6 +652,11 @@
             "title": {
                 "disabled": "Sürükle ve Bırak Modu",
                 "enabled": "Sürükle ve Bırak Modu"
+            }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Klasörler yüklenemiyor. Bir dosya yüklemeye çalışıyorsanız, sistem tarafından tanınmamış olabilir. \"YÜKLE\" tuşunu kullanarak tekrar deneyin."
             }
         }
     },
