@@ -88,6 +88,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}} item dipilih",
             "selectedCount_plural": "{{count}} item dipilih"
+        },
+        "moreInfo": {
+            "title": "Informasi tambahan"
         }
     },
     "node": {
@@ -193,7 +196,9 @@
         "upload": {
             "goToFolder": "Buka folder",
             "success": "Unggahan terjadi di {{destination}}",
-            "moreInfo": "Info lain"
+            "moreInfo": "Info lain",
+            "foldersNotAllowed": "Folder tidak bisa diunggah",
+            "nodesNotAllowed": "Beberapa item belum diunggah"
         },
         "copyNodes": {
             "action": "Buka folder",
@@ -277,7 +282,8 @@
         "moveToTrash": "Pindahkan ke Tempat Sampah",
         "removeUpload": "Hapus unggahan",
         "retryUpload": "Coba unggah lagi",
-        "unflag": "Hapus tanda bendera"
+        "unflag": "Hapus tanda bendera",
+        "sendViaMail": "Kirim melalui email"
     },
     "displayer": {
         "list": {
@@ -646,6 +652,11 @@
             "title": {
                 "disabled": "Mode Seret & Lepas",
                 "enabled": "Mode Seret & Lepas"
+            }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Folder tidak bisa diunggah. Jika Anda mengunggah file, sistem mungkin tidak akan mengenalinya. Coba lagi gunakan tombol \"UNGGAH\"."
             }
         }
     },

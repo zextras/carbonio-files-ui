@@ -114,6 +114,13 @@
             },
             "body": "Sind Sie sicher, dass Sie Ihre Rechte an diesem Knoten verringern wollen? Die Aktion ist dauerhaft und Sie können die Rechte der vorherigen Freigabe nicht mehr selbst wiederherstellen. Sie können sich jederzeit an den Eigentümer des freigegebenen Objekts wenden, wenn Sie die vorherigen Rechte wiederherstellen möchten",
             "header": "Ihre derzeitigen Rechte vermindern"
+        },
+        "moreInfo": {
+            "title": "Weitere Information"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} ausgewähltes Element",
+            "selectedCount_plural": "{{count}} ausgewählte Elemente"
         }
     },
     "node": {
@@ -218,7 +225,10 @@
         },
         "upload": {
             "goToFolder": "Zum Ordner gehen",
-            "success": "Upload erfolgt in {{destination}}"
+            "success": "Upload erfolgt in {{destination}}",
+            "foldersNotAllowed": "Ordner können nicht hochgeladen werden",
+            "nodesNotAllowed": "Einige Elemente wurde nicht hochgeladen",
+            "moreInfo": "weitere Informationen"
         },
         "copyNodes": {
             "action": "Zum Ordner gehen",
@@ -272,7 +282,8 @@
         "moveToTrash": "Zum Papierkorb verschieben",
         "removeUpload": "Upload entfernen",
         "retryUpload": "Upload erneut versuchen",
-        "unflag": "Markierung entfernen"
+        "unflag": "Markierung entfernen",
+        "sendViaMail": "Per E-Mail versenden"
     },
     "displayer": {
         "details": {
@@ -642,6 +653,11 @@
         },
         "destination": {
             "home": "Upload erfolgt in Files Home"
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Ordner können nicht hochgeladen werden. Wenn Sie versucht haben, eine Datei hochzuladen, hat das System diese möglicherweise nicht erkannt. Versuchen Sie es mit dem \"UPLOAD\" Button."
+            }
         }
     },
     "selectionMode": {
@@ -739,5 +755,8 @@
         "close": {
             "tooltip": "Schließen"
         }
+    },
+    "label": {
+        "app_name": "Files"
     }
 }
