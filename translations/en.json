@@ -3,12 +3,15 @@
         "copy": "Copy",
         "deletePermanently": "Delete Permanently",
         "download": "Download",
+        "edit": "Edit",
         "flag": "Flag",
         "goToFolder": "Go to destination folder",
+        "manageShares": "Manage Shares",
         "markForDeletion": "Mark for deletion",
         "move": "Move",
         "moveToTrash": "Move to Trash",
         "openWithDocs": "Open document",
+        "preview": "Preview",
         "removeUpload": "Remove upload",
         "rename": "Rename",
         "restore": "Restore",
@@ -496,8 +499,8 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "Add collaborator",
-                "download": "Download"
+                "download": "Download",
+                "manageShares": "Manage Shares"
             }
         },
         "close": {
