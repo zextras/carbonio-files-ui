@@ -288,7 +288,9 @@
         "upload": {
             "goToFolder": "前往文件夹",
             "success": "上传发生于{{destination}}",
-            "moreInfo": "更多信息"
+            "moreInfo": "更多信息",
+            "foldersNotAllowed": "文件夹无法上传",
+            "nodesNotAllowed": "部分项目未被上传"
         },
         "copyNodes": {
             "action": "前往文件夹",
@@ -342,7 +344,8 @@
         "moveToTrash": "移动至垃圾箱",
         "removeUpload": "移除上传",
         "retryUpload": "重试上传",
-        "unflag": "取消标记"
+        "unflag": "取消标记",
+        "sendViaMail": "通过邮件发送"
     },
     "create": {
         "options": {
@@ -453,6 +456,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}} 已选择项目",
             "selectedCount_plural": "{{count}} 已选择项目"
+        },
+        "moreInfo": {
+            "title": "额外信息"
         }
     },
     "node": {
@@ -643,6 +649,11 @@
             "title": {
                 "disabled": "拖放模式",
                 "enabled": "拖放模式"
+            }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "文件夹无法上传。相反，如果您尝试上传文件，系统可能会无法识别。使用“上传”按钮重试。"
             }
         }
     },

@@ -56,6 +56,13 @@
             },
             "sharedWitMe": "Udostępnione mi",
             "filesHome": "Start"
+        },
+        "moreInfo": {
+            "title": "Dodatkowe informacje"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}} wybrany element",
+            "selectedCount_plural": "{{count}} wybranych elementów"
         }
     },
     "search": {
@@ -165,7 +172,10 @@
         },
         "upload": {
             "goToFolder": "Idź do folderu",
-            "success": "Przeprowadzono przesyłanie w {{destination}}"
+            "success": "Przeprowadzono przesyłanie w {{destination}}",
+            "nodesNotAllowed": "Niektóre z elementów nie zostały przesłane",
+            "foldersNotAllowed": "Nie można przesyłać folderów",
+            "moreInfo": "Więcej informacji"
         },
         "version": {
             "clone": "Wersja została sklonowana jako aktualna",
@@ -199,7 +209,8 @@
         "openWithDocs": "Otwórz dokument",
         "removeUpload": "Usuń przesyłanie",
         "rename": "Zmień nazwę",
-        "unflag": "Usuń flagę"
+        "unflag": "Usuń flagę",
+        "sendViaMail": "Wyślij e-mailem"
     },
     "displayer": {
         "share": {
@@ -577,6 +588,11 @@
         },
         "destination": {
             "home": "Przesyłanie wystąpiło w Plikach Startu"
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Foldery nie mogą być przesyłane. Jeżeli próbowałeś przesłać plik, system mógł go nieprawidłowo rozpoznać. Spróbuj ponownie używając przycisku \"PRZEŚLIJ\"."
+            }
         }
     },
     "empty": {
