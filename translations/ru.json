@@ -751,7 +751,6 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "Добавить сотрудника",
                 "download": "Скачать"
             }
         },

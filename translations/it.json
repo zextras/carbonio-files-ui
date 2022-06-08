@@ -751,7 +751,6 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "Aggiungi collaboratore",
                 "download": "Scarica"
             }
         },

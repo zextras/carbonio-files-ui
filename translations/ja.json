@@ -748,7 +748,6 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "共同編集者を追加する",
                 "download": "ダウンロード"
             }
         },
