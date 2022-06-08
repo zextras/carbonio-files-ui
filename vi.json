@@ -485,8 +485,7 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Tải xuống",
-                "addCollaborator": "Thêm cộng tác viên"
+                "download": "Tải xuống"
             }
         },
         "close": {
