@@ -748,7 +748,6 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "Mitarbeiter hinzufügen",
                 "download": "Download"
             }
         },

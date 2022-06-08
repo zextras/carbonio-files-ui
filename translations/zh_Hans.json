@@ -748,7 +748,6 @@
         },
         "actions": {
             "tooltip": {
-                "addCollaborator": "添加协作者",
                 "download": "下载"
             }
         }

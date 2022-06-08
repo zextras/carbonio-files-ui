@@ -751,7 +751,6 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "Tambahkan kolaborator",
                 "download": "Unduh"
             }
         },
