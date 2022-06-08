@@ -499,8 +499,8 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "Add collaborator",
-                "download": "Download"
+                "download": "Download",
+                "manageShares": "Manage Shares"
             }
         },
         "close": {
