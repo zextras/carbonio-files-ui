@@ -118,6 +118,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}} élément sélectionné",
             "selectedCount_plural": "{{count}} éléments sélectionnés"
+        },
+        "moreInfo": {
+            "title": "Informations complémentaires"
         }
     },
     "node": {
@@ -223,7 +226,9 @@
         "upload": {
             "goToFolder": "Aller dans le dossier",
             "success": "Le téléchargement a eu lieu dans {{destination}}",
-            "moreInfo": "Plus d'informations"
+            "moreInfo": "Plus d'informations",
+            "nodesNotAllowed": "Certains éléments n'ont pas pu être téléversés",
+            "foldersNotAllowed": "Les dossiers ne peuvent pas être téléversés"
         },
         "clipboard": {
             "email": "Adresse e-mail copiée",
@@ -277,7 +282,8 @@
         "moveToTrash": "Déplacer vers la corbeille",
         "removeUpload": "Supprimer le téléchargement",
         "retryUpload": "Réessayer le téléchargement",
-        "unflag": "Décocher"
+        "unflag": "Décocher",
+        "sendViaMail": "Envoyer par email"
     },
     "search": {
         "header": {
@@ -647,6 +653,11 @@
                 "disabled": "Mode glisser-déposer",
                 "enabled": "Mode glisser-déposer"
             }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "Les dossiers ne peuvent pas être téléversés. Toutefois, si vous vouliez téléverser un fichier, le système n'a peut-être pas réussi à le reconnaître. Veuillez réessayer en utilisant le bouton \"TÉLÉVERSER\"."
+            }
         }
     },
     "breadcrumb": {
@@ -738,7 +749,7 @@
         "actions": {
             "tooltip": {
                 "addCollaborator": "Ajouter un collaborateur",
-                "download": "Télécharger"
+                "download": "Téléchargement"
             }
         },
         "close": {

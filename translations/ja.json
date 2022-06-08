@@ -81,6 +81,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}}選択された要素",
             "selectedCount_plural": "{{count}}選択した要素"
+        },
+        "moreInfo": {
+            "title": "追加情報"
         }
     },
     "node": {
@@ -186,7 +189,9 @@
         "upload": {
             "goToFolder": "フォルダに移動する",
             "success": "{{destination}}でアップロードされました",
-            "moreInfo": "詳細"
+            "moreInfo": "詳細",
+            "foldersNotAllowed": "フォルダをアップロードできません",
+            "nodesNotAllowed": "一部のアイテムがアップロードされていません"
         },
         "copyNodes": {
             "action": "フォルダに移動する",
@@ -277,7 +282,8 @@
         "moveToTrash": "ゴミ箱に移動する",
         "removeUpload": "アップロードを削除する",
         "retryUpload": "再びアップロード試す",
-        "unflag": "フラグを外す"
+        "unflag": "フラグを外す",
+        "sendViaMail": "メールで送信する"
     },
     "displayer": {
         "list": {
@@ -646,6 +652,11 @@
             "title": {
                 "disabled": "ドラッグ＆ドロップモード",
                 "enabled": "ドラッグ＆ドロップモード"
+            }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "フォルダをアップロードできません。代わりにファイルのアップロードを試みると、システムにより認識されない可能性があります。 「アップロード」ボタンを使用して再度お試しください。"
             }
         }
     },
