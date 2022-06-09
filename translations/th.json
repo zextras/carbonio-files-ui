@@ -118,6 +118,9 @@
         "nodesSelection": {
             "selectedCount_plural": "{{count}} รายการที่เลือก",
             "selectedCount": "{{count}} รายการที่เลือก"
+        },
+        "moreInfo": {
+            "title": "ข้อมูลเพิ่มเติม"
         }
     },
     "node": {
@@ -223,7 +226,9 @@
         "upload": {
             "goToFolder": "ไปที่โฟลเดอร์",
             "success": "อัปโหลดเกิดขึ้นใน {{destination}}",
-            "moreInfo": "ข้อมูลเพิ่มเติม"
+            "moreInfo": "ข้อมูลเพิ่มเติม",
+            "foldersNotAllowed": "ไม่สามารถอัปโหลดโฟลเดอร์ได้",
+            "nodesNotAllowed": "บางรายการยังไม่ได้อัปโหลด"
         },
         "copyNodes": {
             "action": "ไปที่โฟลเดอร์",
@@ -277,7 +282,8 @@
         "moveToTrash": "ย้ายไปที่ถังขยะ",
         "removeUpload": "ลบการอัปโหลด",
         "retryUpload": "ลองอัปโหลดอีกครั้ง",
-        "unflag": "เอาธงออก"
+        "unflag": "เอาธงออก",
+        "sendViaMail": "ส่งทางอีเมล์"
     },
     "displayer": {
         "list": {
@@ -647,6 +653,11 @@
         },
         "destination": {
             "home": "การอัปโหลดเกิดขึ้นในหน้าหลัก Files"
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "ไม่สามารถอัปโหลดโฟลเดอร์ หรือหากคุณกำลังพยายามอัปโหลดไฟล์ ระบบอาจไม่รู้จักไฟล์ดังกล่าว โปรดลองใหม่อีกครั้งโดยใช้ปุ่ม \"อัปโหลด\""
+            }
         }
     },
     "sortingDropdown": {
@@ -740,7 +751,6 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "เพิ่มผู้เข้าร่วม",
                 "download": "ดาวน์โหลด"
             }
         },

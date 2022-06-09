@@ -10,5 +10,5 @@ import { AdvancedFilters } from '../carbonio-files-ui-common/types/common';
 export interface AdvancedSearchChip extends QueryChip {
 	label: never;
 	value: never;
-	varKey: keyof Omit<AdvancedFilters, 'keywords'>;
+	queryChipsToAdvancedFiltersValue?: Partial<Omit<AdvancedFilters, 'keywords'>> | undefined;
 }

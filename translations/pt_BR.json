@@ -133,6 +133,9 @@
         "nodesSelection": {
             "selectedCount": "{{count}} item selecionado",
             "selectedCount_plural": "{{count}} itens selecionados"
+        },
+        "moreInfo": {
+            "title": "Informações adicionais"
         }
     },
     "node": {
@@ -223,7 +226,9 @@
         "upload": {
             "goToFolder": "Ir para a pasta",
             "success": "Carregamento ocorreu em {{destination}}",
-            "moreInfo": "Mais informações"
+            "moreInfo": "Mais informações",
+            "foldersNotAllowed": "As pastas não podem ser carregadas",
+            "nodesNotAllowed": "Alguns itens não foram carregados"
         },
         "copyNodes": {
             "action": "Ir para a pasta",
@@ -277,7 +282,8 @@
         "moveToTrash": "Mover para Lixeira",
         "removeUpload": "Remover upload",
         "retryUpload": "Tentar upload novamente",
-        "unflag": "Retirar sinalização"
+        "unflag": "Retirar sinalização",
+        "sendViaMail": "Enviar por e-mail"
     },
     "search": {
         "header": {
@@ -647,6 +653,11 @@
         },
         "destination": {
             "home": "Carregamento feito na Home do Files"
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "As pastas não podem ser carregadas. Caso esteja tentando fazer upload de um arquivo, o sistema pode não tê-lo reconhecido. Tente novamente usando o botão \"UPLOAD\"."
+            }
         }
     },
     "selectionMode": {
@@ -737,7 +748,6 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "Adicionar colaborador",
                 "download": "Download"
             }
         },

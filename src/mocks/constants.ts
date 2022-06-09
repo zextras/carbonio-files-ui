@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { faker } from '@faker-js/faker';
 import type { Account, AccountSettings } from '@zextras/carbonio-shell-ui';
 
 export const LOGGED_USER: Account = {
@@ -13,8 +12,8 @@ export const LOGGED_USER: Account = {
 		targets: []
 	},
 	signatures: { signature: [] },
-	id: faker.datatype.uuid(),
-	name: faker.name.findName()
+	id: 'logged-user-id',
+	name: 'Logged User Name'
 };
 
 export const USER_SETTINGS: AccountSettings = {
