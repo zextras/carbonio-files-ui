@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/zextras/carbonio-files-ui/compare/v0.1.4...v0.1.5) (2022-06-09)
+
+
+### Features
+
+* add in or under on search folder chip ([7ed8e85](https://github.com/zextras/carbonio-files-ui/commit/7ed8e8505dc4682104738b666c362446a00e1446)), closes [#68](https://github.com/zextras/carbonio-files-ui/issues/68)
+* add integration to retrieve node metadata ([7d5569c](https://github.com/zextras/carbonio-files-ui/commit/7d5569ca834296ea186ebddf5be8d9e71238c925)), closes [#66](https://github.com/zextras/carbonio-files-ui/issues/66)
+* handle limit of versions ([6ee16f1](https://github.com/zextras/carbonio-files-ui/commit/6ee16f1beb11ff9e4649bb2fe47431fb503a709c)), closes [#62](https://github.com/zextras/carbonio-files-ui/issues/62)
+
+
+### Bug Fixes
+
+* align behaviour of list on mutations updates ([51ae9f2](https://github.com/zextras/carbonio-files-ui/commit/51ae9f23b5626e7b0317645c7af26c61039a12b0)), closes [#75](https://github.com/zextras/carbonio-files-ui/issues/75)
+* avoid to push on stack of modals on viewport change ([0f9b412](https://github.com/zextras/carbonio-files-ui/commit/0f9b412c3bc6c53b0a9bb16a0ac4daf29187367f)), closes [#64](https://github.com/zextras/carbonio-files-ui/issues/64)
+* remove item from folder list when delete your own share ([2cfad03](https://github.com/zextras/carbonio-files-ui/commit/2cfad03e6eb739d3c2878a29af83f77743c68882)), closes [#63](https://github.com/zextras/carbonio-files-ui/issues/63)
+
 ### [0.1.4](https://github.com/zextras/carbonio-files-ui/compare/v0.1.3...v0.1.4) (2022-05-25)
 
 ### [0.1.3](https://github.com/zextras/carbonio-files-ui/compare/v0.1.2...v0.1.3) (2022-05-25)
