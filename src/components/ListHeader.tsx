@@ -36,8 +36,7 @@ const ListHeader: React.VFC<ListHeaderProps> = ({
 	isSelectionModeActive,
 	unSelectAll,
 	selectAll,
-	permittedSelectionModePrimaryActionsItems,
-	permittedSelectionModeSecondaryActionsItems,
+	permittedSelectionModeActionsItems,
 	actionComponent,
 	exitSelectionMode,
 	isAllSelected
@@ -79,8 +78,7 @@ const ListHeader: React.VFC<ListHeaderProps> = ({
 			isSelectionModeActive={isSelectionModeActive}
 			unSelectAll={unSelectAll}
 			selectAll={selectAll}
-			permittedSelectionModePrimaryActionsItems={permittedSelectionModePrimaryActionsItems}
-			permittedSelectionModeSecondaryActionsItems={permittedSelectionModeSecondaryActionsItems}
+			permittedSelectionModeActionsItems={permittedSelectionModeActionsItems}
 			hide={inSearchView}
 			headerEndComponent={headerEndComponent}
 			firstCustomComponent={firstCustomComponent}

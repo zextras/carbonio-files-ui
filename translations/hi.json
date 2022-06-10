@@ -749,7 +749,6 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "addCollaborator": "साथ में काम करने वाले जोड़ें",
                 "download": "डाऊनलोड करें"
             }
         },

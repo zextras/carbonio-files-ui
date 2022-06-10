@@ -32,8 +32,8 @@
 		"@graphql-codegen/cli": "^2.6.2",
 		"@graphql-codegen/fragment-matcher": "^3.2.1",
 		"@graphql-codegen/schema-ast": "^2.4.1",
-		"@graphql-codegen/typescript": "^2.4.8",
-		"@graphql-codegen/typescript-operations": "^2.3.5",
+		"@graphql-codegen/typescript": "^2.5.0",
+		"@graphql-codegen/typescript-operations": "^2.4.1",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/react": "^11.2.7",
 		"@testing-library/react-hooks": "^8.0.0",
@@ -70,7 +70,7 @@
 		"react-test-renderer": "^17.0.2"
 	},
 	"dependencies": {
-		"@apollo/client": "~3.5.10",
+		"@apollo/client": "~3.6.5",
 		"@zextras/carbonio-design-system": "~0.3.4",
 		"@zextras/carbonio-shell-ui": "~0.4.25",
 		"@zextras/carbonio-ui-preview": "^0.1.5",
