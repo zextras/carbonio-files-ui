@@ -80,6 +80,12 @@
         },
         "moreInfo": {
             "title": "Información adicional"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Eliminar todas las versiones"
+            },
+            "header": "Eliminar todas las versiones"
         }
     },
     "node": {
@@ -283,7 +289,9 @@
         "removeUpload": "Eliminar subida",
         "retryUpload": "Reintentar subida",
         "unflag": "Quitar etiqueta",
-        "sendViaMail": "Enviar por e-mail"
+        "sendViaMail": "Enviar por e-mail",
+        "edit": "Editar",
+        "preview": "Vista previa"
     },
     "displayer": {
         "list": {
@@ -746,7 +754,7 @@
         }
     },
     "label": {
-        "app_name": "Drive"
+        "app_name": "Files"
     },
     "preview": {
         "actions": {

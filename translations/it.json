@@ -224,6 +224,13 @@
         },
         "moreInfo": {
             "title": "Ulteriori informazioni"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Elimina tutte le versioni"
+            },
+            "header": "Elimina tutte le versioni",
+            "body": "Tutte le versioni che non sono contrassegnate per essere tenute per sempre, eccetto quella corrente, saranno eliminate. Non sarà possibile recuperarle."
         }
     },
     "filter": {
@@ -277,13 +284,16 @@
         "openWithDocs": "Apri documento",
         "rename": "Rinomina",
         "restore": "Ripristina",
-        "flag": "Etichetta",
+        "flag": "Contrassegna",
         "goToFolder": "Vai alla cartella di destinazione",
         "moveToTrash": "Sposta nel Cestino",
         "removeUpload": "rimuovi caricamento",
         "retryUpload": "Riprova caricamento",
-        "unflag": "Deseleziona",
-        "sendViaMail": "Invia via e-mail"
+        "unflag": "Rimuovi contrassegno",
+        "sendViaMail": "Invia via e-mail",
+        "edit": "Modifica",
+        "preview": "Anteprima",
+        "manageShares": "Gestisci Condivisioni"
     },
     "displayer": {
         "list": {
@@ -704,7 +714,8 @@
         "code_NODE_WRITE_ERROR": "Sembra che questo oggetto non possa essere modificato, o che tu non abbia i permessi per modificarlo",
         "code_SHARE_CREATION_ERROR": "Non è possibile condividere l'elemento con questo utente",
         "code_SHARE_NOT_FOUND": "Impossibile trovare questa condivisione",
-        "code_NODE_DUPLICATED": "É già presente un file con lo stesso nome in questa cartella"
+        "code_NODE_DUPLICATED": "É già presente un file con lo stesso nome in questa cartella",
+        "code_VERSIONS_LIMIT_REACHED": "L'operazione non può essere completata. Hai raggiunto il limite massimo."
     },
     "publicLink": {
         "addLink": {
@@ -751,7 +762,8 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Scarica"
+                "download": "Scarica",
+                "manageShares": "Gestisci Condivisioni"
             }
         },
         "close": {

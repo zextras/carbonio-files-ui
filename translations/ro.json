@@ -136,7 +136,8 @@
         "move": "Muta",
         "openWithDocs": "Deschide cu Docs",
         "rename": "Redenumire",
-        "restore": "Restaurare"
+        "restore": "Restaurare",
+        "edit": "Editeaza"
     },
     "displayer": {
         "details": {

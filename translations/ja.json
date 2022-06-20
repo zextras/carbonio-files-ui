@@ -84,6 +84,12 @@
         },
         "moreInfo": {
             "title": "追加情報"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "すべてのバージョンをパージする"
+            },
+            "header": "すべてのバージョンをパージする"
         }
     },
     "node": {
@@ -283,7 +289,9 @@
         "removeUpload": "アップロードを削除する",
         "retryUpload": "再びアップロード試す",
         "unflag": "フラグを外す",
-        "sendViaMail": "メールで送信する"
+        "sendViaMail": "メールで送信する",
+        "edit": "編集する",
+        "preview": "プレビューする"
     },
     "displayer": {
         "list": {
