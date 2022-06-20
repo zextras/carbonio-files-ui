@@ -14,7 +14,10 @@
         "rename": "Đổi tên",
         "restore": "Khôi phục",
         "retryUpload": "Tải lại",
-        "unflag": "Bỏ gắn cờ"
+        "unflag": "Bỏ gắn cờ",
+        "edit": "Soan thảo",
+        "preview": "Xem trước",
+        "manageShares": "Quản lý chia sẻ"
     },
     "create": {
         "options": {
@@ -269,7 +272,7 @@
                 "purgeAllVersions": "Xóa tất cả các phiên bản",
                 "upload": "Phiên bản tải lên"
             },
-            "mainHint": "Bạn có thể xóa thủ công bất kỳ phiên bản tệp nào hoặc khôi phục một phiên bản tệp làm phiên bản hiện tại. Chọn một hoặc nhiều phiên bản mà bạn muốn giữ mãi mãi."
+            "mainHint": "Bạn có thể xóa thủ công bất kỳ phiên bản tệp nào hoặc khôi phục một phiên bản tệp làm phiên bản hiện tại. Chọn một hoặc nhiều phiên bản mà bạn muốn giữ vĩnh viễn."
         },
         "list": {
             "you": "Bạn"
@@ -313,9 +316,10 @@
     "empty": {
         "search": {
             "noResults": [
-                "Không có kết quả. Tiếp tục tìm kiếm!"
+                "Không có kết quả. Tiếp tục tìm kiếm!",
+                "Không có mục nào phù hợp với tìm kiếm của bạn."
             ],
-            "notRun": "Không có cuộc tìm kiếm nào được thực hiện.",
+            "notRun": "Hiện tại, không có kết quả tìm kiếm nào được đưa ra.",
             "hint": "Không tìm thấy tệp hay thư mục nào phù hợp với tìm kiếm của bạn"
         },
         "filter": {
@@ -342,7 +346,8 @@
         "code_NODE_DUPLICATED": "Có một tệp có cùng tên trong thư mục này",
         "code_NODE_NOT_FOUND": "Có vẻ như đối tượng này không tồn tại hoặc bạn không có quyền truy cập vào nó",
         "code_NODE_WRITE_ERROR": "Có vẻ như không thể chỉnh sửa đối tượng này hoặc bạn không có quyền chỉnh sửa nó",
-        "code": "Đã xảy ra lỗi"
+        "code": "Đã xảy ra lỗi",
+        "code_VERSIONS_LIMIT_REACHED": "Không thể hoàn thành hoạt động. Bạn đã đạt đến giới hạn tối đa."
     },
     "folder": {
         "create": {
@@ -423,6 +428,13 @@
         "nodesSelection": {
             "selectedCount_plural": "{{count}} mục đã chọn",
             "selectedCount": "{{count}} mục đã chọn"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Xóa tất cả các phiên bản"
+            },
+            "header": "Xóa tất cả các phiên bản",
+            "body": "Tất cả các phiên bản không được đánh dấu để lưu giữ vĩnh viễn, ngoại trừ phiên bản hiện tại, sẽ bị xóa. Bạn sẽ không thể khôi phục các phiên bản này."
         }
     },
     "node": {
@@ -485,7 +497,8 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Tải xuống"
+                "download": "Tải xuống",
+                "manageShares": "Quản lý chia sẻ"
             }
         },
         "close": {
@@ -673,7 +686,7 @@
         },
         "version": {
             "keepForeverAdded": "Phiên bản được đánh dấu là sẽ được lưu giữ vĩnh viễn",
-            "keepForeverRemoved": "Đã xóa \"Giữ mãi mãi\"",
+            "keepForeverRemoved": "Đã xóa \"Giữ vĩnh viễn\"",
             "clone": "Phiên bản được sao chép như phiên bản hiện tại"
         },
         "restore": {

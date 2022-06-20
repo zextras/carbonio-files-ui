@@ -121,6 +121,13 @@
         },
         "moreInfo": {
             "title": "Informations complémentaires"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Purger toutes les versions"
+            },
+            "header": "Purger toutes les versions",
+            "body": "Toutes les versions qui n'ont pas été étiquetées comme à garder pour toujours, à l'exception de la version courante, seront supprimées. Vous ne serez pas en mesure de les récupérer."
         }
     },
     "node": {
@@ -283,7 +290,10 @@
         "removeUpload": "Supprimer le téléchargement",
         "retryUpload": "Réessayer le téléchargement",
         "unflag": "Décocher",
-        "sendViaMail": "Envoyer par email"
+        "sendViaMail": "Envoyer par email",
+        "edit": "Modifier",
+        "preview": "Prévisualisation",
+        "manageShares": "Gestion des partages"
     },
     "search": {
         "header": {
@@ -704,7 +714,8 @@
         "code_SHARE_NOT_FOUND": "Nous sommes désolés, mais ce partage est introuvable",
         "code_FILE_VERSION_NOT_FOUND": "Nous sommes désolés, mais cette version du fichier est introuvable",
         "code_NODE_NOT_FOUND": "Il semble que cet objet n'existe pas ou que vous n'avez pas la permission d'y accéder",
-        "code_NODE_DUPLICATED": "Il y a déjà un fichier portant le même nom dans ce dossier"
+        "code_NODE_DUPLICATED": "Il y a déjà un fichier portant le même nom dans ce dossier",
+        "code_VERSIONS_LIMIT_REACHED": "L'opération ne peut être terminée. Vous avez atteint la limite maximum."
     },
     "publicLink": {
         "addLink": {
@@ -748,7 +759,8 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Téléchargement"
+                "download": "Téléchargement",
+                "manageShares": "Gestion des partages"
             }
         },
         "close": {
@@ -756,6 +768,6 @@
         }
     },
     "label": {
-        "app_name": "Drive"
+        "app_name": "Files"
     }
 }

@@ -133,6 +133,12 @@
         "nodesSelection": {
             "selectedCount": "{{count}} item selecionado",
             "selectedCount_plural": "{{count}} itens selecionados"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Excluir todas as versões"
+            },
+            "header": "Excluir todas as versões"
         }
     },
     "node": {
@@ -277,7 +283,9 @@
         "moveToTrash": "Mover para Lixeira",
         "removeUpload": "Remover upload",
         "retryUpload": "Tentar upload novamente",
-        "unflag": "Retirar sinalização"
+        "unflag": "Retirar sinalização",
+        "edit": "Editar",
+        "preview": "Visualizar"
     },
     "search": {
         "header": {

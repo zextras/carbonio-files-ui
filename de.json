@@ -121,6 +121,12 @@
         "nodesSelection": {
             "selectedCount": "{{count}} ausgewähltes Element",
             "selectedCount_plural": "{{count}} ausgewählte Elemente"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Alle Versionen bereinigen"
+            },
+            "header": "Alle Versionen bereinigen"
         }
     },
     "node": {
@@ -283,7 +289,9 @@
         "removeUpload": "Upload entfernen",
         "retryUpload": "Upload erneut versuchen",
         "unflag": "Markierung entfernen",
-        "sendViaMail": "Per E-Mail versenden"
+        "sendViaMail": "Per E-Mail versenden",
+        "edit": "Bearbeiten",
+        "preview": "Vorschau"
     },
     "displayer": {
         "details": {

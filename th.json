@@ -121,6 +121,12 @@
         },
         "moreInfo": {
             "title": "ข้อมูลเพิ่มเติม"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "ล้างทุกเวอร์ชั่น"
+            },
+            "header": "ล้างทุกเวอร์ชั่น"
         }
     },
     "node": {
@@ -283,7 +289,9 @@
         "removeUpload": "ลบการอัปโหลด",
         "retryUpload": "ลองอัปโหลดอีกครั้ง",
         "unflag": "เอาธงออก",
-        "sendViaMail": "ส่งทางอีเมล์"
+        "sendViaMail": "ส่งทางอีเมล์",
+        "edit": "แก้ไข",
+        "preview": "ดูตัวอย่าง"
     },
     "displayer": {
         "list": {
