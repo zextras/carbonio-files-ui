@@ -411,6 +411,18 @@
         "moreInfo": {
             "title": "Additional information"
         },
+        "nodeSelection": {
+            "button": {
+                "create": "Create",
+                "newFolder": {
+                    "disabled": "You don't have the correct permissions",
+                    "label": "New folder"
+                }
+            },
+            "input": {
+                "newFolder": "New folder's name"
+            }
+        },
         "nodesSelection": {
             "selectedCount": "{{count}} selected item",
             "selectedCount_plural": "{{count}} selected items"
