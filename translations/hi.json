@@ -196,6 +196,12 @@
         },
         "moreInfo": {
             "title": "अतिरिक्त जानकारी"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "सभी वर्शन हटाएँ"
+            },
+            "header": "सभी वर्शन हटाएँ"
         }
     },
     "snackbar": {
@@ -281,7 +287,9 @@
         "removeUpload": "अपलोड हटाएँ",
         "retryUpload": "अपलोड की दोबारा कोशिश करें",
         "unflag": "फ्लैग हटाएँ",
-        "sendViaMail": "ई-मेल के द्वारा भेजा"
+        "sendViaMail": "ई-मेल के द्वारा भेजा",
+        "preview": "प्रीव्यू",
+        "edit": "बदलाव करें"
     },
     "displayer": {
         "details": {

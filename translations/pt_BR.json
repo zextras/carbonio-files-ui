@@ -136,6 +136,12 @@
         },
         "moreInfo": {
             "title": "Informações adicionais"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Excluir todas as versões"
+            },
+            "header": "Excluir todas as versões"
         }
     },
     "node": {
@@ -283,7 +289,9 @@
         "removeUpload": "Remover upload",
         "retryUpload": "Tentar upload novamente",
         "unflag": "Retirar sinalização",
-        "sendViaMail": "Enviar por e-mail"
+        "sendViaMail": "Enviar por e-mail",
+        "edit": "Editar",
+        "preview": "Pré-visualizar"
     },
     "search": {
         "header": {
