@@ -345,7 +345,9 @@
         "removeUpload": "移除上传",
         "retryUpload": "重试上传",
         "unflag": "取消标记",
-        "sendViaMail": "通过邮件发送"
+        "sendViaMail": "通过邮件发送",
+        "edit": "编辑",
+        "preview": "预览"
     },
     "create": {
         "options": {
@@ -459,6 +461,12 @@
         },
         "moreInfo": {
             "title": "额外信息"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "清除所有版本"
+            },
+            "header": "清除所有版本"
         }
     },
     "node": {

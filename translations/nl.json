@@ -88,6 +88,12 @@
         },
         "moreInfo": {
             "title": "Aanvullende informatie"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Alle versies verwijderen"
+            },
+            "header": "Alle versies verwijderen"
         }
     },
     "primaryBar": {
@@ -283,7 +289,9 @@
         "removeUpload": "Upload verwijderen",
         "retryUpload": "Upload opnieuw proberen",
         "unflag": "Vlag verwijderen",
-        "sendViaMail": "Verzenden via e-mail"
+        "sendViaMail": "Verzenden via e-mail",
+        "edit": "Bewerken",
+        "preview": "Voorbeeld"
     },
     "displayer": {
         "details": {

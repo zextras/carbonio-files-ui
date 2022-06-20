@@ -1,1 +1,79 @@
-{}
+{
+    "displayer": {
+        "search_empty": [
+            {
+                "message": "Tai valitse \"Edityneet suotimet\" tarkentaaksesi hakuasi."
+            },
+            {},
+            {
+                "message": "Yritä aloittaa toinen haku."
+            },
+            {
+                "title": "Hakusi ei tuottanut tuloksia."
+            }
+        ],
+        "search_full": [
+            {
+                "title": "Valitse tuloksista yksi tai useampi suorittaaksesi toimenpiteitä tai katsoaksesi yksityiskohtia."
+            }
+        ],
+        "tabs": {
+            "details": "Yksityiskohdat"
+        }
+    },
+    "modal": {
+        "removeLink": {
+            "button": {
+                "confirm": "Poista"
+            }
+        },
+        "deleteShare": {
+            "button": {
+                "confirm": "Poista"
+            }
+        }
+    },
+    "publicLink": {
+        "link": {
+            "remove": "Poista"
+        }
+    },
+    "search": {
+        "search": {
+            "tooltip": {
+                "search": "Hae"
+            }
+        },
+        "advancedSearch": {
+            "modal": {
+                "button": {
+                    "confirm": "Hae"
+                }
+            }
+        },
+        "header": {
+            "search": "Hae"
+        }
+    },
+    "secondaryBar": {
+        "filters": "Suotimet"
+    },
+    "actions": {
+        "preview": "Esikatselu"
+    },
+    "empty": {
+        "search": {
+            "noResults": [
+                "Yksikään kohteistasi ei vastannut hakuasi."
+            ]
+        }
+    },
+    "uploads": {
+        "dropzone": {
+            "title": {
+                "disabled": "Vedä&Pudota -tila",
+                "enabled": "Vedä&Pudota -tila"
+            }
+        }
+    }
+}
