@@ -11,11 +11,14 @@ import { getGetLinkFunction } from './getGetLinkFunction';
 import { getNodeFunction } from './getNodeFunction';
 import { getUploadToTargetAndGetTargetIdFunction } from './getUploadToTargetAndGetTargetIdFunction';
 import { useSelectNodes } from './useSelectNodes';
+import { useSelectNodesAction } from './useSelectNodesAction';
 
 export const useIntegrations = (): void => {
-	const selectNodes = useSelectNodes();
+	const selectNodes = useSelectNodesAction();
+	const selectNodesFunction = useSelectNodes();
 
 	useEffect(() => {
+		// TODO: remove when all modules will be using new function integration
 		registerActions(selectNodes);
 	}, [selectNodes]);
 
@@ -23,7 +26,8 @@ export const useIntegrations = (): void => {
 		registerFunctions(
 			getUploadToTargetAndGetTargetIdFunction(),
 			getGetLinkFunction(),
-			getNodeFunction()
+			getNodeFunction(),
+			selectNodesFunction
 		);
-	}, []);
+	}, [selectNodesFunction]);
 };
