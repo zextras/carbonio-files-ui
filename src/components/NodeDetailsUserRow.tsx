@@ -19,16 +19,19 @@ type NodeDetailsUserRowProps = Omit<CommonNodeDetailsUserRowProps, 'clickAction'
 export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 	user,
 	label,
-	dateTime
+	dateTime,
+	loading
 }) => {
 	const [t] = useTranslation();
 
 	const tooltip = useMemo(
 		() =>
-			t('displayer.details.sendMailTo', 'Send e-mail to: {{email}}', {
-				replace: { email: user.email }
-			}),
-		[t, user.email]
+			(user &&
+				t('displayer.details.sendMailTo', 'Send e-mail to: {{email}}', {
+					replace: { email: user.email }
+				})) ||
+			'',
+		[t, user]
 	);
 
 	const openNewMailBoard = useCallback<React.MouseEventHandler>(
@@ -60,6 +63,7 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 			tooltip={tooltip}
 			dateTime={dateTime}
 			clickAction={openNewMailBoard}
+			loading={loading}
 		/>
 	);
 };
