@@ -6,7 +6,9 @@
 
 import { soapFetch as shellSoapFetch } from '@zextras/carbonio-shell-ui';
 
-export const soapFetch = <Req, Res>(request: string, args: Req): Promise<Res> =>
+import { RequestName } from '../carbonio-files-ui-common/types/network';
+
+export const soapFetch = <Req, Res>(request: RequestName, args: Req): Promise<Res> =>
 	new Promise<Res>((resolve, reject) => {
 		shellSoapFetch<Req, Res>(request, {
 			_jsns: 'urn:zimbraMail',
