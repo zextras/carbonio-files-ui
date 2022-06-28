@@ -14,11 +14,7 @@ import { nodeListCursorVar } from './carbonio-files-ui-common/apollo/nodeListCur
 import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
 import { selectionModeVar } from './carbonio-files-ui-common/apollo/selectionVar';
-import {
-	uploadCounterVar,
-	uploadFunctionsVar,
-	uploadVar
-} from './carbonio-files-ui-common/apollo/uploadVar';
+import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
 import { LOGGED_USER, USER_SETTINGS } from './mocks/constants';
 import server from './mocks/server';
@@ -50,7 +46,6 @@ beforeEach(() => {
 	searchParamsVar({});
 	uploadVar([]);
 	uploadFunctionsVar({});
-	uploadCounterVar(0);
 	nodeSortVar(NODES_SORT_DEFAULT);
 	draggedItemsVar(null);
 });

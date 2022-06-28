@@ -11,6 +11,7 @@ import { Accordion, Container } from '@zextras/carbonio-design-system';
 import find from 'lodash/find';
 import map from 'lodash/map';
 import orderBy from 'lodash/orderBy';
+import size from 'lodash/size';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -62,7 +63,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 	const uploadsInfo = useMemo(
 		() => ({
 			isUploading: find(uploadStatus, (item) => item.status === UploadStatus.LOADING) !== undefined,
-			uploadsCounter: uploadStatus.length
+			uploadsCounter: size(uploadStatus)
 		}),
 		[uploadStatus]
 	);
