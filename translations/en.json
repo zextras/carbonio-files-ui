@@ -537,8 +537,16 @@
                 "manageShares": "Manage Shares"
             }
         },
+        "button": {
+            "refresh": "Refresh preview"
+        },
         "close": {
             "tooltip": "Close"
+        },
+        "loading": {
+            "error": "An error occurred while loading the preview. Try again.",
+            "file": "Loading file preview, please wait...",
+            "retrying": "Trying loading of preview..."
         }
     },
     "publicLink": {
