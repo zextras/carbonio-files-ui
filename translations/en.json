@@ -457,6 +457,20 @@
                 "sharedWitMe": "Shared items",
                 "trash": "Trash"
             }
+        },
+        "unsaved_changes": {
+            "body": {
+                "line1": "Are you sure you want to leave this page without saving?",
+                "line2": "All your unsaved changes will be lost"
+            },
+            "button": {
+                "leave_anyway": "Leave anyway",
+                "save_and_leave": "Save and leave"
+            },
+            "title": {
+                "cannot_saved_changes": "Some changes cannot be saved",
+                "unsaved_changes": "You have unsaved changes"
+            }
         }
     },
     "node": {
