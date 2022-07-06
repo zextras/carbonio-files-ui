@@ -751,6 +751,9 @@
         "name": "Name",
         "size": "Size"
     },
+    "uploadItem": {
+        "queued": "Queued"
+    },
     "uploads": {
         "clean": {
             "completed": "Clean completed uploads"
