@@ -29,7 +29,8 @@ export const ACTION_IDS = {
 export const FUNCTION_IDS = {
 	UPLOAD_TO_TARGET_AND_GET_TARGET_ID: 'upload-to-target-and-get-target-id',
 	GET_LINK: 'get-link',
-	GET_NODE: 'get-node'
+	GET_NODE: 'get-node',
+	SELECT_NODES: 'select-nodes'
 } as const;
 
 export const ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT = [];
