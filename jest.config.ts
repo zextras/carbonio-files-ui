@@ -25,8 +25,8 @@ module.exports = {
 	},
 	reporters: ['default', 'jest-junit'],
 	// testMatch: ['/test/**/*.js?(x)'],
-	setupFilesAfterEnv: ['<rootDir>/src/jest-env-setup.js', '<rootDir>/src/jest-mocks.ts'],
-	setupFiles: ['<rootDir>/src/jest-polyfills.js'],
+	setupFilesAfterEnv: ['<rootDir>/src/jest-env-setup.ts', '<rootDir>/src/jest-mocks.ts'],
+	setupFiles: ['<rootDir>/src/jest-polyfills.ts'],
 	globals: {
 		IS_SERVER: false
 	},
