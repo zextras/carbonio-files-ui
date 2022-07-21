@@ -12,7 +12,7 @@
         "driveHome": "Drive Home",
         "filters": "Filtros",
         "uploads": "Uploads",
-        "filesHome": "Home"
+        "filesHome": "Início"
     },
     "create": {
         "options": {
@@ -91,7 +91,7 @@
                 "myElements": "Meus itens",
                 "sharedWitMe": "Itens compartilhados"
             },
-            "filesHome": "Home"
+            "filesHome": "Início"
         },
         "deleteShare": {
             "body": "Tem certeza que deseja remover toda a permissão de acesso concedida a {{shareTarget}} ?",
@@ -141,7 +141,8 @@
             "button": {
                 "confirm": "Excluir todas as versões"
             },
-            "header": "Excluir todas as versões"
+            "header": "Excluir todas as versões",
+            "body": "Todas as versões que não estejam sinalizadas para serem mantidas para sempre, exceto a atual, serão deletadas. Você não poderá recuperar estas versões."
         }
     },
     "node": {
@@ -173,7 +174,7 @@
         },
         "alias": {
             "name_LOCAL_CHAT_ROOT": "Arquivos enviados via Team",
-            "name_LOCAL_ROOT": "Home",
+            "name_LOCAL_ROOT": "Início",
             "name_TRASH_ROOT": "Lixeira",
             "name_SHARED_WITH_ME_ROOT": "Compartilhados comigo"
         },
@@ -262,7 +263,7 @@
         },
         "clipboard": {
             "email": "Endereço de e-mail copiado",
-            "itemShortcutCopied": "Atalho do item copiado"
+            "itemShortcutCopied": "Link do item copiado"
         },
         "version": {
             "clone": "Versão clonada como a versão atual",
@@ -286,12 +287,13 @@
         "flag": "Sinalizar",
         "goToFolder": "Ir para a pasta de destino",
         "moveToTrash": "Mover para Lixeira",
-        "removeUpload": "Remover upload",
+        "removeUpload": "Remover arquivo",
         "retryUpload": "Tentar upload novamente",
         "unflag": "Retirar sinalização",
         "sendViaMail": "Enviar por e-mail",
         "edit": "Editar",
-        "preview": "Pré-visualizar"
+        "preview": "Pré-visualizar",
+        "manageShares": "Gerenciar compartilhamentos"
     },
     "search": {
         "header": {
@@ -376,7 +378,7 @@
                 }
             },
             "missingDescription": "Clique no botão de edição para adicionar uma descrição",
-            "copyShortcut": "copiar atalho do item",
+            "copyShortcut": "copiar link para o item",
             "owner": "Proprietário",
             "sendMailTo": "Enviar e-mail para: {{email}}",
             "collaboratorsTooltip": "Ver lista de colaboradores"
@@ -651,7 +653,7 @@
                     "enabled": "Arraste seu anexo para cá \n para adicioná-lo rapidamente a esta pasta"
                 },
                 "otherView": {
-                    "enabled": "Arraste seu anexo para cá\npara adicioná-lo rapidamente à sua Home"
+                    "enabled": "Arraste seu anexo para cá\npara adicioná-lo rapidamente ao diretório Início"
                 }
             },
             "title": {
@@ -660,7 +662,7 @@
             }
         },
         "destination": {
-            "home": "Carregamento feito na Home do Files"
+            "home": "Carregamento feito no diretório Início do Files"
         },
         "error": {
             "moreInfo": {
@@ -706,7 +708,8 @@
         "code_ACCOUNT_NOT_FOUND": "Parece que este usuário não pertence ao sistema Carbonio",
         "code_MISSING_FIELD": "Ocorreu um erro interno, nem todas as informações deste objeto foram recuperadas",
         "code_SHARE_NOT_FOUND": "Lamentamos, mas este compartilhamento não pode ser encontrado",
-        "code_NODE_DUPLICATED": "Há um arquivo com o mesmo nome nesta pasta"
+        "code_NODE_DUPLICATED": "Há um arquivo com o mesmo nome nesta pasta",
+        "code_VERSIONS_LIMIT_REACHED": "A operação não pode ser completada. Você atingiu o limite máximo."
     },
     "publicLink": {
         "addLink": {
@@ -756,7 +759,8 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Download"
+                "download": "Download",
+                "manageShares": "Gerenciar compartilhamentos"
             }
         },
         "close": {
