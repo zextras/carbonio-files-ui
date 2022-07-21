@@ -8,11 +8,11 @@
             "myElements": "Meus elementos",
             "sharedElements": "Elementos Compartilhados"
         },
-        "team": "Arquivos enviados via Team",
+        "team": "Ficheiros enviados via Team",
         "driveHome": "Drive Home",
         "filters": "Filtros",
         "uploads": "Uploads",
-        "filesHome": "Home"
+        "filesHome": "Início"
     },
     "create": {
         "options": {
@@ -39,9 +39,9 @@
             "sharedWithMe": "Ainda não há itens compartilhados com você."
         },
         "search": {
-            "hint": "Sua busca não coincide com nenhum arquivo ou pasta",
+            "hint": "Sua busca não coincide com nenhum ficheiro ou pasta",
             "noResults": [
-                "Nenhum dos seus itens corresponde à sua busca.",
+                "Nenhum dos seus itens corresponde à sua busca!",
                 "Nenhum dos seus itens corresponde à sua busca."
             ],
             "notRun": "Ainda não foi feita nenhuma busca."
@@ -80,7 +80,7 @@
                 "confirm": "Excluir permanentemente"
             },
             "header": "Esta ação é irreversível",
-            "body": "Você irá excluir permanentemente este(s) item(ns). Não será possível recuperar mais este(s) arquivo(s). Esta ação é irreversível."
+            "body": "Você irá excluir permanentemente este(s) item(ns). Não será possível recuperar mais este(s) ficheiro(s). Esta ação é irreversível."
         },
         "roots": {
             "driveHome": "Home",
@@ -91,7 +91,7 @@
                 "myElements": "Meus itens",
                 "sharedWitMe": "Itens compartilhados"
             },
-            "filesHome": "Home"
+            "filesHome": "Início"
         },
         "deleteShare": {
             "body": "Tem certeza que deseja remover toda a permissão de acesso concedida a {{shareTarget}} ?",
@@ -138,7 +138,11 @@
             "button": {
                 "confirm": "Excluir todas as versões"
             },
-            "header": "Excluir todas as versões"
+            "header": "Excluir todas as versões",
+            "body": "Todas as versões que não estejam marcadas para serem mantidas para sempre, excepto a actual, serão eliminadas. Não será possível recuperar estas versões."
+        },
+        "moreInfo": {
+            "title": "Informação adicional"
         }
     },
     "node": {
@@ -169,8 +173,8 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Arquivos enviados via Team",
-            "name_LOCAL_ROOT": "Home",
+            "name_LOCAL_CHAT_ROOT": "Ficheiros enviados via Team",
+            "name_LOCAL_ROOT": "Início",
             "name_TRASH_ROOT": "Lixeira",
             "name_SHARED_WITH_ME_ROOT": "Compartilhados comigo"
         },
@@ -229,7 +233,9 @@
         "upload": {
             "goToFolder": "Ir para a pasta",
             "success": "Carregamento ocorreu em {{destination}}",
-            "moreInfo": "Mais informações"
+            "moreInfo": "Mais informações",
+            "nodesNotAllowed": "Alguns itens não foram carregados",
+            "foldersNotAllowed": "Não é possível carregar pastas"
         },
         "copyNodes": {
             "action": "Ir para a pasta",
@@ -281,11 +287,13 @@
         "flag": "Sinalizar",
         "goToFolder": "Ir para a pasta de destino",
         "moveToTrash": "Mover para Lixeira",
-        "removeUpload": "Remover upload",
+        "removeUpload": "Remover ficheiro",
         "retryUpload": "Tentar upload novamente",
         "unflag": "Retirar sinalização",
         "edit": "Editar",
-        "preview": "Visualizar"
+        "preview": "Visualizar",
+        "sendViaMail": "Enviar por e-mail",
+        "manageShares": "Administrar partilhas"
     },
     "search": {
         "header": {
@@ -429,7 +437,7 @@
         },
         "generic": {
             "message": "Clique em um item para selecioná-lo",
-            "title": "Veja arquivos e pasta, compartilhe-os com seus contatos"
+            "title": "Veja ficheiros e pastas, partilhe-os com seus contactos"
         },
         "search_empty": [
             {
@@ -539,7 +547,7 @@
             "sharedWithMe_full": [
                 {
                     "message": "Clique em um item para selecioná-lo.",
-                    "title": "Comece a editar e compartilhar seus arquivos."
+                    "title": "Comece a editar e partilhar seus ficheiros."
                 },
                 {
                     "message": "Clique em um item para selecioná-lo.",
@@ -595,7 +603,7 @@
         "folder_full": [
             {
                 "message": "Clique em um item para selecioná-lo.",
-                "title": "Comece a editar e compartilhar seus arquivos."
+                "title": "Comece a editar e partilhar seus ficheiros."
             },
             {
                 "title": "Veja os detalhes das suas pastas e compartilhe-as com seus contatos.",
@@ -645,7 +653,7 @@
                     "enabled": "Arraste seu anexo para cá \n para adicioná-lo rapidamente a esta pasta"
                 },
                 "otherView": {
-                    "enabled": "Arraste seu anexo para cá\npara adicioná-lo rapidamente à sua Home"
+                    "enabled": "Arraste seu anexo para cá\npara adicioná-lo rapidamente ao diretório Início"
                 }
             },
             "title": {
@@ -654,7 +662,12 @@
             }
         },
         "destination": {
-            "home": "Carregamento feito na Home do Files"
+            "home": "Carregamento foi feito no diretório Início do Files"
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "As pastas não podem ser carregadas. Em vez disso, se estiver a tentar carregar um ficheiro, o sistema pode não o ter reconhecido. Tente novamente usando o botão \"CARREGAR\"."
+            }
         }
     },
     "selectionMode": {
@@ -695,11 +708,12 @@
         "code_ACCOUNT_NOT_FOUND": "Parece que este usuário não pertence ao sistema Carbonio",
         "code_MISSING_FIELD": "Ocorreu um erro interno, nem todas as informações deste objeto foram recuperadas",
         "code_SHARE_NOT_FOUND": "Lamentamos, mas este compartilhamento não pode ser encontrado",
-        "code_NODE_DUPLICATED": "Há um arquivo com o mesmo nome nesta pasta"
+        "code_NODE_DUPLICATED": "Há um arquivo com o mesmo nome nesta pasta",
+        "code_VERSIONS_LIMIT_REACHED": "A operação não pode ser concluída. Atingiu o limite máximo."
     },
     "publicLink": {
         "addLink": {
-            "generateLink": "Gerar link",
+            "generateLink": "Gerar Link",
             "undo": "Desfazer",
             "title": "Link Público",
             "addLink": "Adicionar Link",
@@ -745,7 +759,8 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Download"
+                "download": "Download",
+                "manageShares": "Administrar partilhas"
             }
         },
         "close": {
