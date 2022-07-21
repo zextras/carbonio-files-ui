@@ -411,6 +411,18 @@
         "moreInfo": {
             "title": "Additional information"
         },
+        "nodeSelection": {
+            "button": {
+                "create": "Create",
+                "newFolder": {
+                    "disabled": "You don't have the correct permissions",
+                    "label": "New folder"
+                }
+            },
+            "input": {
+                "newFolder": "New folder's name"
+            }
+        },
         "nodesSelection": {
             "selectedCount": "{{count}} selected item",
             "selectedCount_plural": "{{count}} selected items"
@@ -444,6 +456,20 @@
                 "myElements": "My items",
                 "sharedWitMe": "Shared items",
                 "trash": "Trash"
+            }
+        },
+        "unsaved_changes": {
+            "body": {
+                "line1": "Are you sure you want to leave this page without saving?",
+                "line2": "All your unsaved changes will be lost"
+            },
+            "button": {
+                "leave_anyway": "Leave anyway",
+                "save_and_leave": "Save and leave"
+            },
+            "title": {
+                "cannot_saved_changes": "Some changes cannot be saved",
+                "unsaved_changes": "You have unsaved changes"
             }
         }
     },
@@ -511,8 +537,16 @@
                 "manageShares": "Manage Shares"
             }
         },
+        "button": {
+            "refresh": "Refresh preview"
+        },
         "close": {
             "tooltip": "Close"
+        },
+        "loading": {
+            "error": "An error occurred while loading the preview. Try again.",
+            "file": "Loading file preview, please wait...",
+            "retrying": "Trying to load the preview..."
         }
     },
     "publicLink": {
@@ -724,6 +758,9 @@
         "lastUpdate": "Last Update",
         "name": "Name",
         "size": "Size"
+    },
+    "uploadItem": {
+        "queued": "Queued"
     },
     "uploads": {
         "clean": {

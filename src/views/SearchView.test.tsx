@@ -208,7 +208,7 @@ describe('Search view', () => {
 			});
 			expect(screen.getByText(/home/i)).toBeInTheDocument();
 			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: Square')).toBeInTheDocument();
+			expect(screen.getByTestId('icon: CheckmarkSquare')).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /choose folder/i })).toHaveAttribute(
 				'disabled',
 				''
@@ -220,6 +220,10 @@ describe('Search view', () => {
 					''
 				)
 			);
+			act(() => {
+				userEvent.click(screen.getByText(/search also in contained folders/i));
+			});
+			await screen.findByTestId('icon: Square');
 			act(() => {
 				userEvent.click(screen.getByText(/search also in contained folders/i));
 			});
@@ -298,7 +302,7 @@ describe('Search view', () => {
 			});
 			expect(screen.getByText(/home/i)).toBeInTheDocument();
 			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: Square')).toBeInTheDocument();
+			expect(screen.getByTestId('icon: CheckmarkSquare')).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /choose folder/i })).toHaveAttribute(
 				'disabled',
 				''
@@ -310,6 +314,11 @@ describe('Search view', () => {
 					''
 				)
 			);
+			act(() => {
+				userEvent.click(screen.getByText(/search also in contained folders/i));
+			});
+			await screen.findByTestId('icon: Square');
+			expect(screen.queryByTestId('icon: CheckmarkSquare')).not.toBeInTheDocument();
 			act(() => {
 				userEvent.click(screen.getByRole('button', { name: /choose folder/i }));
 			});
@@ -489,7 +498,7 @@ describe('Search view', () => {
 			});
 			expect(screen.getByText(/home/i)).toBeInTheDocument();
 			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: Square')).toBeInTheDocument();
+			expect(screen.getByTestId('icon: CheckmarkSquare')).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /choose folder/i })).toHaveAttribute(
 				'disabled',
 				''
@@ -504,7 +513,7 @@ describe('Search view', () => {
 			act(() => {
 				userEvent.click(screen.getByText(/search also in contained folders/i));
 			});
-			await screen.findByTestId('icon: CheckmarkSquare');
+			await screen.findByTestId('icon: Square');
 			act(() => {
 				userEvent.click(screen.getByRole('button', { name: /choose folder/i }));
 			});
@@ -545,7 +554,7 @@ describe('Search view', () => {
 				expect.objectContaining({
 					value: ROOTS.LOCAL_ROOT,
 					avatarIcon: 'Folder',
-					label: 'under:Home'
+					label: 'in:Home'
 				})
 			]);
 			expect(mockedFindNodes).toHaveBeenCalledWith(
@@ -555,7 +564,7 @@ describe('Search view', () => {
 						flagged: true,
 						shared_by_me: true,
 						folder_id: ROOTS.LOCAL_ROOT,
-						cascade: true
+						cascade: false
 					})
 				}),
 				expect.anything(),
