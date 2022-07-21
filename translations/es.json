@@ -283,7 +283,7 @@
         "openWithDocs": "Abrir documento",
         "rename": "Renombrar",
         "restore": "Restaurar",
-        "deletePermanently": "Borrar permanentemente",
+        "deletePermanently": "Eliminar permanentemente",
         "flag": "Etiqueta",
         "goToFolder": "Ir a la carpeta de destino",
         "moveToTrash": "Mover a la papelera",
@@ -412,7 +412,7 @@
                 "lastWeek": "Última semana",
                 "olderVersions": "Versiones anteriores"
             },
-            "mainHint": "Puedes borrar manualmente cualquier versión de un archivo o restaurar una anterior como versión actual. Elige una o más versiones que quieras conservar para siempre.",
+            "mainHint": "Puedes eliminar manualmente cualquier versión de un archivo o restaurar una anterior como versión actual. Elige una o más versiones que quieras conservar para siempre.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Clonada de la versión {{versionNumber}} ({{cloneDate}})",
@@ -497,10 +497,10 @@
             "trash_empty": [
                 {
                     "title": "Mueve a la papelera todo lo que no necesitas.",
-                    "message": "Haz clic en el icono de la papelera para borrar un artículo."
+                    "message": "Haz clic en el ícono de la papelera para eliminar un elemento."
                 },
                 {
-                    "message": "Haz clic en el icono de la papelera para borrar un elemento.",
+                    "message": "Haz clic en el ícono de la papelera para eliminar un elemento.",
                     "title": "La papelera está vacía."
                 },
                 {
@@ -512,12 +512,12 @@
                     "title": "Elige y restaura tus documentos que están ahora en la papelera."
                 },
                 {
-                    "message": "Elige un artículo para restaurarlo o borrarlo permanentemente.",
+                    "message": "Elige un elemento para restaurarlo o eliminarlo permanentemente.",
                     "title": "¡Nada está perdido!"
                 },
                 {
                     "message": "O, cuando sea posible, selecciónalo y restáuralo a su carpeta original.",
-                    "title": "Elige un elemento para borrarlo permanentemente."
+                    "title": "Elige un elemento para eliminarlo permanentemente."
                 }
             ]
         },
@@ -574,7 +574,7 @@
         },
         "clear": {
             "tooltip": {
-                "clear": "Borrar la entrada de búsqueda",
+                "clear": "Borrar la entrada de la búsqueda",
                 "empty": "La entrada de búsqueda ya está borrada"
             }
         },
