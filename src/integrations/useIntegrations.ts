@@ -8,6 +8,7 @@ import { useEffect, useMemo } from 'react';
 import { AnyFunction, registerActions, registerFunctions } from '@zextras/carbonio-shell-ui';
 
 import { useUpdateLinkMutation } from '../carbonio-files-ui-common/hooks/graphql/mutations/useUpdateLinkMutation';
+import { ErrorHandlerOptions } from '../carbonio-files-ui-common/hooks/useErrorHandler';
 import { FUNCTION_IDS } from '../constants';
 import { getGetLinkFunction } from './getGetLinkFunction';
 import { getNodeFunction } from './getNodeFunction';
@@ -18,7 +19,13 @@ import { useSelectNodesAction } from './useSelectNodesAction';
 export const useIntegrations = (): void => {
 	const selectNodesAction = useSelectNodesAction();
 	const selectNodes = useSelectNodes();
-	const updateLink = useUpdateLinkMutation();
+	const errorHandlerOptions: ErrorHandlerOptions = useMemo(
+		() => ({
+			showSnackbar: false
+		}),
+		[]
+	);
+	const updateLink = useUpdateLinkMutation(errorHandlerOptions);
 
 	const updateLinkFunction = useMemo(
 		() => ({
