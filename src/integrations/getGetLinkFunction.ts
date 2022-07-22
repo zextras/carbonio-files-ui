@@ -6,14 +6,19 @@
 
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { AnyFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
+import find from 'lodash/find';
+import map from 'lodash/map';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
 import LINK from '../carbonio-files-ui-common/graphql/fragments/link.graphql';
 import CREATE_LINK from '../carbonio-files-ui-common/graphql/mutations/createLink.graphql';
+import GET_NODE_LINKS from '../carbonio-files-ui-common/graphql/queries/getNodeLinks.graphql';
 import { NodeWithMetadata } from '../carbonio-files-ui-common/types/common';
 import {
 	CreateLinkMutation,
 	CreateLinkMutationVariables,
+	GetNodeLinksQuery,
+	GetNodeLinksQueryVariables,
 	LinkFragment
 } from '../carbonio-files-ui-common/types/graphql/types';
 import { FUNCTION_IDS } from '../constants';
@@ -25,23 +30,41 @@ type CreateLinkType = {
 	type: 'createLink';
 };
 
-// type CreateDefaultLinkType = {
-// 	nodeId: string;
-// 	description?: string;
-// 	expiresAt?: number;
-// 	type: 'defaultLink';
-// };
+type GetLinksInfoType = {
+	node: Pick<NodeWithMetadata, 'id' | '__typename'>;
+	type: 'getLinksInfo';
+	linkIds?: Array<string>;
+};
 
-type GetLinkFunctionArgsType = CreateLinkType; // | CreateDefaultLinkType;
+type LinksType = Array<{
+	__typename?: 'Link';
+	id: string;
+	url?: string | null;
+	description?: string | null;
+	expires_at?: number | null;
+	created_at: number;
+	node: { __typename?: 'File'; id: string } | { __typename?: 'Folder'; id: string };
+} | null>;
+
+type GetLinkFunctionArgsType = CreateLinkType | GetLinksInfoType;
+
+function isCreateLinkType(args: GetLinkFunctionArgsType): args is CreateLinkType {
+	return args.type === 'createLink';
+}
+
+function isGetLinksInfoType(args: GetLinkFunctionArgsType): args is GetLinksInfoType {
+	return args.type === 'getLinksInfo';
+}
 
 function getLinkWithClient(
 	apolloClient: ApolloClient<NormalizedCacheObject>
-): (args: GetLinkFunctionArgsType) => Promise<CreateLinkMutation['createLink']> {
-	function getLink(args: GetLinkFunctionArgsType): Promise<CreateLinkMutation['createLink']> {
-		const { node, description, expiresAt, type } = args;
-		const { id, __typename } = node;
-
-		if (type === 'createLink') {
+): (args: GetLinkFunctionArgsType) => Promise<CreateLinkMutation['createLink'] | LinksType> {
+	function getLink(
+		args: GetLinkFunctionArgsType
+	): Promise<CreateLinkMutation['createLink'] | LinksType> {
+		if (isCreateLinkType(args)) {
+			const { node, description, expiresAt } = args;
+			const { id, __typename } = node;
 			return new Promise<CreateLinkMutation['createLink']>((resolve, reject) => {
 				apolloClient
 					.mutate<CreateLinkMutation, CreateLinkMutationVariables>({
@@ -80,7 +103,46 @@ function getLinkWithClient(
 					);
 			});
 		}
-		return new Promise<CreateLinkMutation['createLink']>((resolve, reject) => {
+		if (isGetLinksInfoType(args)) {
+			const { node, linkIds } = args;
+
+			return new Promise<LinksType>((resolve, reject) => {
+				apolloClient
+					.query<GetNodeLinksQuery, GetNodeLinksQueryVariables>({
+						// used getNodeLinks instead of getLinks because getLinks has some issues on error handling
+						query: GET_NODE_LINKS,
+						variables: {
+							node_id: node.id
+						}
+					})
+					.then(
+						(value) => {
+							if (value?.data?.getNode?.links) {
+								const links = value?.data?.getNode?.links;
+								if (linkIds) {
+									resolve(
+										map(linkIds, (id) => {
+											const link = find(links, ['id', id]);
+											if (link) {
+												return link;
+											}
+											return null;
+										})
+									);
+								} else {
+									resolve(value.data.getNode.links);
+								}
+							} else {
+								reject();
+							}
+						},
+						(reason) => {
+							reject(reason);
+						}
+					);
+			});
+		}
+		return new Promise((resolve, reject) => {
 			reject(new Error('the type field of args is missing or wrong'));
 		});
 	}
