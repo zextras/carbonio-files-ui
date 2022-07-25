@@ -202,6 +202,27 @@
                 "confirm": "सभी वर्शन हटाएँ"
             },
             "header": "सभी वर्शन हटाएँ"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "आपके अनसेव्ड मैसेज हैं"
+            },
+            "button": {
+                "save_and_leave": "सेव करें और छोड़ें",
+                "leave_anyway": "फिर भी छोड़ें"
+            },
+            "body": {
+                "line2": "आपके सभी बिना सेव किए बदलाव उड़ जाएंगे",
+                "line1": "क्या आप वाकई में बिना सेव किए ये पेज छोड़ना चाहते हैं?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "नया फोल्डर"
+                },
+                "create": "बनाएँ"
+            }
         }
     },
     "snackbar": {
@@ -763,5 +784,8 @@
         "close": {
             "tooltip": "बंद करें"
         }
+    },
+    "uploadItem": {
+        "queued": "कतार में"
     }
 }

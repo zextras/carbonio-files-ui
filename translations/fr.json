@@ -128,6 +128,27 @@
             },
             "header": "Purger toutes les versions",
             "body": "Toutes les versions qui n'ont pas été étiquetées comme à garder pour toujours, à l'exception de la version courante, seront supprimées. Vous ne serez pas en mesure de les récupérer."
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Vous avez des modifications non sauvegardées"
+            },
+            "button": {
+                "save_and_leave": "Enregistrer et quitter",
+                "leave_anyway": "Quitter malgré tout"
+            },
+            "body": {
+                "line2": "Tous vos changements non sauvegardés seront perdus",
+                "line1": "Êtes-vous sûr de vouloir quitter cette page sans sauvegarder ?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Nouveau dossier"
+                },
+                "create": "Créer"
+            }
         }
     },
     "node": {
@@ -769,5 +790,8 @@
     },
     "label": {
         "app_name": "Files"
+    },
+    "uploadItem": {
+        "queued": "Ajouté(e) dans la queue"
     }
 }
