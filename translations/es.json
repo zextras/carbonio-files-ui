@@ -23,7 +23,7 @@
             "button": {
                 "confirm": "Eliminar permanentemente"
             },
-            "body": "Borrarás permanentemente este elemento/estos elementos. Ya no podrás recuperar este archivo/estos archivos. Esta acción es irreversible.",
+            "body": "Eliminarás permanentemente este(os) elemento(s). Ya no podrás recuperar este(os) archivo(s). Esta acción es irreversible.",
             "header": "Esta acción es irreversible"
         },
         "roots": {
@@ -35,7 +35,7 @@
                 "myElements": "Mis elementos",
                 "sharedWitMe": "Elementos compartidos"
             },
-            "filesHome": "Home"
+            "filesHome": "Inicio"
         },
         "deleteShare": {
             "button": {
@@ -85,7 +85,34 @@
             "button": {
                 "confirm": "Eliminar todas las versiones"
             },
-            "header": "Eliminar todas las versiones"
+            "header": "Eliminar todas las versiones",
+            "body": "Todas las versiones que no están marcadas para ser retenidas permanentemente, con excepción de la actual, serán eliminadas. No habrá posibilidad de recuperar aquellas versiones."
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Tienes cambios no guardados",
+                "cannot_saved_changes": "Algunos cambios no pudieron guardarse"
+            },
+            "button": {
+                "save_and_leave": "Guardar y salir",
+                "leave_anyway": "Abandonar de todos modos"
+            },
+            "body": {
+                "line2": "Todos tus cambios no guardados se perderán",
+                "line1": "¿Seguro que quieres salir de esta página sin guardar?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Nueva carpeta",
+                    "disabled": "No tienes los permisos correctos"
+                },
+                "create": "Crear"
+            },
+            "input": {
+                "newFolder": "Nuevo nombre de la carpeta"
+            }
         }
     },
     "node": {
@@ -103,8 +130,8 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Archivos enviados vía Team",
-            "name_LOCAL_ROOT": "Home",
+            "name_LOCAL_CHAT_ROOT": "Archivos enviados a través de Team",
+            "name_LOCAL_ROOT": "Inicio",
             "name_SHARED_WITH_ME_ROOT": "Compartido conmigo",
             "name_TRASH_ROOT": "Papelera"
         },
@@ -161,9 +188,9 @@
             "myElements": "Mis elementos",
             "sharedElements": "Elementos compartidos"
         },
-        "team": "Archivos enviados vía Team",
-        "uploads": "Subidas",
-        "filesHome": "Home"
+        "team": "Archivos enviados a través de Team",
+        "uploads": "Cargas",
+        "filesHome": "Inicio"
     },
     "snackbar": {
         "markForDeletion": {
@@ -190,10 +217,10 @@
         },
         "upload": {
             "goToFolder": "Ir a carpeta",
-            "success": "Subida realizada en {{destination}}",
+            "success": "Carga realizada en {{destination}}",
             "moreInfo": "Más información",
-            "foldersNotAllowed": "Las carpetas no se pueden actualizar",
-            "nodesNotAllowed": "Algunos elementos no han sido actualizados"
+            "foldersNotAllowed": "No es posible cargar carpetas",
+            "nodesNotAllowed": "Algunos elementos no han sido cargados"
         },
         "copyNodes": {
             "error": "Algo fue mal, inténtalo de nuevo",
@@ -221,7 +248,7 @@
         },
         "clipboard": {
             "email": "Dirección email copiada",
-            "itemShortcutCopied": "Atajo del elemento copiado"
+            "itemShortcutCopied": "Enlace del elemento copiado"
         },
         "decreaseYourOwnShare": {
             "success": "Derechos actualizados con éxito"
@@ -259,7 +286,7 @@
         "search": {
             "hint": "Tu búsqueda no coincidió con ningún archivo ni carpeta",
             "noResults": [
-                "Ninguno de tus elementos coincide con tu búsqueda.",
+                "¡No hay resultados para mostrar!",
                 "Ninguno de tus elementos coincide con tu búsqueda."
             ],
             "notRun": "Aún no se ha realizado ninguna búsqueda."
@@ -282,16 +309,17 @@
         "openWithDocs": "Abrir documento",
         "rename": "Renombrar",
         "restore": "Restaurar",
-        "deletePermanently": "Borrar permanentemente",
+        "deletePermanently": "Eliminar permanentemente",
         "flag": "Etiqueta",
         "goToFolder": "Ir a la carpeta de destino",
         "moveToTrash": "Mover a la papelera",
-        "removeUpload": "Eliminar subida",
-        "retryUpload": "Reintentar subida",
+        "removeUpload": "Eliminar archivo",
+        "retryUpload": "Reintentar carga",
         "unflag": "Quitar etiqueta",
         "sendViaMail": "Enviar por e-mail",
         "edit": "Editar",
-        "preview": "Vista previa"
+        "preview": "Vista previa",
+        "manageShares": "Administrar comparticiones"
     },
     "displayer": {
         "list": {
@@ -306,7 +334,7 @@
                         "editor": "Editor",
                         "editorDescription": "Podrá ver y editar el archivo o la carpeta",
                         "viewer": "Visor",
-                        "viewerDescription": "Solo podrá ver o descargar el archivo o la carpeta"
+                        "viewerDescription": "Podrá solamente ver o descargar el archivo o la carpeta"
                     },
                     "sharingAllowed": "Compartir permitido",
                     "sharingAllowedDescription": "Podrá administrar las comparticiones del archivo o la carpeta"
@@ -343,7 +371,7 @@
             "position": "Posición",
             "collaborators": "Colaboradores",
             "content": "Contenido",
-            "downloads": "Descargar a través de enlace público",
+            "downloads": "Descargar a través del enlace público",
             "lastEdit": "Última edición",
             "showPath": "Mostrar ruta",
             "editDescription": {
@@ -354,7 +382,7 @@
                     "label": "La longitud máxima permitida es de 4096 caracteres"
                 }
             },
-            "copyShortcut": "copiar el atajo al elemento",
+            "copyShortcut": "copiar el enlace al elemento",
             "missingDescription": "Haz clic en el botón editar y añade una descripción",
             "owner": "Propietario",
             "sendMailTo": "Enviar por e-mail a: {{email}}",
@@ -367,12 +395,12 @@
             "versioning": "Versión"
         },
         "uploads": {
-            "message": "Aquí puedes encontrar todos los elementos que se están subiendo, puedes administrarlos desde aquí",
-            "title": "Subir sugerencias"
+            "message": "Aquí encontrarás todos los elementos que están siendo cargados en Files, y podrás también administrarlos",
+            "title": "Sugerencias de carga"
         },
         "generic": {
             "message": "Haz clic en un elemento para seleccionarlo",
-            "title": "Ver archivos y carpetas, compartirlas con tus contactos"
+            "title": "Ver archivos y carpetas, compártelas con tus contactos"
         },
         "search_empty": [
             {
@@ -402,7 +430,7 @@
                 "openDocumentVersion": "Abrir versión del documento"
             },
             "button": {
-                "upload": "Cargar versión",
+                "upload": "Aumentar de versión",
                 "purgeAllVersions": "Eliminar todas las versiones"
             },
             "rowHeaders": {
@@ -410,7 +438,7 @@
                 "lastWeek": "Última semana",
                 "olderVersions": "Versiones anteriores"
             },
-            "mainHint": "Puedes borrar manualmente cualquier versión de un archivo o restaurar una anterior como versión actual. Elige una o más versiones que quieras conservar para siempre.",
+            "mainHint": "Puedes eliminar manualmente cualquier versión de un archivo o restaurar una anterior como versión actual. Elige una o más versiones que quieras conservar para siempre.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Clonada de la versión {{versionNumber}} ({{cloneDate}})",
@@ -495,10 +523,10 @@
             "trash_empty": [
                 {
                     "title": "Mueve a la papelera todo lo que no necesitas.",
-                    "message": "Haz clic en el icono de la papelera para borrar un artículo."
+                    "message": "Haz clic en el ícono de la papelera para eliminar un elemento."
                 },
                 {
-                    "message": "Haz clic en el icono de la papelera para borrar un elemento.",
+                    "message": "Haz clic en el ícono de la papelera para eliminar un elemento.",
                     "title": "La papelera está vacía."
                 },
                 {
@@ -510,12 +538,12 @@
                     "title": "Elige y restaura tus documentos que están ahora en la papelera."
                 },
                 {
-                    "message": "Elige un artículo para restaurarlo o borrarlo permanentemente.",
+                    "message": "Elige un elemento para restaurarlo o eliminarlo permanentemente.",
                     "title": "¡Nada está perdido!"
                 },
                 {
                     "message": "O, cuando sea posible, selecciónalo y restáuralo a su carpeta original.",
-                    "title": "Elige un elemento para borrarlo permanentemente."
+                    "title": "Elige un elemento para eliminarlo permanentemente."
                 }
             ]
         },
@@ -535,7 +563,7 @@
         "folder_full": [
             {
                 "message": "Haz clic en un artículo para seleccionarlo.",
-                "title": "Empieza por editar y compartir tus archivos."
+                "title": "Empieza a editar y compartir tus archivos."
             },
             {
                 "message": "Haz clic sobre un artículo para seleccionarlo.",
@@ -572,7 +600,7 @@
         },
         "clear": {
             "tooltip": {
-                "clear": "Borrar la entrada de búsqueda",
+                "clear": "Borrar la entrada de la búsqueda",
                 "empty": "La entrada de búsqueda ya está borrada"
             }
         },
@@ -641,30 +669,30 @@
     },
     "uploads": {
         "clean": {
-            "completed": "Limpiar subidas completadas"
+            "completed": "Limpiar cargas completadas"
         },
         "destination": {
-            "home": "Subida realizada en Files Home"
+            "home": "Carga efectuada en la carpeta Inicio de Files"
         },
         "dropzone": {
             "message": {
-                "disabled": "No puedes soltar un archivo adjunto en este área",
+                "disabled": "No puedes soltar un archivo en esta área",
                 "folderView": {
-                    "enabled": "Suelta tus archivos adjuntos aquí\n para añadirlos rápidamente a esta carpeta",
-                    "disabled": "No puedes soltar un archivo adjunto en este área"
+                    "enabled": "Suelta tus archivos aquí\n para añadirlos rápidamente a esta carpeta",
+                    "disabled": "No puedes soltar un archivo en esta área"
                 },
                 "otherView": {
-                    "enabled": "Suelta aquí tus archivos adjuntos\npara añadirlos rápidamente a tu Home"
+                    "enabled": "Suelta aquí tus archivos\npara añadirlos rápidamente a la carpeta Inicio"
                 }
             },
             "title": {
-                "disabled": "Modo Arrastrar y Soltar",
-                "enabled": "Modo Arrastrar y Soltar"
+                "disabled": "Modo \"arrastrar y soltar\"",
+                "enabled": "Modo \"arrastrar y soltar\""
             }
         },
         "error": {
             "moreInfo": {
-                "foldersNotAllowed": "Las carpetas no se pueden subir. En lugar de eso, si estás intentando subir un archivo, puede que el sistema no lo haya reconocido. Prueba de nuevo dándole al botón \"SUBIR\"."
+                "foldersNotAllowed": "No es posible cargar carpetas. Si estás intentando cargar un archivo, puede que el sistema no lo haya reconocido. Prueba de nuevo haciendo clic sobre El botón \"CARGAR\"."
             }
         }
     },
@@ -706,7 +734,8 @@
         "code_NODE_WRITE_ERROR": "Parece que este objeto no puede ser editado o que no tienes permiso para editarlo",
         "code_SHARE_CREATION_ERROR": "Lo sentimos, pero no es posible compartir el elemento con este usuario",
         "code_SHARE_NOT_FOUND": "Lo sentimos, pero esta compartición no puede ser encontrada",
-        "code_NODE_DUPLICATED": "Hay un archivo con el mismo nombre en esta carpeta"
+        "code_NODE_DUPLICATED": "Hay un archivo con el mismo nombre en esta carpeta",
+        "code_VERSIONS_LIMIT_REACHED": "La operación no se puede completar. Has alcanzado el límite máximo."
     },
     "publicLink": {
         "addLink": {
@@ -759,11 +788,23 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Download"
+                "download": "Download",
+                "manageShares": "Administrar comparticiones"
             }
         },
         "close": {
             "tooltip": "Cerrar"
+        },
+        "loading": {
+            "retrying": "Intentando cargar la vista previa...",
+            "file": "Cargando vista previa de los archivos, por favor, espera...",
+            "error": "Ocurrió un error mientras se cargaba la vista previa. Prueba de nuevo."
+        },
+        "button": {
+            "refresh": "Actualizar vista previa"
         }
+    },
+    "uploadItem": {
+        "queued": "En cola"
     }
 }
