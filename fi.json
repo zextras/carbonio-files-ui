@@ -64,6 +64,7 @@
     "empty": {
         "search": {
             "noResults": [
+                "Yksikään kohteistasi ei vastannut hakuasi.",
                 "Yksikään kohteistasi ei vastannut hakuasi."
             ]
         }

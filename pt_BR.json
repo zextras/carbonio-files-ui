@@ -143,6 +143,27 @@
             },
             "header": "Excluir todas as versões",
             "body": "Todas as versões que não estejam sinalizadas para serem mantidas para sempre, exceto a atual, serão deletadas. Você não poderá recuperar estas versões."
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Você tem alterações que não foram salvas"
+            },
+            "button": {
+                "save_and_leave": "Salvar e Sair",
+                "leave_anyway": "Sair assim mesmo"
+            },
+            "body": {
+                "line2": "Todas as suas alterações não salvas serão perdidas",
+                "line1": "Tem certeza que deseja sair desta página sem salvar?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Nova pasta"
+                },
+                "create": "Criar"
+            }
         }
     },
     "node": {
@@ -769,5 +790,8 @@
     },
     "label": {
         "app_name": "Files"
+    },
+    "uploadItem": {
+        "queued": "Em fila"
     }
 }

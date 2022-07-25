@@ -95,6 +95,27 @@
                 "confirm": "Tüm versiyonları sil"
             },
             "header": "Tüm versiyonları sil"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Kaydedilmemiş değişiklikler var"
+            },
+            "button": {
+                "save_and_leave": "Kaydet ve çık",
+                "leave_anyway": "Evet çıkmak istiyorum"
+            },
+            "body": {
+                "line2": "Değişiklikleriniz kaydedilmeden çıkılacak",
+                "line1": "Kaydetmeden bu sayfadan çıkmak istediğinize emin misiniz?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Yeni klasör"
+                },
+                "create": "Oluştur"
+            }
         }
     },
     "create": {
@@ -769,5 +790,8 @@
     },
     "label": {
         "app_name": "Dosyalar"
+    },
+    "uploadItem": {
+        "queued": "Sırada"
     }
 }

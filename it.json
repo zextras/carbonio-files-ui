@@ -231,6 +231,32 @@
             },
             "header": "Elimina tutte le versioni",
             "body": "Tutte le versioni che non sono contrassegnate per essere tenute per sempre, eccetto quella corrente, saranno eliminate. Non sarà possibile recuperarle."
+        },
+        "unsaved_changes": {
+            "title": {
+                "cannot_saved_changes": "Alcune modifiche non possono essere salvate",
+                "unsaved_changes": "Alcune modifiche non sono salvate"
+            },
+            "button": {
+                "save_and_leave": "Salva e esci",
+                "leave_anyway": "Esci comunque"
+            },
+            "body": {
+                "line2": "Tutte le modifiche non salvate andranno perse",
+                "line1": "Vuoi abbandonare questa pagina senza salvare?"
+            }
+        },
+        "nodeSelection": {
+            "input": {
+                "newFolder": "Nome della nuova cartella"
+            },
+            "button": {
+                "newFolder": {
+                    "disabled": "Non hai i permessi necessari",
+                    "label": "Nuova cartella"
+                },
+                "create": "Crea"
+            }
         }
     },
     "filter": {
@@ -768,6 +794,17 @@
         },
         "close": {
             "tooltip": "Chiudi"
+        },
+        "loading": {
+            "retrying": "Caricamento dell'anteprima in corso...",
+            "file": "Caricamento dell'anteprima del file in corso, attendi...",
+            "error": "Si è verificato un errore durante il caricamento dell'anteprima. Riprova."
+        },
+        "button": {
+            "refresh": "Ricarica l'anteprima"
         }
+    },
+    "uploadItem": {
+        "queued": "In coda"
     }
 }
