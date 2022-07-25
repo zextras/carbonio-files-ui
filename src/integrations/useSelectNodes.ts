@@ -5,7 +5,7 @@
  */
 import { useCallback } from 'react';
 
-import { AnyFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
+import { AnyFunction } from '@zextras/carbonio-shell-ui';
 
 import {
 	OpenNodesSelectionModal,
@@ -14,7 +14,6 @@ import {
 import { RootListItemType } from '../carbonio-files-ui-common/types/common';
 import { BaseNodeFragment } from '../carbonio-files-ui-common/types/graphql/types';
 import { isFile, isFolder } from '../carbonio-files-ui-common/utils/ActionsFactory';
-import { FUNCTION_IDS } from '../constants';
 
 export type OpenSelectNodesModalArgs = Parameters<OpenNodesSelectionModal>[number] & {
 	allowFolders?: boolean;
@@ -23,7 +22,7 @@ export type OpenSelectNodesModalArgs = Parameters<OpenNodesSelectionModal>[numbe
 	actionIcon?: string;
 };
 
-export const useSelectNodes = (): Parameters<typeof registerFunctions>[number] => {
+export const useSelectNodes = (): AnyFunction => {
 	const { openNodesSelectionModal } = useNodesSelectionModal();
 
 	const openSelectNodesModal = useCallback(
@@ -43,8 +42,5 @@ export const useSelectNodes = (): Parameters<typeof registerFunctions>[number] =
 		[openNodesSelectionModal]
 	);
 
-	return {
-		id: FUNCTION_IDS.SELECT_NODES,
-		fn: openSelectNodesModal as AnyFunction
-	};
+	return openSelectNodesModal as AnyFunction;
 };

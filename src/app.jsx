@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { lazy, useEffect, Suspense, useCallback } from 'react';
+import React, { lazy, useEffect, Suspense, useCallback, useMemo } from 'react';
 
+import { ApolloProvider } from '@apollo/client';
 import {
 	Spinner,
 	addRoute,
@@ -17,13 +18,14 @@ import filter from 'lodash/filter';
 import size from 'lodash/size';
 import { useTranslation } from 'react-i18next';
 
+import buildClient from './carbonio-files-ui-common/apollo';
 import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_APP_ID, FILES_ROUTE, ROOTS } from './carbonio-files-ui-common/constants';
 import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
 import { UploadStatus } from './carbonio-files-ui-common/types/common';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
-import { useIntegrations } from './integrations/useIntegrations';
+import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
@@ -120,7 +122,11 @@ export default function App() {
 		});
 	}, [uploadClick, t]);
 
-	useIntegrations();
+	const apolloClient = useMemo(() => buildClient(), []);
 
-	return null;
+	return (
+		<ApolloProvider client={apolloClient}>
+			<IntegrationsRegisterer />
+		</ApolloProvider>
+	);
 }
