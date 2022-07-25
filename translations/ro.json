@@ -3,7 +3,10 @@
         "options": {
             "new": {
                 "folder": "Folder nou",
-                "upload": "Incarcare"
+                "upload": "Incarcare",
+                "spreadsheet": "Foaie nouă de calcul",
+                "presentation": "Prezentare nouă",
+                "document": "Document nou"
             }
         }
     },
@@ -62,6 +65,28 @@
             "button": {
                 "confirm": "Confirmare"
             }
+        },
+        "revokeLink": {
+            "button": {
+                "confirm": "Revocare"
+            }
+        },
+        "deleteShare": {
+            "button": {
+                "confirm": "Eliminare"
+            }
+        },
+        "removeLink": {
+            "button": {
+                "confirm": "Eliminare"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Folder nou"
+                }
+            }
         }
     },
     "node": {
@@ -107,9 +132,9 @@
     },
     "secondaryBar": {
         "driveHome": "Drive Home",
-        "filters": "",
+        "filters": "Filtre",
         "filtersList": {
-            "flagged": "",
+            "flagged": "Marcat",
             "sharedByMe": "Partajate de catre mine",
             "sharedWithMe": "Partajate cu mine",
             "trash": "Cos gunoi"
@@ -123,10 +148,15 @@
             "success": ""
         },
         "deleteShare": {
-            "error": "Eroare"
+            "error": "Eroare",
+            "success": "Succes"
         },
         "deletePermanently": {
-            "error": "Eroare"
+            "error": "Eroare",
+            "success": "Succes"
+        },
+        "restore": {
+            "success": "Succes"
         }
     },
     "actions": {
@@ -137,7 +167,10 @@
         "openWithDocs": "Deschide cu Docs",
         "rename": "Redenumire",
         "restore": "Restaurare",
-        "edit": "Editeaza"
+        "edit": "Editeaza",
+        "preview": "Examinare",
+        "unflag": "Anulare marcare",
+        "flag": "Marcare"
     },
     "displayer": {
         "details": {
@@ -145,15 +178,22 @@
             "description": "Descriere",
             "size": "Marime",
             "owner": "Proprietar",
-            "position": "Pozitie"
+            "position": "Pozitie",
+            "content": "Conţinut"
         },
         "share": {
             "chip": {
                 "popover": {
-                    "save": "Salveaza"
+                    "save": "Salveaza",
+                    "role": {
+                        "viewer": "Vizualizator"
+                    }
                 },
                 "owner": "Proprietar",
                 "you": "Tu"
+            },
+            "addShare": {
+                "note": "Notă:"
             }
         },
         "list": {
@@ -173,6 +213,10 @@
                 "currentVersion": "Versiune curenta",
                 "lastWeek": "Saptamana precedenta"
             }
+        },
+        "tabs": {
+            "sharing": "Partajare",
+            "details": "Detalii"
         }
     },
     "search": {
@@ -200,16 +244,24 @@
                 },
                 "shared": {
                     "label": "Partajat"
-                }
+                },
+                "flagged": {
+                    "label": "Marcat"
+                },
+                "title": "Filtre avansate"
             }
         }
     },
     "publicLink": {
         "addLink": {
-            "generateLink": "Genereaza legatura"
+            "generateLink": "Genereaza legatura",
+            "undo": "Anulare"
         },
         "link": {
-            "edit": "Editeaza"
+            "edit": "Editeaza",
+            "revoke": "Revocare",
+            "remove": "Eliminare",
+            "undo": "Anulare"
         }
     },
     "sortingDropdown": {
@@ -227,6 +279,22 @@
         },
         "close": {
             "tooltip": "Inchide"
+        }
+    },
+    "selectionMode": {
+        "header": {
+            "selectAll": "Selectare toate"
+        }
+    },
+    "docs": {
+        "create": {
+            "modal": {
+                "title": {
+                    "document": "Creare document nou",
+                    "spreadsheet": "Creare foaie nouă de calcul",
+                    "presentation": "Creare prezentare nouă"
+                }
+            }
         }
     }
 }

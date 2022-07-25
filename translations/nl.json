@@ -94,6 +94,27 @@
                 "confirm": "Alle versies verwijderen"
             },
             "header": "Alle versies verwijderen"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "U hebt niet opgeslagen wijzigingen"
+            },
+            "button": {
+                "save_and_leave": "Opslaan en wegwezen",
+                "leave_anyway": "Toch vertrekken"
+            },
+            "body": {
+                "line2": "Al uw niet opgeslagen wijzigingen zullen verloren gaan",
+                "line1": "Weet u zeker dat u deze pagina wilt verlaten zonder op te slaan?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Nieuwe map"
+                },
+                "create": "Creëren"
+            }
         }
     },
     "primaryBar": {
@@ -765,5 +786,8 @@
         "close": {
             "tooltip": "Sluiten"
         }
+    },
+    "uploadItem": {
+        "queued": "In wachtrij"
     }
 }
