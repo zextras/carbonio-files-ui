@@ -80,6 +80,13 @@
             "button": {
                 "confirm": "Eliminare"
             }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Folder nou"
+                }
+            }
         }
     },
     "node": {

@@ -467,6 +467,27 @@
                 "confirm": "清除所有版本"
             },
             "header": "清除所有版本"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "您有未保存更改"
+            },
+            "button": {
+                "save_and_leave": "保存并离开",
+                "leave_anyway": "仍然离开"
+            },
+            "body": {
+                "line2": "您所有的未保存更改都将丢失",
+                "line1": "确定要离开此页面且不保存吗？"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "新文件夹"
+                },
+                "create": "创建"
+            }
         }
     },
     "node": {
@@ -762,5 +783,8 @@
     },
     "label": {
         "app_name": "文件"
+    },
+    "uploadItem": {
+        "queued": "已加入队列"
     }
 }
