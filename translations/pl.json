@@ -63,6 +63,34 @@
         "nodesSelection": {
             "selectedCount": "{{count}} wybrany element",
             "selectedCount_plural": "{{count}} wybranych elementów"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Czystka wszystkich wersji"
+            },
+            "header": "Czystka wszystkich wersji",
+            "body": "Wszystkie wersje, które nie są oznaczone jako zachowywane na zawsze zostaną usunięte. Nie będziesz mógł ich odzyskać."
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Masz niezapisane zmiany"
+            },
+            "button": {
+                "save_and_leave": "Zapisz i opuść",
+                "leave_anyway": "Opuść mimo to"
+            },
+            "body": {
+                "line2": "Wszystkie niezapisane zmiany zostaną utracone",
+                "line1": "Czy na pewno chcesz opuścić tą stronę bez zapisywania?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Nowy folder"
+                },
+                "create": "Stwórz"
+            }
         }
     },
     "search": {
@@ -210,7 +238,10 @@
         "removeUpload": "Usuń przesyłanie",
         "rename": "Zmień nazwę",
         "unflag": "Usuń flagę",
-        "sendViaMail": "Wyślij e-mailem"
+        "sendViaMail": "Wyślij e-mailem",
+        "edit": "Edytuj",
+        "preview": "Podgląd",
+        "manageShares": "Zarządzaj Udostępnieniami"
     },
     "displayer": {
         "share": {
@@ -248,7 +279,7 @@
                     "placeholder": "Dodaj nowe osoby lub grupy"
                 },
                 "note": "Notka:",
-                "noteDescription": "Domyślna wiadomość zawiera twoje imię, nazwę udostępnianiego elementu, uprawnienia przyznane odbiorcom oraz informacje dot. logowania."
+                "noteDescription": "Domyślna wiadomość zawiera Twoje imię, nazwę udostępnianiego elementu, uprawnienia przyznane odbiorcom oraz informacje dot. logowania."
             },
             "noSharePermissionHeader": "Nie masz uprawnień, aby udostępnić ten element."
         },
@@ -578,7 +609,7 @@
                     "enabled": "Tutaj upuść załączniki, aby szybko dodać je do tego folderu"
                 },
                 "otherView": {
-                    "enabled": "Tutaj upuść załączniki, aby szybko dodać je do twojego Startu"
+                    "enabled": "Tutaj upuść załączniki, aby szybko dodać je do Twojego Startu"
                 },
                 "disabled": "Nie możesz upuścić załącznika w tym miejscu"
             }
@@ -720,7 +751,8 @@
         "code_NODE_WRITE_ERROR": "Wygląda na to, że ten obiekt nie może być edytowany lub nie masz do tego uprawnień",
         "code_SHARE_CREATION_ERROR": "Przepraszamy, niestety nie da się udostępnić wskazanego elementu temu użytkownikowi",
         "code_SHARE_NOT_FOUND": "Przepraszamy, nie udało się znaleźc tego udostępnienia",
-        "code_MISSING_FIELD": "Nastąpił błąd wewnętrzny, nie udało się odzyskać wszystkich informacji o tym obiekcie"
+        "code_MISSING_FIELD": "Nastąpił błąd wewnętrzny, nie udało się odzyskać wszystkich informacji o tym obiekcie",
+        "code_VERSIONS_LIMIT_REACHED": "Ta operacja nie może zostać ukończona. Osignięto max. limit."
     },
     "breadcrumb": {
         "expander": {
@@ -734,11 +766,15 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Pobierz"
+                "download": "Pobierz",
+                "manageShares": "Zarządzaj Udostępnieniami"
             }
         },
         "close": {
             "tooltip": "Zamknij"
         }
+    },
+    "uploadItem": {
+        "queued": "W kolejce"
     }
 }

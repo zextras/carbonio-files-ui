@@ -91,6 +91,33 @@
         },
         "moreInfo": {
             "title": "Informasi tambahan"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Hapus semua versi"
+            },
+            "header": "Hapus semua versi"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Anda memiliki perubahan yang belum disimpan"
+            },
+            "button": {
+                "save_and_leave": "Simpan dan keluar",
+                "leave_anyway": "Tetap keluar"
+            },
+            "body": {
+                "line2": "Semua perubahan yang tidak disimpan akan hilang",
+                "line1": "Yakin ingin keluar dari halaman ini tanpa menyimpan?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Folder baru"
+                },
+                "create": "Buat"
+            }
         }
     },
     "node": {
@@ -283,7 +310,9 @@
         "removeUpload": "Hapus unggahan",
         "retryUpload": "Coba unggah lagi",
         "unflag": "Hapus tanda bendera",
-        "sendViaMail": "Kirim melalui email"
+        "sendViaMail": "Kirim melalui email",
+        "edit": "Edit",
+        "preview": "Pratinjau"
     },
     "displayer": {
         "list": {
@@ -757,5 +786,8 @@
         "close": {
             "tooltip": "Tutup"
         }
+    },
+    "uploadItem": {
+        "queued": "Diantrekan"
     }
 }

@@ -121,6 +121,33 @@
         "nodesSelection": {
             "selectedCount": "{{count}} ausgewähltes Element",
             "selectedCount_plural": "{{count}} ausgewählte Elemente"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "Alle Versionen bereinigen"
+            },
+            "header": "Alle Versionen bereinigen"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Sie haben ungespeicherte Änderungen"
+            },
+            "button": {
+                "save_and_leave": "Speichern und verlassen",
+                "leave_anyway": "Trotzdem gehen"
+            },
+            "body": {
+                "line2": "Alle nicht gespeicherten Änderungen gehen verloren.",
+                "line1": "Sind Sie sicher, dass Sie diese Seite verlassen wollen, ohne zu speichern?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Neuer Ordner"
+                },
+                "create": "Erstellen"
+            }
         }
     },
     "node": {
@@ -283,7 +310,9 @@
         "removeUpload": "Upload entfernen",
         "retryUpload": "Upload erneut versuchen",
         "unflag": "Markierung entfernen",
-        "sendViaMail": "Per E-Mail versenden"
+        "sendViaMail": "Per E-Mail versenden",
+        "edit": "Bearbeiten",
+        "preview": "Vorschau"
     },
     "displayer": {
         "details": {
@@ -757,5 +786,8 @@
     },
     "label": {
         "app_name": "Files"
+    },
+    "uploadItem": {
+        "queued": "In der Warteschlange"
     }
 }

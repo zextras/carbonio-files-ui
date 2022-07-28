@@ -1,0 +1,120 @@
+{
+    "modal": {
+        "deletePermanently": {
+            "button": {
+                "confirm": "حذف دائم"
+            }
+        },
+        "roots": {
+            "trash": {
+                "trash": "زباله‌دان"
+            },
+            "sharedWitMe": "اشتراک گذارده با من",
+            "filesHome": "خانه"
+        }
+    },
+    "displayer": {
+        "tabs": {
+            "versioning": "نسخه بندی",
+            "details": "جزئیات",
+            "activities": "سیاهه تغییرات"
+        },
+        "share": {
+            "chip": {
+                "popover": {
+                    "role": {
+                        "viewer": "اجازه مشاهده",
+                        "editor": "ویرایشگر"
+                    }
+                },
+                "owner": "دارنده"
+            }
+        },
+        "details": {
+            "size": "حجم",
+            "position": "جایگاه",
+            "owner": "دارنده",
+            "lastEdit": "آخرین ویرایش",
+            "editDescription": {
+                "editIconTooltip": "ویرایش توضیحات"
+            },
+            "description": "توضیح",
+            "createdBy": "ایجاد شده توسط",
+            "collaborators": "دست‌اندرکاران"
+        }
+    },
+    "create": {
+        "options": {
+            "new": {
+                "upload": "بارگذاری"
+            }
+        }
+    },
+    "actions": {
+        "unflag": "حذف نشانه",
+        "restore": "بازیابی",
+        "rename": "تغییر نام",
+        "move": "انتقال",
+        "flag": "ایجاد نشانه",
+        "download": "دانلود",
+        "copy": "ایجاد رونوشت"
+    },
+    "sortingDropdown": {
+        "size": "حجم"
+    },
+    "secondaryBar": {
+        "filtersList": {
+            "trash": "زباله‌دان",
+            "sharedWithMe": "اشتراک گذارده با من",
+            "sharedByMe": "اشتراک گذارده توسط من",
+            "myElements": "اقلام من",
+            "flagged": "نشانه‌دار"
+        },
+        "filters": "فیلترها",
+        "filesHome": "خانه"
+    },
+    "search": {
+        "advancedSearch": {
+            "modal": {
+                "flagged": {
+                    "label": "نشانه‌دار"
+                }
+            }
+        }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "download": "دانلود"
+            }
+        }
+    },
+    "node": {
+        "rename": {
+            "modal": {
+                "button": {
+                    "confirm": "تغییر نام"
+                }
+            }
+        },
+        "move": {
+            "modal": {
+                "button": {
+                    "confirm": "انتقال"
+                }
+            }
+        },
+        "copy": {
+            "modal": {
+                "button": {
+                    "confirm": "ایجاد رونوشت"
+                }
+            }
+        },
+        "alias": {
+            "name_TRASH_ROOT": "زباله‌دان",
+            "name_SHARED_WITH_ME_ROOT": "اشتراک گذارده با من",
+            "name_LOCAL_ROOT": "خانه"
+        }
+    }
+}

@@ -10,15 +10,10 @@ import failOnConsole from 'jest-fail-on-console';
 
 import buildClient from './carbonio-files-ui-common/apollo';
 import { draggedItemsVar } from './carbonio-files-ui-common/apollo/dragAndDropVar';
-import { nodeListCursorVar } from './carbonio-files-ui-common/apollo/nodeListCursorVar';
 import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
 import { selectionModeVar } from './carbonio-files-ui-common/apollo/selectionVar';
-import {
-	uploadCounterVar,
-	uploadFunctionsVar,
-	uploadVar
-} from './carbonio-files-ui-common/apollo/uploadVar';
+import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
 import { LOGGED_USER, USER_SETTINGS } from './mocks/constants';
 import server from './mocks/server';
@@ -45,12 +40,10 @@ beforeEach(() => {
 	// reset apollo client cache
 	global.apolloClient.resetStore();
 	// reset reactive variables
-	nodeListCursorVar({});
 	selectionModeVar(false);
 	searchParamsVar({});
-	uploadVar([]);
+	uploadVar({});
 	uploadFunctionsVar({});
-	uploadCounterVar(0);
 	nodeSortVar(NODES_SORT_DEFAULT);
 	draggedItemsVar(null);
 });
@@ -119,7 +112,7 @@ beforeAll(() => {
 
 	global.userSettings = USER_SETTINGS;
 
-	let mockedStore = {};
+	let mockedStore: Record<string, unknown> = {};
 	Object.defineProperty(window, 'localStorage', {
 		writable: true,
 		value: {
@@ -136,7 +129,7 @@ beforeAll(() => {
 		}
 	});
 
-	window.resizeTo = function resizeTo(width, height) {
+	window.resizeTo = function resizeTo(width, height): void {
 		Object.assign(this, {
 			innerWidth: width,
 			innerHeight: height,

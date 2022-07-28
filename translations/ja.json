@@ -84,6 +84,39 @@
         },
         "moreInfo": {
             "title": "追加情報"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "すべてのバージョンをパージする"
+            },
+            "header": "すべてのバージョンをパージする",
+            "body": "現在のバージョンを除き、永久に保持されるようにマークされていないバージョンがすべて削除されます。このバージョンを回復することはできません。"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "未保存の変更があります",
+                "cannot_saved_changes": "一部の変更内容を保存できません"
+            },
+            "button": {
+                "save_and_leave": "保存して離れる",
+                "leave_anyway": "とにかく離れる"
+            },
+            "body": {
+                "line2": "保存されていない変更はすべて失われます",
+                "line1": "本当に保存せずにこのページを離れますか？"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "新しいフォルダー",
+                    "disabled": "正しい権限がありません"
+                },
+                "create": "作成する"
+            },
+            "input": {
+                "newFolder": "新しいフォルダの名前"
+            }
         }
     },
     "node": {
@@ -283,7 +316,10 @@
         "removeUpload": "アップロードを削除する",
         "retryUpload": "再びアップロード試す",
         "unflag": "フラグを外す",
-        "sendViaMail": "メールで送信する"
+        "sendViaMail": "メールで送信する",
+        "edit": "編集する",
+        "preview": "プレビューする",
+        "manageShares": "共有を管理する"
     },
     "displayer": {
         "list": {
@@ -698,7 +734,8 @@
         "code_NODE_WRITE_ERROR": "このオブジェクトは編集できないか、編集する権限がないようです",
         "code_SHARE_CREATION_ERROR": "申し訳ありませんが、このユーザーとアイテムを共有することはできません",
         "code_SHARE_NOT_FOUND": "申し訳ありませんが、この共有が見つかりません",
-        "code_NODE_DUPLICATED": "このフォルダに同じ名前のファイルがあります"
+        "code_NODE_DUPLICATED": "このフォルダに同じ名前のファイルがあります",
+        "code_VERSIONS_LIMIT_REACHED": "操作を完了できません。上限に達しました。"
     },
     "publicLink": {
         "addLink": {
@@ -748,14 +785,26 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "ダウンロード"
+                "download": "ダウンロード",
+                "manageShares": "共有を管理する"
             }
         },
         "close": {
             "tooltip": "閉じる"
+        },
+        "loading": {
+            "retrying": "プレビューを読み込もうとしています...",
+            "file": "ファイルプレビューを読み込んでいます。しばらくお待ちください...",
+            "error": "プレビューの読み込み中にエラーが発生しました。再度お試しください。"
+        },
+        "button": {
+            "refresh": "プレビューを更新する"
         }
     },
     "label": {
         "app_name": "ファイル"
+    },
+    "uploadItem": {
+        "queued": "キューに入れられました"
     }
 }

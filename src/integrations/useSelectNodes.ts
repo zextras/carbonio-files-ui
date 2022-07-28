@@ -5,55 +5,42 @@
  */
 import { useCallback } from 'react';
 
-import { Action, ActionFactory, registerActions } from '@zextras/carbonio-shell-ui';
+import { AnyFunction } from '@zextras/carbonio-shell-ui';
 
-import { useNodesSelectionModal } from '../carbonio-files-ui-common/hooks/modals/useNodesSelectionModal';
+import {
+	OpenNodesSelectionModal,
+	useNodesSelectionModal
+} from '../carbonio-files-ui-common/hooks/modals/useNodesSelectionModal';
 import { RootListItemType } from '../carbonio-files-ui-common/types/common';
 import { BaseNodeFragment } from '../carbonio-files-ui-common/types/graphql/types';
 import { isFile, isFolder } from '../carbonio-files-ui-common/utils/ActionsFactory';
-import { ACTION_IDS, ACTION_TYPES } from '../constants';
 
-type ActionTarget = Parameters<
-	ReturnType<typeof useNodesSelectionModal>['openNodesSelectionModal']
->[number] & {
+export type OpenSelectNodesModalArgs = Parameters<OpenNodesSelectionModal>[number] & {
 	allowFolders?: boolean;
 	allowFiles?: boolean;
 	actionLabel?: string;
 	actionIcon?: string;
 };
 
-export const useSelectNodes = (): Parameters<typeof registerActions>[number] => {
+export const useSelectNodes = (): AnyFunction => {
 	const { openNodesSelectionModal } = useNodesSelectionModal();
 
-	const selectSelectNodesAction = useCallback<ActionFactory<ActionTarget>>(
+	const openSelectNodesModal = useCallback(
 		({
 			allowFiles = true,
 			allowFolders = true,
 			isValidSelection,
-			actionLabel = 'Select nodes from Files',
-			actionIcon = 'DriveOutline',
 			...rest
-		}): Action => {
+		}: OpenSelectNodesModalArgs): void => {
 			const checkIfNodeIsSelectable = (node: BaseNodeFragment | RootListItemType): boolean =>
 				(((allowFolders && isFolder(node)) || (allowFiles && isFile(node))) &&
-					(!isValidSelection || isValidSelection(node))) ||
+					(isValidSelection === undefined || isValidSelection(node))) ||
 				false;
 
-			return {
-				id: ACTION_IDS.SELECT_NODES,
-				label: actionLabel,
-				icon: actionIcon,
-				click: (): void =>
-					openNodesSelectionModal({ ...rest, isValidSelection: checkIfNodeIsSelectable }),
-				type: ACTION_TYPES.FILES_ACTION
-			};
+			openNodesSelectionModal({ ...rest, isValidSelection: checkIfNodeIsSelectable });
 		},
 		[openNodesSelectionModal]
 	);
 
-	return {
-		id: ACTION_IDS.SELECT_NODES,
-		action: selectSelectNodesAction as ActionFactory<unknown>,
-		type: ACTION_TYPES.FILES_ACTION
-	};
+	return openSelectNodesModal as AnyFunction;
 };

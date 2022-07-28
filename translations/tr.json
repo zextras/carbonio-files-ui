@@ -88,6 +88,34 @@
         },
         "moreInfo": {
             "title": "Ek Bilgi"
+        },
+        "purgeAllVersions": {
+            "body": "Şu anda geçerli olan dışında, sürekli sakla olarak işaretlenmemiş tüm versiyonlar silinecek. Bu versiyonları geri getiremezsiniz.",
+            "button": {
+                "confirm": "Tüm versiyonları sil"
+            },
+            "header": "Tüm versiyonları sil"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Kaydedilmemiş değişiklikler var"
+            },
+            "button": {
+                "save_and_leave": "Kaydet ve çık",
+                "leave_anyway": "Evet çıkmak istiyorum"
+            },
+            "body": {
+                "line2": "Değişiklikleriniz kaydedilmeden çıkılacak",
+                "line1": "Kaydetmeden bu sayfadan çıkmak istediğinize emin misiniz?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Yeni klasör"
+                },
+                "create": "Oluştur"
+            }
         }
     },
     "create": {
@@ -283,7 +311,10 @@
         "removeUpload": "Yüklemeyi kaldır",
         "retryUpload": "Yüklemeyi tekrar dene",
         "unflag": "Bayrağı kaldır",
-        "sendViaMail": "E-posta ile gönder"
+        "sendViaMail": "E-posta ile gönder",
+        "manageShares": "Paylaşımları Yönet",
+        "edit": "Düzenle",
+        "preview": "Önizleme"
     },
     "displayer": {
         "details": {
@@ -704,7 +735,8 @@
         "code_SHARE_NOT_FOUND": "Üzgünüz, bu paylaşım bulunamadı",
         "code_ACCOUNT_NOT_FOUND": "Bu kullanıcı Carbonio sisteminde bulunmuyor",
         "code_FILE_VERSION_NOT_FOUND": "Üzgünüz, dosyanın bu versiyonu bulunamadı",
-        "code_NODE_DUPLICATED": "Bu klasörde aynı isimde bir dosya var"
+        "code_NODE_DUPLICATED": "Bu klasörde aynı isimde bir dosya var",
+        "code_VERSIONS_LIMIT_REACHED": "İşlem tamamlanamadı. Maksimum limite ulaştınız."
     },
     "publicLink": {
         "addLink": {
@@ -748,7 +780,8 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "İndir"
+                "download": "İndir",
+                "manageShares": "Paylaşımları Yönet"
             }
         },
         "close": {
@@ -757,5 +790,8 @@
     },
     "label": {
         "app_name": "Dosyalar"
+    },
+    "uploadItem": {
+        "queued": "Sırada"
     }
 }

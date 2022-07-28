@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/zextras/carbonio-files-ui/compare/v0.1.6...v0.1.7) (2022-07-21)
+
+
+### Features
+
+* add function for select-nodes integration ([2b57259](https://github.com/zextras/carbonio-files-ui/commit/2b57259491631aab135f587a34f901ec1537a3c3)), closes [#83](https://github.com/zextras/carbonio-files-ui/issues/83)
+* add indicator for trashed nodes on search results ([b08e6a1](https://github.com/zextras/carbonio-files-ui/commit/b08e6a110f57912589b3f3e474141be50e722ceb)), closes [#86](https://github.com/zextras/carbonio-files-ui/issues/86)
+* add limit to upload queue ([0105751](https://github.com/zextras/carbonio-files-ui/commit/0105751d4be5cc915d5713ca3b585f50297a20f4)), closes [#88](https://github.com/zextras/carbonio-files-ui/issues/88)
+* add loader on thumbnail preview inside displayer ([da84c57](https://github.com/zextras/carbonio-files-ui/commit/da84c571f99a79214220241460d2e04498a470ec)), closes [#90](https://github.com/zextras/carbonio-files-ui/issues/90)
+* allow creation of folders from nodes selection modal ([c2ad0f0](https://github.com/zextras/carbonio-files-ui/commit/c2ad0f03bfc7c91c0e147453a96dc8dbf96cf59f)), closes [#79](https://github.com/zextras/carbonio-files-ui/issues/79)
+* open displayer with partial data and shim missing data ([7283cdc](https://github.com/zextras/carbonio-files-ui/commit/7283cdcf4e469ddb593b83d6cefa49cb4bca6bea)), closes [#87](https://github.com/zextras/carbonio-files-ui/issues/87)
+* search by default in subfolders in advanced search ([b7ff09d](https://github.com/zextras/carbonio-files-ui/commit/b7ff09db0e0f05780d0e9ba0cca80f00bbf84e55)), closes [#85](https://github.com/zextras/carbonio-files-ui/issues/85)
+* use contact groups in sharing feature ([de7786c](https://github.com/zextras/carbonio-files-ui/commit/de7786c0b30cf8946a2307faa3c42b48c8526b05)), closes [#84](https://github.com/zextras/carbonio-files-ui/issues/84)
+* use RouteLeavingGuard on unsaved changes ([d857aae](https://github.com/zextras/carbonio-files-ui/commit/d857aae91c4c8016dff9c5f4c739df5726f85e61)), closes [#89](https://github.com/zextras/carbonio-files-ui/issues/89)
+
+
+### Bug Fixes
+
+* show preview for pdf with size 0 ([53c88f2](https://github.com/zextras/carbonio-files-ui/commit/53c88f2645d293b095a82b1ab67bba6ccbefe540)), closes [#80](https://github.com/zextras/carbonio-files-ui/issues/80)
+
+### [0.1.6](https://github.com/zextras/carbonio-files-ui/compare/v0.1.5...v0.1.6) (2022-06-20)
+
 ### [0.1.5](https://github.com/zextras/carbonio-files-ui/compare/v0.1.4...v0.1.5) (2022-06-09)
 
 
