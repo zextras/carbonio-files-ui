@@ -71,17 +71,10 @@
 	},
 	"dependencies": {
 		"@apollo/client": "~3.6.5",
-<<<<<<< HEAD
 		"@zextras/carbonio-design-system": "devel",
 		"@zextras/carbonio-shell-ui": "^0.4.31",
 		"@zextras/carbonio-ui-preview": "file:zextras-carbonio-ui-preview-0.1.5.tgz",
 		"core-js": "^3.24.0",
-=======
-		"@zextras/carbonio-design-system": "~0.3.8",
-		"@zextras/carbonio-shell-ui": "~0.4.25",
-		"@zextras/carbonio-ui-preview": "^0.1.5",
-		"core-js": "^3.21.1",
->>>>>>> FILES-313-improve-chip-of-shares
 		"graphql": "^16.3.0",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.2",
