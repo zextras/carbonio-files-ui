@@ -70,6 +70,27 @@
             },
             "header": "Czystka wszystkich wersji",
             "body": "Wszystkie wersje, które nie są oznaczone jako zachowywane na zawsze zostaną usunięte. Nie będziesz mógł ich odzyskać."
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Masz niezapisane zmiany"
+            },
+            "button": {
+                "save_and_leave": "Zapisz i opuść",
+                "leave_anyway": "Opuść mimo to"
+            },
+            "body": {
+                "line2": "Wszystkie niezapisane zmiany zostaną utracone",
+                "line1": "Czy na pewno chcesz opuścić tą stronę bez zapisywania?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Nowy folder"
+                },
+                "create": "Stwórz"
+            }
         }
     },
     "search": {
@@ -752,5 +773,8 @@
         "close": {
             "tooltip": "Zamknij"
         }
+    },
+    "uploadItem": {
+        "queued": "W kolejce"
     }
 }

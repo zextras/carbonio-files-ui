@@ -87,6 +87,32 @@
             },
             "header": "Eliminar todas las versiones",
             "body": "Todas las versiones que no están marcadas para ser retenidas permanentemente, con excepción de la actual, serán eliminadas. No habrá posibilidad de recuperar aquellas versiones."
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Tienes cambios no guardados",
+                "cannot_saved_changes": "Algunos cambios no pudieron guardarse"
+            },
+            "button": {
+                "save_and_leave": "Guardar y salir",
+                "leave_anyway": "Abandonar de todos modos"
+            },
+            "body": {
+                "line2": "Todos tus cambios no guardados se perderán",
+                "line1": "¿Seguro que quieres salir de esta página sin guardar?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Nueva carpeta",
+                    "disabled": "No tienes los permisos correctos"
+                },
+                "create": "Crear"
+            },
+            "input": {
+                "newFolder": "Nuevo nombre de la carpeta"
+            }
         }
     },
     "node": {
@@ -768,6 +794,17 @@
         },
         "close": {
             "tooltip": "Cerrar"
+        },
+        "loading": {
+            "retrying": "Intentando cargar la vista previa...",
+            "file": "Cargando vista previa de los archivos, por favor, espera...",
+            "error": "Ocurrió un error mientras se cargaba la vista previa. Prueba de nuevo."
+        },
+        "button": {
+            "refresh": "Actualizar vista previa"
         }
+    },
+    "uploadItem": {
+        "queued": "En cola"
     }
 }
