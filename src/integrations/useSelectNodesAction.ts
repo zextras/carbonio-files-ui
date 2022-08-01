@@ -27,7 +27,7 @@ export const useSelectNodesAction = (): Parameters<typeof registerActions>[numbe
 			id: ACTION_IDS.SELECT_NODES,
 			label: actionLabel,
 			icon: actionIcon,
-			click: (): unknown => openSelectNodesModalFunction.fn({ ...rest }),
+			click: (): unknown => openSelectNodesModalFunction({ ...rest }),
 			type: ACTION_TYPES.FILES_ACTION
 		}),
 		[openSelectNodesModalFunction]
