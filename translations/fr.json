@@ -131,7 +131,8 @@
         },
         "unsaved_changes": {
             "title": {
-                "unsaved_changes": "Vous avez des modifications non sauvegardées"
+                "unsaved_changes": "Vous avez des modifications non sauvegardées",
+                "cannot_saved_changes": "Certaines modifications ne peuvent pas être sauvegardées"
             },
             "button": {
                 "save_and_leave": "Enregistrer et quitter",
@@ -145,9 +146,13 @@
         "nodeSelection": {
             "button": {
                 "newFolder": {
-                    "label": "Nouveau dossier"
+                    "label": "Nouveau dossier",
+                    "disabled": "Vous n'avez pas les bonnes permissions"
                 },
                 "create": "Créer"
+            },
+            "input": {
+                "newFolder": "Nouveau nom de dossier"
             }
         }
     },
@@ -786,6 +791,14 @@
         },
         "close": {
             "tooltip": "Fermer"
+        },
+        "loading": {
+            "retrying": "Tentative de chargement de l'aperçu...",
+            "file": "Chargement de l'aperçu du fichier, veuillez patienter...",
+            "error": "Une erreur est survenue lors du chargement de l'aperçu. Veuillez réessayer."
+        },
+        "button": {
+            "refresh": "Rafraîchir l'aperçu"
         }
     },
     "label": {
