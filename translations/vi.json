@@ -435,6 +435,27 @@
             },
             "header": "Xóa tất cả các phiên bản",
             "body": "Tất cả các phiên bản không được đánh dấu để lưu giữ vĩnh viễn, ngoại trừ phiên bản hiện tại, sẽ bị xóa. Bạn sẽ không thể khôi phục các phiên bản này."
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Bạn không lưu thay đổi"
+            },
+            "button": {
+                "save_and_leave": "Lưu và thoát",
+                "leave_anyway": "Vẫn tiếp tục rời khỏi"
+            },
+            "body": {
+                "line2": "Tất cả các thay đổi chưa được lưu của bạn sẽ bị mất",
+                "line1": "Bạn có chắc muốn rời khỏi trang này mà không lưu không?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Thư mục mới"
+                },
+                "create": "Tạo"
+            }
         }
     },
     "node": {
@@ -752,5 +773,8 @@
     },
     "label": {
         "app_name": "Tệp"
+    },
+    "uploadItem": {
+        "queued": "Đã xếp hàng"
     }
 }

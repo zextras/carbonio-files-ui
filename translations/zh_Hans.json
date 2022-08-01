@@ -347,7 +347,8 @@
         "unflag": "取消标记",
         "sendViaMail": "通过邮件发送",
         "edit": "编辑",
-        "preview": "预览"
+        "preview": "预览",
+        "manageShares": "管理分享"
     },
     "create": {
         "options": {
@@ -466,7 +467,34 @@
             "button": {
                 "confirm": "清除所有版本"
             },
-            "header": "清除所有版本"
+            "header": "清除所有版本",
+            "body": "除当前版本外所有未被标记为永久保存的版本都将被删除。您将无法恢复这些版本。"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "您有未保存更改",
+                "cannot_saved_changes": "部分变更无法保存"
+            },
+            "button": {
+                "save_and_leave": "保存并离开",
+                "leave_anyway": "仍然离开"
+            },
+            "body": {
+                "line2": "您所有的未保存更改都将丢失",
+                "line1": "确定要离开此页面且不保存吗？"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "新文件夹",
+                    "disabled": "您没有合适的权限"
+                },
+                "create": "创建"
+            },
+            "input": {
+                "newFolder": "新文件夹名称"
+            }
         }
     },
     "node": {
@@ -703,7 +731,8 @@
         "code_NODE_WRITE_ERROR": "似乎此对象无法编辑，或者您没有编辑权限",
         "code_SHARE_CREATION_ERROR": "抱歉，无法同该用户分享此项目",
         "code_SHARE_NOT_FOUND": "抱歉，无法找到此分享",
-        "code_NODE_DUPLICATED": "文件夹中有同名文件"
+        "code_NODE_DUPLICATED": "文件夹中有同名文件",
+        "code_VERSIONS_LIMIT_REACHED": "操作无法完成。您已达到最高上限。"
     },
     "publicLink": {
         "addLink": {
@@ -756,11 +785,23 @@
         },
         "actions": {
             "tooltip": {
-                "download": "下载"
+                "download": "下载",
+                "manageShares": "管理分享"
             }
+        },
+        "loading": {
+            "retrying": "正在尝试加载预览...",
+            "file": "正在加载文件预览，请稍候...",
+            "error": "加载预览时发生错误。请重试。"
+        },
+        "button": {
+            "refresh": "刷新预览"
         }
     },
     "label": {
         "app_name": "文件"
+    },
+    "uploadItem": {
+        "queued": "已加入队列"
     }
 }

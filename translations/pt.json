@@ -143,6 +143,27 @@
         },
         "moreInfo": {
             "title": "Informação adicional"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Você tem alterações que não foram salvas"
+            },
+            "button": {
+                "save_and_leave": "Salvar e Sair",
+                "leave_anyway": "Sair assim mesmo"
+            },
+            "body": {
+                "line2": "Todas as suas alterações não salvas serão perdidas",
+                "line1": "Tem certeza que deseja sair desta página sem salvar?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Novo diretório"
+                },
+                "create": "Criar"
+            }
         }
     },
     "node": {
