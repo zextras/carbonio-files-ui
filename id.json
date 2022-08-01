@@ -96,7 +96,34 @@
             "button": {
                 "confirm": "Hapus semua versi"
             },
-            "header": "Hapus semua versi"
+            "header": "Hapus semua versi",
+            "body": "Semua versi yang tidak ditandai akan disimpan selamanya, kecuali versi saat ini, akan dihapus. Anda tidak akan bisa memulihkan versi-versi ini."
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "Anda memiliki perubahan yang belum disimpan",
+                "cannot_saved_changes": "Beberapa perubahan tidak bisa disimpan"
+            },
+            "button": {
+                "save_and_leave": "Simpan dan keluar",
+                "leave_anyway": "Tetap keluar"
+            },
+            "body": {
+                "line2": "Semua perubahan yang tidak disimpan akan hilang",
+                "line1": "Yakin ingin keluar dari halaman ini tanpa menyimpan?"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "Folder baru",
+                    "disabled": "Anda tidak memiliki izin yang benar"
+                },
+                "create": "Buat"
+            },
+            "input": {
+                "newFolder": "Nama folder baru"
+            }
         }
     },
     "node": {
@@ -291,7 +318,8 @@
         "unflag": "Hapus tanda bendera",
         "sendViaMail": "Kirim melalui email",
         "edit": "Edit",
-        "preview": "Pratinjau"
+        "preview": "Pratinjau",
+        "manageShares": "Kelola Berbagi"
     },
     "displayer": {
         "list": {
@@ -735,7 +763,8 @@
         "code_NODE_WRITE_ERROR": "Tampaknya objek ini tidak dapat diedit atau Anda tidak memiliki izin mengeditnya",
         "code_SHARE_CREATION_ERROR": "Maaf, Anda tidak bisa berbagi item dengan pengguna ini",
         "code_SHARE_NOT_FOUND": "Maaf, berbagi ini tidak ditemukan",
-        "code_NODE_DUPLICATED": "Ada file dengan nama yang sama di folder ini"
+        "code_NODE_DUPLICATED": "Ada file dengan nama yang sama di folder ini",
+        "code_VERSIONS_LIMIT_REACHED": "Operasi tidak bisa diselesaikan. Anda telah mencapai batas maksimum."
     },
     "breadcrumb": {
         "expander": {
@@ -759,11 +788,23 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Unduh"
+                "download": "Unduh",
+                "manageShares": "Kelola Berbagi"
             }
         },
         "close": {
             "tooltip": "Tutup"
+        },
+        "loading": {
+            "retrying": "Mencoba memuat pratinjau...",
+            "file": "Memuat pratinjau file, harap tunggu...",
+            "error": "Terjadi kesalahan saat memuat pratinjau. Coba lagi."
+        },
+        "button": {
+            "refresh": "Muat ulang pratinjau"
         }
+    },
+    "uploadItem": {
+        "queued": "Diantrekan"
     }
 }
