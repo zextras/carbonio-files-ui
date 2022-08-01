@@ -123,10 +123,7 @@ function getLinkWithClient(
 									resolve(
 										map(linkIds, (id) => {
 											const link = find(links, ['id', id]);
-											if (link) {
-												return link;
-											}
-											return null;
+											return link || null;
 										})
 									);
 								} else {
