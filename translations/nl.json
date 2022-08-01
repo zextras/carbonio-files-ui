@@ -93,11 +93,13 @@
             "button": {
                 "confirm": "Alle versies verwijderen"
             },
-            "header": "Alle versies verwijderen"
+            "header": "Alle versies verwijderen",
+            "body": "Alle versies die niet gemarkeerd zijn om voor altijd te bewaren, behalve de huidige, zullen worden verwijderd. U zult niet in staat zijn deze versies te herstellen."
         },
         "unsaved_changes": {
             "title": {
-                "unsaved_changes": "U hebt niet opgeslagen wijzigingen"
+                "unsaved_changes": "U hebt niet opgeslagen wijzigingen",
+                "cannot_saved_changes": "Sommige wijzigingen kunnen niet worden opgeslagen"
             },
             "button": {
                 "save_and_leave": "Opslaan en wegwezen",
@@ -111,9 +113,13 @@
         "nodeSelection": {
             "button": {
                 "newFolder": {
-                    "label": "Nieuwe map"
+                    "label": "Nieuwe map",
+                    "disabled": "U hebt niet de juiste toestemmingen"
                 },
                 "create": "Creëren"
+            },
+            "input": {
+                "newFolder": "Naam van nieuwe folder"
             }
         }
     },
@@ -312,7 +318,8 @@
         "unflag": "Vlag verwijderen",
         "sendViaMail": "Verzenden via e-mail",
         "edit": "Bewerken",
-        "preview": "Voorbeeld"
+        "preview": "Voorbeeld",
+        "manageShares": "Delen managen"
     },
     "displayer": {
         "details": {
@@ -727,7 +734,8 @@
         "code_SHARE_NOT_FOUND": "Het spijt ons, maar dit aandeel kan niet gevonden worden",
         "code_FILE_VERSION_NOT_FOUND": "Het spijt ons, maar deze versie van het bestand kan niet gevonden worden",
         "code_NODE_NOT_FOUND": "Het lijkt erop dat dit object niet bestaat, of dat je geen toestemming hebt om het te openen",
-        "code_NODE_DUPLICATED": "Er is een bestand met dezelfde naam in deze map"
+        "code_NODE_DUPLICATED": "Er is een bestand met dezelfde naam in deze map",
+        "code_VERSIONS_LIMIT_REACHED": "De operatie kan niet worden voltooid. U hebt de maximumlimiet bereikt."
     },
     "publicLink": {
         "addLink": {
@@ -780,11 +788,20 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Download"
+                "download": "Download",
+                "manageShares": "Delen managen"
             }
         },
         "close": {
             "tooltip": "Sluiten"
+        },
+        "loading": {
+            "retrying": "Er wordt geprobeerd om het voorbeeld te laden...",
+            "file": "Voorbeeldbestand wordt geladen, wacht even....",
+            "error": "Er is een fout opgetreden bij het laden van de voorbeeldweergave. Probeer het opnieuw."
+        },
+        "button": {
+            "refresh": "Weergave vernieuwen"
         }
     },
     "uploadItem": {
