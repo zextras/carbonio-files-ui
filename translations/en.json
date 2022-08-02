@@ -278,13 +278,21 @@
                 "downloadVersion": "Download version",
                 "keepVersion": "Keep this version forever",
                 "openDocumentVersion": "Open document version",
-                "removeKeepVersion": "Remove keep forever"
+                "removeKeepVersion": "Remove keep forever",
+                "tooltip": {
+                    "disabledByDeleteCurrent": "Current version cannot be deleted",
+                    "disabledByDocs": "This version cannot be opened by the online editor",
+                    "disabledByMaxKeepVersion": "You have reached the maximum number of versions to keep forever",
+                    "disabledByMaxVersion": "You have reached the maximum number of versions",
+                    "disabledByPermission": "You don't have the correct permissions",
+                    "disabledByVersionKeepForever": "Versions marked to be kept forever cannot be deleted"
+                }
             },
             "button": {
                 "purgeAllVersions": "Purge all versions",
                 "upload": "Upload version"
             },
-            "mainHint": "You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.",
+            "mainHint": "Files saves the last {{maxVersions}} versions of your files. You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Cloned from version {{versionNumber}} ({{cloneDate}})",
