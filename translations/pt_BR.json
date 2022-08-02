@@ -146,7 +146,8 @@
         },
         "unsaved_changes": {
             "title": {
-                "unsaved_changes": "Você tem alterações que não foram salvas"
+                "unsaved_changes": "Você tem alterações que não foram salvas",
+                "cannot_saved_changes": "Algumas alterações não podem ser salvas"
             },
             "button": {
                 "save_and_leave": "Salvar e Sair",
@@ -160,9 +161,13 @@
         "nodeSelection": {
             "button": {
                 "newFolder": {
-                    "label": "Nova pasta"
+                    "label": "Nova pasta",
+                    "disabled": "Você não possui as permissões necessárias"
                 },
                 "create": "Criar"
+            },
+            "input": {
+                "newFolder": "Nome da nova pasta"
             }
         }
     },
@@ -786,6 +791,14 @@
         },
         "close": {
             "tooltip": "Fechar"
+        },
+        "loading": {
+            "retrying": "Tentando carregar a pré-visualização...",
+            "file": "Carregando a pré-visualização do arquivo. Por favor, aguarde...",
+            "error": "Houve um erro ao carregar a pré-visualização. Tente novamente."
+        },
+        "button": {
+            "refresh": "Atualizar pré-visualização"
         }
     },
     "label": {
