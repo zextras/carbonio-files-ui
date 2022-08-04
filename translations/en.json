@@ -249,11 +249,11 @@
                 },
                 "tooltip": {
                     "edit": {
-                        "collaborator": "Edit {{username}}'s collaboration",
+                        "collaborator": "Edit collaboration",
                         "you": "Edit your collaboration"
                     },
                     "remove": {
-                        "collaborator": "Remove {{username}}",
+                        "collaborator": "Remove collaboration",
                         "yourself": "Remove your collaboration"
                     }
                 },
@@ -681,6 +681,15 @@
         },
         "node": {
             "tooltip": "Activate selection mode"
+        }
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "This email address is not associated to a Carbonio user"
+                }
+            }
         }
     },
     "snackbar": {
