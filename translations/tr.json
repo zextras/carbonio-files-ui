@@ -98,7 +98,8 @@
         },
         "unsaved_changes": {
             "title": {
-                "unsaved_changes": "Kaydedilmemiş değişiklikler var"
+                "unsaved_changes": "Kaydedilmemiş değişiklikler var",
+                "cannot_saved_changes": "Bazı değişiklikler kaydedilemedi"
             },
             "button": {
                 "save_and_leave": "Kaydet ve çık",
@@ -112,9 +113,13 @@
         "nodeSelection": {
             "button": {
                 "newFolder": {
-                    "label": "Yeni klasör"
+                    "label": "Yeni klasör",
+                    "disabled": "Doğru izniniz yok"
                 },
                 "create": "Oluştur"
+            },
+            "input": {
+                "newFolder": "Yeni klasör adı"
             }
         }
     },
@@ -786,6 +791,14 @@
         },
         "close": {
             "tooltip": "Kapat"
+        },
+        "loading": {
+            "retrying": "Ön izleme yükleniyor...",
+            "file": "Dosya ön izleme yükleniyor, lütfen bekleyin...",
+            "error": "Ön izleme yüklenirken hata oluştu. Yeniden deneyin."
+        },
+        "button": {
+            "refresh": "Ön izlemeyi yenile"
         }
     },
     "label": {

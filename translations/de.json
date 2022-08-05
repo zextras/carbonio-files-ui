@@ -144,9 +144,13 @@
         "nodeSelection": {
             "button": {
                 "newFolder": {
-                    "label": "Neuer Ordner"
+                    "label": "Neuer Ordner",
+                    "disabled": "Sie haben nicht die richtigen Rechte"
                 },
                 "create": "Erstellen"
+            },
+            "input": {
+                "newFolder": "Neuer Ordnername"
             }
         }
     },
@@ -312,7 +316,8 @@
         "unflag": "Markierung entfernen",
         "sendViaMail": "Per E-Mail versenden",
         "edit": "Bearbeiten",
-        "preview": "Vorschau"
+        "preview": "Vorschau",
+        "manageShares": "Teilen verwalten"
     },
     "displayer": {
         "details": {
@@ -727,7 +732,8 @@
         "code_NODE_NOT_FOUND": "Es scheint, dass dieses Objekt nicht existiert, oder Sie haben keine Zugriffsberechtigung dafür",
         "code_SHARE_CREATION_ERROR": "Es tut uns leid, aber es ist nicht möglich, den Artikel mit diesem Benutzer zu teilen",
         "code_SHARE_NOT_FOUND": "Es tut uns leid, aber diese Aktie kann nicht gefunden werden",
-        "code_NODE_DUPLICATED": "Es gibt eine Datei mit demselben Namen in diesem Ordner"
+        "code_NODE_DUPLICATED": "Es gibt eine Datei mit demselben Namen in diesem Ordner",
+        "code_VERSIONS_LIMIT_REACHED": "Der Vorgang kann nicht ausgeführt werden. Sie haben die Maximalgrenze erreicht."
     },
     "publicLink": {
         "addLink": {

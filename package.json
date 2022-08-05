@@ -1,6 +1,6 @@
 {
 	"name": "carbonio-files-ui",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "Files module for Zextras Carbonio",
 	"main": "src/app.jsx",
 	"scripts": {
@@ -71,7 +71,7 @@
 	},
 	"dependencies": {
 		"@apollo/client": "~3.6.5",
-		"@zextras/carbonio-design-system": "devel",
+		"@zextras/carbonio-design-system": "^0.3.8-devel.1659011492928",
 		"@zextras/carbonio-shell-ui": "^0.4.31",
 		"@zextras/carbonio-ui-preview": "file:zextras-carbonio-ui-preview-0.1.5.tgz",
 		"core-js": "^3.24.0",
