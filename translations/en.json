@@ -378,6 +378,28 @@
             }
         }
     },
+    "invitationLink": {
+        "button": {
+            "generateLink": "Generate Link",
+            "revoke": "Revoke"
+        },
+        "description": "Internal users will receive the permissions by opening the link. You can always modify granted permissions once the users has clicked on the link.",
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Copy invitation link"
+                }
+            }
+        },
+        "row": {
+            "placeholder": "Create a link in order to share it",
+            "title": {
+                "ReadAndShare": "Read and Share",
+                "writeAndShare": "Write and Share"
+            }
+        },
+        "title": "Invitation Link"
+    },
     "label": {
         "app_name": "Files"
     },
@@ -448,6 +470,13 @@
                 "confirm": "Remove"
             },
             "header": "Remove {{nodeName}} public link"
+        },
+        "revokeInvitationLink": {
+            "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file",
+            "button": {
+                "confirm": "Revoke"
+            },
+            "header": "Revoke {{nodeName}} invitation link"
         },
         "revokeLink": {
             "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file",
@@ -560,6 +589,7 @@
     "publicLink": {
         "addLink": {
             "addLink": "Add Link",
+            "description": "Anyone on the internet with the link can view or download the file",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
             "title": "Public Link",
@@ -715,6 +745,15 @@
         },
         "download": {
             "start": "Your download will start soon"
+        },
+        "invitationLink": {
+            "actionLabel": {
+                "copyLink": "Copy Link"
+            },
+            "copyInvitationLink": "Invitation link copied",
+            "newInvitationLinkGenerated": {
+                "label": "New Invitation Link generated"
+            }
         },
         "markForDeletion": {
             "error": "Something went wrong, try again",
