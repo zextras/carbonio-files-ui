@@ -184,22 +184,6 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 										location.search.includes(`folder=${root.id}`)
 								};
 							}
-							case ROOTS.LOCAL_CHAT_ROOT: {
-								return {
-									priority: 3,
-									id: root.id,
-									label: t('secondaryBar.team', 'Team'),
-									icon: 'TeamOutline',
-									onClick: (ev: React.SyntheticEvent): void => {
-										ev.stopPropagation();
-										navigateTo(`/root/${root.id}`);
-									},
-									CustomComponent: SecondaryBarItemExpanded,
-									active:
-										location.pathname.includes(`/root/${root.id}`) ||
-										location.search.includes(`folder=${root.id}`)
-								};
-							}
 							case ROOTS.TRASH: {
 								return {
 									open: forceTrashOpen,
