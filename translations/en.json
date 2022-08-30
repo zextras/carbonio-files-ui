@@ -349,6 +349,18 @@
             }
         }
     },
+    "dropzone": {
+        "move": {
+            "message": {
+                "disabled": "You cannot drop your items in this area",
+                "enabled": "Drop here your items \n to quickly move them to this folder"
+            },
+            "title": {
+                "disabled": "Drag&Drop Mode",
+                "enabled": "Drag&Drop Mode"
+            }
+        }
+    },
     "empty": {
         "filter": {
             "flagged": "There are no flagged items.",
