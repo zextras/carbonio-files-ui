@@ -13,7 +13,6 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "error": "エラーが発生しました。再度お試しください",
                 "success": "アイテムのフラグが解除されました"
             }
         }
@@ -31,7 +30,6 @@
             "header": "この操作は元に戻せません"
         },
         "roots": {
-            "driveHome": "ホーム",
             "rootsList": "Drive",
             "sharedWitMe": "共有されたファイル",
             "trash": {
@@ -148,7 +146,6 @@
                     }
                 },
                 "title": "{{node.name}}をコピーする",
-                "title_plurals": "アイテムをコピーする",
                 "title_plural": "アイテムをコピーする"
             }
         },
@@ -165,7 +162,6 @@
                 },
                 "subtitle": "宛先フォルダーを選択します:",
                 "title": "{{node.name}}を移動する",
-                "title_plurals": "アイテムを移動する",
                 "title_plural": "アイテムを移動する"
             },
             "error": {
@@ -177,9 +173,6 @@
         "type": {
             "folder": "フォルダー"
         }
-    },
-    "primaryBar": {
-        "driveHome": "Driveホーム"
     },
     "secondaryBar": {
         "driveHome": "Driveホーム",
@@ -301,7 +294,6 @@
         }
     },
     "actions": {
-        "cancelUpload": "アップロードをキャンセルする",
         "copy": "コピー",
         "download": "ダウンロード",
         "markForDeletion": "削除マークを付ける",
