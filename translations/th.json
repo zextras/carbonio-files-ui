@@ -35,7 +35,6 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "error": "เกิดข้อผิดพลาดบางอย่าง โปรดลองใหม่อีกครั้ง",
                 "success": "ยกเลิกการติดธงรายการเรียบร้อยแล้ว"
             }
         }
@@ -68,7 +67,6 @@
             "body": "คุณจะลบรายการนี้/รายการเหล่านี้อย่างถาวร คุณจะไม่สามารถกู้คืนไฟล์นี้/ไฟล์เหล่านี้ได้อีก การดำเนินการนี้ไม่สามารถย้อนกลับได้"
         },
         "roots": {
-            "driveHome": "หน้าแรก",
             "rootsList": "Drive",
             "sharedWitMe": "แชร์กับฉัน",
             "trash": {
@@ -185,7 +183,6 @@
                     }
                 },
                 "title": "คัดลอก {{node.name}}",
-                "title_plurals": "คัดลอกรายการ",
                 "title_plural": "คัดลอกรายการ"
             }
         },
@@ -202,7 +199,6 @@
                 },
                 "subtitle": "เลือกโฟลเดอร์ปลายทาง:",
                 "title": "ย้าย {{node.name}}",
-                "title_plurals": "ย้ายรายการ",
                 "title_plural": "ย้ายรายการ"
             },
             "error": {
@@ -215,11 +211,7 @@
             "folder": "โฟลเดอร์"
         }
     },
-    "primaryBar": {
-        "driveHome": ""
-    },
     "secondaryBar": {
-        "driveHome": "หน้าหลัก Drive",
         "filters": "ตัวกรอง",
         "filtersList": {
             "flagged": "ติดธง",
@@ -305,7 +297,6 @@
         "download": "ดาวน์โหลด",
         "markForDeletion": "ทำเครื่องหมายเพื่อลบ",
         "move": "ย้าย",
-        "cancelUpload": "ยกเลิกการอัปโหลด",
         "openWithDocs": "เปิดเอกสาร",
         "rename": "เปลี่ยนชื่อ",
         "restore": "กู้คืน",

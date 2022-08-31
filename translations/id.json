@@ -38,7 +38,6 @@
             "body": "Anda akan menghapus item ini secara permanen. File tidak dapat dipulihkan lagi. Tindakan ini tidak dapat dibatalkan."
         },
         "roots": {
-            "driveHome": "Beranda",
             "rootsList": "Drive",
             "sharedWitMe": "Dibagikan dengan saya",
             "trash": {
@@ -155,7 +154,6 @@
                     }
                 },
                 "title": "Salin {{node.name}}",
-                "title_plurals": "Salin item",
                 "title_plural": "Salin item"
             }
         },
@@ -172,7 +170,6 @@
                 },
                 "subtitle": "Pilih folder tujuan:",
                 "title": "Pindahkan {{node.name}}",
-                "title_plurals": "Pindahkan item",
                 "title_plural": "Pindahkan item"
             },
             "error": {
@@ -185,11 +182,7 @@
             "folder": "Folder"
         }
     },
-    "primaryBar": {
-        "driveHome": ""
-    },
     "secondaryBar": {
-        "driveHome": "Drive Home",
         "filters": "Filter",
         "filtersList": {
             "flagged": "Diberi tanda bendera",
@@ -295,14 +288,12 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "error": "Terjadi kesalahan, coba lagi",
                 "success": "Tanda bendera pada item berhasil dihapus"
             }
         }
     },
     "actions": {
         "copy": "Salin",
-        "cancelUpload": "Batalkan unggahan",
         "download": "Unduh",
         "markForDeletion": "Tandai untuk dihapus",
         "move": "Pindahkan",
