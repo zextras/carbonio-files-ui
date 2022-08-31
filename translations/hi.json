@@ -35,7 +35,6 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "error": "कुछ गड़बड़ हुई, दोबारा कोशिश करें",
                 "success": "आइटम का फ्लैग हटाया गया"
             }
         }
@@ -112,11 +111,7 @@
             "folder": "फोल्डर"
         }
     },
-    "primaryBar": {
-        "driveHome": ""
-    },
     "secondaryBar": {
-        "driveHome": "Drive होम",
         "filters": "फिल्टर",
         "filtersList": {
             "flagged": "फ्लैग किए हुए",
@@ -143,7 +138,6 @@
             "header": "यह काम वापस नहीं किया जा सकेगा"
         },
         "roots": {
-            "driveHome": "होम",
             "rootsList": "Drive",
             "sharedWitMe": "मेरे साथ शेयर",
             "trash": {
@@ -299,7 +293,6 @@
         }
     },
     "actions": {
-        "cancelUpload": "अपलोड कैंसल करें",
         "copy": "कॉपी करें",
         "download": "डाऊनलोड करें",
         "markForDeletion": "डिलीट करने के लिए मार्क करें",

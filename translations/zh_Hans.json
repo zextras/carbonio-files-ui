@@ -330,7 +330,6 @@
         }
     },
     "actions": {
-        "cancelUpload": "取消上传",
         "copy": "复制",
         "download": "下载",
         "markForDeletion": "标记以删除",
@@ -422,7 +421,6 @@
             }
         },
         "roots": {
-            "driveHome": "主页",
             "rootsList": "云盘",
             "sharedWitMe": "与我共享",
             "trash": {
@@ -513,7 +511,6 @@
                     }
                 },
                 "title": "复制{{node.name}}",
-                "title_plurals": "复制项目",
                 "title_plural": "复制项目"
             }
         },
@@ -530,7 +527,6 @@
                 },
                 "subtitle": "选择一个目标文件夹：",
                 "title": "移动{{node.name}}",
-                "title_plurals": "移动项目",
                 "title_plural": "移动项目"
             },
             "error": {
@@ -620,7 +616,6 @@
         }
     },
     "secondaryBar": {
-        "driveHome": "云盘主页",
         "filtersList": {
             "sharedByMe": "由我分享的",
             "sharedWithMe": "与我共享",
@@ -659,7 +654,6 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "success": "项目取消标记成功",
                 "error": "出现了一些错误，请重试"
             }
         }

@@ -1,12 +1,4 @@
 {
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "Öğe bayrağı başarıyla kaldırıldı",
-                "error": "Bir sorun oluştu, lütfen tekrar deneyin"
-            }
-        }
-    },
     "folder": {
         "create": {
             "modal": {
@@ -35,7 +27,6 @@
             "header": "Bu işlemin geri dönüşü yoktur"
         },
         "roots": {
-            "driveHome": "Giriş",
             "rootsList": "Drive",
             "sharedWitMe": "Benimle paylaşıldı",
             "trash": {
@@ -179,7 +170,6 @@
                     }
                 },
                 "title": "Kopyala {{node.name}}",
-                "title_plurals": "Öğeleri kopyala",
                 "title_plural": "Öğeleri kopyala"
             }
         },
@@ -202,7 +192,6 @@
                 },
                 "subtitle": "Hedef klasör seçin:",
                 "title": "Taşı {{node.name}}",
-                "title_plurals": "Öğeleri taşı",
                 "title_plural": "Öğeleri taşı"
             },
             "error": {
@@ -215,11 +204,7 @@
             "folder": "Klasör"
         }
     },
-    "primaryBar": {
-        "driveHome": ""
-    },
     "secondaryBar": {
-        "driveHome": "Drive Giriş",
         "filters": "Filtreler",
         "filtersList": {
             "flagged": "Bayraklı",
@@ -307,12 +292,11 @@
         "openWithDocs": "Dokümanı aç",
         "rename": "Yeniden adlandır",
         "restore": "Geri yükle",
-        "cancelUpload": "Yüklemeyi iptal et",
         "copy": "Kopyala",
         "deletePermanently": "Kalıcı olarak sil",
         "flag": "Bayrak",
         "goToFolder": "Hedef klasöre git",
-        "moveToTrash": "Çöp Kutusuna Taşı",
+        "moveToTrash": "Sil",
         "removeUpload": "Yüklemeyi kaldır",
         "retryUpload": "Yüklemeyi tekrar dene",
         "unflag": "Bayrağı kaldır",
