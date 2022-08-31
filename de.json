@@ -35,7 +35,6 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "error": "Etwas ist schiefgegangen, bitte versuchen Sie es erneut",
                 "success": "Markierung erfolgreich entfernt"
             }
         }
@@ -68,7 +67,6 @@
             "header": "Diese Aktion ist unwiderruflich"
         },
         "roots": {
-            "driveHome": "Home",
             "rootsList": "Drive",
             "sharedWitMe": "Mit mir geteilt",
             "trash": {
@@ -126,11 +124,13 @@
             "button": {
                 "confirm": "Alle Versionen bereinigen"
             },
-            "header": "Alle Versionen bereinigen"
+            "header": "Alle Versionen bereinigen",
+            "body": "Alle Versionen, die nicht zur dauerhaften Speicherung markiert sind und mit Ausnahme der aktuellen Version, werden gelöscht werden. Sie werden diese Versionen nicht wiederherstellen können."
         },
         "unsaved_changes": {
             "title": {
-                "unsaved_changes": "Sie haben ungespeicherte Änderungen"
+                "unsaved_changes": "Sie haben ungespeicherte Änderungen",
+                "cannot_saved_changes": "Einige Änderungen können nicht gespeichert werden"
             },
             "button": {
                 "save_and_leave": "Speichern und verlassen",
@@ -177,7 +177,6 @@
                     }
                 },
                 "title": "Kopieren {{node.name}}",
-                "title_plurals": "Elemente kopieren",
                 "title_plural": "Elemente kopieren"
             }
         },
@@ -200,7 +199,6 @@
                 },
                 "subtitle": "Wählen Sie einen Zielordner aus:",
                 "title": "Verschieben {{node.name}}",
-                "title_plurals": "Elemente verschieben",
                 "title_plural": "Elemente verschieben"
             },
             "error": {
@@ -213,11 +211,7 @@
             "folder": "Ordner"
         }
     },
-    "primaryBar": {
-        "driveHome": ""
-    },
     "secondaryBar": {
-        "driveHome": "Drive Home",
         "filters": "Filter",
         "filtersList": {
             "flagged": "Markiert",
@@ -299,7 +293,6 @@
         }
     },
     "actions": {
-        "cancelUpload": "Upload abbrechen",
         "copy": "Kopieren",
         "download": "Download",
         "markForDeletion": "Zum Löschen kennzeichnen",
@@ -783,11 +776,20 @@
     "preview": {
         "actions": {
             "tooltip": {
-                "download": "Download"
+                "download": "Download",
+                "manageShares": "Teile verwalten"
             }
         },
         "close": {
             "tooltip": "Schließen"
+        },
+        "loading": {
+            "retrying": "Versuche die Vorschau zu laden…",
+            "file": "Dateivorschau wird geladen, bitte warten…",
+            "error": "Ein Fehler ist beim Ladevorgang aufgetreten. Versuchen Sie es erneut."
+        },
+        "button": {
+            "refresh": "Vorschau aktualisieren"
         }
     },
     "label": {

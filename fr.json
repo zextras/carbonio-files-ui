@@ -35,7 +35,6 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "error": "Erreur, veuillez réessayer",
                 "success": "Item décoché avec succès"
             }
         }
@@ -68,7 +67,6 @@
             "header": "Cette action est irréversible"
         },
         "roots": {
-            "driveHome": "Accueil",
             "rootsList": "Drive",
             "sharedWitMe": "Éléments partagés avec moi",
             "trash": {
@@ -179,7 +177,6 @@
                     }
                 },
                 "title": "Copier {{node.name}}",
-                "title_plurals": "Copier les éléments",
                 "title_plural": "Copier les éléments"
             }
         },
@@ -202,7 +199,6 @@
                 },
                 "subtitle": "Sélectionnez un dossier de destination :",
                 "title": "Déplacer {{node.name}}",
-                "title_plurals": "Déplacer les éléments",
                 "title_plural": "Déplacer les éléments"
             },
             "error": {
@@ -214,9 +210,6 @@
         "type": {
             "folder": "Dossier"
         }
-    },
-    "primaryBar": {
-        "driveHome": "Accueil"
     },
     "secondaryBar": {
         "driveHome": "Accueil",
@@ -305,14 +298,13 @@
         "markForDeletion": "Mettre à la corbeille",
         "move": "Déplacer",
         "openWithDocs": "Ouvrir avec Docs",
-        "cancelUpload": "Annuler le téléversement",
         "copy": "Copier",
         "rename": "Renommer",
         "restore": "Restaurer",
         "deletePermanently": "Supprimer définitivement",
         "flag": "Etiquette",
         "goToFolder": "Aller au dossier de destination",
-        "moveToTrash": "Déplacer vers la corbeille",
+        "moveToTrash": "Supprimer",
         "removeUpload": "Supprimer le téléchargement",
         "retryUpload": "Réessayer le téléchargement",
         "unflag": "Décocher",
