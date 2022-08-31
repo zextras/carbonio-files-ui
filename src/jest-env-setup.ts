@@ -27,7 +27,9 @@ failOnConsole({
 	shouldFailOnError: true,
 	silenceMessage: (errorMessage) =>
 		// snackbar PropType error on Window type
-		/Invalid prop `\w+`(\sof type `\w+`)? supplied to `(\w+\(\w+\))`/.test(errorMessage) ||
+		/Invalid prop `\w+`(\sof type `\w+`)? supplied to `(\w+(\(\w+\))?)`/.test(errorMessage) ||
+		// TODO: remove this check with ds v0.4.0
+		/React does not recognize the `\w+` prop on a DOM element/.test(errorMessage) ||
 		// errors forced from the tests
 		/Controlled error/gi.test(errorMessage)
 });
