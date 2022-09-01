@@ -28,6 +28,7 @@ import handleGetAccountByEmailRequest from '../carbonio-files-ui-common/mocks/ha
 import handleGetBaseNodeRequest from '../carbonio-files-ui-common/mocks/handleGetBaseNodeRequest';
 import handleGetChildrenRequest from '../carbonio-files-ui-common/mocks/handleGetChildrenRequest';
 import handleGetChildRequest from '../carbonio-files-ui-common/mocks/handleGetChildRequest';
+import handleGetNodeCollaborationLinksRequest from '../carbonio-files-ui-common/mocks/handleGetNodeCollaborationLinksRequest';
 import handleGetNodeLinksRequest from '../carbonio-files-ui-common/mocks/handleGetNodeLinksRequest';
 import handleGetNodeRequest from '../carbonio-files-ui-common/mocks/handleGetNodeRequest';
 import handleGetParentRequest from '../carbonio-files-ui-common/mocks/handleGetParentsRequest';
@@ -65,7 +66,8 @@ if (!IS_SERVER) {
 		graphql.query('getPermissions', handleGetPermissionsRequest),
 		graphql.query('getRootsList', handleGetRootsListRequest),
 		graphql.query('getShares', handleGetSharesRequest),
-		graphql.query('getVersions', handleGetVersionsRequest)
+		graphql.query('getVersions', handleGetVersionsRequest),
+		graphql.query('getNodeCollaborationLinks', handleGetNodeCollaborationLinksRequest)
 	);
 	// mutations
 	handlers.push(

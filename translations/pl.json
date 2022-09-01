@@ -25,7 +25,7 @@
             "button": {
                 "confirm": "Deaktywuj"
             },
-            "body": "Deaktywując ten link, zablokujesz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do tego pliku",
+            "body": "Deaktywując ten link, uniemożliwisz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do tego pliku",
             "header": "Deaktywuj publiczny link {{nodeName}}"
         },
         "deletePermanently": {
@@ -39,7 +39,7 @@
             "button": {
                 "confirm": "Usuń"
             },
-            "body": "Czy na pewno chcesz usunąć wszystkie uprawnienia poprzednio udzielone {{shareTarget}} ?",
+            "body": "Czy na pewno chcesz usunąć wszystkie uprawnienia poprzednio nadane {{shareTarget}} ?",
             "header": "Usuń udostępnienie",
             "yourShare": {
                 "body": {
@@ -73,7 +73,8 @@
         },
         "unsaved_changes": {
             "title": {
-                "unsaved_changes": "Masz niezapisane zmiany"
+                "unsaved_changes": "Masz niezapisane zmiany",
+                "cannot_saved_changes": "Nie udało się zapisać niektórych zmian"
             },
             "button": {
                 "save_and_leave": "Zapisz i opuść",
@@ -87,9 +88,13 @@
         "nodeSelection": {
             "button": {
                 "newFolder": {
-                    "label": "Nowy folder"
+                    "label": "Nowy folder",
+                    "disabled": "Nie masz odpowiednich uprawnień"
                 },
                 "create": "Stwórz"
+            },
+            "input": {
+                "newFolder": "Nazwa nowego folderu"
             }
         }
     },
@@ -233,7 +238,7 @@
         "flag": "Oflaguj",
         "goToFolder": "Idź do folderu docelowego",
         "markForDeletion": "Zaznacz jako \"do usunięcia\"",
-        "moveToTrash": "Przenieś do Kosza",
+        "moveToTrash": "Usuń",
         "openWithDocs": "Otwórz dokument",
         "removeUpload": "Usuń przesyłanie",
         "rename": "Zmień nazwę",
@@ -618,7 +623,7 @@
             "completed": "Wyczyść ukończone przesyłania"
         },
         "destination": {
-            "home": "Przesyłanie wystąpiło w Plikach Startu"
+            "home": "Przesyłanie wystąpiło w Files Start"
         },
         "error": {
             "moreInfo": {
@@ -772,6 +777,14 @@
         },
         "close": {
             "tooltip": "Zamknij"
+        },
+        "loading": {
+            "retrying": "Ładowanie podglądu...",
+            "file": "Ładowanie podglądu pliku, proszę czekać...",
+            "error": "Wystąpił błąd przy ładowaniu podglądu. Spróbuj ponownie."
+        },
+        "button": {
+            "refresh": "Odśwież podgląd"
         }
     },
     "uploadItem": {

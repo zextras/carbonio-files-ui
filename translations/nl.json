@@ -2,7 +2,6 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "error": "Er is iets misgegaan, probeer het opnieuw",
                 "success": "Item met succes ontvlagd"
             }
         }
@@ -35,7 +34,6 @@
             "header": "Deze actie is onomkeerbaar"
         },
         "roots": {
-            "driveHome": "Startpagina",
             "rootsList": "Drive",
             "sharedWitMe": "Met mij gedeeld",
             "trash": {
@@ -122,9 +120,6 @@
                 "newFolder": "Naam van nieuwe folder"
             }
         }
-    },
-    "primaryBar": {
-        "driveHome": "Srive Startpagina"
     },
     "secondaryBar": {
         "driveHome": "Srive Startpagina",
@@ -268,7 +263,6 @@
                 },
                 "subtitle": "Een doelmap selecteren:",
                 "title": "{{node.name}} verwijderen",
-                "title_plurals": "Items verwijderen",
                 "title_plural": "Items verwijderen"
             },
             "error": {
@@ -286,7 +280,6 @@
                     }
                 },
                 "title": "{{node.name}} kopiëren",
-                "title_plurals": "Items kopiëren",
                 "title_plural": "Items kopiëren"
             }
         },
@@ -301,7 +294,6 @@
         }
     },
     "actions": {
-        "cancelUpload": "Upload annuleren",
         "download": "Downloaden",
         "markForDeletion": "Voor verwijdering markeren",
         "move": "Verplaatsen",
