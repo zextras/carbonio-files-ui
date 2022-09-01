@@ -25,6 +25,28 @@
             "show": "Show folder's path"
         }
     },
+    "collaborationLinks": {
+        "button": {
+            "generateLink": "Generate Link",
+            "revoke": "Revoke"
+        },
+        "description": "Internal users will receive the permissions by opening the link. You can always modify granted permissions.",
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Copy collaboration link"
+                }
+            }
+        },
+        "row": {
+            "placeholder": "Create a link in order to share the node",
+            "title": {
+                "ReadAndShare": "Read and Share",
+                "writeAndShare": "Write and Share"
+            }
+        },
+        "title": "Collaboration Links"
+    },
     "create": {
         "options": {
             "new": {
@@ -249,11 +271,11 @@
                 },
                 "tooltip": {
                     "edit": {
-                        "collaborator": "Edit {{username}}'s collaboration",
+                        "collaborator": "Edit collaboration",
                         "you": "Edit your collaboration"
                     },
                     "remove": {
-                        "collaborator": "Remove {{username}}",
+                        "collaborator": "Remove collaboration",
                         "yourself": "Remove your collaboration"
                     }
                 },
@@ -278,13 +300,21 @@
                 "downloadVersion": "Download version",
                 "keepVersion": "Keep this version forever",
                 "openDocumentVersion": "Open document version",
-                "removeKeepVersion": "Remove keep forever"
+                "removeKeepVersion": "Remove keep forever",
+                "tooltip": {
+                    "disabledByDeleteCurrent": "Current version cannot be deleted",
+                    "disabledByDocs": "This version cannot be opened by the online editor",
+                    "disabledByMaxKeepVersion": "You have reached the maximum number of versions to keep forever",
+                    "disabledByMaxVersion": "You have reached the maximum number of versions",
+                    "disabledByPermission": "You don't have the correct permissions",
+                    "disabledByVersionKeepForever": "Versions marked to be kept forever cannot be deleted"
+                }
             },
             "button": {
                 "purgeAllVersions": "Purge all versions",
                 "upload": "Upload version"
             },
-            "mainHint": "You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.",
+            "mainHint": "Files saves the last {{maxVersions}} versions of your files. You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Cloned from version {{versionNumber}} ({{cloneDate}})",
@@ -316,6 +346,18 @@
                     "presentation": "Create New Presentation",
                     "spreadsheet": "Create New Spreadsheet"
                 }
+            }
+        }
+    },
+    "dropzone": {
+        "move": {
+            "message": {
+                "disabled": "You cannot drop your items in this area",
+                "enabled": "Drop here your items \n to quickly move them to this folder"
+            },
+            "title": {
+                "disabled": "Drag&Drop Mode",
+                "enabled": "Drag&Drop Mode"
             }
         }
     },
@@ -441,6 +483,13 @@
             },
             "header": "Remove {{nodeName}} public link"
         },
+        "revokeCollaborationLink": {
+            "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the node.",
+            "button": {
+                "confirm": "Revoke"
+            },
+            "header": "Revoke {{nodeName}} collaboration link"
+        },
         "revokeLink": {
             "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file",
             "button": {
@@ -552,9 +601,10 @@
     "publicLink": {
         "addLink": {
             "addLink": "Add Link",
+            "description": "Internal and external users with the link can download the file.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
-            "title": "Public Link",
+            "title": "Public Links",
             "undo": "Undo"
         },
         "datePickerInput": {
@@ -675,10 +725,28 @@
             "tooltip": "Activate selection mode"
         }
     },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "This email address is not associated to a Carbonio user"
+                }
+            }
+        }
+    },
     "snackbar": {
         "clipboard": {
             "email": "Email address copied",
             "itemShortcutCopied": "Item shortcut copied"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Copy Link"
+            },
+            "copyCollaborationLink": "Collaboration link copied",
+            "newCollaborationLinkGenerated": {
+                "label": "New Collaboration Link generated"
+            }
         },
         "copyNodes": {
             "action": "Go to folder",
