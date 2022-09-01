@@ -27,7 +27,6 @@
             "header": "Esta acción es irreversible"
         },
         "roots": {
-            "driveHome": "Carpeta Home",
             "rootsList": "Drive",
             "sharedWitMe": "Compartido conmigo",
             "trash": {
@@ -144,7 +143,6 @@
                     }
                 },
                 "title": "Copiar {{node.name}}",
-                "title_plurals": "Copiar elementos",
                 "title_plural": "Copiar elementos"
             }
         },
@@ -161,7 +159,6 @@
                 },
                 "subtitle": "Elige una carpeta de destino:",
                 "title": "Mover {{node.name}}",
-                "title_plurals": "Mover elementos",
                 "title_plural": "Mover elementos"
             },
             "error": {
@@ -174,11 +171,7 @@
             "folder": "Carpeta"
         }
     },
-    "primaryBar": {
-        "driveHome": ""
-    },
     "secondaryBar": {
-        "driveHome": "Home de Drive",
         "filters": "Filtros",
         "filtersList": {
             "flagged": "Marcado",
@@ -295,13 +288,11 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "error": "Algo fue mal, inténtalo de nuevo",
                 "success": "Elemento desmarcado con éxito"
             }
         }
     },
     "actions": {
-        "cancelUpload": "Cancelar carga",
         "copy": "Copiar",
         "download": "Download",
         "markForDeletion": "Eliminar",

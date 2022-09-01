@@ -10,35 +10,6 @@
             }
         }
     },
-    "empty": {
-        "folder": {
-            "hint": "",
-            "state": ""
-        }
-    },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "error": "",
-                "success": ""
-            }
-        }
-    },
-    "folder": {
-        "create": {
-            "modal": {
-                "button": {
-                    "confirm": ""
-                },
-                "title": "",
-                "input": {
-                    "label": {
-                        "name": ""
-                    }
-                }
-            }
-        }
-    },
     "modal": {
         "button": {
             "cancel": "Anulare",
@@ -50,7 +21,6 @@
             }
         },
         "roots": {
-            "driveHome": "Acasa",
             "rootsList": "Drive",
             "sharedWitMe": "Partajate cu mine",
             "trash": {
@@ -94,13 +64,7 @@
             "modal": {
                 "button": {
                     "confirm": "Redenumire"
-                },
-                "input": {
-                    "label": {
-                        "name": ""
-                    }
-                },
-                "title": ""
+                }
             }
         },
         "alias": {
@@ -127,11 +91,7 @@
             "folder": "Director"
         }
     },
-    "primaryBar": {
-        "driveHome": ""
-    },
     "secondaryBar": {
-        "driveHome": "Drive Home",
         "filters": "Filtre",
         "filtersList": {
             "flagged": "Marcat",
@@ -143,10 +103,6 @@
         "filesHome": "Acasa"
     },
     "snackbar": {
-        "markForDeletion": {
-            "error": "",
-            "success": ""
-        },
         "deleteShare": {
             "error": "Eroare",
             "success": "Succes"

@@ -92,12 +92,8 @@
             "sharedElements": "Elementi Condivisi"
         },
         "filters": "Filtri",
-        "driveHome": "Home Drive",
         "uploads": "Caricamenti",
         "filesHome": "Home"
-    },
-    "primaryBar": {
-        "driveHome": "Home Drive"
     },
     "node": {
         "rename": {
@@ -128,7 +124,6 @@
                     }
                 },
                 "title": "Copia {{node.name}}",
-                "title_plurals": "Copia elementi",
                 "title_plural": "Copia elementi"
             }
         },
@@ -145,7 +140,6 @@
                 },
                 "subtitle": "Seleziona una cartella di destinazione:",
                 "title": "Sposta {{node.name}}",
-                "title_plurals": "Sposta elementi",
                 "title_plural": "Sposta elementi"
             },
             "error": {
@@ -171,7 +165,6 @@
             "header": "L'azione è irreversibile"
         },
         "roots": {
-            "driveHome": "Home",
             "rootsList": "Drive",
             "sharedWitMe": "Condivisi con me",
             "trash": {
@@ -262,7 +255,6 @@
     "filter": {
         "snackbar": {
             "unflag": {
-                "success": "Elemento deselezionato con successo",
                 "error": "Qualcosa è andato storto. riprova"
             }
         }
@@ -301,7 +293,6 @@
         }
     },
     "actions": {
-        "cancelUpload": "Annulla caricamento",
         "deletePermanently": "Elimina definitivamente",
         "copy": "Copia",
         "download": "Scarica",
@@ -312,7 +303,7 @@
         "restore": "Ripristina",
         "flag": "Contrassegna",
         "goToFolder": "Vai alla cartella di destinazione",
-        "moveToTrash": "Sposta nel Cestino",
+        "moveToTrash": "Elimina",
         "removeUpload": "rimuovi caricamento",
         "retryUpload": "Riprova caricamento",
         "unflag": "Rimuovi contrassegno",

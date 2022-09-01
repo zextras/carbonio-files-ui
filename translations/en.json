@@ -9,7 +9,7 @@
         "manageShares": "Manage Shares",
         "markForDeletion": "Mark for deletion",
         "move": "Move",
-        "moveToTrash": "Move to Trash",
+        "moveToTrash": "Delete",
         "openWithDocs": "Open document",
         "preview": "Preview",
         "removeUpload": "Remove upload",
@@ -24,6 +24,28 @@
             "hide": "Hide folder's path",
             "show": "Show folder's path"
         }
+    },
+    "collaborationLinks": {
+        "button": {
+            "generateLink": "Generate Link",
+            "revoke": "Revoke"
+        },
+        "description": "Internal users will receive the permissions by opening the link. You can always modify granted permissions.",
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Copy collaboration link"
+                }
+            }
+        },
+        "row": {
+            "placeholder": "Create a link in order to share the node",
+            "title": {
+                "ReadAndShare": "Read and Share",
+                "writeAndShare": "Write and Share"
+            }
+        },
+        "title": "Collaboration Links"
     },
     "create": {
         "options": {
@@ -327,6 +349,18 @@
             }
         }
     },
+    "dropzone": {
+        "move": {
+            "message": {
+                "disabled": "You cannot drop your items in this area",
+                "enabled": "Drop here your items \n to quickly move them to this folder"
+            },
+            "title": {
+                "disabled": "Drag&Drop Mode",
+                "enabled": "Drag&Drop Mode"
+            }
+        }
+    },
     "empty": {
         "filter": {
             "flagged": "There are no flagged items.",
@@ -449,6 +483,13 @@
             },
             "header": "Remove {{nodeName}} public link"
         },
+        "revokeCollaborationLink": {
+            "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the node.",
+            "button": {
+                "confirm": "Revoke"
+            },
+            "header": "Revoke {{nodeName}} collaboration link"
+        },
         "revokeLink": {
             "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file",
             "button": {
@@ -560,9 +601,10 @@
     "publicLink": {
         "addLink": {
             "addLink": "Add Link",
+            "description": "Internal and external users with the link can download the file.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
-            "title": "Public Link",
+            "title": "Public Links",
             "undo": "Undo"
         },
         "datePickerInput": {
@@ -696,6 +738,15 @@
         "clipboard": {
             "email": "Email address copied",
             "itemShortcutCopied": "Item shortcut copied"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Copy Link"
+            },
+            "copyCollaborationLink": "Collaboration link copied",
+            "newCollaborationLinkGenerated": {
+                "label": "New Collaboration Link generated"
+            }
         },
         "copyNodes": {
             "action": "Go to folder",
