@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.9](https://github.com/zextras/carbonio-files-ui/compare/v0.1.8...v0.1.9) (2022-09-01)
+
+
+### Features
+
+* add getLinksInfo type to getLink integration function ([09979cf](https://github.com/zextras/carbonio-files-ui/commit/09979cfc6d991403413a24958969df3ca3142290)), closes [#96](https://github.com/zextras/carbonio-files-ui/issues/96)
+* add tooltip on disabled actions on versions ([789d8c0](https://github.com/zextras/carbonio-files-ui/commit/789d8c048d285a96c39a9fae4ced8dd6bc3a81d0)), closes [#97](https://github.com/zextras/carbonio-files-ui/issues/97)
+* add update-link ([15458bf](https://github.com/zextras/carbonio-files-ui/commit/15458bf8e9b06b8e432862b61e7c8eab2c819605)), closes [#95](https://github.com/zextras/carbonio-files-ui/issues/95)
+* allow drop on opened folder during drag-move ([a361b43](https://github.com/zextras/carbonio-files-ui/commit/a361b43a048b9d9f69ab8d8574fa6aeeb67d6a70)), closes [#106](https://github.com/zextras/carbonio-files-ui/issues/106)
+* implement collaboration link ([7778b60](https://github.com/zextras/carbonio-files-ui/commit/7778b602615bfd414bcd6f559fb02bd8dbc6de2b)), closes [#104](https://github.com/zextras/carbonio-files-ui/issues/104)
+* improve chip of shares ([77fed99](https://github.com/zextras/carbonio-files-ui/commit/77fed99f4f7f2b39d8e8a34fb76dc658025f7254)), closes [#99](https://github.com/zextras/carbonio-files-ui/issues/99)
+* wait for save result before closing dialog on unsaved changes ([8dbb759](https://github.com/zextras/carbonio-files-ui/commit/8dbb75921e665c56d61b01a9cf3f347f35056934)), closes [#107](https://github.com/zextras/carbonio-files-ui/issues/107)
+
+
+### Bug Fixes
+
+* align filter params by using a global constant ([557694a](https://github.com/zextras/carbonio-files-ui/commit/557694a59cf0f644e20146510cdd195d480b1432)), closes [#105](https://github.com/zextras/carbonio-files-ui/issues/105)
+
 ### [0.1.8](https://github.com/zextras/carbonio-files-ui/compare/v0.1.7...v0.1.8) (2022-08-01)
 
 ### [0.1.7](https://github.com/zextras/carbonio-files-ui/compare/v0.1.6...v0.1.7) (2022-07-21)
