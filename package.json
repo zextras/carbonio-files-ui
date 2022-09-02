@@ -73,7 +73,7 @@
 		"@apollo/client": "~3.6.5",
 		"@zextras/carbonio-design-system": "^0.4.0",
 		"@zextras/carbonio-shell-ui": "^0.4.34",
-		"@zextras/carbonio-ui-preview": "file:zextras-carbonio-ui-preview-0.1.5.tgz",
+		"@zextras/carbonio-ui-preview": "^0.2.0",
 		"core-js": "^3.24.0",
 		"graphql": "^16.3.0",
 		"lodash": "^4.17.21",
