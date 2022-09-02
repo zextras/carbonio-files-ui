@@ -52,7 +52,7 @@ const ListHeader: React.VFC<ListHeaderProps> = ({
 	const headerEndComponent = useMemo(
 		() => (
 			<>
-				{loadingData && <LoadingIcon icon="Refresh" color="primary" size="large" />}
+				{loadingData && <LoadingIcon icon="Refresh" iconColor="primary" size="large" />}
 				{actionComponent}
 			</>
 		),
