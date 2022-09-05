@@ -200,7 +200,7 @@ describe('Search view', () => {
 			});
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
-			userEvent.click(screen.getByText(/select a folder/i));
+			userEvent.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
@@ -294,7 +294,7 @@ describe('Search view', () => {
 			});
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
-			userEvent.click(screen.getByText(/select a folder/i));
+			userEvent.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
@@ -387,7 +387,7 @@ describe('Search view', () => {
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
 
 			act(() => {
-				userEvent.type(screen.getByText(/keywords/i), 'keyword1;');
+				userEvent.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			});
 			// wait for chips to be created (1 chip + icon close of the modal)
 			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(2));
@@ -396,7 +396,7 @@ describe('Search view', () => {
 			);
 			expect(screen.getByText(/keyword1/i)).toBeVisible();
 			act(() => {
-				userEvent.type(screen.getByText(/keywords/i), 'keyword2;');
+				userEvent.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword2;');
 			});
 			// wait for chips to be created (2 chips + icon close of the modal)
 			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(3));
@@ -458,7 +458,7 @@ describe('Search view', () => {
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
 			// keywords
-			await screen.findByText(/keywords/i);
+			await screen.findByRole('textbox', { name: /keywords/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
@@ -467,7 +467,7 @@ describe('Search view', () => {
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
 
 			act(() => {
-				userEvent.type(screen.getByText(/keywords/i), 'keyword1;');
+				userEvent.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			});
 			// wait for chips to be created (1 chip + icon close of the modal)
 			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(2));
@@ -476,7 +476,7 @@ describe('Search view', () => {
 			);
 			expect(screen.getByText(/keyword1/i)).toBeVisible();
 			act(() => {
-				userEvent.type(screen.getByText(/keywords/i), 'keyword2;');
+				userEvent.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword2;');
 			});
 			// wait for chips to be created (2 chips + icon close of the modal)
 			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(3));
@@ -490,7 +490,7 @@ describe('Search view', () => {
 				userEvent.click(screen.getByText(/^shared/i));
 			});
 			// folder
-			userEvent.click(screen.getByText(/select a folder/i));
+			userEvent.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
