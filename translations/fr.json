@@ -32,13 +32,6 @@
             "notRun": "Aucune recherche n'a encore été effectuée."
         }
     },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "Item décoché avec succès"
-            }
-        }
-    },
     "folder": {
         "create": {
             "modal": {
@@ -152,6 +145,13 @@
             "input": {
                 "newFolder": "Nouveau nom de dossier"
             }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "Retirer"
+            },
+            "header": "Révoquer le lien de collaboration {{nodeName}}",
+            "body": "En révoquant ce lien, vous interdisez la possibilité de créer de nouveaux partages. Les personnes ayant déjà utilisé ce lien de collaboration garderont l'accès à ce nœud."
         }
     },
     "node": {
@@ -212,7 +212,6 @@
         }
     },
     "secondaryBar": {
-        "driveHome": "Accueil",
         "filters": "Filtres",
         "filtersList": {
             "flagged": "Marqué",
@@ -291,6 +290,15 @@
             "clone": "Version clonée comme version courante",
             "keepForeverAdded": "Version marquée comme à garder pour toujours",
             "keepForeverRemoved": "\"Conservation définitive\" supprimée"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Copier le lien"
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "Nouveau lien de collaboration généré"
+            },
+            "copyCollaborationLink": "Lien de collaboration copié"
         }
     },
     "actions": {
@@ -421,11 +429,11 @@
                 "owner": "Propriétaire",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "Modifier la collaboration de {{username}}",
+                        "collaborator": "Modifier la collaboration",
                         "you": "Modifier votre collaboration"
                     },
                     "remove": {
-                        "collaborator": "Supprimer {{username}}",
+                        "collaborator": "Supprimer la collaboration",
                         "yourself": "Retirer votre collaboration"
                     }
                 }
@@ -482,7 +490,15 @@
                 "downloadVersion": "Télécharger cette version",
                 "keepVersion": "Garder cette version définitivement",
                 "cloneAsCurrent": "Cloner comme actuel",
-                "openDocumentVersion": "Ouvrir la version du document"
+                "openDocumentVersion": "Ouvrir la version du document",
+                "tooltip": {
+                    "disabledByPermission": "Vous n'avez pas les bonnes permissions",
+                    "disabledByVersionKeepForever": "Les versions définies comme à garder à vie ne peuvent pas être supprimées",
+                    "disabledByMaxVersion": "Vous avez atteint la limite de versions possible",
+                    "disabledByMaxKeepVersion": "Vous avez atteint le nombre maximum de versions pouvant être gardées à vie",
+                    "disabledByDocs": "Cette version ne peut pas être ouverte avec l'éditeur en ligne",
+                    "disabledByDeleteCurrent": "La version courante ne peut pas être supprimée"
+                }
             },
             "button": {
                 "upload": "Téléverser une version",
@@ -493,7 +509,7 @@
                 "lastWeek": "La semaine dernière",
                 "olderVersions": "Versions plus anciennes"
             },
-            "mainHint": "Vous pouvez supprimer manuellement les versions du fichier ou en restaurer une comme version en cours. Sélectionnez une ou plusieurs versions que vous souhaitez garder pour toujours.",
+            "mainHint": "Files enregistre les {{maxVersions}} dernières version de vos fichiers. Vous pouvez supprimer manuellement les versions du fichier ou en restaurer une comme version en cours. Sélectionnez une ou plusieurs versions que vous souhaitez garder pour toujours.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Cloné de la version {{versionNumber}} ({{cloneDate}})",
@@ -740,8 +756,9 @@
             "addLink": "Ajouter un lien",
             "generateLink": "Générer un lien",
             "limitReached": "Le nombre maximum de lien publique a été atteint",
-            "title": "Lien publique",
-            "undo": "Retour arrière"
+            "title": "Liens publiques",
+            "undo": "Retour arrière",
+            "description": "Les utilisateurs internes ou externes en possession du lien peuvent télécharger ce fichier."
         },
         "datePickerInput": {
             "description": "Le lien expire a la fin du jour sélectionné"
@@ -798,5 +815,48 @@
     },
     "uploadItem": {
         "queued": "Ajouté(e) dans la queue"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "Mode glisser déposer",
+                "disabled": "Mode glisser déposer"
+            },
+            "message": {
+                "enabled": "Déposer vos éléments ici \npour les déplacer rapidement dans ce dossier",
+                "disabled": "Vous ne pouvez pas déposer vos éléments dans cette zone"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "Retirer",
+            "generateLink": "Générer un lien"
+        },
+        "title": "Liens de collaboration",
+        "row": {
+            "title": {
+                "ReadAndShare": "Visualiser et Partager",
+                "writeAndShare": "Modifier et Partager"
+            },
+            "placeholder": "Créer un lien pour pouvoir partager le noeud"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Copier le lien de collaboration"
+                }
+            }
+        },
+        "description": "Les utilisateurs internes recevront les permissions en ouvrant le lien. Vous pouvez modifier les droits d'accès à tout moment."
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "Cet adresse email n'est pas associée à un utilisateur de Carbonio"
+                }
+            }
+        }
     }
 }

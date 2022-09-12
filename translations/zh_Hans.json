@@ -110,7 +110,10 @@
                 "keepVersion": "永久保留该版本",
                 "removeKeepVersion": "移除永久保留",
                 "cloneAsCurrent": "克隆为当前",
-                "openDocumentVersion": "打开文档版本"
+                "openDocumentVersion": "打开文档版本",
+                "tooltip": {
+                    "disabledByPermission": "您没有合适的权限"
+                }
             },
             "button": {
                 "upload": "上传版本",
@@ -327,6 +330,11 @@
             "clone": "版本已克隆为当前值",
             "keepForeverAdded": "版本已标记以永久保留",
             "keepForeverRemoved": "“永久保留”已移除"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "复制链接"
+            }
         }
     },
     "actions": {
@@ -340,7 +348,7 @@
         "deletePermanently": "永久删除",
         "flag": "标记",
         "goToFolder": "前往目标文件夹",
-        "moveToTrash": "移动至垃圾箱",
+        "moveToTrash": "删除",
         "removeUpload": "移除上传",
         "retryUpload": "重试上传",
         "unflag": "取消标记",
@@ -492,6 +500,11 @@
             },
             "input": {
                 "newFolder": "新文件夹名称"
+            }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "撤销"
             }
         }
     },
@@ -651,13 +664,6 @@
             "notRun": "尚未进行搜索。"
         }
     },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "error": "出现了一些错误，请重试"
-            }
-        }
-    },
     "uploads": {
         "clean": {
             "completed": "清除已完成的上传"
@@ -797,5 +803,19 @@
     },
     "uploadItem": {
         "queued": "已加入队列"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "拖放模式",
+                "disabled": "拖放模式"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "撤销",
+            "generateLink": "生成链接"
+        }
     }
 }

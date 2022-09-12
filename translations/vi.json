@@ -7,7 +7,7 @@
         "goToFolder": "Đi đến thư mục đích",
         "markForDeletion": "Đánh dấu để xoá",
         "move": "Di chuyển",
-        "moveToTrash": "Chuyển vào thùng rác",
+        "moveToTrash": "Xoá",
         "flag": "Cờ",
         "openWithDocs": "Mở tài liệu",
         "removeUpload": "Xoá tải lên",
@@ -456,6 +456,11 @@
                 },
                 "create": "Tạo"
             }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "Thu hồi"
+            }
         }
     },
     "node": {
@@ -717,6 +722,11 @@
         },
         "unflag": {
             "success": "Đã gỡ gắn cờ thành công"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Sao chép liên kết"
+            }
         }
     },
     "sortingDropdown": {
@@ -776,5 +786,19 @@
     },
     "uploadItem": {
         "queued": "Đã xếp hàng"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "Chế độ kéo thả",
+                "disabled": "Chế độ kéo thả"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "Thu hồi",
+            "generateLink": "Tạo liên kết"
+        }
     }
 }

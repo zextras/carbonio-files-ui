@@ -76,5 +76,13 @@
                 "enabled": "Vedä&Pudota -tila"
             }
         }
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "Vedä&Pudota -tila",
+                "disabled": "Vedä&Pudota -tila"
+            }
+        }
     }
 }

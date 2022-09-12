@@ -1,11 +1,4 @@
 {
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "Item met succes ontvlagd"
-            }
-        }
-    },
     "folder": {
         "create": {
             "modal": {
@@ -119,10 +112,14 @@
             "input": {
                 "newFolder": "Naam van nieuwe folder"
             }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "Intrekken"
+            }
         }
     },
     "secondaryBar": {
-        "driveHome": "Srive Startpagina",
         "team": "Bestanden verstuurd via Team",
         "filters": "Filters",
         "filtersList": {
@@ -201,6 +198,11 @@
         },
         "decreaseYourOwnShare": {
             "success": "Rechten met succes bijgewerkt"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Link kopiëren"
+            }
         }
     },
     "create": {
@@ -304,7 +306,7 @@
         "deletePermanently": "Permanent Verwijderen",
         "flag": "Vlaggen",
         "goToFolder": "Naar de bestemmingsmap gaan",
-        "moveToTrash": "Naar Trash verplaatsen",
+        "moveToTrash": "Verwijderen",
         "removeUpload": "Upload verwijderen",
         "retryUpload": "Upload opnieuw proberen",
         "unflag": "Vlag verwijderen",
@@ -424,7 +426,10 @@
                 "keepVersion": "Bewaar deze versie voor altijd",
                 "removeKeepVersion": "Verwijder voor altijd bewaren",
                 "cloneAsCurrent": "Als huidige clonen",
-                "openDocumentVersion": "Documentversie openen"
+                "openDocumentVersion": "Documentversie openen",
+                "tooltip": {
+                    "disabledByPermission": "U hebt niet de juiste toestemmingen"
+                }
             },
             "button": {
                 "upload": "Uploadversie",
@@ -734,7 +739,7 @@
             "generateLink": "Link genereren",
             "undo": "Ongedaan maken",
             "addLink": "Link toevoegen",
-            "title": "Publieke link",
+            "title": "Öffentlicher Link",
             "limitReached": "Het maximum aantal publieke links is bereikt"
         },
         "link": {
@@ -798,5 +803,19 @@
     },
     "uploadItem": {
         "queued": "In wachtrij"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "Drag&Drop-modus",
+                "disabled": "Drag&Drop-modus"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "Intrekken",
+            "generateLink": "Link genereren"
+        }
     }
 }
