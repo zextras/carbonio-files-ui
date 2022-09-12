@@ -112,6 +112,13 @@
             "input": {
                 "newFolder": "Yeni klasör adı"
             }
+        },
+        "revokeCollaborationLink": {
+            "header": "{{nodeName}} birlikte çalışma bağlantısını iptal et",
+            "body": "Bu bağlantıyı iptal ederek yeni paylaşım oluşturma olasılığını engelliyorsunuz. Birlikte çalışma bağlantısını kullanan herkesin bu öğeye erişimi devam edecek.",
+            "button": {
+                "confirm": "İptal Et"
+            }
         }
     },
     "create": {
@@ -283,6 +290,15 @@
             "clone": "Kullanımda olan versiyon olarak kopyalandı",
             "keepForeverAdded": "Versiyon sürekli saklamak üzere işaretlendi",
             "keepForeverRemoved": "\"Sürekli sakla\" iptal edildi"
+        },
+        "collaborationLink": {
+            "newCollaborationLinkGenerated": {
+                "label": "Yeni Birlikte Çalışma bağlantısı oluşturuldu"
+            },
+            "copyCollaborationLink": "Birlikte çalışma bağlantısı kopyalandı",
+            "actionLabel": {
+                "copyLink": "Bağlantıyı kopyala"
+            }
         }
     },
     "actions": {
@@ -344,17 +360,17 @@
                         "viewerDescription": "Dosya veya klasörü sadece görüntüleyecek veya indirebilecek"
                     },
                     "sharingAllowed": "Paylaşıma izin verildi",
-                    "sharingAllowedDescription": "Dosya veya klasör paylaşımlarını yönetin"
+                    "sharingAllowedDescription": "Dosya veya klasör paylaşımlarını yönet"
                 },
                 "you": "Siz",
                 "owner": "Sahibi",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "{{username}}'in birlikte çalışma özelliklerini düzenleyin",
-                        "you": "Birlikte çalışma özelliklerinizi düzenleyin"
+                        "collaborator": "Birlikte çalışma özelliklerini düzenle",
+                        "you": "Birlikte çalışma özelliklerinizi düzenle"
                     },
                     "remove": {
-                        "collaborator": "{{username}} kullanıcısını kaldır",
+                        "collaborator": "Birlikte çalışma özelliğini kaldır",
                         "yourself": "Birlikte çalışma özelliklerinizi kaldırın"
                     }
                 }
@@ -393,7 +409,15 @@
                 "keepVersion": "Bu versiyonu her zaman sakla",
                 "removeKeepVersion": "Her zaman saklamayı iptal et",
                 "cloneAsCurrent": "Kullanılan olarak kopyala",
-                "openDocumentVersion": "Doküman versiyonunu aç"
+                "openDocumentVersion": "Doküman versiyonunu aç",
+                "tooltip": {
+                    "disabledByVersionKeepForever": "Sürekli saklamak üzere işaretlenmiş versiyonlar silinemez",
+                    "disabledByMaxVersion": "Versiyonlar için maksimum sayıya ulaştınız",
+                    "disabledByMaxKeepVersion": "Sürekli saklanacak versiyonlar için maksimum sayıya ulaştınız",
+                    "disabledByDocs": "Bu versiyon çevrimiçi düzenleyici ile açılamaz",
+                    "disabledByDeleteCurrent": "Geçerli versiyon silinemez",
+                    "disabledByPermission": "Doğru izniniz yok"
+                }
             },
             "button": {
                 "upload": "Versiyon yükle",
@@ -404,7 +428,7 @@
                 "lastWeek": "Geçen hafta",
                 "olderVersions": "Eski versiyonlar"
             },
-            "mainHint": "Herhangi bir dosya versiyonunu manuel olarak silebilir veya güncel versiyon olarak geri alabilirsiniz. Her zaman saklamak istediğiniz bir veya daha fazla versiyonu seçin.",
+            "mainHint": "Dosyalar uygulaması dosyalarınızın {{maxVersions}} versiyonunu kaydeder. Herhangi bir dosya versiyonunu manuel olarak silebilir veya güncel versiyon olarak geri alabilirsiniz. Her zaman saklamak istediğiniz bir veya daha fazla versiyonu seçin.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Kopyalanan versiyon {{versionNumber}} ({{cloneDate}})",
@@ -731,9 +755,10 @@
         "addLink": {
             "addLink": "Bağlantı ekle",
             "limitReached": "Genel kullanım bağlantısı için maksimum değere ulaşıldı",
-            "title": "Genel bağlantı",
+            "title": "Genel Bağlantılar",
             "undo": "Geri al",
-            "generateLink": "Bağlantı oluştur"
+            "generateLink": "Bağlantı oluştur",
+            "description": "Bu bağlantıya erişimi olan iç ve dış kullanıcılar dosyayı indirebilirler."
         },
         "dateTimePicker": {
             "label": "İptal Tarihi"
@@ -790,5 +815,48 @@
     },
     "uploadItem": {
         "queued": "Sırada"
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "Bu e-posta adresi bir Carbonio kullanıcı ile bağlantılı değil"
+                }
+            }
+        }
+    },
+    "dropzone": {
+        "move": {
+            "message": {
+                "enabled": "Öğeleri sürükle bırak özelliğiyle \n bu klasöre kolayca taşıyabilirsiniz",
+                "disabled": "Bu alana sürükle bırak işlemi yapamazsınız"
+            },
+            "title": {
+                "enabled": "Sürükle ve Bırak Modu",
+                "disabled": "Sürükle ve Bırak Modu"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "title": "Birlikte Çalışma Bağlantıları",
+        "row": {
+            "title": {
+                "writeAndShare": "Yaz ve Paylaş",
+                "ReadAndShare": "Oku ve Paylaş"
+            },
+            "placeholder": "Öğeyi paylaşmak için bağlantı oluştur"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Birlikte çalışma bağlantısını kopyala"
+                }
+            }
+        },
+        "description": "İç kullanıcılar bağlantıyı açarak izinleri alacak. Verilen izinleri istediğiniz zaman değiştirebilirsiniz.",
+        "button": {
+            "revoke": "İptal Et",
+            "generateLink": "Bağlantı oluştur"
+        }
     }
 }

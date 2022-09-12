@@ -601,7 +601,7 @@
     "publicLink": {
         "addLink": {
             "addLink": "Add Link",
-            "description": "Internal and external users with the link can download the file.",
+            "description": "Internal and external users that have access to the link can download the file.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
             "title": "Public Links",

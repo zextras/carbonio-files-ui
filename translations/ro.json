@@ -57,6 +57,11 @@
                     "label": "Folder nou"
                 }
             }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "Revocare"
+            }
         }
     },
     "node": {
@@ -126,7 +131,8 @@
         "edit": "Editeaza",
         "preview": "Examinare",
         "unflag": "Anulare marcare",
-        "flag": "Marcare"
+        "flag": "Marcare",
+        "moveToTrash": "Ştergere"
     },
     "displayer": {
         "details": {
@@ -251,6 +257,12 @@
                     "presentation": "Creare prezentare nouă"
                 }
             }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "Revocare",
+            "generateLink": "Genereaza legatura"
         }
     }
 }
