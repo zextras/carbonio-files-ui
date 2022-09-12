@@ -96,6 +96,13 @@
             "input": {
                 "newFolder": "Nazwa nowego folderu"
             }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "Odwołaj"
+            },
+            "header": "Deaktywuj link do współpracy {{nodeName}}",
+            "body": "Po deaktywacji tego linka, tworzenie nowych udostępnień stanie się niemożliwe. Każdy, kto już użył tego linka do współpracy, dalej będzie miał dostep do tego węzła."
         }
     },
     "search": {
@@ -226,6 +233,15 @@
             "newPublicLinkGenerated": {
                 "label": "Nowy publiczny Link został wygenerowany"
             }
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Skopiuj link"
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "Nowy link do współpracy został wygenerowany"
+            },
+            "copyCollaborationLink": "Link do współpracy został skopiowany"
         }
     },
     "actions": {
@@ -266,11 +282,11 @@
                 "you": "Ty",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "Edytuj współpracę z użytkownikiem {{username}}",
+                        "collaborator": "Edytuj współpracę",
                         "you": "Edytuj swoją współpracę"
                     },
                     "remove": {
-                        "collaborator": "Usuń użytkownika {{username}}",
+                        "collaborator": "Usuń współpracę",
                         "yourself": "Usuń swoją współpracę"
                     }
                 }
@@ -483,7 +499,15 @@
                 "downloadVersion": "Pobierz wersję",
                 "keepVersion": "Zachowaj tą wersję na zawsze",
                 "openDocumentVersion": "Otwórz wersję dokumentu",
-                "removeKeepVersion": "Usuń zachowanie tej wersji na zawsze"
+                "removeKeepVersion": "Usuń zachowanie tej wersji na zawsze",
+                "tooltip": {
+                    "disabledByPermission": "Nie masz odpowiednich uprawnień",
+                    "disabledByVersionKeepForever": "Wersje oznaczone jako zachowywane na zawsze nie mogą zostać usunięte",
+                    "disabledByMaxVersion": "Osiągnięto max. ilość wersji",
+                    "disabledByMaxKeepVersion": "Osiągnięto max. ilość wersji zachowywanych na zawsze",
+                    "disabledByDocs": "Ta wersja nie może zostać otworzona za pomocą edytora online",
+                    "disabledByDeleteCurrent": "Aktualna wersja nie może zostać usunięta"
+                }
             },
             "button": {
                 "purgeAllVersions": "Czystka wszystkich wersji",
@@ -501,7 +525,7 @@
                 "lastWeek": "Ostatniego tygodnia",
                 "olderVersions": "Starsze wersje"
             },
-            "mainHint": "Możesz ręcznie usunąć lub przywrócić którąkolwiek wersję pliku. Wybierz jedną lub więcej wersji, które chcesz zachować na zawsze."
+            "mainHint": "Files zapisuje ostatnie {{maxVersions}} wersje Twoich plików. Możesz ręcznie usunąć lub przywrócić którąkolwiek wersję pliku. Wybierz jedną lub więcej wersji, które chcesz zachować na zawsze."
         },
         "generic": {
             "message": "Kliknij w element, aby go wybrać",
@@ -532,8 +556,9 @@
             "undo": "Cofnij",
             "generateLink": "Wygeneruj Link",
             "limitReached": "Osiągnięto maksymalną liczbę publicznych linków",
-            "title": "Publiczy Link",
-            "addLink": "Dodaj Link"
+            "title": "Publiczne linki",
+            "addLink": "Dodaj Link",
+            "description": "Użytkownicy z i spoza tej domeny, którzy mają dostęp do linka, mogą pobrać ten plik."
         },
         "dateTimePicker": {
             "label": "Data wygaśnięcia"
@@ -789,5 +814,48 @@
     },
     "uploadItem": {
         "queued": "W kolejce"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "Tryb Drag&Drop",
+                "disabled": "Tryb Drag&Drop"
+            },
+            "message": {
+                "enabled": "Tutaj upuść swoje elementy,\n aby szybko je przenieść do tego folderu",
+                "disabled": "Nie można upuszczać elementów w tym polu"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "Odwołaj",
+            "generateLink": "Wygeneruj Link"
+        },
+        "title": "Linki do współpracy",
+        "row": {
+            "title": {
+                "writeAndShare": "Edytowanie i Udosepnianie",
+                "ReadAndShare": "Czytanie i Udostępnianie"
+            },
+            "placeholder": "Stwórz link, aby udostępnić węzeł"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Skopiuj link do współpracy"
+                }
+            }
+        },
+        "description": "Użytkownicy z tej domeny otrzymają uprawnienia klikając w ten link. Zawsze możesz edytować przyznane uprawnienia."
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "Ten adres e-mail nie jest przypisany do użytkownika Carbonio"
+                }
+            }
+        }
     }
 }

@@ -32,13 +32,6 @@
             "notRun": "अभी तक कोई सर्च नहीं की गई है।"
         }
     },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "आइटम का फ्लैग हटाया गया"
-            }
-        }
-    },
     "folder": {
         "create": {
             "modal": {
@@ -223,6 +216,11 @@
             "input": {
                 "newFolder": "नए फोल्डर का नाम"
             }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "रद्द करना"
+            }
         }
     },
     "snackbar": {
@@ -290,6 +288,11 @@
             "keepForeverAdded": "वर्शन को हमेशा रखने के लिए मार्क किया गया",
             "clone": "वर्शन वर्तमान के रूप में क्लोन किया गया",
             "keepForeverRemoved": "\"हमेशा के लिए रखना है\" हटाया गया"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "लिंक कॉपी करें"
+            }
         }
     },
     "actions": {
@@ -303,7 +306,7 @@
         "deletePermanently": "सदा के लिए मिटाएँ",
         "flag": "चिन्हित करें",
         "goToFolder": "गंतव्य फोल्डर पर जाएँ",
-        "moveToTrash": "रद्दी में डालें",
+        "moveToTrash": "डिलीट करें",
         "removeUpload": "अपलोड हटाएँ",
         "retryUpload": "अपलोड की दोबारा कोशिश करें",
         "unflag": "फ्लैग हटाएँ",
@@ -423,7 +426,10 @@
                 "keepVersion": "इस वर्शन को हमेशा के लिए रखें",
                 "removeKeepVersion": "हमेशा के लिए रखें हटाएँ",
                 "cloneAsCurrent": "वर्तमान के रूप में क्लोन करें",
-                "openDocumentVersion": "डॉक्युमेंट वर्शन खोलें"
+                "openDocumentVersion": "डॉक्युमेंट वर्शन खोलें",
+                "tooltip": {
+                    "disabledByPermission": "आपके पास सही अनुमतियाँ नहीं हैं"
+                }
             },
             "button": {
                 "upload": "अपलोड वर्शन",
@@ -738,7 +744,7 @@
         "addLink": {
             "generateLink": "लिंक बनाएँ",
             "undo": "अनडू करें",
-            "title": "पब्लिक लिंक",
+            "title": "पब्लिक लिंक्स",
             "addLink": "लिंक जोड़ें",
             "limitReached": "पब्लिक लिंक की अधिकतम सीमा पूरी हो गई है"
         },
@@ -797,5 +803,19 @@
     },
     "uploadItem": {
         "queued": "कतार में"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "उठा के गिराएं",
+                "disabled": "उठा के गिराएं"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "रद्द करना",
+            "generateLink": "लिंक बनाएँ"
+        }
     }
 }

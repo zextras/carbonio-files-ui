@@ -11,6 +11,30 @@
             },
             "sharedWitMe": "اشتراک گذارده با من",
             "filesHome": "خانه"
+        },
+        "revokeLink": {
+            "button": {
+                "confirm": "لغو"
+            }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "لغو"
+            }
+        },
+        "purgeAllVersions": {
+            "header": "پاکسازی تمام نسخه‌ها",
+            "button": {
+                "confirm": "پاکسازی تمام نسخه‌ها"
+            }
+        },
+        "button": {
+            "cancel": "لغو"
+        },
+        "nodeSelection": {
+            "button": {
+                "create": "ایجاد"
+            }
         }
     },
     "displayer": {
@@ -25,9 +49,15 @@
                     "role": {
                         "viewer": "اجازه مشاهده",
                         "editor": "ویرایشگر"
-                    }
+                    },
+                    "sharingAllowed": "اشتراک گذاری مجاز است"
                 },
                 "owner": "دارنده"
+            },
+            "addShare": {
+                "input": {
+                    "placeholder": "افزودن افراد یا گروه های جدید"
+                }
             }
         },
         "details": {
@@ -41,7 +71,27 @@
             "description": "توضیح",
             "createdBy": "ایجاد شده توسط",
             "collaborators": "دست‌اندرکاران"
-        }
+        },
+        "version": {
+            "rowHeaders": {
+                "olderVersions": "نسخه‌های پیشین",
+                "currentVersion": "نسخه کنونی"
+            },
+            "button": {
+                "purgeAllVersions": "پاکسازی تمام نسخه‌ها"
+            },
+            "actions": {
+                "removeKeepVersion": "غیرفعال کردن نگهداری همیشگی فایل",
+                "keepVersion": "نگه‌داشتن این نسخه برای همیشه",
+                "deleteVersion": "حذف نسخه",
+                "cloneAsCurrent": "شبیه‌سازی به عنوان نسخه کنونی"
+            }
+        },
+        "search_empty": [
+            {
+                "message": "یا «فیلترهای پیشرفته» را برای اصلاح جستجوی خود انتخاب کنید."
+            }
+        ]
     },
     "create": {
         "options": {
@@ -57,10 +107,15 @@
         "move": "انتقال",
         "flag": "ایجاد نشانه",
         "download": "دانلود",
-        "copy": "ایجاد رونوشت"
+        "copy": "ایجاد رونوشت",
+        "retryUpload": "آپلود مجدد",
+        "preview": "پیش نمایش",
+        "edit": "ویرایش",
+        "moveToTrash": "حذف"
     },
     "sortingDropdown": {
-        "size": "حجم"
+        "size": "حجم",
+        "name": "نام"
     },
     "secondaryBar": {
         "filtersList": {
@@ -71,15 +126,28 @@
             "flagged": "نشانه‌دار"
         },
         "filters": "فیلترها",
-        "filesHome": "خانه"
+        "filesHome": "خانه",
+        "uploads": "آپلودها"
     },
     "search": {
         "advancedSearch": {
             "modal": {
                 "flagged": {
                     "label": "نشانه‌دار"
+                },
+                "button": {
+                    "reset": "برداشتن فیلترها",
+                    "confirm": "جستجو"
                 }
             }
+        },
+        "search": {
+            "tooltip": {
+                "search": "جستجو"
+            }
+        },
+        "header": {
+            "search": "جستجو"
         }
     },
     "preview": {
@@ -115,6 +183,53 @@
             "name_TRASH_ROOT": "زباله‌دان",
             "name_SHARED_WITH_ME_ROOT": "اشتراک گذارده با من",
             "name_LOCAL_ROOT": "خانه"
+        },
+        "type": {
+            "folder": "پوشه"
+        }
+    },
+    "uploads": {
+        "dropzone": {
+            "title": {
+                "enabled": "حالت Drag&Drop",
+                "disabled": "حالت Drag&Drop"
+            }
+        }
+    },
+    "selectionMode": {
+        "header": {
+            "selectAll": "انتخاب همه"
+        }
+    },
+    "publicLink": {
+        "link": {
+            "revoke": "لغو",
+            "edit": "ویرایش"
+        },
+        "input": {
+            "label": "توضیحات لینک"
+        }
+    },
+    "folder": {
+        "create": {
+            "modal": {
+                "button": {
+                    "confirm": "ایجاد"
+                }
+            }
+        }
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "حالت Drag&Drop",
+                "disabled": "حالت Drag&Drop"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "لغو"
         }
     }
 }

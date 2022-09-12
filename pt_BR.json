@@ -46,13 +46,6 @@
             "notRun": "Ainda não foi feita nenhuma busca."
         }
     },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "Retirada a sinalização com sucesso"
-            }
-        }
-    },
     "folder": {
         "create": {
             "modal": {
@@ -165,6 +158,11 @@
             },
             "input": {
                 "newFolder": "Nome da nova pasta"
+            }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "Revogar"
             }
         }
     },
@@ -290,6 +288,11 @@
         },
         "decreaseYourOwnShare": {
             "success": "Direitos atualizados com sucesso"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Copiar Link"
+            }
         }
     },
     "actions": {
@@ -303,7 +306,7 @@
         "deletePermanently": "Excluir Permanentemente",
         "flag": "Sinalizar",
         "goToFolder": "Ir para a pasta de destino",
-        "moveToTrash": "Mover para Lixeira",
+        "moveToTrash": "Excluir",
         "removeUpload": "Remover arquivo",
         "retryUpload": "Tentar upload novamente",
         "unflag": "Retirar sinalização",
@@ -481,7 +484,10 @@
                 "deleteVersion": "Excluir versão",
                 "downloadVersion": "Baixar versão",
                 "cloneAsCurrent": "Clonar como atual",
-                "openDocumentVersion": "Abrir versão do documento"
+                "openDocumentVersion": "Abrir versão do documento",
+                "tooltip": {
+                    "disabledByPermission": "Você não possui as permissões necessárias"
+                }
             },
             "rowHeaders": {
                 "currentVersion": "Versão atual",
@@ -732,7 +738,7 @@
         "addLink": {
             "generateLink": "Gerar link",
             "undo": "Desfazer",
-            "title": "Link Público",
+            "title": "Links Públicos",
             "addLink": "Adicionar Link",
             "limitReached": "O número máximo de links públicos foi atingido"
         },
@@ -797,5 +803,19 @@
     },
     "uploadItem": {
         "queued": "Em fila"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "Modo Arrastar e Soltar",
+                "disabled": "Modo Arrastar e Soltar"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "Revogar",
+            "generateLink": "Gerar link"
+        }
     }
 }
