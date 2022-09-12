@@ -32,13 +32,6 @@
             "notRun": "Es wurde noch keine Durchsuchung durchgeführt."
         }
     },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "Markierung erfolgreich entfernt"
-            }
-        }
-    },
     "folder": {
         "create": {
             "modal": {
@@ -151,6 +144,11 @@
             },
             "input": {
                 "newFolder": "Neuer Ordnername"
+            }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "Entziehen"
             }
         }
     },
@@ -290,6 +288,11 @@
         },
         "decreaseYourOwnShare": {
             "success": "Rechte erfolgreich aktualisiert"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Link kopieren"
+            }
         }
     },
     "actions": {
@@ -303,7 +306,7 @@
         "deletePermanently": "Endgültig löschen",
         "flag": "Markieren",
         "goToFolder": "Zum Zielordner gehen",
-        "moveToTrash": "Zum Papierkorb verschieben",
+        "moveToTrash": "Löschen",
         "removeUpload": "Upload entfernen",
         "retryUpload": "Upload erneut versuchen",
         "unflag": "Markierung entfernen",
@@ -418,7 +421,10 @@
                 "keepVersion": "Immer diese Version behalten",
                 "removeKeepVersion": "Für immer Behalten entfernen",
                 "openDocumentVersion": "Version des Dokuments öffnen",
-                "cloneAsCurrent": "Klonen wie aktuell"
+                "cloneAsCurrent": "Klonen wie aktuell",
+                "tooltip": {
+                    "disabledByPermission": "Sie haben nicht die richtigen Rechte"
+                }
             },
             "button": {
                 "upload": "Version hochladen",
@@ -734,7 +740,7 @@
             "undo": "Rückgängig machen",
             "addLink": "Link hinzufügen",
             "limitReached": "Die maximale Anzahl der öffentlichen Links ist erreicht",
-            "title": "Öffentlicher Link"
+            "title": "Publieke links"
         },
         "link": {
             "edit": "Bearbeiten",
@@ -797,5 +803,19 @@
     },
     "uploadItem": {
         "queued": "In der Warteschlange"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "Drag&Drop Modus",
+                "disabled": "Drag&Drop Modus"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "Entziehen",
+            "generateLink": "Link erstellen"
+        }
     }
 }

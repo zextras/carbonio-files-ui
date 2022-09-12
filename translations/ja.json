@@ -10,13 +10,6 @@
             }
         }
     },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "アイテムのフラグが解除されました"
-            }
-        }
-    },
     "modal": {
         "button": {
             "cancel": "キャンセル",
@@ -115,6 +108,11 @@
             "input": {
                 "newFolder": "新しいフォルダの名前"
             }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "解除"
+            }
         }
     },
     "node": {
@@ -175,7 +173,6 @@
         }
     },
     "secondaryBar": {
-        "driveHome": "Driveホーム",
         "team": "チーム経由で送信されたファイル",
         "filters": "フィルター",
         "filtersList": {
@@ -254,6 +251,11 @@
             "clone": "現在のバージョンとして複製されたバージョン",
             "keepForeverAdded": "永久に保持されるようにマークされたバージョン",
             "keepForeverRemoved": "「永久に保持する」バージョンが削除されました"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "リンクをコピーする"
+            }
         }
     },
     "empty": {
@@ -304,7 +306,7 @@
         "deletePermanently": "完全に削除する",
         "flag": "フラグを付ける",
         "goToFolder": "宛先フォルダに移動する",
-        "moveToTrash": "ゴミ箱に移動する",
+        "moveToTrash": "削除する",
         "removeUpload": "アップロードを削除する",
         "retryUpload": "再びアップロード試す",
         "unflag": "フラグを外す",
@@ -424,7 +426,10 @@
                 "keepVersion": "このバージョンを維持する",
                 "removeKeepVersion": "バージョンの維持を削除する",
                 "cloneAsCurrent": "現在として複製する",
-                "openDocumentVersion": "ドキュメントバージョンを開く"
+                "openDocumentVersion": "ドキュメントバージョンを開く",
+                "tooltip": {
+                    "disabledByPermission": "正しい権限がありません"
+                }
             },
             "button": {
                 "upload": "バージョンをアップロードする",
@@ -798,5 +803,19 @@
     },
     "uploadItem": {
         "queued": "キューに入れられました"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "ドラッグ＆ドロップモード",
+                "disabled": "ドラッグ＆ドロップモード"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "解除",
+            "generateLink": "リンクを作成"
+        }
     }
 }

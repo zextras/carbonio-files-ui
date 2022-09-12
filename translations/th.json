@@ -32,13 +32,6 @@
             "notRun": "ยังไม่มีการดำเนินการค้นหา"
         }
     },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "ยกเลิกการติดธงรายการเรียบร้อยแล้ว"
-            }
-        }
-    },
     "folder": {
         "create": {
             "modal": {
@@ -151,6 +144,11 @@
             },
             "input": {
                 "newFolder": "ชื่อโฟลเดอร์ใหม่"
+            }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "เพิกถอน"
             }
         }
     },
@@ -290,6 +288,11 @@
         },
         "decreaseYourOwnShare": {
             "success": "อัปเดตสิทธิ์เรียบร้อยแล้ว"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "คัดลอกลิงก์"
+            }
         }
     },
     "actions": {
@@ -303,7 +306,7 @@
         "deletePermanently": "ลบอย่างถาวร",
         "flag": "ธง",
         "goToFolder": "ไปที่โฟลเดอร์ปลายทาง",
-        "moveToTrash": "ย้ายไปที่ถังขยะ",
+        "moveToTrash": "ลบ",
         "removeUpload": "ลบการอัปโหลด",
         "retryUpload": "ลองอัปโหลดอีกครั้ง",
         "unflag": "เอาธงออก",
@@ -423,7 +426,10 @@
                 "keepVersion": "เก็บเวอร์ชั่นนี้ไว้ตลอดไป",
                 "removeKeepVersion": "ลบสิ่งที่เก็บไว้แบบถาวร",
                 "cloneAsCurrent": "ลอกแบบให้เป็นปัจจุบัน",
-                "openDocumentVersion": "เปิดเวอร์ชันเอกสาร"
+                "openDocumentVersion": "เปิดเวอร์ชันเอกสาร",
+                "tooltip": {
+                    "disabledByPermission": "คุณไม่มีสิทธิ์ที่ถูกต้องในการใช้งาน"
+                }
             },
             "button": {
                 "upload": "อัปโหลดเวอร์ชั่น",
@@ -797,5 +803,19 @@
     },
     "uploadItem": {
         "queued": "อยู่ในคิวแล้ว"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "โหมด Drag&Drop",
+                "disabled": "โหมด Drag&Drop"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "เพิกถอน",
+            "generateLink": "สร้างลิงก์"
+        }
     }
 }

@@ -46,13 +46,6 @@
             "notRun": "Ainda não foi feita nenhuma busca."
         }
     },
-    "filter": {
-        "snackbar": {
-            "unflag": {
-                "success": "Retirada a sinalização com sucesso"
-            }
-        }
-    },
     "folder": {
         "create": {
             "modal": {
@@ -160,6 +153,11 @@
                     "label": "Novo diretório"
                 },
                 "create": "Criar"
+            }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "Revogar"
             }
         }
     },
@@ -285,6 +283,11 @@
         },
         "decreaseYourOwnShare": {
             "success": "Direitos atualizados com sucesso"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "Copiar Link"
+            }
         }
     },
     "actions": {
@@ -298,7 +301,7 @@
         "deletePermanently": "Excluir Permanentemente",
         "flag": "Sinalizar",
         "goToFolder": "Ir para a pasta de destino",
-        "moveToTrash": "Mover para Lixeira",
+        "moveToTrash": "Eliminar",
         "removeUpload": "Remover ficheiro",
         "retryUpload": "Tentar upload novamente",
         "unflag": "Retirar sinalização",
@@ -727,7 +730,7 @@
         "addLink": {
             "generateLink": "Gerar Link",
             "undo": "Desfazer",
-            "title": "Link Público",
+            "title": "Public Links",
             "addLink": "Adicionar Link",
             "limitReached": "O número máximo de links públicos foi atingido"
         },
@@ -781,5 +784,19 @@
     },
     "label": {
         "app_name": "Files"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "Modo Arrastar e Soltar",
+                "disabled": "Modo Arrastar e Soltar"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "Revogar",
+            "generateLink": "Gerar Link"
+        }
     }
 }
