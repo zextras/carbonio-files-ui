@@ -7,24 +7,13 @@
 import React from 'react';
 
 import { ThemeProvider } from '@zextras/carbonio-design-system';
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, DefaultTheme } from 'styled-components';
 
 import { AnimatedLoader } from './carbonio-files-ui-common/views/components/icons/AnimatedLoader';
 import { AnimatedUpload } from './carbonio-files-ui-common/views/components/icons/AnimatedUpload';
 
-interface ThemeObject {
-	sizes: ThemeObject & { font: ThemeObject };
-	icons: ThemeObject;
-	[key: string]: string | React.ReactNode | ThemeObject;
-}
-
-const themeOverride = (theme: ThemeObject): ThemeObject => ({
+const themeOverride = (theme: DefaultTheme): DefaultTheme => ({
 	...theme,
-	sizes: {
-		...theme.sizes,
-		// add extralarge size, but use the default one if implemented in the main theme
-		font: { extralarge: '20px', ...theme.sizes.font }
-	},
 	icons: {
 		...theme.icons,
 		AnimatedLoader,

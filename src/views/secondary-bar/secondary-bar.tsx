@@ -7,10 +7,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { Accordion, Container } from '@zextras/carbonio-design-system';
+import { Accordion, AccordionItemType, Container } from '@zextras/carbonio-design-system';
 import find from 'lodash/find';
 import map from 'lodash/map';
 import orderBy from 'lodash/orderBy';
+import reduce from 'lodash/reduce';
 import size from 'lodash/size';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -21,14 +22,17 @@ import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { ROOTS } from '../../carbonio-files-ui-common/constants';
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/common';
+import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
 import {
-	AccordionItemShape,
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
 } from '../../carbonio-files-ui-common/views/components/SecondaryBarItem';
 import { useNavigation } from '../../hooks/useNavigation';
 
-// TODO: remove this customization when DS will have fixed spaces
+type AccordionItemWithPriority = AccordionItemType & {
+	priority?: number;
+};
+
 const CustomAccordion = styled(Accordion)`
 	justify-content: flex-start;
 	height: 100%;
@@ -68,15 +72,15 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 		[uploadStatus]
 	);
 
-	const items = useMemo<Array<AccordionItemShape | null | undefined>>(() => {
-		const filtersAsRoots: AccordionItemShape[] = [
+	const items = useMemo<AccordionItemType[]>(() => {
+		const filtersAsRoots: AccordionItemWithPriority[] = [
 			{
 				id: 'SharedWithMe',
 				priority: 1,
 				icon: 'ArrowCircleLeftOutline',
 				iconCustomColor: '#AB47BC',
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
-				onClick: (ev: React.SyntheticEvent): void => {
+				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
 					navigateTo('/filter/sharedWithMe');
 				},
@@ -85,7 +89,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			}
 		];
 
-		const filters: AccordionItemShape = {
+		const filters: AccordionItemWithPriority = {
 			id: 'FILTERS',
 			onClick: (): void => {
 				if (!expanded) {
@@ -101,7 +105,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 					icon: 'FlagOutline',
 					iconColor: 'error',
 					label: t('secondaryBar.filtersList.flagged', 'Flagged'),
-					onClick: (ev: React.SyntheticEvent): void => {
+					onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 						ev.stopPropagation();
 						navigateTo('/filter/flagged');
 					},
@@ -113,7 +117,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 					icon: 'ArrowCircleRightOutline',
 					iconColor: 'warning',
 					label: t('secondaryBar.filtersList.sharedByMe', 'Shared by me'),
-					onClick: (ev: React.SyntheticEvent): void => {
+					onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 						ev.stopPropagation();
 						navigateTo('/filter/sharedByMe');
 					},
@@ -124,11 +128,11 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			CustomComponent: SecondaryBarItemExpanded
 		};
 
-		const uploads: AccordionItemShape = {
+		const uploads: AccordionItemWithPriority = {
 			id: 'Uploads',
 			label: t('secondaryBar.uploads', 'Uploads'),
 			icon: !uploadsInfo.isUploading ? 'CloudUploadOutline' : 'AnimatedUpload',
-			onClick: (ev: React.SyntheticEvent): void => {
+			onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 				ev.stopPropagation();
 				navigateTo('/uploads');
 			},
@@ -138,12 +142,12 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			active: location.pathname.includes('/uploads')
 		};
 
-		const trashItems: AccordionItemShape[] = [
+		const trashItems: AccordionItemWithPriority[] = [
 			{
 				id: ROOTS.TRASH_MY_ELEMENTS,
 				label: t('secondaryBar.filtersList.myElements', 'My elements'),
 				icon: 'HardDriveOutline',
-				onClick: (ev: React.SyntheticEvent): void => {
+				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
 					navigateTo('/filter/myTrash');
 				},
@@ -154,7 +158,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				id: ROOTS.TRASH_SHARED_ELEMENTS,
 				label: t('secondaryBar.filtersList.sharedElements', 'Shared elements'),
 				icon: 'ShareOutline',
-				onClick: (ev: React.SyntheticEvent): void => {
+				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
 					navigateTo('/filter/sharedTrash');
 				},
@@ -164,17 +168,21 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 		];
 
 		if (data?.getRootsList && data.getRootsList.length > 0) {
-			const rootItems = orderBy(
-				map(data.getRootsList, (root, idx) => {
+			const rootItems = reduce<
+				GetRootsListQuery['getRootsList'][number],
+				AccordionItemWithPriority[]
+			>(
+				data.getRootsList,
+				(acc, root, idx) => {
 					if (root) {
 						switch (root.id) {
 							case ROOTS.LOCAL_ROOT: {
-								return {
+								acc.push({
 									priority: 0,
 									id: root.id,
 									label: t('secondaryBar.filesHome', 'Home'),
 									icon: 'HomeOutline',
-									onClick: (ev: React.SyntheticEvent): void => {
+									onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 										ev.stopPropagation();
 										navigateTo(`/root/${root.id}`);
 									},
@@ -182,10 +190,11 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 									active:
 										location.pathname.includes(`/root/${root.id}`) ||
 										location.search.includes(`folder=${root.id}`)
-								};
+								});
+								break;
 							}
 							case ROOTS.TRASH: {
-								return {
+								acc.push({
 									open: forceTrashOpen,
 									id: root.id,
 									priority: 2,
@@ -198,14 +207,15 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 									},
 									items: trashItems,
 									CustomComponent: SecondaryBarItemExpanded
-								};
+								});
+								break;
 							}
 							default: {
-								return {
+								acc.push({
 									priority: idx + 4,
 									id: root.id,
 									label: root.name,
-									onClick: (ev: React.SyntheticEvent): void => {
+									onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 										ev.stopPropagation();
 										navigateTo(`/root/${root.id}`);
 									},
@@ -213,14 +223,14 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 									active:
 										location.pathname.includes(`/root/${root.id}`) ||
 										location.search.includes(`folder=${root.id}`)
-								};
+								});
+								break;
 							}
 						}
 					}
-					return root;
-				}),
-				['priority'],
-				['asc']
+					return acc;
+				},
+				[]
 			);
 
 			const mixedRootsAndFilters = orderBy(
@@ -237,7 +247,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				label: t('secondaryBar.filesHome', 'Home'),
 				icon: 'HomeOutline',
 				items: [],
-				onClick: (ev: React.SyntheticEvent): void => {
+				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
 					navigateTo(`/root/${ROOTS.LOCAL_ROOT}`);
 				},
@@ -269,7 +279,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 	return (
 		<Container height="fit">
 			{expanded ? (
-				<CustomAccordion role="menuitem" active items={items || []} />
+				<CustomAccordion role="menuitem" items={items || []} />
 			) : (
 				map(
 					items,

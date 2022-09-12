@@ -6,9 +6,9 @@
 
 import { useCallback } from 'react';
 
+import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { useCreateSnackbar } from '../carbonio-files-ui-common/hooks/useCreateSnackbar';
 import { uploadToTargetModule } from '../carbonio-files-ui-common/utils/utils';
 import { getComposePrefillMessageFunction } from '../integrations/functions';
 import { captureException } from '../utils/utils';
@@ -16,7 +16,7 @@ import { captureException } from '../utils/utils';
 export function useSendViaMail(): {
 	sendViaMail: (nodeId: string) => void;
 } {
-	const createSnackbar = useCreateSnackbar();
+	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
 
 	const sendViaMail = useCallback(
