@@ -28,16 +28,18 @@ failOnConsole({
 	silenceMessage: (errorMessage) =>
 		// snackbar PropType error on Window type
 		/Invalid prop `\w+`(\sof type `\w+`)? supplied to `(\w+(\(\w+\))?)`/.test(errorMessage) ||
-		// TODO: remove this check with ds v0.4.0
-		/React does not recognize the `\w+` prop on a DOM element/.test(errorMessage) ||
 		// errors forced from the tests
-		/Controlled error/gi.test(errorMessage)
+		/Controlled error/gi.test(errorMessage) ||
+		/The "input" argument must be an instance of ArrayBuffer or ArrayBufferView. Received an instance of File/.test(
+			errorMessage
+		)
 });
+
+jest.setTimeout(30000);
 
 beforeEach(() => {
 	// Do not useFakeTimers with `whatwg-fetch` if using mocked server
 	// https://github.com/mswjs/msw/issues/448
-	jest.useFakeTimers();
 
 	// reset apollo client cache
 	global.apolloClient.resetStore();
@@ -51,10 +53,9 @@ beforeEach(() => {
 });
 
 beforeAll(() => {
-	server.listen();
+	server.listen({ onUnhandledRequest: 'warn' });
 
-	jest.setTimeout(30000);
-	jest.retryTimes(2);
+	jest.retryTimes(2, { logErrorsBeforeRetry: true });
 
 	// initialize an apollo client instance for test and makes it available globally
 	global.apolloClient = buildClient();
@@ -88,26 +89,9 @@ beforeAll(() => {
 		}))
 	});
 
-	global.clipboard = [];
-
 	Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', {
 		writable: true,
 		value: jest.fn()
-	});
-
-	Object.defineProperty(navigator, 'clipboard', {
-		writable: true,
-		value: {
-			writeText: jest.fn().mockImplementation((text) => {
-				global.clipboard.push(text);
-				return Promise.resolve();
-			}),
-			readText: jest
-				.fn()
-				.mockImplementation(() =>
-					global.clipboard.length > 0 ? global.clipboard[global.clipboard.length - 1] : null
-				)
-		}
 	});
 
 	global.mockedUserLogged = LOGGED_USER;
@@ -145,10 +129,8 @@ beforeAll(() => {
 
 afterAll(() => server.close());
 afterEach(() => {
-	// server.resetHandlers();
 	jest.runOnlyPendingTimers();
-	jest.useRealTimers();
-	jest.restoreAllMocks();
+	server.resetHandlers();
 	act(() => {
 		window.resizeTo(1024, 768);
 	});
