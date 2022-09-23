@@ -52,8 +52,11 @@
             "new": {
                 "document": "New Document",
                 "folder": "New Folder",
-                "msDocument": "Microsoft Document",
-                "odfDocument": "ODF Document",
+                "libreDocument": "OpenDocument {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
                 "presentation": "New Presentation",
                 "spreadsheet": "New Spreadsheet",
                 "upload": "Upload"
