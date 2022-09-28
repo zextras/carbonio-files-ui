@@ -12,7 +12,7 @@
                 "confirm": "Potwierdź"
             },
             "header": "Obniż swoje aktualne uprawnienia",
-            "body": "Czy na pewno chcesz obniżyć swoje uprawnienia do tego węzła? Tej czynności nie da się odwrócić, nie będziesz w stanie samemu przywrócić poprzednich uprawnień. Możesz zawsze skontaktować się z posiadaczem elementu jeśli będziesz jednak potrzebował to zrobić"
+            "body": "Czy na pewno chcesz obniżyć swoje uprawnienia do tego węzła? Tej czynności nie da się odwrócić, nie będziesz w stanie samemu przywrócić poprzednich uprawnień. Możesz zawsze skontaktować się z właścicielem elementu jeśli będziesz jednak potrzebował to zrobić"
         },
         "removeLink": {
             "button": {
@@ -262,7 +262,7 @@
         "sendViaMail": "Wyślij e-mailem",
         "edit": "Edytuj",
         "preview": "Podgląd",
-        "manageShares": "Zarządzaj Udostępnieniami"
+        "manageShares": "Zarządzaj udostępnieniami"
     },
     "displayer": {
         "share": {
@@ -278,7 +278,7 @@
                     "sharingAllowedDescription": "Będzie w stanie zarządzać udostępnieniami tego pliku lub folderu",
                     "sharingAllowed": "Udostępnianie dozwolone"
                 },
-                "owner": "Posiadacz",
+                "owner": "Właściciel",
                 "you": "Ty",
                 "tooltip": {
                     "edit": {
@@ -299,7 +299,7 @@
                     "label": "Dodaj niestandardową wiadomość do tego powiadomienia",
                     "placeholder": "Dodaj nowe osoby lub grupy"
                 },
-                "note": "Notka:",
+                "note": "Notatka:",
                 "noteDescription": "Domyślna wiadomość zawiera Twoje imię, nazwę udostępnianiego elementu, uprawnienia przyznane odbiorcom oraz informacje dot. logowania."
             },
             "noSharePermissionHeader": "Nie masz uprawnień, aby udostępnić ten element."
@@ -311,7 +311,7 @@
             "versioning": "Ustawienia wersji"
         },
         "details": {
-            "owner": "Posiadacz",
+            "owner": "Właściciel",
             "size": "Rozmiar",
             "collaboratorsTooltip": "Zobacz listę współpracowników",
             "sendMailTo": "Wyślij e-mail do: {{email}}",
@@ -402,8 +402,8 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "title": "Nie ma jeszcze żadnych elementów udostępnionych tobie.",
-                    "message": "Kliknij przycisk \"NOWY\" aby stworzyć nowy dokument i udostępnić go swoim kontaktom."
+                    "title": "Nie ma jeszcze żadnych elementów udostępnionych Tobie.",
+                    "message": "Jedyne co pozostaje to czekać, aż ktoś Ci coś udostępni."
                 },
                 {
                     "message": "Daj znać innnym użytkownikom, że możesz z nimi współpracować.",
@@ -490,7 +490,7 @@
         ],
         "uploads": {
             "message": "Tutaj znajdziesz wszystkie elementy, które aktualnie przesyłasz. Możesz z tąd nimi zarządzać",
-            "title": "Prześlij sugestie"
+            "title": "Prześlij pliki"
         },
         "version": {
             "actions": {
@@ -587,7 +587,7 @@
         },
         "filesHome": "Start",
         "team": "Pliki wysłane przez Team",
-        "uploads": "Przesłania"
+        "uploads": "Przesłane"
     },
     "selectionMode": {
         "node": {
@@ -619,10 +619,10 @@
     "create": {
         "options": {
             "new": {
-                "folder": "Nowy Folder",
-                "document": "Nowy Dokument",
-                "presentation": "Nowa Prezentacja",
-                "spreadsheet": "Nowy Arkusz",
+                "folder": "Nowy folder",
+                "document": "Nowy dokument",
+                "presentation": "Nowa prezentacja",
+                "spreadsheet": "Nowy arkusz",
                 "upload": "Prześlij"
             }
         }
@@ -668,7 +668,7 @@
         "filter": {
             "flagged": "Nie ma żadnych oflagowanych elementów.",
             "hint": "Wygląda na to, że nic tu nie ma.",
-            "sharedWithMe": "Nie ma jeszcze żadnych elementów udostępnionych tobie.",
+            "sharedWithMe": "Nie ma jeszcze żadnych elementów udostępnionych Tobie.",
             "trash": "Kosz jest pusty.",
             "sharedByMe": "Nie udostępniono jeszcze żadnego elementu współpracownikom."
         },
@@ -763,9 +763,9 @@
                     }
                 },
                 "title": {
-                    "document": "Stwórz Nowy Dokument",
+                    "document": "Stwórz nowy dokument",
                     "presentation": "Stwórz Nową Prezentację",
-                    "spreadsheet": "Stwórz Nowy Arkusz"
+                    "spreadsheet": "Stwórz nowy arkusz"
                 }
             }
         }
@@ -797,7 +797,7 @@
         "actions": {
             "tooltip": {
                 "download": "Pobierz",
-                "manageShares": "Zarządzaj Udostępnieniami"
+                "manageShares": "Zarządzaj udostępnieniami"
             }
         },
         "close": {
