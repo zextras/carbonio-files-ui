@@ -35,7 +35,7 @@ failOnConsole({
 		)
 });
 
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 beforeEach(() => {
 	// Do not useFakeTimers with `whatwg-fetch` if using mocked server
