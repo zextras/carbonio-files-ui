@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/zextras/carbonio-files-ui/compare/v0.1.10...v0.2.0) (2022-09-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to @zextras/carbonio-design-system v0.4.0
+
+### Features
+
+* allow user to create different formats of documents ([dc5135c](https://github.com/zextras/carbonio-files-ui/commit/dc5135c407052068f9004612f4ca5a81c7137f05)), closes [#118](https://github.com/zextras/carbonio-files-ui/issues/118)
+* integrate preview document selector ([3d9e70a](https://github.com/zextras/carbonio-files-ui/commit/3d9e70a79da6d4d4f280e619a193d60e0ee2e1ea)), closes [#122](https://github.com/zextras/carbonio-files-ui/issues/122)
+* update new document action labels ([97584b8](https://github.com/zextras/carbonio-files-ui/commit/97584b863c91720290d5bb8cf618a7d97f1cb7b6)), closes [#120](https://github.com/zextras/carbonio-files-ui/issues/120)
+
+
+### Bug Fixes
+
+* avoid link chips to overflow and shrink buttons ([b94a04d](https://github.com/zextras/carbonio-files-ui/commit/b94a04d5ee305ba97b518e1ed3c0ce6eeb551b01)), closes [#126](https://github.com/zextras/carbonio-files-ui/issues/126)
+* request shares from network when querying for more than cached limit ([e3aff4c](https://github.com/zextras/carbonio-files-ui/commit/e3aff4c4d2fe3d3645a8a4cd038730902dab2816)), closes [#124](https://github.com/zextras/carbonio-files-ui/issues/124)
+
+
+* migrate to @zextras/carbonio-design-system v0.4.0 ([f8dcb93](https://github.com/zextras/carbonio-files-ui/commit/f8dcb93d01bb04c33c5d5528eeb48f9b878a9a0b)), closes [#115](https://github.com/zextras/carbonio-files-ui/issues/115)
+
 ### [0.1.10](https://github.com/zextras/carbonio-files-ui/compare/v0.1.9...v0.1.10) (2022-09-12)
 
 ### [0.1.9](https://github.com/zextras/carbonio-files-ui/compare/v0.1.8...v0.1.9) (2022-09-01)
