@@ -6,7 +6,6 @@
 import React, { useCallback, useState } from 'react';
 
 import { act, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
 import { graphql } from 'msw';
 
@@ -17,7 +16,7 @@ import {
 	FindNodesQuery,
 	FindNodesQueryVariables
 } from '../carbonio-files-ui-common/types/graphql/types';
-import { render } from '../carbonio-files-ui-common/utils/testUtils';
+import { setup } from '../carbonio-files-ui-common/utils/testUtils';
 import { CreateOptionsContent } from '../hooks/useCreateOptions';
 import server from '../mocks/server';
 import SearchView from './SearchView';
@@ -53,7 +52,7 @@ describe('Search view', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
-			render(
+			const { user } = setup(
 				<SearchView
 					useQuery={useQuery}
 					ResultsHeader={ResultsHeader}
@@ -66,7 +65,7 @@ describe('Search view', () => {
 			await screen.findByText(/view files and folders/i);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
+			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/^flagged/i);
 			act(() => {
 				// run timers of modal
@@ -74,15 +73,11 @@ describe('Search view', () => {
 			});
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
-			act(() => {
-				userEvent.click(screen.getByText(/^flagged/i));
-			});
+			await user.click(screen.getByText(/^flagged/i));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /search/i }));
-			});
+			await user.click(screen.getByRole('button', { name: /search/i }));
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
@@ -103,10 +98,6 @@ describe('Search view', () => {
 				expect.anything()
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
-			act(() => {
-				// run timers of displayer
-				jest.runOnlyPendingTimers();
-			});
 		});
 
 		test('When user select shared, shared_by_me param is set', async () => {
@@ -116,7 +107,7 @@ describe('Search view', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
-			render(
+			const { user } = setup(
 				<SearchView
 					useQuery={useQuery}
 					ResultsHeader={ResultsHeader}
@@ -129,7 +120,7 @@ describe('Search view', () => {
 			await screen.findByText(/view files and folders/i);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
+			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/^shared/i);
 			act(() => {
 				// run timers of modal
@@ -137,15 +128,11 @@ describe('Search view', () => {
 			});
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
-			act(() => {
-				userEvent.click(screen.getByText(/^shared/i));
-			});
+			await user.click(screen.getByText(/^shared/i));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /search/i }));
-			});
+			await user.click(screen.getByRole('button', { name: /search/i }));
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
@@ -166,10 +153,6 @@ describe('Search view', () => {
 				expect.anything()
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
-			act(() => {
-				// run timers of displayer
-				jest.runOnlyPendingTimers();
-			});
 		});
 
 		test('When user choose a folder and the sub-folders param, folder_id and cascade are set', async () => {
@@ -179,7 +162,7 @@ describe('Search view', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
-			render(
+			const { user } = setup(
 				<SearchView
 					useQuery={useQuery}
 					ResultsHeader={ResultsHeader}
@@ -192,7 +175,7 @@ describe('Search view', () => {
 			await screen.findByText(/view files and folders/i);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
+			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/select a folder/i);
 			act(() => {
 				// run timers of modal
@@ -200,7 +183,7 @@ describe('Search view', () => {
 			});
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
-			userEvent.click(screen.getByText(/select a folder/i));
+			await user.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
@@ -213,38 +196,22 @@ describe('Search view', () => {
 				'disabled',
 				''
 			);
-			userEvent.click(screen.getByText(/home/i));
+			await user.click(screen.getByText(/home/i));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /choose folder/i })).not.toHaveAttribute(
 					'disabled',
 					''
 				)
 			);
-			act(() => {
-				userEvent.click(screen.getByText(/search also in contained folders/i));
-			});
+			await user.click(screen.getByText(/search also in contained folders/i));
 			await screen.findByTestId('icon: Square');
-			act(() => {
-				userEvent.click(screen.getByText(/search also in contained folders/i));
-			});
+			await user.click(screen.getByText(/search also in contained folders/i));
 			await screen.findByTestId('icon: CheckmarkSquare');
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /choose folder/i }));
-			});
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
+			await user.click(screen.getByRole('button', { name: /choose folder/i }));
 			await screen.findByText(/home/i);
 			expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
 			expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '');
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /search/i }));
-			});
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
+			await user.click(screen.getByRole('button', { name: /search/i }));
 			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
@@ -260,10 +227,6 @@ describe('Search view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			act(() => {
-				// run timers of displayer
-				jest.runOnlyPendingTimers();
-			});
 		});
 
 		test('When user choose a folder but not the sub-folders param, folder_id is set with selected folder id and cascade is set to false', async () => {
@@ -273,7 +236,7 @@ describe('Search view', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
-			render(
+			const { user } = setup(
 				<SearchView
 					useQuery={useQuery}
 					ResultsHeader={ResultsHeader}
@@ -286,7 +249,7 @@ describe('Search view', () => {
 			await screen.findByText(/view files and folders/i);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
+			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/select a folder/i);
 			act(() => {
 				// run timers of modal
@@ -294,7 +257,7 @@ describe('Search view', () => {
 			});
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
-			userEvent.click(screen.getByText(/select a folder/i));
+			await user.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
@@ -307,35 +270,21 @@ describe('Search view', () => {
 				'disabled',
 				''
 			);
-			userEvent.click(screen.getByText(/home/i));
+			await user.click(screen.getByText(/home/i));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /choose folder/i })).not.toHaveAttribute(
 					'disabled',
 					''
 				)
 			);
-			act(() => {
-				userEvent.click(screen.getByText(/search also in contained folders/i));
-			});
+			await user.click(screen.getByText(/search also in contained folders/i));
 			await screen.findByTestId('icon: Square');
 			expect(screen.queryByTestId('icon: CheckmarkSquare')).not.toBeInTheDocument();
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /choose folder/i }));
-			});
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
+			await user.click(screen.getByRole('button', { name: /choose folder/i }));
 			await screen.findByText(/home/i);
 			expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
 			expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '');
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /search/i }));
-			});
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
+			await user.click(screen.getByRole('button', { name: /search/i }));
 			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
@@ -351,10 +300,6 @@ describe('Search view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			act(() => {
-				// run timers of displayer
-				jest.runOnlyPendingTimers();
-			});
 		});
 
 		test('When user types some keyword, keywords param is set with new keywords', async () => {
@@ -364,7 +309,7 @@ describe('Search view', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
-			render(
+			const { user } = setup(
 				<SearchView
 					useQuery={useQuery}
 					ResultsHeader={ResultsHeader}
@@ -377,7 +322,7 @@ describe('Search view', () => {
 			await screen.findByText(/view files and folders/i);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
+			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/keywords/i);
 			act(() => {
 				// run timers of modal
@@ -386,29 +331,19 @@ describe('Search view', () => {
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
 
-			act(() => {
-				userEvent.type(screen.getByText(/keywords/i), 'keyword1;');
-			});
+			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			// wait for chips to be created (1 chip + icon close of the modal)
 			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(2));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
 			expect(screen.getByText(/keyword1/i)).toBeVisible();
-			act(() => {
-				userEvent.type(screen.getByText(/keywords/i), 'keyword2;');
-			});
+			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword2;');
 			// wait for chips to be created (2 chips + icon close of the modal)
 			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(3));
 			expect(screen.getByText(/keyword2/i)).toBeVisible();
 
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /search/i }));
-			});
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
+			await user.click(screen.getByRole('button', { name: /search/i }));
 			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
@@ -430,10 +365,6 @@ describe('Search view', () => {
 				expect.anything()
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
-			act(() => {
-				// run timers of displayer
-				jest.runOnlyPendingTimers();
-			});
 		});
 
 		test('All advanced filters together', async () => {
@@ -443,7 +374,7 @@ describe('Search view', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
-			render(
+			const { user } = setup(
 				<SearchView
 					useQuery={useQuery}
 					ResultsHeader={ResultsHeader}
@@ -456,9 +387,9 @@ describe('Search view', () => {
 			await screen.findByText(/view files and folders/i);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
+			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			// keywords
-			await screen.findByText(/keywords/i);
+			await screen.findByRole('textbox', { name: /keywords/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
@@ -466,31 +397,23 @@ describe('Search view', () => {
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
 
-			act(() => {
-				userEvent.type(screen.getByText(/keywords/i), 'keyword1;');
-			});
+			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			// wait for chips to be created (1 chip + icon close of the modal)
 			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(2));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
 			expect(screen.getByText(/keyword1/i)).toBeVisible();
-			act(() => {
-				userEvent.type(screen.getByText(/keywords/i), 'keyword2;');
-			});
+			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword2;');
 			// wait for chips to be created (2 chips + icon close of the modal)
 			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(3));
 			expect(screen.getByText(/keyword2/i)).toBeVisible();
 			// flagged
-			act(() => {
-				userEvent.click(screen.getByText(/^flagged/i));
-			});
+			await user.click(screen.getByText(/^flagged/i));
 			// shared by me
-			act(() => {
-				userEvent.click(screen.getByText(/^shared/i));
-			});
+			await user.click(screen.getByText(/^shared/i));
 			// folder
-			userEvent.click(screen.getByText(/select a folder/i));
+			await user.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
@@ -503,32 +426,18 @@ describe('Search view', () => {
 				'disabled',
 				''
 			);
-			userEvent.click(screen.getByText(/home/i));
+			await user.click(screen.getByText(/home/i));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /choose folder/i })).not.toHaveAttribute(
 					'disabled',
 					''
 				)
 			);
-			act(() => {
-				userEvent.click(screen.getByText(/search also in contained folders/i));
-			});
+			await user.click(screen.getByText(/search also in contained folders/i));
 			await screen.findByTestId('icon: Square');
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /choose folder/i }));
-			});
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
+			await user.click(screen.getByRole('button', { name: /choose folder/i }));
 			await screen.findByText(/home/i);
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /search/i }));
-			});
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
+			await user.click(screen.getByRole('button', { name: /search/i }));
 			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
@@ -571,10 +480,6 @@ describe('Search view', () => {
 				expect.anything()
 			);
 			expect(screen.getByRole('button', { name: /4 advanced filter/i })).toBeVisible();
-			act(() => {
-				// run timers of displayer
-				jest.runOnlyPendingTimers();
-			});
 		});
 
 		test('search action run a search and results are shown in the list', async () => {
@@ -590,7 +495,7 @@ describe('Search view', () => {
 					)
 				)
 			);
-			render(
+			const { user } = setup(
 				<SearchView
 					useQuery={useQuery}
 					ResultsHeader={ResultsHeader}
@@ -603,29 +508,21 @@ describe('Search view', () => {
 			await screen.findByText(/view files and folders/i);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
+			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByRole('button', { name: /search/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
-			act(() => {
-				userEvent.click(screen.getByText(/^flagged/i));
-			});
+			await user.click(screen.getByText(/^flagged/i));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
-			act(() => {
-				userEvent.click(screen.getByRole('button', { name: /search/i }));
-			});
+			await user.click(screen.getByRole('button', { name: /search/i }));
 			await screen.findByText(nodes[0].name);
 			expect(screen.getByText(nodes[0].name)).toBeVisible();
 			expect(screen.getByText(nodes[nodes.length - 1].name)).toBeVisible();
-			act(() => {
-				// run timers of displayer
-				jest.runOnlyPendingTimers();
-			});
 		});
 
 		test('Close modal action does not run a search', async () => {
@@ -635,7 +532,7 @@ describe('Search view', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
-			render(
+			const { user } = setup(
 				<SearchView
 					useQuery={useQuery}
 					ResultsHeader={ResultsHeader}
@@ -648,26 +545,18 @@ describe('Search view', () => {
 			await screen.findByText(/view files and folders/i);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			userEvent.click(screen.getByRole('button', { name: /advanced filter/i }));
+			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByRole('button', { name: /search/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
 			expect(screen.getByRole('button', { name: /search/i })).toHaveAttribute('disabled', '');
-			act(() => {
-				userEvent.click(screen.getByText(/^flagged/i));
-			});
+			await user.click(screen.getByText(/^flagged/i));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
-			act(() => {
-				userEvent.click(screen.getByTestId('icon: Close'));
-			});
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
+			await user.click(screen.getByTestId('icon: Close'));
 			expect(screen.queryByRole('button', { name: /search/i })).not.toBeInTheDocument();
 			expect(mockedFindNodes).not.toHaveBeenCalled();
 			expect(screen.getByText(/no search executed/i)).toBeVisible();
