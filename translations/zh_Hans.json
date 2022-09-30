@@ -44,7 +44,7 @@
                 "owner": "所有者",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "编辑{{username}}的协作",
+                        "collaborator": "编辑的协作",
                         "you": "编辑您的协作"
                     },
                     "remove": {

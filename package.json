@@ -1,13 +1,13 @@
 {
 	"name": "carbonio-files-ui",
-	"version": "0.1.10",
+	"version": "0.2.0",
 	"description": "Files module for Zextras Carbonio",
 	"main": "src/app.jsx",
 	"scripts": {
 		"build": "sdk build",
 		"start": "sdk watch",
 		"deploy": "sdk deploy",
-		"test": "jest --maxWorkers=20%",
+		"test": "jest --maxWorkers=2",
 		"prepare": "is-ci || husky install",
 		"test:watch": "jest --watch",
 		"type-check": "tsc --noEmit",
@@ -72,8 +72,8 @@
 	},
 	"dependencies": {
 		"@apollo/client": "~3.6.8",
-		"@zextras/carbonio-design-system": "^0.4.0",
-		"@zextras/carbonio-shell-ui": "^0.4.36",
+		"@zextras/carbonio-design-system": "^0.4.1",
+		"@zextras/carbonio-shell-ui": "0.4.36",
 		"@zextras/carbonio-ui-preview": "^0.2.1",
 		"core-js": "^3.25.2",
 		"graphql": "^16.6.0",
