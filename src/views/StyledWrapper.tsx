@@ -6,11 +6,23 @@
 
 import React from 'react';
 
-import { ThemeProvider } from '@zextras/carbonio-design-system';
+import { createTheme, ThemeProvider } from '@zextras/carbonio-design-system';
 import { createGlobalStyle, DefaultTheme } from 'styled-components';
 
-import { AnimatedLoader } from './carbonio-files-ui-common/views/components/icons/AnimatedLoader';
-import { AnimatedUpload } from './carbonio-files-ui-common/views/components/icons/AnimatedUpload';
+import { AnimatedLoader } from '../carbonio-files-ui-common/views/components/icons/AnimatedLoader';
+import { AnimatedUpload } from '../carbonio-files-ui-common/views/components/icons/AnimatedUpload';
+import { MuiThemeProvider } from './MuiThemeProvider';
+
+const baseTheme = createTheme({});
+
+const extendedTheme = {
+	...baseTheme,
+	icons: {
+		...baseTheme.icons,
+		AnimatedLoader,
+		AnimatedUpload
+	}
+};
 
 const themeOverride = (theme: DefaultTheme): DefaultTheme => ({
 	...theme,
@@ -32,7 +44,7 @@ const GlobalStyle = createGlobalStyle`
 const StyledWrapper: React.FC = ({ children }) => (
 	<ThemeProvider loadDefaultFont={false} extension={themeOverride}>
 		<GlobalStyle />
-		{children}
+		<MuiThemeProvider theme={extendedTheme}>{children}</MuiThemeProvider>
 	</ThemeProvider>
 );
 

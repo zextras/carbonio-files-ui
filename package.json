@@ -72,6 +72,10 @@
 	},
 	"dependencies": {
 		"@apollo/client": "~3.6.8",
+		"@emotion/react": "^11.10.4",
+		"@emotion/styled": "^11.10.4",
+		"@fontsource/roboto": "^4.5.8",
+		"@mui/material": "^5.10.7",
 		"@zextras/carbonio-design-system": "^0.4.1",
 		"@zextras/carbonio-shell-ui": "0.4.36",
 		"@zextras/carbonio-ui-preview": "^0.2.1",
