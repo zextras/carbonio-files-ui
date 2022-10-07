@@ -5,39 +5,57 @@
  */
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { Palette } from '@mui/material';
-import { PaletteColor, SimplePaletteColorOptions } from '@mui/material/styles';
+import React from 'react';
+
 import { Theme as DSTheme } from '@zextras/carbonio-design-system';
 
-interface DSPaletteColor {
-	[key: keyof DSTheme['palette'][string]]: string;
-}
-
-interface DSPalette {
-	[key: keyof DSTheme['palette']]: PaletteColor;
-}
-
-interface DSPaletteOptions {
-	[key: keyof DSTheme['palette']]: SimplePaletteColorOptions;
-}
+type DsPaletteAndAvatarKeys = keyof DSTheme['palette'] | keyof DSTheme['avatarColors'];
 
 declare module '@mui/material/styles' {
 	interface Theme extends DSTheme {}
 	// allow configuration using `createTheme`
-	interface ThemeOptions extends Partial<Omit<DSTheme, 'breakpoints' | 'windowObj'>> {}
+	interface ThemeOptions
+		extends Partial<Omit<DSTheme, 'breakpoints' | 'windowObj' | 'avatarColors'>> {}
 
-	interface Palette extends DSPalette {}
-	interface PaletteOptions extends DSPaletteOptions {}
+	interface Palette extends Record<DsPaletteAndAvatarKeys, PaletteColor> {}
+	interface PaletteOptions extends Record<DsPaletteAndAvatarKeys, SimplePaletteColorOptions> {}
 
-	interface PaletteColor extends DSPaletteColor {}
-	interface SimplePaletteColorOptions extends DSPaletteColor {}
+	interface PaletteColor extends Record<keyof DSTheme[DsPaletteAndAvatarKeys][string], string> {}
+	interface TypeText extends Record<keyof DSTheme[DsPaletteAndAvatarKeys][string], string> {}
+	interface SimplePaletteColorOptions
+		extends Record<keyof DSTheme[DsPaletteAndAvatarKeys][string], string> {}
+
+	interface TypographyVariants {
+		light: React.CSSProperties;
+	}
+
+	// allow configuration using `createTheme`
+	interface TypographyVariantsOptions {
+		light?: React.CSSProperties;
+	}
 }
 
 declare module '@mui/material/Button' {
 	interface ButtonPropsColorOverrides {
-		[key: keyof DSTheme['palette']]: true;
+		[key: keyof DSTheme[DsPaletteAndAvatarKeys]]: true;
 	}
-	interface ButtonOwnerState {
-		backgroundColor: keyof Palette;
+}
+
+declare module '@mui/material/IconButton' {
+	interface IconButtonPropsColorOverrides
+		extends Record<keyof DSTheme[DsPaletteAndAvatarKeys], true> {}
+}
+
+declare module '@mui/material/Chip' {
+	interface ChipPropsSizeOverrides {
+		large: true;
+	}
+
+	interface ChipPropsColorOverrides extends Record<keyof DSTheme[DsPaletteAndAvatarKeys], true> {}
+}
+
+declare module '@mui/material/Typography' {
+	interface TypographyPropsVariantOverrides {
+		light: true;
 	}
 }

@@ -27,6 +27,11 @@ import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
 
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
 const LazySidebarView = lazy(() =>
