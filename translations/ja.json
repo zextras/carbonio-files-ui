@@ -6,7 +6,12 @@
                 "upload": "アップロード",
                 "document": "新しいドキュメント",
                 "presentation": "新しいプレゼンテーション",
-                "spreadsheet": "新しいスプレッドシート"
+                "spreadsheet": "新しいスプレッドシート",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
@@ -112,7 +117,9 @@
         "revokeCollaborationLink": {
             "button": {
                 "confirm": "解除"
-            }
+            },
+            "header": "{{nodeName}}コラボレーションリンクを取り消す",
+            "body": "このリンクを取り消すと、このリンクを使用して新しい共有を作成できなくなります。すでにコラボレーション リンクを使用しているユーザーはすべて、ノードへのアクセスを保持します。"
         }
     },
     "node": {
@@ -255,7 +262,11 @@
         "collaborationLink": {
             "actionLabel": {
                 "copyLink": "リンクをコピーする"
-            }
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "新しいコラボレーションリンクが生成されました"
+            },
+            "copyCollaborationLink": "コラボレーションリンクをコピーしました"
         }
     },
     "empty": {
@@ -336,11 +347,11 @@
                 "owner": "所有者",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "{{username}}のコラボレーションを編集する",
+                        "collaborator": "コラボレーションを編集する",
                         "you": "コラボレーションを編集する"
                     },
                     "remove": {
-                        "collaborator": "{{username}}を削除する",
+                        "collaborator": "コラボレーションを削除する",
                         "yourself": "コラボレーションを削除する"
                     }
                 }
@@ -428,7 +439,12 @@
                 "cloneAsCurrent": "現在として複製する",
                 "openDocumentVersion": "ドキュメントバージョンを開く",
                 "tooltip": {
-                    "disabledByPermission": "正しい権限がありません"
+                    "disabledByPermission": "正しい権限がありません",
+                    "disabledByVersionKeepForever": "永久に保持するようにマークされたバージョンは削除できません",
+                    "disabledByMaxVersion": "バージョンの最大数に達しました",
+                    "disabledByMaxKeepVersion": "永久に保持できるバージョンの最大数に達しました",
+                    "disabledByDocs": "このバージョンはオンラインエディタで開くことができません",
+                    "disabledByDeleteCurrent": "現在のバージョンは削除できません"
                 }
             },
             "button": {
@@ -440,7 +456,7 @@
                 "lastWeek": "先週",
                 "olderVersions": "古いバージョン"
             },
-            "mainHint": "任意のファイルバージョンを手動で削除するか、現在のバージョンとして復元することができます。 永久に保持したいバージョンを1つ以上選択してください。",
+            "mainHint": "ファイルは、ファイルの最後の{{maxVersions}}バージョンを保存します。任意のファイルバージョンを手動で削除するか、現在のバージョンとして復元することができます。永久に保持したい1つまたは複数のバージョンを選択してください。",
             "row": {
                 "clonedIcon": {
                     "tooltip2": "バージョン{{versionNumber}}（削除済みのバージョン）から複製されました",
@@ -740,7 +756,8 @@
             "undo": "元に戻す",
             "addLink": "リンクを追加する",
             "limitReached": "パブリックリンクの最大数に達しました",
-            "title": "パブリックリンク"
+            "title": "パブリックリンク",
+            "description": "リンクにアクセスできる内部および外部ユーザーは、ファイルをダウンロードできます。"
         },
         "link": {
             "edit": "編集",
@@ -809,6 +826,10 @@
             "title": {
                 "enabled": "ドラッグ＆ドロップモード",
                 "disabled": "ドラッグ＆ドロップモード"
+            },
+            "message": {
+                "enabled": "アイテムをこのフォルダに素早く移動するには\nここにドロップしてください",
+                "disabled": "このエリアにアイテムをドロップすることはできません"
             }
         }
     },
@@ -816,6 +837,31 @@
         "button": {
             "revoke": "解除",
             "generateLink": "リンクを作成"
+        },
+        "title": "コラボレーションリンク",
+        "row": {
+            "title": {
+                "writeAndShare": "書いて共有する",
+                "ReadAndShare": "読んで共有する"
+            },
+            "placeholder": "ノードを共有するためにリンクを作成する"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "コラボレーションリンクをコピーする"
+                }
+            }
+        },
+        "description": "内部ユーザーは、リンクを開くことでアクセスを許可されます。付与された権限はいつでも変更できます。"
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "このメールアドレスは、Carbonioユーザーに関連付けられていません"
+                }
+            }
         }
     }
 }
