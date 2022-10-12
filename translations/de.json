@@ -6,7 +6,12 @@
                 "upload": "Upload",
                 "document": "Neues Dokument",
                 "presentation": "Neue Präsentation",
-                "spreadsheet": "Neues Tabellenblatt"
+                "spreadsheet": "Neues Tabellenblatt",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
@@ -149,7 +154,9 @@
         "revokeCollaborationLink": {
             "button": {
                 "confirm": "Entziehen"
-            }
+            },
+            "header": "{{nodeName}} Mitarbeits-Link widerrufen",
+            "body": "Wenn Sie diesen Link widerrufen, sperren Sie die Möglichkeit, neue Shares damit zu erstellen. Jeder, der diesen Mitarbeits-Link bereits genutzt hat, wird den Zugriff auf diesen Knotenpunkt beibehalten."
         }
     },
     "node": {
@@ -292,7 +299,11 @@
         "collaborationLink": {
             "actionLabel": {
                 "copyLink": "Link kopieren"
-            }
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "Neuer Link zur Mitarbeit erstellt"
+            },
+            "copyCollaborationLink": "Mitarbeits-Link kopiert"
         }
     },
     "actions": {
@@ -360,11 +371,11 @@
                 "owner": "Besitzer",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "{{username}}'s Zusammenarbeit bearbeiten",
+                        "collaborator": "Zusammenarbeit bearbeiten",
                         "you": "Bearbeiten Sie Ihre Zusammenarbeit"
                     },
                     "remove": {
-                        "collaborator": "{{username}} entfernen",
+                        "collaborator": "Zusammenarbeit entfernen",
                         "yourself": "Ihre Zusammenarbeit beenden"
                     }
                 }
@@ -423,7 +434,12 @@
                 "openDocumentVersion": "Version des Dokuments öffnen",
                 "cloneAsCurrent": "Klonen wie aktuell",
                 "tooltip": {
-                    "disabledByPermission": "Sie haben nicht die richtigen Rechte"
+                    "disabledByPermission": "Sie haben nicht die richtigen Rechte",
+                    "disabledByVersionKeepForever": "Versionen, die als dauerhaft gehalten gekennzeichnet sind, können nicht gelöscht werden",
+                    "disabledByMaxVersion": "Sie haben die maximale Anzahl an Versionen erreicht",
+                    "disabledByMaxKeepVersion": "Sie haben die maximale Anzahl der Versionen erreicht, die für immer gehalten werden können",
+                    "disabledByDocs": "Diese Version kann nicht mit einem Online Editor geöffnet werden",
+                    "disabledByDeleteCurrent": "Aktuelle Version kann nicht gelöscht werden"
                 }
             },
             "button": {
@@ -435,7 +451,7 @@
                 "lastWeek": "Letzte Woche",
                 "olderVersions": "Ältere Versionen"
             },
-            "mainHint": "Sie können jede beliebige Dateiversion manuell löschen oder eine Version als aktuelle Version wiederherstellen. Wählen Sie eine oder mehrere Versionen aus, die Sie für immer behalten möchten.",
+            "mainHint": "Files speichert die letzten {{maxVersions}} Versionen Ihrer Dateien. Sie können jede beliebige Dateiversion manuell löschen oder eine Version als aktuelle Version wiederherstellen. Wählen Sie eine oder mehrere Versionen aus, die Sie für immer behalten möchten.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Geklont von Version {{Versionsnummer}} ({{cloneDate}})",
@@ -740,7 +756,8 @@
             "undo": "Rückgängig machen",
             "addLink": "Link hinzufügen",
             "limitReached": "Die maximale Anzahl der öffentlichen Links ist erreicht",
-            "title": "Publieke links"
+            "title": "Publieke links",
+            "description": "Interne und externe Benutzer, die Zugriff auf den Link haben, können die Datei herunterladen."
         },
         "link": {
             "edit": "Bearbeiten",
@@ -809,6 +826,10 @@
             "title": {
                 "enabled": "Drag&Drop Modus",
                 "disabled": "Drag&Drop Modus"
+            },
+            "message": {
+                "enabled": "Legen Sie hier Ihre Elemente ab\n, um Sie schnell in diesen Ordner zu verschieben",
+                "disabled": "Sie können Ihre Elemente in diesem Bereich ablegen"
             }
         }
     },
@@ -816,6 +837,31 @@
         "button": {
             "revoke": "Entziehen",
             "generateLink": "Link erstellen"
+        },
+        "title": "Links zur Mitarbeit",
+        "row": {
+            "title": {
+                "writeAndShare": "Schreiben und teilen",
+                "ReadAndShare": "Lesen und teilen"
+            },
+            "placeholder": "Einen Link erstellen, um den Knotenpunkt zu teilen"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Link zur Mitarbeit kopieren"
+                }
+            }
+        },
+        "description": "Interne Benutzer werden die Berechtigungen durch Öffnen des Links erhalten. Sie können die vergebenen Berechtigungen jederzeit ändern."
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "Diese E-Mail Adresse ist nicht mit einem Carbonio Nutzer assoziiert"
+                }
+            }
         }
     }
 }
