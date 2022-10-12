@@ -6,7 +6,12 @@
                 "upload": "Unggah",
                 "document": "Dokumen Baru",
                 "presentation": "Presentasi Baru",
-                "spreadsheet": "Lembar Kerja Baru"
+                "spreadsheet": "Lembar Kerja Baru",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
@@ -127,7 +132,9 @@
         "revokeCollaborationLink": {
             "button": {
                 "confirm": "Batalkan"
-            }
+            },
+            "header": "Cabut tautan kolaborasi {{nodeName}}",
+            "body": "Dengan mencabut tautan ini, Anda menghalangi kemungkinan untuk membuat berbagi baru dengannya. Semua orang yang telah menggunakan tautan kolaborasi tetap memiliki akses ke node."
         }
     },
     "node": {
@@ -270,7 +277,11 @@
         "collaborationLink": {
             "actionLabel": {
                 "copyLink": "Salin Tautan"
-            }
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "Tautan Kolaborasi Baru dibuat"
+            },
+            "copyCollaborationLink": "Tautan kolaborasi disalin"
         }
     },
     "empty": {
@@ -336,11 +347,11 @@
                 "owner": "Pemilik",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "Edit kolaborasi {{username}}",
+                        "collaborator": "Edit kolaborasi",
                         "you": "Edit kolaborasi Anda"
                     },
                     "remove": {
-                        "collaborator": "Hapus {{username}}",
+                        "collaborator": "Hapus kolaborasi",
                         "yourself": "Hapus kolaborasi Anda"
                     }
                 }
@@ -428,7 +439,12 @@
                 "cloneAsCurrent": "Gandakan sebagai saat ini",
                 "openDocumentVersion": "Buka versi dokumen",
                 "tooltip": {
-                    "disabledByPermission": "Anda tidak memiliki izin yang benar"
+                    "disabledByPermission": "Anda tidak memiliki izin yang benar",
+                    "disabledByVersionKeepForever": "Versi yang ditandai untuk disimpan selamanya tidak dapat dihapus",
+                    "disabledByMaxVersion": "Anda telah mencapai jumlah maksimum versi",
+                    "disabledByMaxKeepVersion": "Anda telah mencapai jumlah maksimum versi untuk disimpan selamanya",
+                    "disabledByDocs": "Versi ini tidak dapat dibuka oleh editor online",
+                    "disabledByDeleteCurrent": "Versi saat ini tidak dapat dihapus"
                 }
             },
             "button": {
@@ -440,7 +456,7 @@
                 "lastWeek": "Minggu lalu",
                 "olderVersions": "Versi lama"
             },
-            "mainHint": "Anda dapat menghapus versi file apa pun secara manual atau memulihkannya sebagai versi saat ini. Pilih satu atau beberapa versi yang ingin disimpan selamanya.",
+            "mainHint": "File menyimpan versi {{maxVersions}} terakhir file Anda. Anda dapat menghapus versi file apa pun secara manual atau memulihkannya sebagai versi saat ini. Pilih satu atau beberapa versi yang ingin disimpan selamanya.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Digandakan dari versi {{versionNumber}} ({{cloneDate}})",
@@ -699,7 +715,8 @@
             "undo": "Batalkan",
             "addLink": "Tambahkan Tautan",
             "limitReached": "Maksimum jumlah tautan publik telah tercapai",
-            "title": "Tautan Publik"
+            "title": "Tautan Publik",
+            "description": "Pengguna internal dan eksternal yang memiliki akses ke tautan dapat mengunduh file."
         },
         "link": {
             "remove": "Hapus",
@@ -809,6 +826,10 @@
             "title": {
                 "enabled": "Mode Seret & Lepas",
                 "disabled": "Mode Seret & Lepas"
+            },
+            "message": {
+                "enabled": "Letakkan item Anda di sini \n untuk menambahkan dengan cepat ke folder ini",
+                "disabled": "Anda tidak dapat menempatkan item di area ini"
             }
         }
     },
@@ -816,6 +837,31 @@
         "button": {
             "revoke": "Batalkan",
             "generateLink": "Buat Tautan"
+        },
+        "title": "Tautan Kolaborasi",
+        "row": {
+            "title": {
+                "writeAndShare": "Tulis dan Bagikan",
+                "ReadAndShare": "Baca dan Bagikan"
+            },
+            "placeholder": "Buat tautan untuk berbagi node"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Salin tautan kolaborasi"
+                }
+            }
+        },
+        "description": "Pengguna internal akan menerima izin dengan membukta tautan. Anda dapat selalu mengubah izin yang diberikan."
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "Alamat email ini tidak terkait dengan pengguna Carbonio"
+                }
+            }
         }
     }
 }

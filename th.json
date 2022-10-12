@@ -6,7 +6,12 @@
                 "upload": "อัปโหลด",
                 "document": "เอกสารใหม่",
                 "presentation": "การนำเสนอใหม่",
-                "spreadsheet": "สเปรดชีตใหม่"
+                "spreadsheet": "สเปรดชีตใหม่",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
@@ -149,7 +154,9 @@
         "revokeCollaborationLink": {
             "button": {
                 "confirm": "เพิกถอน"
-            }
+            },
+            "header": "เพิกถอนลิงก์การทำงานร่วมกันของ {{nodeName}}",
+            "body": "การเพิกถอนลิงก์นี้ แสดงว่าคุณกำลังปิดกั้นความเป็นไปได้ในการสร้างการแชร์ใหม่ด้วยลิงก์นี้ โดยทุกคนที่เข้าใช้ลิงก์การทำงานร่วมกันแล้วจะสามารถเข้าถึงโหนดต่อได้"
         }
     },
     "node": {
@@ -292,7 +299,11 @@
         "collaborationLink": {
             "actionLabel": {
                 "copyLink": "คัดลอกลิงก์"
-            }
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "สร้างลิงก์การทำงานร่วมกันใหม่แล้ว"
+            },
+            "copyCollaborationLink": "คัดลอกลิงก์การทำงานร่วมกันแล้ว"
         }
     },
     "actions": {
@@ -336,11 +347,11 @@
                 "owner": "เจ้าของ",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "แก้ไขการทำงานร่วมกันของ {{username}}",
+                        "collaborator": "แก้ไขการทำงานร่วมกัน",
                         "you": "แก้ไขการทำงานร่วมกันของคุณ"
                     },
                     "remove": {
-                        "collaborator": "ลบ {{username}}",
+                        "collaborator": "ลบการทำงานร่วมกัน",
                         "yourself": "ลบการทำงานร่วมกันของคุณ"
                     }
                 }
@@ -428,14 +439,19 @@
                 "cloneAsCurrent": "ลอกแบบให้เป็นปัจจุบัน",
                 "openDocumentVersion": "เปิดเวอร์ชันเอกสาร",
                 "tooltip": {
-                    "disabledByPermission": "คุณไม่มีสิทธิ์ที่ถูกต้องในการใช้งาน"
+                    "disabledByPermission": "คุณไม่มีสิทธิ์ที่ถูกต้องในการใช้งาน",
+                    "disabledByVersionKeepForever": "เวอร์ชันที่ทำเครื่องหมายว่าเก็บไว้ตลอดไปไม่สามารถลบได้",
+                    "disabledByMaxVersion": "คุณมีเวอร์ชันถึงจำนวนสูงสุดแล้ว",
+                    "disabledByMaxKeepVersion": "คุณมีเวอร์ชันถึงจำนวนสูงสุดที่จะเก็บไว้ตลอดไปแล้ว",
+                    "disabledByDocs": "เวอร์ชันนี้ไม่สามารถเปิดได้โดยตัวแก้ไขออนไลน์",
+                    "disabledByDeleteCurrent": "ไม่สามารถลบเวอร์ชันปัจจุบันได้"
                 }
             },
             "button": {
                 "upload": "อัปโหลดเวอร์ชั่น",
                 "purgeAllVersions": "ล้างทุกเวอร์ชั่น"
             },
-            "mainHint": "คุณสามารถลบไฟล์เวอร์ชันใด ๆ หรือกู้คืนเป็นเวอร์ชันปัจจุบันได้ด้วยตนเอง โปรดเลือกอย่างน้อยหนึ่งเวอร์ชันที่คุณต้องการเก็บไว้ตลอดไป",
+            "mainHint": "Files บันทึกไฟล์เวอร์ชัน {{maxVersions}} ล่าสุดของคุณ คุณสามารถลบไฟล์เวอร์ชันใดก็ได้ด้วยตนเองหรือกู้คืนเป็นเวอร์ชันปัจจุบัน เลือกอย่างน้อยหนึ่งเวอร์ชันที่คุณต้องการเก็บไว้ตลอดไป",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "ลอกแบบมาจากเวอร์ชัน {{versionNumber}} ({{cloneDate}})",
@@ -730,7 +746,8 @@
             "undo": "ย้อนกลับ",
             "addLink": "เพิ่มลิงก์",
             "limitReached": "ลิงก์สาธารณะถึงจำนวนสูงสุดแล้ว",
-            "title": "ลิงก์สาธารณะ"
+            "title": "ลิงก์สาธารณะ",
+            "description": "ผู้ใช้ภายในและภายนอกที่มีสิทธิ์เข้าถึงลิงก์สามารถดาวน์โหลดไฟล์ได้"
         },
         "link": {
             "edit": "แก้ไข",
@@ -809,6 +826,10 @@
             "title": {
                 "enabled": "โหมด Drag&Drop",
                 "disabled": "โหมด Drag&Drop"
+            },
+            "message": {
+                "enabled": "วางรายการของคุณที่นี่\n  เพื่อย้ายไปยังโฟลเดอร์นี้อย่างรวดเร็ว",
+                "disabled": "ห้ามดรอปไอเทมในบริเวณนี้"
             }
         }
     },
@@ -816,6 +837,31 @@
         "button": {
             "revoke": "เพิกถอน",
             "generateLink": "สร้างลิงก์"
+        },
+        "title": "ลิงค์การทำงานร่วมกัน",
+        "row": {
+            "title": {
+                "writeAndShare": "เขียนและแชร์",
+                "ReadAndShare": "อ่านและแชร์"
+            },
+            "placeholder": "สร้างลิงค์เพื่อแชร์โหนด"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "คัดลอกลิงค์การทำงานร่วมกัน"
+                }
+            }
+        },
+        "description": "ผู้ใช้ภายในจะได้รับสิทธิ์โดยการเปิดลิงก์ คุณสามารถแก้ไขการอนุญาตที่ได้รับ"
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "ที่อยู่อีเมลนี้ไม่เกี่ยวข้องกับผู้ใช้ Carbonio"
+                }
+            }
         }
     }
 }

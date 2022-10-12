@@ -6,7 +6,12 @@
                 "upload": "Upload",
                 "document": "Nouveau document",
                 "presentation": "Nouvelle présentation",
-                "spreadsheet": "Nouveau tableau"
+                "spreadsheet": "Nouveau tableau",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
