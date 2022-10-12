@@ -623,7 +623,12 @@
                 "document": "Nowy dokument",
                 "presentation": "Nowa prezentacja",
                 "spreadsheet": "Nowy arkusz",
-                "upload": "Prześlij"
+                "upload": "Prześlij",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
@@ -791,7 +796,7 @@
         }
     },
     "label": {
-        "app_name": "Pliki"
+        "app_name": "Files"
     },
     "preview": {
         "actions": {

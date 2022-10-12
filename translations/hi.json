@@ -6,7 +6,12 @@
                 "upload": "अपलोड करें",
                 "document": "नया डॉक्युमेंट",
                 "presentation": "नया प्रेज़ेटेशन",
-                "spreadsheet": "नई स्प्रेडशीट"
+                "spreadsheet": "नई स्प्रेडशीट",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
@@ -220,7 +225,9 @@
         "revokeCollaborationLink": {
             "button": {
                 "confirm": "रद्द करना"
-            }
+            },
+            "header": "{{nodeName}} सहयोग लिंक वापस लें",
+            "body": "लिंक हटा कर आप इसके साथ नए शेयर बनाने की संभावना को ब्लॉक कर देंगे। जिसने पहले ही सहयोग लिंक इस्तेमाल कर ली है उसके पास नोड की एक्सेस बनी रहेगी।"
         }
     },
     "snackbar": {
@@ -292,7 +299,11 @@
         "collaborationLink": {
             "actionLabel": {
                 "copyLink": "लिंक कॉपी करें"
-            }
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "नई सहयोग लिंक बनाई गई"
+            },
+            "copyCollaborationLink": "सहायोग लिंक कॉपी हुई"
         }
     },
     "actions": {
@@ -361,10 +372,10 @@
                 "tooltip": {
                     "edit": {
                         "you": "अपने सहयोग को बदलें",
-                        "collaborator": "{{username}} का सहयोग एडिट करें"
+                        "collaborator": "सहयोग एडिट करें"
                     },
                     "remove": {
-                        "collaborator": "{{username}} को हटाएँ",
+                        "collaborator": "सहयोग हटाएँ",
                         "yourself": "अपने सहयोग को हटाएँ"
                     }
                 }
@@ -428,7 +439,12 @@
                 "cloneAsCurrent": "वर्तमान के रूप में क्लोन करें",
                 "openDocumentVersion": "डॉक्युमेंट वर्शन खोलें",
                 "tooltip": {
-                    "disabledByPermission": "आपके पास सही अनुमतियाँ नहीं हैं"
+                    "disabledByPermission": "आपके पास सही अनुमतियाँ नहीं हैं",
+                    "disabledByVersionKeepForever": "हमेशा रखे जाने के लिए चिन्हित वर्शन डिलीट नहीं किए जा सकते",
+                    "disabledByMaxVersion": "आप वर्शन की अधिकतम संख्या तक पहुँच चुके हैं",
+                    "disabledByMaxKeepVersion": "आप हमेशा रखने के वर्शन की अधिकतम संख्या तक पहुँच चुके हैं",
+                    "disabledByDocs": "वर्शन किसी और ऑनलाइन एडिटर से खोला नहीं जा सकता",
+                    "disabledByDeleteCurrent": "वर्तमान वर्शन डिलीट नहीं किया जा सकता"
                 }
             },
             "button": {
@@ -440,7 +456,7 @@
                 "lastWeek": "पिछले हफ्ते",
                 "olderVersions": "पुराने वर्शन"
             },
-            "mainHint": "आप किसी फ़ाइल वर्ज़न को मैनुअली डिलीट कर सकते हैं या उसे वर्तमान वर्ज़न में वापस ला सकते हैं। जिस एक या ज़्यादा वर्ज़न को आपको हमेशा के लिए रखना है उसे सिलेक्ट कर लें।",
+            "mainHint": "Files आपकी फाइलों के आखिरी {{maxVersions}} वर्शन को सेव करती है। आप किसी फ़ाइल वर्ज़न को मैनुअली डिलीट कर सकते हैं या उसे वर्तमान वर्ज़न में वापस ला सकते हैं। जिस एक या ज़्यादा वर्ज़न को आपको हमेशा के लिए रखना है उसे सिलेक्ट कर लें।",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "वर्शन {{versionNumber}} ({{cloneDate}}) से क्लोन",
@@ -746,7 +762,8 @@
             "undo": "अनडू करें",
             "title": "पब्लिक लिंक्स",
             "addLink": "लिंक जोड़ें",
-            "limitReached": "पब्लिक लिंक की अधिकतम सीमा पूरी हो गई है"
+            "limitReached": "पब्लिक लिंक की अधिकतम सीमा पूरी हो गई है",
+            "description": "इंटरनल और एक्सटर्नल यूजर जिन्हें लिंक की एक्सेस है फाइल डाउनलोड कर सकते हैं।"
         },
         "link": {
             "edit": "बदलाव करें",
@@ -809,6 +826,10 @@
             "title": {
                 "enabled": "उठा के गिराएं",
                 "disabled": "उठा के गिराएं"
+            },
+            "message": {
+                "enabled": "इस फोल्डर में अपने आइटम जल्दी से ले जाने के लिए\n उन्हें यहाँ ड्रॉप करें",
+                "disabled": "आप इस एरिया में आइटम ड्रॉप नहीं कर सकते"
             }
         }
     },
@@ -816,6 +837,31 @@
         "button": {
             "revoke": "रद्द करना",
             "generateLink": "लिंक बनाएँ"
+        },
+        "title": "सहयोग की लिंक्स",
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "सहयोग करने की लिंक कॉपी करें"
+                }
+            }
+        },
+        "row": {
+            "title": {
+                "writeAndShare": "लिखें और शेयर करें",
+                "ReadAndShare": "पढ़ें और शेयर करें"
+            },
+            "placeholder": "नोड शेयर करने के लिए लिंक बनाएँ"
+        },
+        "description": "इंटरनल यूजर लिंक खोलकर अनुमति पा लेंगे। आप दी गई अनुमतियों को कभी भी बदल सकते हैं।"
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "यह ईमेल पता किसी Carbonio यूजर से नहीं जुड़ा है"
+                }
+            }
         }
     }
 }

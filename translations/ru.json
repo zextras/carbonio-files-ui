@@ -297,7 +297,12 @@
                 "upload": "Загрузить",
                 "document": "Новый документ",
                 "presentation": "Новая презентация",
-                "spreadsheet": "Новая таблица"
+                "spreadsheet": "Новая таблица",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
