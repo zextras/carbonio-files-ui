@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/zextras/carbonio-files-ui/compare/v0.2.1...v0.2.2) (2022-10-17)
+
+
+### Bug Fixes
+
+* apply TabBar breaking change ([e98a931](https://github.com/zextras/carbonio-files-ui/commit/e98a931283e89abae25bb2197dd5455453a87361)), closes [#128](https://github.com/zextras/carbonio-files-ui/issues/128)
+* compose modals with DS components and prevent overflowing on resize ([9c6ff41](https://github.com/zextras/carbonio-files-ui/commit/9c6ff412fb0524e0d9c3a3f3452bd1b1afd51de5)), closes [#129](https://github.com/zextras/carbonio-files-ui/issues/129)
+
 ### [0.2.1](https://github.com/zextras/carbonio-files-ui/compare/v0.2.0...v0.2.1) (2022-10-12)
 
 ## [0.2.0](https://github.com/zextras/carbonio-files-ui/compare/v0.1.10...v0.2.0) (2022-09-29)
