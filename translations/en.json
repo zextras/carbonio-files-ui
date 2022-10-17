@@ -395,6 +395,7 @@
         "code_Generic": "Something went wrong",
         "code_LINK_NOT_FOUND": "Action failed. This link no longer exists",
         "code_MISSING_FIELD": "An internal error occurred, not all information of this object has been recovered",
+        "code_NODE_COPY_ERROR": "Sorry, copy of the item failed. Try again",
         "code_NODE_DUPLICATED": "There is a file with the same name in this folder",
         "code_NODE_NOT_FOUND": "It seems that this object doesn't exist, or you do not have permission to access it",
         "code_NODE_WRITE_ERROR": "It seems that this object cannot be edited or that you do not have permission to edit it",
