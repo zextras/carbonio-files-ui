@@ -9,6 +9,7 @@ import { act, configure } from '@testing-library/react';
 import failOnConsole from 'jest-fail-on-console';
 
 import buildClient from './carbonio-files-ui-common/apollo';
+import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar';
 import { draggedItemsVar } from './carbonio-files-ui-common/apollo/dragAndDropVar';
 import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
@@ -50,6 +51,7 @@ beforeEach(() => {
 	uploadFunctionsVar({});
 	nodeSortVar(NODES_SORT_DEFAULT);
 	draggedItemsVar(null);
+	destinationVar({ defaultValue: undefined, currentValue: undefined });
 });
 
 beforeAll(() => {

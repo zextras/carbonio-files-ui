@@ -34,8 +34,8 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 		[t, user]
 	);
 
-	const openNewMailBoard = useCallback<React.MouseEventHandler>(
-		(event) => {
+	const openNewMailBoard = useCallback(
+		(event: React.MouseEvent<HTMLElement> | KeyboardEvent) => {
 			if (user && user.email) {
 				const contact: Contact = {
 					address: user.email,
