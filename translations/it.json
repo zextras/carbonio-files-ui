@@ -297,7 +297,12 @@
                 "upload": "Carica",
                 "document": "Nuovo Documento",
                 "presentation": "Nuova Presentazione",
-                "spreadsheet": "Nuovo Foglio di calcolo"
+                "spreadsheet": "Nuovo Foglio di calcolo",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },

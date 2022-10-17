@@ -128,7 +128,12 @@
                 "upload": "Yükle",
                 "document": "Yeni Doküman",
                 "presentation": "Yeni Sunum",
-                "spreadsheet": "Yeni Tablo"
+                "spreadsheet": "Yeni Tablo",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },

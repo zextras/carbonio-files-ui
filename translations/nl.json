@@ -116,7 +116,9 @@
         "revokeCollaborationLink": {
             "button": {
                 "confirm": "Intrekken"
-            }
+            },
+            "header": "{{nodeName}} samenwerkingslink intrekken",
+            "body": "Door deze link in te trekken, blokkeert u de mogelijkheid om er nieuwe shares mee aan te maken. Iedereen die de samenwerkingslink al heeft gebruikt, behoudt de toegang tot de node."
         }
     },
     "secondaryBar": {
@@ -202,7 +204,11 @@
         "collaborationLink": {
             "actionLabel": {
                 "copyLink": "Link kopiëren"
-            }
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "Nieuwe samenwerkingslink gegenereerd"
+            },
+            "copyCollaborationLink": "Samenwerkingslink gekopieerd"
         }
     },
     "create": {
@@ -212,7 +218,12 @@
                 "upload": "Uploaden",
                 "document": "Nieuw Document",
                 "presentation": "Nieuwe Presentatie",
-                "spreadsheet": "Nieuwe Spreadsheet"
+                "spreadsheet": "Nieuwe Spreadsheet",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
@@ -361,10 +372,10 @@
                 "tooltip": {
                     "edit": {
                         "you": "Uw samenwerking bewerken",
-                        "collaborator": "Samenwerking met {{username}} bewerken"
+                        "collaborator": "Samenwerking bewerken"
                     },
                     "remove": {
-                        "collaborator": "{{username}} verwijderen",
+                        "collaborator": "Samenwerking verwijderen",
                         "yourself": "Uw samenwerking verwijderen"
                     }
                 }
@@ -428,7 +439,12 @@
                 "cloneAsCurrent": "Als huidige clonen",
                 "openDocumentVersion": "Documentversie openen",
                 "tooltip": {
-                    "disabledByPermission": "U hebt niet de juiste toestemmingen"
+                    "disabledByPermission": "U hebt niet de juiste toestemmingen",
+                    "disabledByVersionKeepForever": "Voor altijd te bewaren versies kunnen niet worden verwijderd",
+                    "disabledByMaxVersion": "U heeft het maximale aantal versies bereikt",
+                    "disabledByMaxKeepVersion": "U heeft het maximale aantal versies bereikt dat u voor altijd kunt bewaren",
+                    "disabledByDocs": "Deze versie kan niet worden geopend door de online editor",
+                    "disabledByDeleteCurrent": "Huidige versie kan niet worden verwijderd"
                 }
             },
             "button": {
@@ -440,7 +456,7 @@
                 "lastWeek": "Vorige week",
                 "olderVersions": "Oudere versies"
             },
-            "mainHint": "U kunt handmatig elke bestandsversie verwijderen of een versie terugzetten als de huidige versie. Selecteer een of meer versies die u voor altijd wilt bewaren.",
+            "mainHint": "Files bewaart de laatste {{maxVersions}} versies van uw bestanden. U kunt handmatig elke bestandsversie verwijderen of een versie terugzetten als de huidige versie. Selecteer een of meer versies die u voor altijd wilt bewaren.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Gekloond van versie {{versionNumber}} ({{cloneDate}})",
@@ -740,7 +756,8 @@
             "undo": "Ongedaan maken",
             "addLink": "Link toevoegen",
             "title": "Öffentlicher Link",
-            "limitReached": "Het maximum aantal publieke links is bereikt"
+            "limitReached": "Het maximum aantal publieke links is bereikt",
+            "description": "Interne en externe gebruikers die toegang hebben tot de link kunnen het bestand downloaden."
         },
         "link": {
             "edit": "Bewerken",
@@ -809,6 +826,10 @@
             "title": {
                 "enabled": "Drag&Drop-modus",
                 "disabled": "Drag&Drop-modus"
+            },
+            "message": {
+                "enabled": "Drop hier uw items \n om ze snel naar deze map te verplaatsen",
+                "disabled": "U kunt uw items niet in dit gebied droppen"
             }
         }
     },
@@ -816,6 +837,31 @@
         "button": {
             "revoke": "Intrekken",
             "generateLink": "Link genereren"
+        },
+        "title": "Samenwerkingslinks",
+        "row": {
+            "title": {
+                "writeAndShare": "Schrijven en Delen",
+                "ReadAndShare": "Lezen en Delen"
+            },
+            "placeholder": "Een link maken om het knooppunt te delen"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Samenwerkingslink kopiëren"
+                }
+            }
+        },
+        "description": "Interne gebruikers krijgen de toelatingen door de link te openen. U kunt verleende toelatingen altijd wijzigen."
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "Dit e-mailadres is niet gekoppeld aan een Carbonio-gebruiker"
+                }
+            }
         }
     }
 }

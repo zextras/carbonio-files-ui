@@ -48,7 +48,7 @@
                         "you": "编辑您的协作"
                     },
                     "remove": {
-                        "collaborator": "移除{{username}}",
+                        "collaborator": "移除协作",
                         "yourself": "移除您的协作"
                     }
                 }
@@ -112,7 +112,12 @@
                 "cloneAsCurrent": "克隆为当前",
                 "openDocumentVersion": "打开文档版本",
                 "tooltip": {
-                    "disabledByPermission": "您没有合适的权限"
+                    "disabledByPermission": "您没有合适的权限",
+                    "disabledByVersionKeepForever": "标记为永久保留的版本无法被删除",
+                    "disabledByMaxVersion": "您已达到版本数上限",
+                    "disabledByMaxKeepVersion": "您已达到永久保留的最大版本数上限",
+                    "disabledByDocs": "此版本无法由在线编辑器打开",
+                    "disabledByDeleteCurrent": "当前版本无法删除"
                 }
             },
             "button": {
@@ -124,7 +129,7 @@
                 "lastWeek": "上周",
                 "olderVersions": "旧版本"
             },
-            "mainHint": "您可手动删除任意文件版本或将其还原为当前版本。选择想要保留的一个或多个版本。",
+            "mainHint": "Files 中将对文件的最近 {{maxVersions}} 个版本进行保留。选择想要保留的一个或多个版本。",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "克隆自版本 {{versionNumber}}（{{cloneDate}}）",
@@ -334,7 +339,11 @@
         "collaborationLink": {
             "actionLabel": {
                 "copyLink": "复制链接"
-            }
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "新协作链接已生成"
+            },
+            "copyCollaborationLink": "协作链接已复制"
         }
     },
     "actions": {
@@ -364,7 +373,12 @@
                 "upload": "上传",
                 "document": "新文档",
                 "presentation": "新演示文稿",
-                "spreadsheet": "新电子表格"
+                "spreadsheet": "新电子表格",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
             }
         }
     },
@@ -505,7 +519,9 @@
         "revokeCollaborationLink": {
             "button": {
                 "confirm": "撤销"
-            }
+            },
+            "header": "撤销{{nodeName}}协作链接",
+            "body": "撤销此链接将阻止使用其创建新共享的功能。已使用协作链接的所有人都将保留对节点的访问权限。"
         }
     },
     "node": {
@@ -740,7 +756,8 @@
             "generateLink": "生成链接",
             "limitReached": "已达到公开链接的最大数量",
             "title": "公开链接",
-            "undo": "撤消"
+            "undo": "撤消",
+            "description": "具有此链接访问权限的内部和外部用户可下载文件。"
         },
         "datePickerInput": {
             "description": "链接将在所选日期结束时过期"
@@ -809,6 +826,10 @@
             "title": {
                 "enabled": "拖放模式",
                 "disabled": "拖放模式"
+            },
+            "message": {
+                "enabled": "在此处拖入您的项目\n以快速将其移动至此文件夹",
+                "disabled": "您无法在此区域内拖入项目"
             }
         }
     },
@@ -816,6 +837,31 @@
         "button": {
             "revoke": "撤销",
             "generateLink": "生成链接"
+        },
+        "title": "协作链接",
+        "row": {
+            "title": {
+                "writeAndShare": "写入和分享",
+                "ReadAndShare": "只读和分享"
+            },
+            "placeholder": "创建链接以分享节点"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "复制协作链接"
+                }
+            }
+        },
+        "description": "内部用户将在打开链接时获得权限。您始终可修改已授予的权限。"
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "此邮件地址未关联至 Carbonio 用户"
+                }
+            }
         }
     }
 }
