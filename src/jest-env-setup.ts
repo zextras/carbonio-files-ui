@@ -27,7 +27,9 @@ failOnConsole({
 	shouldFailOnWarn: true,
 	shouldFailOnError: true,
 	silenceMessage: (errorMessage) =>
-		// snackbar PropType error on Window type
+		// Warning: Failed prop type: Invalid prop `target` of type `Window` supplied to `ForwardRef(SnackbarFn)`, expected instance of `Window`
+		// This warning is printed in the console for this render. This happens because window element is a jsdom representation of the window,
+		// and it's an object instead of a Window class instance, so the check on the prop type fail for the target prop
 		/Invalid prop `\w+`(\sof type `\w+`)? supplied to `(\w+(\(\w+\))?)`/.test(errorMessage) ||
 		// errors forced from the tests
 		/Controlled error/gi.test(errorMessage) ||
