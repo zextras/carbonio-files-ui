@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import { Container, Divider } from '@zextras/carbonio-design-system';
 import { useLocation } from 'react-router-dom';
 
+import { ListHeaderActionContext } from '../carbonio-files-ui-common/contexts';
 import { Crumb } from '../carbonio-files-ui-common/types/common';
 import { isSearchView } from '../carbonio-files-ui-common/utils/utils';
 import { AdvancedSearchButtonHeader } from '../carbonio-files-ui-common/views/components/AdvancedSearchButtonHeader';
@@ -26,7 +27,6 @@ type ListHeaderProps = Omit<
 	folderId?: string;
 	crumbs?: Crumb[];
 	loadingData?: boolean;
-	actionComponent?: React.ReactNode;
 };
 
 const ListHeader: React.VFC<ListHeaderProps> = ({
@@ -37,12 +37,12 @@ const ListHeader: React.VFC<ListHeaderProps> = ({
 	unSelectAll,
 	selectAll,
 	permittedSelectionModeActionsItems,
-	actionComponent,
 	exitSelectionMode,
 	isAllSelected
 }) => {
 	const location = useLocation();
 	const inSearchView = isSearchView(location);
+	const actionComponent = useContext(ListHeaderActionContext);
 
 	const firstCustomComponent = useMemo(
 		() => <HeaderBreadcrumbs crumbs={crumbs} folderId={folderId} />,
