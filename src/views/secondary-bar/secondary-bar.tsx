@@ -123,6 +123,17 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 					},
 					CustomComponent: SecondaryBarItemExpanded,
 					active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`)
+				},
+				{
+					id: 'Recents',
+					icon: 'ClockOutline',
+					label: t('secondaryBar.filtersList.recents', 'Recents'),
+					onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
+						ev.stopPropagation();
+						navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`);
+					},
+					CustomComponent: SecondaryBarItemExpanded,
+					active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`)
 				}
 			],
 			CustomComponent: SecondaryBarItemExpanded

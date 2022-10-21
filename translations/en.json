@@ -109,6 +109,24 @@
                     "title": "Flag your most important items by clicking the flag."
                 }
             ],
+            "recents_full": [
+                {
+                    "message": "Click an item to select it.",
+                    "title": "View details of the latest updated items."
+                },
+                {
+                    "message": "Select an item to proceed.",
+                    "title": "Review and edit recently updated items."
+                },
+                {
+                    "message": "Click an item to select it.",
+                    "title": "Quickly review the latest updated items."
+                },
+                {
+                    "message": "Click an item to select it.",
+                    "title": "Keep up to date, check the latest updated items."
+                }
+            ],
             "sharedByMe_empty": [
                 {
                     "message": "Select an item to proceed.",
@@ -713,6 +731,7 @@
         "filtersList": {
             "flagged": "Flagged",
             "myElements": "My elements",
+            "recents": "Recents",
             "sharedByMe": "Shared by me",
             "sharedElements": "Shared Elements",
             "sharedWithMe": "Shared with me",
