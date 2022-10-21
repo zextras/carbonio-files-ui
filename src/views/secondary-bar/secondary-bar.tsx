@@ -19,7 +19,7 @@ import styled from 'styled-components';
 
 import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secondaryBarItemVar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
-import { ROOTS } from '../../carbonio-files-ui-common/constants';
+import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-common/constants';
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/common';
 import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
@@ -82,10 +82,10 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
-					navigateTo('/filter/sharedWithMe');
+					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
-				active: location.pathname.includes('/filter/sharedWithMe')
+				active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}`)
 			}
 		];
 
@@ -107,10 +107,10 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 					label: t('secondaryBar.filtersList.flagged', 'Flagged'),
 					onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 						ev.stopPropagation();
-						navigateTo('/filter/flagged');
+						navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`);
 					},
 					CustomComponent: SecondaryBarItemExpanded,
-					active: location.pathname.includes('/filter/flagged')
+					active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`)
 				},
 				{
 					id: 'SharedByMe',
@@ -119,10 +119,10 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 					label: t('secondaryBar.filtersList.sharedByMe', 'Shared by me'),
 					onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 						ev.stopPropagation();
-						navigateTo('/filter/sharedByMe');
+						navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`);
 					},
 					CustomComponent: SecondaryBarItemExpanded,
-					active: location.pathname.includes('/filter/sharedByMe')
+					active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`)
 				}
 			],
 			CustomComponent: SecondaryBarItemExpanded
@@ -134,12 +134,12 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			icon: !uploadsInfo.isUploading ? 'CloudUploadOutline' : 'AnimatedUpload',
 			onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 				ev.stopPropagation();
-				navigateTo('/uploads');
+				navigateTo(INTERNAL_PATH.UPLOADS);
 			},
 			badgeType: 'unread',
 			badgeCounter: uploadsInfo.uploadsCounter || undefined,
 			CustomComponent: SecondaryBarItemExpanded,
-			active: location.pathname.includes('/uploads')
+			active: location.pathname.includes(INTERNAL_PATH.UPLOADS)
 		};
 
 		const trashItems: AccordionItemWithPriority[] = [
@@ -149,10 +149,10 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				icon: 'HardDriveOutline',
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
-					navigateTo('/filter/myTrash');
+					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
-				active: location.pathname.includes('/filter/myTrash')
+				active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`)
 			},
 			{
 				id: ROOTS.TRASH_SHARED_ELEMENTS,
@@ -160,10 +160,10 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				icon: 'ShareOutline',
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
-					navigateTo('/filter/sharedTrash');
+					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
-				active: location.pathname.includes('/filter/sharedTrash')
+				active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`)
 			}
 		];
 
@@ -184,11 +184,11 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 									icon: 'HomeOutline',
 									onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 										ev.stopPropagation();
-										navigateTo(`/root/${root.id}`);
+										navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
 									},
 									CustomComponent: SecondaryBarItemExpanded,
 									active:
-										location.pathname.includes(`/root/${root.id}`) ||
+										location.pathname.includes(`${INTERNAL_PATH.ROOT}/${root.id}`) ||
 										location.search.includes(`folder=${root.id}`)
 								});
 								break;
@@ -217,11 +217,11 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 									label: root.name,
 									onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 										ev.stopPropagation();
-										navigateTo(`/root/${root.id}`);
+										navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
 									},
 									CustomComponent: SecondaryBarItemExpanded,
 									active:
-										location.pathname.includes(`/root/${root.id}`) ||
+										location.pathname.includes(`${INTERNAL_PATH.ROOT}/${root.id}`) ||
 										location.search.includes(`folder=${root.id}`)
 								});
 								break;
@@ -249,11 +249,11 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				items: [],
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
-					navigateTo(`/root/${ROOTS.LOCAL_ROOT}`);
+					navigateTo(`${INTERNAL_PATH.ROOT}/${ROOTS.LOCAL_ROOT}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
 				active:
-					location.pathname.includes(`/root/${ROOTS.LOCAL_ROOT}`) ||
+					location.pathname.includes(`${INTERNAL_PATH.ROOT}/${ROOTS.LOCAL_ROOT}`) ||
 					location.search.includes(`folder=${ROOTS.LOCAL_ROOT}`)
 			},
 			...filtersAsRoots,
