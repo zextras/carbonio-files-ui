@@ -109,6 +109,12 @@
                     "title": "Flag your most important items by clicking the flag."
                 }
             ],
+            "recents_empty": [
+                {
+                    "message": "You will see the most recents here.",
+                    "title": "Open, read, edit your documents."
+                }
+            ],
             "recents_full": [
                 {
                     "message": "Click an item to select it.",
@@ -388,7 +394,7 @@
         "filter": {
             "flagged": "There are no flagged items.",
             "hint": "It looks like there's nothing here.",
-            "recents": "It looks like there's nothing here.",
+            "recents": "It looks like there are no recent items yet.",
             "sharedByMe": "You haven't shared any item with your collaborators yet.",
             "sharedWithMe": "There are no items shared with you yet.",
             "trash": "The trash is empty."
