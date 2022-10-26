@@ -635,8 +635,8 @@
     "uploads": {
         "dropzone": {
             "title": {
-                "disabled": "Tryb Drag&Drop",
-                "enabled": "Tryb Drag&Drop"
+                "disabled": "Tryb Przeciągnij i upuść",
+                "enabled": "Tryb Przeciągnij i upuść"
             },
             "message": {
                 "folderView": {
@@ -823,8 +823,8 @@
     "dropzone": {
         "move": {
             "title": {
-                "enabled": "Tryb Drag&Drop",
-                "disabled": "Tryb Drag&Drop"
+                "enabled": "Tryb Przeciągnij i upuść",
+                "disabled": "Tryb Przeciągnij i upuść"
             },
             "message": {
                 "enabled": "Tutaj upuść swoje elementy,\n aby szybko je przenieść do tego folderu",
