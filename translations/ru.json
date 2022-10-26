@@ -844,7 +844,7 @@
                 "writeAndShare": "Написать и поделиться",
                 "ReadAndShare": "Читать и Делиться"
             },
-            "placeholder": "Создайте ссылку, чтобы поделиться узлом"
+            "placeholder": "Создайте ссылку"
         },
         "link": {
             "urlChip": {
