@@ -9,6 +9,7 @@ import React, { lazy, Suspense } from 'react';
 import { Spinner } from '@zextras/carbonio-shell-ui';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
+import { INTERNAL_PATH } from '../carbonio-files-ui-common/constants';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
 import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
 
@@ -43,19 +44,19 @@ const AppView: React.VFC = () => {
 						</Suspense>
 					</Route>
 
-					<Route path={`${path}/root/:rootId`}>
+					<Route path={`${path}${INTERNAL_PATH.ROOT}/:rootId`}>
 						<Suspense fallback={<Spinner />}>
 							<LazyFolderView />
 						</Suspense>
 					</Route>
 
-					<Route path={`${path}/filter/:filter?`}>
+					<Route path={`${path}${INTERNAL_PATH.FILTER}/:filter?`}>
 						<Suspense fallback={<Spinner />}>
 							<LazyFilterView />
 						</Suspense>
 					</Route>
 
-					<Route path={`${path}/uploads`}>
+					<Route path={`${path}${INTERNAL_PATH.UPLOADS}`}>
 						<Suspense fallback={<Spinner />}>
 							<LazyUploadView />
 						</Suspense>

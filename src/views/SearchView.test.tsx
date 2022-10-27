@@ -9,7 +9,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
 import { graphql } from 'msw';
 
-import { ROOTS } from '../carbonio-files-ui-common/constants';
+import { INTERNAL_PATH, ROOTS } from '../carbonio-files-ui-common/constants';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import { populateNodePage, populateNodes } from '../carbonio-files-ui-common/mocks/mockUtils';
 import {
@@ -58,7 +58,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: ['/search'] }
+				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -113,7 +113,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: ['/search'] }
+				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -168,7 +168,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: ['/search'] }
+				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -242,7 +242,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: ['/search'] }
+				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -315,7 +315,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: ['/search'] }
+				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -380,7 +380,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: ['/search'] }
+				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -501,7 +501,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: ['/search'] }
+				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -538,7 +538,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: ['/search'] }
+				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
 			);
 
 			await screen.findByText(/No search executed/i);
