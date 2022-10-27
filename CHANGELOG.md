@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/zextras/carbonio-files-ui/compare/v0.2.2...v0.2.3) (2022-10-27)
+
+
+### Features
+
+* add recents filter ([ba68f88](https://github.com/zextras/carbonio-files-ui/commit/ba68f880b45df8a5907f3c69da7793d5ae02bd66)), closes [#137](https://github.com/zextras/carbonio-files-ui/issues/137)
+
 ### [0.2.2](https://github.com/zextras/carbonio-files-ui/compare/v0.2.1...v0.2.2) (2022-10-17)
 
 
