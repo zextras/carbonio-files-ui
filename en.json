@@ -109,6 +109,30 @@
                     "title": "Flag your most important items by clicking the flag."
                 }
             ],
+            "recents_empty": [
+                {
+                    "message": "You will see the most recents here.",
+                    "title": "Open, read, edit your documents."
+                }
+            ],
+            "recents_full": [
+                {
+                    "message": "Click an item to select it.",
+                    "title": "View details of the latest updated items."
+                },
+                {
+                    "message": "Select an item to proceed.",
+                    "title": "Review and edit the latest updated items."
+                },
+                {
+                    "message": "Click an item to select it.",
+                    "title": "Quickly review the latest updated items."
+                },
+                {
+                    "message": "Click an item to select it.",
+                    "title": "Keep up to date on the latest updated items."
+                }
+            ],
             "sharedByMe_empty": [
                 {
                     "message": "Select an item to proceed.",
@@ -370,6 +394,7 @@
         "filter": {
             "flagged": "There are no flagged items.",
             "hint": "It looks like there's nothing here.",
+            "recents": "It looks like there are no recent items yet.",
             "sharedByMe": "You haven't shared any item with your collaborators yet.",
             "sharedWithMe": "There are no items shared with you yet.",
             "trash": "The trash is empty."
@@ -395,6 +420,7 @@
         "code_Generic": "Something went wrong",
         "code_LINK_NOT_FOUND": "Action failed. This link no longer exists",
         "code_MISSING_FIELD": "An internal error occurred, not all information of this object has been recovered",
+        "code_NODE_COPY_ERROR": "Sorry, copy of the item failed. Try again",
         "code_NODE_DUPLICATED": "There is a file with the same name in this folder",
         "code_NODE_NOT_FOUND": "It seems that this object doesn't exist, or you do not have permission to access it",
         "code_NODE_WRITE_ERROR": "It seems that this object cannot be edited or that you do not have permission to edit it",
@@ -712,6 +738,7 @@
         "filtersList": {
             "flagged": "Flagged",
             "myElements": "My elements",
+            "recents": "Recents",
             "sharedByMe": "Shared by me",
             "sharedElements": "Shared Elements",
             "sharedWithMe": "Shared with me",
