@@ -208,6 +208,9 @@
         },
         "input": {
             "label": "توضیحات لینک"
+        },
+        "addLink": {
+            "title": "لینکهای عمومی"
         }
     },
     "folder": {
@@ -230,6 +233,27 @@
     "collaborationLinks": {
         "button": {
             "revoke": "لغو"
+        }
+    },
+    "snackbar": {
+        "moveNodes": {
+            "success": "مورد منتقل شد"
+        },
+        "copyNodes": {
+            "success": "مورد کپی شد"
+        }
+    },
+    "docs": {
+        "create": {
+            "modal": {
+                "input": {
+                    "label": {
+                        "name": {
+                            "document": "نام داکیومنت"
+                        }
+                    }
+                }
+            }
         }
     }
 }
