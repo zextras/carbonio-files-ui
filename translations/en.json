@@ -122,7 +122,7 @@
                 },
                 {
                     "message": "Select an item to proceed.",
-                    "title": "Review and edit recently updated items."
+                    "title": "Review and edit the latest updated items."
                 },
                 {
                     "message": "Click an item to select it.",
@@ -130,7 +130,7 @@
                 },
                 {
                     "message": "Click an item to select it.",
-                    "title": "Keep up to date, check the latest updated items."
+                    "title": "Keep up to date on the latest updated items."
                 }
             ],
             "sharedByMe_empty": [
