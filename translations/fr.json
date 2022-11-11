@@ -26,7 +26,8 @@
             "flagged": "Il n'y a pas d'éléments marqués.",
             "sharedWithMe": "Il n'y a pas encore d'éléments partagés avec vous.",
             "trash": "La corbeille est vide.",
-            "sharedByMe": "Vous n'avez pas encore partagé des éléments avec vos collaborateurs."
+            "sharedByMe": "Vous n'avez pas encore partagé des éléments avec vos collaborateurs.",
+            "recents": "Il semblerai qu'il n'y ai encore aucun élément récents."
         },
         "search": {
             "hint": "Votre recherche ne correspond à aucun fichier ou dossier",
@@ -224,7 +225,8 @@
             "sharedWithMe": "Éléments partagés avec moi",
             "trash": "Corbeille",
             "myElements": "Mes éléments",
-            "sharedElements": "Eléments partagés"
+            "sharedElements": "Eléments partagés",
+            "recents": "Récents"
         },
         "team": "Fichiers envoyés via Team",
         "uploads": "Chargements",
@@ -621,6 +623,30 @@
                     "message": "Cliquez sur un élément pour le sélectionner.",
                     "title": "Vous trouverez ici tous les éléments partagés avec vos contacts."
                 }
+            ],
+            "recents_full": [
+                {
+                    "title": "Afficher les détails des derniers éléments modifiés.",
+                    "message": "Cliquez sur un élément pour le sélectionner."
+                },
+                {
+                    "title": "Examiner et modifier les derniers élément mis à jours.",
+                    "message": "Sélectionner un élément pour continuer."
+                },
+                {
+                    "title": "Révision rapide des derniers éléments mis à jour.",
+                    "message": "Cliquez sur un élément pour le sélectionner."
+                },
+                {
+                    "title": "Rester informé des derniers éléments mis à jour.",
+                    "message": "Cliquez sur un élément pour le sélectionner."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "title": "Ouvrir, lire et modifier vos documents.",
+                    "message": "Vous pourrez voir les plus récents ici."
+                }
             ]
         },
         "folder_empty": [
@@ -754,7 +780,8 @@
         "code_FILE_VERSION_NOT_FOUND": "Nous sommes désolés, mais cette version du fichier est introuvable",
         "code_NODE_NOT_FOUND": "Il semble que cet objet n'existe pas ou que vous n'avez pas la permission d'y accéder",
         "code_NODE_DUPLICATED": "Il y a déjà un fichier portant le même nom dans ce dossier",
-        "code_VERSIONS_LIMIT_REACHED": "L'opération ne peut être terminée. Vous avez atteint la limite maximum."
+        "code_VERSIONS_LIMIT_REACHED": "L'opération ne peut être terminée. Vous avez atteint la limite maximum.",
+        "code_NODE_COPY_ERROR": "Désolé, la copie de l'élément a échoué. Merci de réessayer"
     },
     "publicLink": {
         "addLink": {

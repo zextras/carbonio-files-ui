@@ -98,7 +98,8 @@
             "sharedWithMe": "Condivisi con me",
             "trash": "Cestino",
             "myElements": "I miei elementi",
-            "sharedElements": "Elementi Condivisi"
+            "sharedElements": "Elementi Condivisi",
+            "recents": "Recenti"
         },
         "filters": "Filtri",
         "uploads": "Caricamenti",
@@ -287,7 +288,8 @@
             "sharedWithMe": "Non c'è ancora nessun elemento condiviso con te.",
             "trash": "Il cestino è vuoto.",
             "flagged": "Non ci sono elementi contrassegnati.",
-            "sharedByMe": "Non hai ancora condiviso nessun elemento con i tuoi collaboratori."
+            "sharedByMe": "Non hai ancora condiviso nessun elemento con i tuoi collaboratori.",
+            "recents": "Sembra che non ci siano ancora degli elementi recenti."
         }
     },
     "create": {
@@ -558,6 +560,30 @@
                     "message": "O, quando possibile, selezionalo e ripristinalo nella sua cartella originaria.",
                     "title": "Seleziona un elemento per eliminarlo definitivamente."
                 }
+            ],
+            "recents_full": [
+                {
+                    "title": "Visualizza i dettagli degli ultimi elementi aggiornati.",
+                    "message": "Clicca su un elemento per selezionarlo."
+                },
+                {
+                    "title": "Revisiona e modifica gli ultimi elementi aggiornati.",
+                    "message": "Seleziona un elemento per procedere."
+                },
+                {
+                    "title": "Revisiona velocemente gli ultimi elementi aggiornati.",
+                    "message": "Clicca su un elemento per selezionarlo."
+                },
+                {
+                    "title": "Tieniti aggiornato con gli ultimi elementi aggiornati.",
+                    "message": "Clicca su un elemento per selezionarlo."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "title": "Apri, leggi, modifica i tuoi documenti.",
+                    "message": "Vedrai i più recenti qui."
+                }
             ]
         },
         "folder_empty": [
@@ -754,7 +780,8 @@
         "code_SHARE_CREATION_ERROR": "Non è possibile condividere l'elemento con questo utente",
         "code_SHARE_NOT_FOUND": "Impossibile trovare questa condivisione",
         "code_NODE_DUPLICATED": "É già presente un file con lo stesso nome in questa cartella",
-        "code_VERSIONS_LIMIT_REACHED": "L'operazione non può essere completata. Hai raggiunto il limite massimo."
+        "code_VERSIONS_LIMIT_REACHED": "L'operazione non può essere completata. Hai raggiunto il limite massimo.",
+        "code_NODE_COPY_ERROR": "Copia dell'elemento fallita. Per favore, riprova"
     },
     "publicLink": {
         "addLink": {

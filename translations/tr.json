@@ -148,7 +148,8 @@
             "flagged": "Bayrak işaretli öğe yok.",
             "sharedByMe": "Birlikte çalıştığınız kişilerle henüz hiç öğe paylaşmadınız.",
             "sharedWithMe": "Henüz sizinle paylaşılan bir öğe yok.",
-            "trash": "Çöp kutusu boş."
+            "trash": "Çöp kutusu boş.",
+            "recents": "Yakında güncellenmiş öğe bulunmuyor."
         },
         "search": {
             "hint": "Aramanız ile eşleşen hiçbir dosya veya klasör bulunamadı",
@@ -224,7 +225,8 @@
             "sharedWithMe": "Benimle paylaşıldı",
             "trash": "Çöp Kutusu",
             "myElements": "Öğelerim",
-            "sharedElements": "Paylaşılan Öğeler"
+            "sharedElements": "Paylaşılan Öğeler",
+            "recents": "En son öğeler"
         },
         "team": "Team ile gönderilmiş dosyalar",
         "uploads": "Yüklemeler",
@@ -558,6 +560,30 @@
                     "title": "Tamamen silmek için bir öğe seçin.",
                     "message": "Veya öğeyi seçin ve orijinal klasörüne geri yükleyin."
                 }
+            ],
+            "recents_full": [
+                {
+                    "title": "En son güncellenen öğelerin detaylarını görüntüleyin.",
+                    "message": "Seçmek için öğeye tıklayın."
+                },
+                {
+                    "title": "En son güncellenen öğeleri gözden geçirin ve düzenleyin.",
+                    "message": "Devam etmek için bir öğe seçin."
+                },
+                {
+                    "title": "En son güncellenen öğelere hızlıca göz atın.",
+                    "message": "Seçmek için öğeye tıklayın."
+                },
+                {
+                    "title": "Güncellenmiş en son öğelerden haberdar olun.",
+                    "message": "Seçmek için öğeye tıklayın."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "title": "Dokümanlarınızı açın, görüntüleyin ve düzenleyin.",
+                    "message": "En son yapılanları burada görebilirsiniz."
+                }
             ]
         },
         "folder_empty": [
@@ -754,7 +780,8 @@
         "code_ACCOUNT_NOT_FOUND": "Bu kullanıcı Carbonio sisteminde bulunmuyor",
         "code_FILE_VERSION_NOT_FOUND": "Üzgünüz, dosyanın bu versiyonu bulunamadı",
         "code_NODE_DUPLICATED": "Bu klasörde aynı isimde bir dosya var",
-        "code_VERSIONS_LIMIT_REACHED": "İşlem tamamlanamadı. Maksimum limite ulaştınız."
+        "code_VERSIONS_LIMIT_REACHED": "İşlem tamamlanamadı. Maksimum limite ulaştınız.",
+        "code_NODE_COPY_ERROR": "Öğe kopyalanamadı. Lütfen tekrar deneyin"
     },
     "publicLink": {
         "addLink": {
