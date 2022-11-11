@@ -558,6 +558,20 @@
                     "message": "O, cuando sea posible, selecciónalo y restáuralo a su carpeta original.",
                     "title": "Elige un elemento para eliminarlo permanentemente."
                 }
+            ],
+            "recents_full": [
+                {
+                    "message": "Haz clic sobre un artículo para seleccionarlo."
+                },
+                {
+                    "message": "Elegir un elemento para proceder."
+                },
+                {
+                    "message": "Haz clic sobre un artículo para seleccionarlo."
+                },
+                {
+                    "message": "Haz clic sobre un artículo para seleccionarlo."
+                }
             ]
         },
         "folder_empty": [

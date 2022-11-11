@@ -558,6 +558,20 @@
                     "message": "Of, indien mogelijk, selecteer het en herstel het in zijn oorspronkelijke map.",
                     "title": "Selecteer een item om het definitief te verwijderen."
                 }
+            ],
+            "recents_full": [
+                {
+                    "message": "Klik op een item om het te selecteren."
+                },
+                {
+                    "message": "Selecteer een item om verder te gaan."
+                },
+                {
+                    "message": "Klik op een item om het te selecteren."
+                },
+                {
+                    "message": "Klik op een item om het te selecteren."
+                }
             ]
         },
         "folder_empty": [
