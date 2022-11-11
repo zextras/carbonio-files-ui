@@ -558,6 +558,20 @@
                     "message": "Atau, jika memungkinkan, pilih dan pulihkan di folder aslinya.",
                     "title": "Pilih item untuk menghapusnya permanen."
                 }
+            ],
+            "recents_full": [
+                {
+                    "message": "Klik item untuk memilihnya."
+                },
+                {
+                    "message": "Pilih item untuk melanjutkan."
+                },
+                {
+                    "message": "Klik item untuk memilihnya."
+                },
+                {
+                    "message": "Klik item untuk memilihnya."
+                }
             ]
         },
         "folder_empty": [

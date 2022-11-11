@@ -621,6 +621,20 @@
                     "message": "Ou, quanto possível, selecione-o e restaure-o em sua pasta original.",
                     "title": "Selecione um item para excluí-lo permanentemente."
                 }
+            ],
+            "recents_full": [
+                {
+                    "message": "Clique em um item para selecioná-lo."
+                },
+                {
+                    "message": "Selecione um item para prosseguir."
+                },
+                {
+                    "message": "Clique em um item para selecioná-lo."
+                },
+                {
+                    "message": "Clique em um item para selecioná-lo."
+                }
             ]
         },
         "search": {

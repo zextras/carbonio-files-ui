@@ -26,7 +26,12 @@
                 "upload": "Tải lên",
                 "document": "Tài liệu mới",
                 "folder": "Thư mục mới",
-                "presentation": "Trình diễn mới"
+                "presentation": "Trình diễn mới",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "Mở tài liệu {{ext}}"
             }
         }
     },
@@ -148,6 +153,30 @@
                 {
                     "title": "Chọn một mục và bắt đầu làm việc trên đó với người dùng khác."
                 }
+            ],
+            "recents_full": [
+                {
+                    "message": "Bấm vào một mục để lựa chọn nó.",
+                    "title": "Xem chi tiết các mục được cập nhật mới nhất."
+                },
+                {
+                    "message": "Chọn một mục để tiến hành.",
+                    "title": "Xem lại và chỉnh sửa các mục được cập nhật mới nhất."
+                },
+                {
+                    "message": "Bấm vào một mục để lựa chọn nó.",
+                    "title": "Xem nhanh các mục được cập nhập mới nhất."
+                },
+                {
+                    "message": "Bấm vào một mục để lựa chọn nó.",
+                    "title": "Luôn cập nhật những mục được cập nhật mới nhất."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "title": "Mở, đọc, chỉnh sửa tài liệu của bạn.",
+                    "message": "Bạn sẽ thấy nhiều nhất ở đây."
+                }
             ]
         },
         "folder_empty": [
@@ -236,10 +265,10 @@
                 "tooltip": {
                     "edit": {
                         "you": "Chỉnh sửa cộng tác viên của bạn",
-                        "collaborator": "Chỉnh sửa cộng tác viên {{username}}"
+                        "collaborator": "Chỉnh sửa cộng tác viên"
                     },
                     "remove": {
-                        "collaborator": "Xoá {{username}}",
+                        "collaborator": "Xoá cộng tác viên",
                         "yourself": "Xoá cộng tác viên của bạn"
                     }
                 },
@@ -254,7 +283,15 @@
                 "downloadVersion": "Phiên bản tải về",
                 "keepVersion": "Luôn luôn giữ phiên bản này",
                 "openDocumentVersion": "Phiên bản tài liệu",
-                "removeKeepVersion": "Loại bỏ vĩnh viễn"
+                "removeKeepVersion": "Loại bỏ vĩnh viễn",
+                "tooltip": {
+                    "disabledByVersionKeepForever": "Không thể xóa các phiên bản được đánh dấu là lưu giữ vĩnh viễn",
+                    "disabledByPermission": "Bạn không có quyền sửa",
+                    "disabledByMaxVersion": "Bạn đã đạt đến số phiên bản tối đa",
+                    "disabledByMaxKeepVersion": "Bạn đã đạt đến số phiên bản tối đa để giữ vĩnh viễn",
+                    "disabledByDocs": "Phiên bản này không thể được mở bởi trình chỉnh sửa trực tuyến",
+                    "disabledByDeleteCurrent": "Không thể xóa phiên bản hiện tại"
+                }
             },
             "row": {
                 "clonedIcon": {
@@ -272,7 +309,7 @@
                 "purgeAllVersions": "Xóa tất cả các phiên bản",
                 "upload": "Phiên bản tải lên"
             },
-            "mainHint": "Bạn có thể xóa thủ công bất kỳ phiên bản tệp nào hoặc khôi phục một phiên bản tệp làm phiên bản hiện tại. Chọn một hoặc nhiều phiên bản mà bạn muốn giữ vĩnh viễn."
+            "mainHint": "Tệp lưu các phiên bản {{maxVersions}} cuối cùng của bạn. Bạn có thể xóa thủ công bất kỳ phiên bản tệp nào hoặc khôi phục một phiên bản tệp làm phiên bản hiện tại. Chọn một hoặc nhiều phiên bản mà bạn muốn giữ vĩnh viễn."
         },
         "list": {
             "you": "Bạn"
@@ -327,7 +364,8 @@
             "trash": "Thùng rác đang rỗng.",
             "flagged": "Không có mục nào được gắn cờ.",
             "sharedWithMe": "Không có mục nào được chia sẻ với bạn bây giờ.",
-            "sharedByMe": "Bạn chưa chia sẻ bất kỳ mục nào với các cộng tác viên của mình."
+            "sharedByMe": "Bạn chưa chia sẻ bất kỳ mục nào với các cộng tác viên của mình.",
+            "recents": "Có vẻ như không có mục nào gần đây."
         },
         "folder": {
             "hint": "Có vẻ như thư mục này rỗng",
@@ -347,7 +385,8 @@
         "code_NODE_NOT_FOUND": "Có vẻ như đối tượng này không tồn tại hoặc bạn không có quyền truy cập vào nó",
         "code_NODE_WRITE_ERROR": "Có vẻ như không thể chỉnh sửa đối tượng này hoặc bạn không có quyền chỉnh sửa nó",
         "code": "Đã xảy ra lỗi",
-        "code_VERSIONS_LIMIT_REACHED": "Không thể hoàn thành hoạt động. Bạn đã đạt đến giới hạn tối đa."
+        "code_VERSIONS_LIMIT_REACHED": "Không thể hoàn thành hoạt động. Bạn đã đạt đến giới hạn tối đa.",
+        "code_NODE_COPY_ERROR": "Xin lỗi, bản sao của mục không thành công. Thử lại"
     },
     "folder": {
         "create": {
@@ -438,7 +477,8 @@
         },
         "unsaved_changes": {
             "title": {
-                "unsaved_changes": "Bạn không lưu thay đổi"
+                "unsaved_changes": "Bạn không lưu thay đổi",
+                "cannot_saved_changes": "Không thể lưu một số thay đổi"
             },
             "button": {
                 "save_and_leave": "Lưu và thoát",
@@ -452,15 +492,21 @@
         "nodeSelection": {
             "button": {
                 "newFolder": {
-                    "label": "Thư mục mới"
+                    "label": "Thư mục mới",
+                    "disabled": "Bạn không có quyền chỉnh sửa"
                 },
                 "create": "Tạo"
+            },
+            "input": {
+                "newFolder": "Tên thư mục mới"
             }
         },
         "revokeCollaborationLink": {
             "button": {
                 "confirm": "Thu hồi"
-            }
+            },
+            "header": "Thu hồi liên kết cộng tác {{nodeName}}",
+            "body": "Bằng cách thu hồi liên kết này, bạn đang chặn khả năng tạo chia sẻ mới với nó. Tất cả những người đã sử dụng liên kết cộng tác sẽ giữ quyền truy cập vào nút."
         }
     },
     "node": {
@@ -529,6 +575,14 @@
         },
         "close": {
             "tooltip": "Đóng"
+        },
+        "loading": {
+            "retrying": "Đang cố gắng tải bản xem trước ...",
+            "file": "Đang tải bản xem trước tệp, vui lòng đợi ...",
+            "error": "Đã xảy ra lỗi khi tải bản xem trước. Thử lại."
+        },
+        "button": {
+            "refresh": "Làm mới bản xem trước"
         }
     },
     "publicLink": {
@@ -537,7 +591,8 @@
             "generateLink": "Tạo liên kết",
             "limitReached": "Đã đạt đến số lượng liên kết công khai tối đa",
             "undo": "Hoàn tác",
-            "title": "Liên kết công khai"
+            "title": "Liên kết công khai",
+            "description": "Người dùng bên trong và bên ngoài có quyền truy cập vào liên kết có thể tải xuống tệp."
         },
         "dateTimePicker": {
             "label": "Ngày hết hạn"
@@ -642,7 +697,8 @@
             "flagged": "Gắn cờ",
             "sharedElements": "các yếu tố được chia sẻ",
             "sharedWithMe": "Chia sẻ với tôi",
-            "trash": "Thùng rác"
+            "trash": "Thùng rác",
+            "recents": "Hiện tại"
         },
         "team": "Gửi tệp qua",
         "uploads": "Tải lên"
@@ -726,7 +782,11 @@
         "collaborationLink": {
             "actionLabel": {
                 "copyLink": "Sao chép liên kết"
-            }
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "Liên kết cộng tác mới được tạo"
+            },
+            "copyCollaborationLink": "Đã sao chép liên kết cộng tác"
         }
     },
     "sortingDropdown": {
@@ -792,6 +852,10 @@
             "title": {
                 "enabled": "Chế độ kéo thả",
                 "disabled": "Chế độ kéo thả"
+            },
+            "message": {
+                "enabled": "Thả ở đây các mục của bạn\nđể nhanh chóng chuyển chúng vào thư mục này",
+                "disabled": "Bạn không thể thả các mục của mình trong khu vực này"
             }
         }
     },
@@ -799,6 +863,31 @@
         "button": {
             "revoke": "Thu hồi",
             "generateLink": "Tạo liên kết"
+        },
+        "title": "Liên kết cộng tác viên",
+        "row": {
+            "title": {
+                "writeAndShare": "Ghi và chia sẻ",
+                "ReadAndShare": "Đọc và chia sẻ"
+            },
+            "placeholder": "Tạo liên kết để chia sẻ nút"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "Sao chép liên kết cộng tác"
+                }
+            }
+        },
+        "description": "Người dùng nội bộ sẽ nhận được quyền bằng cách mở liên kết. Bạn luôn có thể sửa đổi các quyền đã được cấp."
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "Địa chỉ thư này không được liên kết với người dùng Carbonio"
+                }
+            }
         }
     }
 }

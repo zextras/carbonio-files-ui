@@ -54,7 +54,7 @@
                 "trash": "Kosz",
                 "myElements": "Moje elementy"
             },
-            "sharedWitMe": "Udostępnione mi",
+            "sharedWitMe": "Udostępnione dla mnie",
             "filesHome": "Start"
         },
         "moreInfo": {
@@ -99,10 +99,10 @@
         },
         "revokeCollaborationLink": {
             "button": {
-                "confirm": "Odwołaj"
+                "confirm": "Deaktywuj"
             },
-            "header": "Deaktywuj link do współpracy {{nodeName}}",
-            "body": "Po deaktywacji tego linka, tworzenie nowych udostępnień stanie się niemożliwe. Każdy, kto już użył tego linka do współpracy, dalej będzie miał dostep do tego węzła."
+            "header": "Deaktywuj link do elementu {{nodeName}}",
+            "body": "Po deaktywacji tego linka, tworzenie nowych udostępnień stanie się niemożliwe. Każdy, kto już użył tego linka do elementu, dalej będzie miał do niego dostep."
         }
     },
     "search": {
@@ -129,7 +129,7 @@
                     "label": "Oflagowane",
                     "description": "Filtruj wyniki wyszukiwania według oflagowanych elementów"
                 },
-                "title": "Zaawansowane Filtry",
+                "title": "Zaawansowane filtry",
                 "shared": {
                     "label": "Udostępnione",
                     "description": "Filtruj wyniki wyszukiwania wg elementów, które zawierają co najmniej jednego współpracownika (nie wliczając ciebie)"
@@ -231,7 +231,7 @@
             },
             "copyLink": "Publiczny Link został skopiowany",
             "newPublicLinkGenerated": {
-                "label": "Nowy publiczny Link został wygenerowany"
+                "label": "Nowy publiczny link został wygenerowany"
             }
         },
         "collaborationLink": {
@@ -239,9 +239,9 @@
                 "copyLink": "Skopiuj link"
             },
             "newCollaborationLinkGenerated": {
-                "label": "Nowy link do współpracy został wygenerowany"
+                "label": "Nowy link do elementu został wygenerowany"
             },
-            "copyCollaborationLink": "Link do współpracy został skopiowany"
+            "copyCollaborationLink": "Link do elementu został skopiowany"
         }
     },
     "actions": {
@@ -282,11 +282,11 @@
                 "you": "Ty",
                 "tooltip": {
                     "edit": {
-                        "collaborator": "Edytuj współpracę",
+                        "collaborator": "Edytuj uprawnienia",
                         "you": "Edytuj swoją współpracę"
                     },
                     "remove": {
-                        "collaborator": "Usuń współpracę",
+                        "collaborator": "Usuń współpracownika",
                         "yourself": "Usuń swoją współpracę"
                     }
                 }
@@ -299,7 +299,7 @@
                     "label": "Dodaj niestandardową wiadomość do tego powiadomienia",
                     "placeholder": "Dodaj nowe osoby lub grupy"
                 },
-                "note": "Notatka:",
+                "note": "Uwaga:",
                 "noteDescription": "Domyślna wiadomość zawiera Twoje imię, nazwę udostępnianiego elementu, uprawnienia przyznane odbiorcom oraz informacje dot. logowania."
             },
             "noSharePermissionHeader": "Nie masz uprawnień, aby udostępnić ten element."
@@ -324,7 +324,7 @@
                 "closeIconTooltip": "Zamknij bez zapisywania",
                 "editIconTooltip": "Edytuj opis",
                 "input": {
-                    "label": "Maksymalna dozwolona długość to 4096 znaków"
+                    "label": "Max. dozwolona długość to 4096 znaków"
                 },
                 "saveIconTooltip": "Zapisz zmiany"
             },
@@ -362,7 +362,7 @@
                     "message": "Kiedykolwiek tylko będzie potrzebny, znajdziesz go tutaj."
                 },
                 {
-                    "message": "Będą tutaj wylistowane.",
+                    "message": "Wtedy będą tutaj wylistowane.",
                     "title": "Oflaguj najważniejsze elementy, klikając na ikonkę flagi."
                 }
             ],
@@ -372,7 +372,7 @@
                     "title": "Kliknij we flagę aby oznaczyć element."
                 },
                 {
-                    "message": "Będą tutaj wylistowane.",
+                    "message": "Wtedy będą tutaj wylistowane.",
                     "title": "Oflaguj najważniejsze elementy, klikając na ikonkę flagi."
                 }
             ],
@@ -448,6 +448,30 @@
                     "message": "Lub, kiedy to możliwe, wybierz oraz przywróć w oryginalnym folderze.",
                     "title": "Wybierz element, aby go trwale usunąć."
                 }
+            ],
+            "recents_full": [
+                {
+                    "title": "Zobacz szczegóły ostatnio edytowanych elementów.",
+                    "message": "Kliknij w element, aby go wybrać."
+                },
+                {
+                    "title": "Przeglądaj i edytuj ostatnio edytowane elementy.",
+                    "message": "Aby kontynuować, wybierz element."
+                },
+                {
+                    "title": "Łatwo przeglądaj ostatnio edytowane elementy.",
+                    "message": "Kliknij w element, aby go wybrać."
+                },
+                {
+                    "title": "Pozostań na bieżąco z ostatnio edytowanymi elementami.",
+                    "message": "Kliknij w element, aby go wybrać."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "title": "Otwieraj, przeglądaj i edytuj swoje dokumenty.",
+                    "message": "Tutaj zobaczysz najnowsze."
+                }
             ]
         },
         "folder_empty": [
@@ -485,20 +509,20 @@
         ],
         "search_full": [
             {
-                "title": "Wybierz jeden lub więcej wyników, aby przeprowadzić czynności lub wyświetlić szczegóły."
+                "title": "Wybierz jeden lub więcej wyników, aby wykonać czynności lub wyświetlić szczegóły."
             }
         ],
         "uploads": {
-            "message": "Tutaj znajdziesz wszystkie elementy, które aktualnie przesyłasz. Możesz z tąd nimi zarządzać",
+            "message": "Tutaj znajdziesz wszystkie elementy, które aktualnie przesyłasz. Możesz stąd nimi zarządzać",
             "title": "Prześlij pliki"
         },
         "version": {
             "actions": {
                 "cloneAsCurrent": "Sklonuj jako aktualne",
                 "deleteVersion": "Usuń wersję",
-                "downloadVersion": "Pobierz wersję",
-                "keepVersion": "Zachowaj tą wersję na zawsze",
-                "openDocumentVersion": "Otwórz wersję dokumentu",
+                "downloadVersion": "Pobierz tę wersję",
+                "keepVersion": "Zachowuj tę wersję na zawsze",
+                "openDocumentVersion": "Otwórz tę wersję dokumentu",
                 "removeKeepVersion": "Usuń zachowanie tej wersji na zawsze",
                 "tooltip": {
                     "disabledByPermission": "Nie masz odpowiednich uprawnień",
@@ -511,7 +535,7 @@
             },
             "button": {
                 "purgeAllVersions": "Czystka wszystkich wersji",
-                "upload": "Wgraj wersję"
+                "upload": "Prześlij nową wersję"
             },
             "row": {
                 "clonedIcon": {
@@ -522,10 +546,10 @@
             },
             "rowHeaders": {
                 "currentVersion": "Aktualna wersja",
-                "lastWeek": "Ostatniego tygodnia",
+                "lastWeek": "Ostatni tydzień",
                 "olderVersions": "Starsze wersje"
             },
-            "mainHint": "Files zapisuje ostatnie {{maxVersions}} wersje Twoich plików. Możesz ręcznie usunąć lub przywrócić którąkolwiek wersję pliku. Wybierz jedną lub więcej wersji, które chcesz zachować na zawsze."
+            "mainHint": "Files zapisuje ostatnie {{maxVersions}} wersji Twoich plików. Możesz ręcznie usunąć lub przywrócić którąkolwiek wersję pliku. Wybierz jedną lub więcej wersji, które chcesz zachować na zawsze."
         },
         "generic": {
             "message": "Kliknij w element, aby go wybrać",
@@ -555,7 +579,7 @@
         "addLink": {
             "undo": "Cofnij",
             "generateLink": "Wygeneruj Link",
-            "limitReached": "Osiągnięto maksymalną liczbę publicznych linków",
+            "limitReached": "Osiągnięto max. liczbę publicznych linków",
             "title": "Publiczne linki",
             "addLink": "Dodaj Link",
             "description": "Użytkownicy z i spoza tej domeny, którzy mają dostęp do linka, mogą pobrać ten plik."
@@ -566,7 +590,7 @@
         "input": {
             "description": {
                 "error": {
-                    "maxLengthAllowed": "Maksymalna dozwolona długość to 300 znaków"
+                    "maxLengthAllowed": "Max. dozwolona długość to 300 znaków"
                 }
             },
             "label": "Opis Linku"
@@ -582,8 +606,9 @@
             "trash": "Kosz",
             "myElements": "Moje elementy",
             "sharedByMe": "Udostępnione przeze mnie",
-            "sharedElements": "Udostępnione Elementy",
-            "sharedWithMe": "Udostępnione mi"
+            "sharedElements": "Udostępnione elementy",
+            "sharedWithMe": "Udostępnione dla mnie",
+            "recents": "Ostatnie"
         },
         "filesHome": "Start",
         "team": "Pliki wysłane przez Team",
@@ -613,7 +638,7 @@
                 "OrderSizeDescending": "Malejąco wg rozmiaru"
             }
         },
-        "lastUpdate": "Ostatnia Aktualizacja",
+        "lastUpdate": "Ostatnia aktualizacja",
         "name": "Nazwa"
     },
     "create": {
@@ -635,8 +660,8 @@
     "uploads": {
         "dropzone": {
             "title": {
-                "disabled": "Tryb Przeciągnij i upuść",
-                "enabled": "Tryb Przeciągnij i upuść"
+                "disabled": "Tryb przeciągnij i upuść",
+                "enabled": "Tryb przeciągnij i upuść"
             },
             "message": {
                 "folderView": {
@@ -675,7 +700,8 @@
             "hint": "Wygląda na to, że nic tu nie ma.",
             "sharedWithMe": "Nie ma jeszcze żadnych elementów udostępnionych Tobie.",
             "trash": "Kosz jest pusty.",
-            "sharedByMe": "Nie udostępniono jeszcze żadnego elementu współpracownikom."
+            "sharedByMe": "Nie udostępniono jeszcze żadnego elementu współpracownikom.",
+            "recents": "Wygląda na to, że nie masz jeszcze żadnych ostatnio edytowanych plików."
         },
         "folder": {
             "displayerContent": "Ten folder nie ma żadnej zawartości",
@@ -703,7 +729,7 @@
             "name_TRASH_ROOT": "Kosz",
             "name_LOCAL_CHAT_ROOT": "Pliki wysłane przez Team",
             "name_LOCAL_ROOT": "Start",
-            "name_SHARED_WITH_ME_ROOT": "Udostępnione mi"
+            "name_SHARED_WITH_ME_ROOT": "Udostępnione dla mnie"
         },
         "move": {
             "modal": {
@@ -787,7 +813,8 @@
         "code_SHARE_CREATION_ERROR": "Przepraszamy, niestety nie da się udostępnić wskazanego elementu temu użytkownikowi",
         "code_SHARE_NOT_FOUND": "Przepraszamy, nie udało się znaleźc tego udostępnienia",
         "code_MISSING_FIELD": "Nastąpił błąd wewnętrzny, nie udało się odzyskać wszystkich informacji o tym obiekcie",
-        "code_VERSIONS_LIMIT_REACHED": "Ta operacja nie może zostać ukończona. Osignięto max. limit."
+        "code_VERSIONS_LIMIT_REACHED": "Ta operacja nie może zostać ukończona. Osignięto max. limit.",
+        "code_NODE_COPY_ERROR": "Kopiowanie elementu się nie powiodło. Spróbuj ponownie"
     },
     "breadcrumb": {
         "expander": {
@@ -823,8 +850,8 @@
     "dropzone": {
         "move": {
             "title": {
-                "enabled": "Tryb Przeciągnij i upuść",
-                "disabled": "Tryb Przeciągnij i upuść"
+                "enabled": "Tryb przeciągnij i upuść",
+                "disabled": "Tryb przeciągnij i upuść"
             },
             "message": {
                 "enabled": "Tutaj upuść swoje elementy,\n aby szybko je przenieść do tego folderu",
@@ -834,25 +861,25 @@
     },
     "collaborationLinks": {
         "button": {
-            "revoke": "Odwołaj",
+            "revoke": "Deaktywuj",
             "generateLink": "Wygeneruj Link"
         },
-        "title": "Linki do współpracy",
+        "title": "Linki do elementu",
         "row": {
             "title": {
-                "writeAndShare": "Edytowanie i Udosepnianie",
-                "ReadAndShare": "Czytanie i Udostępnianie"
+                "writeAndShare": "Edytowanie i udostępnianie",
+                "ReadAndShare": "Czytanie i udostępnianie"
             },
-            "placeholder": "Stwórz link, aby udostępnić węzeł"
+            "placeholder": "Stwórz link, aby udostępnić element"
         },
         "link": {
             "urlChip": {
                 "tooltip": {
-                    "copy": "Skopiuj link do współpracy"
+                    "copy": "Skopiuj link do elementu"
                 }
             }
         },
-        "description": "Użytkownicy z tej domeny otrzymają uprawnienia klikając w ten link. Zawsze możesz edytować przyznane uprawnienia."
+        "description": "Użytkownicy z tej domeny otrzymają uprawnienia klikając w ten link. Zawsze możesz edytować przyznane im uprawnienia."
     },
     "share": {
         "chip": {
