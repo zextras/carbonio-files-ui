@@ -18,7 +18,7 @@ const themeOverride = (theme: DefaultTheme): DefaultTheme => ({
 		...theme.icons,
 		AnimatedLoader,
 		AnimatedUpload
-	}
+	} as DefaultTheme['icons'] // FIXME check how to remove this cast
 });
 
 const GlobalStyle = createGlobalStyle`
