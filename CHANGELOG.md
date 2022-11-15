@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.5](https://github.com/zextras/carbonio-files-ui/compare/v0.2.4...v0.2.5) (2022-11-15)
+
+
+### Features
+
+* convert px to rem ([dfd1328](https://github.com/zextras/carbonio-files-ui/commit/dfd13285a6d12bcb1d04aed7f374c005d3d5a3cd)), closes [#136](https://github.com/zextras/carbonio-files-ui/issues/136)
+* disable force-cache to allow revalidation ([42be8eb](https://github.com/zextras/carbonio-files-ui/commit/42be8ebacafac298e061aec8c4233faaf5c830f8)), closes [#145](https://github.com/zextras/carbonio-files-ui/issues/145)
+
+
+### Bug Fixes
+
+* hide custom message input ([eb57784](https://github.com/zextras/carbonio-files-ui/commit/eb57784a1aaa5e4f9f874c992f22304506796d8c)), closes [#142](https://github.com/zextras/carbonio-files-ui/issues/142)
+* update modals to restore spaces and fonts ([eb8ae08](https://github.com/zextras/carbonio-files-ui/commit/eb8ae0818e5f56fc2a62874fb576efc54190f5fb)), closes [#143](https://github.com/zextras/carbonio-files-ui/issues/143)
+
 ### [0.2.4](https://github.com/zextras/carbonio-files-ui/compare/v0.2.3...v0.2.4) (2022-11-08)
 
 ### [0.2.3](https://github.com/zextras/carbonio-files-ui/compare/v0.2.2...v0.2.3) (2022-10-27)
