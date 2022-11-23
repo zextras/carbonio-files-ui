@@ -66,9 +66,9 @@
         },
         "purgeAllVersions": {
             "button": {
-                "confirm": "Czystka wszystkich wersji"
+                "confirm": "Wyczyść wszystkie wersje"
             },
-            "header": "Czystka wszystkich wersji",
+            "header": "Wyczyść wszystkie wersje",
             "body": "Wszystkie wersje, które nie są oznaczone jako zachowywane na zawsze zostaną usunięte. Nie będziesz mógł ich odzyskać."
         },
         "unsaved_changes": {
@@ -138,7 +138,7 @@
             "button": {
                 "filters": "{{count}} zaawansowany filtr",
                 "filters_plural": "{{count}} zaawansowane filtry",
-                "noFilter": "Zaawansowanych filtrów"
+                "noFilter": "Zaawansowane filtry"
             }
         },
         "header": {
@@ -534,7 +534,7 @@
                 }
             },
             "button": {
-                "purgeAllVersions": "Czystka wszystkich wersji",
+                "purgeAllVersions": "Wyczyść wszystkie wersje",
                 "upload": "Prześlij nową wersję"
             },
             "row": {
@@ -795,7 +795,7 @@
                 },
                 "title": {
                     "document": "Stwórz nowy dokument",
-                    "presentation": "Stwórz Nową Prezentację",
+                    "presentation": "Stwórz nową prezentację",
                     "spreadsheet": "Stwórz nowy arkusz"
                 }
             }
