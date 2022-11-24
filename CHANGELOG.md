@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.6](https://github.com/zextras/carbonio-files-ui/compare/v0.2.5...v0.2.6) (2022-11-24)
+
+
+### Features
+
+* add destinationId in upload-to ([6dc8de7](https://github.com/zextras/carbonio-files-ui/commit/6dc8de706191ec26c0c9d295a258fb34ce39ad6b)), closes [#151](https://github.com/zextras/carbonio-files-ui/issues/151)
+
 ### [0.2.5](https://github.com/zextras/carbonio-files-ui/compare/v0.2.4...v0.2.5) (2022-11-15)
 
 
