@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.7](https://github.com/zextras/carbonio-files-ui/compare/v0.2.6...v0.2.7) (2022-12-01)
+
+
+### Bug Fixes
+
+* fix typo in calc which is causing the broken ui in dev package ([3828860](https://github.com/zextras/carbonio-files-ui/commit/38288604af2deb0a0c1c148719f825056fe246c9))
+
 ### [0.2.6](https://github.com/zextras/carbonio-files-ui/compare/v0.2.5...v0.2.6) (2022-11-24)
 
 
