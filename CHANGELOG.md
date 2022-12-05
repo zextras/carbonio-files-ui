@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.8](https://github.com/zextras/carbonio-files-ui/compare/v0.2.7...v0.2.8) (2022-12-05)
+
+
+### Bug Fixes
+
+* disable thumbnail for docs documents ([aefb0e2](https://github.com/zextras/carbonio-files-ui/commit/aefb0e20a829602dae21b2a0f51927bd9147d468)), closes [#162](https://github.com/zextras/carbonio-files-ui/issues/162)
+
 ### [0.2.7](https://github.com/zextras/carbonio-files-ui/compare/v0.2.6...v0.2.7) (2022-12-01)
 
 
