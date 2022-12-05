@@ -202,7 +202,8 @@
             "sharedWithMe": "Dibagikan dengan saya",
             "trash": "Tempat Sampah",
             "myElements": "Elemen saya",
-            "sharedElements": "Elemen Bersama"
+            "sharedElements": "Elemen Bersama",
+            "recents": "Terbaru"
         },
         "team": "File dikirim melalui Team",
         "uploads": "Unggahan",
@@ -295,7 +296,8 @@
             "flagged": "Tidak ada item yang ditandai bendera.",
             "sharedByMe": "Anda belum berbagi item apa pun dengan kolaborator.",
             "sharedWithMe": "Tidak ada item yang dibagikan kepada Anda.",
-            "trash": "Sampah kosong."
+            "trash": "Sampah kosong.",
+            "recents": "Tampaknya belum ada item terbaru."
         },
         "search": {
             "hint": "Pencarian Anda tidak cocok dengan file atau folder apa pun",
@@ -561,16 +563,26 @@
             ],
             "recents_full": [
                 {
-                    "message": "Klik item untuk memilihnya."
+                    "message": "Klik item untuk memilihnya.",
+                    "title": "Lihat detail item yang terakhir diperbarui."
                 },
                 {
-                    "message": "Pilih item untuk melanjutkan."
+                    "message": "Pilih item untuk melanjutkan.",
+                    "title": "Tinjau dan edit item yang terakhir diperbarui."
                 },
                 {
-                    "message": "Klik item untuk memilihnya."
+                    "message": "Klik item untuk memilihnya.",
+                    "title": "Tinjau dengan cepat item yang terakhir diperbarui."
                 },
                 {
-                    "message": "Klik item untuk memilihnya."
+                    "message": "Klik item untuk memilihnya.",
+                    "title": "Pantau terus item yang terakhir diperbarui."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "message": "Anda akan melihat paling terbaru di sini.",
+                    "title": "Buka, baca, edit dokumen Anda."
                 }
             ]
         },
@@ -792,7 +804,8 @@
         "code_SHARE_CREATION_ERROR": "Maaf, Anda tidak bisa berbagi item dengan pengguna ini",
         "code_SHARE_NOT_FOUND": "Maaf, berbagi ini tidak ditemukan",
         "code_NODE_DUPLICATED": "Ada file dengan nama yang sama di folder ini",
-        "code_VERSIONS_LIMIT_REACHED": "Operasi tidak bisa diselesaikan. Anda telah mencapai batas maksimum."
+        "code_VERSIONS_LIMIT_REACHED": "Operasi tidak bisa diselesaikan. Anda telah mencapai batas maksimum.",
+        "code_NODE_COPY_ERROR": "Maaf, item gagal disalin. Coba lagi"
     },
     "breadcrumb": {
         "expander": {
