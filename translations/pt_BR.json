@@ -6,7 +6,8 @@
             "sharedWithMe": "Compartilhado comigo",
             "trash": "Lixeira",
             "myElements": "Meus elementos",
-            "sharedElements": "Elementos Compartilhados"
+            "sharedElements": "Elementos Compartilhados",
+            "recents": "Recentes"
         },
         "team": "Arquivos enviados via Team",
         "filters": "Filtros",
@@ -40,7 +41,8 @@
             "sharedByMe": "Você ainda não compartilhou nenhum item com seus colaboradores.",
             "trash": "A lixeira está vazia.",
             "flagged": "Não existem itens sinalizados.",
-            "sharedWithMe": "Ainda não há itens compartilhados com você."
+            "sharedWithMe": "Ainda não há itens compartilhados com você.",
+            "recents": "Parece que ainda não existem itens recentes."
         },
         "search": {
             "hint": "Sua busca não coincide com nenhum arquivo ou pasta",
@@ -624,16 +626,26 @@
             ],
             "recents_full": [
                 {
-                    "message": "Clique em um item para selecioná-lo."
+                    "message": "Clique em um item para selecioná-lo.",
+                    "title": "Ver detalhes dos últimos itens atualizados."
                 },
                 {
-                    "message": "Selecione um item para prosseguir."
+                    "message": "Selecione um item para prosseguir.",
+                    "title": "Revisar e editar os últimos itens atualizados."
                 },
                 {
-                    "message": "Clique em um item para selecioná-lo."
+                    "message": "Clique em um item para selecioná-lo.",
+                    "title": "Revisar rapidamente os últimos itens atualizados."
                 },
                 {
-                    "message": "Clique em um item para selecioná-lo."
+                    "message": "Clique em um item para selecioná-lo.",
+                    "title": "Manter-se atualizado sobre os últimos itens atualizados."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "message": "Você verá os mais recentes aqui.",
+                    "title": "Abra, leia, edite seus documentos."
                 }
             ]
         },
@@ -762,7 +774,8 @@
         "code_MISSING_FIELD": "Ocorreu um erro interno, nem todas as informações deste objeto foram recuperadas",
         "code_SHARE_NOT_FOUND": "Lamentamos, mas este compartilhamento não pode ser encontrado",
         "code_NODE_DUPLICATED": "Há um arquivo com o mesmo nome nesta pasta",
-        "code_VERSIONS_LIMIT_REACHED": "A operação não pode ser completada. Você atingiu o limite máximo."
+        "code_VERSIONS_LIMIT_REACHED": "A operação não pode ser completada. Você atingiu o limite máximo.",
+        "code_NODE_COPY_ERROR": "Desculpe, a cópia do item falhou. Tente novamente"
     },
     "publicLink": {
         "addLink": {

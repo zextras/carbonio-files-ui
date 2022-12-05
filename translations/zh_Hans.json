@@ -234,16 +234,26 @@
             ],
             "recents_full": [
                 {
-                    "message": "点击项目以将其选择。"
+                    "message": "点击项目以将其选择。",
+                    "title": "查看最近更新项目详情。"
                 },
                 {
-                    "message": "选择一个项目以继续。"
+                    "message": "选择一个项目以继续。",
+                    "title": "检查并编辑最近更新的项目。"
                 },
                 {
-                    "message": "点击项目以将其选择。"
+                    "message": "点击项目以将其选择。",
+                    "title": "快速检查最近更新的项目。"
                 },
                 {
-                    "message": "点击项目以将其选择。"
+                    "message": "点击项目以将其选择。",
+                    "title": "保持了解最近更新项目的动态。"
+                }
+            ],
+            "recents_empty": [
+                {
+                    "message": "您将在这里看到最新消息。",
+                    "title": "打开、读取、编辑您的文档。"
                 }
             ]
         },
@@ -665,7 +675,8 @@
             "trash": "回收站",
             "flagged": "已标记",
             "myElements": "我的元素",
-            "sharedElements": "共享元素"
+            "sharedElements": "共享元素",
+            "recents": "最近"
         },
         "team": "文件已通过Team发送",
         "filters": "过滤",
@@ -683,7 +694,8 @@
             "flagged": "没有已标记项目。",
             "sharedByMe": "您尚未与协作者分享任何项目。",
             "sharedWithMe": "尚无与您分享的项目。",
-            "trash": "垃圾箱为空。"
+            "trash": "垃圾箱为空。",
+            "recents": "似乎这里尚无最近项目。"
         },
         "search": {
             "hint": "您的搜索未与任何文件或文件夹匹配",
@@ -762,7 +774,8 @@
         "code_SHARE_CREATION_ERROR": "抱歉，无法同该用户分享此项目",
         "code_SHARE_NOT_FOUND": "抱歉，无法找到此分享",
         "code_NODE_DUPLICATED": "文件夹中有同名文件",
-        "code_VERSIONS_LIMIT_REACHED": "操作无法完成。您已达到最高上限。"
+        "code_VERSIONS_LIMIT_REACHED": "操作无法完成。您已达到最高上限。",
+        "code_NODE_COPY_ERROR": "抱歉，项目复制失败。请重试"
     },
     "publicLink": {
         "addLink": {

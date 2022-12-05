@@ -130,7 +130,8 @@
             "sharedWithMe": "Met mij gedeeld",
             "trash": "Prullenbak",
             "myElements": "Mijn elementen",
-            "sharedElements": "Gedeelde elementen"
+            "sharedElements": "Gedeelde elementen",
+            "recents": "Recente"
         },
         "uploads": "Uploads",
         "filesHome": "Startpagina"
@@ -238,7 +239,8 @@
             "flagged": "Er zijn geen gemarkeerde items.",
             "sharedWithMe": "Er zijn nog geen items met u gedeeld.",
             "trash": "De prullenbak is leeg.",
-            "sharedByMe": "U hebt nog geen item gedeeld met uw medewerkers."
+            "sharedByMe": "U hebt nog geen item gedeeld met uw medewerkers.",
+            "recents": "Het lijkt erop dat er nog geen items zijn."
         },
         "search": {
             "hint": "Uw zoekopdracht kwam niet overeen met bestanden of mappen",
@@ -561,16 +563,26 @@
             ],
             "recents_full": [
                 {
-                    "message": "Klik op een item om het te selecteren."
+                    "message": "Klik op een item om het te selecteren.",
+                    "title": "Details van de laatst bijgewerkte items bekijken."
                 },
                 {
-                    "message": "Selecteer een item om verder te gaan."
+                    "message": "Selecteer een item om verder te gaan.",
+                    "title": "De laatst bijgewerkte items bekijken en bewerken."
                 },
                 {
-                    "message": "Klik op een item om het te selecteren."
+                    "message": "Klik op een item om het te selecteren.",
+                    "title": "Snel de laatste bijgewerkte items bekijken."
                 },
                 {
-                    "message": "Klik op een item om het te selecteren."
+                    "message": "Klik op een item om het te selecteren.",
+                    "title": "Op de hoogte blijven van de laatste updates."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "message": "De meest recente ziet u hier.",
+                    "title": "Openen, lezen, bewerken van uw documenten."
                 }
             ]
         },
@@ -762,7 +774,8 @@
         "code_FILE_VERSION_NOT_FOUND": "Het spijt ons, maar deze versie van het bestand kan niet gevonden worden",
         "code_NODE_NOT_FOUND": "Het lijkt erop dat dit object niet bestaat, of dat je geen toestemming hebt om het te openen",
         "code_NODE_DUPLICATED": "Er is een bestand met dezelfde naam in deze map",
-        "code_VERSIONS_LIMIT_REACHED": "De operatie kan niet worden voltooid. U hebt de maximumlimiet bereikt."
+        "code_VERSIONS_LIMIT_REACHED": "De operatie kan niet worden voltooid. U hebt de maximumlimiet bereikt.",
+        "code_NODE_COPY_ERROR": "Sorry, kopiëren van het item is mislukt. Probeer opnieuw"
     },
     "publicLink": {
         "addLink": {
