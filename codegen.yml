@@ -5,9 +5,9 @@
 overwrite: true
 #watch: true
 schema:
-  - "<url>":
+  - "https://sw-s03.demo.zextras.io/services/files/graphql":
       headers:
-        Cookie: ""
+        Cookie: "ZM_AUTH_TOKEN=0_bdaf4b0b99048f170609d254fef04970a1f7c9a0_69643d33363a34306437663135622d363866332d343031362d396530392d6130623063653866303433643b6578703d31333a313637303736353531303139323b747970653d363a7a696d6272613b753d313a613b7469643d383a34303137353034383b"
 generates:
   src/carbonio-files-ui-common/graphql/schema.graphql:
     plugins:
