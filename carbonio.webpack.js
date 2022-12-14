@@ -7,6 +7,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 // const { DefinePlugin } = require('webpack');
 module.exports = (wpConf, pkg, options, mode) => {
+	wpConf.resolve.alias['app-entrypoint'] = `${__dirname}/src/app.tsx`;
 	// enable loader for graphql files to be able to use the import notation
 	wpConf.module.rules.push({
 		test: /\.(graphql|gql)$/,
