@@ -353,7 +353,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Current version",
-                "lastWeek": "Last week",
+                "lastWeek": "Last 7 days",
                 "olderVersions": "Older versions"
             }
         }
