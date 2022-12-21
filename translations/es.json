@@ -186,7 +186,8 @@
             "sharedByMe": "Compartido por mi",
             "sharedWithMe": "Compartido conmigo",
             "myElements": "Mis elementos",
-            "sharedElements": "Elementos compartidos"
+            "sharedElements": "Elementos compartidos",
+            "recents": "Recientes"
         },
         "team": "Archivos enviados a través de Team",
         "uploads": "Cargas",
@@ -295,7 +296,8 @@
             "flagged": "No hay elementos marcados.",
             "sharedByMe": "Aún no has compartido ningún elemento con tus colaboradores.",
             "sharedWithMe": "Aún no hay elementos compartidos contigo.",
-            "trash": "La papelera está vacía."
+            "trash": "La papelera está vacía.",
+            "recents": "Parece que todavía no hay elementos recientes."
         },
         "search": {
             "hint": "Tu búsqueda no coincidió con ningún archivo ni carpeta",
@@ -561,16 +563,26 @@
             ],
             "recents_full": [
                 {
-                    "message": "Haz clic sobre un artículo para seleccionarlo."
+                    "message": "Haz clic sobre un artículo para seleccionarlo.",
+                    "title": "Ver detalles de los últimos elementos actualizados."
                 },
                 {
-                    "message": "Elegir un elemento para proceder."
+                    "message": "Elegir un elemento para proceder.",
+                    "title": "Revisar y editar los últimos elementos actualizados."
                 },
                 {
-                    "message": "Haz clic sobre un artículo para seleccionarlo."
+                    "message": "Haz clic sobre un artículo para seleccionarlo.",
+                    "title": "Revisar rápidamente los últimos elementos actualizados."
                 },
                 {
-                    "message": "Haz clic sobre un artículo para seleccionarlo."
+                    "message": "Haz clic sobre un artículo para seleccionarlo.",
+                    "title": "Mantenme actualizado sobre los últimos elementos actualizados."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "title": "Abrir, leer, editar tus documentos.",
+                    "message": "Aquí verás los más recientes."
                 }
             ]
         },
@@ -762,7 +774,8 @@
         "code_SHARE_CREATION_ERROR": "Lo sentimos, pero no es posible compartir el elemento con este usuario",
         "code_SHARE_NOT_FOUND": "Lo sentimos, pero esta compartición no puede ser encontrada",
         "code_NODE_DUPLICATED": "Hay un archivo con el mismo nombre en esta carpeta",
-        "code_VERSIONS_LIMIT_REACHED": "La operación no se puede completar. Has alcanzado el límite máximo."
+        "code_VERSIONS_LIMIT_REACHED": "La operación no se puede completar. Has alcanzado el límite máximo.",
+        "code_NODE_COPY_ERROR": "Lo sentimos, la copia del elemento falló. Prueba de nuevo"
     },
     "publicLink": {
         "addLink": {

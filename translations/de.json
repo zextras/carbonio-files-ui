@@ -26,7 +26,8 @@
             "flagged": "Es gibt keine markierten Einträge.",
             "sharedByMe": "Sie haben noch keinen Artikel für Ihre Mitarbeiter freigegeben.",
             "sharedWithMe": "Es sind noch keine Artikel für Sie freigegeben.",
-            "trash": "Der Papierkorb ist leer."
+            "trash": "Der Papierkorb ist leer.",
+            "recents": "Es sieht so aus, als gäbe es noch keine kürzlich verwendete Elemente."
         },
         "search": {
             "hint": "Ihre Suche ergab keine Treffer für Dateien oder Ordner",
@@ -224,7 +225,8 @@
             "sharedWithMe": "Mit mir geteilt",
             "trash": "Papierkorb",
             "myElements": "Meine Elemente",
-            "sharedElements": "Geteilte Elemente"
+            "sharedElements": "Geteilte Elemente",
+            "recents": "Kürzliche"
         },
         "team": "Über Team gesendete Dateien",
         "uploads": "Uploads",
@@ -558,6 +560,30 @@
                     "message": "Oder, wenn möglich, wählen Sie sie aus und stellen sie in ihrem ursprünglichen Ordner wieder her.",
                     "title": "Wählen Sie ein Element aus, um es endgültig zu löschen."
                 }
+            ],
+            "recents_full": [
+                {
+                    "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                    "title": "Details des zuletzt aktualisierten Elements ansehen."
+                },
+                {
+                    "message": "Wählen Sie einen Artikel aus, um fortzufahren.",
+                    "title": "Zuletzt aktualisierte Elemente überprüfen und bearbeiten."
+                },
+                {
+                    "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                    "title": "Zuletzt aktualisierte Elemente schnell überprüfen."
+                },
+                {
+                    "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+                    "title": "Über zuletzt aktualisierte Elemente stets informiert bleiben."
+                }
+            ],
+            "recents_empty": [
+                {
+                    "title": "Ihre Dokumente öffnen, lesen und bearbeiten.",
+                    "message": "Hier werden Sie die neusten sehen."
+                }
             ]
         },
         "folder_empty": [
@@ -748,7 +774,8 @@
         "code_SHARE_CREATION_ERROR": "Es tut uns leid, aber es ist nicht möglich, den Artikel mit diesem Benutzer zu teilen",
         "code_SHARE_NOT_FOUND": "Es tut uns leid, aber diese Aktie kann nicht gefunden werden",
         "code_NODE_DUPLICATED": "Es gibt eine Datei mit demselben Namen in diesem Ordner",
-        "code_VERSIONS_LIMIT_REACHED": "Der Vorgang kann nicht ausgeführt werden. Sie haben die Maximalgrenze erreicht."
+        "code_VERSIONS_LIMIT_REACHED": "Der Vorgang kann nicht ausgeführt werden. Sie haben die Maximalgrenze erreicht.",
+        "code_NODE_COPY_ERROR": "Entschuldigung, die Kopie des Elementes ist fehlgeschlagen. Versuchen Sie es erneut"
     },
     "publicLink": {
         "addLink": {
