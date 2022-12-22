@@ -24,7 +24,8 @@ export default {
 	collectCoverageFrom: [
 		'src/**/*.{js,ts}(x)?',
 		'!src/**/mocks/*', // exclude msw handlers
-		'!src/mocks/*' // exclude msw handlers
+		'!src/mocks/*', // exclude msw handlers
+		'!**/(test|mock)*.ts(x)?' // exclude file which name starts with test or mock
 	],
 
 	// The directory where Jest should output its coverage files
@@ -42,7 +43,14 @@ export default {
 	coverageReporters: ['text', 'cobertura'],
 
 	// An object that configures minimum threshold enforcement for coverage results
-	// coverageThreshold: undefined,
+	coverageThreshold: {
+		global: {
+			branches: 75,
+			functions: 75,
+			lines: 75,
+			statements: 75
+		}
+	},
 
 	// A path to a custom dependency extractor
 	// dependencyExtractor: undefined,
