@@ -24,7 +24,7 @@ import buildClient from './carbonio-files-ui-common/apollo';
 import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_APP_ID, FILES_ROUTE, ROOTS } from './carbonio-files-ui-common/constants';
 import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
-import { UploadStatus } from './carbonio-files-ui-common/types/common';
+import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-types';
 import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uploadUtils';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';

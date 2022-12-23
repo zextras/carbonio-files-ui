@@ -8,7 +8,7 @@
 /.idea/
 /junit.xml
 /coverage
-codegen.yml
+old.codegen.yml
 sdk/package-lock.json
 /dist
 /LICENSES

@@ -21,7 +21,7 @@ import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secon
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-common/constants';
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
-import { UploadStatus } from '../../carbonio-files-ui-common/types/common';
+import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
 import {
 	SecondaryBarItemExpanded,
