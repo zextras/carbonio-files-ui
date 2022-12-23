@@ -6,16 +6,13 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-	schema:
-		// 'https://raw.githubusercontent.com/Zextras/carbonio-files-ce/develop/core/src/main/resources/api/schema.graphql',
-		{
-			'https://sw-s03.demo.zextras.io/services/files/graphql': {
-				headers: {
-					Cookie:
-						'ZM_AUTH_TOKEN=0_60f96c2cc79302b40c267f392ff16d478bb77cbd_69643d33363a34306437663135622d363866332d343031362d396530392d6130623063653866303433643b6578703d31333a313637313937323438363139333b747970653d363a7a696d6272613b753d313a613b7469643d393a3531323235383636393b'
-				}
+	schema: {
+		'': {
+			headers: {
+				Cookie: ''
 			}
-		},
+		}
+	},
 	generates: {
 		'src/carbonio-files-ui-common/graphql/schema.graphql': {
 			plugins: [
