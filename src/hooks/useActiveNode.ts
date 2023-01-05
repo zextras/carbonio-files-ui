@@ -7,7 +7,7 @@
 import { useCallback } from 'react';
 
 import includes from 'lodash/includes';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { DISPLAYER_TABS } from '../carbonio-files-ui-common/constants';
 import useQueryParam from '../carbonio-files-ui-common/hooks/useQueryParam';
@@ -31,12 +31,11 @@ export function useActiveNode(): {
 	const activeNodeId = useQueryParam('node');
 	const tab = useQueryParam('tab');
 
-	const { rootId, filter } = useParams<URLParams>();
+	const { rootId, filter, view = '' } = useParams<URLParams>();
 	const folderId = useQueryParam('folder');
 	const fileId = useQueryParam('file');
-	const location = useLocation();
-	const inSearchView = isSearchView(location);
 	const history = useHistory();
+	const inSearchView = isSearchView(history.location);
 
 	const setActiveNode = useCallback(
 		(newId: string, newTab?: string) => {
@@ -58,15 +57,15 @@ export function useActiveNode(): {
 			} else {
 				let params = '';
 				if (rootId) {
-					params += `root/${rootId}`;
+					params += `/${rootId}`;
 				} else if (filter) {
-					params += `filter/${filter}/`;
+					params += `/${filter}/`;
 				}
-				const destination = `/${params}${queryParams}`;
+				const destination = `/${view}${params}${queryParams}`;
 				navigateTo(destination, true);
 			}
 		},
-		[fileId, filter, folderId, history, inSearchView, navigateTo, rootId]
+		[fileId, filter, folderId, history, inSearchView, navigateTo, rootId, view]
 	);
 
 	const removeActiveNode = useCallback(() => {
@@ -76,18 +75,18 @@ export function useActiveNode(): {
 		} else {
 			let params = '';
 			if (rootId) {
-				params += `root/${rootId}`;
+				params += `/${rootId}`;
 			} else if (filter) {
-				params += `filter/${filter}/`;
+				params += `/${filter}/`;
 			}
 			let queryParams = '?';
 			if (folderId) {
 				queryParams += `folder=${folderId}`;
 			}
-			const destination = `/${params}${queryParams}`;
+			const destination = `/${view}${params}${queryParams}`;
 			navigateTo(destination, true);
 		}
-	}, [filter, folderId, history, inSearchView, navigateTo, rootId]);
+	}, [filter, folderId, history, inSearchView, navigateTo, rootId, view]);
 
 	return {
 		activeNodeId,

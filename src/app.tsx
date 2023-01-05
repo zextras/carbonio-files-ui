@@ -12,7 +12,9 @@ import {
 	addRoute,
 	addSearchView,
 	registerActions,
-	ACTION_TYPES
+	ACTION_TYPES,
+	SecondaryBarComponentProps,
+	SearchViewProps
 } from '@zextras/carbonio-shell-ui';
 import filter from 'lodash/filter';
 import size from 'lodash/size';
@@ -22,22 +24,23 @@ import buildClient from './carbonio-files-ui-common/apollo';
 import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_APP_ID, FILES_ROUTE, ROOTS } from './carbonio-files-ui-common/constants';
 import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
-import { UploadStatus } from './carbonio-files-ui-common/types/common';
+import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-types';
+import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uploadUtils';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
-const LazySidebarView = lazy(() =>
-	import(/* webpackChunkName: "sidebarView" */ './views/SidebarView')
+const LazySidebarView = lazy(
+	() => import(/* webpackChunkName: "sidebarView" */ './views/SidebarView')
 );
 
-const LazySearchView = lazy(() =>
-	import(/* webpackChunkName: "SearchView" */ './views/SearchView')
+const LazySearchView = lazy(
+	() => import(/* webpackChunkName: "SearchView" */ './views/SearchView')
 );
 
-const AppView = () => (
+const AppView = (): JSX.Element => (
 	<Suspense fallback={<Spinner />}>
 		<AppErrorCatcher>
 			<LazyAppView />
@@ -45,7 +48,7 @@ const AppView = () => (
 	</Suspense>
 );
 
-const SidebarView = (props) => (
+const SidebarView = (props: SecondaryBarComponentProps): JSX.Element => (
 	<Suspense fallback={<Spinner />}>
 		<AppErrorCatcher>
 			<LazySidebarView {...props} />
@@ -53,7 +56,7 @@ const SidebarView = (props) => (
 	</Suspense>
 );
 
-const SearchView = (props) => (
+const SearchView = (props: SearchViewProps): JSX.Element => (
 	<Suspense fallback={<Spinner />}>
 		<AppErrorCatcher>
 			<LazySearchView {...props} />
@@ -61,7 +64,7 @@ const SearchView = (props) => (
 	</Suspense>
 );
 
-export default function App() {
+export default function App(): JSX.Element {
 	const [t] = useTranslation();
 
 	const beforeunloadCallback = useCallback((e) => {
@@ -79,10 +82,14 @@ export default function App() {
 	const { add } = useUpload();
 
 	const inputElementOnchange = useCallback(
-		(ev) => {
-			add(ev.currentTarget.files, ROOTS.LOCAL_ROOT);
-			// required to select 2 times the same file/files
-			ev.target.value = '';
+		(ev: Event) => {
+			if (ev.currentTarget instanceof HTMLInputElement) {
+				if (ev.currentTarget.files) {
+					add(getUploadAddTypeFromInput(ev.currentTarget.files), ROOTS.LOCAL_ROOT);
+				}
+				// required to select 2 times the same file/files
+				ev.currentTarget.value = '';
+			}
 		},
 		[add]
 	);
@@ -115,6 +122,8 @@ export default function App() {
 				disabled: false,
 				primary: true,
 				group: FILES_APP_ID,
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				type: ACTION_TYPES.NEW
 			}),
 			id: 'upload-file',

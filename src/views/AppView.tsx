@@ -10,6 +10,7 @@ import { Spinner } from '@zextras/carbonio-shell-ui';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { INTERNAL_PATH } from '../carbonio-files-ui-common/constants';
+import { URLParams } from '../carbonio-files-ui-common/types/common';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
 import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
 
@@ -32,33 +33,45 @@ const LazyUploadView = lazy(
 	() => import(/* webpackChunkName: "uploadView" */ '../carbonio-files-ui-common/views/UploadView')
 );
 
+const View = (): JSX.Element | null => {
+	const { path, params } = useRouteMatch<URLParams>();
+	return (
+		(`/${params.view}` === INTERNAL_PATH.ROOT && (
+			<Route path={`${path}/:rootId`}>
+				<Suspense fallback={<Spinner />}>
+					<LazyFolderView />
+				</Suspense>
+			</Route>
+		)) ||
+		(`/${params.view}` === INTERNAL_PATH.FILTER && (
+			<Route path={`${path}/:filter?`}>
+				<Suspense fallback={<Spinner />}>
+					<LazyFilterView />
+				</Suspense>
+			</Route>
+		)) || (
+			<Route path={path}>
+				<Suspense fallback={<Spinner />}>
+					<LazyUploadView />
+				</Suspense>
+			</Route>
+		)
+	);
+};
+
 const AppView: React.VFC = () => {
-	const { path } = useRouteMatch();
+	const { path } = useRouteMatch<URLParams>();
+
 	return (
 		<PreventDefaultDropContainer>
 			<ProvidersWrapper>
 				<Switch>
-					<Route path={`${path}/`} exact>
+					<Route path={`${path}/:view`}>
+						<View />
+					</Route>
+					<Route path={`${path}/`}>
 						<Suspense fallback={<Spinner />}>
 							<LazyFileFolderViewSelector />
-						</Suspense>
-					</Route>
-
-					<Route path={`${path}${INTERNAL_PATH.ROOT}/:rootId`}>
-						<Suspense fallback={<Spinner />}>
-							<LazyFolderView />
-						</Suspense>
-					</Route>
-
-					<Route path={`${path}${INTERNAL_PATH.FILTER}/:filter?`}>
-						<Suspense fallback={<Spinner />}>
-							<LazyFilterView />
-						</Suspense>
-					</Route>
-
-					<Route path={`${path}${INTERNAL_PATH.UPLOADS}`}>
-						<Suspense fallback={<Spinner />}>
-							<LazyUploadView />
 						</Suspense>
 					</Route>
 				</Switch>
