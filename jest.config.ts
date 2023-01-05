@@ -24,7 +24,9 @@ export default {
 	collectCoverageFrom: [
 		'src/**/*.{js,ts}(x)?',
 		'!src/**/mocks/*', // exclude msw handlers
-		'!src/mocks/*' // exclude msw handlers
+		'!src/mocks/*', // exclude msw handlers
+		'!**/(test|mock)*.ts(x)?', // exclude file which name starts with test or mock
+		'!src/**/types/*' // exclude types
 	],
 
 	// The directory where Jest should output its coverage files
@@ -42,7 +44,14 @@ export default {
 	coverageReporters: ['text', 'cobertura'],
 
 	// An object that configures minimum threshold enforcement for coverage results
-	// coverageThreshold: undefined,
+	coverageThreshold: {
+		global: {
+			branches: 75,
+			functions: 75,
+			lines: 75,
+			statements: 75
+		}
+	},
 
 	// A path to a custom dependency extractor
 	// dependencyExtractor: undefined,
@@ -155,15 +164,10 @@ export default {
 	// testLocationInResults: false,
 
 	// The glob patterns Jest uses to detect test files
-	// testMatch: [
-	//   "**/__tests__/**/*.[jt]s?(x)",
-	//   "**/?(*.)+(spec|test).[tj]s?(x)"
-	// ],
+	testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
 
 	// An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-	// testPathIgnorePatterns: [
-	//   "/node_modules/"
-	// ],
+	testPathIgnorePatterns: ['/node_modules/', 'constants/test.ts'],
 
 	// The regexp pattern or array of patterns that Jest uses to detect test files
 	// testRegex: [],

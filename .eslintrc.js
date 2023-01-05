@@ -21,13 +21,44 @@ module.exports = {
 			}
 		},
 		{
-			// disable check for licence header on generated files
-			files: ['src/carbonio-files-ui-common/types/graphql/*'],
+			// disable check for licence header on graphql files
+			files: ['*.graphql'],
 			rules: {
 				'notice/notice': 'off'
 			}
+		},
+		{
+			files: ['**/graphql/*/*.graphql'],
+			extends: ['plugin:@graphql-eslint/operations-recommended'],
+			rules: {
+				'@graphql-eslint/known-type-names': 'error'
+			}
+		},
+		{
+			files: ['*schema.graphql'],
+			extends: ['plugin:@graphql-eslint/schema-recommended'],
+			rules: {
+				'@graphql-eslint/known-type-names': 'error'
+			}
+		},
+		{
+			files: ['schema.graphql'],
+			rules: {
+				'@graphql-eslint/naming-convention': 'off',
+				'@graphql-eslint/require-description': 'off',
+				'@graphql-eslint/no-typename-prefix': 'off',
+				'@graphql-eslint/strict-id-in-types': 'off',
+				'@graphql-eslint/description-style': 'off'
+			}
 		}
 	],
+	parserOptions: {
+		schema: [
+			'src/carbonio-files-ui-common/graphql/schema.graphql',
+			'src/carbonio-files-ui-common/graphql/client-schema.graphql'
+		],
+		operations: 'src/carbonio-files-ui-common/graphql/**/*.graphql'
+	},
 	globals: {
 		IS_SERVER: 'readonly'
 	},

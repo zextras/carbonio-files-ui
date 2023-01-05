@@ -13,7 +13,7 @@ import {
 } from '../carbonio-files-ui-common/hooks/modals/useNodesSelectionModal';
 import { RootListItemType } from '../carbonio-files-ui-common/types/common';
 import { BaseNodeFragment } from '../carbonio-files-ui-common/types/graphql/types';
-import { isFile, isFolder } from '../carbonio-files-ui-common/utils/ActionsFactory';
+import { isFile, isFolder } from '../carbonio-files-ui-common/utils/utils';
 
 export type OpenSelectNodesModalArgs = Parameters<OpenNodesSelectionModal>[number] & {
 	allowFolders?: boolean;

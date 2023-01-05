@@ -19,6 +19,10 @@ import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
 import { LOGGED_USER, USER_SETTINGS } from './mocks/constants';
 import server from './mocks/server';
 
+type FileSystemDirectoryEntryMock = Omit<FileSystemDirectoryEntry, 'filesystem'> & {
+	filesystem: Partial<FileSystemDirectoryEntry['filesystem']>;
+};
+
 configure({
 	asyncUtilTimeout: 2000
 });
@@ -129,6 +133,26 @@ beforeAll(() => {
 	};
 
 	Element.prototype.scrollTo = jest.fn();
+
+	Object.defineProperty(window, 'FileSystemDirectoryEntry', {
+		writable: true,
+		// define it as a standard function and not arrow function because arrow functions can't be called with new
+		value: function FileSystemDirectoryEntryMock(): FileSystemDirectoryEntryMock {
+			return {
+				createReader: jest.fn(),
+				fullPath: '',
+				getDirectory: jest.fn(),
+				getFile: jest.fn,
+				getParent: jest.fn,
+				isDirectory: true,
+				isFile: false,
+				name: '',
+				filesystem: {
+					name: ''
+				}
+			};
+		}
+	});
 });
 
 afterAll(() => server.close());
