@@ -25,7 +25,7 @@
             "button": {
                 "confirm": "Deaktywuj"
             },
-            "body": "Deaktywując ten link, uniemożliwisz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do tego pliku",
+            "body": "Deaktywując ten link, uniemożliwisz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do pliku",
             "header": "Deaktywuj publiczny link {{nodeName}}"
         },
         "deletePermanently": {
@@ -227,9 +227,9 @@
                 "copyLink": "Skopiuj link"
             },
             "linkUpdated": {
-                "label": "Publiczny Link został zaktualizowany"
+                "label": "Publiczny link został zaktualizowany"
             },
-            "copyLink": "Publiczny Link został skopiowany",
+            "copyLink": "Publiczny link został skopiowany",
             "newPublicLinkGenerated": {
                 "label": "Nowy publiczny link został wygenerowany"
             }
