@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.9](https://github.com/zextras/carbonio-files-ui/compare/v0.2.8...v0.2.9) (2023-01-05)
+
+
+### Features
+
+* upload folder from os ([a835d7e](https://github.com/zextras/carbonio-files-ui/commit/a835d7ed0a9588e0e27222f5b08b31402e8b3aee)), closes [#167](https://github.com/zextras/carbonio-files-ui/issues/167)
+
 ### [0.2.8](https://github.com/zextras/carbonio-files-ui/compare/v0.2.7...v0.2.8) (2022-12-05)
 
 
