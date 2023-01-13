@@ -698,6 +698,9 @@
                 "keywords": {
                     "label": "Keywords"
                 },
+                "owner": {
+                    "label": "Owner"
+                },
                 "shared": {
                     "description": "Filter the results by items that contain at least one collaborator besides you",
                     "label": "Shared"
