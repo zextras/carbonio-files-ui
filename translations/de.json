@@ -450,7 +450,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Aktuelle Version",
-                "lastWeek": "Letzte Woche",
+                "lastWeek": "In den letzten 7 Tagen",
                 "olderVersions": "Ältere Versionen"
             },
             "mainHint": "Files speichert die letzten {{maxVersions}} Versionen Ihrer Dateien. Sie können jede beliebige Dateiversion manuell löschen oder eine Version als aktuelle Version wiederherstellen. Wählen Sie eine oder mehrere Versionen aus, die Sie für immer behalten möchten.",
