@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/zextras/carbonio-files-ui/compare/v0.2.10...v1.0.0) (2023-01-16)
+
 ### [0.2.10](https://github.com/zextras/carbonio-files-ui/compare/v0.2.9...v0.2.10) (2023-01-10)
 
 
