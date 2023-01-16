@@ -432,7 +432,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Güncel versiyon",
-                "lastWeek": "Geçen hafta",
+                "lastWeek": "Son 7 gün",
                 "olderVersions": "Eski versiyonlar"
             },
             "mainHint": "Dosyalar uygulaması dosyalarınızın {{maxVersions}} versiyonunu kaydeder. Herhangi bir dosya versiyonunu manuel olarak silebilir veya güncel versiyon olarak geri alabilirsiniz. Her zaman saklamak istediğiniz bir veya daha fazla versiyonu seçin.",

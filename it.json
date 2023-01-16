@@ -450,7 +450,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Versione corrente",
-                "lastWeek": "Una settimana fa",
+                "lastWeek": "Ultimi 7 giorni",
                 "olderVersions": "Versioni più vecchie"
             },
             "mainHint": "Files salva le ultime {{maxVersions}} versioni dei tuoi documenti. Seleziona una o più versioni da conservare per sempre.",
