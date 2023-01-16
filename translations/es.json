@@ -450,7 +450,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Versión actual",
-                "lastWeek": "Última semana",
+                "lastWeek": "Últimos 7 días",
                 "olderVersions": "Versiones anteriores"
             },
             "mainHint": "Files guarda las últimas {{maxVersions}} de tus archivos. Puedes borrar manualmente cualquier versión de un archivo o restaurar una de ellas como versión actual. Elige una o más versiones que quieras guardar para siempre.",
