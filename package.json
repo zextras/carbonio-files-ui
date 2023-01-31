@@ -1,6 +1,6 @@
 {
 	"name": "carbonio-files-ui",
-	"version": "0.2.9",
+	"version": "1.0.0",
 	"description": "Files module for Zextras Carbonio",
 	"main": "src/app.tsx",
 	"scripts": {
@@ -102,6 +102,7 @@
 		"name": "carbonio-files-ui",
 		"display": "Files",
 		"priority": 9,
+		"attrKey": "carbonioFeatureFilesEnabled",
 		"icon": "DriveOutline",
 		"type": "carbonio",
 		"sentryDsn": "https://733fc9332b0e48f1a39b595296fc2280@feedback.zextras.tools/11",

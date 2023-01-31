@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/zextras/carbonio-files-ui/compare/v0.2.10...v1.0.0) (2023-01-16)
+
+### [0.2.10](https://github.com/zextras/carbonio-files-ui/compare/v0.2.9...v0.2.10) (2023-01-10)
+
+
+### Bug Fixes
+
+* upload button not working on folders ([c4b580a](https://github.com/zextras/carbonio-files-ui/commit/c4b580a55af02cbda21eddb21d23d0e6a52f6abe))
+* upload button not working on folders ([a27395f](https://github.com/zextras/carbonio-files-ui/commit/a27395f13d20e964d7bb847276a4640acf834915))
+
 ### [0.2.9](https://github.com/zextras/carbonio-files-ui/compare/v0.2.8...v0.2.9) (2023-01-05)
 
 
