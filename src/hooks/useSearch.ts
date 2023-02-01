@@ -56,6 +56,13 @@ export function fromAdvancedFiltersToQueryChips(
 					ownerId: advancedFiltersPar.ownerId
 				}
 			} as AdvancedSearchChip);
+		} else if ($key === 'type') {
+			reducedForQuery.push({
+				...value,
+				queryChipsToAdvancedFiltersValue: {
+					type: advancedFiltersPar.type
+				}
+			} as AdvancedSearchChip);
 		} else if ($key === 'folderId') {
 			const $value = value as SearchChip & {
 				value: SearchParams['folderId'];

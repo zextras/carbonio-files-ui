@@ -695,6 +695,18 @@
                         "title": "Select a folder"
                     }
                 },
+                "itemType": {
+                    "dropdownOption": {
+                        "audio": "Audio",
+                        "document": "Document",
+                        "folder": "Folder",
+                        "image": "Image",
+                        "presentation": "Presentation",
+                        "spreadsheet": "Spreadsheet",
+                        "video": "Video"
+                    },
+                    "label": "Item type"
+                },
                 "keywords": {
                     "label": "Keywords"
                 },
