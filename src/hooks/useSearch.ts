@@ -8,9 +8,7 @@ import { useCallback, useContext } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import type { QueryChip } from '@zextras/carbonio-shell-ui';
-import forEach from 'lodash/forEach';
-import map from 'lodash/map';
-import partition from 'lodash/partition';
+import { forEach, map, partition } from 'lodash';
 
 import { searchParamsVar } from '../carbonio-files-ui-common/apollo/searchVar';
 import {

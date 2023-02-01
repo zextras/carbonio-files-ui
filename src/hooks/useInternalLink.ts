@@ -7,8 +7,7 @@
 import { useMemo } from 'react';
 
 import { getCurrentRoute } from '@zextras/carbonio-shell-ui';
-import head from 'lodash/head';
-import split from 'lodash/split';
+import { head, split } from 'lodash';
 
 import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
 import { NodeType } from '../carbonio-files-ui-common/types/graphql/types';
