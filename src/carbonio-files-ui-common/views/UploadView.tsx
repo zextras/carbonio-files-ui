@@ -61,10 +61,6 @@ const UploadView: React.VFC = () => {
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
 				action: () => ({
-					// FIXME: remove ts-ignore when shell will fix type of "type"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.UPLOAD_FILE,
 					primary: true,
@@ -82,7 +78,6 @@ const UploadView: React.VFC = () => {
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.CREATE_FOLDER,
 				action: () => ({
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_FOLDER,
 					label: t('create.options.new.folder', 'New Folder'),
@@ -95,7 +90,6 @@ const UploadView: React.VFC = () => {
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 				action: () => ({
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 					label: t('create.options.new.document', 'New Document'),
@@ -122,7 +116,6 @@ const UploadView: React.VFC = () => {
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 				action: () => ({
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 					label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
@@ -149,7 +142,6 @@ const UploadView: React.VFC = () => {
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 				action: () => ({
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 					label: t('create.options.new.presentation', 'New Presentation'),
@@ -191,7 +183,7 @@ const UploadView: React.VFC = () => {
 				mainAlignment="flex-start"
 				width="fill"
 				height="fill"
-				background="gray5"
+				background={'gray5'}
 				borderRadius="none"
 				maxHeight="100%"
 			>
@@ -201,7 +193,7 @@ const UploadView: React.VFC = () => {
 						mainAlignment="flex-start"
 						crossAlignment="unset"
 						borderRadius="none"
-						background="gray6"
+						background={'gray6'}
 					>
 						<UploadList />
 					</Container>

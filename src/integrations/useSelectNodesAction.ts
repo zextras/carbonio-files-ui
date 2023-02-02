@@ -27,11 +27,7 @@ export const useSelectNodesAction = (): Parameters<typeof registerActions>[numbe
 			id: ACTION_IDS.SELECT_NODES,
 			label: actionLabel,
 			icon: actionIcon,
-			click: (): unknown => openSelectNodesModalFunction({ ...rest }),
-			// FIXME: remove ts-ignore when shell will fix type of "type"
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			type: ACTION_TYPES.FILES_ACTION
+			click: (): unknown => openSelectNodesModalFunction({ ...rest })
 		}),
 		[openSelectNodesModalFunction]
 	);

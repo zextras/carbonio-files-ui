@@ -60,10 +60,6 @@ const FileView: React.VFC = () => {
 				id: ACTION_IDS.UPLOAD_FILE,
 				type: ACTION_TYPES.NEW,
 				action: () => ({
-					// FIXME: remove ts-ignore when shell will fix type of "type"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.UPLOAD_FILE,
 					label: t('create.options.new.upload', 'Upload'),
@@ -79,7 +75,6 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_FOLDER,
 					group: FILES_APP_ID,
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.folder', 'New Folder'),
 					icon: 'FolderOutline',
 					click: noop,
@@ -92,7 +87,6 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 					group: FILES_APP_ID,
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.document', 'New Document'),
 					icon: 'FileTextOutline',
 					click: noop,
@@ -119,7 +113,6 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 					group: FILES_APP_ID,
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
 					icon: 'FileCalcOutline',
 					click: noop,
@@ -146,7 +139,6 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 					group: FILES_APP_ID,
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.presentation', 'New Presentation'),
 					icon: 'FilePresentationOutline',
 					click: noop,
@@ -184,10 +176,6 @@ const FileView: React.VFC = () => {
 					id: ACTION_IDS.UPLOAD_FILE,
 					primary: true,
 					group: FILES_APP_ID,
-					// FIXME: remove ts-ignore when shell will fix type of "type"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
 					click: (event): void => {
