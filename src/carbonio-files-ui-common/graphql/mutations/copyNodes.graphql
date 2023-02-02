@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+#import "../fragments/child.graphql"
+
+mutation copyNodes($node_ids: [ID!], $destination_id: ID!, $shares_limit: Int = 1) {
+    copyNodes(node_ids: $node_ids, destination_id: $destination_id) {
+        ...Child
+    }
+}

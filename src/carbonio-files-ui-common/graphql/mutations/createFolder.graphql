@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+#import "../fragments/child.graphql"
+
+mutation createFolder($destination_id: String!, $name: String!, $shares_limit: Int = 1) {
+	createFolder(destination_id: $destination_id, name: $name) {
+		...Child
+	}
+}

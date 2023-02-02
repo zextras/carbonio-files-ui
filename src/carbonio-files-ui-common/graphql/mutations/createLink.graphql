@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+#import "../fragments/link.graphql"
+
+mutation createLink($node_id: ID!, $description: String, $expires_at: DateTime) {
+	createLink(node_id: $node_id, description: $description, expires_at: $expires_at) {
+		...Link
+	}
+}

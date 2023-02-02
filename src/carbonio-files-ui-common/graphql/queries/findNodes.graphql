@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+#import "../fragments/child.graphql"
+
+query findNodes(
+    $keywords: [String!],
+    $flagged: Boolean,
+    $shared_by_me: Boolean,
+    $shared_with_me: Boolean,
+    $folder_id: String,
+    $cascade: Boolean,
+    $limit: Int!,
+    $page_token: String,
+    $sort: NodeSort,
+    $shares_limit: Int = 1,
+    $direct_share: Boolean,
+    $owner_id: String,
+    $type: NodeType
+) {
+    findNodes(
+        keywords: $keywords,
+        flagged: $flagged,
+        shared_by_me: $shared_by_me,
+        shared_with_me: $shared_with_me,
+        folder_id: $folder_id,
+        cascade: $cascade,
+        limit: $limit,
+        page_token: $page_token,
+        sort: $sort,
+        direct_share: $direct_share,
+        owner_id: $owner_id,
+        type: $type
+    ) {
+        nodes {
+            ...Child
+        }
+        page_token
+    }
+}

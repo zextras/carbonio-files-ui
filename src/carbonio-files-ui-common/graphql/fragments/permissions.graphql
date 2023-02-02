@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+fragment Permissions on Node {
+    permissions {
+        can_read
+        can_write_file
+        can_write_folder
+        can_delete
+        can_add_version
+        can_read_link
+        can_change_link
+        can_share
+        can_read_share
+        can_change_share
+    }
+}
