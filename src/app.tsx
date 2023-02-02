@@ -16,8 +16,7 @@ import {
 	SecondaryBarComponentProps,
 	SearchViewProps
 } from '@zextras/carbonio-shell-ui';
-import filter from 'lodash/filter';
-import size from 'lodash/size';
+import { filter, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import buildClient from './carbonio-files-ui-common/apollo';

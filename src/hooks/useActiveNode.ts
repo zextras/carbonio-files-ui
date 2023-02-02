@@ -6,7 +6,7 @@
 
 import { useCallback } from 'react';
 
-import includes from 'lodash/includes';
+import { includes } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { DISPLAYER_TABS } from '../carbonio-files-ui-common/constants';

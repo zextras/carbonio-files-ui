@@ -8,7 +8,7 @@ import React from 'react';
 
 import type { QueryChip } from '@zextras/carbonio-shell-ui';
 import { ACTION_TYPES as SHELL_ACTION_TYPES } from '@zextras/carbonio-shell-ui';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 export const UpdateQueryContext = React.createContext<(arg: Array<QueryChip>) => void>(() => noop);
 

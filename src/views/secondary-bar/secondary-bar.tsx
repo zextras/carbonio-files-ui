@@ -8,11 +8,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Accordion, AccordionItemType, Container } from '@zextras/carbonio-design-system';
-import find from 'lodash/find';
-import map from 'lodash/map';
-import orderBy from 'lodash/orderBy';
-import reduce from 'lodash/reduce';
-import size from 'lodash/size';
+import { map, find, reduce, size, orderBy } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
