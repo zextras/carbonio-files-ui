@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/zextras/carbonio-files-ui/compare/v1.0.0...v1.1.0) (2023-02-02)
+
+
+### Features
+
+* add item type as advanced filter criteria ([b91df95](https://github.com/zextras/carbonio-files-ui/commit/b91df9549870d161b30a1a092db0c53963dc2280)), closes [#181](https://github.com/zextras/carbonio-files-ui/issues/181)
+* add owner as advanced filter criteria  ([600f79b](https://github.com/zextras/carbonio-files-ui/commit/600f79b8d59fd1e220a4e86380265e5339bf2d2f)), closes [#180](https://github.com/zextras/carbonio-files-ui/issues/180)
+* enable and disable carbonioFeatureFilesEnabled should show and hide Files Module ([79af589](https://github.com/zextras/carbonio-files-ui/commit/79af589e5ee2a957bcc6c6571087163929ef4271)), closes [#182](https://github.com/zextras/carbonio-files-ui/issues/182)
+
 ## [1.0.0](https://github.com/zextras/carbonio-files-ui/compare/v0.2.10...v1.0.0) (2023-01-16)
 
 ### [0.2.10](https://github.com/zextras/carbonio-files-ui/compare/v0.2.9...v0.2.10) (2023-01-10)
