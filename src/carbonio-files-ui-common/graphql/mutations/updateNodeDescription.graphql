@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+mutation updateNodeDescription($node_id: String!, $description: String) {
+	updateNode(node_id: $node_id, description: $description) {
+		id
+		description
+	}
+}

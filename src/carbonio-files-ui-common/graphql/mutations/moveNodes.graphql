@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+mutation moveNodes($node_ids: [ID!], $destination_id: ID!) {
+    moveNodes(node_ids: $node_ids, destination_id: $destination_id) {
+        id
+        parent {
+            id
+        }
+    }
+}

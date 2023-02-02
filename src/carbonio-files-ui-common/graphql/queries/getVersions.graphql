@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+query getVersions($node_id: ID!, $versions: [Int!]) {
+	getVersions(node_id: $node_id, versions: $versions ) {
+		version
+		size
+		last_editor {
+			full_name
+			email
+			id
+		}
+		updated_at
+		keep_forever
+		cloned_from_version
+	}
+}

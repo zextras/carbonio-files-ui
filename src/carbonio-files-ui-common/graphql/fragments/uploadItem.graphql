@@ -1,0 +1,15 @@
+#fragment UploadItem on UploadItem {
+#    id
+#    name
+#    nodeId
+#    parentId
+#    parentNodeId
+#    progress
+#    status
+#    fullPath
+#    ...on UploadFolderItem {
+#        children
+#        contentCount
+#        failedCount
+#    }
+#}

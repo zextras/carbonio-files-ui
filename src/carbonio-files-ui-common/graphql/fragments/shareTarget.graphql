@@ -1,0 +1,8 @@
+fragment ShareTarget on SharedTarget {
+    ... on DistributionList {
+        id
+    }
+    ... on User {
+        id
+    }
+}
