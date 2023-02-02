@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+#import "../fragments/child.graphql"
+
+query getChildren(
+	$node_id: ID!,
+	$children_limit: Int!,
+	$page_token: String,
+	$sort: NodeSort!,
+	$shares_limit: Int = 1
+) {
+	getNode(node_id: $node_id) {
+		id
+		name
+		... on Folder {
+			children(limit: $children_limit, page_token: $page_token, sort: $sort) {
+				nodes {
+					...Child
+				}
+				page_token
+			}
+		}
+	}
+}

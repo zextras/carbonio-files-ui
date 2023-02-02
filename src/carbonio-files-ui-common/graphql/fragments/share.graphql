@@ -1,0 +1,19 @@
+fragment Share on Share {
+    permission
+    share_target {
+        ... on User {
+            email
+            full_name
+            id
+        }
+        ... on DistributionList {
+            id
+            name
+        }
+    }
+    created_at
+    node {
+        id
+        type
+    }
+}

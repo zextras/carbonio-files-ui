@@ -6,8 +6,7 @@
 
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { AnyFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
-import find from 'lodash/find';
-import map from 'lodash/map';
+import { map, find } from 'lodash';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
 import LINK from '../carbonio-files-ui-common/graphql/fragments/link.graphql';

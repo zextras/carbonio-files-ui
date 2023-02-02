@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+#import "../fragments/baseNode.graphql"
+
+query getPath($node_id: ID!) {
+	getPath(node_id: $node_id) {
+		...BaseNode
+	}
+}

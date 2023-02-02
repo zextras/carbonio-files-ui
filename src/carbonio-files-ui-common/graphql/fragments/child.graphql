@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+#import "./baseNode.graphql"
+#import "./permissions.graphql"
+#import "./share.graphql"
+
+fragment Child on Node {
+	...BaseNode
+	owner {
+		id
+		full_name
+		email
+	}
+	updated_at
+	last_editor {
+		id
+		full_name
+		email
+	}
+	parent {
+		id
+		name
+		...Permissions
+	}
+	shares(limit: $shares_limit) {
+		...Share
+	}
+}

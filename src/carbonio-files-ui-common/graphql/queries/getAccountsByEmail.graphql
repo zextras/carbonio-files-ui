@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+query getAccountsByEmail($emails: [String!]!) {
+	getAccountsByEmail(emails: $emails) {
+		... on User {
+			id
+			email
+			full_name
+		}
+		... on DistributionList {
+			id
+			name
+		}
+	}
+}

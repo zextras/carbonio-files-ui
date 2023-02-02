@@ -23,11 +23,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 #### Setup
 
 - clone this repo
-- init and update the submodule
-```
-git submodule init
-git submodule update
-```
 - install the dependencies
 ```
 npm install

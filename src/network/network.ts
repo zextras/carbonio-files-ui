@@ -8,10 +8,14 @@ import { soapFetch as shellSoapFetch } from '@zextras/carbonio-shell-ui';
 
 import { RequestName } from '../carbonio-files-ui-common/types/network';
 
-export const soapFetch = <Req, Res>(request: RequestName, args: Req): Promise<Res> =>
+export const soapFetch = <Req, Res>(
+	request: RequestName,
+	args: Req,
+	nameSpaceValue = 'urn:zimbraMail'
+): Promise<Res> =>
 	new Promise<Res>((resolve, reject) => {
 		shellSoapFetch<Req, Res>(request, {
-			_jsns: 'urn:zimbraMail',
+			_jsns: nameSpaceValue,
 			...args
 		})
 			.then(resolve)

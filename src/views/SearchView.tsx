@@ -7,7 +7,7 @@
 import React, { useEffect } from 'react';
 
 import type { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
-import size from 'lodash/size';
+import { size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { searchParamsVar } from '../carbonio-files-ui-common/apollo/searchVar';

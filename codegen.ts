@@ -7,11 +7,12 @@ import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
 	schema: {
-		'': {
-			headers: {
-				Cookie: ''
+		'https://raw.githubusercontent.com/Zextras/carbonio-files-ce/develop/core/src/main/resources/api/schema.graphql':
+			{
+				headers: {
+					Cookie: ''
+				}
 			}
-		}
 	},
 	generates: {
 		'src/carbonio-files-ui-common/graphql/schema.graphql': {

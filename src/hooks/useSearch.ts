@@ -8,9 +8,7 @@ import { useCallback, useContext } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import type { QueryChip } from '@zextras/carbonio-shell-ui';
-import forEach from 'lodash/forEach';
-import map from 'lodash/map';
-import partition from 'lodash/partition';
+import { forEach, map, partition } from 'lodash';
 
 import { searchParamsVar } from '../carbonio-files-ui-common/apollo/searchVar';
 import {
@@ -47,6 +45,20 @@ export function fromAdvancedFiltersToQueryChips(
 				...value,
 				queryChipsToAdvancedFiltersValue: {
 					sharedByMe: advancedFiltersPar.sharedByMe
+				}
+			} as AdvancedSearchChip);
+		} else if ($key === 'ownerId') {
+			reducedForQuery.push({
+				...value,
+				queryChipsToAdvancedFiltersValue: {
+					ownerId: advancedFiltersPar.ownerId
+				}
+			} as AdvancedSearchChip);
+		} else if ($key === 'type') {
+			reducedForQuery.push({
+				...value,
+				queryChipsToAdvancedFiltersValue: {
+					type: advancedFiltersPar.type
 				}
 			} as AdvancedSearchChip);
 		} else if ($key === 'folderId') {
