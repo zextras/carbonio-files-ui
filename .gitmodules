@@ -2,7 +2,3 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-[submodule "src/carbonio-files-ui-common"]
-	path = src/carbonio-files-ui-common
-	url = git@github.com:Zextras/carbonio-files-ui-common.git
-	branch = main
