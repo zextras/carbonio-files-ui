@@ -844,10 +844,14 @@ export function cssCalcBuilder(
 	return `calc(${operationsString})`;
 }
 
-export function isFile(node: { __typename?: string } & Record<string, unknown>): node is File {
-	return node.__typename === 'File';
+export function isFile(
+	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
+): node is File {
+	return node?.__typename === 'File';
 }
 
-export function isFolder(node: { __typename?: string } & Record<string, unknown>): node is Folder {
-	return node.__typename === 'Folder';
+export function isFolder(
+	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
+): node is Folder {
+	return node?.__typename === 'Folder';
 }

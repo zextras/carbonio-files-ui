@@ -1098,123 +1098,12 @@ export type UpdateNodeMutationVariables = Exact<{
 	node_id: Scalars['String'];
 	name?: InputMaybe<Scalars['String']>;
 	description?: InputMaybe<Scalars['String']>;
-	shares_limit?: InputMaybe<Scalars['Int']>;
 }>;
 
 export type UpdateNodeMutation = {
-	updateNode:
-		| ({
-				updated_at: number;
-				size: number;
-				mime_type: string;
-				extension?: string | null;
-				version: number;
-				id: string;
-				name: string;
-				type: NodeType;
-				flagged: boolean;
-				rootId?: string | null;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
-				last_editor?:
-					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
-					| null;
-				parent?:
-					| ({
-							id: string;
-							name: string;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
-					| null;
-				shares: Array<
-					| ({
-							permission: SharePermission;
-							created_at: number;
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
-								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-					  } & { __typename?: 'Share' })
-					| null
-				>;
-				permissions: {
-					can_read: boolean;
-					can_write_file: boolean;
-					can_write_folder: boolean;
-					can_delete: boolean;
-					can_add_version: boolean;
-					can_read_link: boolean;
-					can_change_link: boolean;
-					can_share: boolean;
-					can_read_share: boolean;
-					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
-		| ({
-				updated_at: number;
-				id: string;
-				name: string;
-				type: NodeType;
-				flagged: boolean;
-				rootId?: string | null;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
-				last_editor?:
-					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
-					| null;
-				parent?:
-					| ({
-							id: string;
-							name: string;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
-					| null;
-				shares: Array<
-					| ({
-							permission: SharePermission;
-							created_at: number;
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
-								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-					  } & { __typename?: 'Share' })
-					| null
-				>;
-				permissions: {
-					can_read: boolean;
-					can_write_file: boolean;
-					can_write_folder: boolean;
-					can_delete: boolean;
-					can_add_version: boolean;
-					can_read_link: boolean;
-					can_change_link: boolean;
-					can_share: boolean;
-					can_read_share: boolean;
-					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' });
+	updateNode: { id: string; name: string; description: string } & {
+		__typename?: 'File' | 'Folder';
+	};
 } & { __typename?: 'Mutation' };
 
 export type UpdateNodeDescriptionMutationVariables = Exact<{
@@ -3830,12 +3719,6 @@ export const UpdateNodeDocument = {
 					kind: 'VariableDefinition',
 					variable: { kind: 'Variable', name: { kind: 'Name', value: 'description' } },
 					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-				},
-				{
-					kind: 'VariableDefinition',
-					variable: { kind: 'Variable', name: { kind: 'Name', value: 'shares_limit' } },
-					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
-					defaultValue: { kind: 'IntValue', value: '1' }
 				}
 			],
 			selectionSet: {
@@ -3863,13 +3746,16 @@ export const UpdateNodeDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } }]
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'description' } }
+							]
 						}
 					}
 				]
 			}
-		},
-		...ChildFragmentDoc.definitions
+		}
 	]
 } as unknown as DocumentNode<UpdateNodeMutation, UpdateNodeMutationVariables>;
 export const UpdateNodeDescriptionDocument = {

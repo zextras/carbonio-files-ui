@@ -13,12 +13,13 @@ import { nodeSortVar } from '../../../apollo/nodeSortVar';
 import UPDATE_NODE from '../../../graphql/mutations/updateNode.graphql';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
 import {
+	ChildFragmentDoc,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	UpdateNodeMutation,
 	UpdateNodeMutationVariables
 } from '../../../types/graphql/types';
-import { scrollToNodeItem } from '../../../utils/utils';
+import { isFolder, scrollToNodeItem } from '../../../utils/utils';
 import { useErrorHandler } from '../../useErrorHandler';
 import useQueryParam from '../../useQueryParam';
 import { useUpdateFolderContent } from '../useUpdateFolderContent';
@@ -57,10 +58,14 @@ export function useUpdateNodeMutation(): [
 				// update the position of the node in cache
 				update(cache, { data }) {
 					if (data?.updateNode) {
-						const updatedNode = data.updateNode;
 						// if updated node has a parent, check if parent has children in cache
 						// and update node position in parent cached children
-						if (updatedNode.parent) {
+						const updatedNode = cache.readFragment({
+							fragment: ChildFragmentDoc,
+							fragmentName: 'Child',
+							id: cache.identify(data.updateNode)
+						});
+						if (updatedNode?.parent) {
 							const parentFolder = cache.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 								query: GET_CHILDREN,
 								variables: {
@@ -70,7 +75,7 @@ export function useUpdateNodeMutation(): [
 									sort: nodeSort
 								}
 							});
-							if (parentFolder?.getNode?.__typename === 'Folder') {
+							if (parentFolder?.getNode && isFolder(parentFolder.getNode)) {
 								const parentNode = parentFolder.getNode;
 								const { isLast } = addNodeToFolder(parentNode, updatedNode);
 								const currentFolder = folderId || rootId;
