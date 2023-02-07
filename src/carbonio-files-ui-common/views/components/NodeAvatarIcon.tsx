@@ -7,8 +7,8 @@ import React, { useContext } from 'react';
 
 import { Tooltip } from '@zextras/carbonio-design-system';
 
-import { NodeAvatarIconContext } from '../../contexts';
 import { CheckedAvatar, FileIconPreview, UncheckedAvatar } from './StyledComponents';
+import { NodeAvatarIconContext } from '../../contexts';
 
 interface NodeAvatarIconParams {
 	selectionModeActive: undefined | boolean;

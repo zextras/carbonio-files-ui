@@ -9,17 +9,17 @@ import { Container, Divider, TabBar, TabBarProps } from '@zextras/carbonio-desig
 import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { useActiveNode } from '../../../hooks/useActiveNode';
-import { DISPLAYER_TABS, ROOTS } from '../../constants';
-import { GetNodeQuery } from '../../types/graphql/types';
-import { canUpsertDescription } from '../../utils/ActionsFactory';
-import { isFile, isFolder } from '../../utils/utils';
 import { DisplayerActions } from './DisplayerActions';
 import { DisplayerHeader } from './DisplayerHeader';
 import { NodeDetails } from './NodeDetails';
 import { NodeSharing } from './sharing/NodeSharing';
 import { DisplayerContentContainer } from './StyledComponents';
 import { Versioning } from './versioning/Versioning';
+import { useActiveNode } from '../../../hooks/useActiveNode';
+import { DISPLAYER_TABS, ROOTS } from '../../constants';
+import { GetNodeQuery } from '../../types/graphql/types';
+import { canUpsertDescription } from '../../utils/ActionsFactory';
+import { isFile, isFolder } from '../../utils/utils';
 
 interface DisplayerNodeProps {
 	node: NonNullable<GetNodeQuery['getNode']>;

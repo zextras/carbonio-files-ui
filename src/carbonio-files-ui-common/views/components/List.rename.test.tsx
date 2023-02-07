@@ -9,13 +9,13 @@ import { ApolloError } from '@apollo/client';
 import { fireEvent, screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
+import { List } from './List';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode, sortNodes } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { NodeSort } from '../../types/graphql/types';
 import { mockUpdateNodeError } from '../../utils/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../../utils/testUtils';
-import { List } from './List';
 
 describe('Rename', () => {
 	describe('Selection mode', () => {

@@ -10,6 +10,8 @@ import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system
 import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { UploadDisplayer } from './components/UploadDisplayer';
+import { UploadList } from './components/UploadList';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -19,8 +21,6 @@ import { useUpload } from '../hooks/useUpload';
 import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
-import { UploadDisplayer } from './components/UploadDisplayer';
-import { UploadList } from './components/UploadList';
 
 const UploadView: React.VFC = () => {
 	const [t] = useTranslation();

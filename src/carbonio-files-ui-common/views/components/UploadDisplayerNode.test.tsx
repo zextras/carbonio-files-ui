@@ -9,6 +9,7 @@ import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import { keyBy } from 'lodash';
 
+import { UploadDisplayerNode } from './UploadDisplayerNode';
 import { uploadVar } from '../../apollo/uploadVar';
 import { ICON_REGEXP } from '../../constants/test';
 import {
@@ -21,7 +22,6 @@ import { UploadStatus } from '../../types/graphql/client-types';
 import { mockGetBaseNode } from '../../utils/mockUtils';
 import { setup } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
-import { UploadDisplayerNode } from './UploadDisplayerNode';
 
 describe('Upload Displayer Node', () => {
 	describe('Header actions', () => {

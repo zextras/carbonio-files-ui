@@ -8,9 +8,9 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { NodeListItemWrapper } from './NodeListItemWrapper';
 import { populateNode } from '../../mocks/mockUtils';
 import { setup } from '../../utils/testUtils';
-import { NodeListItemWrapper } from './NodeListItemWrapper';
 
 describe('NodeListItemWrapper', () => {
 	describe('hover actions', () => {

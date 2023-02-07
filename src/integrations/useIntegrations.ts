@@ -7,14 +7,14 @@ import { useEffect, useMemo } from 'react';
 
 import { AnyFunction, registerActions, registerFunctions } from '@zextras/carbonio-shell-ui';
 
-import { useUpdateLinkMutation } from '../carbonio-files-ui-common/hooks/graphql/mutations/useUpdateLinkMutation';
-import { ErrorHandlerOptions } from '../carbonio-files-ui-common/hooks/useErrorHandler';
-import { FUNCTION_IDS } from '../constants';
 import { getGetLinkFunction } from './getGetLinkFunction';
 import { getNodeFunction } from './getNodeFunction';
 import { getUploadToTargetAndGetTargetIdFunction } from './getUploadToTargetAndGetTargetIdFunction';
 import { useSelectNodes } from './useSelectNodes';
 import { useSelectNodesAction } from './useSelectNodesAction';
+import { useUpdateLinkMutation } from '../carbonio-files-ui-common/hooks/graphql/mutations/useUpdateLinkMutation';
+import { ErrorHandlerOptions } from '../carbonio-files-ui-common/hooks/useErrorHandler';
+import { FUNCTION_IDS } from '../constants';
 
 export const useIntegrations = (): void => {
 	const selectNodesAction = useSelectNodesAction();

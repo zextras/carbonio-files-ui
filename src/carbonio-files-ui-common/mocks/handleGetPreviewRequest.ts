@@ -10,7 +10,7 @@ import { ResponseResolver, RestContext, RestRequest } from 'msw';
 import { PREVIEW_TYPE } from '../constants';
 
 type GetPreviewParams = {
-	type: typeof PREVIEW_TYPE[keyof typeof PREVIEW_TYPE];
+	type: (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE];
 	id: string;
 	version: string;
 	area: string;

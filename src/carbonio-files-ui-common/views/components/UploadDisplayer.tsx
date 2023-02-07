@@ -9,10 +9,10 @@ import React, { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { Container } from '@zextras/carbonio-design-system';
 
-import { useActiveNode } from '../../../hooks/useActiveNode';
-import { GetUploadItemDocument } from '../../types/graphql/types';
 import { EmptyDisplayer } from './EmptyDisplayer';
 import { UploadDisplayerNode } from './UploadDisplayerNode';
+import { useActiveNode } from '../../../hooks/useActiveNode';
+import { GetUploadItemDocument } from '../../types/graphql/types';
 
 export interface DisplayerProps {
 	translationKey: string;

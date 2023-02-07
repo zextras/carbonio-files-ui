@@ -8,10 +8,10 @@ import React, { useCallback } from 'react';
 import { Button, useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
+import { HoverSwitchComponent } from './HoverSwitchComponent';
 import { useInternalLink } from '../../../hooks/useInternalLink';
 import { Node } from '../../types/common';
 import { copyToClipboard } from '../../utils/utils';
-import { HoverSwitchComponent } from './HoverSwitchComponent';
 
 interface InternalLinkShortcutProps {
 	id: Node['id'];

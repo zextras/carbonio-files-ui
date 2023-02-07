@@ -10,6 +10,8 @@ import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system
 import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { Displayer } from './components/Displayer';
+import FileList from './components/FileList';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -20,8 +22,6 @@ import { useUpload } from '../hooks/useUpload';
 import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
-import { Displayer } from './components/Displayer';
-import FileList from './components/FileList';
 
 const FileView: React.VFC = () => {
 	const fileId = useQueryParam('file');

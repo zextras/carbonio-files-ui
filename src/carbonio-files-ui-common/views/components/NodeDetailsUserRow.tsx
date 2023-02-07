@@ -9,10 +9,10 @@ import React from 'react';
 import { Padding, Row, Text, Tooltip } from '@zextras/carbonio-design-system';
 import styled from 'styled-components';
 
+import { ShimmerText } from './StyledComponents';
 import useUserInfo from '../../../hooks/useUserInfo';
 import { User } from '../../types/graphql/types';
 import { formatDate, formatTime } from '../../utils/utils';
-import { ShimmerText } from './StyledComponents';
 
 const MainText = styled(Text)`
 	flex: 0 0 auto;

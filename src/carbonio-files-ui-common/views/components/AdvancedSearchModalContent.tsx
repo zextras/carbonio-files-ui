@@ -22,16 +22,16 @@ import { isEmpty, map, isEqual, every, isArray } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { useActiveNode } from '../../../hooks/useActiveNode';
-import { ROOTS } from '../../constants';
-import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
-import { AdvancedFilters, NodeListItemType } from '../../types/common';
-import { Folder } from '../../types/graphql/types';
 import { AdvancedSwitch } from './AdvancedSwitch';
 import { FolderSelectionModalContent } from './FolderSelectionModalContent';
 import { ItemTypeChipInput } from './ItemTypeChipInput';
 import { ModalFooterCustom } from './ModalFooterCustom';
 import { OwnerChipInput } from './OwnerChipInput';
+import { useActiveNode } from '../../../hooks/useActiveNode';
+import { ROOTS } from '../../constants';
+import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
+import { AdvancedFilters, NodeListItemType } from '../../types/common';
+import { Folder } from '../../types/graphql/types';
 
 const FolderChipInput = styled(ChipInput)`
 	cursor: pointer;

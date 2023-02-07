@@ -9,6 +9,8 @@ import { useCallback, useMemo } from 'react';
 import { forEach, map, filter, includes, reduce, noop, partition } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useCreateFolderMutation } from './graphql/mutations/useCreateFolderMutation';
+import { useUpdateFolderContent } from './graphql/useUpdateFolderContent';
 import buildClient from '../apollo';
 import { nodeSortVar } from '../apollo/nodeSortVar';
 import { UploadFunctions, uploadFunctionsVar, uploadVar } from '../apollo/uploadVar';
@@ -35,8 +37,6 @@ import {
 	uploadVersion
 } from '../utils/uploadUtils';
 import { isFileSystemDirectoryEntry, isFolder, scan } from '../utils/utils';
-import { useCreateFolderMutation } from './graphql/mutations/useCreateFolderMutation';
-import { useUpdateFolderContent } from './graphql/useUpdateFolderContent';
 
 type UploadVarObject = {
 	filesEnriched: { [id: string]: UploadItem };

@@ -8,13 +8,13 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { AddShareChip } from './AddShareChip';
 import { populateGalContact, populateNode } from '../../../mocks/mockUtils';
 import { Role, ShareChip } from '../../../types/common';
 import { GetNodeQuery, GetNodeQueryVariables } from '../../../types/graphql/types';
 import { getNodeVariables, mockGetNode } from '../../../utils/mockUtils';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
-import { AddShareChip } from './AddShareChip';
 
 describe('Add Share Chip', () => {
 	test('render a chip for share with read-only permissions', async () => {

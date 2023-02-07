@@ -10,6 +10,8 @@ import { faker } from '@faker-js/faker';
 import { act, fireEvent, screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
@@ -26,8 +28,6 @@ import {
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup, selectNodes } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

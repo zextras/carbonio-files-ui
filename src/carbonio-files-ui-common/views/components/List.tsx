@@ -14,6 +14,9 @@ import { isEmpty, find, filter, includes, reduce, size, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { Dropzone } from './Dropzone';
+import { EmptyFolder } from './EmptyFolder';
+import { ListContent } from './ListContent';
 import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useNavigation } from '../../../hooks/useNavigation';
@@ -71,9 +74,6 @@ import {
 	isSupportedByPreview,
 	openNodeWithDocs
 } from '../../utils/utils';
-import { Dropzone } from './Dropzone';
-import { EmptyFolder } from './EmptyFolder';
-import { ListContent } from './ListContent';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};

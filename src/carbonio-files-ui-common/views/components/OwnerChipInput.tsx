@@ -10,11 +10,11 @@ import { ChipInput, ChipInputProps, ChipItem } from '@zextras/carbonio-design-sy
 import { isEmpty, filter, reduce, throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { Hint, Loader } from './StyledComponents';
 import { soapFetch } from '../../../network/network';
 import { AdvancedFilters, Contact } from '../../types/common';
 import { AutocompleteGalRequest, AutocompleteGalResponse, ContactInfo } from '../../types/network';
 import { getChipLabel } from '../../utils/utils';
-import { Hint, Loader } from './StyledComponents';
 
 function contactInfoToContact(contactInfo: ContactInfo): Contact {
 	return {

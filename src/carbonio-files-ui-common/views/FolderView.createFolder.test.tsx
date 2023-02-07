@@ -11,6 +11,8 @@ import { act, screen, waitForElementToBeRemoved, within } from '@testing-library
 import { DropdownItem } from '@zextras/carbonio-design-system';
 import { find } from 'lodash';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
@@ -26,8 +28,6 @@ import {
 } from '../utils/mockUtils';
 import { generateError, setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 let mockedCreateOptions: CreateOptionsContent['createOptions'];
 

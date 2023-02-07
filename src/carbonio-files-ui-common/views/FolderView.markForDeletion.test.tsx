@@ -9,6 +9,8 @@ import React from 'react';
 import { fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, SELECTORS } from '../constants/test';
@@ -24,8 +26,6 @@ import {
 	mockTrashNodes
 } from '../utils/mockUtils';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

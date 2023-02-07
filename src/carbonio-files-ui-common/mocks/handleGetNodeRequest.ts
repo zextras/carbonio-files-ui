@@ -8,8 +8,6 @@ import { faker } from '@faker-js/faker';
 import { forEach, take } from 'lodash';
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { ROOTS } from '../constants';
-import { GetNodeQuery, GetNodeQueryVariables } from '../types/graphql/types';
 import {
 	populateLinks,
 	populateNode,
@@ -17,6 +15,8 @@ import {
 	populateNodes,
 	sortNodes
 } from './mockUtils';
+import { ROOTS } from '../constants';
+import { GetNodeQuery, GetNodeQueryVariables } from '../types/graphql/types';
 
 const handleGetNodeRequest: ResponseResolver<
 	GraphQLRequest<GetNodeQueryVariables>,

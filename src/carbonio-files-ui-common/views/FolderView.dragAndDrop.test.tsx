@@ -17,6 +17,8 @@ import {
 import { forEach, map, find } from 'lodash';
 import { graphql } from 'msw';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { TIMERS } from '../constants';
@@ -47,8 +49,6 @@ import {
 	mockMoveNodes
 } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup, selectNodes, createDataTransfer } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

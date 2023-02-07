@@ -10,6 +10,7 @@ import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
+import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
 import {
 	populateGalContact,
@@ -30,7 +31,6 @@ import {
 	mockGetShares
 } from '../../utils/mockUtils';
 import { generateError, setup } from '../../utils/testUtils';
-import { Displayer } from './Displayer';
 
 const mockedSoapFetch: jest.Mock = jest.fn();
 

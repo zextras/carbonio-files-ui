@@ -17,6 +17,7 @@ import {
 import { forEach, map, find } from 'lodash';
 import { Route } from 'react-router-dom';
 
+import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import {
 	FILTER_TYPE,
@@ -41,7 +42,6 @@ import {
 } from '../utils/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
-import FilterView from './FilterView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

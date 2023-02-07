@@ -8,13 +8,13 @@ import React from 'react';
 import { act, fireEvent, screen } from '@testing-library/react';
 import { forEach } from 'lodash';
 
+import { EmptySpaceFiller } from './EmptySpaceFiller';
+import { List } from './List';
 import { ACTION_REGEXP } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { mockGetChild, mockGetParent } from '../../utils/mockUtils';
 import { setup, selectNodes } from '../../utils/testUtils';
-import { EmptySpaceFiller } from './EmptySpaceFiller';
-import { List } from './List';
 
 describe('Contextual menu actions', () => {
 	describe('Contextual menu on empty space', () => {

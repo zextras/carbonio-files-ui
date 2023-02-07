@@ -10,6 +10,10 @@ import type { Action as DSAction } from '@zextras/carbonio-design-system';
 import { forEach, map, filter, includes } from 'lodash';
 import styled from 'styled-components';
 
+import { Draggable } from './Draggable';
+import { NodeListItem } from './NodeListItem';
+import { NodeListItemWrapper } from './NodeListItemWrapper';
+import { ScrollContainer } from './ScrollContainer';
 import useUserInfo from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES } from '../../constants';
@@ -19,10 +23,6 @@ import { Node } from '../../types/graphql/types';
 import { DeepPick, OneOrMany } from '../../types/utils';
 import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
 import { isFile } from '../../utils/utils';
-import { Draggable } from './Draggable';
-import { NodeListItem } from './NodeListItem';
-import { NodeListItemWrapper } from './NodeListItemWrapper';
-import { ScrollContainer } from './ScrollContainer';
 
 const DragImageContainer = styled.div`
 	position: absolute;

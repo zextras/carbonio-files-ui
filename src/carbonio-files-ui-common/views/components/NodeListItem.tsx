@@ -21,6 +21,10 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { ContextualMenu } from './ContextualMenu';
+import { NodeAvatarIcon } from './NodeAvatarIcon';
+import { NodeHoverBar } from './NodeHoverBar';
+import { HoverContainer, ListItemContainer } from './StyledComponents';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import useUserInfo from '../../../hooks/useUserInfo';
 import {
@@ -45,10 +49,6 @@ import {
 	isSearchView,
 	cssCalcBuilder
 } from '../../utils/utils';
-import { ContextualMenu } from './ContextualMenu';
-import { NodeAvatarIcon } from './NodeAvatarIcon';
-import { NodeHoverBar } from './NodeHoverBar';
-import { HoverContainer, ListItemContainer } from './StyledComponents';
 
 const CustomText = styled(Text)`
 	text-transform: uppercase;
@@ -165,7 +165,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 	);
 
 	const [$isSupportedByPreview] = useMemo<
-		[boolean, typeof PREVIEW_TYPE[keyof typeof PREVIEW_TYPE] | undefined]
+		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
 	>(() => isSupportedByPreview(mimeType), [mimeType]);
 
 	const openNode = useCallback(

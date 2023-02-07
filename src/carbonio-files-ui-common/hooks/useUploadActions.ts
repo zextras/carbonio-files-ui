@@ -9,6 +9,7 @@ import { Action as DSAction } from '@zextras/carbonio-design-system';
 import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { useUpload } from './useUpload';
 import { useNavigation } from '../../hooks/useNavigation';
 import { Action } from '../types/common';
 import { UploadItem } from '../types/graphql/client-types';
@@ -19,7 +20,6 @@ import {
 	getPermittedUploadActions
 } from '../utils/ActionsFactory';
 import { scrollToNodeItem } from '../utils/utils';
-import { useUpload } from './useUpload';
 
 type ActionNodes = MakeRequired<Partial<UploadItem>, 'id'>[];
 

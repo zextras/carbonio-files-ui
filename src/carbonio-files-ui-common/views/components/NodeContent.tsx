@@ -8,10 +8,10 @@ import React from 'react';
 import { Container, Padding, Shimmer, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
 import { EmptyFolder } from './EmptyFolder';
 import { ScrollContainer } from './ScrollContainer';
 import { DisplayerContentContainer, ShimmerText } from './StyledComponents';
+import { LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
 
 const ShimmerNodeDetailsItem = (): JSX.Element => (
 	<Container

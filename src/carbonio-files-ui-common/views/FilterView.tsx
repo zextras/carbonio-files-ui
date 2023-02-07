@@ -12,6 +12,9 @@ import { filter, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 
+import { Displayer } from './components/Displayer';
+import { List } from './components/List';
+import { SortingComponent } from './components/SortingComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -32,9 +35,6 @@ import { NodeSort } from '../types/graphql/types';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
-import { Displayer } from './components/Displayer';
-import { List } from './components/List';
-import { SortingComponent } from './components/SortingComponent';
 
 const FilterView: React.VFC = () => {
 	const { filter: filterParam } = useParams<URLParams>();

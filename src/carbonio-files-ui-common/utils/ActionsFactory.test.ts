@@ -4,9 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { populateFile, populateFolder, populateUnknownNode } from '../mocks/mockUtils';
-import { Node } from '../types/common';
-import { File, Folder } from '../types/graphql/types';
 import {
 	canCopy,
 	canCreateFolder,
@@ -17,6 +14,9 @@ import {
 	canUnFlag
 } from './ActionsFactory';
 import { isFile, isFolder } from './utils';
+import { populateFile, populateFolder, populateUnknownNode } from '../mocks/mockUtils';
+import { Node } from '../types/common';
+import { File, Folder } from '../types/graphql/types';
 
 type NodeWithoutPermission<T extends Node> = Omit<T, 'permissions'> & {
 	permissions: Partial<T['permissions']>;

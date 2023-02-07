@@ -20,6 +20,10 @@ import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { AddSharing } from './AddSharing';
+import { CollaborationLinks } from './collaborationLinks/CollaborationLinks';
+import { EditShareChip } from './EditShareChip';
+import { PublicLink } from './publicLink/PublicLink';
 import useUserInfo from '../../../../hooks/useUserInfo';
 import { SHARE_CHIP_MAX_WIDTH, SHARE_CHIP_SIZE } from '../../../constants';
 import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
@@ -27,10 +31,6 @@ import { useGetSharesQuery } from '../../../hooks/graphql/queries/useGetSharesQu
 import { Node } from '../../../types/common';
 import { Share, SharedTarget } from '../../../types/graphql/types';
 import { cssCalcBuilder, getChipLabel, getChipTooltip, isFile } from '../../../utils/utils';
-import { AddSharing } from './AddSharing';
-import { CollaborationLinks } from './collaborationLinks/CollaborationLinks';
-import { EditShareChip } from './EditShareChip';
-import { PublicLink } from './publicLink/PublicLink';
 
 const MainContainer = styled(Container)`
 	gap: ${({ theme }): string => theme.sizes.padding.medium};

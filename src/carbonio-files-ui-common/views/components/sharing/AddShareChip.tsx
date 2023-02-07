@@ -11,15 +11,15 @@ import { ChipAction } from '@zextras/carbonio-design-system';
 import { filter, toLower } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { ChipWithPopover } from './ChipWithPopover';
+import { NewShareChipPopoverContainer } from './NewShareChipPopoverContainer';
+import { ShareChipLabel } from './ShareChipLabel';
 import { useActiveNode } from '../../../../hooks/useActiveNode';
 import { SHARE_CHIP_MAX_WIDTH } from '../../../constants';
 import { useGetNodeQuery } from '../../../hooks/graphql/queries/useGetNodeQuery';
 import { Role, ShareChip } from '../../../types/common';
 import { Node } from '../../../types/graphql/types';
 import { getChipLabel, isFile, isFolder } from '../../../utils/utils';
-import { ChipWithPopover } from './ChipWithPopover';
-import { NewShareChipPopoverContainer } from './NewShareChipPopoverContainer';
-import { ShareChipLabel } from './ShareChipLabel';
 
 const rowRoleToIdxMap: { [key in Role]: number } = {
 	[Role.Viewer]: 0,

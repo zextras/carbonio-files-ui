@@ -9,11 +9,11 @@ import { useCallback } from 'react';
 import { includes } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
 
+import { useNavigation } from './useNavigation';
 import { DISPLAYER_TABS } from '../carbonio-files-ui-common/constants';
 import useQueryParam from '../carbonio-files-ui-common/hooks/useQueryParam';
 import { URLParams } from '../carbonio-files-ui-common/types/common';
 import { isSearchView } from '../carbonio-files-ui-common/utils/utils';
-import { useNavigation } from './useNavigation';
 
 export function useActiveNode(): {
 	activeNodeId?: string;

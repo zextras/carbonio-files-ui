@@ -8,12 +8,12 @@ import React from 'react';
 
 import { fireEvent, screen } from '@testing-library/react';
 
+import { List } from './List';
 import { PREVIEW_MAX_SIZE } from '../../constants';
 import { ACTION_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
 import { NodeType } from '../../types/graphql/types';
 import { setup } from '../../utils/testUtils';
-import { List } from './List';
 
 describe('Preview action', () => {
 	test('Pdf with size greater than PREVIEW_MAX_SIZE are not previewed and fallback is shown', async () => {

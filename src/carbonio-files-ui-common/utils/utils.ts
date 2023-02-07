@@ -731,7 +731,7 @@ export function uploadToTargetModule(args: {
 export function isSupportedByPreview(
 	mimeType: string | undefined,
 	type: 'thumbnail' | 'preview' = 'preview'
-): [boolean, typeof PREVIEW_TYPE[keyof typeof PREVIEW_TYPE] | undefined] {
+): [boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined] {
 	return [
 		!!mimeType &&
 			((mimeType.startsWith('image') && mimeType !== 'image/svg+xml') ||

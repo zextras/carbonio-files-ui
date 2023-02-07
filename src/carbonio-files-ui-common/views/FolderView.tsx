@@ -12,6 +12,11 @@ import { map, filter, last } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
+import { ContextualMenuProps } from './components/ContextualMenu';
+import { Displayer } from './components/Displayer';
+import { EmptySpaceFiller } from './components/EmptySpaceFiller';
+import { List } from './components/List';
+import { SortingComponent } from './components/SortingComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { CreateOptionsContent, useCreateOptions } from '../../hooks/useCreateOptions';
@@ -29,11 +34,6 @@ import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement, isFolder } from '../utils/utils';
-import { ContextualMenuProps } from './components/ContextualMenu';
-import { Displayer } from './components/Displayer';
-import { EmptySpaceFiller } from './components/EmptySpaceFiller';
-import { List } from './components/List';
-import { SortingComponent } from './components/SortingComponent';
 
 const FolderView: React.VFC = () => {
 	const { rootId } = useParams<URLParams>();

@@ -8,6 +8,8 @@ import React from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { populateFile, populateFolder } from '../mocks/mockUtils';
 import { NodeSort } from '../types/graphql/types';
@@ -19,8 +21,6 @@ import {
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

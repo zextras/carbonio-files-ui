@@ -11,6 +11,9 @@ import { ChipAction, Text, useSnackbar } from '@zextras/carbonio-design-system';
 import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { ChipWithPopover } from './ChipWithPopover';
+import { EditShareChipPopoverContainer } from './EditShareChipPopoverContainer';
+import { ShareChipLabel } from './ShareChipLabel';
 import { SHARE_CHIP_MAX_WIDTH, SHARE_CHIP_SIZE } from '../../../constants';
 import GET_PERMISSIONS from '../../../graphql/queries/getPermissions.graphql';
 import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
@@ -33,9 +36,6 @@ import {
 } from '../../../types/graphql/types';
 import { getChipLabel, isFile, isFolder, sharePermissionsGetter } from '../../../utils/utils';
 import { RouteLeavingGuard } from '../RouteLeavingGuard';
-import { ChipWithPopover } from './ChipWithPopover';
-import { EditShareChipPopoverContainer } from './EditShareChipPopoverContainer';
-import { ShareChipLabel } from './ShareChipLabel';
 
 const rowSharePermissionToIdxMap = {
 	[SharePermission.ReadOnly]: 0,

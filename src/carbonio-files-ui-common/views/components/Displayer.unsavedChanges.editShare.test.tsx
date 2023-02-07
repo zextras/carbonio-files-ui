@@ -9,6 +9,7 @@ import { ApolloError } from '@apollo/client';
 import { screen, waitFor, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
+import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
 import { populateNode, populateShare, populateUser } from '../../mocks/mockUtils';
 import { SharePermission } from '../../types/graphql/types';
@@ -24,7 +25,6 @@ import {
 } from '../../utils/mockUtils';
 import { generateError, setup } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
-import { Displayer } from './Displayer';
 
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {

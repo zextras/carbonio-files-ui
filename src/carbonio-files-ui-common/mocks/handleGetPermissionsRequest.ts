@@ -6,8 +6,8 @@
 
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { GetPermissionsQuery, GetPermissionsQueryVariables } from '../types/graphql/types';
 import { populatePermissions } from './mockUtils';
+import { GetPermissionsQuery, GetPermissionsQueryVariables } from '../types/graphql/types';
 
 const handleGetPermissionsRequest: ResponseResolver<
 	GraphQLRequest<GetPermissionsQueryVariables>,

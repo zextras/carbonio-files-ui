@@ -7,8 +7,8 @@
 import { map } from 'lodash';
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { GetVersionsQuery, GetVersionsQueryVariables } from '../types/graphql/types';
 import { getVersionFromFile, populateFile } from './mockUtils';
+import { GetVersionsQuery, GetVersionsQueryVariables } from '../types/graphql/types';
 
 const handleGetVersionsRequest: ResponseResolver<
 	GraphQLRequest<GetVersionsQueryVariables>,

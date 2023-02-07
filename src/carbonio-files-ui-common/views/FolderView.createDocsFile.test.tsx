@@ -11,6 +11,8 @@ import { DropdownItem } from '@zextras/carbonio-design-system';
 import { find } from 'lodash';
 import { graphql, rest } from 'msw';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
@@ -39,8 +41,6 @@ import {
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 let mockedCreateOptions: CreateOptionsContent['createOptions'];
 

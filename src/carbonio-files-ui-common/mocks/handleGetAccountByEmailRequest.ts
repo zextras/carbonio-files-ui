@@ -6,8 +6,8 @@
 
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { GetAccountByEmailQuery, GetAccountByEmailQueryVariables } from '../types/graphql/types';
 import { populateUser } from './mockUtils';
+import { GetAccountByEmailQuery, GetAccountByEmailQueryVariables } from '../types/graphql/types';
 
 const handleGetAccountByEmailRequest: ResponseResolver<
 	GraphQLRequest<GetAccountByEmailQueryVariables>,

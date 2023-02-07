@@ -10,6 +10,7 @@ import { map } from 'lodash';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
+import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
@@ -33,7 +34,6 @@ import {
 	GetPathQueryVariables
 } from '../types/graphql/types';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
-import FilterView from './FilterView';
 
 const mockedRequestHandler = jest.fn();
 

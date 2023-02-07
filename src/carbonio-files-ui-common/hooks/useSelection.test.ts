@@ -6,9 +6,9 @@
 
 import { renderHook, act } from '@testing-library/react-hooks';
 
+import useSelection from './useSelection';
 import { populateFolder } from '../mocks/mockUtils';
 import { Node } from '../types/graphql/types';
-import useSelection from './useSelection';
 
 /**
  * Available hook fields:

@@ -8,6 +8,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { keyBy } from 'lodash';
 
+import UploadView from './UploadView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { uploadVar } from '../apollo/uploadVar';
 import { ICON_REGEXP } from '../constants/test';
@@ -22,7 +23,6 @@ import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { mockGetBaseNode } from '../utils/mockUtils';
 import { createDataTransfer, setup, uploadWithDnD } from '../utils/testUtils';
-import UploadView from './UploadView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

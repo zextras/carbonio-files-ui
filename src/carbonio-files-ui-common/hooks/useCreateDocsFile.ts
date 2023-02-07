@@ -8,6 +8,7 @@ import { useCallback, useMemo } from 'react';
 
 import { ApolloClient, FetchResult, NormalizedCacheObject, useReactiveVar } from '@apollo/client';
 
+import { UpdateFolderContentType, useUpdateFolderContent } from './graphql/useUpdateFolderContent';
 import buildClient from '../apollo';
 import { nodeSortVar } from '../apollo/nodeSortVar';
 import { DOCS_ENDPOINT, CREATE_FILE_PATH, NODES_LOAD_LIMIT, SHARES_LOAD_LIMIT } from '../constants';
@@ -23,7 +24,6 @@ import {
 	NodeSort
 } from '../types/graphql/types';
 import { scrollToNodeItem } from '../utils/utils';
-import { UpdateFolderContentType, useUpdateFolderContent } from './graphql/useUpdateFolderContent';
 
 interface DocsFile {
 	name: string;

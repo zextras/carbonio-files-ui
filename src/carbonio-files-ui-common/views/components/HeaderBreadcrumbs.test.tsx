@@ -17,6 +17,7 @@ import {
 } from '@testing-library/react';
 import { forEach, map, find } from 'lodash';
 
+import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, TIMERS } from '../../constants';
@@ -29,7 +30,6 @@ import {
 import { Node } from '../../types/graphql/types';
 import { mockGetParent, mockGetPath, mockMoveNodes } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
-import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
 

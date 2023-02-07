@@ -11,6 +11,7 @@ import { ApolloClient, ApolloQueryResult, NormalizedCacheObject } from '@apollo/
 import { forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
+import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
 import { REST_ENDPOINT, UPLOAD_PATH, UPLOAD_VERSION_PATH } from '../constants';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
@@ -29,7 +30,6 @@ import {
 	NodeSort,
 	NodeType
 } from '../types/graphql/types';
-import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 
 export type UploadAddType = { file: File; fileSystemEntry?: FileSystemEntry | null };
 

@@ -12,6 +12,11 @@ import { takeRightWhile } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { EmptyFolder } from './EmptyFolder';
+import { ListContent } from './ListContent';
+import { LoadingIcon } from './LoadingIcon';
+import { ScrollContainer } from './ScrollContainer';
+import { OverFlowHiddenRow } from './StyledComponents';
 import { BREADCRUMB_ROW_HEIGHT, LIST_ITEM_HEIGHT_COMPACT, ROOTS } from '../../constants';
 import GET_PATH from '../../graphql/queries/getPath.graphql';
 import { Crumb, NodeListItemType } from '../../types/common';
@@ -20,11 +25,6 @@ import { OneOrMany } from '../../types/utils';
 import { canBeWriteNodeDestination } from '../../utils/ActionsFactory';
 import { buildCrumbs, cssCalcBuilder } from '../../utils/utils';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
-import { EmptyFolder } from './EmptyFolder';
-import { ListContent } from './ListContent';
-import { LoadingIcon } from './LoadingIcon';
-import { ScrollContainer } from './ScrollContainer';
-import { OverFlowHiddenRow } from './StyledComponents';
 
 interface ModalListProps {
 	folderId: string;

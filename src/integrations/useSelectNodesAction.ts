@@ -7,8 +7,8 @@ import { useCallback } from 'react';
 
 import { Action, ActionFactory, registerActions } from '@zextras/carbonio-shell-ui';
 
-import { ACTION_IDS, ACTION_TYPES } from '../constants';
 import { OpenSelectNodesModalArgs, useSelectNodes } from './useSelectNodes';
+import { ACTION_IDS, ACTION_TYPES } from '../constants';
 
 type ActionTarget = OpenSelectNodesModalArgs & {
 	actionLabel?: string;

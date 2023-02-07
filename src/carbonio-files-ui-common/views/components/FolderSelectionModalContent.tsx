@@ -18,6 +18,10 @@ import {
 import { reduce, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { ModalFooterCustom } from './ModalFooterCustom';
+import { ModalList } from './ModalList';
+import { ModalRootsList } from './ModalRootsList';
+import { CustomModalBody } from './StyledComponents';
 import { destinationVar, DestinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
 import BASE_NODE from '../../graphql/fragments/baseNode.graphql';
@@ -27,10 +31,6 @@ import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
 import { NodeListItemType, RootListItemType } from '../../types/common';
 import { BaseNodeFragment, Folder } from '../../types/graphql/types';
 import { isFile, isFolder } from '../../utils/utils';
-import { ModalFooterCustom } from './ModalFooterCustom';
-import { ModalList } from './ModalList';
-import { ModalRootsList } from './ModalRootsList';
-import { CustomModalBody } from './StyledComponents';
 
 interface FolderSelectionModalContentProps {
 	folderId?: string;

@@ -9,6 +9,7 @@ import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import { forEach } from 'lodash';
 
+import { NodeSharing } from './NodeSharing';
 import { SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
@@ -39,7 +40,6 @@ import {
 } from '../../../utils/mockUtils';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
-import { NodeSharing } from './NodeSharing';
 
 let mockedUserLogged: User;
 const mockedSoapFetch: jest.Mock = jest.fn();

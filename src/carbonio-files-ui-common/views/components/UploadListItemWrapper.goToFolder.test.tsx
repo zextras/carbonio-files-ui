@@ -8,12 +8,12 @@ import React from 'react';
 import { faker } from '@faker-js/faker';
 import { fireEvent, screen } from '@testing-library/react';
 
+import { UploadListItemWrapper } from './UploadListItemWrapper';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateUploadItem } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { mockGetBaseNode } from '../../utils/mockUtils';
 import { setup } from '../../utils/testUtils';
-import { UploadListItemWrapper } from './UploadListItemWrapper';
 
 describe('Upload List Item Wrapper', () => {
 	describe('Go to folder action', () => {

@@ -11,6 +11,11 @@ import { forEach, isEmpty, reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { EmptyFolder } from './EmptyFolder';
+import { ListContent } from './ListContent';
+import { LoadingIcon } from './LoadingIcon';
+import { ScrollContainer } from './ScrollContainer';
+import { OverFlowHiddenRow } from './StyledComponents';
 import {
 	BREADCRUMB_ROW_HEIGHT,
 	FILTER_PARAMS,
@@ -24,11 +29,6 @@ import { MakeOptional, NodeType } from '../../types/graphql/types';
 import { OneOrMany } from '../../types/utils';
 import { cssCalcBuilder } from '../../utils/utils';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
-import { EmptyFolder } from './EmptyFolder';
-import { ListContent } from './ListContent';
-import { LoadingIcon } from './LoadingIcon';
-import { ScrollContainer } from './ScrollContainer';
-import { OverFlowHiddenRow } from './StyledComponents';
 
 interface RootsListProps {
 	activeNodes?: OneOrMany<string>;

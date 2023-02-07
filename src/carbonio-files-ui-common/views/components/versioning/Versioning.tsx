@@ -13,6 +13,9 @@ import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { GridContainer } from './GridElements';
+import UploadVersionButton, { UploadVersionButtonProps } from './UploadVersionButton';
+import { SectionRow, VersionRow } from './VersionRow';
 import useUserInfo from '../../../../hooks/useUserInfo';
 import { CONFIGS } from '../../../constants';
 import { useCloneVersionMutation } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
@@ -25,9 +28,6 @@ import { DeleteVersionsMutation, GetVersionsQuery } from '../../../types/graphql
 import { NonNullableList, NonNullableListItem } from '../../../types/utils';
 import { ActionsFactoryNodeType, canOpenVersionWithDocs } from '../../../utils/ActionsFactory';
 import { cssCalcBuilder, getChipLabel } from '../../../utils/utils';
-import { GridContainer } from './GridElements';
-import UploadVersionButton, { UploadVersionButtonProps } from './UploadVersionButton';
-import { SectionRow, VersionRow } from './VersionRow';
 
 type Version = NonNullableListItem<GetVersionsQuery['getVersions']>;
 

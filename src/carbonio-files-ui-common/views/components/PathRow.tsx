@@ -10,6 +10,7 @@ import { Button, Row } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
+import { Label } from './Label';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { ROOTS } from '../../constants';
 import GET_PATH from '../../graphql/queries/getPath.graphql';
@@ -18,7 +19,6 @@ import { Crumb, Node, URLParams } from '../../types/common';
 import { GetPathQuery, GetPathQueryVariables, NodeType } from '../../types/graphql/types';
 import { buildCrumbs } from '../../utils/utils';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
-import { Label } from './Label';
 
 export interface PathRowProps {
 	id: Node['id'];

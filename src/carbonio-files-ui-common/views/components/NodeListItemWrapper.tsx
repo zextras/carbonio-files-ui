@@ -12,6 +12,8 @@ import { isEmpty, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
+import { Dropzone } from './Dropzone';
+import { NodeListItem } from './NodeListItem';
 import useUserInfo from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, ROOTS, TIMERS } from '../../constants';
@@ -28,8 +30,6 @@ import {
 } from '../../utils/ActionsFactory';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import { isFile, isFolder, isTrashView } from '../../utils/utils';
-import { Dropzone } from './Dropzone';
-import { NodeListItem } from './NodeListItem';
 
 interface NodeListItemWrapperProps {
 	node: NodeListItemType;

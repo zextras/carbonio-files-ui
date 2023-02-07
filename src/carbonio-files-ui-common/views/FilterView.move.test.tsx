@@ -9,6 +9,7 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { Route } from 'react-router-dom';
 
+import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -31,7 +32,6 @@ import {
 	mockMoveNodes
 } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup, selectNodes } from '../utils/testUtils';
-import FilterView from './FilterView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

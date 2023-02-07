@@ -19,12 +19,12 @@ import { forEach } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { GridItem } from './GridElements';
 import { DropdownListItemContent } from '../../../design_system_fork/DropdownListItemComponent';
 import { CloneVersionType } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
 import { DeleteVersionsType } from '../../../hooks/graphql/mutations/useDeleteVersionsMutation';
 import { KeepVersionsType } from '../../../hooks/graphql/mutations/useKeepVersionsMutation';
 import { downloadNode, formatDate, humanFileSize, openNodeWithDocs } from '../../../utils/utils';
-import { GridItem } from './GridElements';
 
 const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
 	line-height: 1.5;

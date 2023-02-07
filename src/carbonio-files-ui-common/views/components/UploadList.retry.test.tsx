@@ -13,6 +13,7 @@ import { EventEmitter } from 'events';
 import { forEach, keyBy } from 'lodash';
 import { graphql, rest } from 'msw';
 
+import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
@@ -46,7 +47,6 @@ import {
 	setup,
 	uploadWithDnD
 } from '../../utils/testUtils';
-import { UploadList } from './UploadList';
 
 describe('Upload List', () => {
 	describe('Retry', () => {
