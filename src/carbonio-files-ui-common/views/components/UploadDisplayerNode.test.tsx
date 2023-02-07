@@ -12,11 +12,13 @@ import { keyBy } from 'lodash';
 import { uploadVar } from '../../apollo/uploadVar';
 import { ICON_REGEXP } from '../../constants/test';
 import {
+	populateFolder,
 	populateUploadFolderItem,
 	populateUploadItem,
 	populateUploadItems
 } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
+import { mockGetBaseNode } from '../../utils/mockUtils';
 import { setup } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
 import { UploadDisplayerNode } from './UploadDisplayerNode';
@@ -24,14 +26,17 @@ import { UploadDisplayerNode } from './UploadDisplayerNode';
 describe('Upload Displayer Node', () => {
 	describe('Header actions', () => {
 		test('Go to folder is visible for loading status', async () => {
+			const parentFolder = populateFolder();
 			const uploadItem = populateUploadItem({
 				status: UploadStatus.LOADING,
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
 
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
@@ -39,14 +44,17 @@ describe('Upload Displayer Node', () => {
 		});
 
 		test('Go to folder is visible for completed status', async () => {
+			const parentFolder = populateFolder();
 			const uploadItem = populateUploadItem({
 				status: UploadStatus.COMPLETED,
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
 
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
@@ -54,14 +62,17 @@ describe('Upload Displayer Node', () => {
 		});
 
 		test('Go to folder is visible for queued status', async () => {
+			const parentFolder = populateFolder();
 			const uploadItem = populateUploadItem({
 				status: UploadStatus.QUEUED,
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
 
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
@@ -69,14 +80,16 @@ describe('Upload Displayer Node', () => {
 		});
 
 		test('Go to folder is visible for failed status', async () => {
+			const parentFolder = populateFolder();
 			const uploadItem = populateUploadItem({
 				status: UploadStatus.FAILED,
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
 
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
@@ -84,14 +97,16 @@ describe('Upload Displayer Node', () => {
 		});
 
 		test('Retry is visible when item status is failed', async () => {
+			const parentFolder = populateFolder();
 			const uploadItem = populateUploadItem({
 				status: UploadStatus.FAILED,
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
 
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
@@ -99,14 +114,16 @@ describe('Upload Displayer Node', () => {
 		});
 
 		test('Retry is hidden when item status is completed', async () => {
+			const parentFolder = populateFolder();
 			const uploadItem = populateUploadItem({
 				status: UploadStatus.COMPLETED,
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
 
 			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
@@ -116,14 +133,16 @@ describe('Upload Displayer Node', () => {
 		});
 
 		test('Retry is hidden when item status is queued', async () => {
+			const parentFolder = populateFolder();
 			const uploadItem = populateUploadItem({
 				status: UploadStatus.QUEUED,
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
 
 			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
@@ -133,14 +152,16 @@ describe('Upload Displayer Node', () => {
 		});
 
 		test('Retry is hidden when item status is loading', async () => {
+			const parentFolder = populateFolder();
 			const uploadItem = populateUploadItem({
 				status: UploadStatus.LOADING,
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
 
 			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
@@ -150,6 +171,7 @@ describe('Upload Displayer Node', () => {
 		});
 
 		test('Retry for folder is visible when item status is failed because one of the items of the content is failed', async () => {
+			const parentFolder = populateFolder();
 			const children = populateUploadItems(2);
 			children[0].status = UploadStatus.FAILED;
 			const childrenMap = keyBy(children, (item) => item.id);
@@ -157,15 +179,16 @@ describe('Upload Displayer Node', () => {
 				children: Object.keys(childrenMap),
 				status: UploadStatus.FAILED,
 				nodeId: faker.datatype.uuid(),
-				parentNodeId: faker.datatype.uuid()
+				parentNodeId: parentFolder.id
 			});
 			children.forEach((child) => {
 				child.parentNodeId = uploadItem.nodeId;
 			});
 
 			uploadVar({ [uploadItem.id]: uploadItem, ...childrenMap });
+			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-				mocks: []
+				mocks
 			});
 
 			await screen.findByText(uploadItem.name);

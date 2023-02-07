@@ -61,6 +61,7 @@ describe('Mark for deletion - trash', () => {
 			currentFolder.children.nodes.push(folder);
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder),
@@ -187,6 +188,7 @@ describe('Mark for deletion - trash', () => {
 			const element = currentFolder.children.nodes[0] as Node;
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder),
@@ -240,6 +242,7 @@ describe('Mark for deletion - trash', () => {
 			const element1 = currentFolder.children.nodes[1] as Node;
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder),

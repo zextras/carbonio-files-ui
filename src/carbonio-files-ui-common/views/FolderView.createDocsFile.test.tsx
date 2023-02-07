@@ -241,6 +241,7 @@ describe('Create docs file', () => {
 		// --> list should be updated with the correct order
 
 		const mocks = [
+			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChild({ node_id: currentFolder.id }, currentFolder),

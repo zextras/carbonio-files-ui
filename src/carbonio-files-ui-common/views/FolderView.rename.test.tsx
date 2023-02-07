@@ -67,6 +67,7 @@ describe('Rename', () => {
 			const newPos = currentFolder.children.nodes.length - 1;
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder),
@@ -134,6 +135,7 @@ describe('Rename', () => {
 			}-${timestamp}`;
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder),
@@ -217,6 +219,7 @@ describe('Rename', () => {
 			const thirdCursor = thirdPage[thirdPage.length - 1];
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), {
 					...currentFolder,
 					children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))

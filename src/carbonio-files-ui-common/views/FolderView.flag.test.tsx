@@ -13,12 +13,12 @@ import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { Folder } from '../types/graphql/types';
 import {
 	getChildrenVariables,
 	mockFlagNodes,
 	mockGetChild,
 	mockGetChildren,
+	mockGetParent,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup, selectNodes } from '../utils/testUtils';
@@ -56,10 +56,8 @@ describe('Flag', () => {
 			const nodesIdsToUnflag = nodesIdsToFlag.slice(0, nodesIdsToFlag.length / 2);
 
 			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: currentFolder.children
-				} as Folder),
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockFlagNodes(
@@ -105,7 +103,7 @@ describe('Flag', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesIdsToUnflag.length);
 			// if present, open the additional actions
-			const moreActionsItem = screen.queryByTestId('icon: MoreVertical');
+			const moreActionsItem = screen.queryByTestId(ICON_REGEXP.moreVertical);
 			if (moreActionsItem !== null) {
 				await user.click(moreActionsItem);
 				await screen.findByTestId(SELECTORS.dropdownList);
@@ -129,6 +127,7 @@ describe('Flag', () => {
 			currentFolder.children.nodes.push(node);
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder),

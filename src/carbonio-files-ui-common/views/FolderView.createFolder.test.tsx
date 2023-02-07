@@ -90,6 +90,7 @@ describe('Create folder', () => {
 		const newName = node2.name;
 
 		const mocks = [
+			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChild({ node_id: currentFolder.id }, currentFolder),
@@ -212,6 +213,7 @@ describe('Create folder', () => {
 		// --> list should be updated with the correct order
 
 		const mocks = [
+			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChild({ node_id: currentFolder.id }, currentFolder),

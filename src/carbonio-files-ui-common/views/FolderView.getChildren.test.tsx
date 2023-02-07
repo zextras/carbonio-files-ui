@@ -55,6 +55,7 @@ describe('Get children', () => {
 	test('access to a folder with network error response show an error page', async () => {
 		const currentFolder = populateFolder();
 		const mocks = [
+			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildrenError(

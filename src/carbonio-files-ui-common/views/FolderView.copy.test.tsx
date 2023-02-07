@@ -21,6 +21,7 @@ import {
 	mockCopyNodes,
 	mockGetChild,
 	mockGetChildren,
+	mockGetParent,
 	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
@@ -56,6 +57,7 @@ describe('Copy', () => {
 			currentFolder.children.nodes.push(file, folder);
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder)
@@ -93,6 +95,7 @@ describe('Copy', () => {
 				}
 			});
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
@@ -179,6 +182,7 @@ describe('Copy', () => {
 			}));
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
@@ -265,6 +269,7 @@ describe('Copy', () => {
 			});
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
