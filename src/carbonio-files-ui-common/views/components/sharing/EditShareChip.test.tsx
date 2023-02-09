@@ -8,11 +8,11 @@ import React from 'react';
 
 import { act, screen, waitFor } from '@testing-library/react';
 
+import { EditShareChip } from './EditShareChip';
 import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
 import { SharedTarget, SharePermission } from '../../../types/graphql/types';
 import { mockDeleteShare, mockUpdateShare } from '../../../utils/mockUtils';
 import { setup } from '../../../utils/testUtils';
-import { EditShareChip } from './EditShareChip';
 
 describe('Edit Share Chip', () => {
 	describe('From a node with read-only permissions', () => {

@@ -8,6 +8,7 @@ import React from 'react';
 import { screen, waitFor, within } from '@testing-library/react';
 import { forEach, map, find, reduce } from 'lodash';
 
+import { AddSharing } from './AddSharing';
 import { soapFetch } from '../../../../network/network';
 import {
 	populateGalContact,
@@ -29,7 +30,6 @@ import {
 import { mockGetAccountsByEmail } from '../../../utils/mockUtils';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
-import { AddSharing } from './AddSharing';
 
 const mockedSoapFetch = jest.fn<
 	unknown,

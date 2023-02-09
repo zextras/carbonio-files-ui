@@ -8,9 +8,9 @@ import { faker } from '@faker-js/faker';
 import { forEach, take } from 'lodash';
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
+import { populateFolder, sortNodes } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
-import { populateFolder, sortNodes } from './mockUtils';
 
 const handleGetChildrenRequest: ResponseResolver<
 	GraphQLRequest<GetChildrenQueryVariables>,

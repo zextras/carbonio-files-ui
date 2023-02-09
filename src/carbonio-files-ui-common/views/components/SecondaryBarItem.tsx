@@ -18,6 +18,7 @@ import {
 import { map, uniq, find, noop, every } from 'lodash';
 import styled from 'styled-components';
 
+import { Dropzone } from './Dropzone';
 import useUserInfo from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { selectionModeVar } from '../../apollo/selectionVar';
@@ -33,7 +34,6 @@ import { DeepPick } from '../../types/utils';
 import { canBeWriteNodeDestination, canUploadFile } from '../../utils/ActionsFactory';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import { isFile, isFolder } from '../../utils/utils';
-import { Dropzone } from './Dropzone';
 
 // TODO: replace with updated DS Accordion once available
 const CustomAccordionItem = styled(AccordionItem)<{ $dragging: boolean }>`

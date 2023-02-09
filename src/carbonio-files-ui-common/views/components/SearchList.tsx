@@ -10,13 +10,13 @@ import { useReactiveVar } from '@apollo/client';
 import { sample, isEmpty, filter, reduce, isArray } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { List } from './List';
 import { useSearch } from '../../../hooks/useSearch';
 import { nodeSortVar } from '../../apollo/nodeSortVar';
 import { ListContext } from '../../contexts';
 import { useFindNodesQuery } from '../../hooks/graphql/queries/useFindNodesQuery';
 import { NodeListItemType } from '../../types/common';
 import { NonNullableList, OneOrMany } from '../../types/utils';
-import { List } from './List';
 
 export const SearchList: React.VFC = () => {
 	const [t] = useTranslation();

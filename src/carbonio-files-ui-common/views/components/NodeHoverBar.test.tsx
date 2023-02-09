@@ -9,8 +9,8 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
 
-import { setup } from '../../utils/testUtils';
 import { NodeHoverBar } from './NodeHoverBar';
+import { setup } from '../../utils/testUtils';
 
 describe('Node Hover Bar', () => {
 	test('render nothing if no actions are provided', () => {

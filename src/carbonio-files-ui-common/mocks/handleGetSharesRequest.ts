@@ -8,9 +8,9 @@ import { faker } from '@faker-js/faker';
 import { take } from 'lodash';
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
+import { populateNode } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetSharesQuery, GetSharesQueryVariables } from '../types/graphql/types';
-import { populateNode } from './mockUtils';
 
 const handleGetSharesRequest: ResponseResolver<
 	GraphQLRequest<GetSharesQueryVariables>,

@@ -10,17 +10,17 @@ import { Action as DSAction, Container, Row, Text } from '@zextras/carbonio-desi
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { ContextualMenu } from './ContextualMenu';
+import { NodeAvatarIcon } from './NodeAvatarIcon';
+import { NodeHoverBar } from './NodeHoverBar';
+import { HoverContainer, ListItemContainer } from './StyledComponents';
+import { UploadStatusComponent } from './UploadStatusComponent';
 import { LIST_ITEM_HEIGHT } from '../../constants';
 import { Breadcrumbs } from '../../design_system_fork/Breadcrumbs';
 import { Node } from '../../types/common';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Maybe } from '../../types/graphql/types';
 import { buildCrumbs, humanFileSize } from '../../utils/utils';
-import { ContextualMenu } from './ContextualMenu';
-import { NodeAvatarIcon } from './NodeAvatarIcon';
-import { NodeHoverBar } from './NodeHoverBar';
-import { HoverContainer, ListItemContainer } from './StyledComponents';
-import { UploadStatusComponent } from './UploadStatusComponent';
 
 interface UploadListItemProps {
 	id: string;

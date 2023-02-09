@@ -18,9 +18,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { useUpdateNodeDescriptionMutation } from '../../hooks/graphql/mutations/useUpdateNodeDescriptionMutation';
 import { RouteLeavingGuard } from './RouteLeavingGuard';
 import { ItalicText, ShimmerText } from './StyledComponents';
+import { useUpdateNodeDescriptionMutation } from '../../hooks/graphql/mutations/useUpdateNodeDescriptionMutation';
 
 interface NodeDetailsDescriptionProps {
 	description: string | undefined;

@@ -9,6 +9,7 @@ import { screen } from '@testing-library/react';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
+import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_PARAMS, FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
@@ -17,7 +18,6 @@ import { populateNodes } from '../mocks/mockUtils';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import { getFindNodesVariables, mockFindNodes } from '../utils/mockUtils';
 import { setup } from '../utils/testUtils';
-import FilterView from './FilterView';
 
 const mockedRequestHandler = jest.fn();
 

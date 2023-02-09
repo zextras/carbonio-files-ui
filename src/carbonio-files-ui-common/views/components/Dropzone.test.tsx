@@ -8,8 +8,8 @@ import React from 'react';
 
 import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 
-import { setup } from '../../utils/testUtils';
 import { Dropzone } from './Dropzone';
+import { setup } from '../../utils/testUtils';
 
 describe('Dropzone', () => {
 	test('Hide dropzone overlay if another target is reached even without a dragLeave event', async () => {

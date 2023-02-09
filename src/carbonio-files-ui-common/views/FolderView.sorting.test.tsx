@@ -8,6 +8,8 @@ import React from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { populateFile, populateFolder } from '../mocks/mockUtils';
 import { NodeSort } from '../types/graphql/types';
@@ -15,11 +17,10 @@ import {
 	getChildrenVariables,
 	mockGetChild,
 	mockGetChildren,
+	mockGetParent,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -57,6 +58,7 @@ describe('Sorting', () => {
 		currentFolder2.children.nodes.push(file1);
 
 		const mocks = [
+			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChild({ node_id: currentFolder.id }, currentFolder),

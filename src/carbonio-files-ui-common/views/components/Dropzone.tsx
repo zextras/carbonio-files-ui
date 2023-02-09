@@ -10,9 +10,9 @@ import { Container } from '@zextras/carbonio-design-system';
 import { throttle, intersection } from 'lodash';
 import styled, { DefaultTheme } from 'styled-components';
 
+import { DropzoneModal } from './DropzoneModal';
 import { TIMERS } from '../../constants';
 import { cssCalcBuilder } from '../../utils/utils';
-import { DropzoneModal } from './DropzoneModal';
 
 interface DropzoneProps {
 	onDrop?: (event: React.DragEvent<HTMLElement>) => void;

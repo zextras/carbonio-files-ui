@@ -8,9 +8,9 @@ import React from 'react';
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
+import { Draggable } from './Draggable';
 import { DRAG_TYPES } from '../../constants';
 import { setup } from '../../utils/testUtils';
-import { Draggable } from './Draggable';
 
 describe('Draggable', () => {
 	test('Force drag end on mouse move after user release drag but no drag end is fired', async () => {

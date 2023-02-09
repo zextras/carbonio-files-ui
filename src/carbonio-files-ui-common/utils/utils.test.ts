@@ -6,9 +6,9 @@
 
 import { faker } from '@faker-js/faker';
 
+import { addNodeInSortedList, buildCrumbs, cssCalcBuilder } from './utils';
 import { populateFile, populateFolder, populateLocalRoot, populateNodes } from '../mocks/mockUtils';
 import { NodeSort } from '../types/graphql/types';
-import { addNodeInSortedList, buildCrumbs, cssCalcBuilder } from './utils';
 
 describe('Crumbs builder', () => {
 	it('should return a flat array with 3 objects ordered from root to leaf', () => {

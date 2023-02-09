@@ -10,6 +10,8 @@ import { faker } from '@faker-js/faker';
 import { act, fireEvent, screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
@@ -21,12 +23,11 @@ import {
 	mockCopyNodes,
 	mockGetChild,
 	mockGetChildren,
+	mockGetParent,
 	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup, selectNodes } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -56,6 +57,7 @@ describe('Copy', () => {
 			currentFolder.children.nodes.push(file, folder);
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetChild({ node_id: currentFolder.id }, currentFolder)
@@ -93,6 +95,7 @@ describe('Copy', () => {
 				}
 			});
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
@@ -179,6 +182,7 @@ describe('Copy', () => {
 			}));
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
@@ -265,6 +269,7 @@ describe('Copy', () => {
 			});
 
 			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),

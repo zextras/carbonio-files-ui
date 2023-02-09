@@ -8,6 +8,7 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 
+import { UploadListItemWrapper } from './UploadListItemWrapper';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
 import { ICON_REGEXP } from '../../constants/test';
 import { UseUploadHook } from '../../hooks/useUpload';
@@ -20,7 +21,6 @@ import { UploadStatus } from '../../types/graphql/client-types';
 import { mockGetBaseNode } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
-import { UploadListItemWrapper } from './UploadListItemWrapper';
 
 const mockedUseUploadHook: ReturnType<UseUploadHook> = {
 	add: jest.fn(),

@@ -71,8 +71,8 @@ export function useRestoreNodesMutation(): RestoreType {
 				update(cache, { data }) {
 					if (data?.restoreNodes) {
 						const restoredNodes = filter<
-							typeof data.restoreNodes[number],
-							NonNullable<typeof data.restoreNodes[number]>
+							(typeof data.restoreNodes)[number],
+							NonNullable<(typeof data.restoreNodes)[number]>
 						>(data.restoreNodes, (node): node is NonNullable<typeof node> => !!node);
 						removeNodesFromFilter(
 							map(restoredNodes, (restoredNode) => restoredNode.id),

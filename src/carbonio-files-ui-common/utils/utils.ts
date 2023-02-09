@@ -731,7 +731,7 @@ export function uploadToTargetModule(args: {
 export function isSupportedByPreview(
 	mimeType: string | undefined,
 	type: 'thumbnail' | 'preview' = 'preview'
-): [boolean, typeof PREVIEW_TYPE[keyof typeof PREVIEW_TYPE] | undefined] {
+): [boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined] {
 	return [
 		!!mimeType &&
 			((mimeType.startsWith('image') && mimeType !== 'image/svg+xml') ||
@@ -844,10 +844,14 @@ export function cssCalcBuilder(
 	return `calc(${operationsString})`;
 }
 
-export function isFile(node: { __typename?: string } & Record<string, unknown>): node is File {
-	return node.__typename === 'File';
+export function isFile(
+	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
+): node is File {
+	return node?.__typename === 'File';
 }
 
-export function isFolder(node: { __typename?: string } & Record<string, unknown>): node is Folder {
-	return node.__typename === 'Folder';
+export function isFolder(
+	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
+): node is Folder {
+	return node?.__typename === 'Folder';
 }

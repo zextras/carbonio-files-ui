@@ -17,6 +17,7 @@ import {
 import { forEach, map } from 'lodash';
 import { graphql } from 'msw';
 
+import { SearchList } from './SearchList';
 import server from '../../../mocks/server';
 import { searchParamsVar } from '../../apollo/searchVar';
 import { INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../../constants';
@@ -41,7 +42,6 @@ import {
 	mockTrashNodes
 } from '../../utils/mockUtils';
 import { buildChipsFromKeywords, setup, selectNodes } from '../../utils/testUtils';
-import { SearchList } from './SearchList';
 
 describe('Search list', () => {
 	describe('Drag and drop', () => {

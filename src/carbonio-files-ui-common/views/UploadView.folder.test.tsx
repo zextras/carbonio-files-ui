@@ -11,6 +11,7 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { graphql, rest } from 'msw';
 
+import UploadView from './UploadView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { REST_ENDPOINT, UPLOAD_PATH } from '../constants';
@@ -41,7 +42,6 @@ import {
 	uploadWithDnD
 } from '../utils/testUtils';
 import { UploadQueue } from '../utils/uploadUtils';
-import UploadView from './UploadView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

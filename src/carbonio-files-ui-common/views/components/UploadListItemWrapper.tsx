@@ -6,12 +6,12 @@
 
 import React, { useCallback } from 'react';
 
+import { UploadListItem } from './UploadListItem';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useGetBaseNodeQuery } from '../../hooks/graphql/queries/useGetBaseNodeQuery';
 import { useUploadActions } from '../../hooks/useUploadActions';
 import { UploadItem } from '../../types/graphql/client-types';
 import { isUploadFolderItem } from '../../utils/uploadUtils';
-import { UploadListItem } from './UploadListItem';
 
 interface UploadListItemWrapperProps {
 	node: UploadItem;

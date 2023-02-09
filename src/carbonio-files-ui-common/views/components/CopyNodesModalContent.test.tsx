@@ -11,6 +11,7 @@ import React from 'react';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
+import { CopyNodesModalContent } from './CopyNodesModalContent';
 import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT, ROOTS } from '../../constants';
 import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
@@ -40,7 +41,6 @@ import {
 	mockGetPath
 } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
-import { CopyNodesModalContent } from './CopyNodesModalContent';
 
 const resetToDefault = jest.fn(() => {
 	// clone implementation of the function contained in the click callback of useCopyContent

@@ -17,6 +17,7 @@ import {
 import { forEach, map, find } from 'lodash';
 import { Route } from 'react-router-dom';
 
+import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import {
 	FILTER_TYPE,
@@ -33,13 +34,14 @@ import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/gr
 import {
 	getChildrenVariables,
 	getFindNodesVariables,
+	getNodeVariables,
 	mockFindNodes,
+	mockGetNode,
 	mockUpdateNode,
 	mockUpdateNodeError
 } from '../utils/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
-import FilterView from './FilterView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -217,7 +219,8 @@ describe('Filter View', () => {
 							...element,
 							name: newName
 						}
-					)
+					),
+					mockGetNode(getNodeVariables(element.id), { ...element, name: newName })
 				];
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
@@ -356,7 +359,8 @@ describe('Filter View', () => {
 							...element,
 							name: newName
 						}
-					)
+					),
+					mockGetNode(getNodeVariables(element.id), { ...element, name: newName })
 				];
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
@@ -372,7 +376,7 @@ describe('Filter View', () => {
 				// open context menu
 				fireEvent.contextMenu(nodeItem);
 				await renameNode(newName, user);
-				// check the new item. It has the new name and its located at same position
+				// check the new item. It has the new name, and it's located at same position
 				const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
 				expect(updatedNodeItem).toBeVisible();
 				expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
@@ -400,6 +404,7 @@ describe('Filter View', () => {
 				// enable permission to rename
 				parentFolder.permissions.can_write_folder = true;
 				element.permissions.can_write_folder = true;
+				element.parent = parentFolder;
 
 				// prepare the cache with the parent folder as if already loaded
 				global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -432,7 +437,12 @@ describe('Filter View', () => {
 							// update mutation return also the parent
 							parent: parentFolder
 						}
-					)
+					),
+					mockGetNode(getNodeVariables(element.id), {
+						...element,
+						name: newName,
+						parent: parentFolder
+					})
 				];
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
@@ -463,7 +473,7 @@ describe('Filter View', () => {
 				// open context menu
 				fireEvent.contextMenu(nodeItem);
 				await renameNode(newName, user);
-				// check the new item. It has the new name and it is at same position in the filter list
+				// check the new item. It has the new name, and it is at same position in the filter list
 				const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
 				expect(updatedNodeItem).toBeVisible();
 				expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
@@ -503,6 +513,8 @@ describe('Filter View', () => {
 				// enable permission to rename
 				parentFolder.permissions.can_write_folder = true;
 				element.permissions.can_write_folder = true;
+				element.parent = parentFolder;
+
 				// new name set to put element as first element in folder
 				const newName = (parentFolder.children.nodes[0] as Node).name.substring(
 					0,
@@ -534,7 +546,12 @@ describe('Filter View', () => {
 							// update mutation return also the parent
 							parent: parentFolder
 						}
-					)
+					),
+					mockGetNode(getNodeVariables(element.id), {
+						...element,
+						name: newName,
+						parent: parentFolder
+					})
 				];
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {

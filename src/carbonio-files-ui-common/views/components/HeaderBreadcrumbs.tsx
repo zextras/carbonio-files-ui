@@ -10,12 +10,12 @@ import { getColor, Icon, Row, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import styled, { css, SimpleInterpolation } from 'styled-components';
 
+import { OverFlowHiddenRow } from './StyledComponents';
 import { useNavigation } from '../../../hooks/useNavigation';
 import useBreadcrumb from '../../hooks/useBreadcrumb';
 import { useDroppableCrumbs } from '../../hooks/useDroppableCrumbs';
 import { Crumb } from '../../types/common';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
-import { OverFlowHiddenRow } from './StyledComponents';
 
 const Cta = styled(Row)<{ $disabled?: boolean }>`
 	${({ $disabled, theme }): SimpleInterpolation =>

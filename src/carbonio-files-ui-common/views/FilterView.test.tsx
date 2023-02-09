@@ -11,6 +11,8 @@ import { forEach, map } from 'lodash';
 import { graphql } from 'msw';
 import { Link, Route, Switch } from 'react-router-dom';
 
+import FilterView from './FilterView';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
@@ -25,11 +27,10 @@ import {
 	mockFlagNodes,
 	mockGetChild,
 	mockGetChildren,
+	mockGetParent,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { selectNodes, setup, triggerLoadMore } from '../utils/testUtils';
-import FilterView from './FilterView';
-import FolderView from './FolderView';
 
 let mockedRequestHandler: jest.Mock;
 let mockedCreateOptions: CreateOptionsContent['createOptions'];
@@ -157,6 +158,7 @@ describe('Filter view', () => {
 				getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
 				nodes
 			),
+			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),

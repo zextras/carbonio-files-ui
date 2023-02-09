@@ -8,6 +8,7 @@ import React from 'react';
 
 import { screen, within } from '@testing-library/react';
 
+import { Displayer } from './Displayer';
 import { ACTION_REGEXP, ICON_REGEXP } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
@@ -37,7 +38,6 @@ import {
 } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, renameNode, setup } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
-import { Displayer } from './Displayer';
 
 describe('Displayer', () => {
 	test('Copy action open copy modal', async () => {

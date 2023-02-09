@@ -7,6 +7,7 @@ import React from 'react';
 
 import { act, screen, waitFor, within } from '@testing-library/react';
 
+import { AdvancedSearchModalContent } from './AdvancedSearchModalContent';
 import { ROOTS } from '../../constants';
 import { SELECTORS } from '../../constants/test';
 import { populateFolder } from '../../mocks/mockUtils';
@@ -15,7 +16,6 @@ import { NodeType } from '../../types/graphql/types';
 import { ContactInfo } from '../../types/network';
 import { mockGetPath } from '../../utils/mockUtils';
 import { setup } from '../../utils/testUtils';
-import { AdvancedSearchModalContent } from './AdvancedSearchModalContent';
 
 const mockedSoapFetch: jest.Mock = jest.fn();
 

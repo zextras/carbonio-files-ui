@@ -9,6 +9,8 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { forEach } from 'lodash';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -23,8 +25,6 @@ import {
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

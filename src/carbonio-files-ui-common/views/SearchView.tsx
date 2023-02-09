@@ -10,6 +10,8 @@ import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system
 import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { Displayer } from './components/Displayer';
+import { SearchList } from './components/SearchList';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -19,8 +21,6 @@ import { useUpload } from '../hooks/useUpload';
 import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
-import { Displayer } from './components/Displayer';
-import { SearchList } from './components/SearchList';
 
 interface SearchViewProps {
 	resultsHeader?: React.ReactNode;
@@ -71,10 +71,6 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
 				action: () => ({
-					// FIXME: remove ts-ignore when shell will fix type of "type"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					type: ACTION_TYPES.NEW,
 					id: ACTION_IDS.UPLOAD_FILE,
 					primary: true,
 					group: FILES_APP_ID,
@@ -92,7 +88,6 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.CREATE_FOLDER,
 				action: () => ({
-					type: ACTION_TYPES.NEW,
 					id: ACTION_IDS.CREATE_FOLDER,
 					group: FILES_APP_ID,
 					label: t('create.options.new.folder', 'New Folder'),
@@ -105,7 +100,6 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 				action: () => ({
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 					label: t('create.options.new.document', 'New Document'),
@@ -132,7 +126,6 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 				action: () => ({
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 					label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
@@ -159,7 +152,6 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 				action: () => ({
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 					label: t('create.options.new.presentation', 'New Presentation'),
@@ -210,7 +202,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 					mainAlignment="flex-start"
 					width="fill"
 					height="fill"
-					background="gray5"
+					background={'gray5'}
 					borderRadius="none"
 					maxHeight="100%"
 					minHeight={0}
@@ -221,7 +213,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 							mainAlignment="flex-start"
 							crossAlignment="unset"
 							borderRadius="none"
-							background="gray6"
+							background={'gray6'}
 						>
 							<SearchList />
 						</Container>

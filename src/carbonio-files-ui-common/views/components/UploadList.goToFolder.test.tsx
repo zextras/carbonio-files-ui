@@ -9,13 +9,13 @@ import { screen } from '@testing-library/react';
 import { keyBy } from 'lodash';
 import { useLocation } from 'react-router-dom';
 
+import { UploadList } from './UploadList';
 import { uploadVar } from '../../apollo/uploadVar';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateLocalRoot, populateUploadItems } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { mockGetBaseNode } from '../../utils/mockUtils';
 import { selectNodes, setup } from '../../utils/testUtils';
-import { UploadList } from './UploadList';
 
 describe('Upload List', () => {
 	describe('Go To Folder', () => {

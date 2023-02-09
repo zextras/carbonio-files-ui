@@ -10,6 +10,7 @@ import { forEach } from 'lodash';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
+import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
@@ -28,7 +29,6 @@ import {
 } from '../types/graphql/types';
 import { getFindNodesVariables, getNodeVariables, mockFindNodes } from '../utils/mockUtils';
 import { selectNodes, setup } from '../utils/testUtils';
-import FilterView from './FilterView';
 
 const mockedRequestHandler = jest.fn();
 

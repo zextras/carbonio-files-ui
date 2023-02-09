@@ -6,12 +6,12 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { filter, findIndex, size } from 'lodash';
 
+import { nodeSortVar } from './nodeSortVar';
 import CHILD from '../graphql/fragments/child.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { NodesPageCachedObject } from '../types/apollo';
 import { ChildFragment, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
 import { addNodeInSortedList, isFolder } from '../utils/utils';
-import { nodeSortVar } from './nodeSortVar';
 
 export const removeNodesFromFolder = (
 	cache: ApolloCache<object>,
