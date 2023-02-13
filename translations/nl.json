@@ -455,7 +455,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Huidige versie",
-                "lastWeek": "Vorige week",
+                "lastWeek": "Afgelopen 7 dagen",
                 "olderVersions": "Oudere versies"
             },
             "mainHint": "Files bewaart de laatste {{maxVersions}} versies van uw bestanden. U kunt handmatig elke bestandsversie verwijderen of een versie terugzetten als de huidige versie. Selecteer een of meer versies die u voor altijd wilt bewaren.",
@@ -681,7 +681,22 @@
                     "label": "Gedeeld",
                     "description": "Filter de resultaten op items die ten minste één andere medewerker bevatten dan u"
                 },
-                "title": "Geavanceerde Filters"
+                "title": "Geavanceerde Filters",
+                "owner": {
+                    "label": "Besitzer"
+                },
+                "itemType": {
+                    "label": "Itemtype",
+                    "dropdownOption": {
+                        "video": "Video",
+                        "spreadsheet": "Rekenblad",
+                        "presentation": "Presentatie",
+                        "image": "Beeld",
+                        "folder": "Ordner",
+                        "document": "Document",
+                        "audio": "Geluid"
+                    }
+                }
             }
         },
         "resultsFor": "Resultaten voor:"

@@ -681,7 +681,22 @@
                     "label": "Paylaşıldı",
                     "description": "Sonuçları sizden başka en az bir katılımcı daha olan öğlere göre filtrele"
                 },
-                "title": "Gelişmiş Filtreler"
+                "title": "Gelişmiş Filtreler",
+                "owner": {
+                    "label": "Sahibi"
+                },
+                "itemType": {
+                    "label": "Öğe Türü",
+                    "dropdownOption": {
+                        "video": "Video",
+                        "spreadsheet": "Tablo",
+                        "presentation": "Sunum",
+                        "image": "Resim",
+                        "folder": "Klasör",
+                        "document": "Doküman",
+                        "audio": "Ses"
+                    }
+                }
             }
         },
         "resultsFor": "Sonuçlar:"
