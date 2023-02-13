@@ -681,6 +681,21 @@
                 },
                 "keywords": {
                     "label": "Schlüsselwörter"
+                },
+                "itemType": {
+                    "label": "Objekttyp",
+                    "dropdownOption": {
+                        "video": "Video",
+                        "spreadsheet": "Arbeitsblatt",
+                        "presentation": "Präsentation",
+                        "image": "Bild",
+                        "folder": "Ordner",
+                        "document": "Dokument",
+                        "audio": "Audio"
+                    }
+                },
+                "owner": {
+                    "label": "Eigenaar"
                 }
             }
         },

@@ -381,7 +381,22 @@
                     "label": "Compartilhado",
                     "description": "Filtre os resultados por itens que contenham ao menos um colaborador além de você"
                 },
-                "title": "Filtros Avançados"
+                "title": "Filtros Avançados",
+                "itemType": {
+                    "label": "Tipo do item",
+                    "dropdownOption": {
+                        "video": "Vídeo",
+                        "spreadsheet": "Planilha",
+                        "presentation": "Apresentação",
+                        "image": "Imagem",
+                        "folder": "Pasta",
+                        "document": "Documento",
+                        "audio": "Áudio"
+                    }
+                },
+                "owner": {
+                    "label": "Proprietário"
+                }
             },
             "button": {
                 "noFilter": "Filtros avançados",
@@ -509,7 +524,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Versão atual",
-                "lastWeek": "Última semana",
+                "lastWeek": "Últimos 7 dias",
                 "olderVersions": "Versões antigas"
             },
             "button": {

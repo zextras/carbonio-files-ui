@@ -681,7 +681,22 @@
                     "label": "Compartido",
                     "description": "Filtrar los resultados por los elementos que contienen al menos un colaborador aparte de ti"
                 },
-                "title": "Filtros Avanzados"
+                "title": "Filtros Avanzados",
+                "itemType": {
+                    "label": "Tipo de elemento",
+                    "dropdownOption": {
+                        "video": "Vídeo",
+                        "spreadsheet": "Hoja de cálculo",
+                        "presentation": "Presentación",
+                        "image": "Imagen",
+                        "folder": "Carpeta",
+                        "document": "Documento",
+                        "audio": "Audio"
+                    }
+                },
+                "owner": {
+                    "label": "Propietario"
+                }
             }
         },
         "resultsFor": "Resultados para:"
