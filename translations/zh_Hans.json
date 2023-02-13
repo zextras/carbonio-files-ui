@@ -126,7 +126,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "当前版本",
-                "lastWeek": "上周",
+                "lastWeek": "过去 7 天",
                 "olderVersions": "旧版本"
             },
             "mainHint": "Files 中将对文件的最近 {{maxVersions}} 个版本进行保留。选择想要保留的一个或多个版本。",
@@ -664,7 +664,22 @@
                     "label": "已分享",
                     "description": "按照在您之外还包含至少一名协作者的项目过滤结果"
                 },
-                "title": "高级过滤条件"
+                "title": "高级过滤条件",
+                "owner": {
+                    "label": "所有者"
+                },
+                "itemType": {
+                    "label": "项目类型",
+                    "dropdownOption": {
+                        "video": "视频",
+                        "spreadsheet": "电子表格",
+                        "presentation": "演示文稿",
+                        "image": "图像",
+                        "folder": "文件夹",
+                        "document": "文档",
+                        "audio": "音频"
+                    }
+                }
             }
         }
     },

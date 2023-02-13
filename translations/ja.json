@@ -455,7 +455,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "現在のバージョン",
-                "lastWeek": "先週",
+                "lastWeek": "過去7日",
                 "olderVersions": "古いバージョン"
             },
             "mainHint": "ファイルは、ファイルの最後の{{maxVersions}}バージョンを保存します。任意のファイルバージョンを手動で削除するか、現在のバージョンとして復元することができます。永久に保持したい1つまたは複数のバージョンを選択してください。",
@@ -676,7 +676,22 @@
                     "label": "共有",
                     "description": "自分以外に1人以上の共同編集者を含むアイテムで結果をフィルタリングします"
                 },
-                "title": "高度なフィルター"
+                "title": "高度なフィルター",
+                "itemType": {
+                    "label": "アイテムの種類",
+                    "dropdownOption": {
+                        "video": "ビデオ",
+                        "spreadsheet": "スプレッドシート",
+                        "presentation": "プレゼンテーション",
+                        "image": "イメージ",
+                        "folder": "フォルダ",
+                        "document": "文書",
+                        "audio": "オーディオ"
+                    }
+                },
+                "owner": {
+                    "label": "所有者"
+                }
             },
             "button": {
                 "noFilter": "高度なフィルタ",

@@ -455,7 +455,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Versi saat ini",
-                "lastWeek": "Minggu lalu",
+                "lastWeek": "7 hari terakhir",
                 "olderVersions": "Versi lama"
             },
             "mainHint": "File menyimpan versi {{maxVersions}} terakhir file Anda. Anda dapat menghapus versi file apa pun secara manual atau memulihkannya sebagai versi saat ini. Pilih satu atau beberapa versi yang ingin disimpan selamanya.",
@@ -681,7 +681,22 @@
                     "label": "Dibagikan",
                     "description": "Filter hasil berdasarkan item yang berisi minimal satu kolaborator selain Anda"
                 },
-                "title": "Filter Tingkat Lanjut"
+                "title": "Filter Tingkat Lanjut",
+                "itemType": {
+                    "label": "Jenis item",
+                    "dropdownOption": {
+                        "video": "Video",
+                        "spreadsheet": "Spreadsheet",
+                        "presentation": "Presentasi",
+                        "image": "Gambar",
+                        "folder": "Folder",
+                        "document": "Dokumen",
+                        "audio": "Audio"
+                    }
+                },
+                "owner": {
+                    "label": "Pemilik"
+                }
             }
         },
         "resultsFor": "Hasil untuk:"

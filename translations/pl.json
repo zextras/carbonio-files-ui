@@ -133,6 +133,21 @@
                 "shared": {
                     "label": "Udostępnione",
                     "description": "Filtruj wyniki wyszukiwania wg elementów, które zawierają co najmniej jednego współpracownika (nie wliczając ciebie)"
+                },
+                "owner": {
+                    "label": "Właściciel"
+                },
+                "itemType": {
+                    "label": "Typ elementu",
+                    "dropdownOption": {
+                        "video": "Wideo",
+                        "spreadsheet": "Arkusz",
+                        "presentation": "Prezentacja",
+                        "image": "Obraz",
+                        "folder": "Folder",
+                        "document": "Dokument",
+                        "audio": "Dźwięk"
+                    }
                 }
             },
             "button": {

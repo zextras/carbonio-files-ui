@@ -429,7 +429,7 @@
         ],
         "version": {
             "rowHeaders": {
-                "lastWeek": "สัปดาห์ที่แล้ว",
+                "lastWeek": "7 วันที่แล้ว",
                 "currentVersion": "เวอร์ชั่นปัจจุบัน",
                 "olderVersions": "เวอร์ชั่นเก่า"
             },
@@ -676,7 +676,22 @@
                     "label": "แชร์",
                     "description": "กรองผลลัพธ์ตามรายการที่มีผู้ทำงานร่วมกันอย่างน้อยหนึ่งคน นอกเหนือจากคุณ"
                 },
-                "title": "ตัวกรองขั้นสูง"
+                "title": "ตัวกรองขั้นสูง",
+                "itemType": {
+                    "label": "ชนิดรายการ",
+                    "dropdownOption": {
+                        "video": "วิดีโอ",
+                        "spreadsheet": "กระดาษคำนวณ",
+                        "presentation": "งานนำเสนอ",
+                        "image": "รูป",
+                        "folder": "โฟลเดอร์",
+                        "document": "เอกสาร",
+                        "audio": "เสียง"
+                    }
+                },
+                "owner": {
+                    "label": "เจ้าของ"
+                }
             },
             "button": {
                 "noFilter": "ตัวกรองขั้นสูง",

@@ -1,6 +1,6 @@
 {
 	"name": "carbonio-files-ui",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Files module for Zextras Carbonio",
 	"main": "src/app.tsx",
 	"scripts": {
