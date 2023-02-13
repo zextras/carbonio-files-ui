@@ -681,6 +681,21 @@
                 "flagged": {
                     "description": "Filtra i risultati tra gli elementi che hai contrassegnato",
                     "label": "Contrassegnato"
+                },
+                "owner": {
+                    "label": "Proprietario"
+                },
+                "itemType": {
+                    "label": "Tipo di elemento",
+                    "dropdownOption": {
+                        "video": "Video",
+                        "spreadsheet": "Foglio di lavoro",
+                        "presentation": "Presentazione",
+                        "image": "Immagine",
+                        "folder": "Cartella",
+                        "document": "Documento",
+                        "audio": "Audio"
+                    }
                 }
             }
         },
