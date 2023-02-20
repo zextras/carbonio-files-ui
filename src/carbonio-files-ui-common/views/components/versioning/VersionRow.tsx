@@ -13,7 +13,8 @@ import {
 	Dropdown,
 	Tooltip,
 	Container,
-	useSnackbar
+	useSnackbar,
+	DropdownItem
 } from '@zextras/carbonio-design-system';
 import { forEach } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -37,20 +38,6 @@ interface DropdownItemComponentProps {
 	selected?: boolean;
 	tooltipLabel?: string;
 }
-
-type DropdownItem = {
-	type?: 'divider';
-	id: string;
-	label: string;
-	icon?: string;
-	click?: (e: React.SyntheticEvent<HTMLElement> | KeyboardEvent) => void;
-	selected?: boolean;
-	customComponent?: React.ReactNode;
-	disabled?: boolean;
-	items?: Array<DropdownItem>;
-	keepOpen?: boolean;
-	tooltipLabel?: string;
-};
 
 const DropdownItemComponent = ({
 	label,
@@ -174,7 +161,7 @@ export const VersionRow: React.VFC<{
 			{
 				id: 'openDocumentVersion',
 				label: t('displayer.version.actions.openDocumentVersion', 'Open document version'),
-				click: openVersionWithDocsCallback,
+				onClick: openVersionWithDocsCallback,
 				icon: 'BookOpenOutline',
 				disabled: !canOpenWithDocs,
 				tooltipLabel: openWithDocsTooltip
@@ -182,7 +169,7 @@ export const VersionRow: React.VFC<{
 			{
 				id: 'downloadVersion',
 				label: t('displayer.version.actions.downloadVersion', 'Download version'),
-				click: downloadVersionCallback,
+				onClick: downloadVersionCallback,
 				icon: 'Download'
 			},
 			{
@@ -190,7 +177,7 @@ export const VersionRow: React.VFC<{
 				label: !keepVersionValue
 					? t('displayer.version.actions.keepVersion', 'Keep this version forever')
 					: t('displayer.version.actions.removeKeepVersion', 'Remove keep forever'),
-				click: keepVersionCallback,
+				onClick: keepVersionCallback,
 				icon: 'InfinityOutline',
 				disabled: !canKeepVersion,
 				tooltipLabel: keepVersionTooltip
@@ -198,7 +185,7 @@ export const VersionRow: React.VFC<{
 			{
 				id: 'cloneAsCurrent',
 				label: t('displayer.version.actions.cloneAsCurrent', 'Clone as current'),
-				click: cloneVersionCallback,
+				onClick: cloneVersionCallback,
 				icon: 'Copy',
 				disabled: !canCloneVersion,
 				tooltipLabel: cloneVersionTooltip
@@ -206,7 +193,7 @@ export const VersionRow: React.VFC<{
 			{
 				id: 'deleteVersion',
 				label: t('displayer.version.actions.deleteVersion', 'Delete version'),
-				click: deleteVersionCallback,
+				onClick: deleteVersionCallback,
 				icon: 'Trash2Outline',
 				disabled: !canDelete,
 				tooltipLabel: deleteTooltip

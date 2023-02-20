@@ -88,7 +88,7 @@ const FilterView: React.VFC = () => {
 					group: FILES_APP_ID,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					click: (event): void => {
+					onClick: (event): void => {
 						event && event.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
@@ -104,7 +104,7 @@ const FilterView: React.VFC = () => {
 					label: t('create.options.new.folder', 'New Folder'),
 					icon: 'FolderOutline',
 					disabled: true,
-					click: noop
+					onClick: noop
 				})
 			},
 			{
@@ -116,18 +116,18 @@ const FilterView: React.VFC = () => {
 					label: t('create.options.new.document', 'New Document'),
 					icon: 'FileTextOutline',
 					disabled: true,
-					click: noop,
+					onClick: noop,
 					items: [
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
 							label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						},
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
 							label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						}
 					]
@@ -142,18 +142,18 @@ const FilterView: React.VFC = () => {
 					label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
 					icon: 'FileCalcOutline',
 					disabled: true,
-					click: noop,
+					onClick: noop,
 					items: [
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
 							label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						},
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
 							label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						}
 					]
@@ -168,18 +168,18 @@ const FilterView: React.VFC = () => {
 					label: t('create.options.new.presentation', 'New Presentation'),
 					icon: 'FilePresentationOutline',
 					disabled: true,
-					click: noop,
+					onClick: noop,
 					items: [
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
 							label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						},
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
 							label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						}
 					]

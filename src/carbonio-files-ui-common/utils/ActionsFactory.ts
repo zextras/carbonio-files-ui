@@ -584,7 +584,7 @@ export function buildActionItems(
 ): DSAction[] {
 	return reduce<Action, DSAction[]>(
 		actions,
-		(accumulator, action) => {
+		(accumulator, action): DSAction[] => {
 			const actionItem = itemsMap[action];
 			if (actionItem) {
 				accumulator.push(actionItem);

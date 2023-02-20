@@ -173,8 +173,8 @@ const FolderView: React.VFC = () => {
 		[]
 	);
 
-	const actions = useMemo<ContextualMenuProps['actions']>(
-		() => [
+	const actions = useMemo(
+		(): ContextualMenuProps['actions'] => [
 			{
 				id: ACTION_IDS.CREATE_FOLDER,
 				label: t('create.options.new.folder', 'New Folder'),
@@ -270,7 +270,7 @@ const FolderView: React.VFC = () => {
 					group: FILES_APP_ID,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					click: (event: React.SyntheticEvent | KeyboardEvent): void => {
+					onClick: (event: React.SyntheticEvent | KeyboardEvent): void => {
 						event && event.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
