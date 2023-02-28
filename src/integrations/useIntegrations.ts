@@ -5,19 +5,17 @@
  */
 import { useEffect, useMemo } from 'react';
 
-import { AnyFunction, registerActions, registerFunctions } from '@zextras/carbonio-shell-ui';
+import { AnyFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
 
 import { getGetLinkFunction } from './getGetLinkFunction';
 import { getNodeFunction } from './getNodeFunction';
 import { getUploadToTargetAndGetTargetIdFunction } from './getUploadToTargetAndGetTargetIdFunction';
 import { useSelectNodes } from './useSelectNodes';
-import { useSelectNodesAction } from './useSelectNodesAction';
 import { useUpdateLinkMutation } from '../carbonio-files-ui-common/hooks/graphql/mutations/useUpdateLinkMutation';
 import { ErrorHandlerOptions } from '../carbonio-files-ui-common/hooks/useErrorHandler';
 import { FUNCTION_IDS } from '../constants';
 
 export const useIntegrations = (): void => {
-	const selectNodesAction = useSelectNodesAction();
 	const selectNodes = useSelectNodes();
 	const errorHandlerOptions: ErrorHandlerOptions = useMemo(
 		() => ({
@@ -42,11 +40,6 @@ export const useIntegrations = (): void => {
 		}),
 		[selectNodes]
 	);
-
-	useEffect(() => {
-		// TODO: remove when all modules will be using new function integration
-		registerActions(selectNodesAction);
-	}, [selectNodesAction]);
 
 	useEffect(() => {
 		registerFunctions(

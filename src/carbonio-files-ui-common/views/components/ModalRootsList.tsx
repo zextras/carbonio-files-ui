@@ -80,7 +80,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 		$crumbs.push({
 			id: ROOTS.ENTRY_POINT,
 			label: t('modal.roots.rootsList', 'Files'),
-			click: (event: React.SyntheticEvent | KeyboardEvent) => {
+			onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
 				setFilterQueryParam({});
 				navigateTo('', event);
 			}
@@ -91,7 +91,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 				$crumbs.push({
 					id: 'sharedWithMe',
 					label: t('modal.roots.sharedWitMe', 'Shared with me'),
-					click: (event: React.SyntheticEvent | KeyboardEvent) => {
+					onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
 						setFilterQueryParam(FILTER_PARAMS.sharedWithMe);
 						setActiveNode(
 							{
@@ -107,7 +107,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 		}
 		// remove click action from last crumb
 		if ($crumbs.length > 0) {
-			delete $crumbs[$crumbs.length - 1].click;
+			delete $crumbs[$crumbs.length - 1].onClick;
 		}
 		return $crumbs;
 	}, [filterQueryParams, navigateTo, setActiveNode, t]);

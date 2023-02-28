@@ -90,7 +90,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 			$crumbs.push({
 				id: ROOTS.ENTRY_POINT,
 				label: t('modal.roots.rootsList', 'Files'),
-				click: (event: React.SyntheticEvent | KeyboardEvent) => {
+				onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
 					navigateTo('', event);
 				}
 			});
@@ -108,7 +108,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 		}
 		// remove click action from last crumb
 		if ($crumbs.length > 0) {
-			delete $crumbs[$crumbs.length - 1].click;
+			delete $crumbs[$crumbs.length - 1].onClick;
 		}
 		return $crumbs;
 	}, [

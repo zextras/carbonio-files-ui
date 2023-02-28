@@ -8,6 +8,7 @@ import React from 'react';
 import { act, fireEvent, screen } from '@testing-library/react';
 import { forEach } from 'lodash';
 
+import { ContextualMenuProps } from './ContextualMenu';
 import { EmptySpaceFiller } from './EmptySpaceFiller';
 import { List } from './List';
 import { ACTION_REGEXP } from '../../constants/test';
@@ -34,33 +35,33 @@ describe('Contextual menu actions', () => {
 				const isCanCreateFolder = true;
 				const isCanCreateFile = true;
 
-				const actions = [
+				const actions: ContextualMenuProps['actions'] = [
 					{
 						id: 'create-folder',
 						label: 'New Folder',
 						icon: 'FolderOutline',
-						click: createFolderAction,
+						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
 						id: 'create-docs-document',
 						label: 'New Document',
 						icon: 'FileTextOutline',
-						click: createDocumentAction,
+						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-spreadsheet',
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
-						click: createSpreadsheetAction,
+						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-presentation',
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
-						click: createPresentationAction,
+						onClick: createPresentationAction,
 						disabled: !isCanCreateFile
 					}
 				];
@@ -139,33 +140,33 @@ describe('Contextual menu actions', () => {
 				const isCanCreateFolder = false;
 				const isCanCreateFile = false;
 
-				const actions = [
+				const actions: ContextualMenuProps['actions'] = [
 					{
 						id: 'create-folder',
 						label: 'New Folder',
 						icon: 'FolderOutline',
-						click: createFolderAction,
+						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
 						id: 'create-docs-document',
 						label: 'New Document',
 						icon: 'FileTextOutline',
-						click: createDocumentAction,
+						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-spreadsheet',
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
-						click: createSpreadsheetAction,
+						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-presentation',
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
-						click: createPresentationAction,
+						onClick: createPresentationAction,
 						disabled: !isCanCreateFile
 					}
 				];
@@ -241,33 +242,33 @@ describe('Contextual menu actions', () => {
 				const isCanCreateFolder = true;
 				const isCanCreateFile = true;
 
-				const actions = [
+				const actions: ContextualMenuProps['actions'] = [
 					{
 						id: 'create-folder',
 						label: 'New Folder',
 						icon: 'FolderOutline',
-						click: createFolderAction,
+						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
 						id: 'create-docs-document',
 						label: 'New Document',
 						icon: 'FileTextOutline',
-						click: createDocumentAction,
+						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-spreadsheet',
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
-						click: createSpreadsheetAction,
+						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-presentation',
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
-						click: createPresentationAction,
+						onClick: createPresentationAction,
 						disabled: !isCanCreateFile
 					}
 				];
@@ -341,33 +342,33 @@ describe('Contextual menu actions', () => {
 				const isCanCreateFolder = false;
 				const isCanCreateFile = false;
 
-				const actions = [
+				const actions: ContextualMenuProps['actions'] = [
 					{
 						id: 'create-folder',
 						label: 'New Folder',
 						icon: 'FolderOutline',
-						click: createFolderAction,
+						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
 						id: 'create-docs-document',
 						label: 'New Document',
 						icon: 'FileTextOutline',
-						click: createDocumentAction,
+						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-spreadsheet',
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
-						click: createSpreadsheetAction,
+						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-presentation',
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
-						click: createPresentationAction,
+						onClick: createPresentationAction,
 						disabled: !isCanCreateFile
 					}
 				];
