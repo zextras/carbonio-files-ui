@@ -397,7 +397,8 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 						label: `${match.email}`,
 						id: `$${match.email}`,
 						customComponent: <Hint label={getChipLabel(contact)} email={match.email} />,
-						onClick: addShareContact(contact)
+						// TODO: replace after CDS-104
+						click: addShareContact(contact)
 					});
 				}
 				if (isContactGroup(match)) {
@@ -405,7 +406,8 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 						label: `${match.display}`,
 						id: `$${match.display}`,
 						customComponent: <Hint label={match.display} />,
-						onClick: addShareContactGroup(match)
+						// TODO: replace after CDS-104
+						click: addShareContactGroup(match)
 					});
 				}
 				return accumulator;
