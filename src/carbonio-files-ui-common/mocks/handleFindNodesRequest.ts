@@ -8,9 +8,9 @@ import { faker } from '@faker-js/faker';
 import { take } from 'lodash';
 import { GraphQLContext, GraphQLRequest, ResponseResolver, ResponseTransformer } from 'msw';
 
+import { populateNode, populateNodePage, populateShares, sortNodes } from './mockUtils';
 import { ROOTS } from '../constants';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
-import { populateNode, populateNodePage, populateShares, sortNodes } from './mockUtils';
 
 const handleFindNodesRequest: ResponseResolver<
 	GraphQLRequest<FindNodesQueryVariables>,

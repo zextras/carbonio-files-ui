@@ -9,6 +9,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { sample, forEach, map } from 'lodash';
 
+import { NodeDetails } from './NodeDetails';
 import { NODES_LOAD_LIMIT } from '../../constants';
 import {
 	populateFile,
@@ -25,7 +26,6 @@ import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockGetPath } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../utils/testUtils';
 import { formatDate, formatTime, humanFileSize, previewHandledMimeTypes } from '../../utils/utils';
-import { NodeDetails } from './NodeDetails';
 
 describe('Node Details', () => {
 	test('Show file info', () => {

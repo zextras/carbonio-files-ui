@@ -18,10 +18,10 @@ import {
 import { trim } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { ModalFooterCustom } from './ModalFooterCustom';
 import { CreateDocsFile } from '../../types/common';
 import { CreateFolderMutation, UpdateNodeMutation } from '../../types/graphql/types';
 import { decodeError } from '../../utils/utils';
-import { ModalFooterCustom } from './ModalFooterCustom';
 
 type UpdateNameMutation = UpdateNodeMutation | CreateFolderMutation | CreateDocsFile;
 

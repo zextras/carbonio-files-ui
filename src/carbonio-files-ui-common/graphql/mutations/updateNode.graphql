@@ -2,10 +2,10 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-#import "../fragments/child.graphql"
-
-mutation updateNode($node_id: String!, $name: String, $description: String, $shares_limit: Int = 1) {
+mutation updateNode($node_id: String!, $name: String, $description: String) {
 	updateNode(node_id: $node_id, name: $name, description: $description) {
-		...Child
+		id
+		name
+		description
 	}
 }

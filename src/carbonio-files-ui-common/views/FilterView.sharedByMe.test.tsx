@@ -10,6 +10,7 @@ import { find } from 'lodash';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
+import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
@@ -34,7 +35,6 @@ import {
 } from '../utils/mockUtils';
 import { setup } from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
-import FilterView from './FilterView';
 
 const mockedRequestHandler = jest.fn();
 

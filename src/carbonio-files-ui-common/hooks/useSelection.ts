@@ -9,9 +9,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useReactiveVar } from '@apollo/client';
 import { map, find, filter, includes, isEqual, reduce } from 'lodash';
 
+import { useMemoCompare } from './useMemoCompare';
 import { selectionModeVar } from '../apollo/selectionVar';
 import { PickIdNodeType } from '../types/common';
-import { useMemoCompare } from './useMemoCompare';
 
 export default function useSelection(nodes: Array<PickIdNodeType>): {
 	selectedIDs: string[];

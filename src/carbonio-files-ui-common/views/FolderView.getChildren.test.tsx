@@ -11,6 +11,8 @@ import { screen, waitFor, waitForElementToBeRemoved, within } from '@testing-lib
 import { forEach } from 'lodash';
 import { graphql } from 'msw';
 
+import { DisplayerProps } from './components/Displayer';
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { NODES_LOAD_LIMIT } from '../constants';
@@ -33,8 +35,6 @@ import {
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { generateError, setup, triggerLoadMore } from '../utils/testUtils';
-import { DisplayerProps } from './components/Displayer';
-import FolderView from './FolderView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -55,6 +55,7 @@ describe('Get children', () => {
 	test('access to a folder with network error response show an error page', async () => {
 		const currentFolder = populateFolder();
 		const mocks = [
+			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildrenError(

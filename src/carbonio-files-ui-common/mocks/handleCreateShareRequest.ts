@@ -6,8 +6,8 @@
 
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { CreateShareMutation, CreateShareMutationVariables, Node } from '../types/graphql/types';
 import { populateShare, populateUser } from './mockUtils';
+import { CreateShareMutation, CreateShareMutationVariables, Node } from '../types/graphql/types';
 
 const handleCreateShareRequest: ResponseResolver<
 	GraphQLRequest<CreateShareMutationVariables>,

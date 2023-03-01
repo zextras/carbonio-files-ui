@@ -17,6 +17,9 @@ import {
 import { find, reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { ModalFooterCustom } from './ModalFooterCustom';
+import { ModalList } from './ModalList';
+import { CustomModalBody } from './StyledComponents';
 import useUserInfo from '../../../hooks/useUserInfo';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
@@ -26,9 +29,6 @@ import { Node, NodeListItemType } from '../../types/common';
 import { Folder, GetChildrenQuery } from '../../types/graphql/types';
 import { canBeMoveDestination } from '../../utils/ActionsFactory';
 import { isFile, isFolder } from '../../utils/utils';
-import { ModalFooterCustom } from './ModalFooterCustom';
-import { ModalList } from './ModalList';
-import { CustomModalBody } from './StyledComponents';
 
 interface MoveNodesModalContentProps {
 	nodesToMove: Array<Pick<Node, '__typename' | 'id' | 'owner'>>;

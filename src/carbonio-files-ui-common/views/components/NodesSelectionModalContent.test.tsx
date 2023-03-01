@@ -14,6 +14,8 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import { forEach, size } from 'lodash';
 import { find as findStyled } from 'styled-components/test-utils';
 
+import { NodesSelectionModalContent } from './NodesSelectionModalContent';
+import { HoverContainer } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
@@ -41,8 +43,6 @@ import {
 } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, generateError, setup } from '../../utils/testUtils';
 import { isFile, isFolder } from '../../utils/utils';
-import { NodesSelectionModalContent } from './NodesSelectionModalContent';
-import { HoverContainer } from './StyledComponents';
 
 const confirmAction = jest.fn();
 const closeAction = jest.fn();

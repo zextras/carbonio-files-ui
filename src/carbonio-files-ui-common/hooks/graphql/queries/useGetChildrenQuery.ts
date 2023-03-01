@@ -27,10 +27,7 @@ interface GetChildrenQueryHookReturnType
 /**
  * Can return error: ErrorCode.FILE_VERSION_NOT_FOUND, ErrorCode.NODE_NOT_FOUND
  */
-export function useGetChildrenQuery(
-	parentNode: string,
-	displayName?: string
-): GetChildrenQueryHookReturnType {
+export function useGetChildrenQuery(parentNode: string): GetChildrenQueryHookReturnType {
 	const nodeSort = useReactiveVar(nodeSortVar);
 
 	const { data, fetchMore, ...queryResult } = useQuery<GetChildrenQuery, GetChildrenQueryVariables>(
@@ -42,7 +39,6 @@ export function useGetChildrenQuery(
 				sort: nodeSort
 			},
 			skip: !parentNode,
-			displayName,
 			errorPolicy: 'all',
 			returnPartialData: true
 		}

@@ -131,7 +131,7 @@ const buildCrumbsRecursive = (
 			// be careful: the following key is not parsed by i18next-extract purposely
 			/* i18next-extract-disable-next-line */
 			label: (t && t('node.alias.name', node.name, { context: node.id })) || node.name,
-			click: handlerFunction
+			onClick: handlerFunction
 		});
 	}
 	return result;
@@ -154,14 +154,14 @@ export const buildCrumbs = (
 		// the array can contain null if path is requested for a node with no accessible parent
 		return chain(nodes)
 			.filter((node) => !!node)
-			.map((node) => {
+			.map((node): Crumb => {
 				const $node = node as Node;
 				return {
 					id: $node.id,
 					// be careful: the following key is not parsed by i18next-extract purposely
 					/* i18next-extract-disable-next-line */
 					label: (t && t('node.alias.name', $node.name, { context: $node.id })) || $node.name,
-					click:
+					onClick:
 						node && clickHandler && nodeClickCondition(node)
 							? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler($node.id, event)
 							: undefined
@@ -731,7 +731,7 @@ export function uploadToTargetModule(args: {
 export function isSupportedByPreview(
 	mimeType: string | undefined,
 	type: 'thumbnail' | 'preview' = 'preview'
-): [boolean, typeof PREVIEW_TYPE[keyof typeof PREVIEW_TYPE] | undefined] {
+): [boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined] {
 	return [
 		!!mimeType &&
 			((mimeType.startsWith('image') && mimeType !== 'image/svg+xml') ||
@@ -844,10 +844,14 @@ export function cssCalcBuilder(
 	return `calc(${operationsString})`;
 }
 
-export function isFile(node: { __typename?: string } & Record<string, unknown>): node is File {
-	return node.__typename === 'File';
+export function isFile(
+	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
+): node is File {
+	return node?.__typename === 'File';
 }
 
-export function isFolder(node: { __typename?: string } & Record<string, unknown>): node is Folder {
-	return node.__typename === 'Folder';
+export function isFolder(
+	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
+): node is Folder {
+	return node?.__typename === 'Folder';
 }

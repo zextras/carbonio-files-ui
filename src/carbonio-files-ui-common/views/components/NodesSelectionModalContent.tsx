@@ -22,6 +22,11 @@ import {
 import { map, reduce, some, debounce, findIndex, trim } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { LoadingIcon } from './LoadingIcon';
+import { ModalFooterCustom } from './ModalFooterCustom';
+import { ModalList } from './ModalList';
+import { ModalRootsList } from './ModalRootsList';
+import { CustomModalBody, OverFlowHiddenRow } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { DOUBLE_CLICK_DELAY } from '../../constants';
 import { NodeAvatarIconContext } from '../../contexts';
@@ -44,11 +49,6 @@ import {
 import { ArrayOneOrMore } from '../../types/utils';
 import { canCreateFolder } from '../../utils/ActionsFactory';
 import { decodeError, isFile, isFolder } from '../../utils/utils';
-import { LoadingIcon } from './LoadingIcon';
-import { ModalFooterCustom } from './ModalFooterCustom';
-import { ModalList } from './ModalList';
-import { ModalRootsList } from './ModalRootsList';
-import { CustomModalBody, OverFlowHiddenRow } from './StyledComponents';
 
 interface NodesSelectionModalContentProps {
 	title: string;
@@ -221,7 +221,7 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 
 	const nodes = useMemo<Array<NodeListItemType>>(() => {
 		if (currentFolderNode?.children?.nodes && currentFolderNode.children.nodes.length > 0) {
-			return reduce<typeof currentFolderNode.children.nodes[number], NodeListItemType[]>(
+			return reduce<(typeof currentFolderNode.children.nodes)[number], NodeListItemType[]>(
 				currentFolderNode.children.nodes,
 				(result, node) => {
 					if (node) {

@@ -18,6 +18,10 @@ import {
 import { find, reduce, every } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { ModalFooterCustom } from './ModalFooterCustom';
+import { ModalList } from './ModalList';
+import { ModalRootsList } from './ModalRootsList';
+import { CustomModalBody } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { nodeSortVar } from '../../apollo/nodeSortVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
@@ -29,10 +33,6 @@ import { GetNodeParentType, Node, NodeListItemType, RootListItemType } from '../
 import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../../types/graphql/types';
 import { canBeCopyDestination, isRoot } from '../../utils/ActionsFactory';
 import { isFile, isFolder } from '../../utils/utils';
-import { ModalFooterCustom } from './ModalFooterCustom';
-import { ModalList } from './ModalList';
-import { ModalRootsList } from './ModalRootsList';
-import { CustomModalBody } from './StyledComponents';
 
 interface CopyNodesModalContentProps {
 	nodesToCopy: Array<Pick<Node, '__typename' | 'id'> & GetNodeParentType>;

@@ -7,9 +7,9 @@
 import { faker } from '@faker-js/faker';
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
+import { populateNode } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetBaseNodeQuery, GetBaseNodeQueryVariables } from '../types/graphql/types';
-import { populateNode } from './mockUtils';
 
 const handleGetBaseNodeRequest: ResponseResolver<
 	GraphQLRequest<GetBaseNodeQueryVariables>,

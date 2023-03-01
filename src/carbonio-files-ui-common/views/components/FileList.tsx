@@ -8,10 +8,10 @@ import React, { useMemo, useEffect } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
+import { List } from './List';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useGetNodeQuery } from '../../hooks/graphql/queries/useGetNodeQuery';
 import { NodeListItemType } from '../../types/common';
-import { List } from './List';
 
 interface FileListProps {
 	fileId: string;

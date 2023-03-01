@@ -9,11 +9,11 @@ import React, { useMemo } from 'react';
 import { Container, Padding, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
+import { NodeAvatarIcon } from './NodeAvatarIcon';
 import useUserInfo from '../../../hooks/useUserInfo';
 import { LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { formatDate, getIconByFileType } from '../../utils/utils';
-import { NodeAvatarIcon } from './NodeAvatarIcon';
 
 interface NodeDetailsListItemProps {
 	id: string;

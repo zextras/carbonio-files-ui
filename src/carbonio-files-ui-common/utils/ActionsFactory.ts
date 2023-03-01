@@ -7,13 +7,13 @@
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
 import { forEach, find, includes, reduce, size, some, every, isBoolean } from 'lodash';
 
+import { docsHandledMimeTypes, isFile, isFolder, isSupportedByPreview } from './utils';
 import { ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT } from '../../constants';
 import { ROOTS } from '../constants';
 import { Action, GetNodeParentType, Node } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
 import { File as FilesFile, Folder, MakeOptional, Root } from '../types/graphql/types';
 import { OneOrMany } from '../types/utils';
-import { docsHandledMimeTypes, isFile, isFolder, isSupportedByPreview } from './utils';
 
 export type ActionsFactoryNodeType = Pick<
 	Node,
@@ -584,7 +584,7 @@ export function buildActionItems(
 ): DSAction[] {
 	return reduce<Action, DSAction[]>(
 		actions,
-		(accumulator, action) => {
+		(accumulator, action): DSAction[] => {
 			const actionItem = itemsMap[action];
 			if (actionItem) {
 				accumulator.push(actionItem);

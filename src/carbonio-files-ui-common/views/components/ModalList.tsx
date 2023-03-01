@@ -12,6 +12,11 @@ import { takeRightWhile } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { EmptyFolder } from './EmptyFolder';
+import { ListContent } from './ListContent';
+import { LoadingIcon } from './LoadingIcon';
+import { ScrollContainer } from './ScrollContainer';
+import { OverFlowHiddenRow } from './StyledComponents';
 import { BREADCRUMB_ROW_HEIGHT, LIST_ITEM_HEIGHT_COMPACT, ROOTS } from '../../constants';
 import GET_PATH from '../../graphql/queries/getPath.graphql';
 import { Crumb, NodeListItemType } from '../../types/common';
@@ -20,11 +25,6 @@ import { OneOrMany } from '../../types/utils';
 import { canBeWriteNodeDestination } from '../../utils/ActionsFactory';
 import { buildCrumbs, cssCalcBuilder } from '../../utils/utils';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
-import { EmptyFolder } from './EmptyFolder';
-import { ListContent } from './ListContent';
-import { LoadingIcon } from './LoadingIcon';
-import { ScrollContainer } from './ScrollContainer';
-import { OverFlowHiddenRow } from './StyledComponents';
 
 interface ModalListProps {
 	folderId: string;
@@ -90,7 +90,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 			$crumbs.push({
 				id: ROOTS.ENTRY_POINT,
 				label: t('modal.roots.rootsList', 'Files'),
-				click: (event: React.SyntheticEvent | KeyboardEvent) => {
+				onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
 					navigateTo('', event);
 				}
 			});
@@ -108,7 +108,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 		}
 		// remove click action from last crumb
 		if ($crumbs.length > 0) {
-			delete $crumbs[$crumbs.length - 1].click;
+			delete $crumbs[$crumbs.length - 1].onClick;
 		}
 		return $crumbs;
 	}, [

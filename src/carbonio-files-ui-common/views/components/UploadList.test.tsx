@@ -19,6 +19,7 @@ import { EventEmitter } from 'events';
 import { forEach, find } from 'lodash';
 import { rest } from 'msw';
 
+import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
@@ -57,7 +58,6 @@ import {
 	uploadWithDnD
 } from '../../utils/testUtils';
 import { UploadQueue } from '../../utils/uploadUtils';
-import { UploadList } from './UploadList';
 
 describe('Upload list', () => {
 	test('Show upload crumbs', async () => {

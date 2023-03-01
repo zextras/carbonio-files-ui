@@ -30,6 +30,7 @@ import {
 } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { AddShareChip } from './AddShareChip';
 import { soapFetch } from '../../../../network/network';
 import { useCreateShareMutation } from '../../../hooks/graphql/mutations/useCreateShareMutation';
 import { useGetAccountByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountByEmailQuery';
@@ -51,7 +52,6 @@ import {
 import { getChipLabel, sharePermissionsGetter } from '../../../utils/utils';
 import { RouteLeavingGuard } from '../RouteLeavingGuard';
 import { Hint, Loader } from '../StyledComponents';
-import { AddShareChip } from './AddShareChip';
 
 const emailRegex =
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, max-len, no-control-regex
@@ -188,7 +188,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 		setMailTextValue('');
 
 		return Promise.allSettled(promises).then((results) => {
-			const notCreatedChips = reduce<typeof results[number], ShareChip[]>(
+			const notCreatedChips = reduce<(typeof results)[number], ShareChip[]>(
 				results,
 				(accumulator, createSharePromiseResult, index) => {
 					if (createSharePromiseResult.status === 'rejected') {
@@ -397,6 +397,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 						label: `${match.email}`,
 						id: `$${match.email}`,
 						customComponent: <Hint label={getChipLabel(contact)} email={match.email} />,
+						// TODO: replace after CDS-104
 						click: addShareContact(contact)
 					});
 				}
@@ -405,6 +406,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 						label: `${match.display}`,
 						id: `$${match.display}`,
 						customComponent: <Hint label={match.display} />,
+						// TODO: replace after CDS-104
 						click: addShareContactGroup(match)
 					});
 				}

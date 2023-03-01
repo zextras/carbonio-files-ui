@@ -117,13 +117,10 @@ export default function App(): JSX.Element {
 				id: 'upload-file',
 				label: t('create.options.new.upload', 'Upload'),
 				icon: 'CloudUploadOutline',
-				click: uploadClick,
+				onClick: uploadClick,
 				disabled: false,
 				primary: true,
-				group: FILES_APP_ID,
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				type: ACTION_TYPES.NEW
+				group: FILES_APP_ID
 			}),
 			id: 'upload-file',
 			type: ACTION_TYPES.NEW

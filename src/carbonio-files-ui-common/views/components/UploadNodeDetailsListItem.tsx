@@ -10,6 +10,10 @@ import { useQuery } from '@apollo/client';
 import { Container, Text } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 
+import { NodeAvatarIcon } from './NodeAvatarIcon';
+import { NodeHoverBar } from './NodeHoverBar';
+import { HoverContainer, ListItemContainer } from './StyledComponents';
+import { UploadStatusComponent } from './UploadStatusComponent';
 import { LIST_ITEM_AVATAR_HEIGHT_COMPACT } from '../../constants';
 import { Breadcrumbs } from '../../design_system_fork/Breadcrumbs';
 import { useUploadActions } from '../../hooks/useUploadActions';
@@ -19,10 +23,6 @@ import { GetUploadItemDocument } from '../../types/graphql/types';
 import { ActionsFactoryCheckerMap, ActionsFactoryUploadItem } from '../../utils/ActionsFactory';
 import { getUploadNodeType, isUploadFolderItem } from '../../utils/uploadUtils';
 import { getIconByFileType } from '../../utils/utils';
-import { NodeAvatarIcon } from './NodeAvatarIcon';
-import { NodeHoverBar } from './NodeHoverBar';
-import { HoverContainer, ListItemContainer } from './StyledComponents';
-import { UploadStatusComponent } from './UploadStatusComponent';
 
 interface UploadNodeDetailsListItemProps {
 	id: string;

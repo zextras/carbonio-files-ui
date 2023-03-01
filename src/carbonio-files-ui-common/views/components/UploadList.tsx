@@ -11,6 +11,10 @@ import { Button, Container, useSnackbar } from '@zextras/carbonio-design-system'
 import { map, filter, includes, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { Dropzone } from './Dropzone';
+import { EmptyFolder } from './EmptyFolder';
+import { ScrollContainer } from './ScrollContainer';
+import { UploadListItemWrapper } from './UploadListItemWrapper';
 import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { DRAG_TYPES, ROOTS } from '../../constants';
@@ -23,10 +27,6 @@ import { Action } from '../../types/common';
 import { UploadItem } from '../../types/graphql/client-types';
 import { GetUploadItemsDocument } from '../../types/graphql/types';
 import { getUploadAddType, isUploadFolderItem } from '../../utils/uploadUtils';
-import { Dropzone } from './Dropzone';
-import { EmptyFolder } from './EmptyFolder';
-import { ScrollContainer } from './ScrollContainer';
-import { UploadListItemWrapper } from './UploadListItemWrapper';
 
 export const UploadList: React.VFC = () => {
 	const [t] = useTranslation();

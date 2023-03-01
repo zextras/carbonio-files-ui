@@ -9,6 +9,7 @@ import React from 'react';
 import { ApolloError } from '@apollo/client';
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
+import { AddSharing } from './AddSharing';
 import {
 	populateGalContact,
 	populateNode,
@@ -23,7 +24,6 @@ import {
 	mockGetNode
 } from '../../../utils/mockUtils';
 import { generateError, setup } from '../../../utils/testUtils';
-import { AddSharing } from './AddSharing';
 
 const mockedSoapFetch: jest.Mock = jest.fn();
 

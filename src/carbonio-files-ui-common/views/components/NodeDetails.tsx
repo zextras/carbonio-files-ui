@@ -11,10 +11,6 @@ import { Container } from '@zextras/carbonio-design-system';
 import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { NodeDetailsUserRow } from '../../../components/NodeDetailsUserRow';
-import { Node } from '../../types/common';
-import { ChildFragment, Maybe, NodeType, User } from '../../types/graphql/types';
-import { humanFileSize, isFile, isFolder, isSupportedByPreview } from '../../utils/utils';
 import { CollaboratorsRow, CollaboratorsRowProps } from './CollaboratorsRow';
 import { DisplayerPreview } from './DisplayerPreview';
 import { InternalLinkShortcut } from './InternalLinkShortcut';
@@ -24,6 +20,10 @@ import { NodeDetailsListItem } from './NodeDetailsListItem';
 import { PathRow } from './PathRow';
 import { DisplayerContentContainer } from './StyledComponents';
 import { TextRowWithShim } from './TextRowWithShim';
+import { NodeDetailsUserRow } from '../../../components/NodeDetailsUserRow';
+import { Node } from '../../types/common';
+import { ChildFragment, Maybe, NodeType, User } from '../../types/graphql/types';
+import { humanFileSize, isFile, isFolder, isSupportedByPreview } from '../../utils/utils';
 
 interface NodeDetailsProps {
 	typeName: Node['__typename'];

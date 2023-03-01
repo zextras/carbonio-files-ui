@@ -9,6 +9,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
 import { graphql } from 'msw';
 
+import SearchView from './SearchView';
 import { INTERNAL_PATH, ROOTS } from '../carbonio-files-ui-common/constants';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import { populateNodePage, populateNodes } from '../carbonio-files-ui-common/mocks/mockUtils';
@@ -19,7 +20,6 @@ import {
 import { setup } from '../carbonio-files-ui-common/utils/testUtils';
 import { CreateOptionsContent } from '../hooks/useCreateOptions';
 import server from '../mocks/server';
-import SearchView from './SearchView';
 
 jest.mock('../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

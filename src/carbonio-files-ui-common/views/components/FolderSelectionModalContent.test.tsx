@@ -13,6 +13,8 @@ import 'jest-styled-components';
 import { map } from 'lodash';
 import { find as findStyled } from 'styled-components/test-utils';
 
+import { FolderSelectionModalContent } from './FolderSelectionModalContent';
+import { HoverContainer } from './StyledComponents';
 import { destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
 import {
@@ -33,8 +35,6 @@ import {
 	mockGetPath
 } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
-import { FolderSelectionModalContent } from './FolderSelectionModalContent';
-import { HoverContainer } from './StyledComponents';
 
 const confirmAction = jest.fn(() => {
 	// clone implementation of the function contained in the close callback of useCopyContent

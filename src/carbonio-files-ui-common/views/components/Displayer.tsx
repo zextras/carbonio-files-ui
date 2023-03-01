@@ -8,10 +8,10 @@ import React, { useMemo } from 'react';
 
 import { Container } from '@zextras/carbonio-design-system';
 
-import { useActiveNode } from '../../../hooks/useActiveNode';
-import { useGetNodeQuery } from '../../hooks/graphql/queries/useGetNodeQuery';
 import { DisplayerNode } from './DisplayerNode';
 import { EmptyDisplayer } from './EmptyDisplayer';
+import { useActiveNode } from '../../../hooks/useActiveNode';
+import { useGetNodeQuery } from '../../hooks/graphql/queries/useGetNodeQuery';
 
 export interface DisplayerProps {
 	translationKey: string;

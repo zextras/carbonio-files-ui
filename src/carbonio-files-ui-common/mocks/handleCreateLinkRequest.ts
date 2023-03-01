@@ -6,8 +6,8 @@
 
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { CreateLinkMutation, CreateLinkMutationVariables, Node } from '../types/graphql/types';
 import { populateLink } from './mockUtils';
+import { CreateLinkMutation, CreateLinkMutationVariables, Node } from '../types/graphql/types';
 
 const handleCreateLinkRequest: ResponseResolver<
 	GraphQLRequest<CreateLinkMutationVariables>,

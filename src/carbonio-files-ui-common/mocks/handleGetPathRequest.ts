@@ -7,9 +7,9 @@
 import { faker } from '@faker-js/faker';
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
+import { populateFolder, populateLocalRoot, populateParents } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetPathQuery, GetPathQueryVariables } from '../types/graphql/types';
-import { populateFolder, populateLocalRoot, populateParents } from './mockUtils';
 
 const handleGetPathRequest: ResponseResolver<
 	GraphQLRequest<GetPathQueryVariables>,

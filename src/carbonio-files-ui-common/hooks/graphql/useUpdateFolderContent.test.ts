@@ -6,6 +6,7 @@
 
 import { find } from 'lodash';
 
+import { UpdateFolderContentType, useUpdateFolderContent } from './useUpdateFolderContent';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../../constants';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
@@ -26,7 +27,6 @@ import {
 import { getChildrenVariables } from '../../utils/mockUtils';
 import { setupHook } from '../../utils/testUtils';
 import { addNodeInSortedList } from '../../utils/utils';
-import { UpdateFolderContentType, useUpdateFolderContent } from './useUpdateFolderContent';
 
 describe('useUpdateFolderContent', () => {
 	function readGetChildrenQuery(folderId: string, sort = NODES_SORT_DEFAULT): Folder {

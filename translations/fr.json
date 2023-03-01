@@ -386,7 +386,22 @@
                     "description": "Filtrer les résultats par les éléments qui contiennent au moins un collaborateur en plus de vous",
                     "label": "Partagé"
                 },
-                "title": "Filtres avancés"
+                "title": "Filtres avancés",
+                "itemType": {
+                    "dropdownOption": {
+                        "audio": "Audio",
+                        "document": "Document",
+                        "folder": "Dossier",
+                        "image": "Image",
+                        "presentation": "Présentation",
+                        "spreadsheet": "Tableur",
+                        "video": "Vidéo"
+                    },
+                    "label": "Type d'élément"
+                },
+                "owner": {
+                    "label": "Propriétaire"
+                }
             }
         },
         "resultsFor": "Résultats pour :"
@@ -513,7 +528,7 @@
             },
             "rowHeaders": {
                 "currentVersion": "Version en cours",
-                "lastWeek": "La semaine dernière",
+                "lastWeek": "Les 7 derniers jours",
                 "olderVersions": "Versions plus anciennes"
             },
             "mainHint": "Files enregistre les {{maxVersions}} dernières version de vos fichiers. Vous pouvez supprimer manuellement les versions du fichier ou en restaurer une comme version en cours. Sélectionnez une ou plusieurs versions que vous souhaitez garder pour toujours.",

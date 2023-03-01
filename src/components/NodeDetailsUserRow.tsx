@@ -49,7 +49,12 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 				};
 				const { action, available } = getMailToAction(contact);
 				if (available && action) {
-					action.click(event);
+					if (action.onClick) {
+						action.onClick(event);
+						// TODO remove when click is removed from Shell Action type
+					} else if (action.click) {
+						action.click(event);
+					}
 				}
 			}
 		},

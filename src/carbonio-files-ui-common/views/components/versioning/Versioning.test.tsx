@@ -9,6 +9,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import { map, find } from 'lodash';
 import { graphql, rest } from 'msw';
 
+import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
 import { CONFIGS, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
 import {
@@ -38,7 +39,6 @@ import {
 import { setup } from '../../../utils/testUtils';
 import * as moduleUtils from '../../../utils/utils';
 import { getChipLabel } from '../../../utils/utils';
-import { Versioning } from './Versioning';
 
 describe('Versioning', () => {
 	test('versions list split', async () => {

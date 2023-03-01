@@ -6,8 +6,8 @@
 
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { CreateFolderMutation, CreateFolderMutationVariables } from '../types/graphql/types';
 import { populateFolder } from './mockUtils';
+import { CreateFolderMutation, CreateFolderMutationVariables } from '../types/graphql/types';
 
 const handleCreateFolderRequest: ResponseResolver<
 	GraphQLRequest<CreateFolderMutationVariables>,

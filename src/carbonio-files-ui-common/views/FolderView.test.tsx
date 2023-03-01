@@ -9,6 +9,7 @@ import React from 'react';
 import { fireEvent, screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 
+import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
@@ -39,7 +40,6 @@ import {
 	mockGetParent
 } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
-import FolderView from './FolderView';
 
 let mockedCreateOptions: CreateOptionsContent['createOptions'];
 

@@ -34,15 +34,15 @@ import { forEach, map, filter, reduce } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
+import { Mock } from './mockUtils';
+import { isFile, isFolder } from './utils';
 import I18nFactory from '../../i18n/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { SELECTORS } from '../constants/test';
 import { AdvancedFilters, Node } from '../types/common';
 import { File as FilesFile, Folder } from '../types/graphql/types';
-import { Mock } from './mockUtils';
-import { isFile, isFolder } from './utils';
 
-export type UserEvent = ReturnType<typeof userEvent['setup']>;
+export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
 
 /**
  * Matcher function to search a string in more html elements and not just in a single element.
@@ -234,7 +234,7 @@ function customRender(
 
 type SetupOptions = Pick<WrapperProps, 'initialRouterEntries' | 'mocks'> & {
 	renderOptions?: Omit<RenderOptions, 'queries' | 'wrapper'>;
-	setupOptions?: Parameters<typeof userEvent['setup']>[0];
+	setupOptions?: Parameters<(typeof userEvent)['setup']>[0];
 };
 
 export const setup = (
@@ -390,7 +390,7 @@ function createFileSystemDirectoryEntryReader(
 		successCallback: FileSystemEntriesCallback,
 		_errorCallback?: ErrorCallback
 	): ReturnType<FileSystemDirectoryReader['readEntries']> => {
-		const childrenEntries = reduce<typeof node.children.nodes[number], FileSystemEntry[]>(
+		const childrenEntries = reduce<(typeof node.children.nodes)[number], FileSystemEntry[]>(
 			children.splice(0, Math.min(children.length, 10)),
 			(accumulator, childNode) => {
 				if (childNode) {

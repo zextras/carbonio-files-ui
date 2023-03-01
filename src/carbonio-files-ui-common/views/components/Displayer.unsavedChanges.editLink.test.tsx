@@ -10,6 +10,7 @@ import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
+import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
 import { populateFile, populateLinks } from '../../mocks/mockUtils';
 import { Link } from '../../types/graphql/types';
@@ -25,7 +26,6 @@ import {
 } from '../../utils/mockUtils';
 import { generateError, getFirstOfNextMonth, setup } from '../../utils/testUtils';
 import { formatDate, initExpirationDate } from '../../utils/utils';
-import { Displayer } from './Displayer';
 
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {

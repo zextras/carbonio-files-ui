@@ -12,6 +12,8 @@ import { forEach, isEmpty, map, uniq } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DefaultTheme, useTheme } from 'styled-components';
 
+import { useMoveNodesMutation } from './graphql/mutations/useMoveNodesMutation';
+import { useUpload } from './useUpload';
 import { useNavigation } from '../../hooks/useNavigation';
 import useUserInfo from '../../hooks/useUserInfo';
 import { draggedItemsVar } from '../apollo/dragAndDropVar';
@@ -23,8 +25,6 @@ import { BaseNodeFragment, NodeType } from '../types/graphql/types';
 import { canBeMoveDestination, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddType } from '../utils/uploadUtils';
 import { hexToRGBA, isFolder } from '../utils/utils';
-import { useMoveNodesMutation } from './graphql/mutations/useMoveNodesMutation';
-import { useUpload } from './useUpload';
 
 const NODE_OWNER = gql`
 	fragment NodeOwner on Node {
@@ -145,7 +145,7 @@ export function useDroppableCrumbs(
 					if (validDestination && !actionTimer.current) {
 						// if mouse is hovering a child node start the actionTimer to trigger the click action
 						actionTimer.current = setTimeout(() => {
-							crumb.click && crumb.click(event);
+							crumb.onClick && crumb.onClick(event);
 						}, TIMERS.DRAG_NAVIGATION_TRIGGER);
 					}
 				} else {
@@ -169,7 +169,7 @@ export function useDroppableCrumbs(
 				if (!actionTimer.current) {
 					// trigger action even if the upload is disabled because there could be parent folders with right permissions
 					actionTimer.current = setTimeout(() => {
-						crumb.click && crumb.click(event);
+						crumb.onClick && crumb.onClick(event);
 					}, TIMERS.DRAG_NAVIGATION_TRIGGER);
 				}
 			}

@@ -9,6 +9,7 @@ import React from 'react';
 import { fireEvent, screen, within } from '@testing-library/react';
 import { map, find } from 'lodash';
 
+import { SearchView } from './SearchView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { searchParamsVar } from '../apollo/searchVar';
 import { INTERNAL_PATH, ROOTS } from '../constants';
@@ -44,7 +45,6 @@ import {
 } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, buildChipsFromKeywords, moveNode, setup } from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
-import { SearchView } from './SearchView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

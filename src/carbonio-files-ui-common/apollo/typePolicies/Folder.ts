@@ -5,9 +5,9 @@
  */
 import { FieldFunctionOptions, TypePolicy } from '@apollo/client';
 
+import { mergeNodesList, readNodesList } from './utils';
 import { FindNodesCachedObject, NodesPage, NodesPageCachedObject } from '../../types/apollo';
 import { FolderChildrenArgs, GetChildrenQueryVariables } from '../../types/graphql/types';
-import { mergeNodesList, readNodesList } from './utils';
 
 export const folderTypePolicies: TypePolicy = {
 	fields: {

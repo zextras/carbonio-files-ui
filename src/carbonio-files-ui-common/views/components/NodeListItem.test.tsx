@@ -8,6 +8,7 @@ import React from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
 
+import { NodeListItem } from './NodeListItem';
 import { INTERNAL_PATH, PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT, ROOTS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateFile, populateFolder, populateNode, populateUser } from '../../mocks/mockUtils';
@@ -23,7 +24,6 @@ import {
 	humanFileSize
 } from '../../utils/utils';
 import * as moduleUtils from '../../utils/utils';
-import { NodeListItem } from './NodeListItem';
 
 let mockedUserLogged: User;
 let mockedHistory: string[];

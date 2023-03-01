@@ -10,11 +10,11 @@ import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
 import { screen, waitFor, within } from '@testing-library/react';
 
+import { NodeDetailsDescription } from './NodeDetailsDescription';
 import { populateFile } from '../../mocks/mockUtils';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockUpdateNodeDescription, mockUpdateNodeDescriptionError } from '../../utils/mockUtils';
 import { generateError, setup } from '../../utils/testUtils';
-import { NodeDetailsDescription } from './NodeDetailsDescription';
 
 describe('NodeDetailsDescription component', () => {
 	test('Missing description show missing description label', () => {

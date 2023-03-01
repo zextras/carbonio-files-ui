@@ -135,41 +135,9 @@ import {
 
 type Id = string;
 
-type MockVariablePossibleType =
-	| FindNodesQueryVariables
-	| TrashNodesMutationVariables
-	| RestoreNodesMutationVariables
-	| DeleteNodesMutationVariables
-	| UpdateNodeMutationVariables
-	| UpdateNodeDescriptionMutationVariables
-	| GetChildrenQueryVariables
-	| MoveNodesMutationVariables
-	| CreateFolderMutationVariables
-	| FlagNodesMutationVariables
-	| GetPathQueryVariables
-	| GetParentQueryVariables
-	| GetPermissionsQueryVariables
-	| CopyNodesMutationVariables
-	| GetNodeQueryVariables
-	| GetSharesQueryVariables
-	| GetBaseNodeQueryVariables
-	| DeleteShareMutationVariables
-	| CreateShareMutationVariables
-	| UpdateShareMutationVariables
-	| GetAccountByEmailQueryVariables
-	| GetAccountsByEmailQueryVariables
-	| GetNodeLinksQueryVariables
-	| GetNodeCollaborationLinksQueryVariables
-	| DeleteCollaborationLinksMutationVariables
-	| DeleteVersionsMutationVariables
-	| GetVersionsQueryVariables
-	| GetChildQueryVariables
-	| CreateLinkMutationVariables
-	| UpdateLinkMutationVariables;
-
 export interface Mock<
-	TData = Record<string, unknown>,
-	V extends MockVariablePossibleType = Record<string, unknown>
+	TData extends Record<string, unknown> = Record<string, unknown>,
+	V extends Record<string, unknown> = Record<string, unknown>
 > extends MockedResponse<TData> {
 	request: {
 		query: DocumentNode;
@@ -282,7 +250,7 @@ export function mockUpdateNode(
 	return {
 		request: {
 			query: UPDATE_NODE,
-			variables: { ...variables, shares_limit: 1 }
+			variables
 		},
 		result: {
 			data: {
@@ -299,7 +267,7 @@ export function mockUpdateNodeError(
 	return {
 		request: {
 			query: UPDATE_NODE,
-			variables: { ...variables, shares_limit: 1 }
+			variables
 		},
 		error
 	};

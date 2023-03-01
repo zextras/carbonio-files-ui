@@ -10,6 +10,7 @@ import { faker } from '@faker-js/faker';
 import { screen, waitFor, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
+import { Displayer } from './Displayer';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
 import { NodeType } from '../../types/graphql/types';
 import {
@@ -23,7 +24,6 @@ import {
 	mockUpdateNodeDescriptionError
 } from '../../utils/mockUtils';
 import { generateError, setup } from '../../utils/testUtils';
-import { Displayer } from './Displayer';
 
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {

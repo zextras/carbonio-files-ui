@@ -8,9 +8,9 @@ import React from 'react';
 
 import { Container } from '@zextras/carbonio-design-system';
 
+import { ShellSecondaryBar } from './secondary-bar/secondary-bar';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
 import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
-import { ShellSecondaryBar } from './secondary-bar/secondary-bar';
 
 interface SidebarViewProps {
 	expanded: boolean;

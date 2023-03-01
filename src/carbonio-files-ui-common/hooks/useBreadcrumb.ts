@@ -57,7 +57,7 @@ const useBreadcrumb: UseBreadcrumbType = (folderId, labels, crumbAction) => {
 			let breadcrumbs: Crumb[] = [];
 			if (nodes) {
 				breadcrumbs = buildCrumbs(nodes, crumbAction, t);
-				breadcrumbs[size(breadcrumbs) - 1].click = undefined;
+				breadcrumbs[size(breadcrumbs) - 1].onClick = undefined;
 				setCrumbs(breadcrumbs);
 				// breadcrumb can be expanded if not already expanded and if current node parent has a parent itself
 				if (!(nodes instanceof Array)) {

@@ -19,6 +19,8 @@ import { reduce, size } from 'lodash';
 import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
 
+import { AddPublicLinkComponent } from './AddPublicLinkComponent';
+import { PublicLinkComponent } from './PublicLinkComponent';
 import useUserInfo from '../../../../../hooks/useUserInfo';
 import { useCreateLinkMutation } from '../../../../hooks/graphql/mutations/useCreateLinkMutation';
 import { useDeleteLinksMutation } from '../../../../hooks/graphql/mutations/useDeleteLinksMutation';
@@ -27,8 +29,6 @@ import { useGetNodeLinksQuery } from '../../../../hooks/graphql/queries/useGetNo
 import { PublicLinkRowStatus } from '../../../../types/common';
 import { NonNullableListItem } from '../../../../types/utils';
 import { copyToClipboard } from '../../../../utils/utils';
-import { AddPublicLinkComponent } from './AddPublicLinkComponent';
-import { PublicLinkComponent } from './PublicLinkComponent';
 
 interface AddPublicLinkProps {
 	nodeId: string;

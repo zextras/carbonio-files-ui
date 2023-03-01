@@ -8,13 +8,14 @@ import React from 'react';
 import { act, fireEvent, screen } from '@testing-library/react';
 import { forEach } from 'lodash';
 
+import { ContextualMenuProps } from './ContextualMenu';
+import { EmptySpaceFiller } from './EmptySpaceFiller';
+import { List } from './List';
 import { ACTION_REGEXP } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
-import { mockGetChild } from '../../utils/mockUtils';
+import { mockGetChild, mockGetParent } from '../../utils/mockUtils';
 import { setup, selectNodes } from '../../utils/testUtils';
-import { EmptySpaceFiller } from './EmptySpaceFiller';
-import { List } from './List';
 
 describe('Contextual menu actions', () => {
 	describe('Contextual menu on empty space', () => {
@@ -34,38 +35,41 @@ describe('Contextual menu actions', () => {
 				const isCanCreateFolder = true;
 				const isCanCreateFile = true;
 
-				const actions = [
+				const actions: ContextualMenuProps['actions'] = [
 					{
 						id: 'create-folder',
 						label: 'New Folder',
 						icon: 'FolderOutline',
-						click: createFolderAction,
+						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
 						id: 'create-docs-document',
 						label: 'New Document',
 						icon: 'FileTextOutline',
-						click: createDocumentAction,
+						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-spreadsheet',
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
-						click: createSpreadsheetAction,
+						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-presentation',
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
-						click: createPresentationAction,
+						onClick: createPresentationAction,
 						disabled: !isCanCreateFile
 					}
 				];
 
-				const mocks = [mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)];
+				const mocks = [
+					mockGetParent({ node_id: currentFolder.id }, currentFolder),
+					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+				];
 
 				const { user } = setup(
 					<List
@@ -136,38 +140,41 @@ describe('Contextual menu actions', () => {
 				const isCanCreateFolder = false;
 				const isCanCreateFile = false;
 
-				const actions = [
+				const actions: ContextualMenuProps['actions'] = [
 					{
 						id: 'create-folder',
 						label: 'New Folder',
 						icon: 'FolderOutline',
-						click: createFolderAction,
+						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
 						id: 'create-docs-document',
 						label: 'New Document',
 						icon: 'FileTextOutline',
-						click: createDocumentAction,
+						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-spreadsheet',
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
-						click: createSpreadsheetAction,
+						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-presentation',
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
-						click: createPresentationAction,
+						onClick: createPresentationAction,
 						disabled: !isCanCreateFile
 					}
 				];
 
-				const mocks = [mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)];
+				const mocks = [
+					mockGetParent({ node_id: currentFolder.id }, currentFolder),
+					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+				];
 
 				const { user } = setup(
 					<List
@@ -235,38 +242,41 @@ describe('Contextual menu actions', () => {
 				const isCanCreateFolder = true;
 				const isCanCreateFile = true;
 
-				const actions = [
+				const actions: ContextualMenuProps['actions'] = [
 					{
 						id: 'create-folder',
 						label: 'New Folder',
 						icon: 'FolderOutline',
-						click: createFolderAction,
+						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
 						id: 'create-docs-document',
 						label: 'New Document',
 						icon: 'FileTextOutline',
-						click: createDocumentAction,
+						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-spreadsheet',
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
-						click: createSpreadsheetAction,
+						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-presentation',
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
-						click: createPresentationAction,
+						onClick: createPresentationAction,
 						disabled: !isCanCreateFile
 					}
 				];
 
-				const mocks = [mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)];
+				const mocks = [
+					mockGetParent({ node_id: currentFolder.id }, currentFolder),
+					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+				];
 
 				const { user } = setup(
 					<List
@@ -332,38 +342,41 @@ describe('Contextual menu actions', () => {
 				const isCanCreateFolder = false;
 				const isCanCreateFile = false;
 
-				const actions = [
+				const actions: ContextualMenuProps['actions'] = [
 					{
 						id: 'create-folder',
 						label: 'New Folder',
 						icon: 'FolderOutline',
-						click: createFolderAction,
+						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
 						id: 'create-docs-document',
 						label: 'New Document',
 						icon: 'FileTextOutline',
-						click: createDocumentAction,
+						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-spreadsheet',
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
-						click: createSpreadsheetAction,
+						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
 						id: 'create-docs-presentation',
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
-						click: createPresentationAction,
+						onClick: createPresentationAction,
 						disabled: !isCanCreateFile
 					}
 				];
 
-				const mocks = [mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)];
+				const mocks = [
+					mockGetParent({ node_id: currentFolder.id }, currentFolder),
+					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+				];
 
 				const { user } = setup(
 					<List
@@ -434,7 +447,10 @@ describe('Contextual menu actions', () => {
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;
 
-			const mocks = [mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)];
+			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+			];
 
 			const { user } = setup(
 				<List
@@ -484,7 +500,10 @@ describe('Contextual menu actions', () => {
 			const element1 = currentFolder.children.nodes[1] as Node;
 			const element2 = currentFolder.children.nodes[2] as Node;
 
-			const mocks = [mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)];
+			const mocks = [
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+			];
 
 			const { user } = setup(
 				<List
@@ -546,7 +565,10 @@ describe('Contextual menu actions', () => {
 		node2.flagged = true;
 		currentFolder.children.nodes.push(node2);
 
-		const mocks = [mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)];
+		const mocks = [
+			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+		];
 
 		const { user } = setup(
 			<List

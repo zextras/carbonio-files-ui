@@ -9,6 +9,12 @@ import { CollapsingActions, Container } from '@zextras/carbonio-design-system';
 import { map, isEqual, drop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { DisplayerHeader } from './DisplayerHeader';
+import { NodeContent } from './NodeContent';
+import { PathRow, PathRowProps } from './PathRow';
+import { DisplayerContentContainer } from './StyledComponents';
+import { TextRowWithShim } from './TextRowWithShim';
+import { UploadNodeDetailsListItem } from './UploadNodeDetailsListItem';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useGetBaseNodeQuery } from '../../hooks/graphql/queries/useGetBaseNodeQuery';
 import { useMemoCompare } from '../../hooks/useMemoCompare';
@@ -21,12 +27,6 @@ import {
 	isUploadFolderItem
 } from '../../utils/uploadUtils';
 import { humanFileSize } from '../../utils/utils';
-import { DisplayerHeader } from './DisplayerHeader';
-import { NodeContent } from './NodeContent';
-import { PathRow, PathRowProps } from './PathRow';
-import { DisplayerContentContainer } from './StyledComponents';
-import { TextRowWithShim } from './TextRowWithShim';
-import { UploadNodeDetailsListItem } from './UploadNodeDetailsListItem';
 
 interface UploadDisplayerNodeProps {
 	uploadItem: UploadItem;

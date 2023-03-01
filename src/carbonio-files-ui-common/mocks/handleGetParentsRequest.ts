@@ -6,8 +6,8 @@
 
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { GetParentQuery, GetParentQueryVariables } from '../types/graphql/types';
 import { populateFolder, populateParents } from './mockUtils';
+import { GetParentQuery, GetParentQueryVariables } from '../types/graphql/types';
 
 const handleGetParentsRequest: ResponseResolver<
 	GraphQLRequest<GetParentQueryVariables>,

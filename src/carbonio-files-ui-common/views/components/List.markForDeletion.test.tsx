@@ -8,11 +8,11 @@ import React from 'react';
 import { fireEvent, screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 
+import { List } from './List';
 import { ACTION_REGEXP } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { setup, selectNodes } from '../../utils/testUtils';
-import { List } from './List';
 
 describe('Mark for deletion - trash', () => {
 	describe('Selection mode', () => {

@@ -9,6 +9,7 @@ import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-l
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
+import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
 import { ACTION_REGEXP, SELECTORS } from '../constants/test';
@@ -16,7 +17,6 @@ import { populateFile, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { getFindNodesVariables, mockFindNodes, mockTrashNodes } from '../utils/mockUtils';
 import { setup, selectNodes } from '../utils/testUtils';
-import FilterView from './FilterView';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({

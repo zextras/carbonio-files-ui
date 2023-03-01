@@ -451,7 +451,7 @@ export function populateLinks(node: Node, limit = 2): Link[] {
 }
 
 export function populateConfigs(configMap?: Record<string, string>): Config[] {
-	const defaultConfigs: Record<typeof CONFIGS[keyof typeof CONFIGS], string> = {
+	const defaultConfigs: Record<(typeof CONFIGS)[keyof typeof CONFIGS], string> = {
 		[CONFIGS.MAX_VERSIONS]: '5',
 		[CONFIGS.MAX_KEEP_VERSIONS]: '3'
 	};

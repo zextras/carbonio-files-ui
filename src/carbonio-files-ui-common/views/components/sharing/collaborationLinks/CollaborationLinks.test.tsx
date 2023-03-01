@@ -8,6 +8,7 @@ import React from 'react';
 
 import { act, screen, waitFor, within } from '@testing-library/react';
 
+import { CollaborationLinks } from './CollaborationLinks';
 import { populateCollaborationLink, populateNode } from '../../../../mocks/mockUtils';
 import { SharePermission } from '../../../../types/graphql/types';
 import {
@@ -18,7 +19,6 @@ import {
 import { setup } from '../../../../utils/testUtils';
 import * as moduleUtils from '../../../../utils/utils';
 import { isFile } from '../../../../utils/utils';
-import { CollaborationLinks } from './CollaborationLinks';
 
 describe('Collaboration Link', () => {
 	test('no collaboration Links created', async () => {

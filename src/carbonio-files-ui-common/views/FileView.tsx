@@ -10,6 +10,8 @@ import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system
 import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { Displayer } from './components/Displayer';
+import FileList from './components/FileList';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -20,8 +22,6 @@ import { useUpload } from '../hooks/useUpload';
 import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
-import { Displayer } from './components/Displayer';
-import FileList from './components/FileList';
 
 const FileView: React.VFC = () => {
 	const fileId = useQueryParam('file');
@@ -60,15 +60,11 @@ const FileView: React.VFC = () => {
 				id: ACTION_IDS.UPLOAD_FILE,
 				type: ACTION_TYPES.NEW,
 				action: () => ({
-					// FIXME: remove ts-ignore when shell will fix type of "type"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					id: ACTION_IDS.UPLOAD_FILE,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					click: noop,
+					onClick: noop,
 					primary: true,
 					disabled: true
 				})
@@ -79,10 +75,9 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_FOLDER,
 					group: FILES_APP_ID,
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.folder', 'New Folder'),
 					icon: 'FolderOutline',
-					click: noop,
+					onClick: noop,
 					disabled: true
 				})
 			},
@@ -92,22 +87,21 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 					group: FILES_APP_ID,
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.document', 'New Document'),
 					icon: 'FileTextOutline',
-					click: noop,
+					onClick: noop,
 					disabled: true,
 					items: [
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
 							label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						},
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
 							label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						}
 					]
@@ -119,22 +113,21 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 					group: FILES_APP_ID,
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
 					icon: 'FileCalcOutline',
-					click: noop,
+					onClick: noop,
 					disabled: true,
 					items: [
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
 							label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						},
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
 							label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						}
 					]
@@ -146,22 +139,21 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 					group: FILES_APP_ID,
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.presentation', 'New Presentation'),
 					icon: 'FilePresentationOutline',
-					click: noop,
+					onClick: noop,
 					disabled: true,
 					items: [
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
 							label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						},
 						{
 							id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
 							label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-							click: noop,
+							onClick: noop,
 							disabled: true
 						}
 					]
@@ -184,13 +176,9 @@ const FileView: React.VFC = () => {
 					id: ACTION_IDS.UPLOAD_FILE,
 					primary: true,
 					group: FILES_APP_ID,
-					// FIXME: remove ts-ignore when shell will fix type of "type"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					type: ACTION_TYPES.NEW,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					click: (event): void => {
+					onClick: (event): void => {
 						event && event.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;

@@ -7,7 +7,7 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { Dropdown, IconButton, Tooltip } from '@zextras/carbonio-design-system';
+import { Dropdown, DropdownItem, IconButton, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { nodeSortVar } from '../../apollo/nodeSortVar';
@@ -104,35 +104,35 @@ export const SortingComponent: React.VFC = () => {
 		selectOrderType(OrderType.Size);
 	}, [selectOrderType]);
 
-	const items = [
+	const items: Array<DropdownItem> = [
 		{
 			id: 'activity-1',
 			label:
 				ascendingOrDescending === OrderTrend.Descending
 					? t('sortingDropdown.ascendingOrder', 'Ascending Order')
 					: t('sortingDropdown.descendingOrder', 'Descending Order'),
-			click: switchAscendingOrDescendingOrder,
+			onClick: switchAscendingOrDescendingOrder,
 			icon: ascendingOrDescending === OrderTrend.Descending ? 'ZaListOutline' : 'AzListOutline'
 		},
 		{
 			id: 'activity-2',
 			label: t('sortingDropdown.name', 'Name'),
 			selected: orderType === OrderType.Name,
-			click: selectNameOrderType,
+			onClick: selectNameOrderType,
 			icon: orderType === OrderType.Name ? 'RadioButtonOn' : 'RadioButtonOff'
 		},
 		{
 			id: 'activity-3',
 			label: t('sortingDropdown.lastUpdate', 'Last Update'),
 			selected: orderType === OrderType.UpdatedAt,
-			click: selectUpdatedAtOrderType,
+			onClick: selectUpdatedAtOrderType,
 			icon: orderType === OrderType.UpdatedAt ? 'RadioButtonOn' : 'RadioButtonOff'
 		},
 		{
 			id: 'activity-4',
 			label: t('sortingDropdown.size', 'Size'),
 			selected: orderType === OrderType.Size,
-			click: selectSizeOrderType,
+			onClick: selectSizeOrderType,
 			icon: orderType === OrderType.Size ? 'RadioButtonOn' : 'RadioButtonOff'
 		}
 	];

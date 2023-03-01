@@ -12,6 +12,11 @@ import { map, filter, last } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
+import { ContextualMenuProps } from './components/ContextualMenu';
+import { Displayer } from './components/Displayer';
+import { EmptySpaceFiller } from './components/EmptySpaceFiller';
+import { List } from './components/List';
+import { SortingComponent } from './components/SortingComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { CreateOptionsContent, useCreateOptions } from '../../hooks/useCreateOptions';
@@ -29,11 +34,6 @@ import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement, isFolder } from '../utils/utils';
-import { ContextualMenuProps } from './components/ContextualMenu';
-import { Displayer } from './components/Displayer';
-import { EmptySpaceFiller } from './components/EmptySpaceFiller';
-import { List } from './components/List';
-import { SortingComponent } from './components/SortingComponent';
 
 const FolderView: React.VFC = () => {
 	const { rootId } = useParams<URLParams>();
@@ -173,8 +173,8 @@ const FolderView: React.VFC = () => {
 		[]
 	);
 
-	const actions = useMemo<ContextualMenuProps['actions']>(
-		() => [
+	const actions = useMemo(
+		(): ContextualMenuProps['actions'] => [
 			{
 				id: ACTION_IDS.CREATE_FOLDER,
 				label: t('create.options.new.folder', 'New Folder'),
@@ -255,10 +255,6 @@ const FolderView: React.VFC = () => {
 			id: action.id,
 			action: () =>
 				({
-					// FIXME: remove ts-ignore when shell will fix type of "type"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					type: ACTION_TYPES.NEW,
 					group: FILES_APP_ID,
 					...action
 				} as Action)
@@ -269,16 +265,12 @@ const FolderView: React.VFC = () => {
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
 				action: () => ({
-					// FIXME: remove ts-ignore when shell will fix type of "type"
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					type: ACTION_TYPES.NEW,
 					id: ACTION_IDS.UPLOAD_FILE,
 					primary: true,
 					group: FILES_APP_ID,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					click: (event: React.SyntheticEvent | KeyboardEvent): void => {
+					onClick: (event: React.SyntheticEvent | KeyboardEvent): void => {
 						event && event.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;

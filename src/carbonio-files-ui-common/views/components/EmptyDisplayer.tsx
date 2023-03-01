@@ -10,10 +10,10 @@ import { sample, map, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { CenteredText } from './StyledComponents';
 import { ListContext } from '../../contexts';
 import { OneOrMany } from '../../types/utils';
 import { cssCalcBuilder } from '../../utils/utils';
-import { CenteredText } from './StyledComponents';
 
 interface EmptyDisplayerProps {
 	icons: string[];

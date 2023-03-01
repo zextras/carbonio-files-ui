@@ -7,9 +7,9 @@
 import { faker } from '@faker-js/faker';
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
+import { populateLinks, populateNode } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetNodeLinksQuery, GetNodeLinksQueryVariables } from '../types/graphql/types';
-import { populateLinks, populateNode } from './mockUtils';
 
 const handleGetNodeLinksRequest: ResponseResolver<
 	GraphQLRequest<GetNodeLinksQueryVariables>,

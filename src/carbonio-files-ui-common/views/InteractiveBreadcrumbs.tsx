@@ -45,7 +45,7 @@ export const InteractiveBreadcrumbs: React.VFC<BreadcrumbsProps> = ({ crumbs, ..
 			map(crumbs, (crumb) => ({
 				...crumb,
 				className: `${crumb.className ? crumb.className : ''} breadcrumbCrumb ${
-					!crumb.click ? 'currentCrumb' : ''
+					!crumb.onClick ? 'currentCrumb' : ''
 				}`
 			})),
 		[crumbs]
