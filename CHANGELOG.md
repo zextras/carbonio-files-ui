@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/zextras/carbonio-files-ui/compare/v1.1.1...v2.0.0) (2023-03-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove 'files-select-nodes' integrated action
+
+### Bug Fixes
+
+* use click prop in chip input options ([25d47c7](https://github.com/zextras/carbonio-files-ui/commit/25d47c7cf9ae7db4f5b67f8a40a419d80a9df08e)), closes [#193](https://github.com/zextras/carbonio-files-ui/issues/193)
+
+
+* remove click prop in favor of onClick ([3d329a4](https://github.com/zextras/carbonio-files-ui/commit/3d329a45a10b3ccbce5c2c9ea7867f37c2bc5380)), closes [#191](https://github.com/zextras/carbonio-files-ui/issues/191)
+
 ### [1.1.1](https://github.com/zextras/carbonio-files-ui/compare/v1.1.0...v1.1.1) (2023-02-13)
 
 ## [1.1.0](https://github.com/zextras/carbonio-files-ui/compare/v1.0.0...v1.1.0) (2023-02-02)
