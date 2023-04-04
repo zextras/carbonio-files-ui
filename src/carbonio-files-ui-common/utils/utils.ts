@@ -8,6 +8,7 @@ import React from 'react';
 
 import { ApolloError } from '@apollo/client';
 import { Location } from 'history';
+import type { TFunction } from 'i18next';
 import {
 	chain,
 	forEach,
@@ -22,7 +23,6 @@ import {
 	trim
 } from 'lodash';
 import moment, { Moment } from 'moment-timezone';
-import { TFunction } from 'react-i18next';
 
 import { searchParamsVar } from '../apollo/searchVar';
 import {

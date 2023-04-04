@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { graphql, rest } from 'msw';
+import { graphql, RequestHandler, rest } from 'msw';
 
 import {
 	DOCS_ENDPOINT,
@@ -48,7 +48,7 @@ import handleUpdateShareRequest from '../carbonio-files-ui-common/mocks/handleUp
 import handleUploadFileRequest from '../carbonio-files-ui-common/mocks/handleUploadFileRequest';
 import handleUploadVersionRequest from '../carbonio-files-ui-common/mocks/handleUploadVersionRequest';
 
-const handlers = [];
+const handlers: RequestHandler[] = [];
 
 if (!IS_SERVER) {
 	// queries
