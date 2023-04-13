@@ -110,7 +110,8 @@ export default function App(): JSX.Element {
 		});
 		addSearchView({
 			route: FILES_ROUTE,
-			component: SearchView
+			component: SearchView,
+			label: t('label.app_name', 'Files')
 		});
 		registerActions({
 			action: () => ({
