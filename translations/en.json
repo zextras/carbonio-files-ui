@@ -275,6 +275,7 @@
         ],
         "share": {
             "addShare": {
+                "button": "Share",
                 "checkbox": {
                     "label": "Add a custom message to mail notification"
                 },
