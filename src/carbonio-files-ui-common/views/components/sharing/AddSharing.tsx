@@ -482,7 +482,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 
 			<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
 				<Button
-					label="Share"
+					label={t('displayer.share.addShare.button', 'Share')}
 					color="primary"
 					onClick={createShareCallback}
 					disabled={!(size(chips) > 0) || thereAreInvalidChips}
