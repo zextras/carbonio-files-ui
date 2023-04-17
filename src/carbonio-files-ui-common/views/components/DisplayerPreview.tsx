@@ -63,17 +63,14 @@ export const DisplayerPreview: React.VFC<DisplayerPreviewProps> = ({
 
 	const buildPreviewSrc = useCallback(() => {
 		if (previewContainerRef.current) {
-			const src = getPreviewThumbnailSrc(
-				id,
-				version,
-				type,
-				mimeType,
-				previewContainerRef.current.clientWidth,
-				previewHeight,
-				'rectangular',
-				'high',
-				'jpeg'
-			);
+			const src = getPreviewThumbnailSrc(id, version, type, mimeType, {
+				width: previewContainerRef.current.clientWidth,
+				height: previewHeight,
+				shape: 'rectangular',
+				quality: 'high',
+				outputFormat: 'jpeg',
+				includeDocs: true
+			});
 			setPreviewSrc(src);
 			currentSrcRef.current = src;
 		}

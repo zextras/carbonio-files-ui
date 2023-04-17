@@ -372,8 +372,7 @@ describe('Node Details', () => {
 		expect(screen.getByRole('img')).toBeVisible();
 	});
 
-	// TODO: remove skip when thumbnail of documental files is reneabled
-	test.skip('Show file thumbnail for document', async () => {
+	test('Show file thumbnail for document', async () => {
 		const node = populateFile();
 		const loadMore = jest.fn();
 		node.type = NodeType.Application;

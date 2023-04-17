@@ -595,7 +595,17 @@ export const previewHandledMimeTypes: string[] = [
 	'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ];
 
-export const thumbnailHandledMimeTypes: string[] = [];
+export const thumbnailHandledMimeTypes: string[] = [
+	'application/msword',
+	'application/vnd.ms-excel',
+	'application/vnd.ms-powerpoint',
+	'application/vnd.oasis.opendocument.presentation',
+	'application/vnd.oasis.opendocument.spreadsheet',
+	'application/vnd.oasis.opendocument.text',
+	'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+];
 
 /**
  * 	Error codes:
@@ -772,26 +782,29 @@ export const getPreviewThumbnailSrc = (
 	version: number | undefined,
 	type: NodeType,
 	mimeType: string | undefined,
-	width: number,
-	height: number,
-	shape?: 'rectangular' | 'rounded',
-	quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest',
-	outputFormat?: 'jpeg' | 'png'
+	options: {
+		width: number;
+		height: number;
+		shape?: 'rectangular' | 'rounded';
+		quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
+		outputFormat?: 'jpeg' | 'png';
+		includeDocs?: boolean;
+	}
 ): string | undefined => {
 	if (version && mimeType) {
 		const optionalParams = [];
-		shape && optionalParams.push(`shape=${shape}`);
-		quality && optionalParams.push(`quality=${quality}`);
-		outputFormat && optionalParams.push(`output_format=${outputFormat}`);
+		options.shape && optionalParams.push(`shape=${options.shape}`);
+		options.quality && optionalParams.push(`quality=${options.quality}`);
+		options.outputFormat && optionalParams.push(`output_format=${options.outputFormat}`);
 		const optionalParamsStr = (optionalParams.length > 0 && `?${optionalParams.join('&')}`) || '';
 		if (mimeType.startsWith('image') && mimeType !== 'image/svg+xml') {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
+			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
 		}
 		if (includes(mimeType, 'pdf')) {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
+			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
 		}
-		if (includes(thumbnailHandledMimeTypes, mimeType)) {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
+		if (options.includeDocs && includes(thumbnailHandledMimeTypes, mimeType)) {
+			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
 		}
 	}
 	return undefined;
@@ -802,10 +815,16 @@ export const getListItemAvatarPictureUrl = (
 	version: number | undefined,
 	type: NodeType,
 	mimeType: string | undefined
-): string | undefined => getPreviewThumbnailSrc(id, version, type, mimeType, 80, 80);
+): string | undefined =>
+	getPreviewThumbnailSrc(id, version, type, mimeType, {
+		width: 80,
+		height: 80,
+		includeDocs: false
+	});
 
 export function getNewDocumentActionLabel(t: TFunction, docsType: DocsType): string {
 	const [format] = docsType.split('_');
+	/* i18next-extract-disable-next-line */
 	return t(`create.options.new.${format.toLowerCase()}Document`, 'Microsoft {{ext}}', {
 		context: DOCS_EXTENSIONS[docsType],
 		replace: {
