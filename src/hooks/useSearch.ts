@@ -113,13 +113,17 @@ export function useSearch(): UseSearchReturnType {
 
 	const search = useCallback(
 		(keywords: string[]) => {
-			const reducedForQuery = map(keywords, (keyword, index) => ({
-				id: `${index}-${keyword}`,
-				label: keyword,
-				hasAvatar: false,
-				background: 'gray2',
-				value: keyword
-			}));
+			const reducedForQuery = map(
+				keywords,
+				(keyword, index) =>
+					({
+						id: `${index}-${keyword}`,
+						label: keyword,
+						hasAvatar: false,
+						background: 'gray2',
+						value: keyword
+					} satisfies QueryChip)
+			);
 			updateQuery(reducedForQuery);
 		},
 		[updateQuery]
