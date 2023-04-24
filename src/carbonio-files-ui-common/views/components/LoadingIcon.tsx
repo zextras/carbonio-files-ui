@@ -6,6 +6,7 @@
 import React from 'react';
 
 import { IconButton, IconButtonProps } from '@zextras/carbonio-design-system';
+import { noop } from 'lodash';
 import styled, { keyframes } from 'styled-components';
 
 const rotate = keyframes`
@@ -25,16 +26,10 @@ interface LoadingIconButtonProps extends Omit<IconButtonProps, 'onClick'> {
 	onClick?: IconButtonProps['onClick'];
 }
 
-export const LoadingIcon = React.forwardRef<HTMLButtonElement, LoadingIconButtonProps>(
+export const LoadingIcon = React.forwardRef<HTMLDivElement, LoadingIconButtonProps>(
 	function LoadingIconFn({ onClick, type = 'ghost', shape = 'round', ...rest }, ref) {
 		return (
-			<StyledIconButton
-				onClick={onClick || ((): void => undefined)}
-				type={type}
-				shape={shape}
-				{...rest}
-				ref={ref}
-			/>
+			<StyledIconButton onClick={onClick || noop} type={type} shape={shape} {...rest} ref={ref} />
 		);
 	}
 );

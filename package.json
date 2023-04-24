@@ -78,8 +78,8 @@
 	},
 	"dependencies": {
 		"@apollo/client": "~3.7.9",
-		"@zextras/carbonio-design-system": "^1.2.0",
-		"@zextras/carbonio-shell-ui": "^2.1.0-devel.1680516833876",
+		"@zextras/carbonio-design-system": "^2.0.0",
+		"@zextras/carbonio-shell-ui": "^3.0.0",
 		"@zextras/carbonio-ui-preview": "^1.1.0",
 		"core-js": "^3.28.0",
 		"graphql": "^16.6.0",
