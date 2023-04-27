@@ -32,7 +32,7 @@
         "search": {
             "hint": "Ihre Suche ergab keine Treffer für Dateien oder Ordner",
             "noResults": [
-                "Keiner Ihrer Artikel entspricht Ihrer Suche.",
+                "Keine Ergebnisse. Suchen Sie weiter!",
                 "Keiner Ihrer Artikel entspricht Ihrer Suche."
             ],
             "notRun": "Es wurde noch keine Durchsuchung durchgeführt."
@@ -136,7 +136,7 @@
                 "leave_anyway": "Trotzdem gehen"
             },
             "body": {
-                "line2": "Alle nicht gespeicherten Änderungen gehen verloren.",
+                "line2": "Alle nicht gespeicherten Änderungen gehen verloren",
                 "line1": "Sind Sie sicher, dass Sie diese Seite verlassen wollen, ohne zu speichern?"
             }
         },
@@ -850,7 +850,7 @@
         },
         "loading": {
             "retrying": "Versuche die Vorschau zu laden…",
-            "file": "Dateivorschau wird geladen, bitte warten…",
+            "file": "Laden der Dateivorschau, bitte warten...…",
             "error": "Ein Fehler ist beim Ladevorgang aufgetreten. Versuchen Sie es erneut."
         },
         "button": {

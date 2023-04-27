@@ -626,8 +626,8 @@
         },
         "loading": {
             "error": "An error occurred while loading the preview. Try again.",
-            "file": "Loading file preview, please wait...",
-            "retrying": "Trying to load the preview..."
+            "file": "Loading file preview, please wait…",
+            "retrying": "Trying to load the preview…"
         }
     },
     "publicLink": {

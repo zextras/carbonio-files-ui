@@ -849,8 +849,8 @@
             "tooltip": "Kapat"
         },
         "loading": {
-            "retrying": "Ön izleme yükleniyor...",
-            "file": "Dosya ön izleme yükleniyor, lütfen bekleyin...",
+            "retrying": "Ön izleme yükleniyor…",
+            "file": "Dosya ön izleme yükleniyor, lütfen bekleyin…",
             "error": "Ön izleme yüklenirken hata oluştu. Yeniden deneyin."
         },
         "button": {

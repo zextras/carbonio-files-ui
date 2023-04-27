@@ -849,8 +849,8 @@
             "tooltip": "Fermer"
         },
         "loading": {
-            "retrying": "Tentative de chargement de l'aperçu...",
-            "file": "Chargement de l'aperçu du fichier, veuillez patienter...",
+            "retrying": "Tentative de chargement de l'aperçu…",
+            "file": "Chargement de l'aperçu du fichier, veuillez patienter…",
             "error": "Une erreur est survenue lors du chargement de l'aperçu. Veuillez réessayer."
         },
         "button": {
