@@ -5,18 +5,17 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { ResponseResolver, RestContext, RestRequest } from 'msw';
+import { PathParams, ResponseResolver, RestContext, RestRequest } from 'msw';
 
 import { PREVIEW_TYPE } from '../constants';
 
-type GetPreviewParams = {
+interface GetPreviewParams extends PathParams {
 	type: (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE];
 	id: string;
 	version: string;
 	area: string;
-	thumbnail?: 'thumbnail';
-};
-
+	thumbnail: 'thumbnail' | '';
+}
 const handleGetPreviewRequest: ResponseResolver<
 	RestRequest<never, GetPreviewParams>,
 	RestContext,

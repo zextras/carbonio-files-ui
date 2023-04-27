@@ -852,8 +852,8 @@
             "tooltip": "Sluiten"
         },
         "loading": {
-            "retrying": "Er wordt geprobeerd om het voorbeeld te laden...",
-            "file": "Voorbeeldbestand wordt geladen, wacht even....",
+            "retrying": "Er wordt geprobeerd om het voorbeeld te laden…",
+            "file": "Voorbeeldbestand wordt geladen, wacht even….",
             "error": "Er is een fout opgetreden bij het laden van de voorbeeldweergave. Probeer het opnieuw."
         },
         "button": {

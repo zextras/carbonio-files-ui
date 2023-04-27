@@ -26,7 +26,7 @@ interface ScrollContainerProps {
 
 export const ScrollContainer = React.forwardRef<HTMLDivElement, ScrollContainerProps>(
 	function ScrollContainerFn({ loadMore, hasMore, children, loading, fillerWithActions }, ref) {
-		const loadMoreRef = useRef<HTMLButtonElement>(null);
+		const loadMoreRef = useRef<HTMLDivElement>(null);
 		const loadMoreObserverRef = useRef<IntersectionObserver>();
 		const scrollContainerRef = useCombinedRefs(ref) as React.MutableRefObject<HTMLDivElement>;
 

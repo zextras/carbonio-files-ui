@@ -852,8 +852,8 @@
             "tooltip": "Chiudi"
         },
         "loading": {
-            "retrying": "Caricamento dell'anteprima in corso...",
-            "file": "Caricamento dell'anteprima del file in corso, attendi...",
+            "retrying": "Caricamento dell'anteprima in corso…",
+            "file": "Caricamento dell'anteprima del file in corso, attendi…",
             "error": "Si è verificato un errore durante il caricamento dell'anteprima. Riprova."
         },
         "button": {
