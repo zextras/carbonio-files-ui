@@ -577,8 +577,8 @@
             "tooltip": "Đóng"
         },
         "loading": {
-            "retrying": "Đang cố gắng tải bản xem trước ...",
-            "file": "Đang tải bản xem trước tệp, vui lòng đợi ...",
+            "retrying": "Đang cố gắng tải bản xem trước …",
+            "file": "Đang tải bản xem trước tệp, vui lòng đợi …",
             "error": "Đã xảy ra lỗi khi tải bản xem trước. Thử lại."
         },
         "button": {
