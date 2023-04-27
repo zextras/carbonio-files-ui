@@ -852,8 +852,8 @@
             "tooltip": "Tutup"
         },
         "loading": {
-            "retrying": "Mencoba memuat pratinjau...",
-            "file": "Memuat pratinjau file, harap tunggu...",
+            "retrying": "Mencoba memuat pratinjau…",
+            "file": "Memuat pratinjau file, harap tunggu…",
             "error": "Terjadi kesalahan saat memuat pratinjau. Coba lagi."
         },
         "button": {

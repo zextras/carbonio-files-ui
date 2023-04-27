@@ -55,7 +55,8 @@
                 "myElements": "Moje elementy"
             },
             "sharedWitMe": "Udostępnione dla mnie",
-            "filesHome": "Start"
+            "filesHome": "Start",
+            "rootsList": "Pliki"
         },
         "moreInfo": {
             "title": "Dodatkowe informacje"
@@ -274,7 +275,7 @@
         "removeUpload": "Usuń przesyłanie",
         "rename": "Zmień nazwę",
         "unflag": "Usuń flagę",
-        "sendViaMail": "Wyślij e-mailem",
+        "sendViaMail": "Wyślij jako załącznik",
         "edit": "Edytuj",
         "preview": "Podgląd",
         "manageShares": "Zarządzaj udostępnieniami"
@@ -564,7 +565,7 @@
                 "lastWeek": "Ostatnie 7 dni",
                 "olderVersions": "Starsze wersje"
             },
-            "mainHint": "Files zapisuje ostatnie {{maxVersions}} wersji Twoich plików. Możesz ręcznie usunąć lub przywrócić którąkolwiek wersję pliku. Wybierz jedną lub więcej wersji, które chcesz zachować na zawsze."
+            "mainHint": "Carbonio Pliki zapisuje ostatnie {{maxVersions}} wersji Twoich plików. Możesz ręcznie usunąć lub przywrócić którąkolwiek wersję pliku. Wybierz jedną lub więcej wersji, które chcesz zachować na zawsze."
         },
         "generic": {
             "message": "Kliknij w element, aby go wybrać",
@@ -693,7 +694,7 @@
             "completed": "Wyczyść ukończone przesyłania"
         },
         "destination": {
-            "home": "Przesyłanie wystąpiło w Files - Start"
+            "home": "Przesyłanie wystąpiło w Pliki - Start"
         },
         "error": {
             "moreInfo": {
@@ -838,7 +839,7 @@
         }
     },
     "label": {
-        "app_name": "Files"
+        "app_name": "Pliki"
     },
     "preview": {
         "actions": {
@@ -851,8 +852,8 @@
             "tooltip": "Zamknij"
         },
         "loading": {
-            "retrying": "Ładowanie podglądu...",
-            "file": "Ładowanie podglądu pliku, proszę czekać...",
+            "retrying": "Ładowanie podglądu…",
+            "file": "Ładowanie podglądu pliku, proszę czekać…",
             "error": "Wystąpił błąd przy ładowaniu podglądu. Spróbuj ponownie."
         },
         "button": {
