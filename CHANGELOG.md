@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://github.com/zextras/carbonio-files-ui/compare/v2.0.1...v2.0.2) (2023-04-27)
+
+
+### Bug Fixes
+
+* add translation for share button ([4e18f66](https://github.com/zextras/carbonio-files-ui/commit/4e18f660eb1465663929ab41d700f8b0fb56af3a)), closes [#201](https://github.com/zextras/carbonio-files-ui/issues/201)
+* replace click with onClick ([c0f5388](https://github.com/zextras/carbonio-files-ui/commit/c0f53889f6031f3ad42d62c500ecf723d162d02a)), closes [#203](https://github.com/zextras/carbonio-files-ui/issues/203)
+* translate label for search module selector ([54191e9](https://github.com/zextras/carbonio-files-ui/commit/54191e97eb289786e896348fd745756aa91586d8)), closes [#200](https://github.com/zextras/carbonio-files-ui/issues/200)
+
 ### [2.0.1](https://github.com/zextras/carbonio-files-ui/compare/v2.0.0...v2.0.1) (2023-03-13)
 
 ## [2.0.0](https://github.com/zextras/carbonio-files-ui/compare/v1.1.1...v2.0.0) (2023-03-01)
