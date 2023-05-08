@@ -391,7 +391,8 @@
                     "placeholder": "Nieuwe mensen of groepen toevoegen"
                 },
                 "note": "Opmerking:",
-                "noteDescription": "Het standaardbericht toont uw naam, de naam van het gedeelde item, de machtigingen die aan de ontvangers zijn verleend, en de aanmeldingsinformatie."
+                "noteDescription": "Het standaardbericht toont uw naam, de naam van het gedeelde item, de machtigingen die aan de ontvangers zijn verleend, en de aanmeldingsinformatie.",
+                "button": "Delen"
             },
             "noSharePermissionHeader": "U mag dit item niet delen."
         },
@@ -780,7 +781,7 @@
     "errorCode": {
         "code": "Er is iets fout gegaan",
         "code_Generic": "Er ging iets mis",
-        "code_ACCOUNT_NOT_FOUND": "Het lijkt erop dat deze gebruiker geen deel uitmaakt van het Carbonio-systeem",
+        "code_ACCOUNT_NOT_FOUND": "Het lijkt erop dat deze e-mail niet is gekoppeld aan een gebruiker",
         "code_LINK_NOT_FOUND": "Actie mislukt. Deze link bestaat niet meer",
         "code_MISSING_FIELD": "Er is een interne fout opgetreden, niet alle informatie van dit object is hersteld",
         "code_NODE_WRITE_ERROR": "Het lijkt erop dat dit object niet kan worden bewerkt of dat u geen toestemming hebt om het te bewerken",
@@ -901,7 +902,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Dit e-mailadres is niet gekoppeld aan een Carbonio-gebruiker"
+                    "contactNotFound": "U kunt items alleen delen met gebruikers waarvoor deze functie is ingeschakeld en niet met distributielijsten.  Het lijkt erop dat de opgegeven e-mail niet is gekoppeld aan een ingeschakelde gebruiker. Controleer nogmaals en voeg een geldig adres in."
                 }
             }
         }

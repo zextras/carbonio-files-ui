@@ -777,7 +777,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "You can share items only with users who have been enabled to this module, not distribution list. It seems that this email is not associated to an enabled user. Please check again and provide a valid address"
+                    "contactNotFound": "You can share items only with users for which this feature is enabled and not with distribution lists. It seems that the provided email is not associated with any enabled user. Please check again and insert a valid address."
                 }
             }
         }
