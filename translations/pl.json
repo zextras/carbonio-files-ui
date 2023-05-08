@@ -316,7 +316,8 @@
                     "placeholder": "Dodaj nowe osoby lub grupy"
                 },
                 "note": "Uwaga:",
-                "noteDescription": "Domyślna wiadomość zawiera Twoje imię, nazwę udostępnianiego elementu, uprawnienia przyznane odbiorcom oraz informacje dot. logowania."
+                "noteDescription": "Domyślna wiadomość zawiera Twoje imię, nazwę udostępnianiego elementu, uprawnienia przyznane odbiorcom oraz informacje dot. logowania.",
+                "button": "Udostępnij"
             },
             "noSharePermissionHeader": "Nie masz uprawnień, aby udostępnić ten element."
         },
@@ -819,7 +820,7 @@
     },
     "errorCode": {
         "code": "Coś poszło nie tak",
-        "code_ACCOUNT_NOT_FOUND": "Wygląda na to, że ten użytkownik nie jest członkiem systemu Carbonio",
+        "code_ACCOUNT_NOT_FOUND": "Wygląda na to, że ten adres e-mail nie jest przypisany do żadnego użytkownika",
         "code_FILE_VERSION_NOT_FOUND": "Przepraszamy, nie udało się znaleźć tej wersji pliku",
         "code_Generic": "Coś poszło nie tak",
         "code_LINK_NOT_FOUND": "Czynność nie powiodła się. Ten link już nie istnieje",
@@ -901,7 +902,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Ten adres e-mail nie jest przypisany do użytkownika Carbonio"
+                    "contactNotFound": "Możesz udostępniać elementy tylko użytkownikom, którzy mają włączoną tę funkcje. Nie możesz też udostępniać elementów listom dystrybucyjnym. Wygląda na to, że wybrany e-mail nie jest przypisany do żadnego aktywnego użytkownika. Wprowadź prawidłowy adres."
                 }
             }
         }

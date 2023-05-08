@@ -63,7 +63,8 @@
                     "placeholder": "新增人脉或群组"
                 },
                 "noteDescription": "标准消息中会展示您的名称、共享项目名称、授予接收者的权限以及登录信息。",
-                "note": "备注:"
+                "note": "备注:",
+                "button": "分享"
             }
         },
         "tabs": {
@@ -779,7 +780,7 @@
     },
     "errorCode": {
         "code": "出了一些问题",
-        "code_ACCOUNT_NOT_FOUND": "似乎此用户并不是 Carbonio 系统的一部分",
+        "code_ACCOUNT_NOT_FOUND": "似乎此邮件未与用户关联",
         "code_FILE_VERSION_NOT_FOUND": "抱歉，但无法找到该版本的文件",
         "code_Generic": "出了一些问题",
         "code_LINK_NOT_FOUND": "操作失败。此链接不存在",
@@ -901,7 +902,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "此邮件地址未关联至 Carbonio 用户"
+                    "contactNotFound": "您只能与启用了该功能的用户分享项目，无法将其与分发列表中的用户分享。似乎提供的邮件没有与任何启用该功能的用户关联。请再次检查并插入一个有效地址。"
                 }
             }
         }
