@@ -367,7 +367,8 @@
                     "placeholder": "Tambahkan orang atau grup baru"
                 },
                 "note": "Catatan:",
-                "noteDescription": "Pesan standar menampilkan nama Anda, nama item bersama, izin yang diberikan kepada penerima dan informasi masuk."
+                "noteDescription": "Pesan standar menampilkan nama Anda, nama item bersama, izin yang diberikan kepada penerima dan informasi masuk.",
+                "button": "Bagikan"
             },
             "noSharePermissionHeader": "Anda tidak diperbolehkan membagikan item ini."
         },
@@ -810,7 +811,7 @@
     "errorCode": {
         "code": "Terjadi masalah",
         "code_Generic": "Terjadi masalah",
-        "code_ACCOUNT_NOT_FOUND": "Tampaknya pengguna ini bukan bagian dari sistem Carbonio",
+        "code_ACCOUNT_NOT_FOUND": "Tampaknya email ini tidak terkait dengan pengguna",
         "code_FILE_VERSION_NOT_FOUND": "Maaf, versi file ini tidak bisa ditemukan",
         "code_LINK_NOT_FOUND": "Tindakan gagal. Tautan ini sudah tidak ada",
         "code_MISSING_FIELD": "Terjadi kesalahan internal. Tidak semua informasi objek ini telah dipulihkan",
@@ -901,7 +902,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Alamat email ini tidak terkait dengan pengguna Carbonio"
+                    "contactNotFound": "Anda bisa berbagi item ini hanya dengan pengguna yang mengaktifkan fitur ini dan bukan dengan daftar distribusi. Tampaknya email yang diberikan tidak terkait dengan pengguna yang diaktifkan. Periksa lagi dan masukkan alamat yang valid."
                 }
             }
         }

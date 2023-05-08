@@ -391,7 +391,8 @@
                     "placeholder": "Yeni kişi veya gruplar ekle"
                 },
                 "note": "Not:",
-                "noteDescription": "Standart mesajda adınız, paylaşılan öğenin adı, alıcıya verilen izinler ve giriş bilgisi gösterilir."
+                "noteDescription": "Standart mesajda adınız, paylaşılan öğenin adı, alıcıya verilen izinler ve giriş bilgisi gösterilir.",
+                "button": "Paylaş"
             },
             "noSharePermissionHeader": "Bu öğeyi paylaşmak için izniniz yok."
         },
@@ -792,7 +793,7 @@
         "code_NODE_WRITE_ERROR": "Bu öğe düzenlenemez veya onu düzenlemek için izniniz bulunmuyor",
         "code_SHARE_CREATION_ERROR": "Üzgünüz, bu öğeyi bu kullanıcı ile paylaşamazsınız",
         "code_SHARE_NOT_FOUND": "Üzgünüz, bu paylaşım bulunamadı",
-        "code_ACCOUNT_NOT_FOUND": "Bu kullanıcı Carbonio sisteminde bulunmuyor",
+        "code_ACCOUNT_NOT_FOUND": "Bu e-posta adresi ile bağlantılı kullanıcı yok",
         "code_FILE_VERSION_NOT_FOUND": "Üzgünüz, dosyanın bu versiyonu bulunamadı",
         "code_NODE_DUPLICATED": "Bu klasörde aynı isimde bir dosya var",
         "code_VERSIONS_LIMIT_REACHED": "İşlem tamamlanamadı. Maksimum limite ulaştınız.",
@@ -867,7 +868,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Bu e-posta adresi bir Carbonio kullanıcı ile bağlantılı değil"
+                    "contactNotFound": "Öğeler bu modülde etkin olan kullanıcılar ile paylaşılabilir, dağıtım grupları ile paylaşılamaz. Bu e-posta adresi bir kullanıcı ile bağlantılı değil. Lütfen tekrar kontrol ederek geçerli bir adres yazın"
                 }
             }
         }
