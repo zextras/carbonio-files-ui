@@ -275,6 +275,7 @@
         ],
         "share": {
             "addShare": {
+                "button": "Share",
                 "checkbox": {
                     "label": "Add a custom message to mail notification"
                 },
@@ -415,7 +416,7 @@
     },
     "errorCode": {
         "code": "Something went wrong",
-        "code_ACCOUNT_NOT_FOUND": "It seems that this user is not part of the Carbonio system",
+        "code_ACCOUNT_NOT_FOUND": "It seems that this email is not associated to a user",
         "code_FILE_VERSION_NOT_FOUND": "We're sorry, but this version of the file cannot be found",
         "code_Generic": "Something went wrong",
         "code_LINK_NOT_FOUND": "Action failed. This link no longer exists",
@@ -776,7 +777,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "This email address is not associated to a Carbonio user"
+                    "contactNotFound": "You can share items only with users for which this feature is enabled and not with distribution lists. It seems that the provided email is not associated with any enabled user. Please check again and insert a valid address."
                 }
             }
         }

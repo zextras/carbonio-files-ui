@@ -367,7 +367,8 @@
                     "placeholder": "Aggiungi nuove persone o gruppi"
                 },
                 "note": "Note:",
-                "noteDescription": "Il messaggio predefinito mostra il tuo nome, il nome dell'elemento condiviso, i permessi dati ai destinatari e le informazioni di accesso."
+                "noteDescription": "Il messaggio predefinito mostra il tuo nome, il nome dell'elemento condiviso, i permessi dati ai destinatari e le informazioni di accesso.",
+                "button": "Condividi"
             },
             "noSharePermissionHeader": "Non sei autorizzato a condividere questo elemento."
         },
@@ -785,7 +786,7 @@
     },
     "errorCode": {
         "code": "Qualcosa è andato storto",
-        "code_ACCOUNT_NOT_FOUND": "Sembra che questo utente non faccia parte del sistema Carbonio",
+        "code_ACCOUNT_NOT_FOUND": "Sembra che questa email non sia associata ad alcun utente",
         "code_FILE_VERSION_NOT_FOUND": "Impossibile trovare questa versione del file",
         "code_Generic": "Qualcosa è andato storto",
         "code_LINK_NOT_FOUND": "Azione fallita. Questo link non è più esistente",
@@ -901,7 +902,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Questo indirizzo email non è associato a nessun utente Carbonio"
+                    "contactNotFound": "Puoi condividere gli elementi sono con gli utenti per cui è stata abilitata questa funzione e non con le liste di distribuzione. L'indirizzo inserito non è associato con alcun utente abilitato. Per favore, controlla e inserisci un indirizzo valido."
                 }
             }
         }

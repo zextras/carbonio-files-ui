@@ -412,7 +412,7 @@
         "search_empty": [
             {
                 "message": "O elige \"Filtros avanzados\" para refinar la búsqueda.",
-                "title": "Iniciar otra búsqueda."
+                "title": "Inicie otra búsqueda."
             },
             {
                 "message": "¡No te rindas, sigue buscando!",
@@ -780,7 +780,7 @@
     "errorCode": {
         "code": "Algo salió mal",
         "code_Generic": "Algo salió mal",
-        "code_ACCOUNT_NOT_FOUND": "Este usuario no forma parte de Carbonio",
+        "code_ACCOUNT_NOT_FOUND": "Este email no está asociado a ningún usuario",
         "code_FILE_VERSION_NOT_FOUND": "No se pudo encontrar la versión del archivo",
         "code_LINK_NOT_FOUND": "Acción fallida. Este enlace ya no existe",
         "code_MISSING_FIELD": "Ha ocurrido un error. No toda la información de este objeto ha sido recuperada",
@@ -901,7 +901,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Esta dirección e-mail no está asociada a un usuario interno"
+                    "contactNotFound": "Sólo puedes compartir elementos con usuarios para los que esta función esté habilitada y no con listas de distribución. Parece que la dirección de correo electrónico proporcionada no está asociada a ningún usuario habilitado. Por favor, comprueba la dirección e intenta de nuevo."
                 }
             }
         }
