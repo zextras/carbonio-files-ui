@@ -45,7 +45,6 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 	const uploadStatus = useReactiveVar(uploadVar);
 
 	const [forceTrashOpen, setForceTrashOpen] = useState(false);
-	const [forceFilterOpen, setForceFilterOpen] = useState(false);
 	const location = useLocation();
 
 	useEffect(() => {
@@ -55,7 +54,6 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			// used this workaround because when 'expanded' prop changes the component was remounted
 			secondaryBarItemVar('');
 		} else if (expanded && item === 'filter') {
-			setForceFilterOpen(true);
 			secondaryBarItemVar('');
 		}
 	}, [expanded]);
@@ -69,10 +67,35 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 	);
 
 	const items = useMemo<AccordionItemType[]>(() => {
-		const filtersAsRoots: AccordionItemWithPriority[] = [
+		const filters: AccordionItemWithPriority[] = [
+			{
+				id: 'Recents',
+				priority: 1,
+				icon: 'ClockOutline',
+				label: t('secondaryBar.filtersList.recents', 'Recents'),
+				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
+					ev.stopPropagation();
+					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`);
+				},
+				CustomComponent: SecondaryBarItemExpanded,
+				active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`)
+			},
+			{
+				id: 'Flagged',
+				priority: 2,
+				icon: 'FlagOutline',
+				iconColor: 'error',
+				label: t('secondaryBar.filtersList.flagged', 'Flagged'),
+				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
+					ev.stopPropagation();
+					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`);
+				},
+				CustomComponent: SecondaryBarItemExpanded,
+				active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`)
+			},
 			{
 				id: 'SharedWithMe',
-				priority: 1,
+				priority: 3,
 				icon: 'ArrowCircleLeftOutline',
 				iconCustomColor: '#AB47BC',
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
@@ -82,61 +105,25 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				},
 				CustomComponent: SecondaryBarItemExpanded,
 				active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}`)
+			},
+			{
+				id: 'SharedByMe',
+				priority: 4,
+				icon: 'ArrowCircleRightOutline',
+				iconColor: 'warning',
+				label: t('secondaryBar.filtersList.sharedByMe', 'Shared by me'),
+				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
+					ev.stopPropagation();
+					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`);
+				},
+				CustomComponent: SecondaryBarItemExpanded,
+				active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`)
 			}
 		];
 
-		const filters: AccordionItemWithPriority = {
-			id: 'FILTERS',
-			onClick: (): void => {
-				if (!expanded) {
-					secondaryBarItemVar('filter');
-				}
-			},
-			open: forceFilterOpen,
-			label: t('secondaryBar.filters', 'Filters'),
-			icon: 'FunnelOutline',
-			items: [
-				{
-					id: 'Flagged',
-					icon: 'FlagOutline',
-					iconColor: 'error',
-					label: t('secondaryBar.filtersList.flagged', 'Flagged'),
-					onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-						ev.stopPropagation();
-						navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`);
-					},
-					CustomComponent: SecondaryBarItemExpanded,
-					active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`)
-				},
-				{
-					id: 'SharedByMe',
-					icon: 'ArrowCircleRightOutline',
-					iconColor: 'warning',
-					label: t('secondaryBar.filtersList.sharedByMe', 'Shared by me'),
-					onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-						ev.stopPropagation();
-						navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`);
-					},
-					CustomComponent: SecondaryBarItemExpanded,
-					active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`)
-				},
-				{
-					id: 'Recents',
-					icon: 'ClockOutline',
-					label: t('secondaryBar.filtersList.recents', 'Recents'),
-					onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-						ev.stopPropagation();
-						navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`);
-					},
-					CustomComponent: SecondaryBarItemExpanded,
-					active: location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`)
-				}
-			],
-			CustomComponent: SecondaryBarItemExpanded
-		};
-
 		const uploads: AccordionItemWithPriority = {
 			id: 'Uploads',
+			priority: 5,
 			label: t('secondaryBar.uploads', 'Uploads'),
 			icon: !uploadsInfo.isUploading ? 'CloudUploadOutline' : 'AnimatedUpload',
 			onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
@@ -188,7 +175,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 									priority: 0,
 									id: root.id,
 									label: t('secondaryBar.filesHome', 'Home'),
-									icon: 'HomeOutline',
+									icon: 'FolderOutline',
 									onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 										ev.stopPropagation();
 										navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
@@ -204,7 +191,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 								acc.push({
 									open: forceTrashOpen,
 									id: root.id,
-									priority: 2,
+									priority: 6,
 									icon: 'Trash2Outline',
 									label: t('secondaryBar.filtersList.trash', 'Trash'),
 									onClick: (): void => {
@@ -240,13 +227,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				[]
 			);
 
-			const mixedRootsAndFilters = orderBy(
-				[...rootItems, ...filtersAsRoots],
-				['priority'],
-				['asc']
-			);
-
-			return [...mixedRootsAndFilters, filters, uploads];
+			return orderBy([...rootItems, ...filters, uploads], ['priority'], ['asc']);
 		}
 		return [
 			{
@@ -263,7 +244,8 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 					location.pathname.includes(`${INTERNAL_PATH.ROOT}/${ROOTS.LOCAL_ROOT}`) ||
 					location.search.includes(`folder=${ROOTS.LOCAL_ROOT}`)
 			},
-			...filtersAsRoots,
+			...filters,
+			uploads,
 			{
 				id: ROOTS.TRASH,
 				priority: 2,
@@ -277,11 +259,9 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				label: t('secondaryBar.filtersList.trash', 'Trash'),
 				items: trashItems,
 				CustomComponent: SecondaryBarItemExpanded
-			},
-			filters,
-			uploads
+			}
 		];
-	}, [t, forceFilterOpen, uploadsInfo, data, forceTrashOpen, navigateTo, expanded, location]);
+	}, [t, uploadsInfo, data, forceTrashOpen, navigateTo, expanded, location]);
 
 	return (
 		<Container height="fit">
