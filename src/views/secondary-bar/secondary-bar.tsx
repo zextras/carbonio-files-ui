@@ -161,106 +161,77 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 			}
 		];
 
-		if (data?.getRootsList && data.getRootsList.length > 0) {
-			const rootItems = reduce<
-				GetRootsListQuery['getRootsList'][number],
-				AccordionItemWithPriority[]
-			>(
-				data.getRootsList,
-				(acc, root, idx) => {
-					if (root) {
-						switch (root.id) {
-							case ROOTS.LOCAL_ROOT: {
-								acc.push({
-									priority: 0,
-									id: root.id,
-									label: t('secondaryBar.filesHome', 'Home'),
-									icon: 'FolderOutline',
-									onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-										ev.stopPropagation();
-										navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
-									},
-									CustomComponent: SecondaryBarItemExpanded,
-									active:
-										location.pathname.includes(`${INTERNAL_PATH.ROOT}/${root.id}`) ||
-										location.search.includes(`folder=${root.id}`)
-								});
-								break;
-							}
-							case ROOTS.TRASH: {
-								acc.push({
-									open: forceTrashOpen,
-									id: root.id,
-									priority: 6,
-									icon: 'Trash2Outline',
-									label: t('secondaryBar.filtersList.trash', 'Trash'),
-									onClick: (): void => {
-										if (!expanded) {
-											secondaryBarItemVar('trash');
-										}
-									},
-									items: trashItems,
-									CustomComponent: SecondaryBarItemExpanded
-								});
-								break;
-							}
-							default: {
-								acc.push({
-									priority: idx + 4,
-									id: root.id,
-									label: root.name,
-									onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-										ev.stopPropagation();
-										navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
-									},
-									CustomComponent: SecondaryBarItemExpanded,
-									active:
-										location.pathname.includes(`${INTERNAL_PATH.ROOT}/${root.id}`) ||
-										location.search.includes(`folder=${root.id}`)
-								});
-								break;
-							}
+		const fallbackRoots: GetRootsListQuery['getRootsList'] = [
+			{ id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT },
+			{ id: ROOTS.TRASH, name: ROOTS.TRASH }
+		];
+
+		const rootItems = reduce<
+			GetRootsListQuery['getRootsList'][number],
+			AccordionItemWithPriority[]
+		>(
+			data?.getRootsList || fallbackRoots,
+			(acc, root, idx) => {
+				if (root) {
+					switch (root.id) {
+						case ROOTS.LOCAL_ROOT: {
+							acc.push({
+								priority: 0,
+								id: root.id,
+								label: t('secondaryBar.filesHome', 'Home'),
+								icon: 'FolderOutline',
+								onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
+									ev.stopPropagation();
+									navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
+								},
+								CustomComponent: SecondaryBarItemExpanded,
+								active:
+									location.pathname.includes(`${INTERNAL_PATH.ROOT}/${root.id}`) ||
+									location.search.includes(`folder=${root.id}`)
+							});
+							break;
+						}
+						case ROOTS.TRASH: {
+							acc.push({
+								open: forceTrashOpen,
+								id: root.id,
+								priority: 6,
+								icon: 'Trash2Outline',
+								label: t('secondaryBar.filtersList.trash', 'Trash'),
+								onClick: (): void => {
+									if (!expanded) {
+										secondaryBarItemVar('trash');
+									}
+								},
+								items: trashItems,
+								CustomComponent: SecondaryBarItemExpanded
+							});
+							break;
+						}
+						default: {
+							acc.push({
+								priority: idx + 4,
+								id: root.id,
+								label: root.name,
+								onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
+									ev.stopPropagation();
+									navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
+								},
+								CustomComponent: SecondaryBarItemExpanded,
+								active:
+									location.pathname.includes(`${INTERNAL_PATH.ROOT}/${root.id}`) ||
+									location.search.includes(`folder=${root.id}`)
+							});
+							break;
 						}
 					}
-					return acc;
-				},
-				[]
-			);
-
-			return orderBy([...rootItems, ...filters, uploads], ['priority'], ['asc']);
-		}
-		return [
-			{
-				id: ROOTS.LOCAL_ROOT,
-				label: t('secondaryBar.filesHome', 'Home'),
-				icon: 'HomeOutline',
-				items: [],
-				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-					ev.stopPropagation();
-					navigateTo(`${INTERNAL_PATH.ROOT}/${ROOTS.LOCAL_ROOT}`);
-				},
-				CustomComponent: SecondaryBarItemExpanded,
-				active:
-					location.pathname.includes(`${INTERNAL_PATH.ROOT}/${ROOTS.LOCAL_ROOT}`) ||
-					location.search.includes(`folder=${ROOTS.LOCAL_ROOT}`)
+				}
+				return acc;
 			},
-			...filters,
-			uploads,
-			{
-				id: ROOTS.TRASH,
-				priority: 2,
-				open: forceTrashOpen,
-				onClick: (): void => {
-					if (!expanded) {
-						secondaryBarItemVar('trash');
-					}
-				},
-				icon: 'Trash2Outline',
-				label: t('secondaryBar.filtersList.trash', 'Trash'),
-				items: trashItems,
-				CustomComponent: SecondaryBarItemExpanded
-			}
-		];
+			[]
+		);
+
+		return orderBy([...rootItems, ...filters, uploads], ['priority'], ['asc']);
 	}, [t, uploadsInfo, data, forceTrashOpen, navigateTo, expanded, location]);
 
 	return (
