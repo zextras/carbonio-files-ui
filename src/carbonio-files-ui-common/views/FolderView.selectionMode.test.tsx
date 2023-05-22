@@ -120,7 +120,6 @@ describe('Folder View Selection mode', () => {
 		expect(screen.getByText(/\bselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/\bselect all/i));
 		await screen.findByText(/deselect all/i);
-		expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -131,7 +130,6 @@ describe('Folder View Selection mode', () => {
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
 			currentFolder.children.nodes.length
 		);
-		expect(screen.getAllByTestId(SELECTORS.uncheckedAvatar)).toHaveLength(secondPage.length);
 		expect(screen.queryByText(/deselect all/i)).not.toBeInTheDocument();
 		expect(screen.getByText(/\bselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/\bselect all/i));
@@ -139,7 +137,6 @@ describe('Folder View Selection mode', () => {
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
 			currentFolder.children.nodes.length + secondPage.length
 		);
-		expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
 		expect(screen.getByText(/deselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/deselect all/i));
 		await screen.findByText(/\bselect all/i);

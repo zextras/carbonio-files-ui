@@ -9,7 +9,7 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 
 import { List } from './List';
-import { ACTION_REGEXP } from '../../constants/test';
+import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { setup, selectNodes } from '../../utils/testUtils';
@@ -42,7 +42,7 @@ describe('Mark for deletion - trash', () => {
 				user
 			);
 			// check that all wanted items are selected
-			expect(screen.getAllByTestId('checkedAvatar')).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
 				currentFolder.children.nodes.length
 			);
 
@@ -58,7 +58,7 @@ describe('Mark for deletion - trash', () => {
 				user
 			);
 
-			expect(screen.queryByTestId('checkedAvatar')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 			expect.assertions(4);
 		});
 
@@ -90,7 +90,7 @@ describe('Mark for deletion - trash', () => {
 				user
 			);
 			// check that all wanted items are selected
-			expect(screen.getAllByTestId('checkedAvatar')).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
 				currentFolder.children.nodes.length
 			);
 
@@ -105,7 +105,7 @@ describe('Mark for deletion - trash', () => {
 				user
 			);
 
-			expect(screen.queryByTestId('checkedAvatar')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 			expect.assertions(3);
 		});
 	});
