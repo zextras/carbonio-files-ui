@@ -92,33 +92,6 @@ export const ListItemContainer = styled(Container).attrs<
 		`};
 `;
 
-export const CheckedAvatar = styled(Avatar)`
-	border-radius: 0.5rem;
-	min-height: ${LIST_ITEM_AVATAR_HEIGHT};
-	max-height: ${LIST_ITEM_AVATAR_HEIGHT};
-	min-width: ${LIST_ITEM_AVATAR_HEIGHT};
-	max-width: ${LIST_ITEM_AVATAR_HEIGHT};
-	flex: 0 0 auto;
-	align-self: center;
-
-	& > svg {
-		width: 1.5rem;
-		height: 1.5rem;
-	}
-`;
-
-export const UncheckedAvatar = styled(Avatar)`
-	border-radius: 0.5rem;
-	min-height: ${LIST_ITEM_AVATAR_HEIGHT};
-	max-height: ${LIST_ITEM_AVATAR_HEIGHT};
-	min-width: ${LIST_ITEM_AVATAR_HEIGHT};
-	max-width: ${LIST_ITEM_AVATAR_HEIGHT};
-	flex: 0 0 auto;
-	align-self: center;
-	border: 0.0625rem solid ${(props): string => props.theme.palette.primary.regular};
-	box-sizing: border-box;
-`;
-
 export const FileIconPreview = styled(Avatar)<{ $compact?: boolean }>`
 	border-radius: 0.5rem;
 	min-height: ${({ $compact }): string =>
