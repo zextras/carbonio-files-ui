@@ -1,0 +1,910 @@
+{
+    "create": {
+        "options": {
+            "new": {
+                "folder": "新規フォルダ",
+                "upload": "アップロード",
+                "document": "新しいドキュメント",
+                "presentation": "新しいプレゼンテーション",
+                "spreadsheet": "新しいスプレッドシート",
+                "msDocument_xlsx": "Microsoft Excel {{ext}}",
+                "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
+                "msDocument_docx": "Microsoft Word {{ext}}",
+                "msDocument": "Microsoft {{ext}}",
+                "libreDocument": "OpenDocument {{ext}}"
+            }
+        }
+    },
+    "modal": {
+        "button": {
+            "cancel": "キャンセル",
+            "confirm": "確認"
+        },
+        "deletePermanently": {
+            "button": {
+                "confirm": "完全に削除する"
+            },
+            "body": "このアイテム/これらのアイテムは完全に削除されます。このファイル/これらのファイルを回復することはできなくなります。 この操作は元に戻せません。",
+            "header": "この操作は元に戻せません"
+        },
+        "roots": {
+            "rootsList": "Drive",
+            "sharedWitMe": "共有されたファイル",
+            "trash": {
+                "trash": "ゴミ箱",
+                "myElements": "私のアイテム",
+                "sharedWitMe": "共有アイテム"
+            },
+            "filesHome": "ホーム"
+        },
+        "deleteShare": {
+            "button": {
+                "confirm": "削除する"
+            },
+            "body": "{{shareTarget}}に与えられたアクセス許可をすべて削除しますか？",
+            "header": "共有を削除する",
+            "yourShare": {
+                "body": {
+                    "answer": "このコラボレーションから退会しますか？",
+                    "permissionLost": "付与されたアクセス許可がすべて失われます。"
+                }
+            }
+        },
+        "removeLink": {
+            "button": {
+                "confirm": "削除する"
+            },
+            "body": "このリンクは期限切れになっているため、要素にアクセスするために使用できなくなりました。リストからリンクを削除するか、リンクを継続して使用するために有効期限やその他の情報を更新してください",
+            "header": "{{nodeName}}パブリックリンクを削除する"
+        },
+        "revokeLink": {
+            "button": {
+                "confirm": "取り消す"
+            },
+            "body": "このリンクを取り消すことで、リンクを使用してファイルへのアクセスを試みるユーザーの{{nodeName}}へのアクセスがブロックされます",
+            "header": "{{nodeName}}パブリックリンクを取り消す"
+        },
+        "close": {
+            "tooltip": "閉じる"
+        },
+        "decreaseYourOwnSharePermissions": {
+            "button": {
+                "confirm": "確認"
+            },
+            "header": "現在の権限を減らす",
+            "body": "このノードでの権限を減らしてもよろしいですか？ このアクションは永続され、以前の共有権限を復元することができなくなります。 以前の権限を復元する必要がある場合は、いつでも共有アイテムの所有者に連絡できます"
+        },
+        "nodesSelection": {
+            "selectedCount": "{{count}}選択された要素",
+            "selectedCount_plural": "{{count}}選択した要素"
+        },
+        "moreInfo": {
+            "title": "追加情報"
+        },
+        "purgeAllVersions": {
+            "button": {
+                "confirm": "すべてのバージョンをパージする"
+            },
+            "header": "すべてのバージョンをパージする",
+            "body": "現在のバージョンを除き、永久に保持されるようにマークされていないバージョンがすべて削除されます。このバージョンを回復することはできません。"
+        },
+        "unsaved_changes": {
+            "title": {
+                "unsaved_changes": "未保存の変更があります",
+                "cannot_saved_changes": "一部の変更内容を保存できません"
+            },
+            "button": {
+                "save_and_leave": "保存して離れる",
+                "leave_anyway": "とにかく離れる"
+            },
+            "body": {
+                "line2": "保存されていない変更はすべて失われます",
+                "line1": "本当に保存せずにこのページを離れますか？"
+            }
+        },
+        "nodeSelection": {
+            "button": {
+                "newFolder": {
+                    "label": "新しいフォルダー",
+                    "disabled": "正しい権限がありません"
+                },
+                "create": "作成する"
+            },
+            "input": {
+                "newFolder": "新しいフォルダの名前"
+            }
+        },
+        "revokeCollaborationLink": {
+            "button": {
+                "confirm": "解除"
+            },
+            "header": "{{nodeName}}コラボレーションリンクを取り消す",
+            "body": "このリンクを取り消すと、このリンクを使用して新しい共有を作成できなくなります。すでにコラボレーション リンクを使用しているユーザーはすべて、ノードへのアクセスを保持します。"
+        }
+    },
+    "node": {
+        "rename": {
+            "modal": {
+                "button": {
+                    "confirm": "名前を変更"
+                },
+                "input": {
+                    "label": {
+                        "name": "アイテム名"
+                    }
+                },
+                "title": "アイテムの名前を変更する"
+            }
+        },
+        "alias": {
+            "name_LOCAL_CHAT_ROOT": "チーム経由で送信されたファイル",
+            "name_LOCAL_ROOT": "ホーム",
+            "name_SHARED_WITH_ME_ROOT": "共有されたファイル",
+            "name_TRASH_ROOT": "ゴミ箱"
+        },
+        "copy": {
+            "modal": {
+                "button": {
+                    "confirm": "コピー",
+                    "tooltip": {
+                        "confirm": "ここではこのアクションを実行できません"
+                    }
+                },
+                "title": "{{node.name}}をコピーする",
+                "title_plural": "アイテムをコピーする"
+            }
+        },
+        "move": {
+            "modal": {
+                "button": {
+                    "confirm": "移動",
+                    "tooltip": {
+                        "confirm": "ここではこのアクションを実行できません"
+                    }
+                },
+                "input": {
+                    "filter": "フォルダをフィルタリングする"
+                },
+                "subtitle": "宛先フォルダーを選択します:",
+                "title": "{{node.name}}を移動する",
+                "title_plural": "アイテムを移動する"
+            },
+            "error": {
+                "not": {
+                    "allowed": "フィルタまたは検索から複数のノードを移動することはできません"
+                }
+            }
+        },
+        "type": {
+            "folder": "フォルダー"
+        }
+    },
+    "secondaryBar": {
+        "team": "チーム経由で送信されたファイル",
+        "filters": "フィルター",
+        "filtersList": {
+            "flagged": "フラグを付けました",
+            "sharedByMe": "共有したファイル",
+            "sharedWithMe": "共有されたファイル",
+            "trash": "ゴミ箱",
+            "myElements": "私の要素",
+            "sharedElements": "共有要素",
+            "recents": "最近"
+        },
+        "uploads": "アップロード",
+        "filesHome": "ホーム"
+    },
+    "snackbar": {
+        "markForDeletion": {
+            "error": "エラーが発生しました。再度お試しください",
+            "success": "アイテムがゴミ箱に移動されました",
+            "showTrash": "ゴミ箱フォルダを開く"
+        },
+        "deleteShare": {
+            "error": "エラー",
+            "success": "成功"
+        },
+        "restore": {
+            "success": "成功",
+            "error": "エラーが発生しました。再度お試しください",
+            "showInFolder": "フォルダ内に表示する"
+        },
+        "download": {
+            "start": "ダウンロードがまもなく開始されます"
+        },
+        "moveNodes": {
+            "error": "エラーが発生しました。後ほど再度お試しください",
+            "success": "アイテムが移動しました",
+            "action": "フォルダに移動する"
+        },
+        "upload": {
+            "goToFolder": "フォルダに移動する",
+            "success": "{{destination}}でアップロードされました",
+            "moreInfo": "詳細",
+            "foldersNotAllowed": "フォルダをアップロードできません",
+            "nodesNotAllowed": "一部のアイテムがアップロードされていません"
+        },
+        "copyNodes": {
+            "action": "フォルダに移動する",
+            "error": "エラーが発生しました。後ほど再度お試しください",
+            "success": "アイテムがコピーされました"
+        },
+        "deletePermanently": {
+            "error": "エラー",
+            "success": "成功"
+        },
+        "unflag": {
+            "success": "アイテムのフラグが解除されました"
+        },
+        "clipboard": {
+            "email": "メールアドレスがコピーされました",
+            "itemShortcutCopied": "アイテムのショートカットがコピーされました"
+        },
+        "publicLink": {
+            "actionLabel": {
+                "copyLink": "リンクをコピーする"
+            },
+            "copyLink": "パブリックリンクがコピーされました",
+            "linkUpdated": {
+                "label": "パブリックリンクが更新されました"
+            },
+            "newPublicLinkGenerated": {
+                "label": "新しいパブリックリンクが生成されました"
+            }
+        },
+        "decreaseYourOwnShare": {
+            "success": "権限が更新されました"
+        },
+        "version": {
+            "clone": "現在のバージョンとして複製されたバージョン",
+            "keepForeverAdded": "永久に保持されるようにマークされたバージョン",
+            "keepForeverRemoved": "「永久に保持する」バージョンが削除されました"
+        },
+        "collaborationLink": {
+            "actionLabel": {
+                "copyLink": "リンクをコピーする"
+            },
+            "newCollaborationLinkGenerated": {
+                "label": "新しいコラボレーションリンクが生成されました"
+            },
+            "copyCollaborationLink": "コラボレーションリンクをコピーしました"
+        }
+    },
+    "empty": {
+        "folder": {
+            "hint": "このフォルダは空のようです",
+            "state": "「新規」をクリックしてファイルをドラッグするか、新しいファイルを作成します",
+            "displayerContent": "このフォルダにはコンテンツがありません"
+        },
+        "filter": {
+            "hint": "ここには何もないようです。",
+            "flagged": "フラグが立てられたアイテムはありません。",
+            "sharedByMe": "まだ共同編集者とアイテムを共有していません。",
+            "sharedWithMe": "まだ共有されているアイテムはありません。",
+            "trash": "ごみ箱は空です。",
+            "recents": "最近のアイテムはまだないようです。"
+        },
+        "search": {
+            "hint": "検索結果がどのファイルまたはフォルダにも一致しませんでした",
+            "noResults": [
+                "検索に一致するアイテムはありません！",
+                "検索に一致するアイテムはありません。"
+            ],
+            "notRun": "まだ検索されていません。"
+        }
+    },
+    "folder": {
+        "create": {
+            "modal": {
+                "button": {
+                    "confirm": "作成する"
+                },
+                "title": "新しいフォルダを作成する",
+                "input": {
+                    "label": {
+                        "name": "フォルダ名"
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "copy": "コピー",
+        "download": "ダウンロード",
+        "markForDeletion": "削除マークを付ける",
+        "move": "移動",
+        "openWithDocs": "ドキュメントを開く",
+        "rename": "名前を変更",
+        "restore": "戻す",
+        "deletePermanently": "完全に削除する",
+        "flag": "フラグを付ける",
+        "goToFolder": "宛先フォルダに移動する",
+        "moveToTrash": "削除する",
+        "removeUpload": "アップロードを削除する",
+        "retryUpload": "再びアップロード試す",
+        "unflag": "フラグを外す",
+        "sendViaMail": "メールで送信する",
+        "edit": "編集する",
+        "preview": "プレビューする",
+        "manageShares": "共有を管理する"
+    },
+    "displayer": {
+        "list": {
+            "you": "あなた"
+        },
+        "share": {
+            "chip": {
+                "you": "あなた",
+                "popover": {
+                    "save": "保存",
+                    "role": {
+                        "editor": "編集者",
+                        "editorDescription": "ファイルまたはフォルダを表示および編集できるようになります",
+                        "viewer": "ビューアー",
+                        "viewerDescription": "ファイルまたはフォルダのみを表示またはダウンロードできます"
+                    },
+                    "sharingAllowed": "共有が許可されました",
+                    "sharingAllowedDescription": "ファイルまたはフォルダの共有を管理できるようになります"
+                },
+                "owner": "所有者",
+                "tooltip": {
+                    "edit": {
+                        "collaborator": "コラボレーションを編集する",
+                        "you": "コラボレーションを編集する"
+                    },
+                    "remove": {
+                        "collaborator": "コラボレーションを削除する",
+                        "yourself": "コラボレーションを削除する"
+                    }
+                }
+            },
+            "addShare": {
+                "checkbox": {
+                    "label": "通知メールにカスタムメッセージを追加する"
+                },
+                "input": {
+                    "label": "この通知にカスタムメッセージを追加する",
+                    "placeholder": "新しい人またはグループを追加する"
+                },
+                "note": "メモ:",
+                "noteDescription": "標準メッセージには、名前、共有アイテムの名前、受信者に付与されたアクセス許可、サインイン情報が表示されます。",
+                "button": "共有する"
+            },
+            "noSharePermissionHeader": "このアイテムの共有を許可されていません。"
+        },
+        "details": {
+            "createdBy": "作成者",
+            "description": "説明",
+            "size": "サイズ",
+            "position": "場所",
+            "collaborators": "共同編集者",
+            "content": "コンテンツ",
+            "downloads": "パブリックリンクからダウンロードする",
+            "lastEdit": "最終編集",
+            "showPath": "パスを表示する",
+            "editDescription": {
+                "editIconTooltip": "概要を編集する",
+                "closeIconTooltip": "保存せずに閉じる",
+                "saveIconTooltip": "編集を保存する",
+                "input": {
+                    "label": "最大文字数は4096文字です"
+                }
+            },
+            "copyShortcut": "アイテムのショートカットをコピーする",
+            "missingDescription": "編集ボタンをクリックして説明を追加します",
+            "owner": "所有者",
+            "collaboratorsTooltip": "共同作業者のリストを見る",
+            "sendMailTo": "次の宛先にメールを送信します: {{email}}"
+        },
+        "tabs": {
+            "details": "詳細",
+            "activities": "アクティビティ",
+            "sharing": "共有",
+            "versioning": "バージョニング"
+        },
+        "uploads": {
+            "message": "ここで、現在アップロードされているアイテムをすべて見つけられ、ここから管理できます",
+            "title": "提案をアップロードする"
+        },
+        "generic": {
+            "message": "アイテムをクリックして選択します",
+            "title": "ファイルとフォルダを表示し、連絡先と共有します"
+        },
+        "search_empty": [
+            {
+                "message": "または、「高度なフィルター」を選択して検索結果を絞り込みます。",
+                "title": "別の検索を開始します。"
+            },
+            {
+                "message": "あきらめないで、探し続けてください！",
+                "title": "検索結果がありません。"
+            },
+            {
+                "message": "別の検索を開始してみてください。",
+                "title": "申し訳ありませんが、検索結果はありません。"
+            },
+            {
+                "message": "綴りとフィルターのオプションを確認するか、別のキーワードを試してください。",
+                "title": "検索結果はありません。"
+            }
+        ],
+        "search_full": [
+            {
+                "title": "1つ以上の結果を選択して、操作を実行したり、詳細を表示したりします。"
+            }
+        ],
+        "version": {
+            "actions": {
+                "deleteVersion": "バージョンを削除する",
+                "downloadVersion": "バージョンをダウンロードする",
+                "keepVersion": "このバージョンを維持する",
+                "removeKeepVersion": "バージョンの維持を削除する",
+                "cloneAsCurrent": "現在として複製する",
+                "openDocumentVersion": "ドキュメントバージョンを開く",
+                "tooltip": {
+                    "disabledByPermission": "正しい権限がありません",
+                    "disabledByVersionKeepForever": "永久に保持するようにマークされたバージョンは削除できません",
+                    "disabledByMaxVersion": "バージョンの最大数に達しました",
+                    "disabledByMaxKeepVersion": "永久に保持できるバージョンの最大数に達しました",
+                    "disabledByDocs": "このバージョンはオンラインエディタで開くことができません",
+                    "disabledByDeleteCurrent": "現在のバージョンは削除できません"
+                }
+            },
+            "button": {
+                "upload": "バージョンをアップロードする",
+                "purgeAllVersions": "すべてのバージョンをパージする"
+            },
+            "rowHeaders": {
+                "currentVersion": "現在のバージョン",
+                "lastWeek": "過去7日",
+                "olderVersions": "古いバージョン"
+            },
+            "mainHint": "ファイルは、ファイルの最後の{{maxVersions}}バージョンを保存します。任意のファイルバージョンを手動で削除するか、現在のバージョンとして復元することができます。永久に保持したい1つまたは複数のバージョンを選択してください。",
+            "row": {
+                "clonedIcon": {
+                    "tooltip2": "バージョン{{versionNumber}}（削除済みのバージョン）から複製されました",
+                    "tooltip1": "バージョン{{versionNumber}}から複製されました（{{cloneDate}}）"
+                },
+                "versionNumber": "バージョン{{versionNumber}}"
+            }
+        },
+        "filter": {
+            "flagged_empty": [
+                {
+                    "message": "必要なときにいつでもここで見つけることができます。",
+                    "title": "フラグをクリックしてアイテムをマークします。"
+                },
+                {
+                    "message": "ここにリストされます。",
+                    "title": "フラグをクリックして、最も重要なアイテムにフラグを付けます。"
+                }
+            ],
+            "flagged_full": [
+                {
+                    "message": "必要なときにいつでもここで見つけることができます。",
+                    "title": "フラグをクリックしてアイテムをマークします。"
+                },
+                {
+                    "message": "ここにリストされます。",
+                    "title": "フラグをクリックして、最も重要なアイテムにフラグを付けます。"
+                }
+            ],
+            "sharedByMe_empty": [
+                {
+                    "message": "続行するアイテムを選択してください。",
+                    "title": "連絡先の人たちと共有したアイテムを確認して編集します。"
+                },
+                {
+                    "message": "アイテムをクリックして選択してください。",
+                    "title": "共有したフォルダの詳細を表示します。"
+                },
+                {
+                    "message": "アイテムをクリックして選択してください。",
+                    "title": "連絡先の人たちと共有されているすべてのアイテムをここで見つけます。"
+                }
+            ],
+            "sharedByMe_full": [
+                {
+                    "message": "続行する項目を選択してください。",
+                    "title": "連絡先と共有したアイテムを確認して編集します。"
+                },
+                {
+                    "message": "アイテムをクリックして選択してください。",
+                    "title": "共有したフォルダの詳細を表示します。"
+                }
+            ],
+            "sharedWithMe_empty": [
+                {
+                    "title": "まだ共有されているアイテムはありません。",
+                    "message": "[新規]ボタンをクリックして、新しいドキュメントを作成し、連絡先と共有します。"
+                },
+                {
+                    "message": "他のユーザーに、コラボレーションの準備ができていることを知らせます。",
+                    "title": "「新規」ボタンをクリックして、新規メールを作成します。"
+                }
+            ],
+            "sharedWithMe_full": [
+                {
+                    "message": "アイテムをクリックして選択します。",
+                    "title": "ファイルの編集と共有を開始します。"
+                },
+                {
+                    "message": "アイテムをクリックして選択します。",
+                    "title": "フォルダの詳細を表示して、連絡先と共有します。"
+                },
+                {
+                    "title": "アイテムを選択して、他のユーザーと共同作業を開始します。"
+                }
+            ],
+            "trash_empty": [
+                {
+                    "title": "不要なものはすべてゴミ箱に移動します。",
+                    "message": "ごみ箱アイコンをクリックしてアイテムを削除します。"
+                },
+                {
+                    "title": "ごみ箱は空です。",
+                    "message": "ごみ箱アイコンをクリックしてアイテムを削除します。"
+                },
+                {
+                    "title": "ワークスペースをクリーンに保つ: 不要になったアイテムをすべて削除します。"
+                }
+            ],
+            "trash_full": [
+                {
+                    "title": "現在ごみ箱にあるドキュメントを選択して復元します。"
+                },
+                {
+                    "message": "アイテムを選択して復元するか、完全に削除します。",
+                    "title": "何も失われません！"
+                },
+                {
+                    "title": "アイテムを選択して完全に削除します。",
+                    "message": "または、可能であれば、それを選択して元のフォルダーに復元します。"
+                }
+            ],
+            "recents_full": [
+                {
+                    "message": "アイテムをクリックして選択します。",
+                    "title": "最新の更新アイテムの詳細を表示します。"
+                },
+                {
+                    "message": "続行する項目を選択してください。",
+                    "title": "最新の更新項目を確認して編集します。"
+                },
+                {
+                    "message": "アイテムをクリックして選択します。",
+                    "title": "最新の更新されたアイテムを素早く確認します。"
+                },
+                {
+                    "message": "アイテムをクリックして選択します。",
+                    "title": "最新の更新されたアイテムを最新の状態に保ちます。"
+                }
+            ],
+            "recents_empty": [
+                {
+                    "message": "ここに最新のものが表示されます。",
+                    "title": "ドキュメントを開き、読み、編集します。"
+                }
+            ]
+        },
+        "folder_empty": [
+            {
+                "title": "[新規]ボタンをクリックして、新しいアイテムを作成し、連絡先と共有します。"
+            },
+            {
+                "message": "「新規」ボタンをクリックしてファイルを作成します",
+                "title": "作業の編集と共有を開始します。"
+            },
+            {
+                "message": "編集、フラグ付け、共有ができるようになります。",
+                "title": "「新規」ボタンをクリックして、新しいアイテムを作成します。"
+            }
+        ],
+        "folder_full": [
+            {
+                "message": "アイテムをクリックして選択します。",
+                "title": "ファイルの編集と共有を開始します。"
+            },
+            {
+                "message": "アイテムをクリックして選択します。",
+                "title": "フォルダの詳細を表示して、連絡先の人と共有します。"
+            },
+            {
+                "title": "編集するフォルダを選択するか、名前を変更します。"
+            },
+            {
+                "message": "アイテムを選択し、[共有]タブに移動します",
+                "title": "連絡先に編集権限を付与して、アイテムを編集できるようにします。"
+            },
+            {
+                "title": "共有するアイテムを選択するか、別のフォルダーに移動します。"
+            }
+        ],
+        "search": {
+            "title": "キーワードを入力して検索を開始します。"
+        }
+    },
+    "search": {
+        "header": {
+            "search": "検索",
+            "result": "すべてのキーワードを含む結果:",
+            "start": "検索を開始する",
+            "close": "検索を終了する"
+        },
+        "search": {
+            "tooltip": {
+                "search": "検索",
+                "edit": "検索を編集して新しい検索を開始します",
+                "empty": "検索を開始するには、キーワードをいくつか入力してください"
+            }
+        },
+        "clear": {
+            "tooltip": {
+                "clear": "検索入力をクリアする",
+                "empty": "検索入力はすでにクリアされています"
+            }
+        },
+        "searchBar": {
+            "label": {
+                "active": "キーワードをコンマ、セミコロンで区切るか、Tabキーを押します",
+                "default": "検索ワードを入力してください"
+            }
+        },
+        "advancedSearch": {
+            "modal": {
+                "button": {
+                    "reset": "フィルターをリセットする",
+                    "confirm": "検索"
+                },
+                "flagged": {
+                    "label": "フラグを付けました",
+                    "description": "フラグを付けたアイテムで結果をフィルタリングします"
+                },
+                "folder": {
+                    "modal": {
+                        "cancel": "戻る",
+                        "title": "フォルダを選択",
+                        "cascade": "含まれているフォルダも検索する",
+                        "confirm": "フォルダを選択してください",
+                        "subtitle": "結果は選択したフォルダ内でのみ検索されます"
+                    },
+                    "label": "フォルダを選択"
+                },
+                "keywords": {
+                    "label": "キーワード"
+                },
+                "shared": {
+                    "label": "共有",
+                    "description": "自分以外に1人以上の共同編集者を含むアイテムで結果をフィルタリングします"
+                },
+                "title": "高度なフィルター",
+                "itemType": {
+                    "label": "アイテムの種類",
+                    "dropdownOption": {
+                        "video": "ビデオ",
+                        "spreadsheet": "スプレッドシート",
+                        "presentation": "プレゼンテーション",
+                        "image": "イメージ",
+                        "folder": "フォルダ",
+                        "document": "文書",
+                        "audio": "オーディオ"
+                    }
+                },
+                "owner": {
+                    "label": "所有者"
+                }
+            },
+            "button": {
+                "noFilter": "高度なフィルタ",
+                "filters": "{{count}}高度なフィルター",
+                "filters_plural": "{{count}}高度なフィルター"
+            }
+        },
+        "resultsFor": "検索結果:"
+    },
+    "docs": {
+        "create": {
+            "modal": {
+                "input": {
+                    "label": {
+                        "name": {
+                            "document": "ドキュメント名",
+                            "presentation": "プレゼンテーション名",
+                            "spreadsheet": "スプレッドシート名"
+                        }
+                    }
+                },
+                "title": {
+                    "document": "新しいドキュメントを作成する",
+                    "presentation": "新しいプレゼンテーションを作成する",
+                    "spreadsheet": "新しいスプレッドシートを作成する"
+                }
+            }
+        }
+    },
+    "uploads": {
+        "clean": {
+            "completed": "完了したアップロードをクリーンアップする"
+        },
+        "destination": {
+            "home": "ファイルホームでアップロードされました"
+        },
+        "dropzone": {
+            "message": {
+                "disabled": "この領域に添付ファイルをドロップすることはできません",
+                "folderView": {
+                    "disabled": "この領域に添付ファイルをドロップすることはできません",
+                    "enabled": "ここに添付ファイルをドロップして\n このフォルダに素早く追加できます"
+                },
+                "otherView": {
+                    "enabled": "ここに添付ファイルをドロップして\nホームに素早く追加できます"
+                }
+            },
+            "title": {
+                "disabled": "ドラッグ＆ドロップモード",
+                "enabled": "ドラッグ＆ドロップモード"
+            }
+        },
+        "error": {
+            "moreInfo": {
+                "foldersNotAllowed": "フォルダをアップロードできません。代わりにファイルのアップロードを試みると、システムにより認識されない可能性があります。 「アップロード」ボタンを使用して再度お試しください。"
+            }
+        }
+    },
+    "selectionMode": {
+        "header": {
+            "selectAll": "すべて選択",
+            "unselectAll": "すべての選択を解除する",
+            "exit": "選択モードを終了する"
+        },
+        "node": {
+            "tooltip": "選択モードを有効にする"
+        }
+    },
+    "sortingDropdown": {
+        "name": "名前",
+        "size": "サイズ",
+        "ascendingOrder": "昇順",
+        "descendingOrder": "降順",
+        "icon": {
+            "tooltip": {
+                "OrderNameAscending": "名前の昇順",
+                "OrderLastUpdateDescending": "最終更新の降順",
+                "OrderLastUpdateAscending": "最終更新の昇順",
+                "OrderNameDescending": "名前の降順",
+                "OrderSizeAscending": "サイズの昇順",
+                "OrderSizeDescending": "サイズの降順"
+            }
+        },
+        "lastUpdate": "最終更新"
+    },
+    "errorCode": {
+        "code": "エラーが発生しました",
+        "code_Generic": "エラーが発生しました",
+        "code_ACCOUNT_NOT_FOUND": "このメールはユーザーに関連付けられていないようです",
+        "code_FILE_VERSION_NOT_FOUND": "申し訳ありませんが、このバージョンのファイルが見つかりません",
+        "code_LINK_NOT_FOUND": "操作が失敗しました。 このリンクはもう存在しません",
+        "code_MISSING_FIELD": "内部エラーが発生しました。このオブジェクトのあらゆる情報が回復されていません",
+        "code_NODE_NOT_FOUND": "このオブジェクトが存在しないか、アクセスする権限がないようです",
+        "code_NODE_WRITE_ERROR": "このオブジェクトは編集できないか、編集する権限がないようです",
+        "code_SHARE_CREATION_ERROR": "申し訳ありませんが、このユーザーとアイテムを共有することはできません",
+        "code_SHARE_NOT_FOUND": "申し訳ありませんが、この共有が見つかりません",
+        "code_NODE_DUPLICATED": "このフォルダに同じ名前のファイルがあります",
+        "code_VERSIONS_LIMIT_REACHED": "操作を完了できません。上限に達しました。",
+        "code_NODE_COPY_ERROR": "申し訳ありませんが、アイテムのコピーに失敗しました。再度お試しください"
+    },
+    "publicLink": {
+        "addLink": {
+            "generateLink": "リンクを作成",
+            "undo": "元に戻す",
+            "addLink": "リンクを追加する",
+            "limitReached": "パブリックリンクの最大数に達しました",
+            "title": "パブリックリンク",
+            "description": "リンクにアクセスできる内部および外部ユーザーは、ファイルをダウンロードできます。"
+        },
+        "link": {
+            "edit": "編集",
+            "remove": "削除する",
+            "revoke": "取り消す",
+            "undo": "元に戻す",
+            "editLink": "リンクを編集する",
+            "expireOn": "有効期限:",
+            "expiredOn": "このリンクの有効期限は以下です:",
+            "noExpirationDate": "有効期限はありません",
+            "urlChip": {
+                "tooltip": {
+                    "copy": "パブリックリンクをコピーする",
+                    "expired": "このリンクの期限が切れています"
+                }
+            }
+        },
+        "datePickerInput": {
+            "description": "リンクは選択した日の終わりに期限切れになります"
+        },
+        "dateTimePicker": {
+            "label": "有効期限"
+        },
+        "input": {
+            "description": {
+                "error": {
+                    "maxLengthAllowed": "最大文字数は300文字です"
+                }
+            },
+            "label": "リンクの説明"
+        }
+    },
+    "breadcrumb": {
+        "expander": {
+            "hide": "フォルダのパスを非表示にする",
+            "show": "フォルダのパスを表示する"
+        }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "download": "ダウンロード",
+                "manageShares": "共有を管理する"
+            }
+        },
+        "close": {
+            "tooltip": "閉じる"
+        },
+        "loading": {
+            "retrying": "プレビューを読み込もうとしています…",
+            "file": "ファイルプレビューを読み込んでいます。しばらくお待ちください…",
+            "error": "プレビューの読み込み中にエラーが発生しました。再度お試しください。"
+        },
+        "button": {
+            "refresh": "プレビューを更新する"
+        }
+    },
+    "label": {
+        "app_name": "ファイル"
+    },
+    "uploadItem": {
+        "queued": "キューに入れられました"
+    },
+    "dropzone": {
+        "move": {
+            "title": {
+                "enabled": "ドラッグ＆ドロップモード",
+                "disabled": "ドラッグ＆ドロップモード"
+            },
+            "message": {
+                "enabled": "アイテムをこのフォルダに素早く移動するには\nここにドロップしてください",
+                "disabled": "このエリアにアイテムをドロップすることはできません"
+            }
+        }
+    },
+    "collaborationLinks": {
+        "button": {
+            "revoke": "解除",
+            "generateLink": "リンクを作成"
+        },
+        "title": "コラボレーションリンク",
+        "row": {
+            "title": {
+                "writeAndShare": "書いて共有する",
+                "ReadAndShare": "読んで共有する"
+            },
+            "placeholder": "ノードを共有するためにリンクを作成する"
+        },
+        "link": {
+            "urlChip": {
+                "tooltip": {
+                    "copy": "コラボレーションリンクをコピーする"
+                }
+            }
+        },
+        "description": "内部ユーザーは、リンクを開くことでアクセスを許可されます。付与された権限はいつでも変更できます。"
+    },
+    "share": {
+        "chip": {
+            "tooltip": {
+                "error": {
+                    "contactNotFound": "この機能が有効になっているユーザーとのみアイテムを共有でき、配布リストとは共有できません。提供されたメールは有効なユーザーに関連付けられていないようです。 再度確認し、有効なアドレスを入力してください。"
+                }
+            }
+        }
+    }
+}
