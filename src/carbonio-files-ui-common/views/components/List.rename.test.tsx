@@ -106,7 +106,7 @@ describe('Rename', () => {
 			// activate selection mode by selecting items
 			await selectNodes([element.id], user);
 			// check that all wanted items are selected
-			expect(screen.getByTestId('checkedAvatar')).toBeInTheDocument();
+			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
 			await user.click(screen.getByTestId('icon: MoreVertical'));
 			// check that the rename action becomes visible

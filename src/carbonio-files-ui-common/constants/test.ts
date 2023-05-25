@@ -45,8 +45,8 @@ export const ICON_REGEXP = {
 
 export const SELECTORS = {
 	dropdownList: 'dropdown-popper-list',
-	checkedAvatar: 'checkedAvatar',
-	uncheckedAvatar: 'unCheckedAvatar'
+	checkedAvatar: 'icon: Checkmark',
+	uncheckedAvatar: 'file-icon-selecting'
 };
 
 export const EMITTER_CODES = {

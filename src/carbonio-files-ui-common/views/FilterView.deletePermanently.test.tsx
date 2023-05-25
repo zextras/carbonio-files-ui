@@ -92,8 +92,8 @@ describe('Filter View', () => {
 				expect(confirmButton).not.toBeInTheDocument();
 
 				expect(element).not.toBeInTheDocument();
-				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
+				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
+				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
 
 				expect.assertions(8);
 			});

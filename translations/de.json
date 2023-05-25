@@ -391,7 +391,8 @@
                     "placeholder": "Neue Leute oder Gruppen hinzufügen"
                 },
                 "note": "Notizen:",
-                "noteDescription": "Die Standardnachricht zeigt Ihren Namen, den Namen des geteilten Elements, die verteilten Rechte für die Empfänger und Anmeldeinformationen."
+                "noteDescription": "Die Standardnachricht zeigt Ihren Namen, den Namen des geteilten Elements, die verteilten Rechte für die Empfänger und Anmeldeinformationen.",
+                "button": "Teilen"
             },
             "noSharePermissionHeader": "Sind dürfen dieses Element nicht teilen."
         },
@@ -780,7 +781,7 @@
     "errorCode": {
         "code": "Etwas ist schiefgegangen",
         "code_Generic": "Etwas ist schiefgegangen",
-        "code_ACCOUNT_NOT_FOUND": "Es scheint, dass dieser Benutzer nicht Teil des Carbonio-Systems ist",
+        "code_ACCOUNT_NOT_FOUND": "Es scheint, dass diese E-Mail nicht mit einem Benutzer verknüpft ist",
         "code_LINK_NOT_FOUND": "Aktion fehlgeschlagen. Dieser Link existiert nicht mehr",
         "code_MISSING_FIELD": "Ein interner Fehler ist aufgetreten, nicht alle Informationen dieses Objekts wurden wiederhergestellt",
         "code_NODE_WRITE_ERROR": "Es scheint, dass dieses Objekt nicht bearbeitet werden kann oder dass Sie keine Berechtigung haben, es zu bearbeiten",
@@ -901,7 +902,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Diese E-Mail Adresse ist nicht mit einem Carbonio Nutzer assoziiert"
+                    "contactNotFound": "Sie können Elemente nur für Benutzer freigeben, für die diese Funktion aktiviert ist, und nicht für Verteilerlisten. Es scheint, dass die angegebene E-Mail mit keinem aktivierten Benutzer verbunden ist. Bitte überprüfen Sie dies erneut und geben Sie eine gültige Adresse ein."
                 }
             }
         }
