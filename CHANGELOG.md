@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/zextras/carbonio-files-ui/compare/v2.0.3...v2.1.0) (2023-05-25)
+
+
+### Features
+
+* update secondary bar order ([88d6e6d](https://github.com/zextras/carbonio-files-ui/commit/88d6e6de84dd4f8a103d08e994dfc8da3502d2bc)), closes [#210](https://github.com/zextras/carbonio-files-ui/issues/210)
+
+
+### Bug Fixes
+
+* fix avatar bug in dark and selecting mode ([fe7bbbf](https://github.com/zextras/carbonio-files-ui/commit/fe7bbbf51711a8759832bca1efcd1bea85769755)), closes [#211](https://github.com/zextras/carbonio-files-ui/issues/211)
+
 ### [2.0.3](https://github.com/zextras/carbonio-files-ui/compare/v2.0.2...v2.0.3) (2023-05-08)
 
 ### [2.0.2](https://github.com/zextras/carbonio-files-ui/compare/v2.0.1...v2.0.2) (2023-04-27)
