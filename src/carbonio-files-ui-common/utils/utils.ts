@@ -23,6 +23,7 @@ import {
 	trim
 } from 'lodash';
 import moment, { Moment } from 'moment-timezone';
+import { DefaultTheme } from 'styled-components';
 
 import { searchParamsVar } from '../apollo/searchVar';
 import {
@@ -77,7 +78,12 @@ export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): stri
 		case NodeType.Folder:
 			return 'Folder';
 		case NodeType.Text:
-			return 'FileText';
+			switch (subType) {
+				case 'application/pdf':
+					return 'FilePdf';
+				default:
+					return 'FileText';
+			}
 		case NodeType.Video:
 			return 'Video';
 		case NodeType.Audio:
@@ -109,6 +115,39 @@ export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): stri
 	}
 };
 
+export const getIconColorByFileType = (
+	type: NodeType,
+	subType: Maybe<string> | undefined,
+	theme: DefaultTheme
+): string => {
+	switch (type) {
+		case NodeType.Folder:
+			return theme.palette.secondary.regular;
+		case NodeType.Text:
+			switch (subType) {
+				case 'application/pdf':
+					return theme.palette.error.regular;
+				default:
+					return theme.palette.primary.regular;
+			}
+		case NodeType.Video:
+			return theme.palette.error.regular;
+		case NodeType.Audio:
+			return theme.palette.gray0.regular;
+		case NodeType.Image:
+			return theme.palette.error.regular;
+		case NodeType.Message:
+			return theme.palette.primary.regular;
+		case NodeType.Presentation:
+			return theme.avatarColors.avatar_47;
+		case NodeType.Spreadsheet:
+			return theme.palette.success.regular;
+		case NodeType.Application:
+			return theme.palette.gray0.regular;
+		default:
+			return theme.palette.primary.regular;
+	}
+};
 const buildCrumbsRecursive = (
 	node: CrumbNode,
 	clickHandler?: (id: string, event: React.SyntheticEvent | KeyboardEvent) => void,
@@ -802,7 +841,10 @@ export const getListItemAvatarPictureUrl = (
 	version: number | undefined,
 	type: NodeType,
 	mimeType: string | undefined
-): string | undefined => getPreviewThumbnailSrc(id, version, type, mimeType, 80, 80);
+): string | undefined =>
+	includes(mimeType, 'pdf')
+		? undefined
+		: getPreviewThumbnailSrc(id, version, type, mimeType, 80, 80);
 
 export function getNewDocumentActionLabel(t: TFunction, docsType: DocsType): string {
 	const [format] = docsType.split('_');

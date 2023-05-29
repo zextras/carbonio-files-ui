@@ -94,6 +94,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 							type={node.type}
 							owner={node.owner}
 							updatedAt={node.updated_at}
+							mimeType={(isFile(node) && node.mime_type) || undefined}
 						/>
 					)
 			),

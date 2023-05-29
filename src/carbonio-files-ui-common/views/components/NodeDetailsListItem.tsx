@@ -8,12 +8,13 @@ import React, { useMemo } from 'react';
 
 import { Container, Padding, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from 'styled-components';
 
 import { NodeAvatarIcon } from './NodeAvatarIcon';
 import useUserInfo from '../../../hooks/useUserInfo';
 import { LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
-import { formatDate, getIconByFileType } from '../../utils/utils';
+import { formatDate, getIconByFileType, getIconColorByFileType } from '../../utils/utils';
 
 interface NodeDetailsListItemProps {
 	id: string;
@@ -34,6 +35,8 @@ export const NodeDetailsListItem: React.VFC<NodeDetailsListItemProps> = ({
 }) => {
 	const userInfo = useUserInfo();
 	const [t] = useTranslation();
+
+	const theme = useTheme();
 
 	const displayName = useMemo(() => {
 		if (owner && owner.id !== userInfo.me) {
@@ -57,6 +60,7 @@ export const NodeDetailsListItem: React.VFC<NodeDetailsListItemProps> = ({
 				selectionModeActive={false}
 				selected={false}
 				icon={getIconByFileType(type, mimeType)}
+				color={getIconColorByFileType(type, mimeType || id, theme)}
 				compact
 			/>
 			<Container

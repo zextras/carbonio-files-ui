@@ -119,6 +119,7 @@ export const UploadListItem = React.memo<UploadListItemProps>(
 							selected={isSelected}
 							onClick={selectIdCallback}
 							icon="CloudUploadOutline"
+							color="primary"
 						/>
 						<Container
 							orientation="vertical"
