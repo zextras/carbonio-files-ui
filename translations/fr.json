@@ -469,7 +469,8 @@
                     "placeholder": "Ajouter de nouvelles personnes ou de nouveaux groupes"
                 },
                 "note": "Note :",
-                "noteDescription": "Le message standard affiche votre nom, le nom de l'élément partagé, les autorisations accordées aux destinataires et les informations de connexion."
+                "noteDescription": "Le message standard affiche votre nom, le nom de l'élément partagé, les autorisations accordées aux destinataires et les informations de connexion.",
+                "button": "Partage"
             },
             "noSharePermissionHeader": "Vous n'êtes pas autorisé à partager cet élément."
         },
@@ -785,7 +786,7 @@
     },
     "errorCode": {
         "code": "Quelque chose s'est mal passé",
-        "code_ACCOUNT_NOT_FOUND": "Il semble que cet utilisateur ne fasse pas partie du système Carbonio",
+        "code_ACCOUNT_NOT_FOUND": "Il semble que cet email ne soit pas associé à un utilisateur",
         "code_Generic": "Quelque chose s'est mal passé",
         "code_LINK_NOT_FOUND": "L'action a échoué. Ce lien n'existe plus",
         "code_MISSING_FIELD": "Une erreur interne s'est produite, toutes les informations de cet objet n'ont pas été récupérées",
@@ -901,7 +902,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Cet adresse email n'est pas associée à un utilisateur de Carbonio"
+                    "contactNotFound": "Vous ne pouvez partager des éléments qu'avec des utilisateurs pour lesquels cette fonction est activée et non avec des listes de distribution. Il semble que l'email fournie ne soit pas associée à un utilisateur autorisé. Veuillez vérifier à nouveau et insérer une adresse valide."
                 }
             }
         }

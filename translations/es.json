@@ -367,7 +367,8 @@
                     "placeholder": "Añadir nuevos participantes o grupos"
                 },
                 "note": "Nota:",
-                "noteDescription": "El mensaje estándar muestra tu nombre, el nombre del elemento compartido, los permisos otorgados a los usuarios y la información de acceso, si fuera necesaria."
+                "noteDescription": "El mensaje estándar muestra tu nombre, el nombre del elemento compartido, los permisos otorgados a los usuarios y la información de acceso, si fuera necesaria.",
+                "button": "Compartir"
             },
             "noSharePermissionHeader": "No tienes permiso para compartir este elemento."
         },
