@@ -108,7 +108,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 
 	const [$isSupportedByPreview] = useMemo<
 		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview((isFile(node) && node.mime_type) || undefined), [node]);
+	>(() => isSupportedByPreview((isFile(node) && node.mime_type) || undefined, 'preview'), [node]);
 
 	const preview = useCallback(() => {
 		if ($isSupportedByPreview) {

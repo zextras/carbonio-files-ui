@@ -169,7 +169,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 
 	const [$isSupportedByPreview] = useMemo<
 		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview(mimeType), [mimeType]);
+	>(() => isSupportedByPreview(mimeType, 'preview'), [mimeType]);
 
 	const openNode = useCallback(
 		(event: React.SyntheticEvent | KeyboardEvent) => {

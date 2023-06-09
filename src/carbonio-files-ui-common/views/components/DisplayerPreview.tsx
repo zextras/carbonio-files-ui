@@ -68,11 +68,14 @@ export const DisplayerPreview: React.VFC<DisplayerPreviewProps> = ({
 				version,
 				type,
 				mimeType,
-				previewContainerRef.current.clientWidth,
-				previewHeight,
-				'rectangular',
-				'high',
-				'jpeg'
+				{
+					width: previewContainerRef.current.clientWidth,
+					height: previewHeight,
+					shape: 'rectangular',
+					quality: 'high',
+					outputFormat: 'jpeg'
+				},
+				'thumbnail_detail'
 			);
 			setPreviewSrc(src);
 			currentSrcRef.current = src;
