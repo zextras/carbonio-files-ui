@@ -8,7 +8,7 @@ import React from 'react';
 
 import { Container } from '@zextras/carbonio-design-system';
 
-import { ShellSecondaryBar } from './secondary-bar/secondary-bar';
+import { SecondaryBar } from './secondary-bar/SecondaryBar';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
 import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
 
@@ -20,7 +20,7 @@ const SidebarView: React.VFC<SidebarViewProps> = (props) => (
 	<PreventDefaultDropContainer>
 		<ProvidersWrapper>
 			<Container mainAlignment="flex-start">
-				<ShellSecondaryBar {...props} />
+				<SecondaryBar {...props} />
 			</Container>
 		</ProvidersWrapper>
 	</PreventDefaultDropContainer>

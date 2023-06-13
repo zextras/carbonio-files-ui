@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
 	AccordionItem,
 	AccordionItemType,
+	Badge,
 	getColor,
 	IconButton,
 	Padding,
@@ -44,7 +45,9 @@ const CustomAccordionItem = styled(AccordionItem)<{ $dragging: boolean }>`
 `;
 
 interface SecondaryBarItemProps {
-	item: AccordionItemType;
+	item: AccordionItemType & {
+		completeTotalBadgeCounter?: string | undefined;
+	};
 	expanded: boolean;
 }
 
@@ -179,7 +182,11 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 		>
 			{(dragging): JSX.Element =>
 				expanded ? (
-					<CustomAccordionItem item={item} ref={accordionItemRef} $dragging={dragging} />
+					<CustomAccordionItem item={item} ref={accordionItemRef} $dragging={dragging}>
+						{item.completeTotalBadgeCounter && (
+							<Badge value={item.completeTotalBadgeCounter} type={item.badgeType} />
+						)}
+					</CustomAccordionItem>
 				) : (
 					<Row mainAlignment="flex-start" takeAvailableSpace>
 						<Tooltip label={item.label} placement="right">
