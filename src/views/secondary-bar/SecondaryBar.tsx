@@ -136,7 +136,6 @@ export const SecondaryBar: React.VFC<SecondaryBarProps> = ({ expanded }) => {
 				navigateTo(INTERNAL_PATH.UPLOADS);
 			},
 			badgeType: 'unread',
-			// badgeCounter: uploadsInfo.uploadsFailedCounter || undefined,
 			completeTotalBadgeCounter:
 				(uploadsInfo.uploadsCounter > 0 &&
 					`${uploadsInfo.uploadsCompletedCounter}/${uploadsInfo.uploadsCounter}`) ||
