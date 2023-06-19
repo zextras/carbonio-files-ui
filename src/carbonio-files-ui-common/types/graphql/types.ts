@@ -522,24 +522,6 @@ export type Child_File_Fragment = {
 	rootId?: string | null;
 	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
 	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-	parent?:
-		| ({
-				id: string;
-				name: string;
-				permissions: {
-					can_read: boolean;
-					can_write_file: boolean;
-					can_write_folder: boolean;
-					can_delete: boolean;
-					can_add_version: boolean;
-					can_read_link: boolean;
-					can_change_link: boolean;
-					can_share: boolean;
-					can_read_share: boolean;
-					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' | 'Folder' })
-		| null;
 	shares: Array<
 		| ({
 				permission: SharePermission;
@@ -575,24 +557,6 @@ export type Child_Folder_Fragment = {
 	rootId?: string | null;
 	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
 	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-	parent?:
-		| ({
-				id: string;
-				name: string;
-				permissions: {
-					can_read: boolean;
-					can_write_file: boolean;
-					can_write_folder: boolean;
-					can_delete: boolean;
-					can_add_version: boolean;
-					can_read_link: boolean;
-					can_change_link: boolean;
-					can_share: boolean;
-					can_read_share: boolean;
-					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' | 'Folder' })
-		| null;
 	shares: Array<
 		| ({
 				permission: SharePermission;
@@ -621,6 +585,122 @@ export type Child_Folder_Fragment = {
 
 export type ChildFragment = Child_File_Fragment | Child_Folder_Fragment;
 
+export type ChildWithParent_File_Fragment = {
+	updated_at: number;
+	size: number;
+	mime_type: string;
+	extension?: string | null;
+	version: number;
+	id: string;
+	name: string;
+	type: NodeType;
+	flagged: boolean;
+	rootId?: string | null;
+	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+	shares: Array<
+		| ({
+				permission: SharePermission;
+				created_at: number;
+				share_target?:
+					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+					| null;
+				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
+		  } & { __typename?: 'Share' })
+		| null
+	>;
+	parent?:
+		| ({
+				id: string;
+				name: string;
+				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				permissions: {
+					can_read: boolean;
+					can_write_file: boolean;
+					can_write_folder: boolean;
+					can_delete: boolean;
+					can_add_version: boolean;
+					can_read_link: boolean;
+					can_change_link: boolean;
+					can_share: boolean;
+					can_read_share: boolean;
+					can_change_share: boolean;
+				} & { __typename?: 'Permissions' };
+		  } & { __typename?: 'File' | 'Folder' })
+		| null;
+	permissions: {
+		can_read: boolean;
+		can_write_file: boolean;
+		can_write_folder: boolean;
+		can_delete: boolean;
+		can_add_version: boolean;
+		can_read_link: boolean;
+		can_change_link: boolean;
+		can_share: boolean;
+		can_read_share: boolean;
+		can_change_share: boolean;
+	} & { __typename?: 'Permissions' };
+} & { __typename?: 'File' };
+
+export type ChildWithParent_Folder_Fragment = {
+	updated_at: number;
+	id: string;
+	name: string;
+	type: NodeType;
+	flagged: boolean;
+	rootId?: string | null;
+	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+	shares: Array<
+		| ({
+				permission: SharePermission;
+				created_at: number;
+				share_target?:
+					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+					| null;
+				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
+		  } & { __typename?: 'Share' })
+		| null
+	>;
+	parent?:
+		| ({
+				id: string;
+				name: string;
+				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				permissions: {
+					can_read: boolean;
+					can_write_file: boolean;
+					can_write_folder: boolean;
+					can_delete: boolean;
+					can_add_version: boolean;
+					can_read_link: boolean;
+					can_change_link: boolean;
+					can_share: boolean;
+					can_read_share: boolean;
+					can_change_share: boolean;
+				} & { __typename?: 'Permissions' };
+		  } & { __typename?: 'File' | 'Folder' })
+		| null;
+	permissions: {
+		can_read: boolean;
+		can_write_file: boolean;
+		can_write_folder: boolean;
+		can_delete: boolean;
+		can_add_version: boolean;
+		can_read_link: boolean;
+		can_change_link: boolean;
+		can_share: boolean;
+		can_read_share: boolean;
+		can_change_share: boolean;
+	} & { __typename?: 'Permissions' };
+} & { __typename?: 'Folder' };
+
+export type ChildWithParentFragment =
+	| ChildWithParent_File_Fragment
+	| ChildWithParent_Folder_Fragment;
+
 export type CollaborationLinkFragment = {
 	id: string;
 	url: string;
@@ -637,6 +717,46 @@ export type LinkFragment = {
 	created_at: number;
 	node: { id: string } & { __typename?: 'File' | 'Folder' };
 } & { __typename?: 'Link' };
+
+export type NodeParentFragment = {
+	parent?:
+		| ({
+				id: string;
+				name: string;
+				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				permissions: {
+					can_read: boolean;
+					can_write_file: boolean;
+					can_write_folder: boolean;
+					can_delete: boolean;
+					can_add_version: boolean;
+					can_read_link: boolean;
+					can_change_link: boolean;
+					can_share: boolean;
+					can_read_share: boolean;
+					can_change_share: boolean;
+				} & { __typename?: 'Permissions' };
+		  } & { __typename?: 'File' | 'Folder' })
+		| null;
+} & { __typename?: 'File' | 'Folder' };
+
+export type ParentFragment = {
+	id: string;
+	name: string;
+	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+	permissions: {
+		can_read: boolean;
+		can_write_file: boolean;
+		can_write_folder: boolean;
+		can_delete: boolean;
+		can_add_version: boolean;
+		can_read_link: boolean;
+		can_change_link: boolean;
+		can_share: boolean;
+		can_read_share: boolean;
+		can_change_share: boolean;
+	} & { __typename?: 'Permissions' };
+} & { __typename?: 'File' | 'Folder' };
 
 export type ParentIdFragment = {
 	parent?: ({ id: string } & { __typename?: 'File' | 'Folder' }) | null;
@@ -706,27 +826,10 @@ export type CopyNodesMutation = {
 				type: NodeType;
 				flagged: boolean;
 				rootId?: string | null;
+				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
 				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
-					| null;
-				parent?:
-					| ({
-							id: string;
-							name: string;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
 					| null;
 				shares: Array<
 					| ({
@@ -760,27 +863,10 @@ export type CopyNodesMutation = {
 				type: NodeType;
 				flagged: boolean;
 				rootId?: string | null;
+				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
 				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
-					| null;
-				parent?:
-					| ({
-							id: string;
-							name: string;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
 					| null;
 				shares: Array<
 					| ({
@@ -844,27 +930,10 @@ export type CreateFolderMutation = {
 				type: NodeType;
 				flagged: boolean;
 				rootId?: string | null;
+				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
 				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
-					| null;
-				parent?:
-					| ({
-							id: string;
-							name: string;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
 					| null;
 				shares: Array<
 					| ({
@@ -898,27 +967,10 @@ export type CreateFolderMutation = {
 				type: NodeType;
 				flagged: boolean;
 				rootId?: string | null;
+				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
 				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
-					| null;
-				parent?:
-					| ({
-							id: string;
-							name: string;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
 					| null;
 				shares: Array<
 					| ({
@@ -1101,9 +1153,12 @@ export type UpdateNodeMutationVariables = Exact<{
 }>;
 
 export type UpdateNodeMutation = {
-	updateNode: { id: string; name: string; description: string } & {
-		__typename?: 'File' | 'Folder';
-	};
+	updateNode: {
+		id: string;
+		name: string;
+		description: string;
+		parent?: ({ id: string } & { __typename?: 'File' | 'Folder' }) | null;
+	} & { __typename?: 'File' | 'Folder' };
 } & { __typename?: 'Mutation' };
 
 export type UpdateNodeDescriptionMutationVariables = Exact<{
@@ -1171,10 +1226,25 @@ export type FindNodesQuery = {
 							last_editor?:
 								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 								| null;
+							shares: Array<
+								| ({
+										permission: SharePermission;
+										created_at: number;
+										share_target?:
+											| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+											| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+											| null;
+										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
+								  } & { __typename?: 'Share' })
+								| null
+							>;
 							parent?:
 								| ({
 										id: string;
 										name: string;
+										owner: { id: string; full_name: string; email: string } & {
+											__typename?: 'User';
+										};
 										permissions: {
 											can_read: boolean;
 											can_write_file: boolean;
@@ -1189,18 +1259,6 @@ export type FindNodesQuery = {
 										} & { __typename?: 'Permissions' };
 								  } & { __typename?: 'File' | 'Folder' })
 								| null;
-							shares: Array<
-								| ({
-										permission: SharePermission;
-										created_at: number;
-										share_target?:
-											| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-											| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
-											| null;
-										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-								  } & { __typename?: 'Share' })
-								| null
-							>;
 							permissions: {
 								can_read: boolean;
 								can_write_file: boolean;
@@ -1225,10 +1283,25 @@ export type FindNodesQuery = {
 							last_editor?:
 								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 								| null;
+							shares: Array<
+								| ({
+										permission: SharePermission;
+										created_at: number;
+										share_target?:
+											| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+											| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+											| null;
+										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
+								  } & { __typename?: 'Share' })
+								| null
+							>;
 							parent?:
 								| ({
 										id: string;
 										name: string;
+										owner: { id: string; full_name: string; email: string } & {
+											__typename?: 'User';
+										};
 										permissions: {
 											can_read: boolean;
 											can_write_file: boolean;
@@ -1243,18 +1316,6 @@ export type FindNodesQuery = {
 										} & { __typename?: 'Permissions' };
 								  } & { __typename?: 'File' | 'Folder' })
 								| null;
-							shares: Array<
-								| ({
-										permission: SharePermission;
-										created_at: number;
-										share_target?:
-											| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-											| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
-											| null;
-										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-								  } & { __typename?: 'Share' })
-								| null
-							>;
 							permissions: {
 								can_read: boolean;
 								can_write_file: boolean;
@@ -1367,10 +1428,23 @@ export type GetChildQuery = {
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 					| null;
+				shares: Array<
+					| ({
+							permission: SharePermission;
+							created_at: number;
+							share_target?:
+								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+								| null;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
+					  } & { __typename?: 'Share' })
+					| null
+				>;
 				parent?:
 					| ({
 							id: string;
 							name: string;
+							owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
 							permissions: {
 								can_read: boolean;
 								can_write_file: boolean;
@@ -1385,18 +1459,6 @@ export type GetChildQuery = {
 							} & { __typename?: 'Permissions' };
 					  } & { __typename?: 'File' | 'Folder' })
 					| null;
-				shares: Array<
-					| ({
-							permission: SharePermission;
-							created_at: number;
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
-								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-					  } & { __typename?: 'Share' })
-					| null
-				>;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1421,10 +1483,23 @@ export type GetChildQuery = {
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 					| null;
+				shares: Array<
+					| ({
+							permission: SharePermission;
+							created_at: number;
+							share_target?:
+								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+								| null;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
+					  } & { __typename?: 'Share' })
+					| null
+				>;
 				parent?:
 					| ({
 							id: string;
 							name: string;
+							owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
 							permissions: {
 								can_read: boolean;
 								can_write_file: boolean;
@@ -1439,18 +1514,6 @@ export type GetChildQuery = {
 							} & { __typename?: 'Permissions' };
 					  } & { __typename?: 'File' | 'Folder' })
 					| null;
-				shares: Array<
-					| ({
-							permission: SharePermission;
-							created_at: number;
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
-								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-					  } & { __typename?: 'Share' })
-					| null
-				>;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1477,7 +1540,23 @@ export type GetChildrenQueryVariables = Exact<{
 
 export type GetChildrenQuery = {
 	getNode?:
-		| ({ id: string; name: string } & { __typename?: 'File' })
+		| ({
+				id: string;
+				name: string;
+				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				permissions: {
+					can_read: boolean;
+					can_write_file: boolean;
+					can_write_folder: boolean;
+					can_delete: boolean;
+					can_add_version: boolean;
+					can_read_link: boolean;
+					can_change_link: boolean;
+					can_share: boolean;
+					can_read_share: boolean;
+					can_change_share: boolean;
+				} & { __typename?: 'Permissions' };
+		  } & { __typename?: 'File' })
 		| ({
 				id: string;
 				name: string;
@@ -1499,24 +1578,6 @@ export type GetChildrenQuery = {
 								last_editor?:
 									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 									| null;
-								parent?:
-									| ({
-											id: string;
-											name: string;
-											permissions: {
-												can_read: boolean;
-												can_write_file: boolean;
-												can_write_folder: boolean;
-												can_delete: boolean;
-												can_add_version: boolean;
-												can_read_link: boolean;
-												can_change_link: boolean;
-												can_share: boolean;
-												can_read_share: boolean;
-												can_change_share: boolean;
-											} & { __typename?: 'Permissions' };
-									  } & { __typename?: 'File' | 'Folder' })
-									| null;
 								shares: Array<
 									| ({
 											permission: SharePermission;
@@ -1531,6 +1592,27 @@ export type GetChildrenQuery = {
 									  } & { __typename?: 'Share' })
 									| null
 								>;
+								parent?:
+									| ({
+											id: string;
+											name: string;
+											owner: { id: string; full_name: string; email: string } & {
+												__typename?: 'User';
+											};
+											permissions: {
+												can_read: boolean;
+												can_write_file: boolean;
+												can_write_folder: boolean;
+												can_delete: boolean;
+												can_add_version: boolean;
+												can_read_link: boolean;
+												can_change_link: boolean;
+												can_share: boolean;
+												can_read_share: boolean;
+												can_change_share: boolean;
+											} & { __typename?: 'Permissions' };
+									  } & { __typename?: 'File' | 'Folder' })
+									| null;
 								permissions: {
 									can_read: boolean;
 									can_write_file: boolean;
@@ -1555,24 +1637,6 @@ export type GetChildrenQuery = {
 								last_editor?:
 									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 									| null;
-								parent?:
-									| ({
-											id: string;
-											name: string;
-											permissions: {
-												can_read: boolean;
-												can_write_file: boolean;
-												can_write_folder: boolean;
-												can_delete: boolean;
-												can_add_version: boolean;
-												can_read_link: boolean;
-												can_change_link: boolean;
-												can_share: boolean;
-												can_read_share: boolean;
-												can_change_share: boolean;
-											} & { __typename?: 'Permissions' };
-									  } & { __typename?: 'File' | 'Folder' })
-									| null;
 								shares: Array<
 									| ({
 											permission: SharePermission;
@@ -1587,6 +1651,27 @@ export type GetChildrenQuery = {
 									  } & { __typename?: 'Share' })
 									| null
 								>;
+								parent?:
+									| ({
+											id: string;
+											name: string;
+											owner: { id: string; full_name: string; email: string } & {
+												__typename?: 'User';
+											};
+											permissions: {
+												can_read: boolean;
+												can_write_file: boolean;
+												can_write_folder: boolean;
+												can_delete: boolean;
+												can_add_version: boolean;
+												can_read_link: boolean;
+												can_change_link: boolean;
+												can_share: boolean;
+												can_read_share: boolean;
+												can_change_share: boolean;
+											} & { __typename?: 'Permissions' };
+									  } & { __typename?: 'File' | 'Folder' })
+									| null;
 								permissions: {
 									can_read: boolean;
 									can_write_file: boolean;
@@ -1603,6 +1688,19 @@ export type GetChildrenQuery = {
 						| null
 					>;
 				} & { __typename?: 'NodePage' };
+				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				permissions: {
+					can_read: boolean;
+					can_write_file: boolean;
+					can_write_folder: boolean;
+					can_delete: boolean;
+					can_add_version: boolean;
+					can_read_link: boolean;
+					can_change_link: boolean;
+					can_share: boolean;
+					can_read_share: boolean;
+					can_change_share: boolean;
+				} & { __typename?: 'Permissions' };
 		  } & { __typename?: 'Folder' })
 		| null;
 } & { __typename?: 'Query' };
@@ -1713,24 +1811,6 @@ export type GetNodeQuery = {
 								last_editor?:
 									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 									| null;
-								parent?:
-									| ({
-											id: string;
-											name: string;
-											permissions: {
-												can_read: boolean;
-												can_write_file: boolean;
-												can_write_folder: boolean;
-												can_delete: boolean;
-												can_add_version: boolean;
-												can_read_link: boolean;
-												can_change_link: boolean;
-												can_share: boolean;
-												can_read_share: boolean;
-												can_change_share: boolean;
-											} & { __typename?: 'Permissions' };
-									  } & { __typename?: 'File' | 'Folder' })
-									| null;
 								shares: Array<
 									| ({
 											permission: SharePermission;
@@ -1745,6 +1825,27 @@ export type GetNodeQuery = {
 									  } & { __typename?: 'Share' })
 									| null
 								>;
+								parent?:
+									| ({
+											id: string;
+											name: string;
+											owner: { id: string; full_name: string; email: string } & {
+												__typename?: 'User';
+											};
+											permissions: {
+												can_read: boolean;
+												can_write_file: boolean;
+												can_write_folder: boolean;
+												can_delete: boolean;
+												can_add_version: boolean;
+												can_read_link: boolean;
+												can_change_link: boolean;
+												can_share: boolean;
+												can_read_share: boolean;
+												can_change_share: boolean;
+											} & { __typename?: 'Permissions' };
+									  } & { __typename?: 'File' | 'Folder' })
+									| null;
 								permissions: {
 									can_read: boolean;
 									can_write_file: boolean;
@@ -1769,24 +1870,6 @@ export type GetNodeQuery = {
 								last_editor?:
 									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 									| null;
-								parent?:
-									| ({
-											id: string;
-											name: string;
-											permissions: {
-												can_read: boolean;
-												can_write_file: boolean;
-												can_write_folder: boolean;
-												can_delete: boolean;
-												can_add_version: boolean;
-												can_read_link: boolean;
-												can_change_link: boolean;
-												can_share: boolean;
-												can_read_share: boolean;
-												can_change_share: boolean;
-											} & { __typename?: 'Permissions' };
-									  } & { __typename?: 'File' | 'Folder' })
-									| null;
 								shares: Array<
 									| ({
 											permission: SharePermission;
@@ -1801,6 +1884,27 @@ export type GetNodeQuery = {
 									  } & { __typename?: 'Share' })
 									| null
 								>;
+								parent?:
+									| ({
+											id: string;
+											name: string;
+											owner: { id: string; full_name: string; email: string } & {
+												__typename?: 'User';
+											};
+											permissions: {
+												can_read: boolean;
+												can_write_file: boolean;
+												can_write_folder: boolean;
+												can_delete: boolean;
+												can_add_version: boolean;
+												can_read_link: boolean;
+												can_change_link: boolean;
+												can_share: boolean;
+												can_read_share: boolean;
+												can_change_share: boolean;
+											} & { __typename?: 'Permissions' };
+									  } & { __typename?: 'File' | 'Folder' })
+									| null;
 								permissions: {
 									can_read: boolean;
 									can_write_file: boolean;
@@ -2440,7 +2544,35 @@ export const BaseNodeFragmentDoc = {
 				]
 			}
 		},
-		...PermissionsFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<BaseNodeFragment, unknown>;
 export const ShareFragmentDoc = {
@@ -2544,13 +2676,462 @@ export const ChildFragmentDoc = {
 					},
 					{
 						kind: 'Field',
-						name: { kind: 'Name', value: 'parent' },
+						name: { kind: 'Name', value: 'shares' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'shares_limit' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
 						selectionSet: {
 							kind: 'SelectionSet',
 							selections: [
 								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
-								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<ChildFragment, unknown>;
+export const ParentFragmentDoc = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Parent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<ParentFragment, unknown>;
+export const NodeParentFragmentDoc = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'NodeParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'parent' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Parent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<NodeParentFragment, unknown>;
+export const ChildWithParentFragmentDoc = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'ChildWithParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'NodeParent' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Parent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Child' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'last_editor' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
 							]
 						}
 					},
@@ -2572,11 +3153,26 @@ export const ChildFragmentDoc = {
 				]
 			}
 		},
-		...BaseNodeFragmentDoc.definitions,
-		...PermissionsFragmentDoc.definitions,
-		...ShareFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'NodeParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'parent' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } }]
+						}
+					}
+				]
+			}
+		}
 	]
-} as unknown as DocumentNode<ChildFragment, unknown>;
+} as unknown as DocumentNode<ChildWithParentFragment, unknown>;
 export const CollaborationLinkFragmentDoc = {
 	kind: 'Document',
 	definitions: [
@@ -2811,13 +3407,192 @@ export const CopyNodesDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'parent' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
 			}
 		},
-		...ChildFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Child' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'last_editor' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'shares' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'shares_limit' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<CopyNodesMutation, CopyNodesMutationVariables>;
 export const CreateCollaborationLinkDocument = {
@@ -2873,7 +3648,28 @@ export const CreateCollaborationLinkDocument = {
 				]
 			}
 		},
-		...CollaborationLinkFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'CollaborationLink' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'CollaborationLink' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<
 	CreateCollaborationLinkMutation,
@@ -2930,13 +3726,192 @@ export const CreateFolderDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'parent' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
 			}
 		},
-		...ChildFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Child' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'last_editor' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'shares' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'shares_limit' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<CreateFolderMutation, CreateFolderMutationVariables>;
 export const CreateLinkDocument = {
@@ -2997,7 +3972,29 @@ export const CreateLinkDocument = {
 				]
 			}
 		},
-		...LinkFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Link' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<CreateLinkMutation, CreateLinkMutationVariables>;
 export const CreateShareDocument = {
@@ -3749,7 +4746,15 @@ export const UpdateNodeDocument = {
 							selections: [
 								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'description' } }
+								{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'parent' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
+									}
+								}
 							]
 						}
 					}
@@ -4083,7 +5088,9 @@ export const FindNodesDocument = {
 									name: { kind: 'Name', value: 'nodes' },
 									selectionSet: {
 										kind: 'SelectionSet',
-										selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } }]
+										selections: [
+											{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'ChildWithParent' } }
+										]
 									}
 								},
 								{ kind: 'Field', name: { kind: 'Name', value: 'page_token' } }
@@ -4093,7 +5100,228 @@ export const FindNodesDocument = {
 				]
 			}
 		},
-		...ChildFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Child' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'last_editor' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'shares' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'shares_limit' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Parent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'NodeParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'parent' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'ChildWithParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'NodeParent' } }
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<FindNodesQuery, FindNodesQueryVariables>;
 export const GetAccountByEmailDocument = {
@@ -4267,7 +5495,64 @@ export const GetBaseNodeDocument = {
 				]
 			}
 		},
-		...BaseNodeFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetBaseNodeQuery, GetBaseNodeQueryVariables>;
 export const GetChildDocument = {
@@ -4308,13 +5593,236 @@ export const GetChildDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'ChildWithParent' } }
+							]
 						}
 					}
 				]
 			}
 		},
-		...ChildFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Child' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'last_editor' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'shares' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'shares_limit' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Parent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'NodeParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'parent' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'ChildWithParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'NodeParent' } }
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetChildQuery, GetChildQueryVariables>;
 export const GetChildrenDocument = {
@@ -4377,8 +5885,7 @@ export const GetChildrenDocument = {
 						selectionSet: {
 							kind: 'SelectionSet',
 							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } },
 								{
 									kind: 'InlineFragment',
 									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Folder' } },
@@ -4417,7 +5924,17 @@ export const GetChildrenDocument = {
 															selectionSet: {
 																kind: 'SelectionSet',
 																selections: [
-																	{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } }
+																	{
+																		kind: 'FragmentSpread',
+																		name: { kind: 'Name', value: 'Child' }
+																	},
+																	{
+																		kind: 'FragmentSpread',
+																		name: { kind: 'Name', value: 'NodeParent' },
+																		directives: [
+																			{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }
+																		]
+																	}
 																]
 															}
 														},
@@ -4434,7 +5951,216 @@ export const GetChildrenDocument = {
 				]
 			}
 		},
-		...ChildFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Parent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Child' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'last_editor' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'shares' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'shares_limit' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'NodeParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'parent' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } }]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetChildrenQuery, GetChildrenQueryVariables>;
 export const GetConfigsDocument = {
@@ -4656,7 +6382,17 @@ export const GetNodeDocument = {
 															selectionSet: {
 																kind: 'SelectionSet',
 																selections: [
-																	{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Child' } }
+																	{
+																		kind: 'FragmentSpread',
+																		name: { kind: 'Name', value: 'Child' }
+																	},
+																	{
+																		kind: 'FragmentSpread',
+																		name: { kind: 'Name', value: 'NodeParent' },
+																		directives: [
+																			{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }
+																		]
+																	}
 																]
 															}
 														},
@@ -4673,10 +6409,216 @@ export const GetNodeDocument = {
 				]
 			}
 		},
-		...BaseNodeFragmentDoc.definitions,
-		...PermissionsFragmentDoc.definitions,
-		...ShareFragmentDoc.definitions,
-		...ChildFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Parent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Child' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'last_editor' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'shares' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'shares_limit' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'NodeParent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'parent' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } }]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetNodeQuery, GetNodeQueryVariables>;
 export const GetNodeCollaborationLinksDocument = {
@@ -4729,7 +6671,28 @@ export const GetNodeCollaborationLinksDocument = {
 				]
 			}
 		},
-		...CollaborationLinkFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'CollaborationLink' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'CollaborationLink' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<
 	GetNodeCollaborationLinksQuery,
@@ -4783,7 +6746,29 @@ export const GetNodeLinksDocument = {
 				]
 			}
 		},
-		...LinkFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Link' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetNodeLinksQuery, GetNodeLinksQueryVariables>;
 export const GetParentDocument = {
@@ -4846,7 +6831,64 @@ export const GetParentDocument = {
 				]
 			}
 		},
-		...BaseNodeFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetParentQuery, GetParentQueryVariables>;
 export const GetPathDocument = {
@@ -4887,7 +6929,64 @@ export const GetPathDocument = {
 				]
 			}
 		},
-		...BaseNodeFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'BaseNode' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
+					{
+						kind: 'InlineFragment',
+						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetPathQuery, GetPathQueryVariables>;
 export const GetPermissionsDocument = {
@@ -4931,7 +7030,35 @@ export const GetPermissionsDocument = {
 				]
 			}
 		},
-		...PermissionsFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetPermissionsQuery, GetPermissionsQueryVariables>;
 export const GetRootsListDocument = {
@@ -5049,7 +7176,64 @@ export const GetSharesDocument = {
 				]
 			}
 		},
-		...ShareFragmentDoc.definitions
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Share' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Share' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'share_target' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{
+									kind: 'InlineFragment',
+									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } }
+										]
+									}
+								},
+								{
+									kind: 'InlineFragment',
+									typeCondition: {
+										kind: 'NamedType',
+										name: { kind: 'Name', value: 'DistributionList' }
+									},
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+							]
+						}
+					}
+				]
+			}
+		}
 	]
 } as unknown as DocumentNode<GetSharesQuery, GetSharesQueryVariables>;
 export const GetUploadItemDocument = {
