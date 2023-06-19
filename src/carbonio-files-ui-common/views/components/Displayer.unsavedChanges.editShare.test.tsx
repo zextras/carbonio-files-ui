@@ -17,7 +17,7 @@ import {
 	getNodeVariables,
 	getSharesVariables,
 	mockGetNode,
-	mockGetNodeCollaborationLinks,
+	mockGetCollaborationLinks,
 	mockGetNodeLinks,
 	mockGetShares,
 	mockUpdateShare,
@@ -41,7 +41,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -93,7 +93,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -152,7 +152,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -217,7 +217,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockUpdateShare(
 						{
 							node_id: node.id,
@@ -294,7 +294,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockUpdateShareError(
 						{
 							node_id: node.id,

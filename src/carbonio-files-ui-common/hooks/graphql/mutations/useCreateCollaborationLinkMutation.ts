@@ -4,18 +4,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/* eslint-disable arrow-body-style */
 import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 
-import COLLABORATION_LINK from '../../../graphql/fragments/collaborationLink.graphql';
 import CREATE_COLLABORATION_LINK from '../../../graphql/mutations/createCollaborationLink.graphql';
+import { Node } from '../../../types/common';
 import {
 	CreateCollaborationLinkMutation,
 	CreateCollaborationLinkMutationVariables,
-	CollaborationLinkFragment,
-	SharePermission
+	SharePermission,
+	GetCollaborationLinksDocument
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
@@ -23,7 +22,7 @@ export type CreateCollaborationLinkType = (
 	permission: SharePermission
 ) => Promise<FetchResult<CreateCollaborationLinkMutation>>;
 
-export function useCreateCollaborationLinkMutation(nodeId: string): {
+export function useCreateCollaborationLinkMutation(node: Pick<Node, '__typename' | 'id'>): {
 	createCollaborationLink: CreateCollaborationLinkType;
 	loading: boolean;
 } {
@@ -33,31 +32,32 @@ export function useCreateCollaborationLinkMutation(nodeId: string): {
 		);
 
 	const createCollaborationLink: CreateCollaborationLinkType = useCallback(
-		(permission) => {
-			return createCollaborationLinkMutation({
+		(permission) =>
+			createCollaborationLinkMutation({
 				variables: {
-					node_id: nodeId,
+					node_id: node.id,
 					permission
 				},
 				update(cache, { data }) {
 					if (data?.createCollaborationLink) {
-						cache.modify({
-							id: cache.identify(data.createCollaborationLink.node),
-							fields: {
-								collaboration_links(existingCollaborationLinks) {
-									const newLinkRef = cache.writeFragment<CollaborationLinkFragment>({
-										data: data.createCollaborationLink,
-										fragment: COLLABORATION_LINK
-									});
-									return [newLinkRef, ...existingCollaborationLinks];
+						cache.updateQuery(
+							{
+								query: GetCollaborationLinksDocument,
+								variables: {
+									node_id: node.id
 								}
-							}
-						});
+							},
+							(queryData) => ({
+								getCollaborationLinks: [
+									data.createCollaborationLink,
+									...(queryData?.getCollaborationLinks || [])
+								]
+							})
+						);
 					}
 				}
-			});
-		},
-		[createCollaborationLinkMutation, nodeId]
+			}),
+		[createCollaborationLinkMutation, node]
 	);
 	useErrorHandler(createCollaborationLinkError, 'CREATE_COLLABORATION_LINK');
 	return { createCollaborationLink, loading };

@@ -8,15 +8,14 @@
 import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
-import { filter, includes } from 'lodash';
+import { filter } from 'lodash';
 
-import COLLABORATION_LINK from '../../../graphql/fragments/collaborationLink.graphql';
 import DELETE_COLLABORATION_LINKS from '../../../graphql/mutations/deleteCollaborationLinks.graphql';
 import { PickIdTypenameNodeType } from '../../../types/common';
 import {
-	CollaborationLinkFragment,
 	DeleteCollaborationLinksMutation,
-	DeleteCollaborationLinksMutationVariables
+	DeleteCollaborationLinksMutationVariables,
+	GetCollaborationLinksDocument
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
@@ -43,23 +42,22 @@ export function useDeleteCollaborationLinksMutation(
 				},
 				update(cache, { data }) {
 					if (data?.deleteCollaborationLinks) {
-						cache.modify({
-							id: cache.identify(node),
-							fields: {
-								collaboration_links(existingCollaborationLinks) {
-									return filter(existingCollaborationLinks, (existingCollaborationLink) => {
-										const collaborationLink = cache.readFragment<CollaborationLinkFragment>({
-											id: cache.identify(existingCollaborationLink),
-											fragment: COLLABORATION_LINK
-										});
-										return !(
-											collaborationLink &&
-											includes(data.deleteCollaborationLinks, collaborationLink.id)
-										);
-									});
+						cache.updateQuery(
+							{
+								query: GetCollaborationLinksDocument,
+								variables: {
+									node_id: node.id
 								}
-							}
-						});
+							},
+							(queryData) => ({
+								getCollaborationLinks: filter(
+									queryData?.getCollaborationLinks,
+									(existingCollaborationLink) =>
+										existingCollaborationLink?.id !== undefined &&
+										!data.deleteCollaborationLinks.includes(existingCollaborationLink.id)
+								)
+							})
+						);
 					}
 				}
 			});

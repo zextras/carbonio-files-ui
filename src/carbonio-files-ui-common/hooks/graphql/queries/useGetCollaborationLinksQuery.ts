@@ -6,20 +6,20 @@
 
 import { QueryResult, useQuery } from '@apollo/client';
 
-import GET_NODE_COLLABORATION_LINKS from '../../../graphql/queries/getNodeCollaborationLinks.graphql';
 import {
-	GetNodeCollaborationLinksQuery,
-	GetNodeCollaborationLinksQueryVariables
+	GetCollaborationLinksDocument,
+	GetCollaborationLinksQuery,
+	GetCollaborationLinksQueryVariables
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
-export function useGetNodeCollaborationLinksQuery(
+export function useGetCollaborationLinksQuery(
 	nodeId: string
-): Pick<QueryResult<GetNodeCollaborationLinksQuery>, 'data' | 'loading' | 'error'> {
+): Pick<QueryResult<GetCollaborationLinksQuery>, 'data' | 'loading' | 'error'> {
 	const { data, loading, error } = useQuery<
-		GetNodeCollaborationLinksQuery,
-		GetNodeCollaborationLinksQueryVariables
-	>(GET_NODE_COLLABORATION_LINKS, {
+		GetCollaborationLinksQuery,
+		GetCollaborationLinksQueryVariables
+	>(GetCollaborationLinksDocument, {
 		variables: {
 			node_id: nodeId
 		},
@@ -28,7 +28,7 @@ export function useGetNodeCollaborationLinksQuery(
 		errorPolicy: 'all',
 		returnPartialData: true
 	});
-	useErrorHandler(error, 'GET_NODE_COLLABORATION_LINKS');
+	useErrorHandler(error, 'GET_COLLABORATION_LINKS');
 
 	return { data, loading, error };
 }

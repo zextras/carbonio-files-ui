@@ -42,7 +42,6 @@ import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_CONFIGS from '../graphql/queries/getConfigs.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
-import GET_NODE_COLLABORATION_LINKS from '../graphql/queries/getNodeCollaborationLinks.graphql';
 import GET_NODE_LINKS from '../graphql/queries/getNodeLinks.graphql';
 import GET_PARENT from '../graphql/queries/getParent.graphql';
 import GET_PATH from '../graphql/queries/getPath.graphql';
@@ -117,8 +116,8 @@ import {
 	GetConfigsQueryVariables,
 	GetAccountsByEmailQueryVariables,
 	GetAccountsByEmailQuery,
-	GetNodeCollaborationLinksQueryVariables,
-	GetNodeCollaborationLinksQuery,
+	GetCollaborationLinksQueryVariables,
+	GetCollaborationLinksQuery,
 	CollaborationLink,
 	CreateCollaborationLinkMutationVariables,
 	CreateCollaborationLinkMutation,
@@ -130,7 +129,8 @@ import {
 	Link,
 	CreateLinkMutation,
 	UpdateLinkMutationVariables,
-	UpdateLinkMutation
+	UpdateLinkMutation,
+	GetCollaborationLinksDocument
 } from '../types/graphql/types';
 
 type Id = string;
@@ -755,25 +755,18 @@ export function mockGetNodeLinks(
 	};
 }
 
-/**
- * Get Node Links mock
- */
-export function mockGetNodeCollaborationLinks(
-	variables: GetNodeCollaborationLinksQueryVariables,
-	node: Node,
+export function mockGetCollaborationLinks(
+	variables: GetCollaborationLinksQueryVariables,
 	collaborationLinks?: Array<Maybe<CollaborationLink>>
-): Mock<GetNodeCollaborationLinksQuery, GetNodeCollaborationLinksQueryVariables> {
+): Mock<GetCollaborationLinksQuery, GetCollaborationLinksQueryVariables> {
 	return {
 		request: {
-			query: GET_NODE_COLLABORATION_LINKS,
+			query: GetCollaborationLinksDocument,
 			variables
 		},
 		result: {
 			data: {
-				getNode: {
-					...node,
-					collaboration_links: collaborationLinks || []
-				}
+				getCollaborationLinks: collaborationLinks || []
 			}
 		}
 	};

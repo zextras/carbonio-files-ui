@@ -4,35 +4,23 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { faker } from '@faker-js/faker';
 import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
-import { populateNode } from './mockUtils';
-import { ROOTS } from '../constants';
 import {
-	GetNodeCollaborationLinksQuery,
-	GetNodeCollaborationLinksQueryVariables,
+	GetCollaborationLinksQuery,
+	GetCollaborationLinksQueryVariables,
 	GetNodeLinksQuery
 } from '../types/graphql/types';
 
 const handleGetNodeCollaborationLinksRequest: ResponseResolver<
-	GraphQLRequest<GetNodeCollaborationLinksQueryVariables>,
-	GraphQLContext<GetNodeCollaborationLinksQuery>,
+	GraphQLRequest<GetCollaborationLinksQueryVariables>,
+	GraphQLContext<GetCollaborationLinksQuery>,
 	GetNodeLinksQuery
-> = (req, res, ctx) => {
-	const { node_id: id } = req.variables;
-
-	let nodeName = faker.random.words();
-	if (id.trim() === ROOTS.LOCAL_ROOT) {
-		nodeName = 'ROOT';
-	}
-	const node = populateNode(undefined, id, nodeName);
-
-	return res(
+> = (req, res, ctx) =>
+	res(
 		ctx.data({
-			getNode: node
+			getCollaborationLinks: []
 		})
 	);
-};
 
 export default handleGetNodeCollaborationLinksRequest;

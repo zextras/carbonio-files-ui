@@ -26,7 +26,7 @@ import {
 	mockCreateShareError,
 	mockGetAccountByEmail,
 	mockGetNode,
-	mockGetNodeCollaborationLinks,
+	mockGetCollaborationLinks,
 	mockGetNodeLinks,
 	mockGetShares
 } from '../../utils/mockUtils';
@@ -61,7 +61,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
 				];
 
@@ -103,7 +103,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -147,7 +147,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
 				];
 
@@ -199,7 +199,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
 				];
 
@@ -257,7 +257,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
 				];
 
@@ -325,7 +325,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockGetAccountByEmail({ email: userAccount.email }, userAccount),
 					mockCreateShare(
 						{
@@ -414,7 +414,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockGetAccountByEmail({ email: userAccount1.email }, userAccount1),
 					mockGetAccountByEmail({ email: userAccount2.email }, userAccount2),
 					mockCreateShare(
