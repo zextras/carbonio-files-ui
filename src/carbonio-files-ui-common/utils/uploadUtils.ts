@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
-import { REST_ENDPOINT, UPLOAD_PATH, UPLOAD_VERSION_PATH } from '../constants';
+import { REST_ENDPOINT, SHARES_LOAD_LIMIT, UPLOAD_PATH, UPLOAD_VERSION_PATH } from '../constants';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_VERSIONS from '../graphql/queries/getVersions.graphql';
@@ -314,7 +314,8 @@ function loadItemAsChild(
 				query: GET_CHILD,
 				fetchPolicy: 'no-cache',
 				variables: {
-					node_id: nodeId as string
+					node_id: nodeId,
+					shares_limit: SHARES_LOAD_LIMIT
 				}
 			})
 			.then((result) => {

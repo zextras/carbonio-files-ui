@@ -157,7 +157,7 @@ export function getFindNodesVariables(
 		limit: NODES_LOAD_LIMIT,
 		sort: NODES_SORT_DEFAULT,
 		page_token: withCursor ? 'next_page_token' : undefined,
-		shares_limit: 1,
+		shares_limit: SHARES_LOAD_LIMIT,
 		...variables
 	};
 }
@@ -337,7 +337,7 @@ export function getChildrenVariables(
 	folderId: Id,
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
-	sharesLimit = 1,
+	sharesLimit = SHARES_LOAD_LIMIT,
 	withCursor = false
 ): GetChildrenQueryVariables {
 	return {
@@ -413,7 +413,7 @@ export function mockCopyNodes(
 	return {
 		request: {
 			query: COPY_NODES,
-			variables: { ...variables, shares_limit: 1 }
+			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
 		},
 		result: {
 			data: {
@@ -433,7 +433,7 @@ export function mockCreateFolder(
 	return {
 		request: {
 			query: CREATE_FOLDER,
-			variables: { ...variables, shares_limit: 1 }
+			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
 		},
 		result: {
 			data: {
@@ -450,7 +450,7 @@ export function mockCreateFolderError(
 	return {
 		request: {
 			query: CREATE_FOLDER,
-			variables: { ...variables, shares_limit: 1 }
+			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
 		},
 		error
 	};
@@ -948,7 +948,7 @@ export function mockGetChild(
 			query: GET_CHILD,
 			variables: {
 				node_id: variables.node_id,
-				shares_limit: variables?.shares_limit || 1
+				shares_limit: variables?.shares_limit || SHARES_LOAD_LIMIT
 			}
 		},
 		result: {

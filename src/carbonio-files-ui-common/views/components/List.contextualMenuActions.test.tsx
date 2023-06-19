@@ -68,7 +68,7 @@ describe('Contextual menu actions', () => {
 
 				const mocks = [
 					mockGetParent({ node_id: currentFolder.id }, currentFolder),
-					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+					mockGetChild({ node_id: currentFolder.id }, currentFolder)
 				];
 
 				const { user } = setup(
@@ -173,7 +173,7 @@ describe('Contextual menu actions', () => {
 
 				const mocks = [
 					mockGetParent({ node_id: currentFolder.id }, currentFolder),
-					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+					mockGetChild({ node_id: currentFolder.id }, currentFolder)
 				];
 
 				const { user } = setup(
@@ -275,7 +275,7 @@ describe('Contextual menu actions', () => {
 
 				const mocks = [
 					mockGetParent({ node_id: currentFolder.id }, currentFolder),
-					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+					mockGetChild({ node_id: currentFolder.id }, currentFolder)
 				];
 
 				const { user } = setup(
@@ -375,7 +375,7 @@ describe('Contextual menu actions', () => {
 
 				const mocks = [
 					mockGetParent({ node_id: currentFolder.id }, currentFolder),
-					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+					mockGetChild({ node_id: currentFolder.id }, currentFolder)
 				];
 
 				const { user } = setup(
@@ -449,7 +449,7 @@ describe('Contextual menu actions', () => {
 
 			const mocks = [
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+				mockGetChild({ node_id: currentFolder.id }, currentFolder)
 			];
 
 			const { user } = setup(
@@ -502,7 +502,7 @@ describe('Contextual menu actions', () => {
 
 			const mocks = [
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+				mockGetChild({ node_id: currentFolder.id }, currentFolder)
 			];
 
 			const { user } = setup(
@@ -567,7 +567,7 @@ describe('Contextual menu actions', () => {
 
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
+			mockGetChild({ node_id: currentFolder.id }, currentFolder)
 		];
 
 		const { user } = setup(

@@ -23,17 +23,15 @@ import { useDeleteShareModal } from '../../../hooks/useDeleteShareModal';
 import { Role } from '../../../types/common';
 import {
 	DeleteNodesMutation,
-	File,
-	Folder,
 	GetPermissionsQuery,
 	GetPermissionsQueryVariables,
 	Node,
 	NodeType,
 	Permissions,
-	Share,
-	SharedTarget,
+	ShareFragment,
 	SharePermission
 } from '../../../types/graphql/types';
+import { MakeRequiredNonNull } from '../../../types/utils';
 import { getChipLabel, isFile, isFolder, sharePermissionsGetter } from '../../../utils/utils';
 import { RouteLeavingGuard } from '../RouteLeavingGuard';
 
@@ -50,10 +48,10 @@ const rowRoleToIdxMap: { [Role.Editor]: number; [Role.Viewer]: number } = {
 };
 
 const roleAssignChecker: {
-	[Role.Editor]: (node: Node, permissions: Permissions) => boolean;
-	[Role.Viewer]: (node: Node, permissions: Permissions) => boolean;
+	[Role.Editor]: (node: Pick<Node, 'type'>, permissions: Permissions) => boolean;
+	[Role.Viewer]: (node: Pick<Node, 'type'>, permissions: Permissions) => boolean;
 } = {
-	[Role.Editor]: (node: Node, permissions: Permissions) =>
+	[Role.Editor]: (node: Pick<Node, 'type'>, permissions: Permissions) =>
 		node?.type &&
 		((node.type === NodeType.Folder && permissions.can_write_folder) ||
 			(node.type !== NodeType.Folder && permissions.can_write_file)),
@@ -66,7 +64,7 @@ const rowIdxToRoleMap: { [id: number]: Role } = {
 };
 
 interface EditShareChipProps {
-	share: Share;
+	share: MakeRequiredNonNull<ShareFragment, 'share_target'> & { node: Pick<Node, 'id' | 'type'> };
 	permissions: Permissions;
 	yourselfChip: boolean;
 	deleteShare: ReturnType<typeof useDeleteShareMutation>;
@@ -133,8 +131,8 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 		if (
 			desiredRole !== Role.Editor ||
 			// if desiredRole === Role.Editor you need write permission
-			(isFolder(share.node as File | Folder) && permissions.can_write_folder) ||
-			(isFile(share.node as File | Folder) && permissions.can_write_file)
+			(isFolder(share.node) && permissions.can_write_folder) ||
+			(isFile(share.node) && permissions.can_write_file)
 		) {
 			setActiveRow(containerIdx);
 		}
@@ -144,7 +142,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 		() =>
 			updateShare(
 				share.node,
-				share.share_target?.id as string,
+				share.share_target.id,
 				sharePermissionsGetter(rowIdxToRoleMap[activeRow], checkboxValue)
 			),
 		[activeRow, checkboxValue, share, updateShare]
@@ -161,14 +159,13 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 	);
 
 	const deleteShareCallback = useCallback<() => Promise<FetchResult<DeleteNodesMutation>>>(
-		(): Promise<FetchResult<DeleteNodesMutation>> =>
-			deleteShare(share.node, (share.share_target as SharedTarget).id),
+		(): Promise<FetchResult<DeleteNodesMutation>> => deleteShare(share.node, share.share_target.id),
 		[deleteShare, share]
 	);
 
 	const { openDeleteShareModal } = useDeleteShareModal(
 		deleteShareCallback,
-		share.share_target as SharedTarget,
+		share.share_target,
 		yourselfChip
 	);
 
@@ -298,7 +295,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 				size={SHARE_CHIP_SIZE}
 				avatarLabel={chipLabel}
 				label={chipLabelComponent}
-				background="gray3"
+				background={'gray3'}
 				actions={actions}
 				openPopoverOnClick={false}
 				popoverOpen={popoverOpen}

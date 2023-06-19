@@ -10,7 +10,7 @@ import { QueryResult, useQuery, useReactiveVar } from '@apollo/client';
 import { isEqual } from 'lodash';
 
 import { nodeSortVar } from '../../../apollo/nodeSortVar';
-import { NODES_LOAD_LIMIT } from '../../../constants';
+import { NODES_LOAD_LIMIT, SHARES_LOAD_LIMIT } from '../../../constants';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
 import { GetChildrenQuery, GetChildrenQueryVariables } from '../../../types/graphql/types';
 import { isFolder } from '../../../utils/utils';
@@ -36,7 +36,8 @@ export function useGetChildrenQuery(parentNode: string): GetChildrenQueryHookRet
 			variables: {
 				node_id: parentNode,
 				children_limit: NODES_LOAD_LIMIT,
-				sort: nodeSort
+				sort: nodeSort,
+				shares_limit: SHARES_LOAD_LIMIT
 			},
 			skip: !parentNode,
 			errorPolicy: 'all',

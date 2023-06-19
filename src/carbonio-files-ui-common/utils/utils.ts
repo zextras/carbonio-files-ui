@@ -57,6 +57,7 @@ import {
 	NodeType,
 	SharePermission
 } from '../types/graphql/types';
+import { MakeRequiredNonNull } from '../types/utils';
 
 /**
  * Format a size in byte as human-readable
@@ -846,12 +847,12 @@ export function cssCalcBuilder(
 
 export function isFile(
 	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
-): node is File {
+): node is File & MakeRequiredNonNull<File, '__typename'> {
 	return node?.__typename === 'File';
 }
 
 export function isFolder(
 	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
-): node is Folder {
+): node is Folder & MakeRequiredNonNull<Folder, '__typename'> {
 	return node?.__typename === 'Folder';
 }

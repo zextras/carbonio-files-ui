@@ -26,5 +26,9 @@ fragment Child on Node {
 	}
 	shares(limit: $shares_limit) {
 		...Share
+		node @client {
+			id
+			type
+		}
 	}
 }

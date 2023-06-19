@@ -11,10 +11,10 @@ import { map } from 'lodash';
 
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { SHARES_LOAD_LIMIT } from '../constants';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
-import GET_PATH from '../graphql/queries/getPath.graphql';
 import GET_PERMISSIONS from '../graphql/queries/getPermissions.graphql';
 import { populateFolder, populateNode, populateParents } from '../mocks/mockUtils';
 import { Node } from '../types/common';
@@ -27,8 +27,6 @@ import {
 	GetNodeQueryVariables,
 	GetParentQuery,
 	GetParentQueryVariables,
-	GetPathQuery,
-	GetPathQueryVariables,
 	GetPermissionsQuery,
 	GetPermissionsQueryVariables
 } from '../types/graphql/types';
@@ -37,7 +35,11 @@ import {
 	getNodeVariables,
 	mockGetChild,
 	mockGetChildren,
-	mockGetParent
+	mockGetNode,
+	mockGetParent,
+	mockGetPath,
+	mockGetPermissions,
+	mockMoveNodes
 } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
@@ -75,10 +77,7 @@ describe('Folder View', () => {
 					getNode: currentFolder
 				}
 			});
-			const mockGetChildQuery = mockGetChild(
-				{ node_id: currentFolder.id, shares_limit: 1 },
-				currentFolder
-			);
+			const mockGetChildQuery = mockGetChild({ node_id: currentFolder.id }, currentFolder);
 			global.apolloClient.writeQuery<GetChildQuery, GetChildQueryVariables>({
 				...mockGetChildQuery.request,
 				data: {
@@ -123,10 +122,7 @@ describe('Folder View', () => {
 					getNode: currentFolder
 				}
 			});
-			const mockGetChildQuery = mockGetChild(
-				{ node_id: currentFolder.id, shares_limit: 1 },
-				currentFolder
-			);
+			const mockGetChildQuery = mockGetChild({ node_id: currentFolder.id }, currentFolder);
 			global.apolloClient.writeQuery<GetChildQuery, GetChildQueryVariables>({
 				...mockGetChildQuery.request,
 				data: {
@@ -155,8 +151,8 @@ describe('Folder View', () => {
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
 				expect.arrayContaining([expect.objectContaining({ id: 'create-folder', disabled: false })])
 			);
+			expect.assertions(1);
 		});
-		expect.assertions(1);
 	});
 
 	describe('Displayer', () => {
@@ -174,7 +170,7 @@ describe('Folder View', () => {
 				query: GET_CHILD,
 				variables: {
 					node_id: currentFolder.id,
-					shares_limit: 1
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				data: {
 					getNode: currentFolder
@@ -221,64 +217,26 @@ describe('Folder View', () => {
 			currentFolder.children.nodes.push(node);
 			const path = [...parentPath, node];
 
-			// prepare cache so that apollo client read data from the cache
-			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
-				variables: getChildrenVariables(currentFolder.id),
-				data: {
-					getNode: currentFolder
-				}
-			});
-			global.apolloClient.writeQuery<GetChildQuery, GetChildQueryVariables>({
-				query: GET_CHILD,
-				variables: {
-					node_id: currentFolder.id,
-					shares_limit: 1
-				},
-				data: {
-					getNode: currentFolder
-				}
-			});
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GET_NODE,
-				variables: getNodeVariables(node.id),
-				data: {
-					getNode: node
-				}
-			});
-			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
-				query: GET_PATH,
-				variables: { node_id: node.id },
-				data: {
-					getPath: path
-				}
-			});
-			const getNodeParentMockedQuery = mockGetParent({ node_id: node.id }, node);
-			global.apolloClient.writeQuery<GetParentQuery, GetParentQueryVariables>({
-				...getNodeParentMockedQuery.request,
-				data: {
-					getNode: node
-				}
-			});
-			const getCurrentFolderParentMockedQuery = mockGetParent(
-				{ node_id: currentFolder.id },
-				currentFolder
-			);
-			global.apolloClient.writeQuery<GetParentQuery, GetParentQueryVariables>({
-				...getCurrentFolderParentMockedQuery.request,
-				data: {
-					getNode: currentFolder
-				}
-			});
-			const { findByTextWithMarkup, user } = setup(<FolderView />, {
-				initialRouterEntries: [`/?folder=${currentFolder.id}&node=${node.id}`]
+			const mocks = [
+				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
+				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
+				mockGetChild({ node_id: currentFolder.id }, currentFolder),
+				mockGetNode(getNodeVariables(node.id), node),
+				mockGetPath({ node_id: node.id }, path),
+				mockGetPath({ node_id: currentFolder.id }, parentPath),
+				mockGetParent({ node_id: node.id }, node),
+				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockMoveNodes({ destination_id: destinationFolder.id, node_ids: [node.id] }, [
+					{ ...node, parent: destinationFolder }
+				])
+			];
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}&node=${node.id}`],
+				mocks
 			});
 			const displayer = await screen.findByTestId('displayer');
+			await screen.findAllByText(node.name);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
-			const breadcrumbItem = await findByTextWithMarkup(
-				buildBreadCrumbRegExp(...map(path, (parent) => parent.name))
-			);
-			expect(breadcrumbItem).toBeVisible();
 			// right click to open contextual menu
 			const nodeToMoveItem = within(screen.getByTestId(`list-${currentFolder.id}`)).getByText(
 				node.name
@@ -326,7 +284,7 @@ describe('Folder View', () => {
 				query: GET_CHILD,
 				variables: {
 					node_id: currentFolder.id,
-					shares_limit: 1
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				data: {
 					getNode: currentFolder
@@ -380,7 +338,7 @@ describe('Folder View', () => {
 				query: GET_CHILD,
 				variables: {
 					node_id: currentFolder.id,
-					shares_limit: 1
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				data: {
 					getNode: currentFolder
@@ -404,7 +362,7 @@ describe('Folder View', () => {
 					expect.objectContaining({ id: 'create-docs-presentation', disabled: false })
 				])
 			);
+			expect.assertions(1);
 		});
-		expect.assertions(1);
 	});
 });

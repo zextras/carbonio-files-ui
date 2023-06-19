@@ -211,7 +211,7 @@ describe('Search view', () => {
 				mockGetPath({ node_id: node.parent.id }, parentPath),
 				mockGetPath({ node_id: destinationFolder.id }, [...parentPath, destinationFolder]),
 				mockGetChildren(getChildrenVariables(node.parent.id), node.parent),
-				mockGetChild({ node_id: node.parent.id, shares_limit: 1 }, node.parent),
+				mockGetChild({ node_id: node.parent.id }, node.parent),
 				mockMoveNodes({ node_ids: [node.id], destination_id: destinationFolder.id }, [node])
 			];
 

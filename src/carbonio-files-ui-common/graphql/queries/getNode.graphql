@@ -35,6 +35,10 @@ query getNode($node_id: ID!, $children_limit: Int!, $page_token: String, $sort: 
 		}
 		shares(limit: $shares_limit, cursor: $shares_cursor, sorts: $shares_sorts) {
 			...Share
+			node @client {
+				id
+				type
+			}
 		}
 		... on Folder {
 			children(limit: $children_limit, page_token: $page_token, sort: $sort) {
