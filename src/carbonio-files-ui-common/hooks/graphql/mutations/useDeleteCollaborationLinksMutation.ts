@@ -11,7 +11,6 @@ import { FetchResult, useMutation } from '@apollo/client';
 import { filter } from 'lodash';
 
 import DELETE_COLLABORATION_LINKS from '../../../graphql/mutations/deleteCollaborationLinks.graphql';
-import { PickIdTypenameNodeType } from '../../../types/common';
 import {
 	DeleteCollaborationLinksMutation,
 	DeleteCollaborationLinksMutationVariables,
@@ -26,9 +25,7 @@ export type DeleteCollaborationLinksType = (
 /**
  * Can return error: ErrorCode.
  */
-export function useDeleteCollaborationLinksMutation(
-	node: PickIdTypenameNodeType
-): DeleteCollaborationLinksType {
+export function useDeleteCollaborationLinksMutation(nodeId: string): DeleteCollaborationLinksType {
 	const [deleteCollaborationLinksMutation, { error: deleteCollaborationLinksError }] = useMutation<
 		DeleteCollaborationLinksMutation,
 		DeleteCollaborationLinksMutationVariables
@@ -46,7 +43,7 @@ export function useDeleteCollaborationLinksMutation(
 							{
 								query: GetCollaborationLinksDocument,
 								variables: {
-									node_id: node.id
+									node_id: nodeId
 								}
 							},
 							(queryData) => ({
@@ -62,7 +59,7 @@ export function useDeleteCollaborationLinksMutation(
 				}
 			});
 		},
-		[deleteCollaborationLinksMutation, node]
+		[deleteCollaborationLinksMutation, nodeId]
 	);
 	useErrorHandler(deleteCollaborationLinksError, 'DELETE_COLLABORATION_LINKS');
 

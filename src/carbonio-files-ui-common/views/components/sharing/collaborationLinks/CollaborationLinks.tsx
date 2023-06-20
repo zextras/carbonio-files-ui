@@ -69,16 +69,10 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 	}, [getCollaborationLinksQueryData]);
 
 	/** Mutation to create collaboration link */
-	const { createCollaborationLink } = useCreateCollaborationLinkMutation({
-		id: nodeId,
-		__typename: nodeTypename
-	});
+	const { createCollaborationLink } = useCreateCollaborationLinkMutation(nodeId);
 
 	/** Mutation to delete collaboration link */
-	const deleteCollaborationsLinks = useDeleteCollaborationLinksMutation({
-		id: nodeId,
-		__typename: nodeTypename
-	});
+	const deleteCollaborationsLinks = useDeleteCollaborationLinksMutation(nodeId);
 
 	const copyLinkToClipboard = useCallback(
 		(link: string) => {

@@ -9,7 +9,6 @@ import { useCallback } from 'react';
 import { FetchResult, useMutation } from '@apollo/client';
 
 import CREATE_COLLABORATION_LINK from '../../../graphql/mutations/createCollaborationLink.graphql';
-import { Node } from '../../../types/common';
 import {
 	CreateCollaborationLinkMutation,
 	CreateCollaborationLinkMutationVariables,
@@ -22,7 +21,7 @@ export type CreateCollaborationLinkType = (
 	permission: SharePermission
 ) => Promise<FetchResult<CreateCollaborationLinkMutation>>;
 
-export function useCreateCollaborationLinkMutation(node: Pick<Node, '__typename' | 'id'>): {
+export function useCreateCollaborationLinkMutation(nodeId: string): {
 	createCollaborationLink: CreateCollaborationLinkType;
 	loading: boolean;
 } {
@@ -35,7 +34,7 @@ export function useCreateCollaborationLinkMutation(node: Pick<Node, '__typename'
 		(permission) =>
 			createCollaborationLinkMutation({
 				variables: {
-					node_id: node.id,
+					node_id: nodeId,
 					permission
 				},
 				update(cache, { data }) {
@@ -44,7 +43,7 @@ export function useCreateCollaborationLinkMutation(node: Pick<Node, '__typename'
 							{
 								query: GetCollaborationLinksDocument,
 								variables: {
-									node_id: node.id
+									node_id: nodeId
 								}
 							},
 							(queryData) => ({
@@ -57,7 +56,7 @@ export function useCreateCollaborationLinkMutation(node: Pick<Node, '__typename'
 					}
 				}
 			}),
-		[createCollaborationLinkMutation, node]
+		[createCollaborationLinkMutation, nodeId]
 	);
 	useErrorHandler(createCollaborationLinkError, 'CREATE_COLLABORATION_LINK');
 	return { createCollaborationLink, loading };
