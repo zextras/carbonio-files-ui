@@ -181,6 +181,6 @@ describe('Get children', () => {
 				}`
 			)
 		).toBeVisible();
-		expect(screen.queryByTestId('Icon: Refresh')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument();
 	});
 });

@@ -143,7 +143,7 @@ describe('Filter view', () => {
 		).toBeVisible();
 		expect(screen.getByTestId(`node-item-${currentFilter[0].id}`)).toBeVisible();
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(currentFilter.length);
-		expect(screen.queryByTestId('Icon: Refresh')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument();
 	});
 
 	test('filter is re-fetched on subsequent navigations', async () => {
