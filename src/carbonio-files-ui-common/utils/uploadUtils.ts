@@ -314,7 +314,7 @@ function loadItemAsChild(
 				query: GET_CHILD,
 				fetchPolicy: 'no-cache',
 				variables: {
-					node_id: nodeId as string
+					node_id: nodeId
 				}
 			})
 			.then((result) => {
