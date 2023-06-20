@@ -8,14 +8,13 @@ import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
 import {
 	GetCollaborationLinksQuery,
-	GetCollaborationLinksQueryVariables,
-	GetNodeLinksQuery
+	GetCollaborationLinksQueryVariables
 } from '../types/graphql/types';
 
-const handleGetNodeCollaborationLinksRequest: ResponseResolver<
+const handleGetCollaborationLinksRequest: ResponseResolver<
 	GraphQLRequest<GetCollaborationLinksQueryVariables>,
 	GraphQLContext<GetCollaborationLinksQuery>,
-	GetNodeLinksQuery
+	GetCollaborationLinksQuery
 > = (req, res, ctx) =>
 	res(
 		ctx.data({
@@ -23,4 +22,4 @@ const handleGetNodeCollaborationLinksRequest: ResponseResolver<
 		})
 	);
 
-export default handleGetNodeCollaborationLinksRequest;
+export default handleGetCollaborationLinksRequest;
