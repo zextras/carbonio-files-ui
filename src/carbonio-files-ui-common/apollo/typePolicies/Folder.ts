@@ -45,7 +45,7 @@ export const folderTypePolicies: TypePolicy = {
 						__typename: typename,
 						id: variables.node_id
 					});
-					if (parentFolderRef && canRead(parentFolderRef)) {
+					if (parentFolderRef) {
 						const parentNode = cache.readFragment<ParentFragment>({
 							fragment: ParentFragmentDoc,
 							fragmentName: 'Parent',
