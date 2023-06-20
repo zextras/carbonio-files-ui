@@ -39,7 +39,7 @@ interface SecondaryBarProps {
 	expanded: boolean;
 }
 
-export const SecondaryBar: React.VFC<SecondaryBarProps> = ({ expanded }) => {
+export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 	const { navigateTo } = useNavigation();
 	const [t] = useTranslation();
 	const { data } = useGetRootsListQuery();

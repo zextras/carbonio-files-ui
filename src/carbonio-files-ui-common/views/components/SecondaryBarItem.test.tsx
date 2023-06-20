@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import React from 'react';
 
 import { screen } from '@testing-library/react';
@@ -5,11 +10,6 @@ import { screen } from '@testing-library/react';
 import { SecondaryBarItem } from './SecondaryBarItem';
 import { setup } from '../../utils/testUtils';
 
-/*
- * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
- *
- * SPDX-License-Identifier: AGPL-3.0-only
- */
 describe('SecondaryBarItem', () => {
 	test('should render an upload badge with a fraction if expanded is true', () => {
 		const item = {
@@ -17,7 +17,6 @@ describe('SecondaryBarItem', () => {
 			completeTotalBadgeCounter: '1/1'
 		};
 		setup(<SecondaryBarItem item={item} expanded />);
-		expect(screen.getByText(/1\/1/i)).toBeInTheDocument();
 		expect(screen.getByText(/1\/1/i)).toBeVisible();
 	});
 

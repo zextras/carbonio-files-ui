@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import React from 'react';
 
 import { act, screen } from '@testing-library/react';
@@ -13,11 +18,6 @@ import {
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { setup } from '../../carbonio-files-ui-common/utils/testUtils';
 
-/*
- * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
- *
- * SPDX-License-Identifier: AGPL-3.0-only
- */
 describe('SecondaryBar', () => {
 	describe('Upload item', () => {
 		test('should render the upload item without the badge', () => {
