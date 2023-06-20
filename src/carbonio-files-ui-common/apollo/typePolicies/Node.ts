@@ -14,16 +14,29 @@ export const nodeTypePolicies: TypePolicy = {
 		shares: {
 			keyArgs: false,
 			merge(
-				existing: ShareCachedObject[],
+				existing: SharesCachedObject,
 				incoming: ShareCachedObject[],
 				{ args }: FieldFunctionOptions<Partial<NodeSharesArgs>>
 			): SharesCachedObject {
 				if (args?.cursor) {
-					const newExisting = existing || [];
+					const newExisting = existing.shares || [];
 					return {
 						args,
 						shares: [...newExisting, ...incoming]
 					};
+				}
+				// return the already cached data when:
+				// a previous query requested a greater number of shares (cached limit is greater than args limit)
+				// or
+				// cached shares number is lower than the previous query limit
+				// (so even requesting a greater limit, the returned share will be the same of the already cached)
+				if (
+					existing?.args?.limit !== undefined &&
+					(args?.limit === undefined ||
+						existing.args.limit >= args.limit ||
+						existing.shares.length < existing.args.limit)
+				) {
+					return existing;
 				}
 				return { args, shares: [...incoming] };
 			},
@@ -41,14 +54,17 @@ export const nodeTypePolicies: TypePolicy = {
 				// cached shares number is lower than the previous query limit
 				// (so even requesting a greater limit, the returned share will be the same of the already cached)
 				if (
-					!existing?.args?.limit ||
-					!args?.limit ||
+					existing?.args?.limit === undefined ||
+					args?.limit === undefined ||
 					existing.args.limit >= args.limit ||
 					existing.shares.length < existing.args.limit
 				) {
 					return existing?.shares;
 				}
-				// otherwise, if a query is requesting a number of shares grater then the cached data,
+				// otherwise, if
+				// there is no cached data
+				// or
+				// a query is requesting a number of shares greater than the cached data,
 				// return undefined to force the network request
 				return undefined;
 			}

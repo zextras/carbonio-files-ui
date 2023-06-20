@@ -36,7 +36,7 @@ import {
 	Match,
 	Member
 } from '../types/network';
-import { MakeRequired } from '../types/utils';
+import { MakeRequired, MakeRequiredNonNull } from '../types/utils';
 import { ActionsFactoryNodeType } from '../utils/ActionsFactory';
 import { nodeSortComparator } from '../utils/utils';
 
@@ -104,7 +104,11 @@ export function populateSharePermission(sharePermission?: SharePermission): Shar
 	return sharePermission || SharePermission.ReadAndWrite;
 }
 
-export function populateShare(node: Node, key: number | string, shareTarget?: SharedTarget): Share {
+export function populateShare(
+	node: Node,
+	key: number | string,
+	shareTarget?: SharedTarget
+): MakeRequiredNonNull<Share, 'share_target'> {
 	return {
 		__typename: 'Share',
 		created_at: faker.date.past().getTime(),
@@ -133,7 +137,11 @@ export function populateShares(node: FilesFile | Folder, limit = 1): Share[] {
 	return shares;
 }
 
-function populateNodeFields(type?: NodeType, id?: string, name?: string): Node {
+function populateNodeFields(
+	type?: NodeType,
+	id?: string,
+	name?: string
+): MakeRequiredNonNull<Node, 'owner'> {
 	const types = filter(Object.values(NodeType), (t) => t !== NodeType.Root);
 	const nodeType = type || faker.helpers.arrayElement(types);
 	return {
@@ -307,13 +315,13 @@ export function getVersionFromFile(
 	};
 }
 
-export function populateFile(id?: string, name?: string): FilesFile {
+export function populateFile(id?: string, name?: string): MakeRequiredNonNull<FilesFile, 'owner'> {
 	const mimeType = faker.system.mimeType();
 	const types = filter(
 		Object.values(NodeType),
 		(t) => t !== NodeType.Root && t !== NodeType.Folder
 	);
-	const file: FilesFile = {
+	const file: MakeRequiredNonNull<FilesFile, 'owner'> = {
 		...populateNodeFields(faker.helpers.arrayElement(types), id, name),
 		mime_type: mimeType,
 		size: faker.datatype.number(),

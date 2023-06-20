@@ -167,7 +167,7 @@ export function canCreateFolder(
 	return destinationNode.permissions.can_write_folder;
 }
 
-export function canUploadFile(
+export function canCreateFile(
 	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions'>
 ): boolean {
 	if (isFile(destinationNode)) {
@@ -179,16 +179,10 @@ export function canUploadFile(
 	return destinationNode.permissions.can_write_file;
 }
 
-export function canCreateFile(
+export function canUploadFile(
 	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions'>
 ): boolean {
-	if (isFile(destinationNode)) {
-		throw Error('destinationNode must be a Folder');
-	}
-	if (!isBoolean(destinationNode.permissions.can_write_file)) {
-		throw Error('can_write_file not defined');
-	}
-	return destinationNode.permissions.can_write_file;
+	return canCreateFile(destinationNode);
 }
 
 export function canBeWriteNodeDestination(
@@ -309,13 +303,13 @@ export function canMove(
 				!!node.parent &&
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
 				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner.id === loggedUserId) &&
-				!!node.parent.permissions.can_write_file &&
+				node.parent.permissions.can_write_file &&
 				node.rootId !== ROOTS.TRASH;
 		} else if (isFolder(node)) {
 			if (!isBoolean(node.permissions.can_write_folder)) {
 				throw Error('can_write_folder not defined');
 			}
-			// a folder can be moved if it has can_write_folder permission and it has a parent which has can_write_folder permission
+			// a folder can be moved if it has can_write_folder permission, and it has a parent which has can_write_folder permission
 			canMoveResult =
 				node.permissions.can_write_folder &&
 				!!node.parent &&

@@ -31,7 +31,7 @@ export type PickIdTypenameNodeType = Pick<Node, 'id' | '__typename'>;
 
 export type GetNodeParentType = {
 	parent?: Maybe<
-		| ({ __typename?: 'File' } & Pick<FilesFile, 'id' | 'name'> & {
+		| ({ __typename?: 'File' } & Pick<FilesFile, 'id'> & {
 					permissions: { __typename?: 'Permissions' } & Pick<
 						Permissions,
 						| 'can_read'
@@ -46,7 +46,7 @@ export type GetNodeParentType = {
 						| 'can_change_share'
 					>;
 				})
-		| ({ __typename?: 'Folder' } & Pick<Folder, 'id' | 'name'> & {
+		| ({ __typename?: 'Folder' } & Pick<Folder, 'id'> & {
 					permissions: { __typename?: 'Permissions' } & Pick<
 						Permissions,
 						| 'can_read'
@@ -85,6 +85,7 @@ export enum Role {
 }
 
 export type NodeListItemType = ChildFragment & {
+	parent?: Pick<NonNullable<Node['parent']>, 'id' | 'permissions'> | null;
 	disabled?: boolean;
 	selectable?: boolean;
 	shares?: Array<Pick<Share, '__typename' | 'created_at'> | null | undefined>;
