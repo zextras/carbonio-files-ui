@@ -5,6 +5,7 @@
  */
 import { QueryResult, useQuery } from '@apollo/client';
 
+import { SHARES_LOAD_LIMIT } from '../../../constants';
 import GET_CHILD from '../../../graphql/queries/getChild.graphql';
 import { GetChildQuery, GetChildQueryVariables } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
@@ -14,7 +15,8 @@ export function useGetChildQuery(
 ): Pick<QueryResult<GetChildQuery, GetChildQueryVariables>, 'data' | 'error' | 'loading'> {
 	const { data, loading, error } = useQuery<GetChildQuery, GetChildQueryVariables>(GET_CHILD, {
 		variables: {
-			node_id: nodeId || ''
+			node_id: nodeId || '',
+			shares_limit: SHARES_LOAD_LIMIT
 		},
 		skip: !nodeId,
 		returnPartialData: true,

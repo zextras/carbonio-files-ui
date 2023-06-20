@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 
 import { useNavigation } from '../../../../hooks/useNavigation';
 import { nodeSortVar } from '../../../apollo/nodeSortVar';
+import { SHARES_LOAD_LIMIT } from '../../../constants';
 import COPY_NODES from '../../../graphql/mutations/copyNodes.graphql';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
 import { PickIdNodeType } from '../../../types/common';
@@ -82,7 +83,8 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 			return copyNodesMutation({
 				variables: {
 					node_ids: nodesIds,
-					destination_id: destinationFolder.id
+					destination_id: destinationFolder.id,
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				update(cache, { data: result }) {
 					const currentFolderId = folderId || rootId;

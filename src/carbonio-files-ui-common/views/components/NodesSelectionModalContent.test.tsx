@@ -1213,7 +1213,7 @@ describe('Nodes Selection Modal Content', () => {
 					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
 					mockGetPath({ node_id: localRoot.id }, [localRoot]),
 					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetChild({ node_id: localRoot.id, shares_limit: 1 }, localRoot),
+					mockGetChild({ node_id: localRoot.id }, localRoot),
 					mockGetPermissions({ node_id: localRoot.id }, localRoot)
 				];
 
@@ -2174,7 +2174,7 @@ describe('Nodes Selection Modal Content', () => {
 					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
 					mockGetPath({ node_id: localRoot.id }, [localRoot]),
 					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetChild({ node_id: localRoot.id, shares_limit: 1 }, localRoot),
+					mockGetChild({ node_id: localRoot.id }, localRoot),
 					mockGetPermissions({ node_id: localRoot.id }, localRoot)
 				];
 
@@ -2555,7 +2555,7 @@ describe('Nodes Selection Modal Content', () => {
 				mockGetPath({ node_id: localRoot.id }, [localRoot]),
 				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
 				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetChild({ node_id: localRoot.id, shares_limit: 1 }, localRoot),
+				mockGetChild({ node_id: localRoot.id }, localRoot),
 				mockGetPermissions({ node_id: localRoot.id }, localRoot)
 			];
 
@@ -2609,7 +2609,7 @@ describe('Nodes Selection Modal Content', () => {
 				mockGetPath({ node_id: localRoot.id }, [localRoot]),
 				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
 				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetChild({ node_id: localRoot.id, shares_limit: 1 }, localRoot),
+				mockGetChild({ node_id: localRoot.id }, localRoot),
 				mockGetPermissions({ node_id: localRoot.id }, localRoot)
 			];
 
@@ -2675,7 +2675,7 @@ describe('Nodes Selection Modal Content', () => {
 				mockGetPath({ node_id: sharedFolder.id }, [sharedFolder]),
 				mockGetBaseNode({ node_id: sharedFolder.id }, sharedFolder),
 				mockGetChildren(getChildrenVariables(sharedFolder.id), sharedFolder),
-				mockGetChild({ node_id: sharedFolder.id, shares_limit: 1 }, sharedFolder),
+				mockGetChild({ node_id: sharedFolder.id }, sharedFolder),
 				mockGetPermissions({ node_id: sharedFolder.id }, sharedFolder)
 			];
 
@@ -2746,7 +2746,7 @@ describe('Nodes Selection Modal Content', () => {
 				mockGetPath({ node_id: sharedFolder.id }, [sharedFolder]),
 				mockGetBaseNode({ node_id: sharedFolder.id }, sharedFolder),
 				mockGetChildren(getChildrenVariables(sharedFolder.id), sharedFolder),
-				mockGetChild({ node_id: sharedFolder.id, shares_limit: 1 }, sharedFolder),
+				mockGetChild({ node_id: sharedFolder.id }, sharedFolder),
 				mockGetPermissions({ node_id: sharedFolder.id }, sharedFolder)
 			];
 
@@ -2818,12 +2818,12 @@ describe('Nodes Selection Modal Content', () => {
 				mockGetPath({ node_id: localRoot.id }, [localRoot]),
 				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
 				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetChild({ node_id: localRoot.id, shares_limit: 1 }, localRoot),
+				mockGetChild({ node_id: localRoot.id }, localRoot),
 				mockGetPermissions({ node_id: localRoot.id }, localRoot),
 				mockGetPath({ node_id: folder.id }, [localRoot, folder]),
 				mockGetBaseNode({ node_id: folder.id }, folder),
 				mockGetChildren(getChildrenVariables(folder.id), folder),
-				mockGetChild({ node_id: folder.id, shares_limit: 1 }, folder),
+				mockGetChild({ node_id: folder.id }, folder),
 				mockGetPermissions({ node_id: folder.id }, folder)
 			];
 
@@ -2904,7 +2904,7 @@ describe('Nodes Selection Modal Content', () => {
 				mockGetPath({ node_id: localRoot.id }, [localRoot]),
 				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
 				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetChild({ node_id: localRoot.id, shares_limit: 1 }, localRoot),
+				mockGetChild({ node_id: localRoot.id }, localRoot),
 				mockGetPermissions({ node_id: localRoot.id }, localRoot),
 				mockGetBaseNode({ node_id: folder.id }, folder)
 			];
@@ -2988,7 +2988,7 @@ describe('Nodes Selection Modal Content', () => {
 				mockGetPath({ node_id: localRoot.id }, [localRoot]),
 				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
 				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetChild({ node_id: localRoot.id, shares_limit: 1 }, localRoot),
+				mockGetChild({ node_id: localRoot.id }, localRoot),
 				mockGetPermissions({ node_id: localRoot.id }, localRoot),
 				mockCreateFolder({ name: newFolder.name, destination_id: localRoot.id }, newFolder),
 				mockGetBaseNode({ node_id: newFolder.id }, newFolder)
@@ -3211,12 +3211,12 @@ describe('Nodes Selection Modal Content', () => {
 				mockGetPath({ node_id: localRoot.id }, [localRoot]),
 				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
 				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetChild({ node_id: localRoot.id, shares_limit: 1 }, localRoot),
+				mockGetChild({ node_id: localRoot.id }, localRoot),
 				mockGetPermissions({ node_id: localRoot.id }, localRoot),
 				mockGetPath({ node_id: folder.id }, [localRoot, folder]),
 				mockGetBaseNode({ node_id: folder.id }, folder),
 				mockGetChildren(getChildrenVariables(folder.id), folder),
-				mockGetChild({ node_id: folder.id, shares_limit: 1 }, folder),
+				mockGetChild({ node_id: folder.id }, folder),
 				mockGetPermissions({ node_id: folder.id }, folder)
 			];
 
