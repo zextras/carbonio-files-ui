@@ -214,7 +214,7 @@ export function canBeMoveDestination(
 	// - is not one of the moving nodes (cannot move a folder inside itself)
 	// - has the same owner of the files that are written (workspace concept)
 	const destinationOwnerId = destinationNode.owner?.id || loggedUserId;
-	const isSameOwner = !some(nodesToMove, (node) => node.owner.id !== destinationOwnerId);
+	const isSameOwner = !some(nodesToMove, (node) => node.owner?.id !== destinationOwnerId);
 	return (
 		canBeWriteNodeDestination(destinationNode, movingFile, movingFolder) &&
 		find(nodesToMove, ['id', destinationNode.id]) === undefined &&
@@ -302,7 +302,7 @@ export function canMove(
 				node.permissions.can_write_file &&
 				!!node.parent &&
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner.id === loggedUserId) &&
+				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner?.id === loggedUserId) &&
 				node.parent.permissions.can_write_file &&
 				node.rootId !== ROOTS.TRASH;
 		} else if (isFolder(node)) {
@@ -314,7 +314,7 @@ export function canMove(
 				node.permissions.can_write_folder &&
 				!!node.parent &&
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner.id === loggedUserId) &&
+				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner?.id === loggedUserId) &&
 				!!node.parent?.permissions.can_write_folder &&
 				node.rootId !== ROOTS.TRASH;
 		} else {

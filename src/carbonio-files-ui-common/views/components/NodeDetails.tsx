@@ -29,7 +29,7 @@ interface NodeDetailsProps {
 	typeName: Node['__typename'];
 	id: string;
 	name: string;
-	owner: Partial<User>;
+	owner: Maybe<Partial<User>> | undefined;
 	creator: Partial<User>;
 	lastEditor?: Maybe<Partial<User>>;
 	size?: number;

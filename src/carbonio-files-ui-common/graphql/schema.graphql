@@ -36,7 +36,7 @@ type File implements Node {
 	links: [Link]!
 	mime_type: String!
 	name: String!
-	owner: User!
+	owner: User
 	parent: Node
 	permissions: Permissions!
 	rootId: ID
@@ -59,7 +59,7 @@ type Folder implements Node {
 	last_editor: User
 	links: [Link]!
 	name: String!
-	owner: User!
+	owner: User
 	parent: Node
 	permissions: Permissions!
 	rootId: ID
@@ -121,7 +121,7 @@ interface Node {
 	last_editor: User
 	links: [Link]!
 	name: String!
-	owner: User!
+	owner: User
 	parent: Node
 	permissions: Permissions!
 	rootId: ID

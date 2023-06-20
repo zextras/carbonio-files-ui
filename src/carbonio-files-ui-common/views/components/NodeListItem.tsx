@@ -36,7 +36,7 @@ import {
 	ROOTS
 } from '../../constants';
 import { Action } from '../../types/common';
-import { NodeType, User } from '../../types/graphql/types';
+import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { buildActionItems } from '../../utils/ActionsFactory';
 import {
 	downloadNode,
@@ -62,7 +62,7 @@ interface NodeListItemProps {
 	mimeType?: string;
 	updatedAt?: number;
 	size?: number;
-	owner?: User;
+	owner?: Maybe<User>;
 	lastEditor?: User | null;
 	incomingShare?: boolean;
 	outgoingShare?: boolean;

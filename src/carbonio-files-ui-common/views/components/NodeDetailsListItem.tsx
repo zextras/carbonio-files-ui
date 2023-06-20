@@ -20,7 +20,7 @@ interface NodeDetailsListItemProps {
 	name: string;
 	type: NodeType;
 	mimeType?: Maybe<string>;
-	owner?: Partial<User>;
+	owner?: Maybe<Partial<User>>;
 	updatedAt?: number;
 }
 
