@@ -54,21 +54,19 @@ export const useUpdateFolderContent = (
 				return { newPosition: 0, isLast: true };
 			}
 
-			let nodes: Array<Maybe<Node>> = [];
-
-			if (cachedFolder && cachedFolder.getNode && isFolder(cachedFolder.getNode)) {
-				nodes = cachedFolder.getNode.children.nodes;
-			}
+			const nodes: Array<Maybe<Node>> =
+				(isFolder(cachedFolder.getNode) && cachedFolder.getNode.children.nodes) || [];
+			const newNodeWithParent = { ...newNode, parent: cachedFolder.getNode };
 
 			// if folder is empty, just write cache
 			if (nodes.length === 0) {
-				addNodeInCachedChildren(apolloClient.cache, newNode, folder.id, 0);
+				addNodeInCachedChildren(apolloClient.cache, newNodeWithParent, folder.id, 0);
 				return { newPosition: 0, isLast: true };
 			}
 			// else find the position of the node in the loaded list to check
 			// if the updated node is an ordered or an unordered node
-			const newIndex = addNodeInSortedList(nodes, newNode, nodeSortVar());
-			addNodeInCachedChildren(apolloClient.cache, newNode, folder.id, newIndex);
+			const newIndex = addNodeInSortedList(nodes, newNodeWithParent, nodeSortVar());
+			addNodeInCachedChildren(apolloClient.cache, newNodeWithParent, folder.id, newIndex);
 			return {
 				newPosition: newIndex > -1 ? newIndex : nodes.length,
 				isLast: newIndex === -1 || newIndex === nodes.length

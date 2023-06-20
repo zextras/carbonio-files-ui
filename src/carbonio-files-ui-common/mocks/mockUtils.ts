@@ -137,7 +137,11 @@ export function populateShares(node: FilesFile | Folder, limit = 1): Share[] {
 	return shares;
 }
 
-function populateNodeFields(type?: NodeType, id?: string, name?: string): Node {
+function populateNodeFields(
+	type?: NodeType,
+	id?: string,
+	name?: string
+): MakeRequiredNonNull<Node, 'owner'> {
 	const types = filter(Object.values(NodeType), (t) => t !== NodeType.Root);
 	const nodeType = type || faker.helpers.arrayElement(types);
 	return {
@@ -311,13 +315,13 @@ export function getVersionFromFile(
 	};
 }
 
-export function populateFile(id?: string, name?: string): FilesFile {
+export function populateFile(id?: string, name?: string): MakeRequiredNonNull<FilesFile, 'owner'> {
 	const mimeType = faker.system.mimeType();
 	const types = filter(
 		Object.values(NodeType),
 		(t) => t !== NodeType.Root && t !== NodeType.Folder
 	);
-	const file: FilesFile = {
+	const file: MakeRequiredNonNull<FilesFile, 'owner'> = {
 		...populateNodeFields(faker.helpers.arrayElement(types), id, name),
 		mime_type: mimeType,
 		size: faker.datatype.number(),

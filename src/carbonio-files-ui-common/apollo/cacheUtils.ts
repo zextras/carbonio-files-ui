@@ -3,14 +3,19 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
-import { filter, findIndex, size } from 'lodash';
+import { ApolloCache, FieldFunctionOptions, NormalizedCacheObject } from '@apollo/client';
+import { filter, find, findIndex, size } from 'lodash';
 
 import { nodeSortVar } from './nodeSortVar';
-import CHILD from '../graphql/fragments/child.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { NodesPageCachedObject } from '../types/apollo';
-import { ChildFragment, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import introspection from '../types/graphql/possible-types';
+import {
+	ChildFragment,
+	ChildWithParentFragmentDoc,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
 import { addNodeInSortedList, isFolder } from '../utils/utils';
 
 export const removeNodesFromFolder = (
@@ -80,9 +85,9 @@ export const addNodeInCachedChildren = (
 					return DELETE;
 				}
 
-				const newNodeRef = cache.writeFragment<ChildFragment>({
-					fragment: CHILD,
-					fragmentName: 'Child',
+				const newNodeRef = cache.writeFragment({
+					fragment: ChildWithParentFragmentDoc,
+					fragmentName: 'ChildWithParent',
 					data: newNode
 				});
 
@@ -175,3 +180,16 @@ export const upsertNodeInFolder = (
 		);
 	}
 };
+
+export function findNodeTypeName(
+	nodeId: string,
+	{ canRead, toReference }: Pick<FieldFunctionOptions, 'toReference' | 'canRead'>
+): string | undefined {
+	return find(introspection.possibleTypes.Node, (nodePossibleType) => {
+		const nodeRef = toReference({
+			__typename: nodePossibleType,
+			id: nodeId
+		});
+		return canRead(nodeRef);
+	});
+}

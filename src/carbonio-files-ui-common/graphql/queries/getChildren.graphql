@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 #import "../fragments/child.graphql"
+#import "../fragments/nodeParent.graphql"
+#import "../fragments/parent.graphql"
 
 query getChildren(
 	$node_id: ID!,
@@ -12,12 +14,12 @@ query getChildren(
 	$shares_limit: Int = 1
 ) {
 	getNode(node_id: $node_id) {
-		id
-		name
+		...Parent
 		... on Folder {
 			children(limit: $children_limit, page_token: $page_token, sort: $sort) {
 				nodes {
 					...Child
+					...NodeParent @client
 				}
 				page_token
 			}
