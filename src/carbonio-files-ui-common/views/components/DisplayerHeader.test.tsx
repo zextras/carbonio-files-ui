@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import React from 'react';
 
 import { screen } from '@testing-library/react';
@@ -8,11 +13,6 @@ import { NodeType } from '../../types/graphql/types';
 import { setup } from '../../utils/testUtils';
 import 'jest-styled-components';
 
-/*
- * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
- *
- * SPDX-License-Identifier: AGPL-3.0-only
- */
 describe('Displayer Header', () => {
 	test.each<
 		[type: NodeType, mimeType: string | undefined, icon: keyof DefaultTheme['icons'], color: string]
