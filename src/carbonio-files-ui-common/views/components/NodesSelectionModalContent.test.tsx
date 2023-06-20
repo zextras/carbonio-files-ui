@@ -1578,14 +1578,9 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				);
 				await screen.findByText(/home/i);
-				// wait for root list query to be executed
-				await waitFor(() =>
-					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
-					).not.toBeNull()
-				);
+				act(() => {
+					jest.runOnlyPendingTimers();
+				});
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				await findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));

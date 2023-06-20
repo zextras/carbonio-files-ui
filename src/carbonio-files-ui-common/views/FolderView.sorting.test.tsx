@@ -16,7 +16,7 @@ import { NodeSort } from '../types/graphql/types';
 import {
 	getChildrenVariables,
 	mockGetChildren,
-	mockGetParent,
+	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup } from '../utils/testUtils';
@@ -57,7 +57,7 @@ describe('Sorting', () => {
 		currentFolder2.children.nodes.push(file1);
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(

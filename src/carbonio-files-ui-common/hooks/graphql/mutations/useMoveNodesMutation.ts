@@ -16,12 +16,12 @@ import { useActiveNode } from '../../../../hooks/useActiveNode';
 import { useNavigation } from '../../../../hooks/useNavigation';
 import MOVE_NODES from '../../../graphql/mutations/moveNodes.graphql';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
-import GET_PATH from '../../../graphql/queries/getPath.graphql';
 import { URLParams } from '../../../types/common';
 import {
 	Folder,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
+	GetPathDocument,
 	GetPathQueryVariables,
 	MoveNodesMutation,
 	MoveNodesMutationVariables,
@@ -123,7 +123,7 @@ export function useMoveNodesMutation(): { moveNodes: MoveNodesType; loading: boo
 				onQueryUpdated(observableQuery, { result }, lastDiff) {
 					const { query, variables } = observableQuery.options;
 					if (
-						isOperationVariables<GetPathQueryVariables>(query, variables, GET_PATH) &&
+						isOperationVariables<GetPathQueryVariables>(query, variables, GetPathDocument) &&
 						variables.node_id === destinationFolder.id
 					) {
 						// avoid refetch getPath for the destination (folder content opened inside move modal)

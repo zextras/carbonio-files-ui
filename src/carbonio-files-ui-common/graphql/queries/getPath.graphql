@@ -2,10 +2,10 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-#import "../fragments/baseNode.graphql"
+#import "../fragments/parent.graphql"
 
 query getPath($node_id: ID!) {
 	getPath(node_id: $node_id) {
-		...BaseNode
+		...Parent
 	}
 }

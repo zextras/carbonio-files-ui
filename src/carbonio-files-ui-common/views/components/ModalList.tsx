@@ -18,9 +18,13 @@ import { LoadingIcon } from './LoadingIcon';
 import { ScrollContainer } from './ScrollContainer';
 import { OverFlowHiddenRow } from './StyledComponents';
 import { BREADCRUMB_ROW_HEIGHT, LIST_ITEM_HEIGHT_COMPACT, ROOTS } from '../../constants';
-import GET_PATH from '../../graphql/queries/getPath.graphql';
 import { Crumb, NodeListItemType } from '../../types/common';
-import { GetPathQuery, GetPathQueryVariables, Node } from '../../types/graphql/types';
+import {
+	GetPathDocument,
+	GetPathQuery,
+	GetPathQueryVariables,
+	Node
+} from '../../types/graphql/types';
 import { OneOrMany } from '../../types/utils';
 import { canBeWriteNodeDestination } from '../../utils/ActionsFactory';
 import { buildCrumbs, cssCalcBuilder } from '../../utils/utils';
@@ -69,7 +73,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 
 	// use a useQuery to load full path only when required so that operations like move that cleanup cache trigger a refetch
 	const { data: pathData, loading: loadingPath } = useQuery<GetPathQuery, GetPathQueryVariables>(
-		GET_PATH,
+		GetPathDocument,
 		{
 			variables: {
 				node_id: folderId

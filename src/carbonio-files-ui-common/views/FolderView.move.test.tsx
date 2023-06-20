@@ -6,13 +6,7 @@
 
 import React from 'react';
 
-import {
-	fireEvent,
-	screen,
-	waitFor,
-	waitForElementToBeRemoved,
-	within
-} from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -27,7 +21,6 @@ import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/gr
 import {
 	getChildrenVariables,
 	mockGetChildren,
-	mockGetParent,
 	mockGetPath,
 	mockGetPermissions,
 	mockMoveNodes
@@ -78,7 +71,6 @@ describe('Move', () => {
 				}
 			});
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
@@ -160,7 +152,6 @@ describe('Move', () => {
 				}
 			});
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
@@ -213,7 +204,6 @@ describe('Move', () => {
 				expect(screen.getByRole('button', { name: /move/i })).not.toHaveAttribute('disabled', '')
 			);
 			await user.click(screen.getByRole('button', { name: /move/i }));
-			await waitForElementToBeRemoved(screen.queryByRole('button', { name: /move/i }));
 			expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument();
 			expect(screen.queryByText('Move')).not.toBeInTheDocument();
 			await screen.findByText(/Item moved/i);
@@ -262,7 +252,6 @@ describe('Move', () => {
 					children: populateNodePage(firstPage)
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [commonParent, currentFolder]),
 				mockGetChildren(getChildrenVariables(commonParent.id), commonParent),
 				mockGetPath({ node_id: commonParent.id }, [commonParent]),
@@ -308,6 +297,10 @@ describe('Move', () => {
 			await user.click(screen.getByText(commonParent.name));
 			await findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name));
 			await screen.findByText(destinationFolder.name);
+			act(() => {
+				// run modal timers
+				jest.runOnlyPendingTimers();
+			});
 			expect(screen.getByText(destinationFolder.name)).toBeVisible();
 			expect(screen.getByText(currentFolder.name)).toBeVisible();
 			await user.click(screen.getByText(destinationFolder.name));
@@ -345,7 +338,6 @@ describe('Move', () => {
 			});
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
@@ -418,7 +410,6 @@ describe('Move', () => {
 					children: populateNodePage(firstPage)
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockMoveNodes(
 					{

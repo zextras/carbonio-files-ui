@@ -162,33 +162,6 @@ export const getIconColorByFileType = (
 			return theme.palette.primary.regular;
 	}
 };
-const buildCrumbsRecursive = (
-	node: CrumbNode,
-	clickHandler?: (id: string, event: React.SyntheticEvent | KeyboardEvent) => void,
-	t?: TFunction,
-	nodeClickCondition: (node: Pick<Node, 'id' | 'name' | 'type'>) => boolean = (): boolean => true
-): Crumb[] => {
-	let result: Crumb[] = [];
-	if (node.parent) {
-		result = buildCrumbsRecursive(node.parent, clickHandler, t);
-	}
-
-	let handlerFunction;
-	if (clickHandler && node && nodeClickCondition(node)) {
-		handlerFunction = (event: React.SyntheticEvent | KeyboardEvent): void =>
-			clickHandler(node.id, event);
-	}
-	if (node.name) {
-		result.push({
-			id: node.id,
-			// be careful: the following key is not parsed by i18next-extract purposely
-			/* i18next-extract-disable-next-line */
-			label: (t && t('node.alias.name', node.name, { context: node.id })) || node.name,
-			onClick: handlerFunction
-		});
-	}
-	return result;
-};
 
 /**
  * Build the crumbs for a node formatted as required by @zextras/carbonio-design-system Breadcrumb.
@@ -198,33 +171,26 @@ const buildCrumbsRecursive = (
  * @param nodeClickCondition - validation click function
  */
 export const buildCrumbs = (
-	nodes: CrumbNode | Array<Maybe<Pick<Node, 'id' | 'name' | 'type'>> | undefined>,
+	nodes: Array<Maybe<CrumbNode> | undefined>,
 	clickHandler?: (id: string, event: React.SyntheticEvent | KeyboardEvent) => void,
 	t?: TFunction,
 	nodeClickCondition: (node: Pick<Node, 'id' | 'name' | 'type'>) => boolean = (): boolean => true
-): Crumb[] => {
-	if (nodes instanceof Array) {
-		// the array can contain null if path is requested for a node with no accessible parent
-		return chain(nodes)
-			.filter((node) => !!node)
-			.map((node): Crumb => {
-				const $node = node as Node;
-				return {
-					id: $node.id,
-					// be careful: the following key is not parsed by i18next-extract purposely
-					/* i18next-extract-disable-next-line */
-					label: (t && t('node.alias.name', $node.name, { context: $node.id })) || $node.name,
-					onClick:
-						node && clickHandler && nodeClickCondition(node)
-							? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler($node.id, event)
-							: undefined
-				};
-			})
-			.value();
-	}
-
-	return nodes ? buildCrumbsRecursive(nodes, clickHandler, t, nodeClickCondition) : [];
-};
+): Crumb[] =>
+	// the array can contain null if path is requested for a node with no accessible parent
+	chain(nodes)
+		.filter((node): node is CrumbNode => node !== undefined && node !== null)
+		.map((node): Crumb => {
+			const $node = node as Node;
+			return {
+				id: $node.id,
+				label: (t && t('node.alias.name', $node.name, { context: $node.id })) || $node.name,
+				onClick:
+					node && clickHandler && nodeClickCondition(node)
+						? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler($node.id, event)
+						: undefined
+			};
+		})
+		.value();
 
 export const formatDate = (
 	date?: Moment | Date | string | number,

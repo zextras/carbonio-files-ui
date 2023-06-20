@@ -238,7 +238,7 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
 		expect(findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)).toHaveStyle(
-			'background-color: #d5e3f6'
+			{ 'background-color': '#d5e3f6' }
 		);
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
@@ -263,7 +263,7 @@ describe('Folder Selection Modal Content', () => {
 		// local root item is not visibly active
 		expect(
 			findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
-		).not.toHaveStyle('background-color: #d5e3f6');
+		).not.toHaveStyle({ 'background-color': '#d5e3f6' });
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
 		// navigate again inside local root

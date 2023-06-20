@@ -20,7 +20,7 @@ import { Folder } from '../types/graphql/types';
 import {
 	getChildrenVariables,
 	mockGetChildren,
-	mockGetParent,
+	mockGetPath,
 	mockGetPermissions,
 	mockTrashNodes,
 	mockUpdateNode
@@ -66,7 +66,7 @@ describe('Rename', () => {
 			const newPos = currentFolder.children.nodes.length - 1;
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
@@ -133,7 +133,7 @@ describe('Rename', () => {
 			}-${timestamp}`;
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
@@ -215,7 +215,7 @@ describe('Rename', () => {
 			const thirdCursor = thirdPage[thirdPage.length - 1];
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), {
 					...currentFolder,
 					children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))
@@ -349,7 +349,7 @@ describe('Rename', () => {
 					...currentFolder,
 					children: populateNodePage(firstPage)
 				} as Folder),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
 					{ node_id: nodeToRename.id, name: newName },
@@ -415,7 +415,7 @@ describe('Rename', () => {
 					...currentFolder,
 					children: populateNodePage(firstPage)
 				} as Folder),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
 					{ node_id: nodeToRename.id, name: newName },

@@ -614,6 +614,7 @@ export type ChildWithParent_File_Fragment = {
 		| ({
 				id: string;
 				name: string;
+				type: NodeType;
 				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
@@ -668,6 +669,7 @@ export type ChildWithParent_Folder_Fragment = {
 		| ({
 				id: string;
 				name: string;
+				type: NodeType;
 				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
@@ -723,6 +725,7 @@ export type NodeParentFragment = {
 		| ({
 				id: string;
 				name: string;
+				type: NodeType;
 				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
@@ -743,6 +746,7 @@ export type NodeParentFragment = {
 export type ParentFragment = {
 	id: string;
 	name: string;
+	type: NodeType;
 	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	permissions: {
 		can_read: boolean;
@@ -1243,6 +1247,7 @@ export type FindNodesQuery = {
 								| ({
 										id: string;
 										name: string;
+										type: NodeType;
 										owner?:
 											| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 											| null;
@@ -1302,6 +1307,7 @@ export type FindNodesQuery = {
 								| ({
 										id: string;
 										name: string;
+										type: NodeType;
 										owner?:
 											| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 											| null;
@@ -1447,6 +1453,7 @@ export type GetChildQuery = {
 					| ({
 							id: string;
 							name: string;
+							type: NodeType;
 							owner?:
 								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 								| null;
@@ -1504,6 +1511,7 @@ export type GetChildQuery = {
 					| ({
 							id: string;
 							name: string;
+							type: NodeType;
 							owner?:
 								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 								| null;
@@ -1550,6 +1558,7 @@ export type GetChildrenQuery = {
 		| ({
 				id: string;
 				name: string;
+				type: NodeType;
 				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
@@ -1567,6 +1576,7 @@ export type GetChildrenQuery = {
 		| ({
 				id: string;
 				name: string;
+				type: NodeType;
 				children: {
 					page_token?: string | null;
 					nodes: Array<
@@ -1605,6 +1615,7 @@ export type GetChildrenQuery = {
 									| ({
 											id: string;
 											name: string;
+											type: NodeType;
 											owner?:
 												| ({ id: string; full_name: string; email: string } & {
 														__typename?: 'User';
@@ -1668,6 +1679,7 @@ export type GetChildrenQuery = {
 									| ({
 											id: string;
 											name: string;
+											type: NodeType;
 											owner?:
 												| ({ id: string; full_name: string; email: string } & {
 														__typename?: 'User';
@@ -1729,6 +1741,7 @@ export type GetChildrenParentQuery = {
 		| ({
 				id: string;
 				name: string;
+				type: NodeType;
 				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
@@ -1907,6 +1920,7 @@ export type GetNodeQuery = {
 									| ({
 											id: string;
 											name: string;
+											type: NodeType;
 											owner?:
 												| ({ id: string; full_name: string; email: string } & {
 														__typename?: 'User';
@@ -1970,6 +1984,7 @@ export type GetNodeQuery = {
 									| ({
 											id: string;
 											name: string;
+											type: NodeType;
 											owner?:
 												| ({ id: string; full_name: string; email: string } & {
 														__typename?: 'User';
@@ -2056,321 +2071,6 @@ export type GetNodeQuery = {
 		| null;
 } & { __typename?: 'Query' };
 
-export type GetParentQueryVariables = Exact<{
-	node_id: Scalars['ID'];
-}>;
-
-export type GetParentQuery = {
-	getNode?:
-		| ({
-				size: number;
-				mime_type: string;
-				extension?: string | null;
-				version: number;
-				id: string;
-				name: string;
-				type: NodeType;
-				flagged: boolean;
-				rootId?: string | null;
-				parent?:
-					| ({
-							size: number;
-							mime_type: string;
-							extension?: string | null;
-							version: number;
-							id: string;
-							name: string;
-							type: NodeType;
-							flagged: boolean;
-							rootId?: string | null;
-							parent?:
-								| ({
-										size: number;
-										mime_type: string;
-										extension?: string | null;
-										version: number;
-										id: string;
-										name: string;
-										type: NodeType;
-										flagged: boolean;
-										rootId?: string | null;
-										permissions: {
-											can_read: boolean;
-											can_write_file: boolean;
-											can_write_folder: boolean;
-											can_delete: boolean;
-											can_add_version: boolean;
-											can_read_link: boolean;
-											can_change_link: boolean;
-											can_share: boolean;
-											can_read_share: boolean;
-											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'File' })
-								| ({
-										id: string;
-										name: string;
-										type: NodeType;
-										flagged: boolean;
-										rootId?: string | null;
-										permissions: {
-											can_read: boolean;
-											can_write_file: boolean;
-											can_write_folder: boolean;
-											can_delete: boolean;
-											can_add_version: boolean;
-											can_read_link: boolean;
-											can_change_link: boolean;
-											can_share: boolean;
-											can_read_share: boolean;
-											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'Folder' })
-								| null;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' })
-					| ({
-							id: string;
-							name: string;
-							type: NodeType;
-							flagged: boolean;
-							rootId?: string | null;
-							parent?:
-								| ({
-										size: number;
-										mime_type: string;
-										extension?: string | null;
-										version: number;
-										id: string;
-										name: string;
-										type: NodeType;
-										flagged: boolean;
-										rootId?: string | null;
-										permissions: {
-											can_read: boolean;
-											can_write_file: boolean;
-											can_write_folder: boolean;
-											can_delete: boolean;
-											can_add_version: boolean;
-											can_read_link: boolean;
-											can_change_link: boolean;
-											can_share: boolean;
-											can_read_share: boolean;
-											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'File' })
-								| ({
-										id: string;
-										name: string;
-										type: NodeType;
-										flagged: boolean;
-										rootId?: string | null;
-										permissions: {
-											can_read: boolean;
-											can_write_file: boolean;
-											can_write_folder: boolean;
-											can_delete: boolean;
-											can_add_version: boolean;
-											can_read_link: boolean;
-											can_change_link: boolean;
-											can_share: boolean;
-											can_read_share: boolean;
-											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'Folder' })
-								| null;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'Folder' })
-					| null;
-				permissions: {
-					can_read: boolean;
-					can_write_file: boolean;
-					can_write_folder: boolean;
-					can_delete: boolean;
-					can_add_version: boolean;
-					can_read_link: boolean;
-					can_change_link: boolean;
-					can_share: boolean;
-					can_read_share: boolean;
-					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
-		| ({
-				id: string;
-				name: string;
-				type: NodeType;
-				flagged: boolean;
-				rootId?: string | null;
-				parent?:
-					| ({
-							size: number;
-							mime_type: string;
-							extension?: string | null;
-							version: number;
-							id: string;
-							name: string;
-							type: NodeType;
-							flagged: boolean;
-							rootId?: string | null;
-							parent?:
-								| ({
-										size: number;
-										mime_type: string;
-										extension?: string | null;
-										version: number;
-										id: string;
-										name: string;
-										type: NodeType;
-										flagged: boolean;
-										rootId?: string | null;
-										permissions: {
-											can_read: boolean;
-											can_write_file: boolean;
-											can_write_folder: boolean;
-											can_delete: boolean;
-											can_add_version: boolean;
-											can_read_link: boolean;
-											can_change_link: boolean;
-											can_share: boolean;
-											can_read_share: boolean;
-											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'File' })
-								| ({
-										id: string;
-										name: string;
-										type: NodeType;
-										flagged: boolean;
-										rootId?: string | null;
-										permissions: {
-											can_read: boolean;
-											can_write_file: boolean;
-											can_write_folder: boolean;
-											can_delete: boolean;
-											can_add_version: boolean;
-											can_read_link: boolean;
-											can_change_link: boolean;
-											can_share: boolean;
-											can_read_share: boolean;
-											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'Folder' })
-								| null;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' })
-					| ({
-							id: string;
-							name: string;
-							type: NodeType;
-							flagged: boolean;
-							rootId?: string | null;
-							parent?:
-								| ({
-										size: number;
-										mime_type: string;
-										extension?: string | null;
-										version: number;
-										id: string;
-										name: string;
-										type: NodeType;
-										flagged: boolean;
-										rootId?: string | null;
-										permissions: {
-											can_read: boolean;
-											can_write_file: boolean;
-											can_write_folder: boolean;
-											can_delete: boolean;
-											can_add_version: boolean;
-											can_read_link: boolean;
-											can_change_link: boolean;
-											can_share: boolean;
-											can_read_share: boolean;
-											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'File' })
-								| ({
-										id: string;
-										name: string;
-										type: NodeType;
-										flagged: boolean;
-										rootId?: string | null;
-										permissions: {
-											can_read: boolean;
-											can_write_file: boolean;
-											can_write_folder: boolean;
-											can_delete: boolean;
-											can_add_version: boolean;
-											can_read_link: boolean;
-											can_change_link: boolean;
-											can_share: boolean;
-											can_read_share: boolean;
-											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'Folder' })
-								| null;
-							permissions: {
-								can_read: boolean;
-								can_write_file: boolean;
-								can_write_folder: boolean;
-								can_delete: boolean;
-								can_add_version: boolean;
-								can_read_link: boolean;
-								can_change_link: boolean;
-								can_share: boolean;
-								can_read_share: boolean;
-								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'Folder' })
-					| null;
-				permissions: {
-					can_read: boolean;
-					can_write_file: boolean;
-					can_write_folder: boolean;
-					can_delete: boolean;
-					can_add_version: boolean;
-					can_read_link: boolean;
-					can_change_link: boolean;
-					can_share: boolean;
-					can_read_share: boolean;
-					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' })
-		| null;
-} & { __typename?: 'Query' };
-
 export type GetPathQueryVariables = Exact<{
 	node_id: Scalars['ID'];
 }>;
@@ -2378,15 +2078,10 @@ export type GetPathQueryVariables = Exact<{
 export type GetPathQuery = {
 	getPath: Array<
 		| ({
-				size: number;
-				mime_type: string;
-				extension?: string | null;
-				version: number;
 				id: string;
 				name: string;
 				type: NodeType;
-				flagged: boolean;
-				rootId?: string | null;
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -2399,26 +2094,7 @@ export type GetPathQuery = {
 					can_read_share: boolean;
 					can_change_share: boolean;
 				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
-		| ({
-				id: string;
-				name: string;
-				type: NodeType;
-				flagged: boolean;
-				rootId?: string | null;
-				permissions: {
-					can_read: boolean;
-					can_write_file: boolean;
-					can_write_folder: boolean;
-					can_delete: boolean;
-					can_add_version: boolean;
-					can_read_link: boolean;
-					can_change_link: boolean;
-					can_share: boolean;
-					can_read_share: boolean;
-					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' })
+		  } & { __typename?: 'File' | 'Folder' })
 		| null
 	>;
 } & { __typename?: 'Query' };
@@ -2854,6 +2530,7 @@ export const ParentFragmentDoc = {
 				selections: [
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 					{
 						kind: 'Field',
 						name: { kind: 'Name', value: 'owner' },
@@ -2960,6 +2637,7 @@ export const NodeParentFragmentDoc = {
 				selections: [
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 					{
 						kind: 'Field',
 						name: { kind: 'Name', value: 'owner' },
@@ -3107,6 +2785,7 @@ export const ChildWithParentFragmentDoc = {
 				selections: [
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 					{
 						kind: 'Field',
 						name: { kind: 'Name', value: 'owner' },
@@ -5320,6 +4999,7 @@ export const FindNodesDocument = {
 				selections: [
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 					{
 						kind: 'Field',
 						name: { kind: 'Name', value: 'owner' },
@@ -5824,6 +5504,7 @@ export const GetChildDocument = {
 				selections: [
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 					{
 						kind: 'Field',
 						name: { kind: 'Name', value: 'owner' },
@@ -6112,6 +5793,7 @@ export const GetChildrenDocument = {
 				selections: [
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 					{
 						kind: 'Field',
 						name: { kind: 'Name', value: 'owner' },
@@ -6289,6 +5971,7 @@ export const GetChildrenParentDocument = {
 				selections: [
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 					{
 						kind: 'Field',
 						name: { kind: 'Name', value: 'owner' },
@@ -6810,6 +6493,7 @@ export const GetNodeDocument = {
 				selections: [
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 					{
 						kind: 'Field',
 						name: { kind: 'Name', value: 'owner' },
@@ -6911,126 +6595,6 @@ export const GetNodeDocument = {
 		}
 	]
 } as unknown as DocumentNode<GetNodeQuery, GetNodeQueryVariables>;
-export const GetParentDocument = {
-	kind: 'Document',
-	definitions: [
-		{
-			kind: 'OperationDefinition',
-			operation: 'query',
-			name: { kind: 'Name', value: 'getParent' },
-			variableDefinitions: [
-				{
-					kind: 'VariableDefinition',
-					variable: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } },
-					type: {
-						kind: 'NonNullType',
-						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
-					}
-				}
-			],
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'getNode' },
-						arguments: [
-							{
-								kind: 'Argument',
-								name: { kind: 'Name', value: 'node_id' },
-								value: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } }
-							}
-						],
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
-								{
-									kind: 'Field',
-									name: { kind: 'Name', value: 'parent' },
-									selectionSet: {
-										kind: 'SelectionSet',
-										selections: [
-											{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } },
-											{
-												kind: 'Field',
-												name: { kind: 'Name', value: 'parent' },
-												selectionSet: {
-													kind: 'SelectionSet',
-													selections: [
-														{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } }
-													]
-												}
-											}
-										]
-									}
-								}
-							]
-						}
-					}
-				]
-			}
-		},
-		{
-			kind: 'FragmentDefinition',
-			name: { kind: 'Name', value: 'Permissions' },
-			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'permissions' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
-							]
-						}
-					}
-				]
-			}
-		},
-		{
-			kind: 'FragmentDefinition',
-			name: { kind: 'Name', value: 'BaseNode' },
-			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
-					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
-					{
-						kind: 'InlineFragment',
-						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
-							]
-						}
-					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
-				]
-			}
-		}
-	]
-} as unknown as DocumentNode<GetParentQuery, GetParentQueryVariables>;
 export const GetPathDocument = {
 	kind: 'Document',
 	definitions: [
@@ -7063,7 +6627,7 @@ export const GetPathDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'BaseNode' } }]
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } }]
 						}
 					}
 				]
@@ -7100,7 +6664,7 @@ export const GetPathDocument = {
 		},
 		{
 			kind: 'FragmentDefinition',
-			name: { kind: 'Name', value: 'BaseNode' },
+			name: { kind: 'Name', value: 'Parent' },
 			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
 			selectionSet: {
 				kind: 'SelectionSet',
@@ -7108,22 +6672,19 @@ export const GetPathDocument = {
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
-					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } },
 					{
-						kind: 'InlineFragment',
-						typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'File' } },
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
 						selectionSet: {
 							kind: 'SelectionSet',
 							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'size' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'mime_type' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'extension' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'version' } }
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'flagged' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } }
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
 		}

@@ -21,8 +21,8 @@ import {
 	GetChildrenQueryVariables,
 	GetNodeQuery,
 	GetNodeQueryVariables,
-	GetParentQuery,
-	GetParentQueryVariables,
+	GetPathQuery,
+	GetPathQueryVariables,
 	GetPermissionsQuery,
 	GetPermissionsQueryVariables
 } from '../types/graphql/types';
@@ -31,7 +31,6 @@ import {
 	getNodeVariables,
 	mockGetChildren,
 	mockGetNode,
-	mockGetParent,
 	mockGetPath,
 	mockGetPermissions,
 	mockMoveNodes
@@ -72,11 +71,11 @@ describe('Folder View', () => {
 					getNode: currentFolder
 				}
 			});
-			const getParentMockedQuery = mockGetParent({ node_id: currentFolder.id }, currentFolder);
-			global.apolloClient.writeQuery<GetParentQuery, GetParentQueryVariables>({
-				...getParentMockedQuery.request,
+			const getPathMockedQuery = mockGetPath({ node_id: currentFolder.id }, [currentFolder]);
+			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
+				...getPathMockedQuery.request,
 				data: {
-					getNode: currentFolder
+					getPath: [currentFolder]
 				}
 			});
 			global.apolloClient.writeQuery<GetPermissionsQuery, GetPermissionsQueryVariables>({
@@ -110,11 +109,11 @@ describe('Folder View', () => {
 					getNode: currentFolder
 				}
 			});
-			const getParentMockedQuery = mockGetParent({ node_id: currentFolder.id }, currentFolder);
-			global.apolloClient.writeQuery<GetParentQuery, GetParentQueryVariables>({
-				...getParentMockedQuery.request,
+			const getPathMockedQuery = mockGetPath({ node_id: currentFolder.id }, [currentFolder]);
+			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
+				...getPathMockedQuery.request,
 				data: {
-					getNode: currentFolder
+					getPath: [currentFolder]
 				}
 			});
 			// prepare cache so that apollo client read data from the cache
@@ -194,8 +193,6 @@ describe('Folder View', () => {
 				mockGetNode(getNodeVariables(node.id), node),
 				mockGetPath({ node_id: node.id }, path),
 				mockGetPath({ node_id: currentFolder.id }, parentPath),
-				mockGetParent({ node_id: node.id }, node),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockMoveNodes({ destination_id: destinationFolder.id, node_ids: [node.id] }, [
 					{ ...node, parent: destinationFolder }
 				])
@@ -206,6 +203,7 @@ describe('Folder View', () => {
 			});
 			const displayer = await screen.findByTestId('displayer');
 			await screen.findAllByText(node.name);
+			await screen.findByText(destinationFolder.name);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
 			const nodeToMoveItem = within(screen.getByTestId(`list-${currentFolder.id}`)).getByText(
@@ -250,11 +248,11 @@ describe('Folder View', () => {
 					getNode: currentFolder
 				}
 			});
-			const mockedGetParentQuery = mockGetParent({ node_id: currentFolder.id }, currentFolder);
-			global.apolloClient.writeQuery<GetParentQuery, GetParentQueryVariables>({
-				...mockedGetParentQuery.request,
+			const getPathMockedQuery = mockGetPath({ node_id: currentFolder.id }, [currentFolder]);
+			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
+				...getPathMockedQuery.request,
 				data: {
-					getNode: currentFolder
+					getPath: [currentFolder]
 				}
 			});
 
@@ -294,13 +292,14 @@ describe('Folder View', () => {
 					getNode: currentFolder
 				}
 			});
-			const mockedGetParentQuery = mockGetParent({ node_id: currentFolder.id }, currentFolder);
-			global.apolloClient.writeQuery<GetParentQuery, GetParentQueryVariables>({
-				...mockedGetParentQuery.request,
+			const getPathMockedQuery = mockGetPath({ node_id: currentFolder.id }, [currentFolder]);
+			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
+				...getPathMockedQuery.request,
 				data: {
-					getNode: currentFolder
+					getPath: [currentFolder]
 				}
 			});
+
 			setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`]
 			});

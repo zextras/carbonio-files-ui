@@ -14,7 +14,7 @@ module.exports = {
 			'i18next-extract',
 			{
 				outputPath: 'translations/{{ns}}.json',
-				defaultContexts: [''],
+				defaultContexts: [],
 				discardOldKeys: false,
 				defaultNS: 'en',
 				jsonSpace: 4

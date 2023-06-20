@@ -23,7 +23,7 @@ import {
 	mockCreateFolder,
 	mockCreateFolderError,
 	mockGetChildren,
-	mockGetParent,
+	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { generateError, setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
@@ -90,7 +90,7 @@ describe('Create folder', () => {
 		const newName = node2.name;
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockCreateFolderError(
@@ -149,7 +149,7 @@ describe('Create folder', () => {
 		currentFolder.children.nodes.push(node1, node3);
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockCreateFolder(
@@ -211,7 +211,7 @@ describe('Create folder', () => {
 		// --> list should be updated with the correct order
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockCreateFolder(
@@ -312,7 +312,7 @@ describe('Create folder', () => {
 		newPos = newPos > -1 ? newPos : currentFolder.children.nodes.length;
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockCreateFolder(
