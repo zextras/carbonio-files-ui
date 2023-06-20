@@ -7,7 +7,8 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
-import { sample, forEach, map } from 'lodash';
+import { forEach, map } from 'lodash';
+import { DefaultTheme } from 'styled-components';
 
 import { NodeDetails } from './NodeDetails';
 import { NODES_LOAD_LIMIT } from '../../constants';
@@ -25,7 +26,8 @@ import { Folder, NodeType, QueryGetPathArgs } from '../../types/graphql/types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockGetPath } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../utils/testUtils';
-import { formatDate, formatTime, humanFileSize, previewHandledMimeTypes } from '../../utils/utils';
+import { formatDate, formatTime, humanFileSize } from '../../utils/utils';
+import 'jest-styled-components';
 
 describe('Node Details', () => {
 	test('Show file info', () => {
@@ -372,12 +374,11 @@ describe('Node Details', () => {
 		expect(screen.getByRole('img')).toBeVisible();
 	});
 
-	// TODO: remove skip when thumbnail of documental files is reneabled
-	test.skip('Show file thumbnail for document', async () => {
+	test('should not show file thumbnail for document', async () => {
 		const node = populateFile();
 		const loadMore = jest.fn();
 		node.type = NodeType.Application;
-		node.mime_type = sample(previewHandledMimeTypes) || 'application/vnd.oasis.opendocument.text';
+		node.mime_type = 'application/vnd.oasis.opendocument.text';
 		setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -401,8 +402,8 @@ describe('Node Details', () => {
 			/>,
 			{ mocks: [] }
 		);
-		await screen.findByRole('img');
-		expect(screen.getByRole('img')).toBeVisible();
+		expect(screen.getByText(node.name)).toBeVisible();
+		expect(screen.queryByRole('img')).not.toBeInTheDocument();
 	});
 
 	test('Do not show file preview for node with unsupported type/mime type', async () => {
@@ -485,4 +486,48 @@ describe('Node Details', () => {
 
 		expect(loadMore).toHaveBeenCalled();
 	});
+	test.each<[type: NodeType, mimeType: string, icon: keyof DefaultTheme['icons'], color: string]>([
+		[NodeType.Folder, 'any', 'Folder', '#828282'],
+		[NodeType.Text, 'application/pdf', 'FilePdf', '#d74942'],
+		[NodeType.Text, 'any', 'FileText', '#2b73d2'],
+		[NodeType.Video, 'any', 'Video', '#d74942'],
+		[NodeType.Audio, 'any', 'Music', '#414141'],
+		[NodeType.Image, 'any', 'Image', '#d74942'],
+		[NodeType.Message, 'any', 'Email', '#2b73d2'],
+		[NodeType.Presentation, 'any', 'FilePresentation', '#FFA726'],
+		[NodeType.Spreadsheet, 'any', 'FileCalc', '#8bc34a'],
+		[NodeType.Application, 'any', 'Code', '#414141'],
+		[NodeType.Other, 'any', 'File', '#2b73d2']
+	])(
+		'child of a folder with type %s and mimetype %s show icon %s with color %s inside content',
+		(type, mimeType, icon, color) => {
+			const node = populateFolder();
+			const loadMore = jest.fn();
+			const child = populateFile();
+			child.type = type;
+			child.mime_type = mimeType;
+			setup(
+				<NodeDetails
+					typeName={node.__typename}
+					id={node.id}
+					name={node.name}
+					owner={node.owner}
+					creator={node.creator}
+					lastEditor={node.last_editor}
+					createdAt={node.created_at}
+					updatedAt={node.updated_at}
+					description={node.description}
+					canUpsertDescription={canUpsertDescription(node)}
+					loadMore={loadMore}
+					loading={false}
+					shares={node.shares}
+					hasMore
+					nodes={[child]}
+					type={node.type}
+				/>
+			);
+			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
+			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
+		}
+	);
 });

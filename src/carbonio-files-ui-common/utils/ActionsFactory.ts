@@ -414,7 +414,7 @@ export function canPreview(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean 
 		!(
 			$nodes[0].permissions.can_write_file && includes(docsHandledMimeTypes, $nodes[0].mime_type)
 		) &&
-		(isSupportedByPreview($nodes[0].mime_type)[0] ||
+		(isSupportedByPreview($nodes[0].mime_type, 'preview')[0] ||
 			includes(docsHandledMimeTypes, $nodes[0].mime_type))
 	);
 }

@@ -13,7 +13,6 @@ import {
 	chain,
 	forEach,
 	map,
-	includes,
 	reduce,
 	size,
 	debounce,
@@ -23,6 +22,7 @@ import {
 	trim
 } from 'lodash';
 import moment, { Moment } from 'moment-timezone';
+import { DefaultTheme } from 'styled-components';
 
 import { searchParamsVar } from '../apollo/searchVar';
 import {
@@ -78,7 +78,12 @@ export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): stri
 		case NodeType.Folder:
 			return 'Folder';
 		case NodeType.Text:
-			return 'FileText';
+			switch (subType) {
+				case 'application/pdf':
+					return 'FilePdf';
+				default:
+					return 'FileText';
+			}
 		case NodeType.Video:
 			return 'Video';
 		case NodeType.Audio:
@@ -110,6 +115,39 @@ export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): stri
 	}
 };
 
+export const getIconColorByFileType = (
+	type: NodeType,
+	subType: Maybe<string> | undefined,
+	theme: DefaultTheme
+): string => {
+	switch (type) {
+		case NodeType.Folder:
+			return theme.palette.secondary.regular;
+		case NodeType.Text:
+			switch (subType) {
+				case 'application/pdf':
+					return theme.palette.error.regular;
+				default:
+					return theme.palette.primary.regular;
+			}
+		case NodeType.Video:
+			return theme.palette.error.regular;
+		case NodeType.Audio:
+			return theme.palette.gray0.regular;
+		case NodeType.Image:
+			return theme.palette.error.regular;
+		case NodeType.Message:
+			return theme.palette.primary.regular;
+		case NodeType.Presentation:
+			return theme.avatarColors.avatar_47;
+		case NodeType.Spreadsheet:
+			return theme.palette.success.regular;
+		case NodeType.Application:
+			return theme.palette.gray0.regular;
+		default:
+			return theme.palette.primary.regular;
+	}
+};
 const buildCrumbsRecursive = (
 	node: CrumbNode,
 	clickHandler?: (id: string, event: React.SyntheticEvent | KeyboardEvent) => void,
@@ -584,19 +622,71 @@ export const docsHandledMimeTypes = [
 	'application/vnd.sun.xml.writer.template'
 ];
 
-export const previewHandledMimeTypes: string[] = [
-	'application/msword',
-	'application/vnd.ms-excel',
-	'application/vnd.ms-powerpoint',
-	'application/vnd.oasis.opendocument.presentation',
-	'application/vnd.oasis.opendocument.spreadsheet',
-	'application/vnd.oasis.opendocument.text',
-	'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-	'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-];
-
-export const thumbnailHandledMimeTypes: string[] = [];
+const mimeTypePreviewSupport: Record<
+	string,
+	Record<'thumbnail' | 'preview' | 'thumbnail_detail', boolean>
+> = {
+	'application/pdf': {
+		thumbnail: false,
+		thumbnail_detail: true,
+		preview: true
+	},
+	'image/svg+xml': {
+		thumbnail: true,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/msword': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/vnd.ms-excel': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/vnd.ms-powerpoint': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/vnd.oasis.opendocument.presentation': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/vnd.oasis.opendocument.spreadsheet': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/vnd.oasis.opendocument.text': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: true
+	},
+	image: {
+		thumbnail: true,
+		thumbnail_detail: true,
+		preview: true
+	}
+};
 
 /**
  * 	Error codes:
@@ -731,20 +821,22 @@ export function uploadToTargetModule(args: {
  */
 export function isSupportedByPreview(
 	mimeType: string | undefined,
-	type: 'thumbnail' | 'preview' = 'preview'
+	type: ThumbnailType | 'preview'
 ): [boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined] {
-	return [
-		!!mimeType &&
-			((mimeType.startsWith('image') && mimeType !== 'image/svg+xml') ||
-				mimeType.includes('pdf') ||
-				(type === 'preview' && previewHandledMimeTypes.includes(mimeType)) ||
-				(type === 'thumbnail' && thumbnailHandledMimeTypes.includes(mimeType))),
-		(mimeType &&
-			((mimeType.startsWith('image') && PREVIEW_TYPE.IMAGE) ||
-				(mimeType.includes('pdf') && PREVIEW_TYPE.PDF) ||
-				PREVIEW_TYPE.DOCUMENT)) ||
-			undefined
-	];
+	if (mimeType) {
+		const isSupported =
+			mimeTypePreviewSupport[mimeType]?.[type] ||
+			mimeTypePreviewSupport[mimeType.split('/')[0]]?.[type] ||
+			false;
+		const previewType =
+			(isSupported &&
+				((mimeType.startsWith('image') && PREVIEW_TYPE.IMAGE) ||
+					(mimeType.includes('pdf') && PREVIEW_TYPE.PDF) ||
+					PREVIEW_TYPE.DOCUMENT)) ||
+			undefined;
+		return [isSupported, previewType];
+	}
+	return [false, undefined];
 }
 
 /**
@@ -768,32 +860,30 @@ export const getDocumentPreviewSrc = (id: string, version?: number): string =>
 /**
  * Get thumbnail src
  */
+type ThumbnailType = 'thumbnail' | 'thumbnail_detail';
+
 export const getPreviewThumbnailSrc = (
 	id: string,
 	version: number | undefined,
 	type: NodeType,
 	mimeType: string | undefined,
-	width: number,
-	height: number,
-	shape?: 'rectangular' | 'rounded',
-	quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest',
-	outputFormat?: 'jpeg' | 'png'
+	options: {
+		width: number;
+		height: number;
+		shape?: 'rectangular' | 'rounded';
+		quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
+		outputFormat?: 'jpeg' | 'png';
+	},
+	thumbnailType: ThumbnailType
 ): string | undefined => {
-	if (version && mimeType) {
+	const [isSupported, previewType] = isSupportedByPreview(mimeType, thumbnailType);
+	if (version && mimeType && isSupported) {
 		const optionalParams = [];
-		shape && optionalParams.push(`shape=${shape}`);
-		quality && optionalParams.push(`quality=${quality}`);
-		outputFormat && optionalParams.push(`output_format=${outputFormat}`);
+		options.shape && optionalParams.push(`shape=${options.shape}`);
+		options.quality && optionalParams.push(`quality=${options.quality}`);
+		options.outputFormat && optionalParams.push(`output_format=${options.outputFormat}`);
 		const optionalParamsStr = (optionalParams.length > 0 && `?${optionalParams.join('&')}`) || '';
-		if (mimeType.startsWith('image') && mimeType !== 'image/svg+xml') {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
-		}
-		if (includes(mimeType, 'pdf')) {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
-		}
-		if (includes(thumbnailHandledMimeTypes, mimeType)) {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
-		}
+		return `${REST_ENDPOINT}${PREVIEW_PATH}/${previewType}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
 	}
 	return undefined;
 };
@@ -803,7 +893,8 @@ export const getListItemAvatarPictureUrl = (
 	version: number | undefined,
 	type: NodeType,
 	mimeType: string | undefined
-): string | undefined => getPreviewThumbnailSrc(id, version, type, mimeType, 80, 80);
+): string | undefined =>
+	getPreviewThumbnailSrc(id, version, type, mimeType, { width: 80, height: 80 }, 'thumbnail');
 
 export function getNewDocumentActionLabel(t: TFunction, docsType: DocsType): string {
 	const [format] = docsType.split('_');

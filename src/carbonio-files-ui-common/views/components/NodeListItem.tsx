@@ -19,7 +19,7 @@ import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { includes, some, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { ContextualMenu } from './ContextualMenu';
 import { NodeAvatarIcon } from './NodeAvatarIcon';
@@ -47,7 +47,8 @@ import {
 	openNodeWithDocs,
 	isSupportedByPreview,
 	isSearchView,
-	cssCalcBuilder
+	cssCalcBuilder,
+	getIconColorByFileType
 } from '../../utils/utils';
 
 const CustomText = styled(Text)`
@@ -150,6 +151,8 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		[id, selectId]
 	);
 
+	const theme = useTheme();
+
 	const createSnackbar = useSnackbar();
 
 	const { sendViaMail } = useSendViaMail();
@@ -166,7 +169,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 
 	const [$isSupportedByPreview] = useMemo<
 		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview(mimeType), [mimeType]);
+	>(() => isSupportedByPreview(mimeType, 'preview'), [mimeType]);
 
 	const openNode = useCallback(
 		(event: React.SyntheticEvent | KeyboardEvent) => {
@@ -433,6 +436,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 							disabled={disabled}
 							selectable={selectable}
 							icon={getIconByFileType(type, mimeType || id)}
+							color={getIconColorByFileType(type, mimeType || id, theme)}
 							picture={getListItemAvatarPictureUrl(id, version, type, mimeType)}
 						/>
 						<Container

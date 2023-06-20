@@ -74,7 +74,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 }) => {
 	const [t] = useTranslation();
 	const [$isSupportedByPreview, previewType] = useMemo(
-		() => isSupportedByPreview(mimeType, 'thumbnail'),
+		() => isSupportedByPreview(mimeType, 'thumbnail_detail'),
 		[mimeType]
 	);
 
@@ -94,6 +94,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 							type={node.type}
 							owner={node.owner}
 							updatedAt={node.updated_at}
+							mimeType={(isFile(node) && node.mime_type) || undefined}
 						/>
 					)
 			),

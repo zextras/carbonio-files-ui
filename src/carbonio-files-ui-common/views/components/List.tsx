@@ -339,7 +339,10 @@ export const List: React.VFC<ListProps> = ({
 				nodes,
 				(accumulator: Parameters<PreviewManagerContextType['initPreview']>[0], node) => {
 					if (isFile(node)) {
-						const [$isSupportedByPreview, documentType] = isSupportedByPreview(node.mime_type);
+						const [$isSupportedByPreview, documentType] = isSupportedByPreview(
+							node.mime_type,
+							'preview'
+						);
 						if ($isSupportedByPreview) {
 							const actions = [
 								{
@@ -419,7 +422,7 @@ export const List: React.VFC<ListProps> = ({
 	const previewSelection = useCallback(() => {
 		const nodeToPreview = find(nodes, (node) => node.id === selectedIDs[0]);
 		const { id, mime_type: mimeType } = nodeToPreview as File;
-		const [$isSupportedByPreview] = isSupportedByPreview(mimeType);
+		const [$isSupportedByPreview] = isSupportedByPreview(mimeType, 'preview');
 		if ($isSupportedByPreview) {
 			openPreview(id);
 		} else if (includes(permittedSelectionModeActions, Action.OpenWithDocs)) {
