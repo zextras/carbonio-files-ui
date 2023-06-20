@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 
 import { FetchResult, MutationHookOptions, MutationResult, useMutation } from '@apollo/client';
 
+import { SHARES_LOAD_LIMIT } from '../../../constants';
 import CREATE_FOLDER from '../../../graphql/mutations/createFolder.graphql';
 import {
 	CreateFolderMutation,
@@ -48,7 +49,8 @@ export function useCreateFolderMutation(
 			return createFolderMutation({
 				variables: {
 					destination_id: parentFolder.id,
-					name
+					name,
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				// after the mutation returns a response, check if next neighbor is already loaded.
 				// If so, write the folder in cache,

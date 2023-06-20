@@ -12,8 +12,4 @@ fragment Share on Share {
         }
     }
     created_at
-    node {
-        id
-        type
-    }
 }

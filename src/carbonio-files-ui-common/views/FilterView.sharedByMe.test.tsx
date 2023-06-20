@@ -13,7 +13,13 @@ import { Route } from 'react-router-dom';
 import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
-import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
+import {
+	FILTER_TYPE,
+	INTERNAL_PATH,
+	NODES_LOAD_LIMIT,
+	ROOTS,
+	SHARES_LOAD_LIMIT
+} from '../constants';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNode, populateNodes, populateShares } from '../mocks/mockUtils';
 import {
@@ -65,7 +71,7 @@ describe('Filter view', () => {
 				shared_by_me: true,
 				sort: NodeSort.NameAsc,
 				limit: NODES_LOAD_LIMIT,
-				shares_limit: 1,
+				shares_limit: SHARES_LOAD_LIMIT,
 				direct_share: true
 			};
 			expect(mockedRequestHandler).toHaveBeenCalledWith(

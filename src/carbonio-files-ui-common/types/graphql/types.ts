@@ -526,11 +526,11 @@ export type Child_File_Fragment = {
 		| ({
 				permission: SharePermission;
 				created_at: number;
+				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 				share_target?:
 					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 					| null;
-				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 		  } & { __typename?: 'Share' })
 		| null
 	>;
@@ -561,11 +561,11 @@ export type Child_Folder_Fragment = {
 		| ({
 				permission: SharePermission;
 				created_at: number;
+				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 				share_target?:
 					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 					| null;
-				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 		  } & { __typename?: 'Share' })
 		| null
 	>;
@@ -602,11 +602,11 @@ export type ChildWithParent_File_Fragment = {
 		| ({
 				permission: SharePermission;
 				created_at: number;
+				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 				share_target?:
 					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 					| null;
-				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 		  } & { __typename?: 'Share' })
 		| null
 	>;
@@ -656,11 +656,11 @@ export type ChildWithParent_Folder_Fragment = {
 		| ({
 				permission: SharePermission;
 				created_at: number;
+				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 				share_target?:
 					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 					| null;
-				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 		  } & { __typename?: 'Share' })
 		| null
 	>;
@@ -784,7 +784,6 @@ export type ShareFragment = {
 		| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 		| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 		| null;
-	node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 } & { __typename?: 'Share' };
 
 export type ShareTargetFragment = { id: string } & { __typename?: 'DistributionList' | 'User' };
@@ -835,11 +834,11 @@ export type CopyNodesMutation = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -872,11 +871,11 @@ export type CopyNodesMutation = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -939,11 +938,11 @@ export type CreateFolderMutation = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -976,11 +975,11 @@ export type CreateFolderMutation = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -1230,11 +1229,11 @@ export type FindNodesQuery = {
 								| ({
 										permission: SharePermission;
 										created_at: number;
+										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 										share_target?:
 											| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 											| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 											| null;
-										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 								  } & { __typename?: 'Share' })
 								| null
 							>;
@@ -1287,11 +1286,11 @@ export type FindNodesQuery = {
 								| ({
 										permission: SharePermission;
 										created_at: number;
+										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 										share_target?:
 											| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 											| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 											| null;
-										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 								  } & { __typename?: 'Share' })
 								| null
 							>;
@@ -1432,11 +1431,11 @@ export type GetChildQuery = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -1487,11 +1486,11 @@ export type GetChildQuery = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -1582,13 +1581,13 @@ export type GetChildrenQuery = {
 									| ({
 											permission: SharePermission;
 											created_at: number;
+											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 											share_target?:
 												| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 												| ({ email: string; full_name: string; id: string } & {
 														__typename?: 'User';
 												  })
 												| null;
-											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 									  } & { __typename?: 'Share' })
 									| null
 								>;
@@ -1641,13 +1640,13 @@ export type GetChildrenQuery = {
 									| ({
 											permission: SharePermission;
 											created_at: number;
+											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 											share_target?:
 												| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 												| ({ email: string; full_name: string; id: string } & {
 														__typename?: 'User';
 												  })
 												| null;
-											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 									  } & { __typename?: 'Share' })
 									| null
 								>;
@@ -1763,11 +1762,11 @@ export type GetNodeQuery = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -1815,13 +1814,13 @@ export type GetNodeQuery = {
 									| ({
 											permission: SharePermission;
 											created_at: number;
+											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 											share_target?:
 												| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 												| ({ email: string; full_name: string; id: string } & {
 														__typename?: 'User';
 												  })
 												| null;
-											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 									  } & { __typename?: 'Share' })
 									| null
 								>;
@@ -1874,13 +1873,13 @@ export type GetNodeQuery = {
 									| ({
 											permission: SharePermission;
 											created_at: number;
+											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 											share_target?:
 												| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 												| ({ email: string; full_name: string; id: string } & {
 														__typename?: 'User';
 												  })
 												| null;
-											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 									  } & { __typename?: 'Share' })
 									| null
 								>;
@@ -1948,11 +1947,11 @@ export type GetNodeQuery = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -2425,15 +2424,16 @@ export type GetSharesQuery = {
 	getNode?:
 		| ({
 				id: string;
+				type: NodeType;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
+							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 							share_target?:
 								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
 								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
 								| null;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
 					  } & { __typename?: 'Share' })
 					| null
 				>;
@@ -2621,18 +2621,7 @@ export const ShareFragmentDoc = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		}
@@ -2686,7 +2675,21 @@ export const ChildFragmentDoc = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'node' },
+									directives: [{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
@@ -2793,18 +2796,7 @@ export const ChildFragmentDoc = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		}
@@ -3062,18 +3054,7 @@ export const ChildWithParentFragmentDoc = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		},
@@ -3147,7 +3128,21 @@ export const ChildWithParentFragmentDoc = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'node' },
+									directives: [{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
@@ -3527,18 +3522,7 @@ export const CopyNodesDocument = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		},
@@ -3587,7 +3571,21 @@ export const CopyNodesDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'node' },
+									directives: [{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
@@ -3846,18 +3844,7 @@ export const CreateFolderDocument = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		},
@@ -3906,7 +3893,21 @@ export const CreateFolderDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'node' },
+									directives: [{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
@@ -5201,18 +5202,7 @@ export const FindNodesDocument = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		},
@@ -5261,7 +5251,21 @@ export const FindNodesDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'node' },
+									directives: [{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
@@ -5702,18 +5706,7 @@ export const GetChildDocument = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		},
@@ -5762,7 +5755,21 @@ export const GetChildDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'node' },
+									directives: [{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
@@ -6052,18 +6059,7 @@ export const GetChildrenDocument = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		},
@@ -6137,7 +6133,21 @@ export const GetChildrenDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'node' },
+									directives: [{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
@@ -6341,7 +6351,23 @@ export const GetNodeDocument = {
 									],
 									selectionSet: {
 										kind: 'SelectionSet',
-										selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+										selections: [
+											{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'node' },
+												directives: [
+													{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }
+												],
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+													]
+												}
+											}
+										]
 									}
 								},
 								{
@@ -6510,18 +6536,7 @@ export const GetNodeDocument = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		},
@@ -6595,7 +6610,21 @@ export const GetNodeDocument = {
 						],
 						selectionSet: {
 							kind: 'SelectionSet',
-							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'node' },
+									directives: [{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }],
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+											{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+										]
+									}
+								}
+							]
 						}
 					}
 				]
@@ -7145,6 +7174,7 @@ export const GetSharesDocument = {
 							kind: 'SelectionSet',
 							selections: [
 								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 								{
 									kind: 'Field',
 									name: { kind: 'Name', value: 'shares' },
@@ -7167,7 +7197,23 @@ export const GetSharesDocument = {
 									],
 									selectionSet: {
 										kind: 'SelectionSet',
-										selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } }]
+										selections: [
+											{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Share' } },
+											{
+												kind: 'Field',
+												name: { kind: 'Name', value: 'node' },
+												directives: [
+													{ kind: 'Directive', name: { kind: 'Name', value: 'client' } }
+												],
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
+													]
+												}
+											}
+										]
 									}
 								}
 							]
@@ -7219,18 +7265,7 @@ export const GetSharesDocument = {
 							]
 						}
 					},
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'type' } }
-							]
-						}
-					}
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
 				]
 			}
 		}

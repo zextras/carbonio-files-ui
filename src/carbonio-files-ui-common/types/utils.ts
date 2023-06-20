@@ -40,6 +40,8 @@ export type MakeRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 export type MakeRequiredNonNull<T, K extends keyof T> = T & { [KK in K]-?: NonNullable<T[KK]> };
 
+export type MakePartial<T, K extends keyof T> = Omit<T, K> & { [KK in K]: Partial<T[KK]> };
+
 export type SnakeToCamelCase<S extends string> = S extends `${infer T}_${infer U}`
 	? `${T}${Capitalize<SnakeToCamelCase<U>>}`
 	: S;

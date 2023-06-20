@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { FieldFunctionOptions, TypePolicy } from '@apollo/client';
+import { map } from 'lodash';
 
 import { ShareCachedObject, SharesCachedObject } from '../../types/apollo';
+import { Node } from '../../types/common';
 import { NodeSharesArgs } from '../../types/graphql/types';
 
 export const nodeTypePolicies: TypePolicy = {
@@ -42,7 +44,7 @@ export const nodeTypePolicies: TypePolicy = {
 			},
 			read(
 				existing: SharesCachedObject,
-				{ args }: FieldFunctionOptions<Partial<NodeSharesArgs>>
+				{ args, readField, toReference }: FieldFunctionOptions<Partial<NodeSharesArgs>>
 			): ShareCachedObject[] | undefined {
 				// return the already cached data when:
 				// cached data is missing
@@ -54,12 +56,18 @@ export const nodeTypePolicies: TypePolicy = {
 				// cached shares number is lower than the previous query limit
 				// (so even requesting a greater limit, the returned share will be the same of the already cached)
 				if (
-					existing?.args?.limit === undefined ||
-					args?.limit === undefined ||
-					existing.args.limit >= args.limit ||
-					existing.shares.length < existing.args.limit
+					existing &&
+					(existing?.args?.limit === undefined ||
+						args?.limit === undefined ||
+						existing.args.limit >= args.limit ||
+						existing.shares.length < existing.args.limit)
 				) {
-					return existing?.shares;
+					const nodeId = readField<string>('id');
+					const nodeTypeName = readField<Node['__typename']>('__typename');
+					return map(existing.shares, (share) => ({
+						...share,
+						node: toReference({ __typename: nodeTypeName, id: nodeId })
+					}));
 				}
 				// otherwise, if
 				// there is no cached data

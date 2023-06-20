@@ -30,6 +30,7 @@ import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDele
 import { useGetSharesQuery } from '../../../hooks/graphql/queries/useGetSharesQuery';
 import { Node } from '../../../types/common';
 import { Share, SharedTarget } from '../../../types/graphql/types';
+import { MakePartial, MakeRequiredNonNull } from '../../../types/utils';
 import { cssCalcBuilder, getChipLabel, getChipTooltip, isFile } from '../../../utils/utils';
 
 const MainContainer = styled(Container)`
@@ -53,12 +54,17 @@ const CustomText = styled(Text)`
 interface NodeSharingProps {
 	node: Pick<Node, '__typename' | 'id' | 'permissions' | 'owner' | 'name'> & {
 		shares?: Array<
-			// eslint-disable-next-line camelcase
 			| (Pick<Share, '__typename'> & { shared_target?: Pick<SharedTarget, '__typename' | 'id'> })
 			| null
 			| undefined
 		>;
 	};
+}
+
+function shareTargetExists<T extends MakePartial<Pick<Share, 'share_target'>, 'share_target'>>(
+	share: T
+): share is T & MakeRequiredNonNull<T, 'share_target'> {
+	return share.share_target !== undefined && share.share_target !== null;
 }
 
 export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
@@ -74,11 +80,11 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 			reduce(
 				data?.getNode?.shares,
 				(accumulator, share) => {
-					if (share?.share_target) {
+					if (share && shareTargetExists(share)) {
 						const chip = (
 							<EditShareChip
 								key={`${share.share_target.id}`}
-								share={share as Share}
+								share={share}
 								permissions={node.permissions}
 								yourselfChip={share.share_target.id === me}
 								deleteShare={deleteShare}
@@ -124,7 +130,7 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 	return (
 		<MainContainer
 			mainAlignment="flex-start"
-			background="gray5"
+			background={'gray5'}
 			height={cssCalcBuilder('100%', ['-', '3.125rem'])}
 			data-testid="node-sharing"
 		>
@@ -133,14 +139,14 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 				crossAlignment="flex-start"
 				height="fit"
 				padding={{ all: 'large' }}
-				background="gray6"
+				background={'gray6'}
 				data-testid="node-sharing-collaborators"
 			>
 				{!node.permissions.can_share && (
 					<Padding bottom="large" width="100%">
 						<Container
 							orientation="horizontal"
-							background="info"
+							background={'info'}
 							minHeight="2.5rem"
 							mainAlignment="flex-start"
 						>
@@ -193,7 +199,7 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 				<PublicLink
 					nodeId={node.id}
 					nodeName={node.name}
-					nodeTypename={node.__typename as string}
+					nodeTypename={node.__typename}
 					canShare={node.permissions.can_share}
 				/>
 			)}

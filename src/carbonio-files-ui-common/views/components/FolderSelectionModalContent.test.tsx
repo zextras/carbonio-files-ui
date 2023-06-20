@@ -499,7 +499,7 @@ describe('Folder Selection Modal Content', () => {
 				filter
 			),
 			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetChild({ node_id: folder.id, shares_limit: 1 }, folder),
+			mockGetChild({ node_id: folder.id }, folder),
 			mockGetPath({ node_id: folder.id }, [folder])
 		];
 

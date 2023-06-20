@@ -11,6 +11,7 @@ import { map } from 'lodash';
 
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { SHARES_LOAD_LIMIT } from '../constants';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
@@ -76,10 +77,7 @@ describe('Folder View', () => {
 					getNode: currentFolder
 				}
 			});
-			const mockGetChildQuery = mockGetChild(
-				{ node_id: currentFolder.id, shares_limit: 1 },
-				currentFolder
-			);
+			const mockGetChildQuery = mockGetChild({ node_id: currentFolder.id }, currentFolder);
 			global.apolloClient.writeQuery<GetChildQuery, GetChildQueryVariables>({
 				...mockGetChildQuery.request,
 				data: {
@@ -124,10 +122,7 @@ describe('Folder View', () => {
 					getNode: currentFolder
 				}
 			});
-			const mockGetChildQuery = mockGetChild(
-				{ node_id: currentFolder.id, shares_limit: 1 },
-				currentFolder
-			);
+			const mockGetChildQuery = mockGetChild({ node_id: currentFolder.id }, currentFolder);
 			global.apolloClient.writeQuery<GetChildQuery, GetChildQueryVariables>({
 				...mockGetChildQuery.request,
 				data: {
@@ -175,7 +170,7 @@ describe('Folder View', () => {
 				query: GET_CHILD,
 				variables: {
 					node_id: currentFolder.id,
-					shares_limit: 1
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				data: {
 					getNode: currentFolder
@@ -289,7 +284,7 @@ describe('Folder View', () => {
 				query: GET_CHILD,
 				variables: {
 					node_id: currentFolder.id,
-					shares_limit: 1
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				data: {
 					getNode: currentFolder
@@ -343,7 +338,7 @@ describe('Folder View', () => {
 				query: GET_CHILD,
 				variables: {
 					node_id: currentFolder.id,
-					shares_limit: 1
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				data: {
 					getNode: currentFolder
