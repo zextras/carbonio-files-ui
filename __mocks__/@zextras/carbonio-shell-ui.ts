@@ -47,7 +47,8 @@ function soapFetchMock(
 	);
 }
 
-export const useUserAccounts = (): Account[] => [LOGGED_USER];
+export const useUserAccount = (): Account => LOGGED_USER;
+export const getUserAccount = (): Account => LOGGED_USER;
 export const useUserSettings = (): AccountSettings => USER_SETTINGS;
 export const replaceHistory = jest.fn(replaceHistoryMock);
 export const pushHistory = jest.fn(pushHistoryMock);

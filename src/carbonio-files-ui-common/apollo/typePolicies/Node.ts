@@ -3,12 +3,13 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { FieldFunctionOptions, TypePolicy } from '@apollo/client';
+import { FieldFunctionOptions, Reference, TypePolicy } from '@apollo/client';
 import { map } from 'lodash';
 
+import { getUserAccount } from '../../../utils/utils';
 import { ShareCachedObject, SharesCachedObject } from '../../types/apollo';
 import { Node } from '../../types/common';
-import { NodeSharesArgs } from '../../types/graphql/types';
+import { NodeSharesArgs, User } from '../../types/graphql/types';
 
 export const nodeTypePolicies: TypePolicy = {
 	merge: true,
@@ -75,6 +76,21 @@ export const nodeTypePolicies: TypePolicy = {
 				// a query is requesting a number of shares greater than the cached data,
 				// return undefined to force the network request
 				return undefined;
+			}
+		},
+		owner: {
+			merge(existing: Reference | undefined, incoming: Reference | null, { toReference, canRead }) {
+				if (incoming === null) {
+					// owner should be null only for the roots
+					// when null, the owner is the logged user
+					const loggedUser = getUserAccount();
+					const loggedUserRef = toReference({
+						__typename: 'User' satisfies User['__typename'],
+						id: loggedUser.id
+					});
+					return canRead(loggedUserRef) ? loggedUserRef : null;
+				}
+				return incoming;
 			}
 		}
 	}
