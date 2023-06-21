@@ -4,11 +4,8 @@
 
 #import "../fragments/collaborationLink.graphql"
 
-query getNodeCollaborationLinks($node_id: ID!) {
-	getNode(node_id: $node_id) {
-		id
-		collaboration_links {
-			...CollaborationLink
-		}
+query getCollaborationLinks($node_id: ID!) {
+	getCollaborationLinks(node_id: $node_id) {
+		...CollaborationLink
 	}
 }

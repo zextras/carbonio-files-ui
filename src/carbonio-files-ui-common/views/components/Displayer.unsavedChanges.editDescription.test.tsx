@@ -17,7 +17,7 @@ import {
 	getNodeVariables,
 	getSharesVariables,
 	mockGetNode,
-	mockGetNodeCollaborationLinks,
+	mockGetCollaborationLinks,
 	mockGetNodeLinks,
 	mockGetShares,
 	mockUpdateNodeDescription,
@@ -123,7 +123,7 @@ describe('Displayer', () => {
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -187,7 +187,7 @@ describe('Displayer', () => {
 					),
 					mockGetShares(getSharesVariables(node.id), node),
 					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -245,7 +245,7 @@ describe('Displayer', () => {
 						{ node_id: node.id, description: newDescription },
 						new ApolloError({ graphQLErrors: [generateError('update error')] })
 					),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {

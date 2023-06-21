@@ -30,7 +30,7 @@ import {
 	mockDeleteShare,
 	mockFindNodes,
 	mockGetNode,
-	mockGetNodeCollaborationLinks,
+	mockGetCollaborationLinks,
 	mockGetNodeLinks,
 	mockGetShares
 } from '../utils/mockUtils';
@@ -100,7 +100,7 @@ describe('Filter view', () => {
 				),
 				mockGetNode(getNodeVariables(node.id), node as Node),
 				mockGetShares(getSharesVariables(node.id), node),
-				mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+				mockGetCollaborationLinks({ node_id: node.id }),
 				mockGetNodeLinks({ node_id: node.id }, node),
 				mockDeleteShare({ node_id: node.id, share_target_id: mockedUserLogged.id }, true)
 			];
