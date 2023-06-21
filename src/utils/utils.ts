@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { report } from '@zextras/carbonio-shell-ui';
+import { Account, getUserAccount as shellGetUserAccount, report } from '@zextras/carbonio-shell-ui';
 
 export const captureException = report;
+
+export function getUserAccount(): Account {
+	return shellGetUserAccount();
+}

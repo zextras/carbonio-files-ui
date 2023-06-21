@@ -123,7 +123,7 @@ function cleanEmails<T extends { email?: string | undefined }>(
 				return acc;
 			}
 			// exclude email of node owner
-			if (result.email === node.owner.email) {
+			if (result.email === node.owner?.email) {
 				return acc;
 			}
 			// exclude emails already added as collaborators

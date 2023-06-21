@@ -105,7 +105,7 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 
 	const ownerChip = useMemo(() => {
 		const label =
-			node.owner.id === me ? t('displayer.share.chip.you', 'You') : getChipLabel(node.owner);
+			node.owner?.id === me ? t('displayer.share.chip.you', 'You') : getChipLabel(node.owner);
 		return (
 			<Chip
 				size={SHARE_CHIP_SIZE}

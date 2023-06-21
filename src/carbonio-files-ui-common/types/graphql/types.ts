@@ -69,7 +69,7 @@ export type File = Node & {
 	links: Array<Maybe<Link>>;
 	mime_type: Scalars['String'];
 	name: Scalars['String'];
-	owner: User;
+	owner?: Maybe<User>;
 	parent?: Maybe<Node>;
 	permissions: Permissions;
 	rootId?: Maybe<Scalars['ID']>;
@@ -103,7 +103,7 @@ export type Folder = Node & {
 	last_editor?: Maybe<User>;
 	links: Array<Maybe<Link>>;
 	name: Scalars['String'];
-	owner: User;
+	owner?: Maybe<User>;
 	parent?: Maybe<Node>;
 	permissions: Permissions;
 	rootId?: Maybe<Scalars['ID']>;
@@ -272,7 +272,7 @@ export type Node = {
 	last_editor?: Maybe<User>;
 	links: Array<Maybe<Link>>;
 	name: Scalars['String'];
-	owner: User;
+	owner?: Maybe<User>;
 	parent?: Maybe<Node>;
 	permissions: Permissions;
 	rootId?: Maybe<Scalars['ID']>;
@@ -520,7 +520,7 @@ export type Child_File_Fragment = {
 	type: NodeType;
 	flagged: boolean;
 	rootId?: string | null;
-	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	shares: Array<
 		| ({
@@ -555,7 +555,7 @@ export type Child_Folder_Fragment = {
 	type: NodeType;
 	flagged: boolean;
 	rootId?: string | null;
-	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	shares: Array<
 		| ({
@@ -596,7 +596,7 @@ export type ChildWithParent_File_Fragment = {
 	type: NodeType;
 	flagged: boolean;
 	rootId?: string | null;
-	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	shares: Array<
 		| ({
@@ -614,7 +614,7 @@ export type ChildWithParent_File_Fragment = {
 		| ({
 				id: string;
 				name: string;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -650,7 +650,7 @@ export type ChildWithParent_Folder_Fragment = {
 	type: NodeType;
 	flagged: boolean;
 	rootId?: string | null;
-	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	shares: Array<
 		| ({
@@ -668,7 +668,7 @@ export type ChildWithParent_Folder_Fragment = {
 		| ({
 				id: string;
 				name: string;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -723,7 +723,7 @@ export type NodeParentFragment = {
 		| ({
 				id: string;
 				name: string;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -743,7 +743,7 @@ export type NodeParentFragment = {
 export type ParentFragment = {
 	id: string;
 	name: string;
-	owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 	permissions: {
 		can_read: boolean;
 		can_write_file: boolean;
@@ -826,7 +826,7 @@ export type CopyNodesMutation = {
 				flagged: boolean;
 				rootId?: string | null;
 				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 					| null;
@@ -863,7 +863,7 @@ export type CopyNodesMutation = {
 				flagged: boolean;
 				rootId?: string | null;
 				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 					| null;
@@ -930,7 +930,7 @@ export type CreateFolderMutation = {
 				flagged: boolean;
 				rootId?: string | null;
 				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 					| null;
@@ -967,7 +967,7 @@ export type CreateFolderMutation = {
 				flagged: boolean;
 				rootId?: string | null;
 				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 					| null;
@@ -1221,7 +1221,9 @@ export type FindNodesQuery = {
 							type: NodeType;
 							flagged: boolean;
 							rootId?: string | null;
-							owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+							owner?:
+								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								| null;
 							last_editor?:
 								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 								| null;
@@ -1241,9 +1243,9 @@ export type FindNodesQuery = {
 								| ({
 										id: string;
 										name: string;
-										owner: { id: string; full_name: string; email: string } & {
-											__typename?: 'User';
-										};
+										owner?:
+											| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+											| null;
 										permissions: {
 											can_read: boolean;
 											can_write_file: boolean;
@@ -1278,7 +1280,9 @@ export type FindNodesQuery = {
 							type: NodeType;
 							flagged: boolean;
 							rootId?: string | null;
-							owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+							owner?:
+								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								| null;
 							last_editor?:
 								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 								| null;
@@ -1298,9 +1302,9 @@ export type FindNodesQuery = {
 								| ({
 										id: string;
 										name: string;
-										owner: { id: string; full_name: string; email: string } & {
-											__typename?: 'User';
-										};
+										owner?:
+											| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+											| null;
 										permissions: {
 											can_read: boolean;
 											can_write_file: boolean;
@@ -1423,7 +1427,7 @@ export type GetChildQuery = {
 				type: NodeType;
 				flagged: boolean;
 				rootId?: string | null;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 					| null;
@@ -1443,7 +1447,9 @@ export type GetChildQuery = {
 					| ({
 							id: string;
 							name: string;
-							owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+							owner?:
+								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								| null;
 							permissions: {
 								can_read: boolean;
 								can_write_file: boolean;
@@ -1478,7 +1484,7 @@ export type GetChildQuery = {
 				type: NodeType;
 				flagged: boolean;
 				rootId?: string | null;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				last_editor?:
 					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 					| null;
@@ -1498,7 +1504,9 @@ export type GetChildQuery = {
 					| ({
 							id: string;
 							name: string;
-							owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+							owner?:
+								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								| null;
 							permissions: {
 								can_read: boolean;
 								can_write_file: boolean;
@@ -1542,7 +1550,7 @@ export type GetChildrenQuery = {
 		| ({
 				id: string;
 				name: string;
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1573,7 +1581,9 @@ export type GetChildrenQuery = {
 								type: NodeType;
 								flagged: boolean;
 								rootId?: string | null;
-								owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+								owner?:
+									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+									| null;
 								last_editor?:
 									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 									| null;
@@ -1595,9 +1605,11 @@ export type GetChildrenQuery = {
 									| ({
 											id: string;
 											name: string;
-											owner: { id: string; full_name: string; email: string } & {
-												__typename?: 'User';
-											};
+											owner?:
+												| ({ id: string; full_name: string; email: string } & {
+														__typename?: 'User';
+												  })
+												| null;
 											permissions: {
 												can_read: boolean;
 												can_write_file: boolean;
@@ -1632,7 +1644,9 @@ export type GetChildrenQuery = {
 								type: NodeType;
 								flagged: boolean;
 								rootId?: string | null;
-								owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+								owner?:
+									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+									| null;
 								last_editor?:
 									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 									| null;
@@ -1654,9 +1668,11 @@ export type GetChildrenQuery = {
 									| ({
 											id: string;
 											name: string;
-											owner: { id: string; full_name: string; email: string } & {
-												__typename?: 'User';
-											};
+											owner?:
+												| ({ id: string; full_name: string; email: string } & {
+														__typename?: 'User';
+												  })
+												| null;
 											permissions: {
 												can_read: boolean;
 												can_write_file: boolean;
@@ -1687,7 +1703,7 @@ export type GetChildrenQuery = {
 						| null
 					>;
 				} & { __typename?: 'NodePage' };
-				owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1735,7 +1751,7 @@ export type GetNodeQuery = {
 				type: NodeType;
 				flagged: boolean;
 				rootId?: string | null;
-				owner: { id: string; email: string; full_name: string } & { __typename?: 'User' };
+				owner?: ({ id: string; email: string; full_name: string } & { __typename?: 'User' }) | null;
 				creator: { id: string; email: string; full_name: string } & { __typename?: 'User' };
 				last_editor?:
 					| ({ id: string; email: string; full_name: string } & { __typename?: 'User' })
@@ -1806,7 +1822,9 @@ export type GetNodeQuery = {
 								type: NodeType;
 								flagged: boolean;
 								rootId?: string | null;
-								owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+								owner?:
+									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+									| null;
 								last_editor?:
 									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 									| null;
@@ -1828,9 +1846,11 @@ export type GetNodeQuery = {
 									| ({
 											id: string;
 											name: string;
-											owner: { id: string; full_name: string; email: string } & {
-												__typename?: 'User';
-											};
+											owner?:
+												| ({ id: string; full_name: string; email: string } & {
+														__typename?: 'User';
+												  })
+												| null;
 											permissions: {
 												can_read: boolean;
 												can_write_file: boolean;
@@ -1865,7 +1885,9 @@ export type GetNodeQuery = {
 								type: NodeType;
 								flagged: boolean;
 								rootId?: string | null;
-								owner: { id: string; full_name: string; email: string } & { __typename?: 'User' };
+								owner?:
+									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+									| null;
 								last_editor?:
 									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
 									| null;
@@ -1887,9 +1909,11 @@ export type GetNodeQuery = {
 									| ({
 											id: string;
 											name: string;
-											owner: { id: string; full_name: string; email: string } & {
-												__typename?: 'User';
-											};
+											owner?:
+												| ({ id: string; full_name: string; email: string } & {
+														__typename?: 'User';
+												  })
+												| null;
 											permissions: {
 												can_read: boolean;
 												can_write_file: boolean;
@@ -1920,7 +1944,7 @@ export type GetNodeQuery = {
 						| null
 					>;
 				} & { __typename?: 'NodePage' };
-				owner: { id: string; email: string; full_name: string } & { __typename?: 'User' };
+				owner?: ({ id: string; email: string; full_name: string } & { __typename?: 'User' }) | null;
 				creator: { id: string; email: string; full_name: string } & { __typename?: 'User' };
 				last_editor?:
 					| ({ id: string; email: string; full_name: string } & { __typename?: 'User' })
