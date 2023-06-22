@@ -108,7 +108,6 @@ function getLinkWithClient(
 			return new Promise<LinksType>((resolve, reject) => {
 				apolloClient
 					.query<GetLinksQuery, GetLinksQueryVariables>({
-						// used getNodeLinks instead of getLinks because getLinks has some issues on error handling
 						query: GetLinksDocument,
 						variables: {
 							node_id: node.id

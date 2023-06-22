@@ -24,7 +24,7 @@ import useUserInfo from '../../../../../hooks/useUserInfo';
 import { useCreateLinkMutation } from '../../../../hooks/graphql/mutations/useCreateLinkMutation';
 import { useDeleteLinksMutation } from '../../../../hooks/graphql/mutations/useDeleteLinksMutation';
 import { useUpdateLinkMutation } from '../../../../hooks/graphql/mutations/useUpdateLinkMutation';
-import { useGetNodeLinksQuery } from '../../../../hooks/graphql/queries/useGetNodeLinksQuery';
+import { useGetLinksQuery } from '../../../../hooks/graphql/queries/useGetLinksQuery';
 import { PublicLinkRowStatus } from '../../../../types/common';
 import { NonNullableListItem } from '../../../../types/utils';
 import { copyToClipboard } from '../../../../utils/utils';
@@ -41,7 +41,7 @@ export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): 
 	const createSnackbar = useSnackbar();
 	const createModal = useModal();
 
-	const { data: getLinksQueryData } = useGetNodeLinksQuery(nodeId);
+	const { data: getLinksQueryData } = useGetLinksQuery(nodeId);
 
 	const links = useMemo(() => {
 		if (getLinksQueryData?.getLinks) {

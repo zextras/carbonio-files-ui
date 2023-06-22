@@ -13,7 +13,7 @@ import {
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
-export function useGetNodeLinksQuery(
+export function useGetLinksQuery(
 	nodeId: string
 ): Pick<QueryResult<GetLinksQuery>, 'data' | 'loading' | 'error'> {
 	const { data, loading, error } = useQuery<GetLinksQuery, GetLinksQueryVariables>(
