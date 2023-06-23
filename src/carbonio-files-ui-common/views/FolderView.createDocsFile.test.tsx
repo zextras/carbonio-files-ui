@@ -21,6 +21,7 @@ import {
 	NODES_LOAD_LIMIT,
 	NODES_SORT_DEFAULT
 } from '../constants';
+import { ICON_REGEXP } from '../constants/test';
 import {
 	CreateDocsFileRequestBody,
 	CreateDocsFileResponse
@@ -128,7 +129,7 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -191,7 +192,7 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -289,7 +290,7 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		let nodes = screen.getAllByTestId('node-item', { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 

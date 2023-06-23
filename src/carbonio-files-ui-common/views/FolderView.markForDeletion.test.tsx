@@ -13,7 +13,7 @@ import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
-import { ACTION_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodePage, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { Folder, NodeSort } from '../types/graphql/types';
@@ -206,7 +206,7 @@ describe('Mark for deletion - trash', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(5);
 
@@ -260,7 +260,7 @@ describe('Mark for deletion - trash', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(5);
 

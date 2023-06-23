@@ -89,10 +89,10 @@ describe('Filter view', () => {
 		});
 
 		const listHeader = screen.getByTestId('list-header');
-		expect(within(listHeader).getByTestId('icon: Refresh')).toBeVisible();
+		expect(within(listHeader).getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 		await waitFor(() => expect(screen.getByTestId(`list-`)).not.toBeEmptyDOMElement());
 		await screen.findByText(nodes[0].name);
-		expect(within(listHeader).queryByTestId('icon: Refresh')).not.toBeInTheDocument();
+		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 		forEach(nodes, (node) => {
 			expect(screen.getByTestId(`node-item-${node.id}`)).toBeInTheDocument();
 			expect(screen.getByTestId(`node-item-${node.id}`)).toHaveTextContent(node.name);
@@ -119,16 +119,20 @@ describe('Filter view', () => {
 		});
 
 		// this is the loading refresh icon
-		expect(screen.getByTestId('list-header')).toContainElement(screen.getByTestId('icon: Refresh'));
-		expect(within(screen.getByTestId('list-header')).getByTestId('icon: Refresh')).toBeVisible();
+		expect(screen.getByTestId('list-header')).toContainElement(
+			screen.getByTestId(ICON_REGEXP.queryLoading)
+		);
+		expect(
+			within(screen.getByTestId('list-header')).getByTestId(ICON_REGEXP.queryLoading)
+		).toBeVisible();
 		await waitForElementToBeRemoved(
-			within(screen.getByTestId('list-header')).queryByTestId('icon: Refresh')
+			within(screen.getByTestId('list-header')).queryByTestId(ICON_REGEXP.queryLoading)
 		);
 		// wait the rendering of the first item
 		await screen.findByTestId(`node-item-${currentFilter[0].id}`);
 		expect(screen.getByTestId(`node-item-${currentFilter[NODES_LOAD_LIMIT - 1].id}`)).toBeVisible();
 		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
-		expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(screen.queryByTestId(currentFilter[NODES_LOAD_LIMIT].id)).not.toBeInTheDocument();
@@ -143,7 +147,7 @@ describe('Filter view', () => {
 		).toBeVisible();
 		expect(screen.getByTestId(`node-item-${currentFilter[0].id}`)).toBeVisible();
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(currentFilter.length);
-		expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 
 	test('filter is re-fetched on subsequent navigations', async () => {

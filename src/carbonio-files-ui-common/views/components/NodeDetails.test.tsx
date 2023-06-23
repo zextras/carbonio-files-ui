@@ -12,6 +12,7 @@ import { DefaultTheme } from 'styled-components';
 
 import { NodeDetails } from './NodeDetails';
 import { NODES_LOAD_LIMIT } from '../../constants';
+import { ICON_REGEXP } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -475,7 +476,7 @@ describe('Node Details', () => {
 		const firstElement = await screen.findByText(nodes[0].name);
 		expect(firstElement).toBeVisible();
 		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
-		expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(screen.queryAllByTestId(`details-node-item-`, { exact: false })).toHaveLength(

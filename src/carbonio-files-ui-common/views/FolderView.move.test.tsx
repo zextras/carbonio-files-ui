@@ -457,7 +457,7 @@ describe('Move', () => {
 			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 				firstPage.length - 1
 			);
-			expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 			await triggerLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();

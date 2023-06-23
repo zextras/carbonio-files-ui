@@ -16,6 +16,7 @@ import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { NODES_LOAD_LIMIT } from '../constants';
+import { ICON_REGEXP } from '../constants/test';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
@@ -74,7 +75,7 @@ describe('Get children', () => {
 			mocks
 		});
 
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 		await screen.findByText(/An error occurred/i);
 	});
@@ -97,11 +98,11 @@ describe('Get children', () => {
 		});
 
 		const listHeader = screen.getByTestId('list-header');
-		expect(within(listHeader).getByTestId('icon: Refresh')).toBeVisible();
+		expect(within(listHeader).getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 		await waitFor(() =>
 			expect(screen.getByTestId(`list-${currentFolder.id}`)).not.toBeEmptyDOMElement()
 		);
-		expect(within(listHeader).queryByTestId('icon: Refresh')).not.toBeInTheDocument();
+		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 		const queryResult = global.apolloClient.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 			query: GET_CHILDREN,
 			variables: getChildrenVariables(currentFolder.id)
@@ -144,10 +145,14 @@ describe('Get children', () => {
 		});
 
 		// this is the loading refresh icon
-		expect(screen.getByTestId('list-header')).toContainElement(screen.getByTestId('icon: Refresh'));
-		expect(within(screen.getByTestId('list-header')).getByTestId('icon: Refresh')).toBeVisible();
+		expect(screen.getByTestId('list-header')).toContainElement(
+			screen.getByTestId(ICON_REGEXP.queryLoading)
+		);
+		expect(
+			within(screen.getByTestId('list-header')).getByTestId(ICON_REGEXP.queryLoading)
+		).toBeVisible();
 		await waitForElementToBeRemoved(
-			within(screen.getByTestId('list-header')).queryByTestId('icon: Refresh')
+			within(screen.getByTestId('list-header')).queryByTestId(ICON_REGEXP.queryLoading)
 		);
 		// wait the rendering of the first item
 		await screen.findByTestId(`node-item-${(currentFolder.children.nodes[0] as Node).id}`);
@@ -157,7 +162,7 @@ describe('Get children', () => {
 			)
 		).toBeVisible();
 		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
-		expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(
@@ -181,6 +186,6 @@ describe('Get children', () => {
 				}`
 			)
 		).toBeVisible();
-		expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 });

@@ -82,7 +82,7 @@ describe('Flag', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 			expect(screen.queryByTestId('icon: Flag')).not.toBeInTheDocument();
 
 			// activate selection mode by selecting items
@@ -153,7 +153,7 @@ describe('Flag', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(`node-item-${node.id}`);
