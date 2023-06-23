@@ -42,7 +42,6 @@ import {
 } from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPath,
@@ -92,8 +91,7 @@ describe('Drag and drop', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder)
+			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
 		const dataTransferObj = createDataTransfer(uploadedFiles);
@@ -157,8 +155,7 @@ describe('Drag and drop', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder)
+			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
 		const dataTransferObj = createDataTransfer(uploadedFiles);
@@ -217,8 +214,7 @@ describe('Drag and drop', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder)
+			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
 		const dataTransferObj = createDataTransfer(uploadedFiles);
@@ -277,8 +273,7 @@ describe('Drag and drop', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder)
+			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
 		const dataTransferObj = createDataTransfer(uploadedFiles);
@@ -341,8 +336,7 @@ describe('Drag and drop', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder)
+			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
 		const dataTransferObj = createDataTransfer(uploadedFiles);
@@ -404,7 +398,6 @@ describe('Drag and drop', () => {
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockMoveNodes(
 				{
 					node_ids: map(nodesToDrag, (node) => node.id),
@@ -503,8 +496,7 @@ describe('Drag and drop', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder)
+			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
 		let dataTransferData: Record<string, string> = {};
@@ -581,7 +573,6 @@ describe('Drag and drop', () => {
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockMoveNodes(
 				{
 					node_ids: map(nodesToDrag, (node) => node.id),
@@ -669,7 +660,6 @@ describe('Drag and drop', () => {
 		const mocks = [
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPath({ node_id: currentFolder.id }, path),
 			mockMoveNodes(

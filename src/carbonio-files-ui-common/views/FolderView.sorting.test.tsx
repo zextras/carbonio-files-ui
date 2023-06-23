@@ -15,7 +15,6 @@ import { populateFile, populateFolder } from '../mocks/mockUtils';
 import { NodeSort } from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPermissions
@@ -61,7 +60,6 @@ describe('Sorting', () => {
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(
 				getChildrenVariables(currentFolder2.id, undefined, NodeSort.NameDesc),
 				currentFolder2

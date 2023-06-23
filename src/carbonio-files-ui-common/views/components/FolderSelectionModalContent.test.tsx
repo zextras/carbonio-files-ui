@@ -30,7 +30,6 @@ import {
 	getChildrenVariables,
 	getFindNodesVariables,
 	mockFindNodes,
-	mockGetChild,
 	mockGetChildren,
 	mockGetPath
 } from '../../utils/mockUtils';
@@ -499,7 +498,6 @@ describe('Folder Selection Modal Content', () => {
 				filter
 			),
 			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetChild({ node_id: folder.id }, folder),
 			mockGetPath({ node_id: folder.id }, [folder])
 		];
 

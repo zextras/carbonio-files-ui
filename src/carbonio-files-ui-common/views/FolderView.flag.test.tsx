@@ -18,7 +18,6 @@ import { Node } from '../types/common';
 import {
 	getChildrenVariables,
 	mockFlagNodes,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPermissions
@@ -59,7 +58,6 @@ describe('Flag', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockFlagNodes(
 					{
 						node_ids: nodesIdsToFlag,
@@ -130,7 +128,6 @@ describe('Flag', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockFlagNodes(
 					{
 						node_ids: [node.id],

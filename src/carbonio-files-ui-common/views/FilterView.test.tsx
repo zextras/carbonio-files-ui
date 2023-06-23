@@ -25,7 +25,6 @@ import {
 	getFindNodesVariables,
 	mockFindNodes,
 	mockFlagNodes,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPermissions
@@ -164,7 +163,6 @@ describe('Filter view', () => {
 			),
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockFlagNodes(
 				{

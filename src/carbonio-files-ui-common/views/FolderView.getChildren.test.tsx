@@ -29,7 +29,6 @@ import {
 } from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChild,
 	mockGetChildren,
 	mockGetChildrenError,
 	mockGetParent,
@@ -58,7 +57,6 @@ describe('Get children', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildrenError(
 				getChildrenVariables(currentFolder.id),
 				new ApolloError({ graphQLErrors: [generateError('An error occurred')] })
@@ -129,7 +127,6 @@ describe('Get children', () => {
 				children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))
 			} as Folder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(
 				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
 				{

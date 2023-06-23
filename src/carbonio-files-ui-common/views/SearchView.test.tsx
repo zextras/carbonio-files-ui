@@ -32,7 +32,6 @@ import {
 	getSharesVariables,
 	mockDeleteShare,
 	mockFindNodes,
-	mockGetChild,
 	mockGetChildren,
 	mockGetNode,
 	mockGetCollaborationLinks,
@@ -211,7 +210,6 @@ describe('Search view', () => {
 				mockGetPath({ node_id: node.parent.id }, parentPath),
 				mockGetPath({ node_id: destinationFolder.id }, [...parentPath, destinationFolder]),
 				mockGetChildren(getChildrenVariables(node.parent.id), node.parent),
-				mockGetChild({ node_id: node.parent.id }, node.parent),
 				mockMoveNodes({ node_ids: [node.id], destination_id: destinationFolder.id }, [node])
 			];
 
