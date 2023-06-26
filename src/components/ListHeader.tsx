@@ -27,6 +27,7 @@ type ListHeaderProps = Omit<
 	folderId?: string;
 	crumbs?: Crumb[];
 	loadingData?: boolean;
+	selectedCount?: number;
 };
 
 const ListHeader: React.VFC<ListHeaderProps> = ({
@@ -38,7 +39,8 @@ const ListHeader: React.VFC<ListHeaderProps> = ({
 	selectAll,
 	permittedSelectionModeActionsItems,
 	exitSelectionMode,
-	isAllSelected
+	isAllSelected,
+	selectedCount
 }) => {
 	const location = useLocation();
 	const inSearchView = isSearchView(location);
@@ -75,6 +77,7 @@ const ListHeader: React.VFC<ListHeaderProps> = ({
 
 	return (
 		<CommonListHeader
+			selectedCount={selectedCount}
 			isSelectionModeActive={isSelectionModeActive}
 			unSelectAll={unSelectAll}
 			selectAll={selectAll}
