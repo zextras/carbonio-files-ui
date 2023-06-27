@@ -101,11 +101,11 @@ export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): stri
 		case NodeType.Root: {
 			switch (subType) {
 				case ROOTS.LOCAL_ROOT:
-					return 'Home';
+					return 'FolderOutline';
 				case ROOTS.TRASH:
-					return 'Trash2';
+					return 'Trash2Outline';
 				case ROOTS.SHARED_WITH_ME:
-					return 'Share';
+					return 'ArrowCircleLeftOutline';
 				default:
 					return 'File';
 			}
@@ -144,6 +144,14 @@ export const getIconColorByFileType = (
 			return theme.palette.success.regular;
 		case NodeType.Application:
 			return theme.palette.gray0.regular;
+		case NodeType.Root: {
+			switch (subType) {
+				case ROOTS.SHARED_WITH_ME:
+					return '#AB47BC';
+				default:
+					return theme.palette.currentColor.regular;
+			}
+		}
 		default:
 			return theme.palette.primary.regular;
 	}

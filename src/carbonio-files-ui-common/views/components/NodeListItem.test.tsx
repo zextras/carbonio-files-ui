@@ -314,36 +314,6 @@ describe('Node List Item', () => {
 		expect(mockedNavigation).not.toHaveBeenCalled();
 	});
 
-	test('Icon change based on node type', () => {
-		const { rerender } = setup(<NodeListItem id="nodeId" name="name" type={NodeType.Folder} />);
-		expect(screen.getByTestId('icon: Folder')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Folder')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Text} />);
-		expect(screen.getByTestId('icon: FileText')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Video} />);
-		expect(screen.getByTestId('icon: Video')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Audio} />);
-		expect(screen.getByTestId('icon: Music')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Image} />);
-		expect(screen.getByTestId('icon: Image')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Message} />);
-		expect(screen.getByTestId('icon: Email')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Presentation} />);
-		expect(screen.getByTestId('icon: FilePresentation')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Spreadsheet} />);
-		expect(screen.getByTestId('icon: FileCalc')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Application} />);
-		expect(screen.getByTestId('icon: Code')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Other} />);
-		expect(screen.getByTestId('icon: File')).toBeVisible();
-		rerender(<NodeListItem id={ROOTS.TRASH} name="name" type={NodeType.Root} />);
-		expect(screen.getByTestId('icon: Trash2')).toBeVisible();
-		rerender(<NodeListItem id={ROOTS.SHARED_WITH_ME} name="name" type={NodeType.Root} />);
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
-		rerender(<NodeListItem id={ROOTS.LOCAL_ROOT} name="name" type={NodeType.Root} />);
-		expect(screen.getByTestId('icon: Home')).toBeVisible();
-	});
-
 	test('Double click on node of type image open preview to show image with original dimensions', async () => {
 		const node = populateFile();
 		node.type = NodeType.Image;
@@ -605,4 +575,13 @@ describe('Node List Item', () => {
 			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
 		}
 	);
+	test.each<[rootType: string, icon: keyof DefaultTheme['icons'], color: string]>([
+		[ROOTS.SHARED_WITH_ME, 'ArrowCircleLeftOutline', '#AB47BC'],
+		[ROOTS.TRASH, 'Trash2Outline', 'currentColor'],
+		[ROOTS.LOCAL_ROOT, 'FolderOutline', 'currentColor']
+	])('node with root type %s show icon %s with color %s', (rootType, icon, color) => {
+		setup(<NodeListItem id={rootType} name={'name'} type={NodeType.Root} />);
+		expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
+		expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
+	});
 });
