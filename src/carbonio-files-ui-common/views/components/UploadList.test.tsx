@@ -589,14 +589,14 @@ describe('Upload list', () => {
 		test('should render the badge with the number of selected items', async () => {
 			const uploadItems = populateUploadItems(10);
 			uploadVar(keyBy(uploadItems, (item) => item.id));
-			const { user } = setup(<UploadList />);
+			const { user } = setup(<UploadList />, { mocks: [] });
 			await selectNodes([uploadItems[0].id], user);
 			expect(screen.getByText(1)).toBeInTheDocument();
 		});
 		test('if the user clicks SELECT ALL, the badge renders the length of all nodes', async () => {
 			const uploadItems = populateUploadItems(10);
 			uploadVar(keyBy(uploadItems, (item) => item.id));
-			const { user } = setup(<UploadList />);
+			const { user } = setup(<UploadList />, { mocks: [] });
 			await selectNodes([uploadItems[0].id], user);
 			expect(screen.getByText(1)).toBeInTheDocument();
 			await user.click(screen.getByText(/SELECT ALL/i));
