@@ -15,7 +15,7 @@ describe('List', () => {
 	describe('Badge', () => {
 		test('should render the list header with the badge with the number of selected items', async () => {
 			const nodes = populateNodes(10);
-			const { user } = setup(<List nodes={nodes} mainList emptyListMessage={'hint'} />);
+			const { user } = setup(<List nodes={nodes} mainList emptyListMessage={'hint'} />, { mocks: [] );
 			const nodesSelected = [nodes[0].id, nodes[1].id];
 			// the user selected the first 2 nodes
 			await selectNodes(nodesSelected, user);
