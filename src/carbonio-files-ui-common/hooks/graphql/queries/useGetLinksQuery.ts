@@ -6,15 +6,18 @@
 
 import { QueryResult, useQuery } from '@apollo/client';
 
-import GET_NODE_LINKS from '../../../graphql/queries/getNodeLinks.graphql';
-import { GetNodeLinksQuery, GetNodeLinksQueryVariables } from '../../../types/graphql/types';
+import {
+	GetLinksDocument,
+	GetLinksQuery,
+	GetLinksQueryVariables
+} from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
-export function useGetNodeLinksQuery(
+export function useGetLinksQuery(
 	nodeId: string
-): Pick<QueryResult<GetNodeLinksQuery>, 'data' | 'loading' | 'error'> {
-	const { data, loading, error } = useQuery<GetNodeLinksQuery, GetNodeLinksQueryVariables>(
-		GET_NODE_LINKS,
+): Pick<QueryResult<GetLinksQuery>, 'data' | 'loading' | 'error'> {
+	const { data, loading, error } = useQuery<GetLinksQuery, GetLinksQueryVariables>(
+		GetLinksDocument,
 		{
 			variables: {
 				node_id: nodeId
@@ -25,7 +28,7 @@ export function useGetNodeLinksQuery(
 			returnPartialData: true
 		}
 	);
-	useErrorHandler(error, 'GET_NODE_LINKS');
+	useErrorHandler(error, 'GET_LINKS');
 
 	return { data, loading, error };
 }

@@ -10,14 +10,14 @@ import { map, find } from 'lodash';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
 import LINK from '../carbonio-files-ui-common/graphql/fragments/link.graphql';
-import CREATE_LINK from '../carbonio-files-ui-common/graphql/mutations/createLink.graphql';
-import GET_NODE_LINKS from '../carbonio-files-ui-common/graphql/queries/getNodeLinks.graphql';
 import { NodeWithMetadata } from '../carbonio-files-ui-common/types/common';
 import {
+	CreateLinkDocument,
 	CreateLinkMutation,
 	CreateLinkMutationVariables,
-	GetNodeLinksQuery,
-	GetNodeLinksQueryVariables,
+	GetLinksDocument,
+	GetLinksQuery,
+	GetLinksQueryVariables,
 	LinkFragment
 } from '../carbonio-files-ui-common/types/graphql/types';
 import { FUNCTION_IDS } from '../constants';
@@ -67,7 +67,7 @@ function getLinkWithClient(
 			return new Promise<CreateLinkMutation['createLink']>((resolve, reject) => {
 				apolloClient
 					.mutate<CreateLinkMutation, CreateLinkMutationVariables>({
-						mutation: CREATE_LINK,
+						mutation: CreateLinkDocument,
 						variables: {
 							node_id: id,
 							description,
@@ -107,26 +107,25 @@ function getLinkWithClient(
 
 			return new Promise<LinksType>((resolve, reject) => {
 				apolloClient
-					.query<GetNodeLinksQuery, GetNodeLinksQueryVariables>({
-						// used getNodeLinks instead of getLinks because getLinks has some issues on error handling
-						query: GET_NODE_LINKS,
+					.query<GetLinksQuery, GetLinksQueryVariables>({
+						query: GetLinksDocument,
 						variables: {
 							node_id: node.id
 						}
 					})
 					.then(
 						(value) => {
-							if (value?.data?.getNode?.links) {
-								const links = value?.data?.getNode?.links;
+							if (value?.data?.getLinks) {
+								const links = value?.data?.getLinks;
 								if (linkIds) {
 									resolve(
 										map(linkIds, (id) => {
-											const link = find(links, ['id', id]);
+											const link = find(links, (item) => item?.id === id);
 											return link || null;
 										})
 									);
 								} else {
-									resolve(value.data.getNode.links);
+									resolve(value.data.getLinks);
 								}
 							} else {
 								reject();
@@ -138,9 +137,7 @@ function getLinkWithClient(
 					);
 			});
 		}
-		return new Promise((resolve, reject) => {
-			reject(new Error('the type field of args is missing or wrong'));
-		});
+		return Promise.reject(new Error('the type field of args is missing or wrong'));
 	}
 
 	return getLink;
