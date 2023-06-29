@@ -29,7 +29,7 @@ import handleGetBaseNodeRequest from '../carbonio-files-ui-common/mocks/handleGe
 import handleGetChildrenRequest from '../carbonio-files-ui-common/mocks/handleGetChildrenRequest';
 import handleGetChildRequest from '../carbonio-files-ui-common/mocks/handleGetChildRequest';
 import handleGetCollaborationLinksRequest from '../carbonio-files-ui-common/mocks/handleGetCollaborationLinksRequest';
-import handleGetNodeLinksRequest from '../carbonio-files-ui-common/mocks/handleGetNodeLinksRequest';
+import handleGetLinksRequest from '../carbonio-files-ui-common/mocks/handleGetLinksRequest';
 import handleGetNodeRequest from '../carbonio-files-ui-common/mocks/handleGetNodeRequest';
 import handleGetParentRequest from '../carbonio-files-ui-common/mocks/handleGetParentsRequest';
 import handleGetPathRequest from '../carbonio-files-ui-common/mocks/handleGetPathRequest';
@@ -59,7 +59,7 @@ if (!IS_SERVER) {
 		graphql.query('getBaseNode', handleGetBaseNodeRequest),
 		graphql.query('getChild', handleGetChildRequest),
 		graphql.query('getChildren', handleGetChildrenRequest),
-		graphql.query('getNodeLinks', handleGetNodeLinksRequest),
+		graphql.query('getLinks', handleGetLinksRequest),
 		graphql.query('getNode', handleGetNodeRequest),
 		graphql.query('getParent', handleGetParentRequest),
 		graphql.query('getPath', handleGetPathRequest),

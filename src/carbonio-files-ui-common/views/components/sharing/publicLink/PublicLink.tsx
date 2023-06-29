@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/* eslint-disable no-nested-ternary */
 import React, { useCallback, useMemo, useState } from 'react';
 
 import {
@@ -25,7 +24,7 @@ import useUserInfo from '../../../../../hooks/useUserInfo';
 import { useCreateLinkMutation } from '../../../../hooks/graphql/mutations/useCreateLinkMutation';
 import { useDeleteLinksMutation } from '../../../../hooks/graphql/mutations/useDeleteLinksMutation';
 import { useUpdateLinkMutation } from '../../../../hooks/graphql/mutations/useUpdateLinkMutation';
-import { useGetNodeLinksQuery } from '../../../../hooks/graphql/queries/useGetNodeLinksQuery';
+import { useGetLinksQuery } from '../../../../hooks/graphql/queries/useGetLinksQuery';
 import { PublicLinkRowStatus } from '../../../../types/common';
 import { NonNullableListItem } from '../../../../types/utils';
 import { copyToClipboard } from '../../../../utils/utils';
@@ -33,26 +32,20 @@ import { copyToClipboard } from '../../../../utils/utils';
 interface AddPublicLinkProps {
 	nodeId: string;
 	nodeName: string;
-	nodeTypename: string;
 	canShare: boolean;
 }
 
-export const PublicLink: React.FC<AddPublicLinkProps> = ({
-	nodeId,
-	nodeName,
-	nodeTypename,
-	canShare
-}) => {
+export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): JSX.Element => {
 	const [t] = useTranslation();
 	const { zimbraPrefTimeZoneId } = useUserInfo();
 	const createSnackbar = useSnackbar();
 	const createModal = useModal();
 
-	const { data: getLinksQueryData } = useGetNodeLinksQuery(nodeId);
+	const { data: getLinksQueryData } = useGetLinksQuery(nodeId);
 
 	const links = useMemo(() => {
-		if (getLinksQueryData?.getNode?.links) {
-			return getLinksQueryData.getNode.links;
+		if (getLinksQueryData?.getLinks) {
+			return getLinksQueryData.getLinks;
 		}
 		return [];
 	}, [getLinksQueryData]);
@@ -62,8 +55,8 @@ export const PublicLink: React.FC<AddPublicLinkProps> = ({
 	const [thereIsOpenRow, setThereIsOpenRow] = useState(false);
 
 	/** Mutation to create link */
-	const { createLink, loading: createLinkLoading } = useCreateLinkMutation(nodeId, nodeTypename);
-	const deleteLinks = useDeleteLinksMutation(nodeId, nodeTypename);
+	const { createLink, loading: createLinkLoading } = useCreateLinkMutation(nodeId);
+	const deleteLinks = useDeleteLinksMutation(nodeId);
 	const updateLink = useUpdateLinkMutation();
 
 	/** AddPublicLinkComponent callbacks */
@@ -222,42 +215,48 @@ export const PublicLink: React.FC<AddPublicLinkProps> = ({
 		[createSnackbar, t, updateLink, zimbraPrefTimeZoneId]
 	);
 
-	/** linkComponents */
+	const linkComponents = useMemo(() => {
+		function getLinkStatus(linkId: string): PublicLinkRowStatus {
+			if (openLinkId === linkId) {
+				return PublicLinkRowStatus.OPEN;
+			}
+			return thereIsOpenRow ? PublicLinkRowStatus.DISABLED : PublicLinkRowStatus.CLOSED;
+		}
+		return reduce<NonNullableListItem<typeof links> | null | undefined, JSX.Element[]>(
+			links,
+			(accumulator, link) => {
+				if (link) {
+					accumulator.push(
+						<PublicLinkComponent
+							key={link.id}
+							id={link.id}
+							url={link.url}
+							description={link.description}
+							status={getLinkStatus(link.id)}
+							expiresAt={link.expires_at}
+							onEdit={onEdit}
+							onEditConfirm={onEditConfirm}
+							onUndo={onEditUndo}
+							onRevokeOrRemove={onRevokeOrRemove}
+							forceUrlCopyDisabled={thereIsOpenRow}
+						/>
+					);
+				}
+				return accumulator;
+			},
+			[]
+		);
+	}, [links, onEdit, onEditConfirm, onEditUndo, onRevokeOrRemove, openLinkId, thereIsOpenRow]);
 
-	const linkComponents = useMemo(
-		() =>
-			reduce<NonNullableListItem<typeof links> | null | undefined, JSX.Element[]>(
-				links,
-				(accumulator, link) => {
-					if (link) {
-						accumulator.push(
-							<PublicLinkComponent
-								key={link.id}
-								id={link.id}
-								url={link.url}
-								description={link.description}
-								status={
-									openLinkId === link.id
-										? PublicLinkRowStatus.OPEN
-										: thereIsOpenRow
-										? PublicLinkRowStatus.DISABLED
-										: PublicLinkRowStatus.CLOSED
-								}
-								expiresAt={link.expires_at}
-								onEdit={onEdit}
-								onEditConfirm={onEditConfirm}
-								onUndo={onEditUndo}
-								onRevokeOrRemove={onRevokeOrRemove}
-								forceUrlCopyDisabled={thereIsOpenRow}
-							/>
-						);
-					}
-					return accumulator;
-				},
-				[]
-			),
-		[links, onEdit, onEditConfirm, onEditUndo, onRevokeOrRemove, openLinkId, thereIsOpenRow]
-	);
+	const addPublicLinkComputedStatus = useMemo<PublicLinkRowStatus>(() => {
+		if (createLinkLoading) {
+			return PublicLinkRowStatus.DISABLED;
+		}
+		if (addPublicLinkStatus === PublicLinkRowStatus.OPEN) {
+			return PublicLinkRowStatus.OPEN;
+		}
+		return thereIsOpenRow ? PublicLinkRowStatus.DISABLED : PublicLinkRowStatus.CLOSED;
+	}, [addPublicLinkStatus, createLinkLoading, thereIsOpenRow]);
 
 	return (
 		<Container
@@ -265,19 +264,11 @@ export const PublicLink: React.FC<AddPublicLinkProps> = ({
 			crossAlignment="flex-start"
 			height="fit"
 			padding={{ all: 'large' }}
-			background="gray6"
+			background={'gray6'}
 		>
 			{canShare && (
 				<AddPublicLinkComponent
-					status={
-						createLinkLoading
-							? PublicLinkRowStatus.DISABLED
-							: addPublicLinkStatus === PublicLinkRowStatus.OPEN
-							? addPublicLinkStatus
-							: thereIsOpenRow
-							? PublicLinkRowStatus.DISABLED
-							: PublicLinkRowStatus.CLOSED
-					}
+					status={addPublicLinkComputedStatus}
 					onAddLink={onAddLink}
 					onUndo={onAddUndo}
 					onGenerate={onGenerate}
