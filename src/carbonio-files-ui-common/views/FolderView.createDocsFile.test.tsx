@@ -21,6 +21,7 @@ import {
 	NODES_LOAD_LIMIT,
 	NODES_SORT_DEFAULT
 } from '../constants';
+import { ICON_REGEXP } from '../constants/test';
 import {
 	CreateDocsFileRequestBody,
 	CreateDocsFileResponse
@@ -35,7 +36,6 @@ import {
 import { Folder, GetNodeQuery, GetNodeQueryVariables } from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPermissions
@@ -109,8 +109,7 @@ describe('Create docs file', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder)
+			mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
 		];
 
 		server.use(
@@ -128,7 +127,7 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -168,8 +167,7 @@ describe('Create docs file', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder)
+			mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
 		];
 
 		server.use(
@@ -191,7 +189,7 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -244,7 +242,6 @@ describe('Create docs file', () => {
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			// fetchMore request, cursor is still last ordered node (last child of initial folder)
 			mockGetChildren(
 				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
@@ -289,7 +286,7 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		let nodes = screen.getAllByTestId('node-item', { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 

@@ -12,7 +12,7 @@ import { Route } from 'react-router-dom';
 import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
-import { ACTION_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { getFindNodesVariables, mockFindNodes, mockTrashNodes } from '../utils/mockUtils';
@@ -58,7 +58,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToMFD, user);
 				// check that all wanted items are selected
@@ -110,7 +110,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToMFD, user);
 				// check that all wanted items are selected
@@ -145,7 +145,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(`node-item-${node.id}`);

@@ -26,7 +26,6 @@ import { Node } from '../types/common';
 import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPath,
@@ -83,7 +82,6 @@ describe('Move', () => {
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockMoveNodes(
 					{
 						node_ids: [nodeToMove.id],
@@ -165,7 +163,6 @@ describe('Move', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockMoveNodes(
 					{
@@ -265,7 +262,6 @@ describe('Move', () => {
 					children: populateNodePage(firstPage)
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [commonParent, currentFolder]),
 				mockGetChildren(getChildrenVariables(commonParent.id), commonParent),
@@ -352,7 +348,6 @@ describe('Move', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockMoveNodes(
 					{
@@ -423,7 +418,6 @@ describe('Move', () => {
 					children: populateNodePage(firstPage)
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockMoveNodes(
@@ -457,7 +451,7 @@ describe('Move', () => {
 			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 				firstPage.length - 1
 			);
-			expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 			await triggerLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();

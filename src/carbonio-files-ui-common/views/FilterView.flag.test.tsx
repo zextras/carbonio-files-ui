@@ -59,7 +59,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				expect(screen.queryAllByTestId('icon: Flag')).toHaveLength(currentFilter.length);
 
 				// activate selection mode by selecting items
@@ -112,7 +112,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				expect(screen.queryAllByTestId('icon: Flag')).toHaveLength(nodes.length);
 
 				// right click to open contextual menu on first node
