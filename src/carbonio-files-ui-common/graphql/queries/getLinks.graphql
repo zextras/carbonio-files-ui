@@ -4,11 +4,8 @@
 
 #import "../fragments/link.graphql"
 
-query getNodeLinks($node_id: ID!) {
-	getNode(node_id: $node_id) {
-		id
-		links {
-			...Link
-		}
+query getLinks($node_id: ID!) {
+	getLinks(node_id: $node_id) {
+		...Link
 	}
 }

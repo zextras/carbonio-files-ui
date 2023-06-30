@@ -36,7 +36,7 @@ import {
 	mockGetChildren,
 	mockGetNode,
 	mockGetCollaborationLinks,
-	mockGetNodeLinks,
+	mockGetLinks,
 	mockGetPath,
 	mockGetShares,
 	mockMoveNodes,
@@ -68,7 +68,7 @@ describe('Search view', () => {
 				mockFindNodes(getFindNodesVariables({ shared_by_me: true, keywords: [] }), nodes),
 				mockGetNode(getNodeVariables(nodeWithShares.id), nodeWithShares),
 				mockGetShares(getSharesVariables(nodeWithShares.id), nodeWithShares),
-				mockGetNodeLinks({ node_id: nodeWithShares.id }, nodeWithShares),
+				mockGetLinks({ node_id: nodeWithShares.id }, nodeWithShares.links),
 				mockGetCollaborationLinks({ node_id: nodeWithShares.id }),
 				mockDeleteShare(
 					{

@@ -8,8 +8,11 @@ import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 
-import UPDATE_LINK from '../../../graphql/mutations/updateLink.graphql';
-import { UpdateLinkMutation, UpdateLinkMutationVariables } from '../../../types/graphql/types';
+import {
+	UpdateLinkDocument,
+	UpdateLinkMutation,
+	UpdateLinkMutationVariables
+} from '../../../types/graphql/types';
 import { ErrorHandlerOptions, useErrorHandler } from '../../useErrorHandler';
 
 export type UpdateLinkType = (
@@ -25,7 +28,7 @@ export function useUpdateLinkMutation(errorHandlerOptions?: ErrorHandlerOptions)
 	const [updateLinkMutation, { error: updateLinkError }] = useMutation<
 		UpdateLinkMutation,
 		UpdateLinkMutationVariables
-	>(UPDATE_LINK);
+	>(UpdateLinkDocument);
 
 	const updateLink: UpdateLinkType = useCallback(
 		(id: string, description?: string, expiresAt?: number) =>

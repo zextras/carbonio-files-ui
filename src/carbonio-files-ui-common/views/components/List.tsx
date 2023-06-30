@@ -697,6 +697,7 @@ export const List: React.VFC<ListProps> = ({
 			background="gray6"
 		>
 			<ListHeader
+				selectedCount={size(selectedNodes)}
 				folderId={folderId}
 				crumbs={crumbs}
 				loadingData={loading}

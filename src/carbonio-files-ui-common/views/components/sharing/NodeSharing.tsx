@@ -196,12 +196,7 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 				/>
 			)}
 			{isFile(node) && node.permissions.can_share && (
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					nodeTypename={node.__typename}
-					canShare={node.permissions.can_share}
-				/>
+				<PublicLink nodeId={node.id} nodeName={node.name} canShare={node.permissions.can_share} />
 			)}
 		</MainContainer>
 	);

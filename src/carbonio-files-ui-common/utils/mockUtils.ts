@@ -19,7 +19,6 @@ import CLONE_VERSION from '../graphql/mutations/cloneVersion.graphql';
 import COPY_NODES from '../graphql/mutations/copyNodes.graphql';
 import CREATE_COLLABORATION_LINK from '../graphql/mutations/createCollaborationLink.graphql';
 import CREATE_FOLDER from '../graphql/mutations/createFolder.graphql';
-import CREATE_LINK from '../graphql/mutations/createLink.graphql';
 import CREATE_SHARE from '../graphql/mutations/createShare.graphql';
 import DELETE_COLLABORATION_LINKS from '../graphql/mutations/deleteCollaborationLinks.graphql';
 import DELETE_NODES from '../graphql/mutations/deleteNodes.graphql';
@@ -30,7 +29,6 @@ import KEEP_VERSIONS from '../graphql/mutations/keepVersions.graphql';
 import MOVE_NODES from '../graphql/mutations/moveNodes.graphql';
 import RESTORE_NODES from '../graphql/mutations/restoreNodes.graphql';
 import TRASH_NODES from '../graphql/mutations/trashNodes.graphql';
-import UPDATE_LINK from '../graphql/mutations/updateLink.graphql';
 import UPDATE_NODE from '../graphql/mutations/updateNode.graphql';
 import UPDATE_NODE_DESCRIPTION from '../graphql/mutations/updateNodeDescription.graphql';
 import UPDATE_SHARE from '../graphql/mutations/updateShare.graphql';
@@ -42,7 +40,6 @@ import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_CONFIGS from '../graphql/queries/getConfigs.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
-import GET_NODE_LINKS from '../graphql/queries/getNodeLinks.graphql';
 import GET_PARENT from '../graphql/queries/getParent.graphql';
 import GET_PATH from '../graphql/queries/getPath.graphql';
 import GET_PERMISSIONS from '../graphql/queries/getPermissions.graphql';
@@ -74,7 +71,6 @@ import {
 	UpdateShareMutationVariables,
 	Share,
 	GetAccountByEmailQueryVariables,
-	GetNodeLinksQueryVariables,
 	GetVersionsQueryVariables,
 	File,
 	DeleteVersionsMutationVariables,
@@ -103,7 +99,6 @@ import {
 	CreateShareMutation,
 	UpdateShareMutation,
 	GetAccountByEmailQuery,
-	GetNodeLinksQuery,
 	GetVersionsQuery,
 	DeleteVersionsMutation,
 	KeepVersionsMutation,
@@ -116,6 +111,7 @@ import {
 	GetConfigsQueryVariables,
 	GetAccountsByEmailQueryVariables,
 	GetAccountsByEmailQuery,
+	GetCollaborationLinksDocument,
 	GetCollaborationLinksQueryVariables,
 	GetCollaborationLinksQuery,
 	CollaborationLink,
@@ -130,7 +126,11 @@ import {
 	CreateLinkMutation,
 	UpdateLinkMutationVariables,
 	UpdateLinkMutation,
-	GetCollaborationLinksDocument
+	GetLinksDocument,
+	GetLinksQueryVariables,
+	GetLinksQuery,
+	CreateLinkDocument,
+	UpdateLinkDocument
 } from '../types/graphql/types';
 
 type Id = string;
@@ -735,21 +735,18 @@ export function mockGetAccountsByEmail(
 	};
 }
 
-/**
- * Get Node Links mock
- */
-export function mockGetNodeLinks(
-	variables: GetNodeLinksQueryVariables,
-	node: Node
-): Mock<GetNodeLinksQuery, GetNodeLinksQueryVariables> {
+export function mockGetLinks(
+	variables: GetLinksQueryVariables,
+	links: Maybe<Link>[]
+): Mock<GetLinksQuery, GetLinksQueryVariables> {
 	return {
 		request: {
-			query: GET_NODE_LINKS,
+			query: GetLinksDocument,
 			variables
 		},
 		result: {
 			data: {
-				getNode: node
+				getLinks: links
 			}
 		}
 	};
@@ -961,7 +958,7 @@ export function mockCreateLink(
 ): Mock<CreateLinkMutation, CreateLinkMutationVariables> {
 	return {
 		request: {
-			query: CREATE_LINK,
+			query: CreateLinkDocument,
 			variables
 		},
 		result: {
@@ -978,7 +975,7 @@ export function mockCreateLinkError(
 ): Mock<CreateLinkMutation, CreateLinkMutationVariables> {
 	return {
 		request: {
-			query: CREATE_LINK,
+			query: CreateLinkDocument,
 			variables
 		},
 		error
@@ -994,7 +991,7 @@ export function mockUpdateLink(
 ): Mock<UpdateLinkMutation, UpdateLinkMutationVariables> {
 	return {
 		request: {
-			query: UPDATE_LINK,
+			query: UpdateLinkDocument,
 			variables
 		},
 		result: {
@@ -1011,7 +1008,7 @@ export function mockUpdateLinkError(
 ): Mock<UpdateLinkMutation, UpdateLinkMutationVariables> {
 	return {
 		request: {
-			query: UPDATE_LINK,
+			query: UpdateLinkDocument,
 			variables
 		},
 		error

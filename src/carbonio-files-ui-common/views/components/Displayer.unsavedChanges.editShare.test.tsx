@@ -18,7 +18,7 @@ import {
 	getSharesVariables,
 	mockGetNode,
 	mockGetCollaborationLinks,
-	mockGetNodeLinks,
+	mockGetLinks,
 	mockGetShares,
 	mockUpdateShare,
 	mockUpdateShareError
@@ -40,7 +40,7 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
 					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
@@ -92,7 +92,7 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
 					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
@@ -151,7 +151,7 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
 					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
@@ -216,7 +216,7 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
 					mockGetCollaborationLinks({ node_id: node.id }),
 					mockUpdateShare(
 						{
@@ -293,7 +293,7 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
 					mockGetCollaborationLinks({ node_id: node.id }),
 					mockUpdateShareError(
 						{
