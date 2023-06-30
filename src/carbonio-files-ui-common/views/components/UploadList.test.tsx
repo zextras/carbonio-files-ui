@@ -16,7 +16,7 @@ import {
 	within
 } from '@testing-library/react';
 import { EventEmitter } from 'events';
-import { forEach, find } from 'lodash';
+import { forEach, find, keyBy } from 'lodash';
 import { rest } from 'msw';
 
 import { UploadList } from './UploadList';
@@ -33,7 +33,8 @@ import {
 	populateFile,
 	populateFolder,
 	populateLocalRoot,
-	populateNodes
+	populateNodes,
+	populateUploadItems
 } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { UploadItem, UploadStatus } from '../../types/graphql/client-types';
@@ -54,6 +55,7 @@ import {
 	buildBreadCrumbRegExp,
 	createDataTransfer,
 	delayUntil,
+	selectNodes,
 	setup,
 	uploadWithDnD
 } from '../../utils/testUtils';
@@ -580,6 +582,27 @@ describe('Upload list', () => {
 
 			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted)).toBeVisible();
 			expect(screen.getByText(RegExp(`${numberOfNodes}/${numberOfNodes}`))).toBeVisible();
+		});
+	});
+
+	describe('Upload Badge Selected Counter', () => {
+		test('should render the badge with the number of selected items', async () => {
+			const uploadItems = populateUploadItems(10);
+			uploadVar(keyBy(uploadItems, (item) => item.id));
+			const { user } = setup(<UploadList />, { mocks: [] });
+			await selectNodes([uploadItems[0].id], user);
+			expect(screen.getByText(1)).toBeInTheDocument();
+		});
+		test('if the user clicks SELECT ALL, the badge renders the length of all nodes', async () => {
+			const uploadItems = populateUploadItems(10);
+			uploadVar(keyBy(uploadItems, (item) => item.id));
+			const { user } = setup(<UploadList />, { mocks: [] });
+			await selectNodes([uploadItems[0].id], user);
+			expect(screen.getByText(1)).toBeInTheDocument();
+			await user.click(screen.getByText(/SELECT ALL/i));
+			expect(screen.getByText(uploadItems.length)).toBeVisible();
+			await user.click(screen.getByText(/DESELECT ALL/i));
+			expect(screen.queryByText(uploadItems.length)).not.toBeInTheDocument();
 		});
 	});
 });
