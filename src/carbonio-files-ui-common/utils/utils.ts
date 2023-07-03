@@ -643,9 +643,9 @@ const mimeTypePreviewSupport: Record<
 		preview: true
 	},
 	'image/svg+xml': {
-		thumbnail: true,
+		thumbnail: false,
 		thumbnail_detail: false,
-		preview: true
+		preview: false
 	},
 	'application/msword': {
 		thumbnail: false,
@@ -836,8 +836,8 @@ export function isSupportedByPreview(
 ): [boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined] {
 	if (mimeType) {
 		const isSupported =
-			mimeTypePreviewSupport[mimeType]?.[type] ||
-			mimeTypePreviewSupport[mimeType.split('/')[0]]?.[type] ||
+			mimeTypePreviewSupport[mimeType]?.[type] ??
+			mimeTypePreviewSupport[mimeType.split('/')[0]]?.[type] ??
 			false;
 		const previewType =
 			(isSupported &&
