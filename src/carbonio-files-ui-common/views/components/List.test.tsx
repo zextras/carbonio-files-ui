@@ -8,8 +8,12 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { List } from './List';
-import { populateNodes } from '../../mocks/mockUtils';
+import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { populateFile, populateNodes } from '../../mocks/mockUtils';
+import { NodeType } from '../../types/graphql/types';
 import { selectNodes, setup } from '../../utils/testUtils';
+import * as moduleUtils from '../../utils/utils';
 
 describe('List', () => {
 	describe('Badge', () => {
@@ -38,6 +42,103 @@ describe('List', () => {
 			expect(screen.getByText(nodes.length)).toBeVisible();
 			await user.click(screen.getByText(/DESELECT ALL/i));
 			expect(screen.queryByText(nodes.length)).not.toBeInTheDocument();
+		});
+	});
+
+	describe('Preview', () => {
+		test.each([
+			['image/jpeg', 'jpeg'],
+			['image/png', 'jpeg'],
+			['image/gif', 'gif']
+		])(
+			'Double click on node of type image with mime type %s open preview to show image with original dimensions and format %s',
+			async (mimeType, outputFormat) => {
+				const node = populateFile();
+				node.type = NodeType.Image;
+				node.extension = 'ext';
+				node.mime_type = mimeType;
+
+				const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
+				await user.dblClick(screen.getByText(node.name));
+				await screen.findByRole('img');
+				expect(screen.getByRole('img')).toBeVisible();
+				expect(screen.getByRole('img')).toHaveAttribute(
+					'src',
+					`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/${node.version}/0x0?quality=high&output_format=${outputFormat}`
+				);
+			}
+		);
+
+		test('Double click on node of type pdf open preview without action to open in docs', async () => {
+			const node = populateFile();
+			node.mime_type = 'application/pdf';
+			node.type = NodeType.Application;
+			node.extension = 'pdf';
+
+			const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(
+				<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+			);
+			await user.dblClick(screen.getByText(node.name));
+			await screen.findByTestId(SELECTORS.pdfPreview);
+			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
+			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
+			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })).toBeVisible();
+			expect(
+				queryByRoleWithIcon('button', { icon: ICON_REGEXP.openDocument })
+			).not.toBeInTheDocument();
+		});
+
+		test('Double click on node that is supported by both preview and docs and has write permissions open document with docs', async () => {
+			const openWithDocsFn = jest.spyOn(moduleUtils, 'openNodeWithDocs');
+			const node = populateFile();
+			node.permissions.can_write_file = true;
+			node.mime_type = 'application/vnd.oasis.opendocument.text';
+			node.type = NodeType.Text;
+			node.extension = 'odt';
+
+			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
+			await user.dblClick(screen.getByText(node.name));
+			expect(openWithDocsFn).toHaveBeenCalled();
+			expect(screen.queryByTestId(SELECTORS.pdfPreview)).not.toBeInTheDocument();
+		});
+
+		test('Double click on node that is supported by both preview and docs but does not have write permissions open document with preview', async () => {
+			const openWithDocsFn = jest.spyOn(moduleUtils, 'openNodeWithDocs');
+			const node = populateFile();
+			node.permissions.can_write_file = false;
+			node.mime_type = 'application/vnd.oasis.opendocument.text';
+			node.type = NodeType.Text;
+			node.extension = 'odt';
+
+			const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(
+				<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+			);
+			await user.dblClick(screen.getByText(node.name));
+			await screen.findByTestId(SELECTORS.pdfPreview);
+			expect(openWithDocsFn).not.toHaveBeenCalled();
+			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
+			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
+			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })).toBeVisible();
+			expect(
+				queryByRoleWithIcon('button', { icon: ICON_REGEXP.openDocument })
+			).not.toBeInTheDocument();
+		});
+
+		test('Double click on node that is not supported by preview nor docs does nothing', async () => {
+			const openWithDocsFn = jest.spyOn(moduleUtils, 'openNodeWithDocs');
+			const getDocumentPreviewSrcFn = jest.spyOn(moduleUtils, 'getDocumentPreviewSrc');
+			const getPdfPreviewSrcFn = jest.spyOn(moduleUtils, 'getPdfPreviewSrc');
+			const getImgPreviewSrcFn = jest.spyOn(moduleUtils, 'getImgPreviewSrc');
+			const node = populateFile();
+			node.type = NodeType.Application;
+			node.mime_type = 'unsupported/mimetype';
+
+			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
+			await user.dblClick(screen.getByText(node.name));
+			expect(getDocumentPreviewSrcFn).not.toHaveBeenCalled();
+			expect(getPdfPreviewSrcFn).not.toHaveBeenCalled();
+			expect(getImgPreviewSrcFn).not.toHaveBeenCalled();
+			expect(openWithDocsFn).not.toHaveBeenCalled();
 		});
 	});
 });
