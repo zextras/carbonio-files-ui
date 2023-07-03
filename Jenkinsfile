@@ -5,7 +5,7 @@
  */
 
 library(
-	identifier: 'zapp-jenkins-lib@github-pipeline-v4',
+	identifier: 'zapp-jenkins-lib@timeout-time-as-arg',
 	retriever: modernSCM([
 		$class: 'GitSCMSource',
    		remote: 'git@github.com:zextras/jenkins-zapp-lib.git',
@@ -14,5 +14,6 @@ library(
 )
 
 zappPipeline(
-	disableAutoTranslationsSync: true
+	disableAutoTranslationsSync: true,
+	timeout: 30
 )
