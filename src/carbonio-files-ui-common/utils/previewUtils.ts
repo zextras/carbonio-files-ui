@@ -17,9 +17,9 @@ type ThumbnailOptions = PreviewOptions & {
 	shape?: 'rectangular' | 'rounded';
 };
 
-const MIME_TYPE_PREVIEW_SUPPORT: Record<
+export const MIME_TYPE_PREVIEW_SUPPORT: Record<
 	string,
-	Record<'thumbnail' | 'preview' | 'thumbnail_detail', boolean>
+	Record<ThumbnailType | 'preview', boolean>
 > = {
 	'application/pdf': {
 		thumbnail: false,
