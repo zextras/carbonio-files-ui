@@ -12,8 +12,9 @@ import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateNodes } from '../../mocks/mockUtils';
 import { NodeType } from '../../types/graphql/types';
+import * as previewUtils from '../../utils/previewUtils';
 import { selectNodes, setup } from '../../utils/testUtils';
-import * as moduleUtils from '../../utils/utils';
+import * as utils from '../../utils/utils';
 
 describe('List', () => {
 	describe('Badge', () => {
@@ -89,7 +90,7 @@ describe('List', () => {
 		});
 
 		test('Double click on node that is supported by both preview and docs and has write permissions open document with docs', async () => {
-			const openWithDocsFn = jest.spyOn(moduleUtils, 'openNodeWithDocs');
+			const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
 			const node = populateFile();
 			node.permissions.can_write_file = true;
 			node.mime_type = 'application/vnd.oasis.opendocument.text';
@@ -103,7 +104,7 @@ describe('List', () => {
 		});
 
 		test('Double click on node that is supported by both preview and docs but does not have write permissions open document with preview', async () => {
-			const openWithDocsFn = jest.spyOn(moduleUtils, 'openNodeWithDocs');
+			const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
 			const node = populateFile();
 			node.permissions.can_write_file = false;
 			node.mime_type = 'application/vnd.oasis.opendocument.text';
@@ -125,10 +126,10 @@ describe('List', () => {
 		});
 
 		test('Double click on node that is not supported by preview nor docs does nothing', async () => {
-			const openWithDocsFn = jest.spyOn(moduleUtils, 'openNodeWithDocs');
-			const getDocumentPreviewSrcFn = jest.spyOn(moduleUtils, 'getDocumentPreviewSrc');
-			const getPdfPreviewSrcFn = jest.spyOn(moduleUtils, 'getPdfPreviewSrc');
-			const getImgPreviewSrcFn = jest.spyOn(moduleUtils, 'getImgPreviewSrc');
+			const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
+			const getDocumentPreviewSrcFn = jest.spyOn(previewUtils, 'getDocumentPreviewSrc');
+			const getPdfPreviewSrcFn = jest.spyOn(previewUtils, 'getPdfPreviewSrc');
+			const getImgPreviewSrcFn = jest.spyOn(previewUtils, 'getImgPreviewSrc');
 			const node = populateFile();
 			node.type = NodeType.Application;
 			node.mime_type = 'unsupported/mimetype';

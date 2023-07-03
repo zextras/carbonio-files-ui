@@ -39,17 +39,19 @@ import { Action } from '../../types/common';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { buildActionItems } from '../../utils/ActionsFactory';
 import {
+	getPreviewOutputFormat,
+	getPreviewThumbnailSrc,
+	isSupportedByPreview
+} from '../../utils/previewUtils';
+import {
 	downloadNode,
 	formatDate,
 	getIconByFileType,
 	humanFileSize,
 	openNodeWithDocs,
-	isSupportedByPreview,
 	isSearchView,
 	cssCalcBuilder,
-	getIconColorByFileType,
-	getPreviewThumbnailSrc,
-	getPreviewOutputFormat
+	getIconColorByFileType
 } from '../../utils/utils';
 
 const CustomText = styled(Text)`

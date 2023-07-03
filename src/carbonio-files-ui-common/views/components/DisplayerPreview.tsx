@@ -12,11 +12,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { NodeType } from '../../types/graphql/types';
-import {
-	getIconByFileType,
-	getPreviewOutputFormat,
-	getPreviewThumbnailSrc
-} from '../../utils/utils';
+import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';
+import { getIconByFileType } from '../../utils/utils';
 
 const ImgContainer = styled(Container)`
 	overflow: hidden;

@@ -11,13 +11,13 @@ import { Location } from 'history';
 import type { TFunction } from 'i18next';
 import {
 	chain,
+	debounce,
+	findIndex,
+	first,
 	forEach,
 	map,
 	reduce,
 	size,
-	debounce,
-	findIndex,
-	first,
 	toLower,
 	trim
 } from 'lodash';
@@ -31,8 +31,6 @@ import {
 	DOWNLOAD_PATH,
 	INTERNAL_PATH,
 	OPEN_FILE_PATH,
-	PREVIEW_PATH,
-	PREVIEW_TYPE,
 	REST_ENDPOINT,
 	ROOTS,
 	UPLOAD_TO_PATH
@@ -58,17 +56,6 @@ import {
 	SharePermission
 } from '../types/graphql/types';
 import { MakeRequiredNonNull } from '../types/utils';
-
-type ThumbnailType = 'thumbnail' | 'thumbnail_detail';
-type PreviewOptions = {
-	width: number;
-	height: number;
-	quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
-	outputFormat?: 'jpeg' | 'png' | 'gif';
-};
-type ThumbnailOptions = PreviewOptions & {
-	shape?: 'rectangular' | 'rounded';
-};
 
 /**
  * Format a size in byte as human-readable
@@ -633,72 +620,6 @@ export const docsHandledMimeTypes = [
 	'application/vnd.sun.xml.writer.template'
 ];
 
-const mimeTypePreviewSupport: Record<
-	string,
-	Record<'thumbnail' | 'preview' | 'thumbnail_detail', boolean>
-> = {
-	'application/pdf': {
-		thumbnail: false,
-		thumbnail_detail: true,
-		preview: true
-	},
-	'image/svg+xml': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: false
-	},
-	'application/msword': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.ms-excel': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.ms-powerpoint': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.oasis.opendocument.presentation': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.oasis.opendocument.spreadsheet': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.oasis.opendocument.text': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	image: {
-		thumbnail: true,
-		thumbnail_detail: true,
-		preview: true
-	}
-};
-
 /**
  * 	Error codes:
  *	400 if target  does not match
@@ -821,76 +742,6 @@ export function uploadToTargetModule(args: {
 		xhr.addEventListener('abort', () => uploadToCompleted(xhr, resolve, reject));
 		xhr.send(JSON.stringify(body));
 	});
-}
-
-/**
- * Check if a file is supported by preview by its mime type
- *
- * [0]: tells whether the given mime type is supported or not
- *
- * [1]: if mime type is supported, tells which type of preview this mime type is associated to
- */
-export function isSupportedByPreview(
-	mimeType: string | undefined,
-	type: ThumbnailType | 'preview'
-): [boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined] {
-	if (mimeType) {
-		const isSupported =
-			mimeTypePreviewSupport[mimeType]?.[type] ??
-			mimeTypePreviewSupport[mimeType.split('/')[0]]?.[type] ??
-			false;
-		const previewType =
-			(isSupported &&
-				((mimeType.startsWith('image') && PREVIEW_TYPE.IMAGE) ||
-					(mimeType.includes('pdf') && PREVIEW_TYPE.PDF) ||
-					PREVIEW_TYPE.DOCUMENT)) ||
-			undefined;
-		return [isSupported, previewType];
-	}
-	return [false, undefined];
-}
-
-export function getImgPreviewSrc(id: string, version: number, options: PreviewOptions): string {
-	const optionalParams = [];
-	options.quality && optionalParams.push(`quality=${options.quality}`);
-	options.outputFormat && optionalParams.push(`output_format=${options.outputFormat}`);
-	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${options.width}x${
-		options.height
-	}?${optionalParams.join('&')}`;
-}
-
-export function getPdfPreviewSrc(id: string, version?: number): string {
-	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}`;
-}
-
-export function getDocumentPreviewSrc(id: string, version?: number): string {
-	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}`;
-}
-
-export function getPreviewThumbnailSrc(
-	id: string,
-	version: number | undefined,
-	type: NodeType,
-	mimeType: string | undefined,
-	options: ThumbnailOptions,
-	thumbnailType: ThumbnailType
-): string | undefined {
-	const [isSupported, previewType] = isSupportedByPreview(mimeType, thumbnailType);
-	if (version && mimeType && isSupported) {
-		const optionalParams = [];
-		options.shape && optionalParams.push(`shape=${options.shape}`);
-		options.quality && optionalParams.push(`quality=${options.quality}`);
-		options.outputFormat && optionalParams.push(`output_format=${options.outputFormat}`);
-		const optionalParamsStr = (optionalParams.length > 0 && `?${optionalParams.join('&')}`) || '';
-		return `${REST_ENDPOINT}${PREVIEW_PATH}/${previewType}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
-	}
-	return undefined;
-}
-
-export function getPreviewOutputFormat(
-	mimeType: string | undefined
-): PreviewOptions['outputFormat'] {
-	return mimeType === 'image/gif' ? 'gif' : 'jpeg';
 }
 
 export function getNewDocumentActionLabel(t: TFunction, docsType: DocsType): string {

@@ -61,19 +61,15 @@ import {
 	canBeMoveDestination,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { getUploadAddType } from '../../utils/uploadUtils';
 import {
-	downloadNode,
 	getDocumentPreviewSrc,
 	getImgPreviewSrc,
 	getPdfPreviewSrc,
 	getPreviewOutputFormat,
-	humanFileSize,
-	isFile,
-	isFolder,
-	isSupportedByPreview,
-	openNodeWithDocs
-} from '../../utils/utils';
+	isSupportedByPreview
+} from '../../utils/previewUtils';
+import { getUploadAddType } from '../../utils/uploadUtils';
+import { downloadNode, humanFileSize, isFile, isFolder, openNodeWithDocs } from '../../utils/utils';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};

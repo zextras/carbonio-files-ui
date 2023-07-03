@@ -31,7 +31,8 @@ import {
 	buildActionItems,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { downloadNode, isFile, isSupportedByPreview, openNodeWithDocs } from '../../utils/utils';
+import { isSupportedByPreview } from '../../utils/previewUtils';
+import { downloadNode, isFile, openNodeWithDocs } from '../../utils/utils';
 
 interface DisplayerActionsParams {
 	node: ActionsFactoryNodeType &
