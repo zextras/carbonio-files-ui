@@ -59,6 +59,17 @@ import {
 } from '../types/graphql/types';
 import { MakeRequiredNonNull } from '../types/utils';
 
+type ThumbnailType = 'thumbnail' | 'thumbnail_detail';
+type PreviewOptions = {
+	width: number;
+	height: number;
+	quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
+	outputFormat?: 'jpeg' | 'png' | 'gif';
+};
+type ThumbnailOptions = PreviewOptions & {
+	shape?: 'rectangular' | 'rounded';
+};
+
 /**
  * Format a size in byte as human-readable
  */
@@ -839,43 +850,31 @@ export function isSupportedByPreview(
 	return [false, undefined];
 }
 
-/**
- * Get preview src
- */
-export const getImgPreviewSrc = (
-	id: string,
-	version: number,
-	weight: number,
-	height: number,
-	quality: 'lowest' | 'low' | 'medium' | 'high' | 'highest' // medium as default if not set
-): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${weight}x${height}?quality=${quality}`;
+export function getImgPreviewSrc(id: string, version: number, options: PreviewOptions): string {
+	const optionalParams = [];
+	options.quality && optionalParams.push(`quality=${options.quality}`);
+	options.outputFormat && optionalParams.push(`output_format=${options.outputFormat}`);
+	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${options.width}x${
+		options.height
+	}?${optionalParams.join('&')}`;
+}
 
-export const getPdfPreviewSrc = (id: string, version?: number): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}`;
+export function getPdfPreviewSrc(id: string, version?: number): string {
+	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}`;
+}
 
-export const getDocumentPreviewSrc = (id: string, version?: number): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}`;
+export function getDocumentPreviewSrc(id: string, version?: number): string {
+	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}`;
+}
 
-/**
- * Get thumbnail src
- */
-type ThumbnailType = 'thumbnail' | 'thumbnail_detail';
-
-export const getPreviewThumbnailSrc = (
+export function getPreviewThumbnailSrc(
 	id: string,
 	version: number | undefined,
 	type: NodeType,
 	mimeType: string | undefined,
-	options: {
-		width: number;
-		height: number;
-		shape?: 'rectangular' | 'rounded';
-		quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
-		outputFormat?: 'jpeg' | 'png';
-	},
+	options: ThumbnailOptions,
 	thumbnailType: ThumbnailType
-): string | undefined => {
+): string | undefined {
 	const [isSupported, previewType] = isSupportedByPreview(mimeType, thumbnailType);
 	if (version && mimeType && isSupported) {
 		const optionalParams = [];
@@ -886,15 +885,13 @@ export const getPreviewThumbnailSrc = (
 		return `${REST_ENDPOINT}${PREVIEW_PATH}/${previewType}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
 	}
 	return undefined;
-};
+}
 
-export const getListItemAvatarPictureUrl = (
-	id: string,
-	version: number | undefined,
-	type: NodeType,
+export function getPreviewOutputFormat(
 	mimeType: string | undefined
-): string | undefined =>
-	getPreviewThumbnailSrc(id, version, type, mimeType, { width: 80, height: 80 }, 'thumbnail');
+): PreviewOptions['outputFormat'] {
+	return mimeType === 'image/gif' ? 'gif' : 'jpeg';
+}
 
 export function getNewDocumentActionLabel(t: TFunction, docsType: DocsType): string {
 	const [format] = docsType.split('_');

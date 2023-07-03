@@ -67,6 +67,7 @@ import {
 	getDocumentPreviewSrc,
 	getImgPreviewSrc,
 	getPdfPreviewSrc,
+	getPreviewOutputFormat,
 	humanFileSize,
 	isFile,
 	isFolder,
@@ -384,7 +385,14 @@ export const List: React.VFC<ListProps> = ({
 									size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
 									actions,
 									closeAction,
-									src: node.version ? getImgPreviewSrc(node.id, node.version, 0, 0, 'high') : '',
+									src: node.version
+										? getImgPreviewSrc(node.id, node.version, {
+												width: 0,
+												height: 0,
+												quality: 'high',
+												outputFormat: getPreviewOutputFormat(node.mime_type)
+										  })
+										: '',
 									id: node.id
 								});
 								return accumulator;

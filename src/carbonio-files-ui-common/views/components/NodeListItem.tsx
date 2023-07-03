@@ -42,13 +42,14 @@ import {
 	downloadNode,
 	formatDate,
 	getIconByFileType,
-	getListItemAvatarPictureUrl,
 	humanFileSize,
 	openNodeWithDocs,
 	isSupportedByPreview,
 	isSearchView,
 	cssCalcBuilder,
-	getIconColorByFileType
+	getIconColorByFileType,
+	getPreviewThumbnailSrc,
+	getPreviewOutputFormat
 } from '../../utils/utils';
 
 const CustomText = styled(Text)`
@@ -437,7 +438,14 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 							selectable={selectable}
 							icon={getIconByFileType(type, mimeType || id)}
 							color={getIconColorByFileType(type, mimeType || id, theme)}
-							picture={getListItemAvatarPictureUrl(id, version, type, mimeType)}
+							picture={getPreviewThumbnailSrc(
+								id,
+								version,
+								type,
+								mimeType,
+								{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
+								'thumbnail'
+							)}
 						/>
 						<Container
 							orientation="vertical"

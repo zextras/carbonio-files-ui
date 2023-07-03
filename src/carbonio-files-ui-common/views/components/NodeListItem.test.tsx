@@ -358,7 +358,9 @@ describe('Node List Item', () => {
 						filename: node.name,
 						extension: node.extension || undefined,
 						size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
-						src: node.version ? getImgPreviewSrc(node.id, node.version, 0, 0, 'high') : '',
+						src: node.version
+							? getImgPreviewSrc(node.id, node.version, { width: 0, height: 0, quality: 'high' })
+							: '',
 						id: node.id
 					}
 				]}
