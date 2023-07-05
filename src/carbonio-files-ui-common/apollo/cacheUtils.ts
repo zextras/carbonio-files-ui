@@ -3,20 +3,13 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { ApolloCache, FieldFunctionOptions, NormalizedCacheObject } from '@apollo/client';
+import { ApolloCache, FieldFunctionOptions } from '@apollo/client';
 import { filter, find, findIndex, size } from 'lodash';
 
 import { nodeSortVar } from './nodeSortVar';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { NodesPageCachedObject } from '../types/apollo';
 import introspection from '../types/graphql/possible-types';
-import {
-	ChildFragment,
-	ChildWithParentFragmentDoc,
-	GetChildrenQuery,
-	GetChildrenQueryVariables
-} from '../types/graphql/types';
-import { addNodeInSortedList, isFolder } from '../utils/utils';
+import { ChildFragment, ChildWithParentFragmentDoc } from '../types/graphql/types';
 
 export const removeNodesFromFolder = (
 	cache: ApolloCache<object>,
@@ -154,32 +147,6 @@ export const addNodeInCachedChildren = (
 			}
 		}
 	});
-
-export const upsertNodeInFolder = (
-	cache: ApolloCache<NormalizedCacheObject>,
-	folderId: string,
-	newNode: ChildFragment
-): void => {
-	const cachedFolder = cache.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-		query: GET_CHILDREN,
-		variables: {
-			node_id: folderId,
-			children_limit: Number.MAX_SAFE_INTEGER,
-			sort: nodeSortVar()
-		}
-	});
-
-	if (cachedFolder && cachedFolder.getNode && isFolder(cachedFolder.getNode)) {
-		const { nodes } = cachedFolder.getNode.children;
-		addNodeInCachedChildren(
-			cache,
-			newNode,
-			folderId,
-			nodes.length === 0 ? 0 : addNodeInSortedList(nodes, newNode, nodeSortVar()),
-			false
-		);
-	}
-};
 
 export function findNodeTypeName(
 	nodeId: string,

@@ -6,31 +6,27 @@
 
 import { useCallback } from 'react';
 
-import { FetchResult, useMutation, useReactiveVar } from '@apollo/client';
+import { FetchResult, useMutation } from '@apollo/client';
 import { useSnackbar } from '@zextras/carbonio-design-system';
 import { forEach, map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { useNavigation } from '../../../../hooks/useNavigation';
-import { nodeSortVar } from '../../../apollo/nodeSortVar';
 import { SHARES_LOAD_LIMIT } from '../../../constants';
 import COPY_NODES from '../../../graphql/mutations/copyNodes.graphql';
-import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
 import { PickIdNodeType } from '../../../types/common';
 import {
 	CopyNodesMutation,
 	CopyNodesMutationVariables,
-	Folder,
-	GetChildrenQuery,
-	GetChildrenQueryVariables
+	Folder
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 import useQueryParam from '../../useQueryParam';
 import { useUpdateFolderContent } from '../useUpdateFolderContent';
 
 export type CopyNodesType = (
-	destinationFolder: Pick<Folder, '__typename' | 'id' | 'children'>,
+	destinationFolder: Pick<Folder, '__typename' | 'id'>,
 	...nodes: Array<PickIdNodeType>
 ) => Promise<FetchResult<CopyNodesMutation>>;
 
@@ -74,9 +70,8 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 	useErrorHandler(error, 'COPY_NODES');
 
 	const { addNodeToFolder } = useUpdateFolderContent();
-	const nodeSort = useReactiveVar(nodeSortVar);
 
-	const copyNodes: CopyNodesType = useCallback(
+	const copyNodes = useCallback<CopyNodesType>(
 		(destinationFolder, ...nodes) => {
 			const nodesIds = map(nodes, 'id');
 
@@ -95,26 +90,13 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 					} else {
 						// add copied nodes in cached data in right sorted position
 						forEach(result?.copyNodes, (newNode) => {
-							// read data from cache at every iteration to includes previously added nodes
-							const cachedFolder = cache.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-								query: GET_CHILDREN,
-								variables: {
-									node_id: destinationFolder.id,
-									// load all cached children
-									children_limit: Number.MAX_SAFE_INTEGER,
-									sort: nodeSort
-								}
-							});
-							const parentFolder =
-								(cachedFolder?.getNode?.__typename === 'Folder' && cachedFolder.getNode) ||
-								destinationFolder;
-							addNodeToFolder(parentFolder, newNode);
+							addNodeToFolder(destinationFolder, newNode);
 						});
 					}
 				}
 			});
 		},
-		[copyNodesMutation, folderId, nodeSort, rootId, addNodeToFolder]
+		[copyNodesMutation, folderId, rootId, addNodeToFolder]
 	);
 	return { copyNodes, loading };
 }
