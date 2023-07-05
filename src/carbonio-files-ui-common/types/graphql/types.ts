@@ -1720,10 +1720,71 @@ export type GetChildrenQuery = {
 		| null;
 } & { __typename?: 'Query' };
 
+export type GetChildrenParentQueryVariables = Exact<{
+	node_id: Scalars['ID'];
+}>;
+
+export type GetChildrenParentQuery = {
+	getNode?:
+		| ({
+				id: string;
+				name: string;
+				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+				permissions: {
+					can_read: boolean;
+					can_write_file: boolean;
+					can_write_folder: boolean;
+					can_delete: boolean;
+					can_add_version: boolean;
+					can_read_link: boolean;
+					can_change_link: boolean;
+					can_share: boolean;
+					can_read_share: boolean;
+					can_change_share: boolean;
+				} & { __typename?: 'Permissions' };
+		  } & { __typename?: 'File' | 'Folder' })
+		| null;
+} & { __typename?: 'Query' };
+
+export type GetCollaborationLinksQueryVariables = Exact<{
+	node_id: Scalars['ID'];
+}>;
+
+export type GetCollaborationLinksQuery = {
+	getCollaborationLinks: Array<
+		| ({
+				id: string;
+				url: string;
+				permission: SharePermission;
+				created_at: number;
+				node: { id: string } & { __typename?: 'File' | 'Folder' };
+		  } & { __typename?: 'CollaborationLink' })
+		| null
+	>;
+} & { __typename?: 'Query' };
+
 export type GetConfigsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetConfigsQuery = {
 	getConfigs: Array<({ name: string; value: string } & { __typename?: 'Config' }) | null>;
+} & { __typename?: 'Query' };
+
+export type GetLinksQueryVariables = Exact<{
+	node_id: Scalars['ID'];
+}>;
+
+export type GetLinksQuery = {
+	getLinks: Array<
+		| ({
+				id: string;
+				url?: string | null;
+				description?: string | null;
+				expires_at?: number | null;
+				created_at: number;
+				node: { id: string } & { __typename?: 'File' | 'Folder' };
+		  } & { __typename?: 'Link' })
+		| null
+	>;
 } & { __typename?: 'Query' };
 
 export type GetNodeQueryVariables = Exact<{
@@ -1992,46 +2053,6 @@ export type GetNodeQuery = {
 					can_change_share: boolean;
 				} & { __typename?: 'Permissions' };
 		  } & { __typename?: 'Folder' })
-		| null;
-} & { __typename?: 'Query' };
-
-export type GetCollaborationLinksQueryVariables = Exact<{
-	node_id: Scalars['ID'];
-}>;
-
-export type GetCollaborationLinksQuery = {
-	getCollaborationLinks: Array<
-		| ({
-				id: string;
-				url: string;
-				permission: SharePermission;
-				created_at: number;
-				node: { id: string } & { __typename?: 'File' | 'Folder' };
-		  } & { __typename?: 'CollaborationLink' })
-		| null
-	>;
-} & { __typename?: 'Query' };
-
-export type GetNodeLinksQueryVariables = Exact<{
-	node_id: Scalars['ID'];
-}>;
-
-export type GetNodeLinksQuery = {
-	getNode?:
-		| ({
-				id: string;
-				links: Array<
-					| ({
-							id: string;
-							url?: string | null;
-							description?: string | null;
-							expires_at?: number | null;
-							created_at: number;
-							node: { id: string } & { __typename?: 'File' | 'Folder' };
-					  } & { __typename?: 'Link' })
-					| null
-				>;
-		  } & { __typename?: 'File' | 'Folder' })
 		| null;
 } & { __typename?: 'Query' };
 
@@ -6192,6 +6213,164 @@ export const GetChildrenDocument = {
 		}
 	]
 } as unknown as DocumentNode<GetChildrenQuery, GetChildrenQueryVariables>;
+export const GetChildrenParentDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getChildrenParent' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+					}
+				}
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'getNode' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'node_id' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Parent' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Permissions' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'permissions' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_file' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_write_folder' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_delete' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_add_version' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_link' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_read_share' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'can_change_share' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Parent' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Node' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'owner' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'email' } }
+							]
+						}
+					},
+					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<GetChildrenParentQuery, GetChildrenParentQueryVariables>;
+export const GetCollaborationLinksDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getCollaborationLinks' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+					}
+				}
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'getCollaborationLinks' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'node_id' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'CollaborationLink' } }
+							]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'CollaborationLink' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'CollaborationLink' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
+						}
+					}
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<GetCollaborationLinksQuery, GetCollaborationLinksQueryVariables>;
 export const GetConfigsDocument = {
 	kind: 'Document',
 	definitions: [
@@ -6218,6 +6397,69 @@ export const GetConfigsDocument = {
 		}
 	]
 } as unknown as DocumentNode<GetConfigsQuery, GetConfigsQueryVariables>;
+export const GetLinksDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getLinks' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+					}
+				}
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'getLinks' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'node_id' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Link' } }]
+						}
+					}
+				]
+			}
+		},
+		{
+			kind: 'FragmentDefinition',
+			name: { kind: 'Name', value: 'Link' },
+			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'node' },
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
+						}
+					}
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<GetLinksQuery, GetLinksQueryVariables>;
 export const GetNodeDocument = {
 	kind: 'Document',
 	definitions: [
@@ -6669,143 +6911,6 @@ export const GetNodeDocument = {
 		}
 	]
 } as unknown as DocumentNode<GetNodeQuery, GetNodeQueryVariables>;
-export const GetCollaborationLinksDocument = {
-	kind: 'Document',
-	definitions: [
-		{
-			kind: 'OperationDefinition',
-			operation: 'query',
-			name: { kind: 'Name', value: 'getCollaborationLinks' },
-			variableDefinitions: [
-				{
-					kind: 'VariableDefinition',
-					variable: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } },
-					type: {
-						kind: 'NonNullType',
-						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
-					}
-				}
-			],
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'getCollaborationLinks' },
-						arguments: [
-							{
-								kind: 'Argument',
-								name: { kind: 'Name', value: 'node_id' },
-								value: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } }
-							}
-						],
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'CollaborationLink' } }
-							]
-						}
-					}
-				]
-			}
-		},
-		{
-			kind: 'FragmentDefinition',
-			name: { kind: 'Name', value: 'CollaborationLink' },
-			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'CollaborationLink' } },
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'permission' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
-						}
-					}
-				]
-			}
-		}
-	]
-} as unknown as DocumentNode<GetCollaborationLinksQuery, GetCollaborationLinksQueryVariables>;
-export const GetNodeLinksDocument = {
-	kind: 'Document',
-	definitions: [
-		{
-			kind: 'OperationDefinition',
-			operation: 'query',
-			name: { kind: 'Name', value: 'getNodeLinks' },
-			variableDefinitions: [
-				{
-					kind: 'VariableDefinition',
-					variable: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } },
-					type: {
-						kind: 'NonNullType',
-						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
-					}
-				}
-			],
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'getNode' },
-						arguments: [
-							{
-								kind: 'Argument',
-								name: { kind: 'Name', value: 'node_id' },
-								value: { kind: 'Variable', name: { kind: 'Name', value: 'node_id' } }
-							}
-						],
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-								{
-									kind: 'Field',
-									name: { kind: 'Name', value: 'links' },
-									selectionSet: {
-										kind: 'SelectionSet',
-										selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Link' } }]
-									}
-								}
-							]
-						}
-					}
-				]
-			}
-		},
-		{
-			kind: 'FragmentDefinition',
-			name: { kind: 'Name', value: 'Link' },
-			typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
-					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'node' },
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
-						}
-					}
-				]
-			}
-		}
-	]
-} as unknown as DocumentNode<GetNodeLinksQuery, GetNodeLinksQueryVariables>;
 export const GetParentDocument = {
 	kind: 'Document',
 	definitions: [

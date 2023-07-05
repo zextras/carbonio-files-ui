@@ -175,4 +175,51 @@ describe('ListHeader', () => {
 			expect(screen.queryByText(crumbs[0].label)).not.toBeInTheDocument();
 		});
 	});
+	describe('Select Badge Counter', () => {
+		test('should render the badge with the number of selectedCount if the selectedCount is > 0', () => {
+			const { node: currentFolder } = populateParents(populateFolder(), 5);
+
+			const selectAll = jest.fn();
+			const unselectAll = jest.fn();
+			const exitSelectionMode = jest.fn();
+			const selectedCount = 1;
+			setup(
+				<ListHeader
+					folderId={currentFolder.id}
+					isSelectionModeActive
+					permittedSelectionModeActionsItems={[]}
+					selectAll={selectAll}
+					unSelectAll={unselectAll}
+					exitSelectionMode={exitSelectionMode}
+					isAllSelected={false}
+					selectedCount={selectedCount}
+				/>,
+				{ mocks: [] }
+			);
+			expect(screen.getByTestId('list-header-selectionModeActive')).toBeVisible();
+			expect(screen.getByText(selectedCount)).toBeVisible();
+		});
+		test('Should not render the badge with 0 if selectedCount is 0', () => {
+			const { node: currentFolder } = populateParents(populateFolder(), 5);
+
+			const selectAll = jest.fn();
+			const unselectAll = jest.fn();
+			const exitSelectionMode = jest.fn();
+			const selectedCount = 0;
+			setup(
+				<ListHeader
+					folderId={currentFolder.id}
+					isSelectionModeActive
+					permittedSelectionModeActionsItems={[]}
+					selectAll={selectAll}
+					unSelectAll={unselectAll}
+					exitSelectionMode={exitSelectionMode}
+					isAllSelected={false}
+					selectedCount={selectedCount}
+				/>,
+				{ mocks: [] }
+			);
+			expect(screen.queryByText(selectedCount)).not.toBeInTheDocument();
+		});
+	});
 });

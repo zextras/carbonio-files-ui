@@ -40,7 +40,8 @@ export const ICON_REGEXP = {
 	goToFolder: /^icon: FolderOutline$/i,
 	uploadFailed: /^icon: AlertCircle$/i,
 	uploadCompleted: /^icon: CheckmarkCircle2$/i,
-	uploadLoading: /^icon: AnimatedLoader$/i
+	uploadLoading: /^icon: AnimatedLoader$/i,
+	queryLoading: /^icon: Refresh$/i
 } as const;
 
 export const SELECTORS = {

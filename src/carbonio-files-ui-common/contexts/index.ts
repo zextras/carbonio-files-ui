@@ -10,7 +10,7 @@ export const ListContext = createContext<{
 	setIsEmpty: (empty: boolean) => void;
 	// describe whether the list relates to a query or not.
 	// Should be false only when no data should be shown because no query has been executed
-	queryCalled?: boolean | undefined;
+	queryCalled?: boolean;
 	setQueryCalled?: (queryCalled: boolean) => void;
 }>({
 	isEmpty: true,

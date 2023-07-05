@@ -18,7 +18,7 @@ import {
 	getSharesVariables,
 	mockGetNode,
 	mockGetCollaborationLinks,
-	mockGetNodeLinks,
+	mockGetLinks,
 	mockGetShares,
 	mockUpdateNodeDescription,
 	mockUpdateNodeDescriptionError
@@ -122,7 +122,7 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
 					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
@@ -186,7 +186,7 @@ describe('Displayer', () => {
 						{ ...node, description: newDescription }
 					),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
 					mockGetCollaborationLinks({ node_id: node.id })
 				];
 

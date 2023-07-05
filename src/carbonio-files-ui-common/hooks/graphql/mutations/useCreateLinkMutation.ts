@@ -8,12 +8,11 @@ import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 
-import LINK from '../../../graphql/fragments/link.graphql';
-import CREATE_LINK from '../../../graphql/mutations/createLink.graphql';
 import {
+	CreateLinkDocument,
 	CreateLinkMutation,
 	CreateLinkMutationVariables,
-	LinkFragment
+	GetLinksDocument
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
@@ -22,14 +21,14 @@ export type CreateLinkType = (
 	expiresAt?: number
 ) => Promise<FetchResult<CreateLinkMutation>>;
 
-export function useCreateLinkMutation(
-	nodeId: string,
-	nodeTypename: string
-): { createLink: CreateLinkType; loading: boolean } {
+export function useCreateLinkMutation(nodeId: string): {
+	createLink: CreateLinkType;
+	loading: boolean;
+} {
 	const [createLinkMutation, { error: createLinkError, loading }] = useMutation<
 		CreateLinkMutation,
 		CreateLinkMutationVariables
-	>(CREATE_LINK);
+	>(CreateLinkDocument);
 
 	const createLink: CreateLinkType = useCallback(
 		(description?: string, expiresAt?: number) =>
@@ -41,22 +40,21 @@ export function useCreateLinkMutation(
 				},
 				update(cache, { data }) {
 					if (data?.createLink) {
-						cache.modify({
-							id: cache.identify({ id: nodeId, __typename: nodeTypename }),
-							fields: {
-								links(existingLinks) {
-									const newLinkRef = cache.writeFragment<LinkFragment>({
-										data: data.createLink,
-										fragment: LINK
-									});
-									return [newLinkRef, ...existingLinks];
+						cache.updateQuery(
+							{
+								query: GetLinksDocument,
+								variables: {
+									node_id: nodeId
 								}
-							}
-						});
+							},
+							(queryData) => ({
+								getLinks: [data.createLink, ...(queryData?.getLinks || [])]
+							})
+						);
 					}
 				}
 			}),
-		[createLinkMutation, nodeId, nodeTypename]
+		[createLinkMutation, nodeId]
 	);
 	useErrorHandler(createLinkError, 'CREATE_LINK');
 	return { createLink, loading };

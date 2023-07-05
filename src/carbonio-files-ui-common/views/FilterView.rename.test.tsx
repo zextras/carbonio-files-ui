@@ -26,7 +26,7 @@ import {
 	NODES_SORT_DEFAULT,
 	ROOTS
 } from '../constants';
-import { ACTION_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { populateFile, populateFolder, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
@@ -75,7 +75,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// activate selection mode by selecting items
 				await selectNodes(
@@ -115,7 +115,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// activate selection mode by selecting items
 				await selectNodes([node.id], user);
@@ -165,7 +165,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// activate selection mode by selecting items
 				await selectNodes([element.id], user);
@@ -229,7 +229,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// activate selection mode by selecting items
 				await selectNodes([element.id], user);
@@ -274,7 +274,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
 				const node1Item = screen.getByTestId(`node-item-${nodes[0].id}`);
@@ -321,7 +321,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
@@ -369,7 +369,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
@@ -451,7 +451,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// check the position of the node to update in the cached parent folder
 				// load two pages even if only one should be written in cache
@@ -560,7 +560,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// check the position of the node to update in the cached parent folder
 				// load two pages even if only one should be written in cache

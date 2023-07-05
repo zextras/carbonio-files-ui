@@ -439,7 +439,7 @@ describe('Search list', () => {
 				const { user } = setup(<SearchList />, { mocks });
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToMFD, user);
 				// check that all wanted items are selected
@@ -482,7 +482,7 @@ describe('Search list', () => {
 				const { user } = setup(<SearchList />, { mocks });
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToMFD, user);
 				// check that all wanted items are selected
@@ -547,7 +547,7 @@ describe('Search list', () => {
 				const { user } = setup(<SearchList />, { mocks });
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
@@ -597,7 +597,7 @@ describe('Search list', () => {
 				const { user } = setup(<SearchList />, { mocks });
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
@@ -650,7 +650,7 @@ describe('Search list', () => {
 				const { user } = setup(<SearchList />, { mocks });
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
@@ -708,7 +708,7 @@ describe('Search list', () => {
 				const { user } = setup(<SearchList />, { mocks });
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToDeletePermanently, user);
 				// check that all wanted items are selected
@@ -765,7 +765,7 @@ describe('Search list', () => {
 				const { user } = setup(<SearchList />, { mocks });
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToDeletePermanently, user);
 				// check that all wanted items are selected

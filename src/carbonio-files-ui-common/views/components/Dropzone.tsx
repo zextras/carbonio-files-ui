@@ -7,7 +7,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Container } from '@zextras/carbonio-design-system';
-import { throttle, intersection } from 'lodash';
+import { intersection, throttle } from 'lodash';
 import styled, { DefaultTheme } from 'styled-components';
 
 import { DropzoneModal } from './DropzoneModal';
@@ -72,7 +72,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 				() => {
 					setDragging(true);
 				},
-				100,
+				TIMERS.DRAG_THROTTLE,
 				{ leading: false }
 			),
 		[]
