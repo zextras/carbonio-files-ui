@@ -28,6 +28,7 @@ import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uplo
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
+import { PrimaryBarElement } from './PrimaryBarElement';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
@@ -104,7 +105,7 @@ export default function App(): JSX.Element {
 			position: 9,
 			visible: true,
 			label: t('label.app_name', 'Files'),
-			primaryBar: 'DriveOutline',
+			primaryBar: PrimaryBarElement,
 			secondaryBar: SidebarView,
 			appView: AppView
 		});

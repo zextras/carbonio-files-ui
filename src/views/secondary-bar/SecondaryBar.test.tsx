@@ -52,5 +52,19 @@ describe('SecondaryBar', () => {
 			});
 			expect(screen.getByText('2/4')).toBeVisible();
 		});
+		test('should render an icon alert if an upload fails', () => {
+			const uploadItems = populateUploadItems(4);
+			uploadItems[0].status = UploadStatus.FAILED;
+			uploadVar(keyBy(uploadItems, (item) => item.id));
+			setup(<SecondaryBar expanded />);
+			expect(screen.getByTestId('icon: AlertCircle')).toBeVisible();
+			act(() => {
+				uploadVar({
+					...uploadVar(),
+					[uploadItems[0].id]: { ...uploadItems[0], status: UploadStatus.COMPLETED }
+				});
+			});
+			expect(screen.queryByTestId('icon: AlertCircle')).not.toBeInTheDocument();
+		});
 	});
 });

@@ -28,6 +28,7 @@ import { useNavigation } from '../../hooks/useNavigation';
 type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
 	completeTotalBadgeCounter?: string | undefined;
+	isUploadFailed?: boolean;
 };
 
 const CustomAccordion = styled(Accordion)`
@@ -66,7 +67,8 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 			uploadsCompletedCounter: filter(
 				uploadStatus,
 				(item) => item.status === UploadStatus.COMPLETED
-			).length
+			).length,
+			isFailed: find(uploadStatus, (item) => item.status === UploadStatus.FAILED) !== undefined
 		}),
 		[uploadStatus]
 	);
@@ -140,6 +142,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 				(uploadsInfo.uploadsCounter > 0 &&
 					`${uploadsInfo.uploadsCompletedCounter}/${uploadsInfo.uploadsCounter}`) ||
 				undefined,
+			isUploadFailed: uploadsInfo.isFailed,
 			CustomComponent: SecondaryBarItemExpanded,
 			active: location.pathname.includes(INTERNAL_PATH.UPLOADS)
 		};
