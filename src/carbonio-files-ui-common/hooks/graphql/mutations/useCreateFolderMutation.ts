@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/* eslint-disable arrow-body-style */
 import { useCallback } from 'react';
 
 import { FetchResult, MutationHookOptions, MutationResult, useMutation } from '@apollo/client';
@@ -45,8 +44,8 @@ export function useCreateFolderMutation(
 	const { addNodeToFolder } = useUpdateFolderContent(mutationOptions.client);
 
 	const createFolder = useCallback<CreateFolderType>(
-		(parentFolder: Parameters<CreateFolderType>[0], name: string) => {
-			return createFolderMutation({
+		(parentFolder, name) =>
+			createFolderMutation({
 				variables: {
 					destination_id: parentFolder.id,
 					name,
@@ -61,8 +60,7 @@ export function useCreateFolderMutation(
 						scrollToNodeItem(data.createFolder.id, isLast);
 					}
 				}
-			});
-		},
+			}),
 		[createFolderMutation, addNodeToFolder]
 	);
 
