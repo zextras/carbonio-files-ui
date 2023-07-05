@@ -8,7 +8,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Accordion, AccordionItemType, Container } from '@zextras/carbonio-design-system';
-import { map, find, reduce, size, orderBy, filter } from 'lodash';
+import { map, find, reduce, size, orderBy, filter, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -68,7 +68,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 				uploadStatus,
 				(item) => item.status === UploadStatus.COMPLETED
 			).length,
-			isFailed: find(uploadStatus, (item) => item.status === UploadStatus.FAILED) !== undefined
+			isFailed: some(uploadStatus, (item) => item.status === UploadStatus.FAILED)
 		}),
 		[uploadStatus]
 	);
