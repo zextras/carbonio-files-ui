@@ -27,6 +27,7 @@ import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-ty
 import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uploadUtils';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
+import { PrimaryBarElement } from './components/PrimaryBarElement';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
@@ -104,7 +105,7 @@ export default function App(): JSX.Element {
 			position: 9,
 			visible: true,
 			label: t('label.app_name', 'Files'),
-			primaryBar: 'DriveOutline',
+			primaryBar: PrimaryBarElement,
 			secondaryBar: SidebarView,
 			appView: AppView
 		});
