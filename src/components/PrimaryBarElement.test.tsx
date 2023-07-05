@@ -10,12 +10,12 @@ import { keyBy } from 'lodash';
 import { act } from 'react-dom/test-utils';
 import { Link, Switch, Route, useLocation } from 'react-router-dom';
 
-import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
-import { FILES_ROUTE } from './carbonio-files-ui-common/constants';
-import { populateUploadItems } from './carbonio-files-ui-common/mocks/mockUtils';
-import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-types';
-import { setup } from './carbonio-files-ui-common/utils/testUtils';
 import { PrimaryBarElement } from './PrimaryBarElement';
+import { uploadVar } from '../carbonio-files-ui-common/apollo/uploadVar';
+import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
+import { populateUploadItems } from '../carbonio-files-ui-common/mocks/mockUtils';
+import { UploadStatus } from '../carbonio-files-ui-common/types/graphql/client-types';
+import { setup } from '../carbonio-files-ui-common/utils/testUtils';
 
 describe('PrimaryBarElement', () => {
 	test('should render an alert icon if an upload fails', () => {

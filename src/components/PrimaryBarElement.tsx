@@ -11,11 +11,11 @@ import { BadgeInfo, PrimaryBarComponentProps } from '@zextras/carbonio-shell-ui'
 import { find } from 'lodash';
 import { useLocation } from 'react-router-dom';
 
-import BadgeWrap from './badge-wrap';
-import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
-import { FILES_ROUTE } from './carbonio-files-ui-common/constants';
-import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-types';
-import { useNavigation } from './hooks/useNavigation';
+import { BadgeWrap } from './BadgeWrap';
+import { uploadVar } from '../carbonio-files-ui-common/apollo/uploadVar';
+import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
+import { UploadStatus } from '../carbonio-files-ui-common/types/graphql/client-types';
+import { useNavigation } from '../hooks/useNavigation';
 
 export const PrimaryBarElement = ({ active }: PrimaryBarComponentProps): JSX.Element => {
 	const uploadStatus = useReactiveVar(uploadVar);

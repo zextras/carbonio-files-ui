@@ -27,8 +27,8 @@ import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-ty
 import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uploadUtils';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
+import { PrimaryBarElement } from './components/PrimaryBarElement';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
-import { PrimaryBarElement } from './PrimaryBarElement';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
