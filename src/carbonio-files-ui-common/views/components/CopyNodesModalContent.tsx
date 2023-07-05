@@ -30,7 +30,7 @@ import { useCopyNodesMutation } from '../../hooks/graphql/mutations/useCopyNodes
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
 import { GetNodeParentType, Node, NodeListItemType, RootListItemType } from '../../types/common';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../../types/graphql/types';
+import { GetChildrenQuery, GetChildrenQueryVariables } from '../../types/graphql/types';
 import { canBeCopyDestination, isRoot } from '../../utils/ActionsFactory';
 import { isFile, isFolder } from '../../utils/utils';
 
@@ -160,11 +160,11 @@ export const CopyNodesModalContent: React.VFC<CopyNodesModalContentProps> = ({
 	const confirmHandler = useCallback(
 		(e: Event | React.SyntheticEvent) => {
 			e.stopPropagation();
-			let destinationFolderNode;
+			let destinationFolderNode: Pick<Node, '__typename' | 'id'> | undefined | null;
 			if (destinationFolder === currentFolder?.getNode?.id) {
 				destinationFolderNode = currentFolder?.getNode;
 			} else if (destinationFolder) {
-				const node = find(nodes, ['id', destinationFolder]);
+				const node = find(nodes, (item) => item.id === destinationFolder);
 				if (node) {
 					destinationFolderNode = node;
 				} else {
@@ -184,8 +184,8 @@ export const CopyNodesModalContent: React.VFC<CopyNodesModalContentProps> = ({
 				}
 			}
 
-			if (destinationFolderNode) {
-				copyNodes(destinationFolderNode as Folder, ...nodesToCopy).then((result) => {
+			if (destinationFolderNode && isFolder(destinationFolderNode)) {
+				copyNodes(destinationFolderNode, ...nodesToCopy).then((result) => {
 					// TODO: handle case when not all nodes are copied
 					if (result?.data) {
 						closeHandler();

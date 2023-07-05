@@ -8,7 +8,7 @@ import { forEach } from 'lodash';
 
 import { mergeNodesList, readNodesList } from './utils';
 import { FindNodesCachedObject, NodesPage, NodesPageCachedObject } from '../../types/apollo';
-import { Folder, FolderChildrenArgs } from '../../types/graphql/types';
+import { Folder, FolderChildrenArgs, ParentIdFragmentDoc } from '../../types/graphql/types';
 
 export const folderTypePolicies: TypePolicy = {
 	fields: {
@@ -52,16 +52,27 @@ export const folderTypePolicies: TypePolicy = {
 						if (parentFolderRef) {
 							// write parent data on each child
 							forEach(existingNodes, (child) => {
-								cache.modify({
+								const parentCachedData = cache.readFragment({
 									id: cache.identify(child),
-									fields: {
-										parent() {
-											return parentFolderRef;
-										}
-									},
-									// do not broadcast update to avoid refetch of queries
-									broadcast: false
+									fragment: ParentIdFragmentDoc,
+									fragmentName: 'ParentId'
 								});
+								if (!parentCachedData?.parent) {
+									// use writeFragment and not cache modify in order to write the field even if it is not already present
+									cache.writeFragment({
+										id: cache.identify(child),
+										fragment: ParentIdFragmentDoc,
+										fragmentName: 'ParentId',
+										// do not broadcast update to avoid refetch of queries
+										broadcast: false,
+										data: {
+											parent: {
+												__typename: typename,
+												id: folderId
+											}
+										}
+									});
+								}
 							});
 						}
 					}

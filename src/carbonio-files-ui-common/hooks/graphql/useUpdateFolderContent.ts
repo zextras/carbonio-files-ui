@@ -33,8 +33,7 @@ export const useUpdateFolderContent = (
 	apolloClientArg?: ApolloClient<object>
 ): UpdateFolderContentType => {
 	// TODO remove apolloClientArg when useApolloClient is safe(provider moved up)
-	// eslint-disable-next-line react-hooks/rules-of-hooks
-	const apolloClient = apolloClientArg || useApolloClient();
+	const apolloClient = useApolloClient(apolloClientArg);
 
 	const addNodeToFolder = useCallback<UpdateFolderContentType['addNodeToFolder']>(
 		(folder, newNode) => {
