@@ -102,7 +102,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 				id: 'SharedWithMe',
 				priority: 3,
 				icon: 'ArrowCircleLeftOutline',
-				iconCustomColor: '#AB47BC',
+				iconColor: 'linked',
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();

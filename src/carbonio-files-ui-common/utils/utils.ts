@@ -73,16 +73,23 @@ export const humanFileSize = (inputSize: number): string => {
 /**
  * Given a file type returns the DS icon name
  */
-export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): string => {
+export const getIconByFileType = (
+	type: NodeType,
+	subType?: Maybe<string>,
+	options?: { outline?: boolean }
+): keyof DefaultTheme['icons'] => {
+	function buildIconName(icon: keyof DefaultTheme['icons']): keyof DefaultTheme['icons'] {
+		return options?.outline ? `${icon}Outline` : icon;
+	}
 	switch (type) {
 		case NodeType.Folder:
-			return 'Folder';
+			return buildIconName('Folder');
 		case NodeType.Text:
 			switch (subType) {
 				case 'application/pdf':
-					return 'FilePdf';
+					return buildIconName('FilePdf');
 				default:
-					return 'FileText';
+					return buildIconName('FileText');
 			}
 		case NodeType.Video:
 			return 'Video';
@@ -101,11 +108,11 @@ export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): stri
 		case NodeType.Root: {
 			switch (subType) {
 				case ROOTS.LOCAL_ROOT:
-					return 'FolderOutline';
+					return 'Folder';
 				case ROOTS.TRASH:
-					return 'Trash2Outline';
+					return 'Trash2';
 				case ROOTS.SHARED_WITH_ME:
-					return 'ArrowCircleLeftOutline';
+					return 'ArrowCircleLeft';
 				default:
 					return 'File';
 			}
@@ -147,7 +154,7 @@ export const getIconColorByFileType = (
 		case NodeType.Root: {
 			switch (subType) {
 				case ROOTS.SHARED_WITH_ME:
-					return '#AB47BC';
+					return theme.palette.linked.regular;
 				default:
 					return theme.palette.currentColor.regular;
 			}

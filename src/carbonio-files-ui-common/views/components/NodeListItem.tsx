@@ -471,12 +471,12 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										)}
 										{incomingShare && (
 											<Padding left="extrasmall">
-												<Icon icon="ArrowCircleLeft" customColor="#AB47BC" disabled={disabled} />
+												<Icon icon="ArrowCircleLeft" color={'linked'} disabled={disabled} />
 											</Padding>
 										)}
 										{outgoingShare && (
 											<Padding left="extrasmall">
-												<Icon icon="ArrowCircleRight" customColor="#FFB74D" disabled={disabled} />
+												<Icon icon="ArrowCircleRight" color="shared" disabled={disabled} />
 											</Padding>
 										)}
 										{trashed && isSearchView(location) && (
