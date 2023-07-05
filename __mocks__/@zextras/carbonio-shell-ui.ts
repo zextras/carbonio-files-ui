@@ -5,6 +5,7 @@
  */
 
 import type { Account, AccountSettings, AppRoute } from '@zextras/carbonio-shell-ui';
+import { pushHistory as shellPushHistory } from '@zextras/carbonio-shell-ui';
 import { createMemoryHistory, Location } from 'history';
 
 import { FILES_APP_ID, FILES_ROUTE } from '../../src/carbonio-files-ui-common/constants';
@@ -20,11 +21,17 @@ function replaceHistoryMock(location: string | Location): void {
 	}
 }
 
-function pushHistoryMock(location: string | Location): void {
+function pushHistoryMock(
+	location: Parameters<typeof shellPushHistory>[0]
+): ReturnType<typeof shellPushHistory> {
 	if (typeof location === 'string') {
 		history.push(location);
+	} else if (typeof location.path === 'string') {
+		history.push(`/${location.route || ''}${location.path}`);
 	} else {
-		history.push({ ...location, pathname: location.pathname });
+		history.push(
+			`${location.route || ''}/${location.path.pathname || ''}${location.path.search || ''}`
+		);
 	}
 }
 

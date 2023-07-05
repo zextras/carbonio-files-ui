@@ -8,27 +8,14 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { keyBy } from 'lodash';
 import { act } from 'react-dom/test-utils';
-import { Link, Switch, Route } from 'react-router-dom';
+import { Link, Switch, Route, useLocation } from 'react-router-dom';
 
 import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_ROUTE } from './carbonio-files-ui-common/constants';
 import { populateUploadItems } from './carbonio-files-ui-common/mocks/mockUtils';
 import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-types';
 import { setup } from './carbonio-files-ui-common/utils/testUtils';
-import { UseNavigationHook } from './hooks/useNavigation';
 import { PrimaryBarElement } from './PrimaryBarElement';
-
-let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
-
-jest.mock('', () => ({
-	useNavigation: (): ReturnType<UseNavigationHook> => mockedUseNavigationHook
-}));
-
-mockedUseNavigationHook = {
-	navigateTo: jest.fn(),
-	navigateToFolder: jest.fn(),
-	navigateBack: jest.fn
-};
 
 describe('PrimaryBarElement', () => {
 	test('should render an alert icon if an upload fails', () => {
@@ -47,27 +34,37 @@ describe('PrimaryBarElement', () => {
 		expect(screen.queryByTestId('icon: AlertCircle')).not.toBeInTheDocument();
 	});
 	test('when return to a visited module, the last visited view is preserved', async () => {
-		const { user } = setup(
-			<>
-				<Switch>
-					<Route path={`/${FILES_ROUTE}/path1`}>
-						<div>
-							<span>Path 1 of Files module</span>
-							<Link to={`/${FILES_ROUTE}/path2`}>Go to path2</Link>
-						</div>
-					</Route>
-					<Route path={`/${FILES_ROUTE}/path2`}>
-						<div>
-							<span>Path 2 of Files module</span>
-							<Link to={'/otherModule'}>Go to otherModule</Link>
-						</div>
-					</Route>
-					<Route path={`/otherModule`}>Other module view</Route>
-				</Switch>
-				<PrimaryBarElement active={window.location.pathname.startsWith(`/${FILES_ROUTE}`)} />
-			</>,
-			{ initialRouterEntries: [`/${FILES_ROUTE}/path1`] }
-		);
+		// we are using the '/test' because in the PrimaryBarElement.tsx component we used a replace function
+		// to remove the first '/files' which is added automatically by the shell.
+		// For this test we need to check that the PrimaryBarElement navigates to the last valid location of Files
+		// but the test environment works without the '/files' and does not add automatically
+		const TestComponent = (): JSX.Element => {
+			const location = useLocation();
+			return (
+				<>
+					<Switch>
+						<Route path={`/test${FILES_ROUTE}/path1`}>
+							<div>
+								<span>Path 1 of Files module</span>
+								<Link to={`/test${FILES_ROUTE}/path2`}>Go to path2</Link>
+							</div>
+						</Route>
+						<Route path={`/test${FILES_ROUTE}/path2`}>
+							<div>
+								<span>Path 2 of Files module</span>
+								<Link to={'/otherModule'}>Go to otherModule</Link>
+							</div>
+						</Route>
+						<Route path={`/otherModule`}>Other module view</Route>
+					</Switch>
+					<PrimaryBarElement active={location.pathname.startsWith(`/test${FILES_ROUTE}`)} />
+				</>
+			);
+		};
+
+		const { user, getByRoleWithIcon } = setup(<TestComponent />, {
+			initialRouterEntries: [`/test${FILES_ROUTE}/path1`]
+		});
 		expect(screen.getByText(/Path 1 of Files module/i)).toBeVisible();
 		await user.click(screen.getByRole('link', { name: 'Go to path2' }));
 		expect(screen.getByText(/Path 2 of Files module/i)).toBeVisible();
@@ -75,8 +72,9 @@ describe('PrimaryBarElement', () => {
 		await user.click(screen.getByRole('link', { name: 'Go to otherModule' }));
 		expect(screen.getByText(/Other module view/i)).toBeVisible();
 		expect(screen.queryByText(/Path 2 of Files module/i)).not.toBeInTheDocument();
-
-		// expect(screen.queryByText(/Other module view/i)).not.toBeInTheDocument();
-		// expect(screen.getByText(/Path 2 of Files module/i)).toBeVisible();
+		await user.click(getByRoleWithIcon('button', { icon: 'icon: DriveOutline' }));
+		await screen.findByText(/Path 2 of Files module/i);
+		expect(screen.queryByText(/Other module view/i)).not.toBeInTheDocument();
+		expect(screen.getByText(/Path 2 of Files module/i)).toBeVisible();
 	});
 });
