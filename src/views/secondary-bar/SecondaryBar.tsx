@@ -8,7 +8,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Accordion, AccordionItemType, Container } from '@zextras/carbonio-design-system';
-import { map, find, reduce, size, orderBy, filter } from 'lodash';
+import { map, find, reduce, size, orderBy, filter, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -28,6 +28,7 @@ import { useNavigation } from '../../hooks/useNavigation';
 type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
 	completeTotalBadgeCounter?: string | undefined;
+	isUploadFailed?: boolean;
 };
 
 const CustomAccordion = styled(Accordion)`
@@ -66,7 +67,8 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 			uploadsCompletedCounter: filter(
 				uploadStatus,
 				(item) => item.status === UploadStatus.COMPLETED
-			).length
+			).length,
+			isFailed: some(uploadStatus, (item) => item.status === UploadStatus.FAILED)
 		}),
 		[uploadStatus]
 	);
@@ -140,6 +142,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 				(uploadsInfo.uploadsCounter > 0 &&
 					`${uploadsInfo.uploadsCompletedCounter}/${uploadsInfo.uploadsCounter}`) ||
 				undefined,
+			isUploadFailed: uploadsInfo.isFailed,
 			CustomComponent: SecondaryBarItemExpanded,
 			active: location.pathname.includes(INTERNAL_PATH.UPLOADS)
 		};
