@@ -85,7 +85,7 @@ export const UploadNodeDetailsListItem = ({ id }: UploadNodeDetailsListItemProps
 					<NodeAvatarIcon
 						selectionModeActive={false}
 						selected={false}
-						icon={`${getIconByFileType(getUploadNodeType(item))}Outline`}
+						icon={getIconByFileType(getUploadNodeType(item), undefined, { outline: true })}
 						compact
 					/>
 					<Container

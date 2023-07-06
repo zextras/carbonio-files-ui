@@ -30,7 +30,7 @@ export const NodeAvatarIcon: React.VFC<NodeAvatarIconParams> = ({
 	disabled,
 	selectable,
 	icon,
-	color,
+	color = 'gray1',
 	picture
 }) => {
 	const { tooltipLabel, tooltipDisabled } = useContext(NodeAvatarIconContext);
