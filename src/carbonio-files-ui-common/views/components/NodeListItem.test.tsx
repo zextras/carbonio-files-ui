@@ -10,7 +10,7 @@ import { screen } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeListItem } from './NodeListItem';
-import { INTERNAL_PATH } from '../../constants';
+import { INTERNAL_PATH, PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT, ROOTS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateFile, populateFolder, populateNode, populateUser } from '../../mocks/mockUtils';
 import { NodeType, User } from '../../types/graphql/types';
