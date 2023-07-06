@@ -76,48 +76,49 @@ export const getIconByFileType = (
 	subType?: Maybe<string>,
 	options?: { outline?: boolean }
 ): keyof DefaultTheme['icons'] => {
-	function buildIconName(icon: keyof DefaultTheme['icons']): keyof DefaultTheme['icons'] {
-		return options?.outline ? `${icon}Outline` : icon;
-	}
-	switch (type) {
-		case NodeType.Folder:
-			return buildIconName('Folder');
-		case NodeType.Text:
-			switch (subType) {
-				case 'application/pdf':
-					return buildIconName('FilePdf');
-				default:
-					return buildIconName('FileText');
+	function getIcon(): keyof DefaultTheme['icons'] {
+		switch (type) {
+			case NodeType.Folder:
+				return 'Folder';
+			case NodeType.Text:
+				switch (subType) {
+					case 'application/pdf':
+						return 'FilePdf';
+					default:
+						return 'FileText';
+				}
+			case NodeType.Video:
+				return 'Video';
+			case NodeType.Audio:
+				return 'Music';
+			case NodeType.Image:
+				return 'Image';
+			case NodeType.Message:
+				return 'Email';
+			case NodeType.Presentation:
+				return 'FilePresentation';
+			case NodeType.Spreadsheet:
+				return 'FileCalc';
+			case NodeType.Application:
+				return 'Code';
+			case NodeType.Root: {
+				switch (subType) {
+					case ROOTS.LOCAL_ROOT:
+						return 'Folder';
+					case ROOTS.TRASH:
+						return 'Trash2';
+					case ROOTS.SHARED_WITH_ME:
+						return 'ArrowCircleLeft';
+					default:
+						return 'File';
+				}
 			}
-		case NodeType.Video:
-			return 'Video';
-		case NodeType.Audio:
-			return 'Music';
-		case NodeType.Image:
-			return 'Image';
-		case NodeType.Message:
-			return 'Email';
-		case NodeType.Presentation:
-			return 'FilePresentation';
-		case NodeType.Spreadsheet:
-			return 'FileCalc';
-		case NodeType.Application:
-			return 'Code';
-		case NodeType.Root: {
-			switch (subType) {
-				case ROOTS.LOCAL_ROOT:
-					return 'Folder';
-				case ROOTS.TRASH:
-					return 'Trash2';
-				case ROOTS.SHARED_WITH_ME:
-					return 'ArrowCircleLeft';
-				default:
-					return 'File';
-			}
+			default:
+				return 'File';
 		}
-		default:
-			return 'File';
 	}
+	const icon = getIcon();
+	return options?.outline ? `${icon}Outline` : icon;
 };
 
 export const getIconColorByFileType = (
