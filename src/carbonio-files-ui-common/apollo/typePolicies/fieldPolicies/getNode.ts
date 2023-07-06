@@ -15,10 +15,7 @@ export const getNodeFieldPolicy: FieldPolicy<
 	FieldFunctionOptions<Partial<QueryGetNodeArgs>, Partial<GetNodeQueryVariables>>
 > = {
 	read(_, fieldFunctionOptions): Reference | undefined {
-		const { args, toReference, canRead } = fieldFunctionOptions as FieldFunctionOptions<
-			QueryGetNodeArgs,
-			GetNodeQueryVariables
-		>;
+		const { args, toReference, canRead } = fieldFunctionOptions;
 		if (args?.node_id) {
 			const typename = findNodeTypeName(args.node_id, { canRead, toReference });
 

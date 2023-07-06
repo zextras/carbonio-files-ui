@@ -11,7 +11,8 @@ import { forEach, map } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeDetails } from './NodeDetails';
-import { NODES_LOAD_LIMIT } from '../../constants';
+import { NODES_LOAD_LIMIT, PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
+import { ICON_REGEXP } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -342,6 +343,42 @@ describe('Node Details', () => {
 		expect(screen.getByRole('img')).toBeVisible();
 	});
 
+	test('should show preview of gif image with gif format', async () => {
+		const node = populateFile();
+		const loadMore = jest.fn();
+		node.type = NodeType.Image;
+		node.mime_type = 'image/gif';
+		setup(
+			<NodeDetails
+				typeName={node.__typename}
+				id={node.id}
+				name={node.name}
+				owner={node.owner}
+				creator={node.creator}
+				lastEditor={node.last_editor}
+				createdAt={node.created_at}
+				updatedAt={node.updated_at}
+				description={node.description}
+				canUpsertDescription={canUpsertDescription(node)}
+				loadMore={loadMore}
+				loading={false}
+				shares={node.shares}
+				hasMore={false}
+				size={node.size}
+				type={node.type}
+				version={node.version}
+				mimeType={node.mime_type}
+			/>,
+			{ mocks: [] }
+		);
+		await screen.findByRole('img');
+		expect(screen.getByRole('img')).toBeVisible();
+		expect(screen.getByRole('img')).toHaveAttribute(
+			'src',
+			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/${node.version}/0x256/thumbnail/?shape=rectangular&quality=high&output_format=gif`
+		);
+	});
+
 	test('Show file preview for pdf', async () => {
 		const node = populateFile();
 		const loadMore = jest.fn();
@@ -475,7 +512,7 @@ describe('Node Details', () => {
 		const firstElement = await screen.findByText(nodes[0].name);
 		expect(firstElement).toBeVisible();
 		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
-		expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(screen.queryAllByTestId(`details-node-item-`, { exact: false })).toHaveLength(

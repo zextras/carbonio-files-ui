@@ -21,7 +21,6 @@ import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/gr
 import {
 	getChildrenVariables,
 	mockCopyNodes,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPath,
@@ -59,8 +58,7 @@ describe('Copy', () => {
 			const mocks = [
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder)
+				mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
 			];
 
 			const { user } = setup(<FolderView />, {
@@ -99,7 +97,6 @@ describe('Copy', () => {
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockCopyNodes(
 					{
 						node_ids: [nodeToCopy.id],
@@ -186,7 +183,6 @@ describe('Copy', () => {
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockCopyNodes(
 					{
 						node_ids: map(nodesToCopy, (node) => node.id),
@@ -273,7 +269,6 @@ describe('Copy', () => {
 				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockCopyNodes(
 					{
 						node_ids: [nodeToCopy.id],

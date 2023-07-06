@@ -18,7 +18,6 @@ import { Node } from '../types/common';
 import {
 	getChildrenVariables,
 	mockFlagNodes,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPermissions
@@ -59,7 +58,6 @@ describe('Flag', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockFlagNodes(
 					{
 						node_ids: nodesIdsToFlag,
@@ -82,7 +80,7 @@ describe('Flag', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 			expect(screen.queryByTestId('icon: Flag')).not.toBeInTheDocument();
 
 			// activate selection mode by selecting items
@@ -130,7 +128,6 @@ describe('Flag', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockFlagNodes(
 					{
 						node_ids: [node.id],
@@ -153,7 +150,7 @@ describe('Flag', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(`node-item-${node.id}`);

@@ -35,17 +35,22 @@ export const ICON_REGEXP = {
 	openDocument: /^icon: BookOpenOutline$/i,
 	close: /^icon: Close$/i,
 	trash: /^icon: Trash2Outline$/i,
+	share: 'icon: ShareOutline',
 	retryUpload: /^icon: PlayCircleOutline$/i,
 	removeUpload: /^icon: CloseCircleOutline$/i,
 	goToFolder: /^icon: FolderOutline$/i,
 	uploadFailed: /^icon: AlertCircle$/i,
 	uploadCompleted: /^icon: CheckmarkCircle2$/i,
-	uploadLoading: /^icon: AnimatedLoader$/i
+	uploadLoading: /^icon: AnimatedLoader$/i,
+	previewClose: 'icon: ArrowBackOutline',
+	previewDownload: 'icon: DownloadOutline',
+	queryLoading: /^icon: Refresh$/i
 } as const;
 
 export const SELECTORS = {
 	dropdownList: 'dropdown-popper-list',
 	checkedAvatar: 'icon: Checkmark',
+	pdfPreview: 'pdf-preview-container',
 	uncheckedAvatar: 'file-icon-selecting'
 };
 

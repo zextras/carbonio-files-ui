@@ -13,13 +13,12 @@ import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
-import { ACTION_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { Folder } from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPermissions,
@@ -70,7 +69,6 @@ describe('Rename', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
 					{
 						node_id: element.id,
@@ -89,7 +87,7 @@ describe('Rename', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			// activate selection mode by selecting items
 			await selectNodes([element.id], user);
@@ -138,8 +136,6 @@ describe('Rename', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
 					{
 						node_id: element.id,
@@ -158,7 +154,7 @@ describe('Rename', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(`node-item-${element.id}`);
@@ -225,7 +221,6 @@ describe('Rename', () => {
 					children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
 					{
 						node_id: element.id,
@@ -273,7 +268,7 @@ describe('Rename', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			let nodes = screen.getAllByTestId('node-item', { exact: false });
 			expect(screen.getByTestId(`node-item-${firstCursor.id}`)).toBe(nodes[nodes.length - 1]);
@@ -330,7 +325,7 @@ describe('Rename', () => {
 			// number of elements shown is the total number of children
 			expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 			// load more icon is not visible
-			expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 		});
 
 		test('Rename of last ordered node to unordered update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
@@ -356,7 +351,6 @@ describe('Rename', () => {
 				} as Folder),
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
 					{ node_id: nodeToRename.id, name: newName },
 					{ ...nodeToRename, name: newName }
@@ -387,7 +381,7 @@ describe('Rename', () => {
 			expect(screen.queryByText(nodeToRename.name)).not.toBeInTheDocument();
 			expect(screen.getByText(newName)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 			await triggerLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
@@ -423,7 +417,6 @@ describe('Rename', () => {
 				} as Folder),
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockUpdateNode(
 					{ node_id: nodeToRename.id, name: newName },
 					{ ...nodeToRename, name: newName }
@@ -464,7 +457,7 @@ describe('Rename', () => {
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);
-			expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 			await triggerLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
