@@ -155,7 +155,7 @@ export const getIconColorByFileType = (
 				case ROOTS.SHARED_WITH_ME:
 					return theme.palette.linked.regular;
 				default:
-					return theme.palette.currentColor.regular;
+					return theme.palette.gray1.regular;
 			}
 		}
 		default:
