@@ -371,9 +371,9 @@ describe('Node List Item', () => {
 		});
 	});
 	test.each<[rootType: string, icon: keyof DefaultTheme['icons'], color: string]>([
-		[ROOTS.SHARED_WITH_ME, 'ArrowCircleLeftOutline', '#AB47BC'],
-		[ROOTS.TRASH, 'Trash2Outline', 'currentColor'],
-		[ROOTS.LOCAL_ROOT, 'FolderOutline', 'currentColor']
+		[ROOTS.SHARED_WITH_ME, 'ArrowCircleLeft', '#AB47BC'],
+		[ROOTS.TRASH, 'Trash2', '#828282'],
+		[ROOTS.LOCAL_ROOT, 'Folder', '#828282']
 	])('node with root type %s show icon %s with color %s', (rootType, icon, color) => {
 		setup(<NodeListItem id={rootType} name={'name'} type={NodeType.Root} />);
 		expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
