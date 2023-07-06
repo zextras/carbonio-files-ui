@@ -7,7 +7,9 @@ import type { Account, AccountSettings } from '@zextras/carbonio-shell-ui';
 
 export const LOGGED_USER: Account = {
 	displayName: '',
-	identities: undefined,
+	identities: {
+		identity: [{ id: 'logged-user-identity-default', name: 'DEFAULT' }]
+	},
 	rights: {
 		targets: []
 	},
