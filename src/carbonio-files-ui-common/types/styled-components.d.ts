@@ -13,6 +13,10 @@ declare module 'styled-components' {
 			AnimatedLoader: (props: React.SVGAttributes<SVGSVGElement>) => JSX.Element;
 			AnimatedUpload: (props: React.ObjectHTMLAttributes<HTMLObjectElement>) => JSX.Element;
 		};
+		palette: DSTheme['palette'] & {
+			shared: DSTheme['palette'][keyof DSTheme['palette']];
+			linked: DSTheme['palette'][keyof DSTheme['palette']];
+		};
 	}
 }
 

@@ -831,7 +831,7 @@ describe('Drag and drop', () => {
 			})
 		});
 
-		const { findByTextWithMarkup } = setup(<FolderView />, {
+		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
 		});
