@@ -11,7 +11,7 @@
         },
         "team": "Arquivos enviados no Team",
         "filters": "Filtros",
-        "uploads": "Uploads",
+        "uploads": "Carregamentos",
         "filesHome": "Início"
     },
     "create": {
@@ -469,7 +469,8 @@
                     "placeholder": "Adicionar novas pessoas ou grupos"
                 },
                 "noteDescription": "A mensagem padrão exibe seu nome, o nome do item compartilhado, as permissões concedidas aos destinatários e as informações de acesso.",
-                "note": "Nota:"
+                "note": "Nota:",
+                "button": "Partilhar"
             },
             "noSharePermissionHeader": "Você não pode compartilhar este item."
         },
@@ -490,7 +491,7 @@
         "search_empty": [
             {
                 "message": "Ou selecione \"Filtros Avançados\" para refinar sua busca.",
-                "title": "Inicie uma nova busca"
+                "title": "Inicie uma nova pesquisa."
             },
             {
                 "message": "Não desista, continue procurando!",
@@ -665,7 +666,7 @@
             ]
         },
         "search": {
-            "title": "Digite as palavras-chave para iniciar a busca"
+            "title": "Digite as palavras-chave para iniciar a pesquisa."
         },
         "folder_empty": [
             {
@@ -785,7 +786,7 @@
         "code_NODE_NOT_FOUND": "Parece que este elemento não existe ou você não tem permissão para acessá-lo",
         "code_NODE_WRITE_ERROR": "Parece que este elemento não pode ser modificado ou você não tem permissão para modificá-lo",
         "code_SHARE_CREATION_ERROR": "Lamentamos, mas não é possível compartilhar um item com este usuário",
-        "code_ACCOUNT_NOT_FOUND": "Este usuário não faz parte do Carbonio",
+        "code_ACCOUNT_NOT_FOUND": "Este endereço de email não pertence a nenhum utilizador",
         "code_MISSING_FIELD": "Ocorreu um erro interno. Não todas as informações deste objeto foram recuperadas",
         "code_SHARE_NOT_FOUND": "Este compartilhamento não pode ser encontrado",
         "code_NODE_DUPLICATED": "Já existe um arquivo com o mesmo nome nesta pasta",
@@ -901,7 +902,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "Este endereço de e-mail não está associado a um usuário do Carbonio"
+                    "contactNotFound": "Só é possível partilhar itens com utilizadores com esse recurso ativado e não com listas de distribuição. Parece que o endereço de e-mail fornecido não está associado a nenhum utilizador ativo. Verifique o endereço e tente novamente."
                 }
             }
         }
