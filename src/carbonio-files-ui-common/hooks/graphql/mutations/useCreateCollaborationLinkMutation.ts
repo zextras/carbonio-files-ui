@@ -4,18 +4,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/* eslint-disable arrow-body-style */
 import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 
-import COLLABORATION_LINK from '../../../graphql/fragments/collaborationLink.graphql';
 import CREATE_COLLABORATION_LINK from '../../../graphql/mutations/createCollaborationLink.graphql';
 import {
 	CreateCollaborationLinkMutation,
 	CreateCollaborationLinkMutationVariables,
-	CollaborationLinkFragment,
-	SharePermission
+	SharePermission,
+	GetCollaborationLinksDocument
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
@@ -33,30 +31,31 @@ export function useCreateCollaborationLinkMutation(nodeId: string): {
 		);
 
 	const createCollaborationLink: CreateCollaborationLinkType = useCallback(
-		(permission) => {
-			return createCollaborationLinkMutation({
+		(permission) =>
+			createCollaborationLinkMutation({
 				variables: {
 					node_id: nodeId,
 					permission
 				},
 				update(cache, { data }) {
 					if (data?.createCollaborationLink) {
-						cache.modify({
-							id: cache.identify(data.createCollaborationLink.node),
-							fields: {
-								collaboration_links(existingCollaborationLinks) {
-									const newLinkRef = cache.writeFragment<CollaborationLinkFragment>({
-										data: data.createCollaborationLink,
-										fragment: COLLABORATION_LINK
-									});
-									return [newLinkRef, ...existingCollaborationLinks];
+						cache.updateQuery(
+							{
+								query: GetCollaborationLinksDocument,
+								variables: {
+									node_id: nodeId
 								}
-							}
-						});
+							},
+							(queryData) => ({
+								getCollaborationLinks: [
+									data.createCollaborationLink,
+									...(queryData?.getCollaborationLinks || [])
+								]
+							})
+						);
 					}
 				}
-			});
-		},
+			}),
 		[createCollaborationLinkMutation, nodeId]
 	);
 	useErrorHandler(createCollaborationLinkError, 'CREATE_COLLABORATION_LINK');

@@ -14,7 +14,7 @@ import { List } from './List';
 import { ACTION_REGEXP } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
-import { mockGetChild, mockGetParent } from '../../utils/mockUtils';
+import { mockGetParent } from '../../utils/mockUtils';
 import { setup, selectNodes } from '../../utils/testUtils';
 
 describe('Contextual menu actions', () => {
@@ -66,10 +66,7 @@ describe('Contextual menu actions', () => {
 					}
 				];
 
-				const mocks = [
-					mockGetParent({ node_id: currentFolder.id }, currentFolder),
-					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
-				];
+				const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
 
 				const { user } = setup(
 					<List
@@ -171,10 +168,7 @@ describe('Contextual menu actions', () => {
 					}
 				];
 
-				const mocks = [
-					mockGetParent({ node_id: currentFolder.id }, currentFolder),
-					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
-				];
+				const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
 
 				const { user } = setup(
 					<List
@@ -273,10 +267,7 @@ describe('Contextual menu actions', () => {
 					}
 				];
 
-				const mocks = [
-					mockGetParent({ node_id: currentFolder.id }, currentFolder),
-					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
-				];
+				const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
 
 				const { user } = setup(
 					<List
@@ -373,10 +364,7 @@ describe('Contextual menu actions', () => {
 					}
 				];
 
-				const mocks = [
-					mockGetParent({ node_id: currentFolder.id }, currentFolder),
-					mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
-				];
+				const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
 
 				const { user } = setup(
 					<List
@@ -447,10 +435,7 @@ describe('Contextual menu actions', () => {
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;
 
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
-			];
+			const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
 
 			const { user } = setup(
 				<List
@@ -500,10 +485,7 @@ describe('Contextual menu actions', () => {
 			const element1 = currentFolder.children.nodes[1] as Node;
 			const element2 = currentFolder.children.nodes[2] as Node;
 
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
-			];
+			const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
 
 			const { user } = setup(
 				<List
@@ -565,10 +547,7 @@ describe('Contextual menu actions', () => {
 		node2.flagged = true;
 		currentFolder.children.nodes.push(node2);
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id, shares_limit: 1 }, currentFolder)
-		];
+		const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
 
 		const { user } = setup(
 			<List

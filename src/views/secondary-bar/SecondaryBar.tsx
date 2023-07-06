@@ -8,7 +8,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Accordion, AccordionItemType, Container } from '@zextras/carbonio-design-system';
-import { map, find, reduce, size, orderBy } from 'lodash';
+import { map, find, reduce, size, orderBy, filter, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -27,6 +27,8 @@ import { useNavigation } from '../../hooks/useNavigation';
 
 type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
+	completeTotalBadgeCounter?: string | undefined;
+	isUploadFailed?: boolean;
 };
 
 const CustomAccordion = styled(Accordion)`
@@ -34,11 +36,11 @@ const CustomAccordion = styled(Accordion)`
 	height: 100%;
 `;
 
-interface ShellSecondaryBarProps {
+interface SecondaryBarProps {
 	expanded: boolean;
 }
 
-export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded }) => {
+export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 	const { navigateTo } = useNavigation();
 	const [t] = useTranslation();
 	const { data } = useGetRootsListQuery();
@@ -61,7 +63,12 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 	const uploadsInfo = useMemo(
 		() => ({
 			isUploading: find(uploadStatus, (item) => item.status === UploadStatus.LOADING) !== undefined,
-			uploadsCounter: size(uploadStatus)
+			uploadsCounter: size(uploadStatus),
+			uploadsCompletedCounter: filter(
+				uploadStatus,
+				(item) => item.status === UploadStatus.COMPLETED
+			).length,
+			isFailed: some(uploadStatus, (item) => item.status === UploadStatus.FAILED)
 		}),
 		[uploadStatus]
 	);
@@ -97,7 +104,7 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				id: 'SharedWithMe',
 				priority: 3,
 				icon: 'ArrowCircleLeftOutline',
-				iconCustomColor: '#AB47BC',
+				iconColor: 'linked',
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
@@ -131,7 +138,11 @@ export const ShellSecondaryBar: React.VFC<ShellSecondaryBarProps> = ({ expanded 
 				navigateTo(INTERNAL_PATH.UPLOADS);
 			},
 			badgeType: 'unread',
-			badgeCounter: uploadsInfo.uploadsCounter || undefined,
+			completeTotalBadgeCounter:
+				(uploadsInfo.uploadsCounter > 0 &&
+					`${uploadsInfo.uploadsCompletedCounter}/${uploadsInfo.uploadsCounter}`) ||
+				undefined,
+			isUploadFailed: uploadsInfo.isFailed,
 			CustomComponent: SecondaryBarItemExpanded,
 			active: location.pathname.includes(INTERNAL_PATH.UPLOADS)
 		};

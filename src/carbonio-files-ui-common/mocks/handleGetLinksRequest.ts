@@ -9,12 +9,12 @@ import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
 
 import { populateLinks, populateNode } from './mockUtils';
 import { ROOTS } from '../constants';
-import { GetNodeLinksQuery, GetNodeLinksQueryVariables } from '../types/graphql/types';
+import { GetLinksQuery, GetLinksQueryVariables } from '../types/graphql/types';
 
-const handleGetNodeLinksRequest: ResponseResolver<
-	GraphQLRequest<GetNodeLinksQueryVariables>,
-	GraphQLContext<GetNodeLinksQuery>,
-	GetNodeLinksQuery
+const handleGetLinksRequest: ResponseResolver<
+	GraphQLRequest<GetLinksQueryVariables>,
+	GraphQLContext<GetLinksQuery>,
+	GetLinksQuery
 > = (req, res, ctx) => {
 	const { node_id: id } = req.variables;
 
@@ -29,9 +29,9 @@ const handleGetNodeLinksRequest: ResponseResolver<
 
 	return res(
 		ctx.data({
-			getNode: node
+			getLinks: node.links
 		})
 	);
 };
 
-export default handleGetNodeLinksRequest;
+export default handleGetLinksRequest;

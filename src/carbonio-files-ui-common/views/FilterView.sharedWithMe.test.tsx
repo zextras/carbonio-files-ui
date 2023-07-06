@@ -12,7 +12,13 @@ import { Route } from 'react-router-dom';
 import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
-import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
+import {
+	FILTER_TYPE,
+	INTERNAL_PATH,
+	NODES_LOAD_LIMIT,
+	ROOTS,
+	SHARES_LOAD_LIMIT
+} from '../constants';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes, populateShare, populateUser } from '../mocks/mockUtils';
 import { Node } from '../types/common';
@@ -24,8 +30,8 @@ import {
 	mockDeleteShare,
 	mockFindNodes,
 	mockGetNode,
-	mockGetNodeCollaborationLinks,
-	mockGetNodeLinks,
+	mockGetCollaborationLinks,
+	mockGetLinks,
 	mockGetShares
 } from '../utils/mockUtils';
 import { setup } from '../utils/testUtils';
@@ -59,7 +65,7 @@ describe('Filter view', () => {
 				shared_with_me: true,
 				sort: NodeSort.NameAsc,
 				limit: NODES_LOAD_LIMIT,
-				shares_limit: 1,
+				shares_limit: SHARES_LOAD_LIMIT,
 				direct_share: true
 			};
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
@@ -94,8 +100,8 @@ describe('Filter view', () => {
 				),
 				mockGetNode(getNodeVariables(node.id), node as Node),
 				mockGetShares(getSharesVariables(node.id), node),
-				mockGetNodeCollaborationLinks({ node_id: node.id }, node),
-				mockGetNodeLinks({ node_id: node.id }, node),
+				mockGetCollaborationLinks({ node_id: node.id }),
+				mockGetLinks({ node_id: node.id }, node.links),
 				mockDeleteShare({ node_id: node.id, share_target_id: mockedUserLogged.id }, true)
 			];
 

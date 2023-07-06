@@ -136,7 +136,8 @@ export const useUpload: UseUploadHook = () => {
 							});
 						}
 					})
-					.catch(() => {
+					.catch((error) => {
+						console.error(error);
 						const itemsToSetAsFailed = flatUploadItemChildren(uploadFolderItem, uploadVar());
 						forEach(itemsToSetAsFailed, (item) => {
 							if (item.status !== UploadStatus.COMPLETED) {

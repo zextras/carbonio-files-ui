@@ -31,7 +31,8 @@ import {
 	buildActionItems,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { downloadNode, isFile, isSupportedByPreview, openNodeWithDocs } from '../../utils/utils';
+import { isSupportedByPreview } from '../../utils/previewUtils';
+import { downloadNode, isFile, openNodeWithDocs } from '../../utils/utils';
 
 interface DisplayerActionsParams {
 	node: ActionsFactoryNodeType &
@@ -108,7 +109,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 
 	const [$isSupportedByPreview] = useMemo<
 		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview((isFile(node) && node.mime_type) || undefined), [node]);
+	>(() => isSupportedByPreview((isFile(node) && node.mime_type) || undefined, 'preview'), [node]);
 
 	const preview = useCallback(() => {
 		if ($isSupportedByPreview) {

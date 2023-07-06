@@ -15,13 +15,13 @@ import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
+import { ICON_REGEXP } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { Folder } from '../types/graphql/types';
 import {
 	getChildrenVariables,
 	mockCreateFolder,
 	mockCreateFolderError,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPermissions
@@ -93,7 +93,6 @@ describe('Create folder', () => {
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockCreateFolderError(
 				{
 					destination_id: currentFolder.id,
@@ -109,7 +108,7 @@ describe('Create folder', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -153,7 +152,6 @@ describe('Create folder', () => {
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockCreateFolder(
 				{
 					destination_id: currentFolder.id,
@@ -169,7 +167,7 @@ describe('Create folder', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -216,7 +214,6 @@ describe('Create folder', () => {
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockCreateFolder(
 				{
 					destination_id: currentFolder.id,
@@ -248,7 +245,7 @@ describe('Create folder', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		let nodes = screen.getAllByTestId('node-item', { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 
@@ -318,7 +315,6 @@ describe('Create folder', () => {
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChild({ node_id: currentFolder.id }, currentFolder),
 			mockCreateFolder(
 				{
 					destination_id: currentFolder.id,
@@ -334,7 +330,7 @@ describe('Create folder', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -359,6 +355,6 @@ describe('Create folder', () => {
 		const nodes = screen.getAllByTestId('node-item', { exact: false });
 		expect(nodes).toHaveLength(NODES_LOAD_LIMIT);
 		expect(nodes[newPos]).toBe(nodeItem);
-		expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 });

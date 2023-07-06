@@ -23,13 +23,14 @@ import { TextRowWithShim } from './TextRowWithShim';
 import { NodeDetailsUserRow } from '../../../components/NodeDetailsUserRow';
 import { Node } from '../../types/common';
 import { ChildFragment, Maybe, NodeType, User } from '../../types/graphql/types';
-import { humanFileSize, isFile, isFolder, isSupportedByPreview } from '../../utils/utils';
+import { isSupportedByPreview } from '../../utils/previewUtils';
+import { humanFileSize, isFile, isFolder } from '../../utils/utils';
 
 interface NodeDetailsProps {
 	typeName: Node['__typename'];
 	id: string;
 	name: string;
-	owner: Partial<User>;
+	owner: Maybe<Partial<User>> | undefined;
 	creator: Partial<User>;
 	lastEditor?: Maybe<Partial<User>>;
 	size?: number;
@@ -74,7 +75,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 }) => {
 	const [t] = useTranslation();
 	const [$isSupportedByPreview, previewType] = useMemo(
-		() => isSupportedByPreview(mimeType, 'thumbnail'),
+		() => isSupportedByPreview(mimeType, 'thumbnail_detail'),
 		[mimeType]
 	);
 
@@ -94,6 +95,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 							type={node.type}
 							owner={node.owner}
 							updatedAt={node.updated_at}
+							mimeType={(isFile(node) && node.mime_type) || undefined}
 						/>
 					)
 			),

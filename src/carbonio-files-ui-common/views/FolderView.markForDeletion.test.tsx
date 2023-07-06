@@ -13,13 +13,12 @@ import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
-import { ACTION_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodePage, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { Folder, NodeSort } from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChild,
 	mockGetChildren,
 	mockGetParent,
 	mockGetPermissions,
@@ -64,7 +63,6 @@ describe('Mark for deletion - trash', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockTrashNodes(
 					{
 						node_ids: [folderId1]
@@ -131,7 +129,6 @@ describe('Mark for deletion - trash', () => {
 					children: populateNodePage(firstPage)
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockTrashNodes({ node_ids: nodesToTrash }, nodesToTrash),
 				mockGetChildren(getChildrenVariables(currentFolder.id), {
@@ -191,7 +188,6 @@ describe('Mark for deletion - trash', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockTrashNodes(
 					{
 						node_ids: [element.id]
@@ -206,7 +202,7 @@ describe('Mark for deletion - trash', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(5);
 
@@ -245,7 +241,6 @@ describe('Mark for deletion - trash', () => {
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockTrashNodes(
 					{
 						node_ids: [element0.id, element1.id]
@@ -260,7 +255,7 @@ describe('Mark for deletion - trash', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(5);
 
@@ -299,7 +294,6 @@ describe('Mark for deletion - trash', () => {
 					children: populateNodePage(firstPage)
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetChild({ node_id: currentFolder.id }, currentFolder),
 				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockTrashNodes({ node_ids: [firstPage[NODES_LOAD_LIMIT - 1].id] }, [
 					firstPage[NODES_LOAD_LIMIT - 1].id

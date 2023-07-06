@@ -167,7 +167,7 @@ export function useTrashNodesMutation(): TrashNodesType {
 					removeByNodeId(data.trashNodes);
 					const [ownedNodes, sharedNodes] = partition(
 						nodes,
-						(node) => node.owner.id === loggedUser
+						(node) => node.owner?.id === loggedUser
 					);
 					createSnackbar({
 						key: new Date().toLocaleString(),

@@ -11,9 +11,9 @@ import { useParams } from 'react-router-dom';
 
 import { nodeSortVar } from '../../../apollo/nodeSortVar';
 import UPDATE_NODE from '../../../graphql/mutations/updateNode.graphql';
-import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
 import {
-	ChildFragmentDoc,
+	ChildWithParentFragmentDoc,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	UpdateNodeMutation,
@@ -61,13 +61,13 @@ export function useUpdateNodeMutation(): [
 						// if updated node has a parent, check if parent has children in cache
 						// and update node position in parent cached children
 						const updatedNode = cache.readFragment({
-							fragment: ChildFragmentDoc,
-							fragmentName: 'Child',
+							fragment: ChildWithParentFragmentDoc,
+							fragmentName: 'ChildWithParent',
 							id: cache.identify(data.updateNode)
 						});
 						if (updatedNode?.parent) {
 							const parentFolder = cache.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-								query: GET_CHILDREN,
+								query: GetChildrenDocument,
 								variables: {
 									node_id: updatedNode.parent.id,
 									// load all cached children

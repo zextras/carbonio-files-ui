@@ -12,7 +12,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { NodeType } from '../../types/graphql/types';
-import { getIconByFileType, getPreviewThumbnailSrc } from '../../utils/utils';
+import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';
+import { getIconByFileType } from '../../utils/utils';
 
 const ImgContainer = styled(Container)`
 	overflow: hidden;
@@ -68,11 +69,14 @@ export const DisplayerPreview: React.VFC<DisplayerPreviewProps> = ({
 				version,
 				type,
 				mimeType,
-				previewContainerRef.current.clientWidth,
-				previewHeight,
-				'rectangular',
-				'high',
-				'jpeg'
+				{
+					width: previewContainerRef.current.clientWidth,
+					height: previewHeight,
+					shape: 'rectangular',
+					quality: 'high',
+					outputFormat: getPreviewOutputFormat(mimeType)
+				},
+				'thumbnail_detail'
 			);
 			setPreviewSrc(src);
 			currentSrcRef.current = src;

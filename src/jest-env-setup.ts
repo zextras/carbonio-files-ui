@@ -153,6 +153,8 @@ beforeAll(() => {
 			};
 		}
 	});
+
+	window.open = (): ReturnType<typeof window.open> => null;
 });
 
 afterAll(() => server.close());

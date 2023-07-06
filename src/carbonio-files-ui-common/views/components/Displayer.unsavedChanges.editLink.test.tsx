@@ -18,8 +18,8 @@ import {
 	getNodeVariables,
 	getSharesVariables,
 	mockGetNode,
-	mockGetNodeCollaborationLinks,
-	mockGetNodeLinks,
+	mockGetCollaborationLinks,
+	mockGetLinks,
 	mockGetShares,
 	mockUpdateLink,
 	mockUpdateLinkError
@@ -40,8 +40,8 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetLinks({ node_id: node.id }, node.links),
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -81,8 +81,8 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetLinks({ node_id: node.id }, node.links),
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -127,8 +127,8 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetLinks({ node_id: node.id }, node.links),
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -184,8 +184,8 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node)
+					mockGetLinks({ node_id: node.id }, node.links),
+					mockGetCollaborationLinks({ node_id: node.id })
 				];
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
@@ -253,8 +253,8 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockUpdateLink(
 						{ link_id: link.id, description: newDescription, expires_at: newExpiresAt.getTime() },
 						{ ...link, description: newDescription, expires_at: newExpiresAt.getTime() }
@@ -334,8 +334,8 @@ describe('Displayer', () => {
 				const mocks = [
 					mockGetNode(getNodeVariables(node.id), node),
 					mockGetShares(getSharesVariables(node.id), node),
-					mockGetNodeLinks({ node_id: node.id }, node),
-					mockGetNodeCollaborationLinks({ node_id: node.id }, node),
+					mockGetLinks({ node_id: node.id }, node.links),
+					mockGetCollaborationLinks({ node_id: node.id }),
 					mockUpdateLinkError(
 						{ link_id: link.id, description: newDescription, expires_at: newExpiresAt.getTime() },
 						new ApolloError({ graphQLErrors: [generateError('update link error')] })

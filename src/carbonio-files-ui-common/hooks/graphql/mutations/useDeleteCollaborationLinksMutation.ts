@@ -8,15 +8,13 @@
 import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
-import { filter, includes } from 'lodash';
+import { filter } from 'lodash';
 
-import COLLABORATION_LINK from '../../../graphql/fragments/collaborationLink.graphql';
 import DELETE_COLLABORATION_LINKS from '../../../graphql/mutations/deleteCollaborationLinks.graphql';
-import { PickIdTypenameNodeType } from '../../../types/common';
 import {
-	CollaborationLinkFragment,
 	DeleteCollaborationLinksMutation,
-	DeleteCollaborationLinksMutationVariables
+	DeleteCollaborationLinksMutationVariables,
+	GetCollaborationLinksDocument
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
@@ -27,9 +25,7 @@ export type DeleteCollaborationLinksType = (
 /**
  * Can return error: ErrorCode.
  */
-export function useDeleteCollaborationLinksMutation(
-	node: PickIdTypenameNodeType
-): DeleteCollaborationLinksType {
+export function useDeleteCollaborationLinksMutation(nodeId: string): DeleteCollaborationLinksType {
 	const [deleteCollaborationLinksMutation, { error: deleteCollaborationLinksError }] = useMutation<
 		DeleteCollaborationLinksMutation,
 		DeleteCollaborationLinksMutationVariables
@@ -43,28 +39,27 @@ export function useDeleteCollaborationLinksMutation(
 				},
 				update(cache, { data }) {
 					if (data?.deleteCollaborationLinks) {
-						cache.modify({
-							id: cache.identify(node),
-							fields: {
-								collaboration_links(existingCollaborationLinks) {
-									return filter(existingCollaborationLinks, (existingCollaborationLink) => {
-										const collaborationLink = cache.readFragment<CollaborationLinkFragment>({
-											id: cache.identify(existingCollaborationLink),
-											fragment: COLLABORATION_LINK
-										});
-										return !(
-											collaborationLink &&
-											includes(data.deleteCollaborationLinks, collaborationLink.id)
-										);
-									});
+						cache.updateQuery(
+							{
+								query: GetCollaborationLinksDocument,
+								variables: {
+									node_id: nodeId
 								}
-							}
-						});
+							},
+							(queryData) => ({
+								getCollaborationLinks: filter(
+									queryData?.getCollaborationLinks,
+									(existingCollaborationLink) =>
+										existingCollaborationLink?.id !== undefined &&
+										!data.deleteCollaborationLinks.includes(existingCollaborationLink.id)
+								)
+							})
+						);
 					}
 				}
 			});
 		},
-		[deleteCollaborationLinksMutation, node]
+		[deleteCollaborationLinksMutation, nodeId]
 	);
 	useErrorHandler(deleteCollaborationLinksError, 'DELETE_COLLABORATION_LINKS');
 

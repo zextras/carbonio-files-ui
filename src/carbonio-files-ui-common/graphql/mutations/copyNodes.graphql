@@ -7,5 +7,9 @@
 mutation copyNodes($node_ids: [ID!], $destination_id: ID!, $shares_limit: Int = 1) {
     copyNodes(node_ids: $node_ids, destination_id: $destination_id) {
         ...Child
+        parent {
+            id
+            name
+        }
     }
 }

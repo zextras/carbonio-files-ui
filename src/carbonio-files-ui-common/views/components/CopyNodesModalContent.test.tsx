@@ -14,7 +14,7 @@ import { forEach, map } from 'lodash';
 import { CopyNodesModalContent } from './CopyNodesModalContent';
 import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT, ROOTS } from '../../constants';
-import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
 	populateFile,
@@ -89,7 +89,9 @@ describe('Copy Nodes Modal', () => {
 			}
 		);
 		await screen.findByText((parentFolder.children.nodes[0] as File | Folder).name);
-		await waitFor(() => expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', parentFolder.name));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			parentFolder.children.nodes.length
@@ -115,7 +117,9 @@ describe('Copy Nodes Modal', () => {
 			}
 		);
 		await screen.findByText((parentFolder.children.nodes[0] as File | Folder).name);
-		await waitFor(() => expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		const breadcrumbRegexp = buildBreadCrumbRegExp('Files', parentFolder.name);
 		const breadcrumb = await findByTextWithMarkup(breadcrumbRegexp);
 		expect(breadcrumb).toBeVisible();
@@ -279,7 +283,9 @@ describe('Copy Nodes Modal', () => {
 		// navigate inside local root
 		await user.dblClick(filesHome);
 		await screen.findByText((localRoot.children.nodes[0] as Node).name);
-		await waitFor(() => expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		let breadcrumb = await findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
 		expect(breadcrumb).toBeVisible();
 		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
@@ -428,7 +434,9 @@ describe('Copy Nodes Modal', () => {
 
 		await screen.findByText(folder.name);
 		await screen.findByText(nodesToCopy[0].name);
-		await waitFor(() => expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
 		expect(confirmButton).not.toHaveAttribute('disabled');
@@ -493,7 +501,9 @@ describe('Copy Nodes Modal', () => {
 		);
 
 		const folderItem = await screen.findByText(folder.name);
-		await waitFor(() => expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name));
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
 		expect(confirmButton).not.toHaveAttribute('disabled');
@@ -639,7 +649,9 @@ describe('Copy Nodes Modal', () => {
 		);
 
 		await screen.findByText(nodesToCopy[0].name);
-		await waitFor(() => expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name));
 		const mockedGetChildrenQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 		let cachedData = global.apolloClient.readQuery<GetChildrenQuery, GetChildrenQueryVariables>(
@@ -722,7 +734,9 @@ describe('Copy Nodes Modal', () => {
 		);
 
 		await screen.findByText(nodesToCopy[0].name);
-		await waitFor(() => expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name));
 		await user.click(screen.getByText('Files'));
 		await screen.findByText('Home');
@@ -771,7 +785,9 @@ describe('Copy Nodes Modal', () => {
 
 		await screen.findByText((currentFolder.children.nodes[0] as Node).name);
 		let breadcrumbRegexp = buildBreadCrumbRegExp('Files', ...map(path, (node) => node.name));
-		await waitFor(() => expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		await findByTextWithMarkup(breadcrumbRegexp);
 		// full path immediately visible
 		expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
@@ -826,12 +842,14 @@ describe('Copy Nodes Modal', () => {
 		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
 		const modalListHeader = screen.getByTestId('modal-listHeader');
 		await waitFor(() =>
-			expect(within(modalListHeader).queryByTestId('icon: Refresh')).not.toBeInTheDocument()
+			expect(
+				within(modalListHeader).queryByTestId(ICON_REGEXP.queryLoading)
+			).not.toBeInTheDocument()
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name));
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(NODES_LOAD_LIMIT);
-		expect(screen.getByTestId('icon: Refresh')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 		await triggerLoadMore();
 		await screen.findByText(
 			(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as File | Folder).name
@@ -839,6 +857,6 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
-		expect(screen.queryByTestId('icon: Refresh')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 });

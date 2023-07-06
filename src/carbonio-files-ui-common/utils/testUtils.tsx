@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { ReactElement, useContext, useEffect, useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 
 import { ApolloProvider } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
@@ -26,8 +26,7 @@ import {
 import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
 import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
-import { PreviewManager, PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
-import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
+import { PreviewManager } from '@zextras/carbonio-ui-preview';
 import { EventEmitter } from 'events';
 import { GraphQLError } from 'graphql';
 import { forEach, map, filter, reduce } from 'lodash';
@@ -38,7 +37,7 @@ import { Mock } from './mockUtils';
 import { isFile, isFolder } from './utils';
 import I18nFactory from '../../i18n/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
-import { SELECTORS } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { AdvancedFilters, Node } from '../types/common';
 import { File as FilesFile, Folder } from '../types/graphql/types';
 
@@ -268,14 +267,14 @@ export function setupHook<TProps, TResult>(
 }
 
 export async function triggerLoadMore(): Promise<void> {
-	expect(screen.getByTestId('icon: Refresh')).toBeVisible();
+	expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 	const { calls } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>).mock;
 	const [onChange] = calls[calls.length - 1];
 	// trigger the intersection on the observed element
 	await waitFor(() =>
 		onChange([
 			{
-				target: screen.getByTestId('icon: Refresh'),
+				target: screen.getByTestId(ICON_REGEXP.queryLoading),
 				intersectionRatio: 0,
 				isIntersecting: true
 			}
@@ -364,17 +363,6 @@ export async function delayUntil(emitter: EventEmitter, event: string): Promise<
 	});
 }
 
-export const PreviewInitComponent: React.FC<{
-	initPreviewArgs: Parameters<PreviewManagerContextType['initPreview']>[0];
-}> = ({ children, initPreviewArgs }) => {
-	const { initPreview, emptyPreview } = useContext(PreviewsManagerContext);
-
-	useEffect(() => {
-		initPreview(initPreviewArgs);
-		return emptyPreview;
-	}, [emptyPreview, initPreview, initPreviewArgs]);
-	return <>{children}</>;
-};
 type DataTransferUploadStub = {
 	items: Array<{ webkitGetAsEntry: () => Partial<FileSystemEntry> }>;
 	files: Array<File>;

@@ -7,7 +7,8 @@
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
 import { forEach, find, includes, reduce, size, some, every, isBoolean } from 'lodash';
 
-import { docsHandledMimeTypes, isFile, isFolder, isSupportedByPreview } from './utils';
+import { isSupportedByPreview } from './previewUtils';
+import { docsHandledMimeTypes, isFile, isFolder } from './utils';
 import { ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT } from '../../constants';
 import { ROOTS } from '../constants';
 import { Action, GetNodeParentType, Node } from '../types/common';
@@ -167,7 +168,7 @@ export function canCreateFolder(
 	return destinationNode.permissions.can_write_folder;
 }
 
-export function canUploadFile(
+export function canCreateFile(
 	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions'>
 ): boolean {
 	if (isFile(destinationNode)) {
@@ -179,16 +180,10 @@ export function canUploadFile(
 	return destinationNode.permissions.can_write_file;
 }
 
-export function canCreateFile(
+export function canUploadFile(
 	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions'>
 ): boolean {
-	if (isFile(destinationNode)) {
-		throw Error('destinationNode must be a Folder');
-	}
-	if (!isBoolean(destinationNode.permissions.can_write_file)) {
-		throw Error('can_write_file not defined');
-	}
-	return destinationNode.permissions.can_write_file;
+	return canCreateFile(destinationNode);
 }
 
 export function canBeWriteNodeDestination(
@@ -220,7 +215,7 @@ export function canBeMoveDestination(
 	// - is not one of the moving nodes (cannot move a folder inside itself)
 	// - has the same owner of the files that are written (workspace concept)
 	const destinationOwnerId = destinationNode.owner?.id || loggedUserId;
-	const isSameOwner = !some(nodesToMove, (node) => node.owner.id !== destinationOwnerId);
+	const isSameOwner = !some(nodesToMove, (node) => node.owner?.id !== destinationOwnerId);
 	return (
 		canBeWriteNodeDestination(destinationNode, movingFile, movingFolder) &&
 		find(nodesToMove, ['id', destinationNode.id]) === undefined &&
@@ -308,19 +303,19 @@ export function canMove(
 				node.permissions.can_write_file &&
 				!!node.parent &&
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner.id === loggedUserId) &&
-				!!node.parent.permissions.can_write_file &&
+				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner?.id === loggedUserId) &&
+				node.parent.permissions.can_write_file &&
 				node.rootId !== ROOTS.TRASH;
 		} else if (isFolder(node)) {
 			if (!isBoolean(node.permissions.can_write_folder)) {
 				throw Error('can_write_folder not defined');
 			}
-			// a folder can be moved if it has can_write_folder permission and it has a parent which has can_write_folder permission
+			// a folder can be moved if it has can_write_folder permission, and it has a parent which has can_write_folder permission
 			canMoveResult =
 				node.permissions.can_write_folder &&
 				!!node.parent &&
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner.id === loggedUserId) &&
+				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner?.id === loggedUserId) &&
 				!!node.parent?.permissions.can_write_folder &&
 				node.rootId !== ROOTS.TRASH;
 		} else {
@@ -420,7 +415,7 @@ export function canPreview(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean 
 		!(
 			$nodes[0].permissions.can_write_file && includes(docsHandledMimeTypes, $nodes[0].mime_type)
 		) &&
-		(isSupportedByPreview($nodes[0].mime_type)[0] ||
+		(isSupportedByPreview($nodes[0].mime_type, 'preview')[0] ||
 			includes(docsHandledMimeTypes, $nodes[0].mime_type))
 	);
 }

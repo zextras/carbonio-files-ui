@@ -6,6 +6,8 @@
 import { TypePolicy } from '@apollo/client';
 
 import { findNodesFieldPolicy } from './fieldPolicies/findNodes';
+import { getCollaborationLinksFieldPolicy } from './fieldPolicies/getCollaborationLinks';
+import { getLinksFieldPolicy } from './fieldPolicies/getLinks';
 import { getNodeFieldPolicy } from './fieldPolicies/getNode';
 import { getUploadItemFieldPolicy } from './fieldPolicies/getUploadItem';
 import { getUploadItemsFieldPolicy } from './fieldPolicies/getUploadItems';
@@ -17,6 +19,8 @@ export const queryTypePolicies: TypePolicy = {
 		getVersions: getVersionsFieldPolicy,
 		getNode: getNodeFieldPolicy,
 		getUploadItems: getUploadItemsFieldPolicy,
-		getUploadItem: getUploadItemFieldPolicy
+		getUploadItem: getUploadItemFieldPolicy,
+		getCollaborationLinks: getCollaborationLinksFieldPolicy,
+		getLinks: getLinksFieldPolicy
 	}
 };

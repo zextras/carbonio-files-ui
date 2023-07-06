@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 import { ApolloQueryResult, QueryResult, useQuery } from '@apollo/client';
 import { isEqual } from 'lodash';
 
-import { NODES_LOAD_LIMIT } from '../../../constants';
+import { NODES_LOAD_LIMIT, SHARES_LOAD_LIMIT } from '../../../constants';
 import FIND_NODES from '../../../graphql/queries/findNodes.graphql';
 import { SearchParams } from '../../../types/common';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../../../types/graphql/types';
@@ -56,7 +56,8 @@ export function useFindNodesQuery({
 				sort,
 				direct_share: directShare,
 				owner_id: ownerId,
-				type
+				type,
+				shares_limit: SHARES_LOAD_LIMIT
 			},
 			skip:
 				flagged === undefined &&

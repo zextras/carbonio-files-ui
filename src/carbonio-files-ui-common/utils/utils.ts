@@ -11,18 +11,18 @@ import { Location } from 'history';
 import type { TFunction } from 'i18next';
 import {
 	chain,
-	forEach,
-	map,
-	includes,
-	reduce,
-	size,
 	debounce,
 	findIndex,
 	first,
+	forEach,
+	map,
+	reduce,
+	size,
 	toLower,
 	trim
 } from 'lodash';
 import moment, { Moment } from 'moment-timezone';
+import { DefaultTheme } from 'styled-components';
 
 import { searchParamsVar } from '../apollo/searchVar';
 import {
@@ -31,8 +31,6 @@ import {
 	DOWNLOAD_PATH,
 	INTERNAL_PATH,
 	OPEN_FILE_PATH,
-	PREVIEW_PATH,
-	PREVIEW_TYPE,
 	REST_ENDPOINT,
 	ROOTS,
 	UPLOAD_TO_PATH
@@ -57,6 +55,7 @@ import {
 	NodeType,
 	SharePermission
 } from '../types/graphql/types';
+import { MakeRequiredNonNull } from '../types/utils';
 
 /**
  * Format a size in byte as human-readable
@@ -72,43 +71,97 @@ export const humanFileSize = (inputSize: number): string => {
 /**
  * Given a file type returns the DS icon name
  */
-export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): string => {
+export const getIconByFileType = (
+	type: NodeType,
+	subType?: Maybe<string>,
+	options?: { outline?: boolean }
+): keyof DefaultTheme['icons'] => {
+	function getIcon(): keyof DefaultTheme['icons'] {
+		switch (type) {
+			case NodeType.Folder:
+				return 'Folder';
+			case NodeType.Text:
+				switch (subType) {
+					case 'application/pdf':
+						return 'FilePdf';
+					default:
+						return 'FileText';
+				}
+			case NodeType.Video:
+				return 'Video';
+			case NodeType.Audio:
+				return 'Music';
+			case NodeType.Image:
+				return 'Image';
+			case NodeType.Message:
+				return 'Email';
+			case NodeType.Presentation:
+				return 'FilePresentation';
+			case NodeType.Spreadsheet:
+				return 'FileCalc';
+			case NodeType.Application:
+				return 'Code';
+			case NodeType.Root: {
+				switch (subType) {
+					case ROOTS.LOCAL_ROOT:
+						return 'Folder';
+					case ROOTS.TRASH:
+						return 'Trash2';
+					case ROOTS.SHARED_WITH_ME:
+						return 'ArrowCircleLeft';
+					default:
+						return 'File';
+				}
+			}
+			default:
+				return 'File';
+		}
+	}
+	const icon = getIcon();
+	return options?.outline ? `${icon}Outline` : icon;
+};
+
+export const getIconColorByFileType = (
+	type: NodeType,
+	subType: Maybe<string> | undefined,
+	theme: DefaultTheme
+): string => {
 	switch (type) {
 		case NodeType.Folder:
-			return 'Folder';
+			return theme.palette.secondary.regular;
 		case NodeType.Text:
-			return 'FileText';
+			switch (subType) {
+				case 'application/pdf':
+					return theme.palette.error.regular;
+				default:
+					return theme.palette.primary.regular;
+			}
 		case NodeType.Video:
-			return 'Video';
+			return theme.palette.error.regular;
 		case NodeType.Audio:
-			return 'Music';
+			return theme.palette.gray0.regular;
 		case NodeType.Image:
-			return 'Image';
+			return theme.palette.error.regular;
 		case NodeType.Message:
-			return 'Email';
+			return theme.palette.primary.regular;
 		case NodeType.Presentation:
-			return 'FilePresentation';
+			return theme.avatarColors.avatar_47;
 		case NodeType.Spreadsheet:
-			return 'FileCalc';
+			return theme.palette.success.regular;
 		case NodeType.Application:
-			return 'Code';
+			return theme.palette.gray0.regular;
 		case NodeType.Root: {
 			switch (subType) {
-				case ROOTS.LOCAL_ROOT:
-					return 'Home';
-				case ROOTS.TRASH:
-					return 'Trash2';
 				case ROOTS.SHARED_WITH_ME:
-					return 'Share';
+					return theme.palette.linked.regular;
 				default:
-					return 'File';
+					return theme.palette.gray1.regular;
 			}
 		}
 		default:
-			return 'File';
+			return theme.palette.primary.regular;
 	}
 };
-
 const buildCrumbsRecursive = (
 	node: CrumbNode,
 	clickHandler?: (id: string, event: React.SyntheticEvent | KeyboardEvent) => void,
@@ -583,20 +636,6 @@ export const docsHandledMimeTypes = [
 	'application/vnd.sun.xml.writer.template'
 ];
 
-export const previewHandledMimeTypes: string[] = [
-	'application/msword',
-	'application/vnd.ms-excel',
-	'application/vnd.ms-powerpoint',
-	'application/vnd.oasis.opendocument.presentation',
-	'application/vnd.oasis.opendocument.spreadsheet',
-	'application/vnd.oasis.opendocument.text',
-	'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-	'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-];
-
-export const thumbnailHandledMimeTypes: string[] = [];
-
 /**
  * 	Error codes:
  *	400 if target  does not match
@@ -721,89 +760,6 @@ export function uploadToTargetModule(args: {
 	});
 }
 
-/**
- * Check if a file is supported by preview by its mime type
- *
- * [0]: tells whether the given mime type is supported or not
- *
- * [1]: if mime type is supported, tells which type of preview this mime type is associated to
- */
-export function isSupportedByPreview(
-	mimeType: string | undefined,
-	type: 'thumbnail' | 'preview' = 'preview'
-): [boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined] {
-	return [
-		!!mimeType &&
-			((mimeType.startsWith('image') && mimeType !== 'image/svg+xml') ||
-				mimeType.includes('pdf') ||
-				(type === 'preview' && previewHandledMimeTypes.includes(mimeType)) ||
-				(type === 'thumbnail' && thumbnailHandledMimeTypes.includes(mimeType))),
-		(mimeType &&
-			((mimeType.startsWith('image') && PREVIEW_TYPE.IMAGE) ||
-				(mimeType.includes('pdf') && PREVIEW_TYPE.PDF) ||
-				PREVIEW_TYPE.DOCUMENT)) ||
-			undefined
-	];
-}
-
-/**
- * Get preview src
- */
-export const getImgPreviewSrc = (
-	id: string,
-	version: number,
-	weight: number,
-	height: number,
-	quality: 'lowest' | 'low' | 'medium' | 'high' | 'highest' // medium as default if not set
-): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${weight}x${height}?quality=${quality}`;
-
-export const getPdfPreviewSrc = (id: string, version?: number): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}`;
-
-export const getDocumentPreviewSrc = (id: string, version?: number): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}`;
-
-/**
- * Get thumbnail src
- */
-export const getPreviewThumbnailSrc = (
-	id: string,
-	version: number | undefined,
-	type: NodeType,
-	mimeType: string | undefined,
-	width: number,
-	height: number,
-	shape?: 'rectangular' | 'rounded',
-	quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest',
-	outputFormat?: 'jpeg' | 'png'
-): string | undefined => {
-	if (version && mimeType) {
-		const optionalParams = [];
-		shape && optionalParams.push(`shape=${shape}`);
-		quality && optionalParams.push(`quality=${quality}`);
-		outputFormat && optionalParams.push(`output_format=${outputFormat}`);
-		const optionalParamsStr = (optionalParams.length > 0 && `?${optionalParams.join('&')}`) || '';
-		if (mimeType.startsWith('image') && mimeType !== 'image/svg+xml') {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
-		}
-		if (includes(mimeType, 'pdf')) {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
-		}
-		if (includes(thumbnailHandledMimeTypes, mimeType)) {
-			return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}/${width}x${height}/thumbnail/${optionalParamsStr}`;
-		}
-	}
-	return undefined;
-};
-
-export const getListItemAvatarPictureUrl = (
-	id: string,
-	version: number | undefined,
-	type: NodeType,
-	mimeType: string | undefined
-): string | undefined => getPreviewThumbnailSrc(id, version, type, mimeType, 80, 80);
-
 export function getNewDocumentActionLabel(t: TFunction, docsType: DocsType): string {
 	const [format] = docsType.split('_');
 	return t(`create.options.new.${format.toLowerCase()}Document`, 'Microsoft {{ext}}', {
@@ -846,12 +802,12 @@ export function cssCalcBuilder(
 
 export function isFile(
 	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
-): node is File {
+): node is File & MakeRequiredNonNull<File, '__typename'> {
 	return node?.__typename === 'File';
 }
 
 export function isFolder(
 	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
-): node is Folder {
+): node is Folder & MakeRequiredNonNull<Folder, '__typename'> {
 	return node?.__typename === 'Folder';
 }

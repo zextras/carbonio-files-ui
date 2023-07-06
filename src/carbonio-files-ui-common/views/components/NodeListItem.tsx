@@ -19,7 +19,7 @@ import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { includes, some, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { ContextualMenu } from './ContextualMenu';
 import { NodeAvatarIcon } from './NodeAvatarIcon';
@@ -36,18 +36,22 @@ import {
 	ROOTS
 } from '../../constants';
 import { Action } from '../../types/common';
-import { NodeType, User } from '../../types/graphql/types';
+import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { buildActionItems } from '../../utils/ActionsFactory';
+import {
+	getPreviewOutputFormat,
+	getPreviewThumbnailSrc,
+	isSupportedByPreview
+} from '../../utils/previewUtils';
 import {
 	downloadNode,
 	formatDate,
 	getIconByFileType,
-	getListItemAvatarPictureUrl,
 	humanFileSize,
 	openNodeWithDocs,
-	isSupportedByPreview,
 	isSearchView,
-	cssCalcBuilder
+	cssCalcBuilder,
+	getIconColorByFileType
 } from '../../utils/utils';
 
 const CustomText = styled(Text)`
@@ -62,7 +66,7 @@ interface NodeListItemProps {
 	mimeType?: string;
 	updatedAt?: number;
 	size?: number;
-	owner?: User;
+	owner?: Maybe<User>;
 	lastEditor?: User | null;
 	incomingShare?: boolean;
 	outgoingShare?: boolean;
@@ -150,6 +154,8 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		[id, selectId]
 	);
 
+	const theme = useTheme();
+
 	const createSnackbar = useSnackbar();
 
 	const { sendViaMail } = useSendViaMail();
@@ -166,7 +172,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 
 	const [$isSupportedByPreview] = useMemo<
 		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview(mimeType), [mimeType]);
+	>(() => isSupportedByPreview(mimeType, 'preview'), [mimeType]);
 
 	const openNode = useCallback(
 		(event: React.SyntheticEvent | KeyboardEvent) => {
@@ -433,7 +439,15 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 							disabled={disabled}
 							selectable={selectable}
 							icon={getIconByFileType(type, mimeType || id)}
-							picture={getListItemAvatarPictureUrl(id, version, type, mimeType)}
+							color={getIconColorByFileType(type, mimeType || id, theme)}
+							picture={getPreviewThumbnailSrc(
+								id,
+								version,
+								type,
+								mimeType,
+								{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
+								'thumbnail'
+							)}
 						/>
 						<Container
 							orientation="vertical"
@@ -467,12 +481,12 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										)}
 										{incomingShare && (
 											<Padding left="extrasmall">
-												<Icon icon="ArrowCircleLeft" customColor="#AB47BC" disabled={disabled} />
+												<Icon icon="ArrowCircleLeft" color={'linked'} disabled={disabled} />
 											</Padding>
 										)}
 										{outgoingShare && (
 											<Padding left="extrasmall">
-												<Icon icon="ArrowCircleRight" customColor="#FFB74D" disabled={disabled} />
+												<Icon icon="ArrowCircleRight" color="shared" disabled={disabled} />
 											</Padding>
 										)}
 										{trashed && isSearchView(location) && (

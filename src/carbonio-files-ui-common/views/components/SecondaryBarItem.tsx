@@ -9,7 +9,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
 	AccordionItem,
 	AccordionItemType,
+	Badge,
 	getColor,
+	Icon,
 	IconButton,
 	Padding,
 	Row,
@@ -44,7 +46,10 @@ const CustomAccordionItem = styled(AccordionItem)<{ $dragging: boolean }>`
 `;
 
 interface SecondaryBarItemProps {
-	item: AccordionItemType;
+	item: AccordionItemType & {
+		completeTotalBadgeCounter?: string | undefined;
+		isUploadFailed?: boolean;
+	};
 	expanded: boolean;
 }
 
@@ -179,7 +184,14 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 		>
 			{(dragging): JSX.Element =>
 				expanded ? (
-					<CustomAccordionItem item={item} ref={accordionItemRef} $dragging={dragging} />
+					<CustomAccordionItem item={item} ref={accordionItemRef} $dragging={dragging}>
+						<Row gap="0.25rem">
+							{item.isUploadFailed && <Icon icon="AlertCircle" size="large" color={'error'} />}
+							{item.completeTotalBadgeCounter && (
+								<Badge value={item.completeTotalBadgeCounter} type={item.badgeType} />
+							)}
+						</Row>
+					</CustomAccordionItem>
 				) : (
 					<Row mainAlignment="flex-start" takeAvailableSpace>
 						<Tooltip label={item.label} placement="right">

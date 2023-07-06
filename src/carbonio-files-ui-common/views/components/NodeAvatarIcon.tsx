@@ -18,6 +18,7 @@ interface NodeAvatarIconParams {
 	disabled?: boolean;
 	selectable?: boolean;
 	icon: string;
+	color?: string;
 	picture?: string;
 }
 
@@ -29,6 +30,7 @@ export const NodeAvatarIcon: React.VFC<NodeAvatarIconParams> = ({
 	disabled,
 	selectable,
 	icon,
+	color = 'gray1',
 	picture
 }) => {
 	const { tooltipLabel, tooltipDisabled } = useContext(NodeAvatarIconContext);
@@ -46,7 +48,7 @@ export const NodeAvatarIcon: React.VFC<NodeAvatarIconParams> = ({
 		>
 			<FileIconPreview
 				icon={icon}
-				color="gray1"
+				color={color}
 				background={'gray3'}
 				label=""
 				onClick={onClick}

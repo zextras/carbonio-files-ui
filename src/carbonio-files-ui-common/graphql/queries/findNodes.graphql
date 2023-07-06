@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-#import "../fragments/child.graphql"
+#import "../fragments/childWithParent.graphql"
 
 query findNodes(
     $keywords: [String!],
@@ -34,7 +34,7 @@ query findNodes(
         type: $type
     ) {
         nodes {
-            ...Child
+            ...ChildWithParent
         }
         page_token
     }

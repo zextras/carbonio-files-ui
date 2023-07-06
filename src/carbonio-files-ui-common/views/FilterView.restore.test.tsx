@@ -63,7 +63,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
@@ -117,7 +117,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
@@ -162,7 +162,7 @@ describe('Filter View', () => {
 				});
 
 				// wait for the load to be completed
-				await waitForElementToBeRemoved(screen.queryByTestId('icon: Refresh'));
+				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(`node-item-${node.id}`);

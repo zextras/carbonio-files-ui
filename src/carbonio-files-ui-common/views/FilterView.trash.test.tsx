@@ -13,7 +13,13 @@ import { Route } from 'react-router-dom';
 import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
-import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
+import {
+	FILTER_TYPE,
+	INTERNAL_PATH,
+	NODES_LOAD_LIMIT,
+	ROOTS,
+	SHARES_LOAD_LIMIT
+} from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import FIND_NODES from '../graphql/queries/findNodes.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
@@ -328,7 +334,7 @@ describe('Filter view', () => {
 				shared_with_me: false,
 				sort: NodeSort.NameAsc,
 				limit: NODES_LOAD_LIMIT,
-				shares_limit: 1
+				shares_limit: SHARES_LOAD_LIMIT
 			};
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -353,7 +359,7 @@ describe('Filter view', () => {
 				shared_with_me: true,
 				sort: NodeSort.NameAsc,
 				limit: NODES_LOAD_LIMIT,
-				shares_limit: 1
+				shares_limit: SHARES_LOAD_LIMIT
 			};
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({

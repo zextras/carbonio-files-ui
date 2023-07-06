@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useCreateCollaborationLinkMutation } from '../../../../hooks/graphql/mutations/useCreateCollaborationLinkMutation';
 import { useDeleteCollaborationLinksMutation } from '../../../../hooks/graphql/mutations/useDeleteCollaborationLinksMutation';
-import { useGetNodeCollaborationLinksQuery } from '../../../../hooks/graphql/queries/useGetNodeCollaborationLinksQuery';
+import { useGetCollaborationLinksQuery } from '../../../../hooks/graphql/queries/useGetCollaborationLinksQuery';
 import { SharePermission } from '../../../../types/graphql/types';
 import { copyToClipboard } from '../../../../utils/utils';
 import { TextWithLineHeight } from '../../StyledComponents';
@@ -46,13 +46,12 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 	const createSnackbar = useSnackbar();
 	const createModal = useModal();
 
-	const { data: getCollaborationLinksQueryData, loading } =
-		useGetNodeCollaborationLinksQuery(nodeId);
+	const { data: getCollaborationLinksQueryData, loading } = useGetCollaborationLinksQuery(nodeId);
 
 	const readAndShareCollaborationLink = useMemo(() => {
-		if (getCollaborationLinksQueryData?.getNode?.collaboration_links) {
+		if (getCollaborationLinksQueryData?.getCollaborationLinks) {
 			return find(
-				getCollaborationLinksQueryData?.getNode?.collaboration_links,
+				getCollaborationLinksQueryData?.getCollaborationLinks,
 				(link) => link?.permission === SharePermission.ReadAndShare
 			);
 		}
@@ -60,9 +59,9 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 	}, [getCollaborationLinksQueryData]);
 
 	const readWriteAndShareCollaborationLink = useMemo(() => {
-		if (getCollaborationLinksQueryData?.getNode?.collaboration_links) {
+		if (getCollaborationLinksQueryData?.getCollaborationLinks) {
 			return find(
-				getCollaborationLinksQueryData?.getNode?.collaboration_links,
+				getCollaborationLinksQueryData?.getCollaborationLinks,
 				(link) => link?.permission === SharePermission.ReadWriteAndShare
 			);
 		}
@@ -70,14 +69,10 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 	}, [getCollaborationLinksQueryData]);
 
 	/** Mutation to create collaboration link */
-	const { createCollaborationLink, loading: _createCollaborationLinkLoading } =
-		useCreateCollaborationLinkMutation(nodeId);
+	const { createCollaborationLink } = useCreateCollaborationLinkMutation(nodeId);
 
 	/** Mutation to delete collaboration link */
-	const deleteCollaborationsLinks = useDeleteCollaborationLinksMutation({
-		id: nodeId,
-		__typename: nodeTypename
-	});
+	const deleteCollaborationsLinks = useDeleteCollaborationLinksMutation(nodeId);
 
 	const copyLinkToClipboard = useCallback(
 		(link: string) => {
@@ -185,14 +180,14 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 			crossAlignment="flex-start"
 			height="fit"
 			padding={{ all: 'large' }}
-			background="gray6"
+			background={'gray6'}
 			data-testid="collaboration-link-container"
 		>
 			<Container
 				mainAlignment="flex-start"
 				crossAlignment="flex-start"
 				height="fit"
-				background="gray6"
+				background={'gray6'}
 			>
 				<TextWithLineHeight size="medium">
 					{t('collaborationLinks.title', 'Collaboration Links')}

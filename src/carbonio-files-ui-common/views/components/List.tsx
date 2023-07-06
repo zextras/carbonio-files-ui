@@ -6,7 +6,7 @@
 
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useReactiveVar } from '@apollo/client';
+import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
 import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
@@ -46,7 +46,6 @@ import {
 	UpdateNodeType,
 	useUpdateNodeMutation
 } from '../../hooks/graphql/mutations/useUpdateNodeMutation';
-import { useGetChildQuery } from '../../hooks/graphql/queries/useGetChildQuery';
 import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
@@ -54,7 +53,7 @@ import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameMod
 import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { Action, Crumb, NodeListItemType } from '../../types/common';
-import { File } from '../../types/graphql/types';
+import { File, Folder, GetChildrenParentDocument } from '../../types/graphql/types';
 import {
 	ActionsFactoryChecker,
 	ActionsFactoryCheckerMap,
@@ -62,18 +61,15 @@ import {
 	canBeMoveDestination,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { getUploadAddType } from '../../utils/uploadUtils';
 import {
-	downloadNode,
 	getDocumentPreviewSrc,
 	getImgPreviewSrc,
 	getPdfPreviewSrc,
-	humanFileSize,
-	isFile,
-	isFolder,
-	isSupportedByPreview,
-	openNodeWithDocs
-} from '../../utils/utils';
+	getPreviewOutputFormat,
+	isSupportedByPreview
+} from '../../utils/previewUtils';
+import { getUploadAddType } from '../../utils/uploadUtils';
+import { downloadNode, humanFileSize, isFile, isFolder, openNodeWithDocs } from '../../utils/utils';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};
@@ -107,7 +103,16 @@ export const List: React.VFC<ListProps> = ({
 	const { navigateToFolder } = useNavigation();
 	const { activeNodeId: activeNode, setActiveNode } = useActiveNode();
 	const [t] = useTranslation();
-	const { data: getChildData } = useGetChildQuery(folderId || '');
+	const { data: getChildrenParentData, loading: getChildrenParentLoading } = useQuery(
+		GetChildrenParentDocument,
+		{
+			variables: {
+				node_id: folderId || ''
+			},
+			skip: !folderId,
+			fetchPolicy: 'cache-only'
+		}
+	);
 	const draggedItems = useReactiveVar(draggedItemsVar);
 	const [dropzoneEnabled, setDropzoneEnabled] = useState(false);
 	const [dropzoneModal, setDropzoneModal] = useState<{
@@ -116,9 +121,14 @@ export const List: React.VFC<ListProps> = ({
 		icons?: string[];
 	}>();
 
-	const folderNode = useMemo(
-		() => (getChildData?.getNode && isFolder(getChildData.getNode) && getChildData.getNode) || null,
-		[getChildData?.getNode]
+	const folderNode = useMemo<Pick<Folder, '__typename' | 'id' | 'owner' | 'permissions'> | null>(
+		() =>
+			getChildrenParentData?.getNode &&
+			getChildrenParentData?.getNode.id === folderId &&
+			isFolder(getChildrenParentData.getNode)
+				? getChildrenParentData.getNode
+				: null,
+		[getChildrenParentData?.getNode, folderId]
 	);
 
 	const { setIsEmpty } = useContext(ListContext);
@@ -339,7 +349,10 @@ export const List: React.VFC<ListProps> = ({
 				nodes,
 				(accumulator: Parameters<PreviewManagerContextType['initPreview']>[0], node) => {
 					if (isFile(node)) {
-						const [$isSupportedByPreview, documentType] = isSupportedByPreview(node.mime_type);
+						const [$isSupportedByPreview, documentType] = isSupportedByPreview(
+							node.mime_type,
+							'preview'
+						);
 						if ($isSupportedByPreview) {
 							const actions = [
 								{
@@ -368,7 +381,14 @@ export const List: React.VFC<ListProps> = ({
 									size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
 									actions,
 									closeAction,
-									src: node.version ? getImgPreviewSrc(node.id, node.version, 0, 0, 'high') : '',
+									src: node.version
+										? getImgPreviewSrc(node.id, node.version, {
+												width: 0,
+												height: 0,
+												quality: 'high',
+												outputFormat: getPreviewOutputFormat(node.mime_type)
+										  })
+										: '',
 									id: node.id
 								});
 								return accumulator;
@@ -419,7 +439,7 @@ export const List: React.VFC<ListProps> = ({
 	const previewSelection = useCallback(() => {
 		const nodeToPreview = find(nodes, (node) => node.id === selectedIDs[0]);
 		const { id, mime_type: mimeType } = nodeToPreview as File;
-		const [$isSupportedByPreview] = isSupportedByPreview(mimeType);
+		const [$isSupportedByPreview] = isSupportedByPreview(mimeType, 'preview');
 		if ($isSupportedByPreview) {
 			openPreview(id);
 		} else if (includes(permittedSelectionModeActions, Action.OpenWithDocs)) {
@@ -686,17 +706,26 @@ export const List: React.VFC<ListProps> = ({
 		[dropzoneEnabled, moveNodesAction, uploadWithDragAndDrop]
 	);
 
+	const nodeAvatarIconContextValue = useMemo<React.ContextType<typeof NodeAvatarIconContext>>(
+		() => ({
+			tooltipLabel: t('selectionMode.node.tooltip', 'Activate selection mode'),
+			tooltipDisabled: false
+		}),
+		[t]
+	);
+
 	return (
 		<MainContainer
 			mainAlignment="flex-start"
 			data-testid={`list-${folderId || ''}`}
 			maxHeight="100%"
-			background="gray6"
+			background={'gray6'}
 		>
 			<ListHeader
+				selectedCount={size(selectedNodes)}
 				folderId={folderId}
 				crumbs={crumbs}
-				loadingData={loading}
+				loadingData={loading || getChildrenParentLoading}
 				isSelectionModeActive={isSelectionModeActive}
 				isAllSelected={size(selectedIDs) === size(nodes)}
 				unSelectAll={unSelectAll}
@@ -715,14 +744,9 @@ export const List: React.VFC<ListProps> = ({
 				icons={dropzoneModal?.icons}
 			>
 				{(): JSX.Element => (
-					<Container background="gray6" mainAlignment="flex-start">
+					<Container background={'gray6'} mainAlignment="flex-start">
 						{nodes.length > 0 && (
-							<NodeAvatarIconContext.Provider
-								value={{
-									tooltipLabel: t('selectionMode.node.tooltip', 'Activate selection mode'),
-									tooltipDisabled: false
-								}}
-							>
+							<NodeAvatarIconContext.Provider value={nodeAvatarIconContextValue}>
 								<ListContent
 									nodes={nodes}
 									selectedMap={selectedMap}

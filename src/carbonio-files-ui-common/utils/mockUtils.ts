@@ -19,7 +19,6 @@ import CLONE_VERSION from '../graphql/mutations/cloneVersion.graphql';
 import COPY_NODES from '../graphql/mutations/copyNodes.graphql';
 import CREATE_COLLABORATION_LINK from '../graphql/mutations/createCollaborationLink.graphql';
 import CREATE_FOLDER from '../graphql/mutations/createFolder.graphql';
-import CREATE_LINK from '../graphql/mutations/createLink.graphql';
 import CREATE_SHARE from '../graphql/mutations/createShare.graphql';
 import DELETE_COLLABORATION_LINKS from '../graphql/mutations/deleteCollaborationLinks.graphql';
 import DELETE_NODES from '../graphql/mutations/deleteNodes.graphql';
@@ -30,7 +29,6 @@ import KEEP_VERSIONS from '../graphql/mutations/keepVersions.graphql';
 import MOVE_NODES from '../graphql/mutations/moveNodes.graphql';
 import RESTORE_NODES from '../graphql/mutations/restoreNodes.graphql';
 import TRASH_NODES from '../graphql/mutations/trashNodes.graphql';
-import UPDATE_LINK from '../graphql/mutations/updateLink.graphql';
 import UPDATE_NODE from '../graphql/mutations/updateNode.graphql';
 import UPDATE_NODE_DESCRIPTION from '../graphql/mutations/updateNodeDescription.graphql';
 import UPDATE_SHARE from '../graphql/mutations/updateShare.graphql';
@@ -42,8 +40,6 @@ import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_CONFIGS from '../graphql/queries/getConfigs.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
-import GET_NODE_COLLABORATION_LINKS from '../graphql/queries/getNodeCollaborationLinks.graphql';
-import GET_NODE_LINKS from '../graphql/queries/getNodeLinks.graphql';
 import GET_PARENT from '../graphql/queries/getParent.graphql';
 import GET_PATH from '../graphql/queries/getPath.graphql';
 import GET_PERMISSIONS from '../graphql/queries/getPermissions.graphql';
@@ -75,7 +71,6 @@ import {
 	UpdateShareMutationVariables,
 	Share,
 	GetAccountByEmailQueryVariables,
-	GetNodeLinksQueryVariables,
 	GetVersionsQueryVariables,
 	File,
 	DeleteVersionsMutationVariables,
@@ -104,7 +99,6 @@ import {
 	CreateShareMutation,
 	UpdateShareMutation,
 	GetAccountByEmailQuery,
-	GetNodeLinksQuery,
 	GetVersionsQuery,
 	DeleteVersionsMutation,
 	KeepVersionsMutation,
@@ -117,8 +111,9 @@ import {
 	GetConfigsQueryVariables,
 	GetAccountsByEmailQueryVariables,
 	GetAccountsByEmailQuery,
-	GetNodeCollaborationLinksQueryVariables,
-	GetNodeCollaborationLinksQuery,
+	GetCollaborationLinksDocument,
+	GetCollaborationLinksQueryVariables,
+	GetCollaborationLinksQuery,
 	CollaborationLink,
 	CreateCollaborationLinkMutationVariables,
 	CreateCollaborationLinkMutation,
@@ -130,7 +125,12 @@ import {
 	Link,
 	CreateLinkMutation,
 	UpdateLinkMutationVariables,
-	UpdateLinkMutation
+	UpdateLinkMutation,
+	GetLinksDocument,
+	GetLinksQueryVariables,
+	GetLinksQuery,
+	CreateLinkDocument,
+	UpdateLinkDocument
 } from '../types/graphql/types';
 
 type Id = string;
@@ -157,7 +157,7 @@ export function getFindNodesVariables(
 		limit: NODES_LOAD_LIMIT,
 		sort: NODES_SORT_DEFAULT,
 		page_token: withCursor ? 'next_page_token' : undefined,
-		shares_limit: 1,
+		shares_limit: SHARES_LOAD_LIMIT,
 		...variables
 	};
 }
@@ -337,7 +337,7 @@ export function getChildrenVariables(
 	folderId: Id,
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
-	sharesLimit = 1,
+	sharesLimit = SHARES_LOAD_LIMIT,
 	withCursor = false
 ): GetChildrenQueryVariables {
 	return {
@@ -413,7 +413,7 @@ export function mockCopyNodes(
 	return {
 		request: {
 			query: COPY_NODES,
-			variables: { ...variables, shares_limit: 1 }
+			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
 		},
 		result: {
 			data: {
@@ -433,7 +433,7 @@ export function mockCreateFolder(
 	return {
 		request: {
 			query: CREATE_FOLDER,
-			variables: { ...variables, shares_limit: 1 }
+			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
 		},
 		result: {
 			data: {
@@ -450,7 +450,7 @@ export function mockCreateFolderError(
 	return {
 		request: {
 			query: CREATE_FOLDER,
-			variables: { ...variables, shares_limit: 1 }
+			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
 		},
 		error
 	};
@@ -735,45 +735,35 @@ export function mockGetAccountsByEmail(
 	};
 }
 
-/**
- * Get Node Links mock
- */
-export function mockGetNodeLinks(
-	variables: GetNodeLinksQueryVariables,
-	node: Node
-): Mock<GetNodeLinksQuery, GetNodeLinksQueryVariables> {
+export function mockGetLinks(
+	variables: GetLinksQueryVariables,
+	links: Maybe<Link>[]
+): Mock<GetLinksQuery, GetLinksQueryVariables> {
 	return {
 		request: {
-			query: GET_NODE_LINKS,
+			query: GetLinksDocument,
 			variables
 		},
 		result: {
 			data: {
-				getNode: node
+				getLinks: links
 			}
 		}
 	};
 }
 
-/**
- * Get Node Links mock
- */
-export function mockGetNodeCollaborationLinks(
-	variables: GetNodeCollaborationLinksQueryVariables,
-	node: Node,
+export function mockGetCollaborationLinks(
+	variables: GetCollaborationLinksQueryVariables,
 	collaborationLinks?: Array<Maybe<CollaborationLink>>
-): Mock<GetNodeCollaborationLinksQuery, GetNodeCollaborationLinksQueryVariables> {
+): Mock<GetCollaborationLinksQuery, GetCollaborationLinksQueryVariables> {
 	return {
 		request: {
-			query: GET_NODE_COLLABORATION_LINKS,
+			query: GetCollaborationLinksDocument,
 			variables
 		},
 		result: {
 			data: {
-				getNode: {
-					...node,
-					collaboration_links: collaborationLinks || []
-				}
+				getCollaborationLinks: collaborationLinks || []
 			}
 		}
 	};
@@ -948,7 +938,7 @@ export function mockGetChild(
 			query: GET_CHILD,
 			variables: {
 				node_id: variables.node_id,
-				shares_limit: variables?.shares_limit || 1
+				shares_limit: variables?.shares_limit || SHARES_LOAD_LIMIT
 			}
 		},
 		result: {
@@ -968,7 +958,7 @@ export function mockCreateLink(
 ): Mock<CreateLinkMutation, CreateLinkMutationVariables> {
 	return {
 		request: {
-			query: CREATE_LINK,
+			query: CreateLinkDocument,
 			variables
 		},
 		result: {
@@ -985,7 +975,7 @@ export function mockCreateLinkError(
 ): Mock<CreateLinkMutation, CreateLinkMutationVariables> {
 	return {
 		request: {
-			query: CREATE_LINK,
+			query: CreateLinkDocument,
 			variables
 		},
 		error
@@ -1001,7 +991,7 @@ export function mockUpdateLink(
 ): Mock<UpdateLinkMutation, UpdateLinkMutationVariables> {
 	return {
 		request: {
-			query: UPDATE_LINK,
+			query: UpdateLinkDocument,
 			variables
 		},
 		result: {
@@ -1018,7 +1008,7 @@ export function mockUpdateLinkError(
 ): Mock<UpdateLinkMutation, UpdateLinkMutationVariables> {
 	return {
 		request: {
-			query: UPDATE_LINK,
+			query: UpdateLinkDocument,
 			variables
 		},
 		error

@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/* eslint-disable arrow-body-style */
 import { useCallback } from 'react';
 
 import { FetchResult, MutationHookOptions, MutationResult, useMutation } from '@apollo/client';
 
+import { SHARES_LOAD_LIMIT } from '../../../constants';
 import CREATE_FOLDER from '../../../graphql/mutations/createFolder.graphql';
 import {
 	CreateFolderMutation,
@@ -44,11 +44,12 @@ export function useCreateFolderMutation(
 	const { addNodeToFolder } = useUpdateFolderContent(mutationOptions.client);
 
 	const createFolder = useCallback<CreateFolderType>(
-		(parentFolder: Parameters<CreateFolderType>[0], name: string) => {
-			return createFolderMutation({
+		(parentFolder, name) =>
+			createFolderMutation({
 				variables: {
 					destination_id: parentFolder.id,
-					name
+					name,
+					shares_limit: SHARES_LOAD_LIMIT
 				},
 				// after the mutation returns a response, check if next neighbor is already loaded.
 				// If so, write the folder in cache,
@@ -59,8 +60,7 @@ export function useCreateFolderMutation(
 						scrollToNodeItem(data.createFolder.id, isLast);
 					}
 				}
-			});
-		},
+			}),
 		[createFolderMutation, addNodeToFolder]
 	);
 

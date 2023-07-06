@@ -14,7 +14,7 @@ import { SharePermission } from '../../../../types/graphql/types';
 import {
 	mockCreateCollaborationLink,
 	mockDeleteCollaborationLinks,
-	mockGetNodeCollaborationLinks
+	mockGetCollaborationLinks
 } from '../../../../utils/mockUtils';
 import { setup } from '../../../../utils/testUtils';
 import * as moduleUtils from '../../../../utils/utils';
@@ -26,7 +26,7 @@ describe('Collaboration Link', () => {
 		node.permissions.can_share = true;
 		node.permissions.can_write_folder = true;
 		node.permissions.can_write_file = true;
-		const mocks = [mockGetNodeCollaborationLinks({ node_id: node.id }, node, [])];
+		const mocks = [mockGetCollaborationLinks({ node_id: node.id }, [])];
 		setup(
 			<CollaborationLinks
 				nodeId={node.id}
@@ -117,7 +117,7 @@ describe('Collaboration Link', () => {
 			SharePermission.ReadWriteAndShare
 		);
 		const mocks = [
-			mockGetNodeCollaborationLinks({ node_id: node.id }, node, [readAndShareCollaborationLink]),
+			mockGetCollaborationLinks({ node_id: node.id }, [readAndShareCollaborationLink]),
 			mockCreateCollaborationLink(
 				{ node_id: node.id, permission: SharePermission.ReadWriteAndShare },
 				readWriteAndShareCollaborationLink
@@ -163,9 +163,7 @@ describe('Collaboration Link', () => {
 			SharePermission.ReadWriteAndShare
 		);
 		const mocks = [
-			mockGetNodeCollaborationLinks({ node_id: node.id }, node, [
-				readWriteAndShareCollaborationLink
-			]),
+			mockGetCollaborationLinks({ node_id: node.id }, [readWriteAndShareCollaborationLink]),
 			mockCreateCollaborationLink(
 				{ node_id: node.id, permission: SharePermission.ReadAndShare },
 				readAndShareCollaborationLink
@@ -208,7 +206,7 @@ describe('Collaboration Link', () => {
 			SharePermission.ReadAndShare
 		);
 		const mocks = [
-			mockGetNodeCollaborationLinks({ node_id: node.id }, node, [readAndShareCollaborationLink]),
+			mockGetCollaborationLinks({ node_id: node.id }, [readAndShareCollaborationLink]),
 			mockDeleteCollaborationLinks({ collaboration_link_ids: [readAndShareCollaborationLink.id] }, [
 				readAndShareCollaborationLink.id
 			])
@@ -270,9 +268,7 @@ describe('Collaboration Link', () => {
 			SharePermission.ReadWriteAndShare
 		);
 		const mocks = [
-			mockGetNodeCollaborationLinks({ node_id: node.id }, node, [
-				readWriteAndShareCollaborationLink
-			]),
+			mockGetCollaborationLinks({ node_id: node.id }, [readWriteAndShareCollaborationLink]),
 			mockDeleteCollaborationLinks(
 				{ collaboration_link_ids: [readWriteAndShareCollaborationLink.id] },
 				[readWriteAndShareCollaborationLink.id]
@@ -337,7 +333,7 @@ describe('Collaboration Link', () => {
 			SharePermission.ReadAndShare
 		);
 		const mocks = [
-			mockGetNodeCollaborationLinks({ node_id: node.id }, node, [readAndShareCollaborationLink])
+			mockGetCollaborationLinks({ node_id: node.id }, [readAndShareCollaborationLink])
 		];
 		const { user } = setup(
 			<CollaborationLinks
@@ -373,7 +369,7 @@ describe('Collaboration Link', () => {
 		);
 		const mocks = [
 			// Simulating that the BE wrongly return both the link
-			mockGetNodeCollaborationLinks({ node_id: node.id }, node, [
+			mockGetCollaborationLinks({ node_id: node.id }, [
 				readAndShareCollaborationLink,
 				readWriteAndShareCollaborationLink
 			])

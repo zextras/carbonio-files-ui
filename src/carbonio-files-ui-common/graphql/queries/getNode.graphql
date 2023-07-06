@@ -6,6 +6,7 @@
 #import "../fragments/child.graphql"
 #import "../fragments/permissions.graphql"
 #import "../fragments/share.graphql"
+#import "../fragments/nodeParent.graphql"
 
 query getNode($node_id: ID!, $children_limit: Int!, $page_token: String, $sort: NodeSort!, $shares_limit: Int!, $shares_cursor: String, $shares_sorts: [ShareSort!]) {
 	getNode(node_id: $node_id) {
@@ -35,11 +36,16 @@ query getNode($node_id: ID!, $children_limit: Int!, $page_token: String, $sort: 
 		}
 		shares(limit: $shares_limit, cursor: $shares_cursor, sorts: $shares_sorts) {
 			...Share
+			node @client {
+				id
+				type
+			}
 		}
 		... on Folder {
 			children(limit: $children_limit, page_token: $page_token, sort: $sort) {
 				nodes {
 					...Child
+					...NodeParent @client
 				}
 				page_token
 			}

@@ -163,6 +163,7 @@ export const UploadList: React.VFC = () => {
 		>
 			<ListHeaderActionContext.Provider value={headerAction}>
 				<ListHeader
+					selectedCount={size(selectedIDs)}
 					crumbs={crumbs}
 					isSelectionModeActive={isSelectionModeActive}
 					unSelectAll={unSelectAll}
