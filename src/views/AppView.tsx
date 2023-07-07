@@ -12,7 +12,10 @@ import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { INTERNAL_PATH } from '../carbonio-files-ui-common/constants';
 import { URLParams } from '../carbonio-files-ui-common/types/common';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
-import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
+import {
+	GlobalProvidersWrapper,
+	ViewProvidersWrapper
+} from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
 
 const LazyFileFolderViewSelector = lazy(
 	() =>
@@ -39,20 +42,26 @@ const View = (): JSX.Element | null => {
 		(`/${params.view}` === INTERNAL_PATH.ROOT && (
 			<Route path={`${path}/:rootId`}>
 				<Suspense fallback={<Spinner />}>
-					<LazyFolderView />
+					<ViewProvidersWrapper>
+						<LazyFolderView />
+					</ViewProvidersWrapper>
 				</Suspense>
 			</Route>
 		)) ||
 		(`/${params.view}` === INTERNAL_PATH.FILTER && (
 			<Route path={`${path}/:filter?`}>
 				<Suspense fallback={<Spinner />}>
-					<LazyFilterView />
+					<ViewProvidersWrapper>
+						<LazyFilterView />
+					</ViewProvidersWrapper>
 				</Suspense>
 			</Route>
 		)) || (
 			<Route path={path}>
 				<Suspense fallback={<Spinner />}>
-					<LazyUploadView />
+					<ViewProvidersWrapper>
+						<LazyUploadView />
+					</ViewProvidersWrapper>
 				</Suspense>
 			</Route>
 		)
@@ -64,18 +73,20 @@ const AppView: React.VFC = () => {
 
 	return (
 		<PreventDefaultDropContainer>
-			<ProvidersWrapper>
+			<GlobalProvidersWrapper>
 				<Switch>
 					<Route path={`${path}/:view`}>
 						<View />
 					</Route>
 					<Route path={`${path}/`}>
 						<Suspense fallback={<Spinner />}>
-							<LazyFileFolderViewSelector />
+							<ViewProvidersWrapper>
+								<LazyFileFolderViewSelector />
+							</ViewProvidersWrapper>
 						</Suspense>
 					</Route>
 				</Switch>
-			</ProvidersWrapper>
+			</GlobalProvidersWrapper>
 		</PreventDefaultDropContainer>
 	);
 };

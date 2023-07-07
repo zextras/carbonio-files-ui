@@ -10,7 +10,10 @@ import { Container } from '@zextras/carbonio-design-system';
 
 import { SecondaryBar } from './secondary-bar/SecondaryBar';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
-import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
+import {
+	GlobalProvidersWrapper,
+	ViewProvidersWrapper
+} from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
 
 interface SidebarViewProps {
 	expanded: boolean;
@@ -18,11 +21,13 @@ interface SidebarViewProps {
 
 const SidebarView: React.VFC<SidebarViewProps> = (props) => (
 	<PreventDefaultDropContainer>
-		<ProvidersWrapper>
-			<Container mainAlignment="flex-start">
-				<SecondaryBar {...props} />
-			</Container>
-		</ProvidersWrapper>
+		<GlobalProvidersWrapper>
+			<ViewProvidersWrapper>
+				<Container mainAlignment="flex-start">
+					<SecondaryBar {...props} />
+				</Container>
+			</ViewProvidersWrapper>
+		</GlobalProvidersWrapper>
 	</PreventDefaultDropContainer>
 );
 

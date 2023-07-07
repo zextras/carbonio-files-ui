@@ -13,7 +13,10 @@ import { useTranslation } from 'react-i18next';
 import { searchParamsVar } from '../carbonio-files-ui-common/apollo/searchVar';
 import { AdvancedFilters } from '../carbonio-files-ui-common/types/common';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
-import { ProvidersWrapper } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
+import {
+	GlobalProvidersWrapper,
+	ViewProvidersWrapper
+} from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
 import { SearchView as CommonSearchView } from '../carbonio-files-ui-common/views/SearchView';
 import { UpdateQueryContext } from '../constants';
 import { fromQueryChipsToAdvancedFilters } from '../hooks/useSearch';
@@ -34,15 +37,17 @@ const SearchView: React.VFC<SearchViewProps> = ({ useQuery, ResultsHeader }) => 
 
 	return (
 		<PreventDefaultDropContainer>
-			<ProvidersWrapper>
-				<UpdateQueryContext.Provider value={updateQuery as (args: QueryChip[]) => void}>
-					<CommonSearchView
-						resultsHeader={<ResultsHeader label={t('search.resultsFor', 'Results for:')} />}
-						listWidth="25%"
-						displayerWidth="75%"
-					/>
-				</UpdateQueryContext.Provider>
-			</ProvidersWrapper>
+			<GlobalProvidersWrapper>
+				<ViewProvidersWrapper>
+					<UpdateQueryContext.Provider value={updateQuery as (args: QueryChip[]) => void}>
+						<CommonSearchView
+							resultsHeader={<ResultsHeader label={t('search.resultsFor', 'Results for:')} />}
+							listWidth="25%"
+							displayerWidth="75%"
+						/>
+					</UpdateQueryContext.Provider>
+				</ViewProvidersWrapper>
+			</GlobalProvidersWrapper>
 		</PreventDefaultDropContainer>
 	);
 };

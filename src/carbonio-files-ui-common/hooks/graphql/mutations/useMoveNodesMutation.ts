@@ -120,7 +120,7 @@ export function useMoveNodesMutation(): { moveNodes: MoveNodesType; loading: boo
 					cache.evict({ id: cache.identify(destinationFolder), fieldName: 'children' });
 					cache.gc();
 				},
-				onQueryUpdated(observableQuery, { result }, lastDiff) {
+				onQueryUpdated(observableQuery, { result }) {
 					const { query, variables } = observableQuery.options;
 					if (
 						isOperationVariables<GetPathQueryVariables>(query, variables, GetPathDocument) &&
@@ -137,22 +137,14 @@ export function useMoveNodesMutation(): { moveNodes: MoveNodesType; loading: boo
 						return currentFolderId === destinationFolder.id;
 					}
 
-					const lastResult = lastDiff?.result;
 					if (
 						isQueryResult<GetChildrenQuery>(query, result, GET_CHILDREN) &&
-						isQueryResult<GetChildrenQuery>(query, lastResult, GET_CHILDREN) &&
 						result?.getNode &&
-						lastResult?.getNode &&
 						isFolder(result.getNode) &&
-						isFolder(lastResult.getNode)
+						result.getNode.id === currentFolderId
 					) {
 						const listNodes = result.getNode.children?.nodes;
-						const lastListNodes = lastResult.getNode.children?.nodes;
-						if (
-							activeNodeId &&
-							some(lastListNodes, (lastResultNode) => lastResultNode?.id === activeNodeId) &&
-							!some(listNodes, (resultNode) => resultNode?.id === activeNodeId)
-						) {
+						if (activeNodeId && !some(listNodes, (resultNode) => resultNode?.id === activeNodeId)) {
 							// close displayer of the node if it is removed from list
 							removeActiveNode();
 						}
