@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/zextras/carbonio-files-ui/compare/v2.1.1...v2.2.0) (2023-07-06)
+
+
+### Features
+
+* add alert icon when an upload fails ([5b22815](https://github.com/zextras/carbonio-files-ui/commit/5b22815df999f8d61528137e0dbd91d10e463606)), closes [#231](https://github.com/zextras/carbonio-files-ui/issues/231)
+* add badge with the number of selected items ([034b23b](https://github.com/zextras/carbonio-files-ui/commit/034b23b00a5b9d9b050ab62e48f27db883ee95f6)), closes [#226](https://github.com/zextras/carbonio-files-ui/issues/226)
+* add support for gif preview and thumbnail ([bbd6481](https://github.com/zextras/carbonio-files-ui/commit/bbd6481d7265ad979690924c369053c8d959cf71)), closes [#228](https://github.com/zextras/carbonio-files-ui/issues/228)
+* change the upload badge to be a complete/total fraction ([a969fbc](https://github.com/zextras/carbonio-files-ui/commit/a969fbc7087f111b619a0a182bbedc5189707c5a)), closes [#219](https://github.com/zextras/carbonio-files-ui/issues/219)
+* differentiate icons in the list with specific colors ([aa2ff95](https://github.com/zextras/carbonio-files-ui/commit/aa2ff9582114749924ef906e7773310837008f7c)), closes [#216](https://github.com/zextras/carbonio-files-ui/issues/216)
+
+
+### Bug Fixes
+
+* align home icons and root icons color inside modals ([19ce865](https://github.com/zextras/carbonio-files-ui/commit/19ce86543d187a0c50c660ba339f4c04e3e21fbd)), closes [#227](https://github.com/zextras/carbonio-files-ui/issues/227)
+* save parent in cache with writeFragment when reading children ([073e0d5](https://github.com/zextras/carbonio-files-ui/commit/073e0d5f9baaa5cda3065f047e65b5148dcc04f0)), closes [#230](https://github.com/zextras/carbonio-files-ui/issues/230)
+
 ### [2.1.1](https://github.com/zextras/carbonio-files-ui/compare/v2.1.0...v2.1.1) (2023-06-05)
 
 ## [2.1.0](https://github.com/zextras/carbonio-files-ui/compare/v2.0.3...v2.1.0) (2023-05-25)
