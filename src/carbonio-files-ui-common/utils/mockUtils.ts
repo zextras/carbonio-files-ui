@@ -458,17 +458,21 @@ export function mockCreateFolderError(
  */
 export function mockGetPath(
 	variables: GetPathQueryVariables,
-	getPath: Node[]
+	getPath: Node[],
+	callback?: () => void
 ): Mock<GetPathQuery, GetPathQueryVariables> {
 	return {
 		request: {
 			query: GetPathDocument,
 			variables
 		},
-		result: {
-			data: {
-				getPath
-			}
+		result: (): { data: GetPathQuery } => {
+			callback?.();
+			return {
+				data: {
+					getPath
+				}
+			};
 		}
 	};
 }

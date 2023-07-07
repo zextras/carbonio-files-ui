@@ -128,10 +128,7 @@ describe('Displayer', () => {
 			mockGetPath({ node_id: parent.id }, [parent]),
 			mockMoveNodes({ node_ids: [node.id], destination_id: destinationFolder.id }, [
 				{ ...node, parent: destinationFolder }
-			]),
-			mockGetChildren(getChildrenVariables(parent.id), parent),
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetNode(getNodeVariables(node.id), node)
+			])
 		];
 		const { findByTextWithMarkup, user } = setup(<Displayer translationKey="No.node" />, {
 			initialRouterEntries: [`/?node=${node.id}`],
@@ -158,8 +155,6 @@ describe('Displayer', () => {
 		await user.click(moveButton);
 		expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 		await screen.findByText(/item moved/i);
-
-		await screen.findByText(/view files and folders/i);
 		const queryResult = global.apolloClient.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 			query: GET_CHILDREN,
 			variables: getChildrenVariables(parent.id)
