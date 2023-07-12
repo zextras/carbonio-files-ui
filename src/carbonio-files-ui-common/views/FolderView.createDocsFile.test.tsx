@@ -9,7 +9,7 @@ import React from 'react';
 import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { DropdownItem } from '@zextras/carbonio-design-system';
 import { find } from 'lodash';
-import { graphql, rest } from 'msw';
+import { rest } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -33,10 +33,12 @@ import {
 	populateNodes,
 	sortNodes
 } from '../mocks/mockUtils';
-import { Folder, GetNodeQuery, GetNodeQueryVariables } from '../types/graphql/types';
+import { Folder } from '../types/graphql/types';
 import {
 	getChildrenVariables,
+	getNodeVariables,
 	mockGetChildren,
+	mockGetNode,
 	mockGetParent,
 	mockGetPermissions
 } from '../utils/mockUtils';
@@ -109,15 +111,13 @@ describe('Create docs file', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
+			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
+			mockGetNode(getNodeVariables(node2.id), node2)
 		];
 
 		server.use(
 			rest.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, (req, res, ctx) =>
 				res(ctx.status(500, 'Error! Name already assigned'))
-			),
-			graphql.query<GetNodeQuery, GetNodeQueryVariables>('getNode', (req, res, ctx) =>
-				res(ctx.data({ getNode: node2 }))
 			)
 		);
 
@@ -167,7 +167,8 @@ describe('Create docs file', () => {
 		const mocks = [
 			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
+			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
+			mockGetNode(getNodeVariables(node2.id), node2)
 		];
 
 		server.use(
@@ -177,9 +178,6 @@ describe('Create docs file', () => {
 						nodeId: node2.id
 					})
 				)
-			),
-			graphql.query<GetNodeQuery, GetNodeQueryVariables>('getNode', (req, res, ctx) =>
-				res(ctx.data({ getNode: node2 }))
 			)
 		);
 
@@ -250,7 +248,9 @@ describe('Create docs file', () => {
 					// second page contains the new created nodes and node3, not loaded before
 					children: populateNodePage([node1, node2, node3])
 				} as Folder
-			)
+			),
+			mockGetNode(getNodeVariables(node1.id), node1),
+			mockGetNode(getNodeVariables(node2.id), node2)
 		];
 
 		server.use(
@@ -267,17 +267,7 @@ describe('Create docs file', () => {
 						})
 					);
 				}
-			),
-			graphql.query<GetNodeQuery, GetNodeQueryVariables>('getNode', (req, res, ctx) => {
-				const { node_id: id } = req.variables;
-				let result = null;
-				if (id === node1.id) {
-					result = node1;
-				} else if (id === node2.id) {
-					result = node2;
-				}
-				return res(ctx.data({ getNode: result }));
-			})
+			)
 		);
 
 		const { user } = setup(<FolderView />, {

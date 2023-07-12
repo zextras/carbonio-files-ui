@@ -7,7 +7,8 @@
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
 import { forEach, find, includes, reduce, size, some, every, isBoolean } from 'lodash';
 
-import { docsHandledMimeTypes, isFile, isFolder, isSupportedByPreview } from './utils';
+import { isSupportedByPreview } from './previewUtils';
+import { docsHandledMimeTypes, isFile, isFolder } from './utils';
 import { ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT } from '../../constants';
 import { ROOTS } from '../constants';
 import { Action, GetNodeParentType, Node } from '../types/common';

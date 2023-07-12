@@ -23,7 +23,8 @@ import { TextRowWithShim } from './TextRowWithShim';
 import { NodeDetailsUserRow } from '../../../components/NodeDetailsUserRow';
 import { Node } from '../../types/common';
 import { ChildFragment, Maybe, NodeType, User } from '../../types/graphql/types';
-import { humanFileSize, isFile, isFolder, isSupportedByPreview } from '../../utils/utils';
+import { isSupportedByPreview } from '../../utils/previewUtils';
+import { humanFileSize, isFile, isFolder } from '../../utils/utils';
 
 interface NodeDetailsProps {
 	typeName: Node['__typename'];

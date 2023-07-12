@@ -11,13 +11,13 @@ import { Location } from 'history';
 import type { TFunction } from 'i18next';
 import {
 	chain,
+	debounce,
+	findIndex,
+	first,
 	forEach,
 	map,
 	reduce,
 	size,
-	debounce,
-	findIndex,
-	first,
 	toLower,
 	trim
 } from 'lodash';
@@ -31,8 +31,6 @@ import {
 	DOWNLOAD_PATH,
 	INTERNAL_PATH,
 	OPEN_FILE_PATH,
-	PREVIEW_PATH,
-	PREVIEW_TYPE,
 	REST_ENDPOINT,
 	ROOTS,
 	UPLOAD_TO_PATH
@@ -73,46 +71,54 @@ export const humanFileSize = (inputSize: number): string => {
 /**
  * Given a file type returns the DS icon name
  */
-export const getIconByFileType = (type: NodeType, subType?: Maybe<string>): string => {
-	switch (type) {
-		case NodeType.Folder:
-			return 'Folder';
-		case NodeType.Text:
-			switch (subType) {
-				case 'application/pdf':
-					return 'FilePdf';
-				default:
-					return 'FileText';
+export const getIconByFileType = (
+	type: NodeType,
+	subType?: Maybe<string>,
+	options?: { outline?: boolean }
+): keyof DefaultTheme['icons'] => {
+	function getIcon(): keyof DefaultTheme['icons'] {
+		switch (type) {
+			case NodeType.Folder:
+				return 'Folder';
+			case NodeType.Text:
+				switch (subType) {
+					case 'application/pdf':
+						return 'FilePdf';
+					default:
+						return 'FileText';
+				}
+			case NodeType.Video:
+				return 'Video';
+			case NodeType.Audio:
+				return 'Music';
+			case NodeType.Image:
+				return 'Image';
+			case NodeType.Message:
+				return 'Email';
+			case NodeType.Presentation:
+				return 'FilePresentation';
+			case NodeType.Spreadsheet:
+				return 'FileCalc';
+			case NodeType.Application:
+				return 'Code';
+			case NodeType.Root: {
+				switch (subType) {
+					case ROOTS.LOCAL_ROOT:
+						return 'Folder';
+					case ROOTS.TRASH:
+						return 'Trash2';
+					case ROOTS.SHARED_WITH_ME:
+						return 'ArrowCircleLeft';
+					default:
+						return 'File';
+				}
 			}
-		case NodeType.Video:
-			return 'Video';
-		case NodeType.Audio:
-			return 'Music';
-		case NodeType.Image:
-			return 'Image';
-		case NodeType.Message:
-			return 'Email';
-		case NodeType.Presentation:
-			return 'FilePresentation';
-		case NodeType.Spreadsheet:
-			return 'FileCalc';
-		case NodeType.Application:
-			return 'Code';
-		case NodeType.Root: {
-			switch (subType) {
-				case ROOTS.LOCAL_ROOT:
-					return 'Home';
-				case ROOTS.TRASH:
-					return 'Trash2';
-				case ROOTS.SHARED_WITH_ME:
-					return 'Share';
-				default:
-					return 'File';
-			}
+			default:
+				return 'File';
 		}
-		default:
-			return 'File';
 	}
+	const icon = getIcon();
+	return options?.outline ? `${icon}Outline` : icon;
 };
 
 export const getIconColorByFileType = (
@@ -144,6 +150,14 @@ export const getIconColorByFileType = (
 			return theme.palette.success.regular;
 		case NodeType.Application:
 			return theme.palette.gray0.regular;
+		case NodeType.Root: {
+			switch (subType) {
+				case ROOTS.SHARED_WITH_ME:
+					return theme.palette.linked.regular;
+				default:
+					return theme.palette.gray1.regular;
+			}
+		}
 		default:
 			return theme.palette.primary.regular;
 	}
@@ -622,72 +636,6 @@ export const docsHandledMimeTypes = [
 	'application/vnd.sun.xml.writer.template'
 ];
 
-const mimeTypePreviewSupport: Record<
-	string,
-	Record<'thumbnail' | 'preview' | 'thumbnail_detail', boolean>
-> = {
-	'application/pdf': {
-		thumbnail: false,
-		thumbnail_detail: true,
-		preview: true
-	},
-	'image/svg+xml': {
-		thumbnail: true,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/msword': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.ms-excel': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.ms-powerpoint': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.oasis.opendocument.presentation': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.oasis.opendocument.spreadsheet': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.oasis.opendocument.text': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.openxmlformats-officedocument.presentationml.presentation': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: true
-	},
-	image: {
-		thumbnail: true,
-		thumbnail_detail: true,
-		preview: true
-	}
-};
-
 /**
  * 	Error codes:
  *	400 if target  does not match
@@ -811,90 +759,6 @@ export function uploadToTargetModule(args: {
 		xhr.send(JSON.stringify(body));
 	});
 }
-
-/**
- * Check if a file is supported by preview by its mime type
- *
- * [0]: tells whether the given mime type is supported or not
- *
- * [1]: if mime type is supported, tells which type of preview this mime type is associated to
- */
-export function isSupportedByPreview(
-	mimeType: string | undefined,
-	type: ThumbnailType | 'preview'
-): [boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined] {
-	if (mimeType) {
-		const isSupported =
-			mimeTypePreviewSupport[mimeType]?.[type] ||
-			mimeTypePreviewSupport[mimeType.split('/')[0]]?.[type] ||
-			false;
-		const previewType =
-			(isSupported &&
-				((mimeType.startsWith('image') && PREVIEW_TYPE.IMAGE) ||
-					(mimeType.includes('pdf') && PREVIEW_TYPE.PDF) ||
-					PREVIEW_TYPE.DOCUMENT)) ||
-			undefined;
-		return [isSupported, previewType];
-	}
-	return [false, undefined];
-}
-
-/**
- * Get preview src
- */
-export const getImgPreviewSrc = (
-	id: string,
-	version: number,
-	weight: number,
-	height: number,
-	quality: 'lowest' | 'low' | 'medium' | 'high' | 'highest' // medium as default if not set
-): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${weight}x${height}?quality=${quality}`;
-
-export const getPdfPreviewSrc = (id: string, version?: number): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}`;
-
-export const getDocumentPreviewSrc = (id: string, version?: number): string =>
-	`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}`;
-
-/**
- * Get thumbnail src
- */
-type ThumbnailType = 'thumbnail' | 'thumbnail_detail';
-
-export const getPreviewThumbnailSrc = (
-	id: string,
-	version: number | undefined,
-	type: NodeType,
-	mimeType: string | undefined,
-	options: {
-		width: number;
-		height: number;
-		shape?: 'rectangular' | 'rounded';
-		quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
-		outputFormat?: 'jpeg' | 'png';
-	},
-	thumbnailType: ThumbnailType
-): string | undefined => {
-	const [isSupported, previewType] = isSupportedByPreview(mimeType, thumbnailType);
-	if (version && mimeType && isSupported) {
-		const optionalParams = [];
-		options.shape && optionalParams.push(`shape=${options.shape}`);
-		options.quality && optionalParams.push(`quality=${options.quality}`);
-		options.outputFormat && optionalParams.push(`output_format=${options.outputFormat}`);
-		const optionalParamsStr = (optionalParams.length > 0 && `?${optionalParams.join('&')}`) || '';
-		return `${REST_ENDPOINT}${PREVIEW_PATH}/${previewType}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
-	}
-	return undefined;
-};
-
-export const getListItemAvatarPictureUrl = (
-	id: string,
-	version: number | undefined,
-	type: NodeType,
-	mimeType: string | undefined
-): string | undefined =>
-	getPreviewThumbnailSrc(id, version, type, mimeType, { width: 80, height: 80 }, 'thumbnail');
 
 export function getNewDocumentActionLabel(t: TFunction, docsType: DocsType): string {
 	const [format] = docsType.split('_');

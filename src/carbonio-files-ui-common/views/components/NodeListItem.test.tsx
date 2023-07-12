@@ -6,25 +6,17 @@
 
 import React from 'react';
 
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeListItem } from './NodeListItem';
 import { INTERNAL_PATH, PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT, ROOTS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateFile, populateFolder, populateNode, populateUser } from '../../mocks/mockUtils';
-import { Action } from '../../types/common';
 import { NodeType, User } from '../../types/graphql/types';
 import { getPermittedHoverBarActions } from '../../utils/ActionsFactory';
-import { PreviewInitComponent, setup } from '../../utils/testUtils';
-import {
-	formatDate,
-	getDocumentPreviewSrc,
-	getImgPreviewSrc,
-	getPdfPreviewSrc,
-	humanFileSize
-} from '../../utils/utils';
-import * as moduleUtils from '../../utils/utils';
+import { setup } from '../../utils/testUtils';
+import { formatDate, humanFileSize } from '../../utils/utils';
 import 'jest-styled-components';
 
 let mockedUserLogged: User;
@@ -314,250 +306,6 @@ describe('Node List Item', () => {
 		expect(mockedNavigation).not.toHaveBeenCalled();
 	});
 
-	test('Icon change based on node type', () => {
-		const { rerender } = setup(<NodeListItem id="nodeId" name="name" type={NodeType.Folder} />);
-		expect(screen.getByTestId('icon: Folder')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Folder')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Text} />);
-		expect(screen.getByTestId('icon: FileText')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Video} />);
-		expect(screen.getByTestId('icon: Video')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Audio} />);
-		expect(screen.getByTestId('icon: Music')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Image} />);
-		expect(screen.getByTestId('icon: Image')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Message} />);
-		expect(screen.getByTestId('icon: Email')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Presentation} />);
-		expect(screen.getByTestId('icon: FilePresentation')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Spreadsheet} />);
-		expect(screen.getByTestId('icon: FileCalc')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Application} />);
-		expect(screen.getByTestId('icon: Code')).toBeVisible();
-		rerender(<NodeListItem id="nodeId" name="name" type={NodeType.Other} />);
-		expect(screen.getByTestId('icon: File')).toBeVisible();
-		rerender(<NodeListItem id={ROOTS.TRASH} name="name" type={NodeType.Root} />);
-		expect(screen.getByTestId('icon: Trash2')).toBeVisible();
-		rerender(<NodeListItem id={ROOTS.SHARED_WITH_ME} name="name" type={NodeType.Root} />);
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
-		rerender(<NodeListItem id={ROOTS.LOCAL_ROOT} name="name" type={NodeType.Root} />);
-		expect(screen.getByTestId('icon: Home')).toBeVisible();
-	});
-
-	test('Double click on node of type image open preview to show image with original dimensions', async () => {
-		const node = populateFile();
-		node.type = NodeType.Image;
-		node.extension = 'jpg';
-		node.mime_type = 'image/jpeg';
-
-		const { user } = setup(
-			<PreviewInitComponent
-				initPreviewArgs={[
-					{
-						previewType: 'image',
-						filename: node.name,
-						extension: node.extension || undefined,
-						size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
-						src: node.version ? getImgPreviewSrc(node.id, node.version, 0, 0, 'high') : '',
-						id: node.id
-					}
-				]}
-			>
-				<NodeListItem
-					id={node.id}
-					name={node.name}
-					type={node.type}
-					extension={node.extension}
-					size={node.size}
-					version={node.version}
-					mimeType={node.mime_type}
-				/>
-			</PreviewInitComponent>
-		);
-		expect(screen.getByText(node.name)).toBeInTheDocument();
-		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
-		expect(screen.getByText(node.extension)).toBeVisible();
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
-		await waitFor(() => expect(screen.getAllByText(node.name)).toHaveLength(2));
-		expect(screen.getAllByText(RegExp(humanFileSize(node.size)))).toHaveLength(2);
-		expect(screen.getByAltText(node.name)).toBeInTheDocument();
-		expect(screen.getByAltText(node.name)).toBeVisible();
-		expect(screen.getByRole('img')).toHaveAttribute(
-			'src',
-			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/${node.version}/0x0?quality=high`
-		);
-	});
-
-	test('Double click on node of type pdf open preview without action to open in docs', async () => {
-		const node = populateFile();
-		node.mime_type = 'application/pdf';
-		node.type = NodeType.Application;
-		node.extension = 'pdf';
-
-		const { user } = setup(
-			<PreviewInitComponent
-				initPreviewArgs={[
-					{
-						previewType: 'pdf',
-						filename: node.name,
-						extension: node.extension || undefined,
-						size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
-						src: node.version ? getPdfPreviewSrc(node.id, node.version) : '',
-						id: node.id,
-						closeAction: {
-							id: 'close-action',
-							icon: 'ArrowBackOutline',
-							tooltipLabel: 'Close'
-						},
-						actions: [
-							{
-								icon: 'ShareOutline',
-								id: 'ShareOutline',
-								tooltipLabel: 'Manage Shares',
-								onClick: (): void => undefined
-							},
-							{
-								icon: 'DownloadOutline',
-								tooltipLabel: 'Download',
-								id: 'DownloadOutline',
-								onClick: (): void => undefined
-							}
-						]
-					}
-				]}
-			>
-				<NodeListItem
-					id={node.id}
-					name={node.name}
-					type={node.type}
-					extension={node.extension}
-					size={node.size}
-					version={node.version}
-					mimeType={node.mime_type}
-				/>
-			</PreviewInitComponent>
-		);
-		expect(screen.getByText(node.name)).toBeInTheDocument();
-		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
-		expect(screen.getByText(node.extension)).toBeVisible();
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
-		await waitFor(() => expect(screen.getAllByText(node.name)).toHaveLength(2));
-		expect(screen.getAllByText(new RegExp(`^${node.extension}`, 'i'))).toHaveLength(2);
-		expect(screen.getAllByText(new RegExp(humanFileSize(node.size), 'i'))).toHaveLength(2);
-		expect(screen.getByTestId('icon: ArrowBackOutline')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: ShareOutline')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: DownloadOutline')).toBeInTheDocument();
-		expect(screen.queryByTestId('icon: BookOpenOutline')).not.toBeInTheDocument();
-	});
-
-	test('Double click on node that is supported by both preview and docs open preview with action to open in docs', async () => {
-		const openWithDocsFn = jest.spyOn(moduleUtils, 'openNodeWithDocs');
-		const node = populateFile();
-		node.mime_type = 'application/vnd.oasis.opendocument.text';
-		node.type = NodeType.Text;
-		node.extension = 'odt';
-
-		const { user } = setup(
-			<PreviewInitComponent
-				initPreviewArgs={[
-					{
-						previewType: 'pdf',
-						filename: node.name,
-						extension: node.extension || undefined,
-						size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
-						src: node.version ? getDocumentPreviewSrc(node.id, node.version) : '',
-						id: node.id,
-						closeAction: {
-							id: 'close-action',
-							icon: 'ArrowBackOutline',
-							tooltipLabel: 'Close'
-						},
-						actions: [
-							{
-								icon: 'ShareOutline',
-								id: 'ShareOutline',
-								tooltipLabel: 'Manage Shares',
-								onClick: (): void => undefined
-							},
-							{
-								icon: 'DownloadOutline',
-								tooltipLabel: 'Download',
-								id: 'DownloadOutline',
-								onClick: (): void => undefined
-							},
-							{
-								id: 'OpenWithDocs',
-								icon: 'BookOpenOutline',
-								tooltipLabel: 'Open document',
-								onClick: (): void => undefined
-							}
-						]
-					}
-				]}
-			>
-				<NodeListItem
-					id={node.id}
-					name={node.name}
-					type={node.type}
-					extension={node.extension}
-					size={node.size}
-					version={node.version}
-					mimeType={node.mime_type}
-					permittedContextualMenuActions={[Action.OpenWithDocs]}
-				/>
-			</PreviewInitComponent>
-		);
-		expect(screen.getByText(node.name)).toBeInTheDocument();
-		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
-		expect(screen.getByText(node.extension)).toBeVisible();
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
-		expect(screen.getAllByText(node.name)).toHaveLength(2);
-		expect(screen.getAllByText(new RegExp(node.extension, 'i'))).toHaveLength(2);
-		expect(screen.getAllByText(new RegExp(humanFileSize(node.size), 'i'))).toHaveLength(2);
-		expect(screen.getByText(/failed to load document preview/i)).toBeInTheDocument();
-		expect(screen.getByTestId('icon: ArrowBackOutline')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: ShareOutline')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: DownloadOutline')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: BookOpenOutline')).toBeInTheDocument();
-		expect(openWithDocsFn).not.toHaveBeenCalled();
-	});
-
-	test('Double click on node that is not supported by preview nor docs does nothing', async () => {
-		const openWithDocsFn = jest.spyOn(moduleUtils, 'openNodeWithDocs');
-		const getDocumentPreviewSrcFn = jest.spyOn(moduleUtils, 'getDocumentPreviewSrc');
-		const getPdfPreviewSrcFn = jest.spyOn(moduleUtils, 'getPdfPreviewSrc');
-		const getImgPreviewSrcFn = jest.spyOn(moduleUtils, 'getImgPreviewSrc');
-		const node = populateFile();
-		node.type = NodeType.Text;
-		node.extension = 'txt';
-		node.mime_type = 'text/plain';
-
-		const { user } = setup(
-			<NodeListItem
-				id={node.id}
-				name={node.name}
-				type={node.type}
-				extension={node.extension}
-				size={node.size}
-				version={node.version}
-				mimeType={node.mime_type}
-				permittedContextualMenuActions={[]}
-			/>
-		);
-		expect(screen.getByText(node.name)).toBeInTheDocument();
-		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
-		expect(screen.getByText(node.extension)).toBeVisible();
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
-		expect(getDocumentPreviewSrcFn).not.toHaveBeenCalled();
-		expect(getPdfPreviewSrcFn).not.toHaveBeenCalled();
-		expect(getImgPreviewSrcFn).not.toHaveBeenCalled();
-		expect(openWithDocsFn).not.toHaveBeenCalled();
-	});
-
 	test('Trash icon is visible if node is trashed and is search view', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} trashed />, {
@@ -605,4 +353,30 @@ describe('Node List Item', () => {
 			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
 		}
 	);
+
+	test('should show thumbnail of gif image with gif format', async () => {
+		setup(
+			<NodeListItem
+				id={'id'}
+				name={'name'}
+				type={NodeType.Image}
+				mimeType={'image/gif'}
+				version={1}
+			/>
+		);
+		expect(screen.getByTestId('file-icon-preview')).toHaveStyle({
+			background: expect.stringContaining(
+				`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/id/1/80x80/thumbnail/?shape=rectangular&quality=high&output_format=gif`
+			)
+		});
+	});
+	test.each<[rootType: string, icon: keyof DefaultTheme['icons'], color: string]>([
+		[ROOTS.SHARED_WITH_ME, 'ArrowCircleLeft', '#AB47BC'],
+		[ROOTS.TRASH, 'Trash2', '#828282'],
+		[ROOTS.LOCAL_ROOT, 'Folder', '#828282']
+	])('node with root type %s show icon %s with color %s', (rootType, icon, color) => {
+		setup(<NodeListItem id={rootType} name={'name'} type={NodeType.Root} />);
+		expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
+		expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
+	});
 });

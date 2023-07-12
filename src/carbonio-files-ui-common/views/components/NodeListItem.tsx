@@ -39,13 +39,16 @@ import { Action } from '../../types/common';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { buildActionItems } from '../../utils/ActionsFactory';
 import {
+	getPreviewOutputFormat,
+	getPreviewThumbnailSrc,
+	isSupportedByPreview
+} from '../../utils/previewUtils';
+import {
 	downloadNode,
 	formatDate,
 	getIconByFileType,
-	getListItemAvatarPictureUrl,
 	humanFileSize,
 	openNodeWithDocs,
-	isSupportedByPreview,
 	isSearchView,
 	cssCalcBuilder,
 	getIconColorByFileType
@@ -437,7 +440,14 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 							selectable={selectable}
 							icon={getIconByFileType(type, mimeType || id)}
 							color={getIconColorByFileType(type, mimeType || id, theme)}
-							picture={getListItemAvatarPictureUrl(id, version, type, mimeType)}
+							picture={getPreviewThumbnailSrc(
+								id,
+								version,
+								type,
+								mimeType,
+								{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
+								'thumbnail'
+							)}
 						/>
 						<Container
 							orientation="vertical"
@@ -471,12 +481,12 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										)}
 										{incomingShare && (
 											<Padding left="extrasmall">
-												<Icon icon="ArrowCircleLeft" customColor="#AB47BC" disabled={disabled} />
+												<Icon icon="ArrowCircleLeft" color={'linked'} disabled={disabled} />
 											</Padding>
 										)}
 										{outgoingShare && (
 											<Padding left="extrasmall">
-												<Icon icon="ArrowCircleRight" customColor="#FFB74D" disabled={disabled} />
+												<Icon icon="ArrowCircleRight" color="shared" disabled={disabled} />
 											</Padding>
 										)}
 										{trashed && isSearchView(location) && (

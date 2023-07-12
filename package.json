@@ -1,6 +1,6 @@
 {
 	"name": "carbonio-files-ui",
-	"version": "2.1.1",
+	"version": "2.2.0",
 	"description": "Files module",
 	"main": "src/app.tsx",
 	"scripts": {
@@ -46,7 +46,7 @@
 		"@testing-library/react": "^12.1.5",
 		"@testing-library/react-hooks": "^8.0.1",
 		"@testing-library/user-event": "^14.4.0",
-		"@types/jest": "^29.4.0",
+		"@types/jest": "^29.4.4",
 		"@types/lodash": "^4.14.191",
 		"@types/react": "^17.0.53",
 		"@types/react-dom": "^17.0.19",
@@ -80,8 +80,8 @@
 	},
 	"dependencies": {
 		"@apollo/client": "~3.7.9",
-		"@zextras/carbonio-design-system": "^2.1.0",
-		"@zextras/carbonio-shell-ui": "^3.1.0",
+		"@zextras/carbonio-design-system": "^2.2.0",
+		"@zextras/carbonio-shell-ui": "^3.2.0",
 		"@zextras/carbonio-ui-preview": "^1.1.0",
 		"core-js": "^3.28.0",
 		"graphql": "^16.6.0",

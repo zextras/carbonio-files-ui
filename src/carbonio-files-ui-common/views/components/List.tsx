@@ -61,18 +61,15 @@ import {
 	canBeMoveDestination,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { getUploadAddType } from '../../utils/uploadUtils';
 import {
-	downloadNode,
 	getDocumentPreviewSrc,
 	getImgPreviewSrc,
 	getPdfPreviewSrc,
-	humanFileSize,
-	isFile,
-	isFolder,
-	isSupportedByPreview,
-	openNodeWithDocs
-} from '../../utils/utils';
+	getPreviewOutputFormat,
+	isSupportedByPreview
+} from '../../utils/previewUtils';
+import { getUploadAddType } from '../../utils/uploadUtils';
+import { downloadNode, humanFileSize, isFile, isFolder, openNodeWithDocs } from '../../utils/utils';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};
@@ -384,7 +381,14 @@ export const List: React.VFC<ListProps> = ({
 									size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
 									actions,
 									closeAction,
-									src: node.version ? getImgPreviewSrc(node.id, node.version, 0, 0, 'high') : '',
+									src: node.version
+										? getImgPreviewSrc(node.id, node.version, {
+												width: 0,
+												height: 0,
+												quality: 'high',
+												outputFormat: getPreviewOutputFormat(node.mime_type)
+										  })
+										: '',
 									id: node.id
 								});
 								return accumulator;
