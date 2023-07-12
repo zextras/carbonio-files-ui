@@ -5,7 +5,7 @@
  */
 
 library(
-	identifier: 'zapp-jenkins-lib@timeout-time-as-arg',
+	identifier: 'zapp-jenkins-lib@github-pipeline-v4',
 	retriever: modernSCM([
 		$class: 'GitSCMSource',
    		remote: 'git@github.com:zextras/jenkins-zapp-lib.git',
