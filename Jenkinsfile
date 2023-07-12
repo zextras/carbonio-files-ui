@@ -14,5 +14,6 @@ library(
 )
 
 zappPipeline(
-	disableAutoTranslationsSync: true
+	disableAutoTranslationsSync: true,
+	timeout: 30
 )
