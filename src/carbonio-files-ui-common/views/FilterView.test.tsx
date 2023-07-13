@@ -26,7 +26,7 @@ import {
 	mockFindNodes,
 	mockFlagNodes,
 	mockGetChildren,
-	mockGetParent,
+	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { selectNodes, setup, triggerLoadMore } from '../utils/testUtils';
@@ -161,7 +161,7 @@ describe('Filter view', () => {
 				getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
 				nodes
 			),
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockFlagNodes(

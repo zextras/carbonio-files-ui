@@ -19,7 +19,7 @@ import {
 	getChildrenVariables,
 	mockFlagNodes,
 	mockGetChildren,
-	mockGetParent,
+	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup, selectNodes } from '../utils/testUtils';
@@ -55,7 +55,7 @@ describe('Flag', () => {
 			const nodesIdsToUnflag = nodesIdsToFlag.slice(0, nodesIdsToFlag.length / 2);
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockFlagNodes(
@@ -125,7 +125,7 @@ describe('Flag', () => {
 			currentFolder.children.nodes.push(node);
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockFlagNodes(

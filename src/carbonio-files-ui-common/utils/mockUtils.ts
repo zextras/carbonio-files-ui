@@ -40,8 +40,6 @@ import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_CONFIGS from '../graphql/queries/getConfigs.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
-import GET_PARENT from '../graphql/queries/getParent.graphql';
-import GET_PATH from '../graphql/queries/getPath.graphql';
 import GET_PERMISSIONS from '../graphql/queries/getPermissions.graphql';
 import GET_ROOTS_LIST from '../graphql/queries/getRootsList.graphql';
 import GET_SHARES from '../graphql/queries/getShares.graphql';
@@ -56,7 +54,6 @@ import {
 	GetBaseNodeQueryVariables,
 	GetChildrenQueryVariables,
 	GetNodeQueryVariables,
-	GetParentQueryVariables,
 	GetPathQueryVariables,
 	GetSharesQueryVariables,
 	MoveNodesMutationVariables,
@@ -89,7 +86,6 @@ import {
 	MoveNodesMutation,
 	CopyNodesMutation,
 	CreateFolderMutation,
-	GetParentQuery,
 	GetPathQuery,
 	GetNodeQuery,
 	Folder,
@@ -130,7 +126,8 @@ import {
 	GetLinksQueryVariables,
 	GetLinksQuery,
 	CreateLinkDocument,
-	UpdateLinkDocument
+	UpdateLinkDocument,
+	GetPathDocument
 } from '../types/graphql/types';
 
 type Id = string;
@@ -457,41 +454,25 @@ export function mockCreateFolderError(
 }
 
 /**
- * Get parents mock
- */
-export function mockGetParent(
-	variables: GetParentQueryVariables,
-	node: Node
-): Mock<GetParentQuery, GetParentQueryVariables> {
-	return {
-		request: {
-			query: GET_PARENT,
-			variables
-		},
-		result: {
-			data: {
-				getNode: node
-			}
-		}
-	};
-}
-
-/**
  * Get path mock
  */
 export function mockGetPath(
 	variables: GetPathQueryVariables,
-	getPath: Node[]
+	getPath: Node[],
+	callback?: () => void
 ): Mock<GetPathQuery, GetPathQueryVariables> {
 	return {
 		request: {
-			query: GET_PATH,
+			query: GetPathDocument,
 			variables
 		},
-		result: {
-			data: {
-				getPath
-			}
+		result: (): { data: GetPathQuery } => {
+			callback?.();
+			return {
+				data: {
+					getPath
+				}
+			};
 		}
 	};
 }

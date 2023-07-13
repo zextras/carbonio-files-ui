@@ -66,11 +66,7 @@ export type GetNodeParentType = {
 
 export type Crumb = BreadcrumbsProps['crumbs'][number];
 
-export type CrumbNode = Pick<Node, 'id' | 'name' | 'type'> & {
-	parent?: Maybe<
-		Pick<Node, 'id' | 'name' | 'type'> & { parent?: Maybe<Pick<Node, 'id' | 'name' | 'type'>> }
-	>;
-};
+export type CrumbNode = Pick<Node, 'id' | 'name' | 'type'>;
 
 export type DroppableCrumb = Crumb & {
 	onDragEnter?: DragEventHandler;

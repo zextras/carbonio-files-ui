@@ -38,8 +38,8 @@ import {
 	getChildrenVariables,
 	getNodeVariables,
 	mockGetChildren,
+	mockGetPath,
 	mockGetNode,
-	mockGetParent,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
@@ -109,7 +109,7 @@ describe('Create docs file', () => {
 		const newName = node2.name;
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetNode(getNodeVariables(node2.id), node2)
@@ -165,7 +165,7 @@ describe('Create docs file', () => {
 		currentFolder.children.nodes.push(node1, node3);
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetNode(getNodeVariables(node2.id), node2)
@@ -237,7 +237,7 @@ describe('Create docs file', () => {
 		// --> list should be updated with the correct order
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			// fetchMore request, cursor is still last ordered node (last child of initial folder)

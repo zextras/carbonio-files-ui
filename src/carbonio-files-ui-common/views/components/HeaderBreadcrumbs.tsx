@@ -12,7 +12,7 @@ import styled, { css, SimpleInterpolation } from 'styled-components';
 
 import { OverFlowHiddenRow } from './StyledComponents';
 import { useNavigation } from '../../../hooks/useNavigation';
-import useBreadcrumb from '../../hooks/useBreadcrumb';
+import { useBreadcrumb } from '../../hooks/useBreadcrumb';
 import { useDroppableCrumbs } from '../../hooks/useDroppableCrumbs';
 import { Crumb } from '../../types/common';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
@@ -37,7 +37,7 @@ export const HeaderBreadcrumbs: React.VFC<HeaderBreadcrumbsProps> = ({ folderId,
 	const { navigateToFolder } = useNavigation();
 	const [t] = useTranslation();
 
-	const { data, toggleExpanded, loading, error, expanded, expandable, loadPath } = useBreadcrumb(
+	const { data, toggleExpanded, loading, error, expanded, expandable } = useBreadcrumb(
 		folderId,
 		crumbs,
 		navigateToFolder
@@ -52,9 +52,9 @@ export const HeaderBreadcrumbs: React.VFC<HeaderBreadcrumbsProps> = ({ folderId,
 
 	const ctaDragEnterHandler = useCallback(() => {
 		if (!expanded) {
-			loadPath();
+			toggleExpanded();
 		}
-	}, [expanded, loadPath]);
+	}, [expanded, toggleExpanded]);
 
 	const onDropdownOpen = useCallback(() => {
 		dropdownProps.onOpen && dropdownProps.onOpen();
@@ -79,8 +79,8 @@ export const HeaderBreadcrumbs: React.VFC<HeaderBreadcrumbsProps> = ({ folderId,
 		>
 			{folderId && expandable && (
 				<Tooltip
-					/* i18next-extract-disable-next-line */
 					label={t(
+						/* i18next-extract-disable-next-line */
 						`breadcrumb.expander.${expanded ? 'hide' : 'show'}`,
 						expanded ? 'Hide previous folders' : 'Show previous folders'
 					)}

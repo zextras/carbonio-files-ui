@@ -21,6 +21,7 @@ import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, TIMERS } from '../../constants';
+import { ICON_REGEXP } from '../../constants/test';
 import {
 	populateFolder,
 	populateNodes,
@@ -28,7 +29,7 @@ import {
 	populateUser
 } from '../../mocks/mockUtils';
 import { Node } from '../../types/graphql/types';
-import { mockGetParent, mockGetPath, mockMoveNodes } from '../../utils/mockUtils';
+import { mockGetPath, mockMoveNodes } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
@@ -120,7 +121,6 @@ describe('Header Breadcrumbs', () => {
 			});
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, path),
 				mockMoveNodes(
 					{
@@ -145,33 +145,16 @@ describe('Header Breadcrumbs', () => {
 				)
 			).toBeVisible();
 			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronRight')).toBeVisible();
-			expect(screen.queryByTestId('icon: ChevronLeft')).not.toBeInTheDocument();
-			await user.click(screen.getByTestId('icon: FolderOutline'));
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			await screen.findByText(/hide previous folders/i);
-			expect(screen.queryByTestId('icon: ChevronRight')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronLeft')).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(path[0].name);
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
-			// TODO: move fragment to graphql file and add type
-			// add missing data in cache
-			global.apolloClient.writeFragment({
-				fragment: gql`
-					fragment NodeOwner on Node {
-						owner {
-							id
-							email
-							full_name
-						}
-					}
-				`,
-				id: global.apolloClient.cache.identify(path[0]),
-				data: {
-					owner
-				}
-			});
 
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
@@ -220,7 +203,6 @@ describe('Header Breadcrumbs', () => {
 			const moveMutationFn = jest.fn();
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, path),
 				mockMoveNodes(
 					{
@@ -246,12 +228,12 @@ describe('Header Breadcrumbs', () => {
 				)
 			).toBeVisible();
 			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronRight')).toBeVisible();
-			expect(screen.queryByTestId('icon: ChevronLeft')).not.toBeInTheDocument();
-			await user.click(screen.getByTestId('icon: FolderOutline'));
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			await screen.findByText(/hide previous folders/i);
-			expect(screen.queryByTestId('icon: ChevronRight')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronLeft')).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(currentFolder.name);
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
@@ -321,7 +303,7 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
+			const mocks = [mockGetPath({ node_id: currentFolder.id }, [parent, currentFolder])];
 
 			const { getByTextWithMarkup } = setup(
 				<>
@@ -398,7 +380,7 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [mockGetParent({ node_id: currentFolder.id }, currentFolder)];
+			const mocks = [mockGetPath({ node_id: currentFolder.id }, [parent, currentFolder])];
 
 			const { getByTextWithMarkup } = setup(
 				<>
@@ -478,7 +460,6 @@ describe('Header Breadcrumbs', () => {
 			const moveMutationFn = jest.fn();
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, path),
 				mockMoveNodes(
 					{
@@ -504,12 +485,12 @@ describe('Header Breadcrumbs', () => {
 				)
 			).toBeVisible();
 			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronRight')).toBeVisible();
-			expect(screen.queryByTestId('icon: ChevronLeft')).not.toBeInTheDocument();
-			await user.click(screen.getByTestId('icon: FolderOutline'));
-			expect(screen.queryByTestId('icon: ChevronRight')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
 			await screen.findByText(/hide previous folders/i);
-			expect(screen.getByTestId('icon: ChevronLeft')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(path[0].name);
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
@@ -577,10 +558,7 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, path)
-			];
+			const mocks = [mockGetPath({ node_id: currentFolder.id }, path)];
 
 			const { getByTextWithMarkup } = setup(
 				<>
@@ -596,18 +574,17 @@ describe('Header Breadcrumbs', () => {
 				)
 			).toBeVisible();
 			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronRight')).toBeVisible();
-			expect(screen.queryByTestId('icon: ChevronLeft')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
 			// set drag data as if a node of the list was dragged
 			draggedItemsVar(movingNodes);
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
-			fireEvent.dragEnter(screen.getByTestId('icon: FolderOutline'));
-			await waitForElementToBeRemoved(screen.queryByTestId('icon: ChevronRight'));
-			expect(screen.getByTestId('icon: ChevronLeft')).toBeVisible();
-			fireEvent.dragLeave(screen.getByTestId('icon: FolderOutline'));
+			fireEvent.dragEnter(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
+			fireEvent.dragLeave(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
@@ -633,10 +610,7 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, path)
-			];
+			const mocks = [mockGetPath({ node_id: currentFolder.id }, path)];
 
 			const { getByTextWithMarkup, user } = setup(
 				<>
@@ -653,12 +627,12 @@ describe('Header Breadcrumbs', () => {
 			).toBeVisible();
 
 			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronRight')).toBeVisible();
-			expect(screen.queryByTestId('icon: ChevronLeft')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			// simulate a drag of a node of the list
-			await user.click(screen.getByTestId('icon: FolderOutline'));
-			expect(screen.queryByTestId('icon: ChevronRight')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronLeft')).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
@@ -729,7 +703,6 @@ describe('Header Breadcrumbs', () => {
 			});
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, path),
 				mockMoveNodes(
 					{
@@ -755,12 +728,12 @@ describe('Header Breadcrumbs', () => {
 			).toBeVisible();
 
 			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronRight')).toBeVisible();
-			expect(screen.queryByTestId('icon: ChevronLeft')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			// simulate a drag of a node of the list
-			await user.click(screen.getByTestId('icon: FolderOutline'));
-			expect(screen.queryByTestId('icon: ChevronRight')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronLeft')).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
@@ -845,7 +818,6 @@ describe('Header Breadcrumbs', () => {
 			const moveMutationFn = jest.fn();
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
 				mockGetPath({ node_id: currentFolder.id }, path),
 				mockMoveNodes(
 					{
@@ -872,33 +844,16 @@ describe('Header Breadcrumbs', () => {
 			).toBeVisible();
 
 			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: ChevronRight')).toBeVisible();
-			expect(screen.queryByTestId('icon: ChevronLeft')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			// simulate a drag of a node of the list
-			await user.click(screen.getByTestId('icon: FolderOutline'));
-			expect(screen.queryByTestId('icon: ChevronRight')).not.toBeInTheDocument();
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
+			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
 			await screen.findByText(/hide previous folders/i);
-			expect(screen.getByTestId('icon: ChevronLeft')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
-			// TODO: move fragment to graphql file and add type
-			// add missing data in cache
-			global.apolloClient.writeFragment({
-				fragment: gql`
-					fragment NodeOwner on Node {
-						owner {
-							id
-							email
-							full_name
-						}
-					}
-				`,
-				id: global.apolloClient.cache.identify(path[0]),
-				data: {
-					owner
-				}
-			});
 
 			const breadcrumbsComponent = screen.getByTestId('customBreadcrumbs');
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);

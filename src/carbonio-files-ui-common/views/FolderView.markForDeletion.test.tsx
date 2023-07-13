@@ -20,7 +20,7 @@ import { Folder, NodeSort } from '../types/graphql/types';
 import {
 	getChildrenVariables,
 	mockGetChildren,
-	mockGetParent,
+	mockGetPath,
 	mockGetPermissions,
 	mockTrashNodes
 } from '../utils/mockUtils';
@@ -60,7 +60,7 @@ describe('Mark for deletion - trash', () => {
 			currentFolder.children.nodes.push(folder);
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockTrashNodes(
@@ -129,7 +129,7 @@ describe('Mark for deletion - trash', () => {
 					children: populateNodePage(firstPage)
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockTrashNodes({ node_ids: nodesToTrash }, nodesToTrash),
 				mockGetChildren(getChildrenVariables(currentFolder.id), {
 					...currentFolder,
@@ -185,7 +185,7 @@ describe('Mark for deletion - trash', () => {
 			const element = currentFolder.children.nodes[0] as Node;
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockTrashNodes(
@@ -238,7 +238,7 @@ describe('Mark for deletion - trash', () => {
 			const element1 = currentFolder.children.nodes[1] as Node;
 
 			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 				mockTrashNodes(
@@ -294,7 +294,7 @@ describe('Mark for deletion - trash', () => {
 					children: populateNodePage(firstPage)
 				} as Folder),
 				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
+				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 				mockTrashNodes({ node_ids: [firstPage[NODES_LOAD_LIMIT - 1].id] }, [
 					firstPage[NODES_LOAD_LIMIT - 1].id
 				]),

@@ -31,7 +31,7 @@ import {
 	getChildrenVariables,
 	mockGetChildren,
 	mockGetChildrenError,
-	mockGetParent,
+	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { generateError, setup, triggerLoadMore } from '../utils/testUtils';
@@ -55,7 +55,7 @@ describe('Get children', () => {
 	test('access to a folder with network error response show an error page', async () => {
 		const currentFolder = populateFolder();
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildrenError(
 				getChildrenVariables(currentFolder.id),
@@ -116,12 +116,7 @@ describe('Get children', () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT + Math.floor(NODES_LOAD_LIMIT / 2));
 
 		const mocks = [
-			mockGetParent(
-				{
-					node_id: currentFolder.id
-				},
-				currentFolder
-			),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), {
 				...currentFolder,
 				children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))

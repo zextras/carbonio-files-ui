@@ -6,21 +6,11 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ApolloError, useApolloClient, useQuery } from '@apollo/client';
-import { size } from 'lodash';
+import { ApolloError, useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 
-import GET_PARENT from '../graphql/queries/getParent.graphql';
-import GET_PATH from '../graphql/queries/getPath.graphql';
 import { Crumb, CrumbNode } from '../types/common';
-import {
-	GetParentQuery,
-	GetParentQueryVariables,
-	GetPathQuery,
-	GetPathQueryVariables,
-	Maybe,
-	Node
-} from '../types/graphql/types';
+import { GetPathDocument, Maybe } from '../types/graphql/types';
 import { buildCrumbs } from '../utils/utils';
 
 export type UseBreadcrumbType = (
@@ -33,37 +23,33 @@ export type UseBreadcrumbType = (
 	loading: boolean;
 	error: ApolloError | undefined;
 	expanded: boolean;
-	loadPath: () => void;
 	expandable: boolean;
 };
 
 // folderId has the precedence over labels. If folderId has a value, breadcrumb is loaded dynamically from parents.
 // labels, if defined, is used to initialize the breadcrumb
-const useBreadcrumb: UseBreadcrumbType = (folderId, labels, crumbAction) => {
+export const useBreadcrumb: UseBreadcrumbType = (folderId, labels, crumbAction) => {
 	const [expanded, setExpanded] = useState(false);
 	const [expandable, setExpandable] = useState(false);
 	const [crumbs, setCrumbs] = useState<Crumb[]>(labels || []);
-	const apolloClient = useApolloClient();
 	const [t] = useTranslation();
 
 	useEffect(() => {
 		if (!folderId) {
 			setCrumbs(labels || []);
+			setExpanded(false);
 		}
 	}, [folderId, labels]);
 
 	const updateCrumbs = useCallback(
-		(nodes: CrumbNode | Array<Maybe<Pick<Node, 'id' | 'name' | 'type'>> | undefined>) => {
-			let breadcrumbs: Crumb[] = [];
-			if (nodes) {
-				breadcrumbs = buildCrumbs(nodes, crumbAction, t);
-				breadcrumbs[size(breadcrumbs) - 1].onClick = undefined;
-				setCrumbs(breadcrumbs);
-				// breadcrumb can be expanded if not already expanded and if current node parent has a parent itself
-				if (!(nodes instanceof Array)) {
-					const isExpandable = nodes.parent?.parent != null;
-					setExpandable(isExpandable);
+		(nodes: Array<Maybe<CrumbNode> | undefined>) => {
+			if (nodes.length > 0) {
+				const breadcrumbs = buildCrumbs(nodes, crumbAction, t);
+				if (breadcrumbs.length > 0) {
+					breadcrumbs[breadcrumbs.length - 1].onClick = undefined;
 				}
+				setCrumbs(breadcrumbs);
+				setExpandable(breadcrumbs.length > 2);
 			} else {
 				setCrumbs([]);
 			}
@@ -71,45 +57,23 @@ const useBreadcrumb: UseBreadcrumbType = (folderId, labels, crumbAction) => {
 		[crumbAction, t]
 	);
 
-	// main query that loads short breadcrumb
-	const { loading, error } = useQuery<GetParentQuery, GetParentQueryVariables>(GET_PARENT, {
-		variables: {
-			node_id: folderId || ''
-		},
+	const { data, loading, error } = useQuery(GetPathDocument, {
+		variables: { node_id: folderId || '' },
 		skip: !folderId,
-		onCompleted(data) {
-			if (data?.getNode) {
-				updateCrumbs(data.getNode);
-				setExpanded(false);
-			}
-		}
+		errorPolicy: 'all',
+		returnPartialData: true
 	});
 
-	const loadPath = useCallback(() => {
-		// use apollo query to fetch full path only when request
-		if (folderId && expandable) {
-			apolloClient
-				.query<GetPathQuery, GetPathQueryVariables>({
-					query: GET_PATH,
-					variables: {
-						node_id: folderId
-					}
-				})
-				.then(({ data: { getPath } }) => {
-					updateCrumbs(getPath);
-					setExpanded(true);
-				})
-				.catch((err) => console.error(err));
+	useEffect(() => {
+		if (data?.getPath) {
+			updateCrumbs(data.getPath);
+			setExpanded(false);
 		}
-	}, [apolloClient, expandable, folderId, updateCrumbs]);
+	}, [data?.getPath, updateCrumbs]);
 
 	const toggle = useCallback(() => {
-		if (!expanded && expandable && folderId) {
-			loadPath();
-		} else {
-			setExpanded((prevState) => !prevState);
-		}
-	}, [expanded, expandable, folderId, loadPath]);
+		setExpanded((prevState) => !prevState);
+	}, []);
 
 	return {
 		data: expanded || crumbs.length <= 2 ? crumbs : crumbs.slice(-2),
@@ -117,9 +81,6 @@ const useBreadcrumb: UseBreadcrumbType = (folderId, labels, crumbAction) => {
 		loading,
 		error,
 		expanded,
-		loadPath,
 		expandable
 	};
 };
-
-export default useBreadcrumb;

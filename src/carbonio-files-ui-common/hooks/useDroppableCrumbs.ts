@@ -19,9 +19,8 @@ import useUserInfo from '../../hooks/useUserInfo';
 import { draggedItemsVar } from '../apollo/dragAndDropVar';
 import { selectionModeVar } from '../apollo/selectionVar';
 import { DRAG_TYPES, TIMERS } from '../constants';
-import BASE_NODE from '../graphql/fragments/baseNode.graphql';
 import { Crumb, DroppableCrumb, NodeListItemType } from '../types/common';
-import { BaseNodeFragment, NodeType } from '../types/graphql/types';
+import { ParentFragmentDoc } from '../types/graphql/types';
 import { canBeMoveDestination, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddType } from '../utils/uploadUtils';
 import { hexToRGBA, isFolder } from '../utils/utils';
@@ -86,7 +85,7 @@ export function useDroppableCrumbs(
 	 * is cleared. To avoid the delay and perform the close immediately, set delay param to 0
 	 */
 	const closeDropdown = useCallback<(event: Event | React.SyntheticEvent, delay?: number) => void>(
-		(event, delay = 150) => {
+		(event, delay = TIMERS.DRAG_DELAY_CLOSE_DROPDOWN) => {
 			if (openRef.current) {
 				event.preventDefault();
 				closeDropdownTimer.current && clearTimeout(closeDropdownTimer.current);
@@ -105,28 +104,13 @@ export function useDroppableCrumbs(
 	}, []);
 
 	const getNodeFromCrumb = useCallback(
-		(crumb: Crumb) => {
-			// FIXME: update with only BaseNode fragment when owner will not throw an error for roots
-			let destinationNode: (BaseNodeFragment & Partial<Pick<NodeListItemType, 'owner'>>) | null =
-				null;
-			const node = apolloClient.readFragment<BaseNodeFragment>({
-				fragment: BASE_NODE,
-				fragmentName: 'BaseNode',
+		(crumb: Crumb) =>
+			apolloClient.readFragment({
+				fragment: ParentFragmentDoc,
+				fragmentName: 'Parent',
+				// FIXME: remove hardcoded typename
 				id: apolloClient.cache.identify({ __typename: 'Folder', id: crumb.id })
-			});
-			if (node) {
-				destinationNode = { ...node };
-				if (node.type === NodeType.Folder) {
-					// TODO: move fragment to graphql file and add type
-					const owner = apolloClient.readFragment({
-						fragment: NODE_OWNER,
-						id: apolloClient.cache.identify(node)
-					});
-					destinationNode = { ...destinationNode, ...owner };
-				}
-			}
-			return destinationNode as BaseNodeFragment & Pick<NodeListItemType, 'owner'>;
-		},
+			}),
 		[apolloClient]
 	);
 
@@ -274,10 +258,12 @@ export function useDroppableCrumbs(
 				actionTimer.current = undefined;
 				closeDropdown(event, 0);
 				const node = getNodeFromCrumb(crumb);
-				if (event.dataTransfer.types.includes(DRAG_TYPES.move)) {
-					moveNodesAction(node, event);
-				} else if (event.dataTransfer.types.includes(DRAG_TYPES.upload)) {
-					uploadAction(node, event);
+				if (node) {
+					if (event.dataTransfer.types.includes(DRAG_TYPES.move)) {
+						moveNodesAction(node, event);
+					} else if (event.dataTransfer.types.includes(DRAG_TYPES.upload)) {
+						uploadAction(node, event);
+					}
 				}
 			},
 		[closeDropdown, getNodeFromCrumb, moveNodesAction, uploadAction]
@@ -397,7 +383,7 @@ export function useDroppableCrumbs(
 						element.classList.add('disable-hover');
 					}
 				});
-			}, 10);
+			}, TIMERS.DRAG_PREVENT_HOVER_DROPDOWN);
 		}
 	}, []);
 

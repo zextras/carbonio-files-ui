@@ -6,8 +6,7 @@
 
 import { QueryResult, useQuery } from '@apollo/client';
 
-import GET_PATH from '../../../graphql/queries/getPath.graphql';
-import { GetPathQuery, GetPathQueryVariables } from '../../../types/graphql/types';
+import { GetPathDocument, GetPathQuery, GetPathQueryVariables } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
 /**
@@ -16,7 +15,7 @@ import { useErrorHandler } from '../../useErrorHandler';
 export const useGetPathQuery = (
 	nodeId?: string
 ): Pick<QueryResult<GetPathQuery>, 'data' | 'loading' | 'error'> => {
-	const { data, loading, error } = useQuery<GetPathQuery, GetPathQueryVariables>(GET_PATH, {
+	const { data, loading, error } = useQuery<GetPathQuery, GetPathQueryVariables>(GetPathDocument, {
 		variables: {
 			node_id: nodeId || ''
 		},

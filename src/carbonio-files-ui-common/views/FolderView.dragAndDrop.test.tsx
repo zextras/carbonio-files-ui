@@ -43,7 +43,6 @@ import {
 import {
 	getChildrenVariables,
 	mockGetChildren,
-	mockGetParent,
 	mockGetPath,
 	mockGetPermissions,
 	mockMoveNodes
@@ -89,7 +88,7 @@ describe('Drag and drop', () => {
 			})
 		);
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
@@ -153,7 +152,7 @@ describe('Drag and drop', () => {
 			})
 		);
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
@@ -212,7 +211,7 @@ describe('Drag and drop', () => {
 			})
 		);
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
@@ -271,7 +270,7 @@ describe('Drag and drop', () => {
 			})
 		);
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
@@ -334,7 +333,7 @@ describe('Drag and drop', () => {
 			})
 		);
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
@@ -395,7 +394,7 @@ describe('Drag and drop', () => {
 		currentFolder.children.nodes.push(folderWithoutPermission);
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockMoveNodes(
@@ -494,7 +493,7 @@ describe('Drag and drop', () => {
 		currentFolder.children.nodes.push(folderWithoutPermission);
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
@@ -570,7 +569,7 @@ describe('Drag and drop', () => {
 		currentFolder.children.nodes.push(destinationFolder);
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockMoveNodes(
@@ -660,7 +659,6 @@ describe('Drag and drop', () => {
 		const mocks = [
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
 			mockGetPath({ node_id: currentFolder.id }, path),
 			mockMoveNodes(
 				{
@@ -797,7 +795,7 @@ describe('Drag and drop', () => {
 		currentFolder.children = populateNodePage([draggedNode, destinationFolder]);
 
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(getChildrenVariables(destinationFolder.id), destinationFolder),
@@ -808,7 +806,7 @@ describe('Drag and drop', () => {
 				},
 				map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
 			),
-			mockGetParent({ node_id: destinationFolder.id }, destinationFolder),
+			mockGetPath({ node_id: destinationFolder.id }, [currentFolder, destinationFolder]),
 			mockGetChildren(getChildrenVariables(destinationFolder.id), {
 				...destinationFolder,
 				children: populateNodePage(nodesToDrag)

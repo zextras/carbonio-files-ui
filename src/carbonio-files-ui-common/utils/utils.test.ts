@@ -18,8 +18,7 @@ describe('Crumbs builder', () => {
 		lvl2.parent = lvl1;
 		lvl1.parent = lvl0;
 
-		const resultWithNode = buildCrumbs(lvl2);
-		const resultWithArray = buildCrumbs([lvl0, lvl1, lvl2]);
+		const result = buildCrumbs([lvl0, lvl1, lvl2]);
 
 		const expected = [
 			{
@@ -36,8 +35,7 @@ describe('Crumbs builder', () => {
 			}
 		];
 
-		expect(resultWithNode).toMatchObject(expected);
-		expect(resultWithArray).toMatchObject(expected);
+		expect(result).toMatchObject(expected);
 	});
 });
 

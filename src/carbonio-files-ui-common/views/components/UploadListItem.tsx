@@ -88,7 +88,7 @@ export const UploadListItem = React.memo<UploadListItemProps>(
 			[id, selectId]
 		);
 
-		const crumbs = useMemo(() => (parent ? buildCrumbs(parent, undefined, t) : []), [parent, t]);
+		const crumbs = useMemo(() => (parent ? buildCrumbs([parent], undefined, t) : []), [parent, t]);
 
 		return (
 			<ContextualMenu

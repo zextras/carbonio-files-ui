@@ -35,18 +35,18 @@ import {
 } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
-const confirmAction = jest.fn(() => {
-	// clone implementation of the function contained in the close callback of useCopyContent
-	destinationVar({ defaultValue: undefined, currentValue: undefined });
-});
-const resetToDefault = jest.fn(() => {
-	// clone implementation of the function contained in the click callback of useCopyContent
-	destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
-});
+let confirmAction = jest.fn();
+let resetToDefault = jest.fn();
 
 beforeEach(() => {
-	confirmAction.mockClear();
-	resetToDefault.mockClear();
+	confirmAction = jest.fn(() => {
+		// clone implementation of the function contained in the close callback of useCopyContent
+		destinationVar({ defaultValue: undefined, currentValue: undefined });
+	});
+	resetToDefault = jest.fn(() => {
+		// clone implementation of the function contained in the click callback of useCopyContent
+		destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
+	});
 });
 
 describe('Folder Selection Modal Content', () => {
@@ -214,13 +214,11 @@ describe('Folder Selection Modal Content', () => {
 		localRoot.children.nodes.push(folder);
 		folder.parent = localRoot;
 
+		const getPathMock = jest.fn();
 		const mocks = [
 			// request to find out parent
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-			// request to create breadcrumb
-			mockGetPath({ node_id: folder.id }, [localRoot, folder]),
-			mockGetChildren(getChildrenVariables(folder.id), folder)
+			mockGetPath({ node_id: localRoot.id }, [localRoot], getPathMock),
+			mockGetChildren(getChildrenVariables(localRoot.id), localRoot)
 		];
 
 		const { findByTextWithMarkup, user } = setup(
@@ -233,12 +231,13 @@ describe('Folder Selection Modal Content', () => {
 		);
 
 		await screen.findByText(/home/i);
+		await waitFor(() => expect(getPathMock).toHaveBeenCalled());
 		let breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
 		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
 		expect(findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)).toHaveStyle(
-			'background-color: #d5e3f6'
+			{ 'background-color': '#d5e3f6' }
 		);
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
@@ -253,17 +252,14 @@ describe('Folder Selection Modal Content', () => {
 		// navigate back to the roots list through breadcrumb
 		await user.click(screen.getByText('Files'));
 		// wait roots list to be rendered
-		await screen.findByText(/home/i);
+		await screen.findByText(/shared with me/i);
 		expect(screen.queryByText(folder.name)).not.toBeInTheDocument();
-		expect(screen.getByText(/home/i)).toBeVisible();
-		expect(screen.getByText(/shared with me/i)).toBeVisible();
-		expect(screen.getByText(/trash/i)).toBeVisible();
 		// choose button is disabled because is now referring the entry point, which is not valid
 		expect(chooseButton).toHaveAttribute('disabled', '');
 		// local root item is not visibly active
 		expect(
 			findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
-		).not.toHaveStyle('background-color: #d5e3f6');
+		).not.toHaveStyle(expect.objectContaining({ 'background-color': '#d5e3f6' }));
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
 		// navigate again inside local root

@@ -22,6 +22,9 @@ export const ACTION_REGEXP = {
 } as const;
 
 export const ICON_REGEXP = {
+	breadcrumbCtaExpand: 'icon: ChevronRight',
+	breadcrumbCtaReduce: 'icon: ChevronLeft',
+	breadcrumbCta: 'icon: FolderOutline',
 	moreVertical: /^icon: MoreVertical$/i,
 	moveToTrash: /^icon: Trash2Outline$/i,
 	restore: /^icon: RestoreOutline$/i,

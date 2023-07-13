@@ -20,7 +20,7 @@ import { Folder } from '../types/graphql/types';
 import {
 	getChildrenVariables,
 	mockGetChildren,
-	mockGetParent,
+	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
@@ -44,7 +44,7 @@ describe('Folder View Selection mode', () => {
 	test('if there is no element selected, all actions are visible and disabled', async () => {
 		const currentFolder = populateFolder(10);
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
 		];
@@ -96,7 +96,7 @@ describe('Folder View Selection mode', () => {
 			mockedNode.parent = currentFolder;
 		});
 		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
+			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
 			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
 			mockGetChildren(
