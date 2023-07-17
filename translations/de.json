@@ -168,7 +168,7 @@
                 },
                 "input": {
                     "label": {
-                        "name": "Elementname"
+                        "name": "Artikelname"
                     }
                 },
                 "title": "Element umbenennen"
