@@ -13,9 +13,10 @@ import { find } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
+import { ACTION_IDS } from '../../constants';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
-import { ICON_REGEXP } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { Folder } from '../types/graphql/types';
 import {
@@ -46,14 +47,14 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 	})
 }));
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+const MockDisplayer = (props: DisplayerProps): JSX.Element => (
+	<div>
+		{props.translationKey}:{props.icons}
 		<button
-			data-testid="create-folder-test-id"
 			onClick={(ev: React.MouseEvent<HTMLButtonElement>): void => {
 				if (mockedCreateOptions) {
 					const createFolder = mockedCreateOptions.find(
-						(element) => element.id === 'create-folder'
+						(element) => element.id === ACTION_IDS.CREATE_FOLDER
 					);
 					if (createFolder) {
 						const clickFn = (createFolder.action('target') as DropdownItem).onClick;
@@ -62,20 +63,23 @@ jest.mock('./components/Displayer', () => ({
 				}
 			}}
 		>
-			{props.translationKey}:{props.icons}
+			create folder
 		</button>
-	)
+	</div>
+);
+
+jest.mock('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): JSX.Element => <MockDisplayer {...props} />
 }));
 
 describe('Create folder', () => {
 	async function createNode(newNode: { name: string }, user: UserEvent): Promise<void> {
 		// wait for the creation modal to be opened
-		const inputFieldDiv = await screen.findByTestId('input-name');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		expect(inputField).toHaveValue('');
 		await user.type(inputField, newNode.name);
 		expect(inputField).toHaveValue(newNode.name);
-		const button = screen.getByRole('button', { name: /create/i });
+		const button = screen.getByRole('button', { name: /^create$/i });
 		await user.click(button);
 	}
 
@@ -109,32 +113,36 @@ describe('Create folder', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 
-		const createFolder = find(mockedCreateOptions, (option) => option.id === 'create-folder');
+		const createFolder = find(
+			mockedCreateOptions,
+			(option) => option.id === ACTION_IDS.CREATE_FOLDER
+		);
 		expect(createFolder).toBeDefined();
 		if (createFolder) {
-			const createFolderElement = screen.getByTestId('create-folder-test-id');
+			const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 			await user.click(createFolderElement);
 		} else {
 			fail();
 		}
 
 		await createNode(node2, user);
-		await within(screen.getByTestId('modal')).findByText(/Error! Name already assigned/i);
-		const error = within(screen.getByTestId('modal')).getByText(/Error! Name already assigned/i);
+		await within(screen.getByTestId(SELECTORS.modal)).findByText(/Error! Name already assigned/i);
+		const error = within(screen.getByTestId(SELECTORS.modal)).getByText(
+			/Error! Name already assigned/i
+		);
 		expect(error).toBeInTheDocument();
 		act(() => {
 			// run timers of modal
 			jest.runOnlyPendingTimers();
 		});
-		const inputFieldDiv = screen.getByTestId('input-name');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		expect(inputField).toBeVisible();
 		expect(inputField).toHaveValue(newName);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 	});
@@ -168,14 +176,17 @@ describe('Create folder', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 
-		const createFolder = find(mockedCreateOptions, (option) => option.id === 'create-folder');
+		const createFolder = find(
+			mockedCreateOptions,
+			(option) => option.id === ACTION_IDS.CREATE_FOLDER
+		);
 		expect(createFolder).toBeDefined();
 		if (createFolder) {
-			const createFolderElement = screen.getByTestId('create-folder-test-id');
+			const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 			await user.click(createFolderElement);
 		} else {
 			fail();
@@ -183,13 +194,13 @@ describe('Create folder', () => {
 
 		// create action
 		await createNode(node2, user);
-		await screen.findByTestId(`node-item-${node2.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
 
-		const nodeItem = await screen.findByTestId(`node-item-${node2.id}`);
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+		const nodeItem = await screen.findByTestId(SELECTORS.nodeItem(node2.id));
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
 		expect(within(nodeItem).getByText(node2.name)).toBeVisible();
-		const nodes = screen.getAllByTestId('node-item', { exact: false });
+		const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 1);
 		expect(nodes[1]).toBe(nodeItem);
 	});
@@ -246,13 +257,16 @@ describe('Create folder', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		let nodes = screen.getAllByTestId('node-item', { exact: false });
+		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 
-		const createFolder = find(mockedCreateOptions, (option) => option.id === 'create-folder');
+		const createFolder = find(
+			mockedCreateOptions,
+			(option) => option.id === ACTION_IDS.CREATE_FOLDER
+		);
 		expect(createFolder).toBeDefined();
 		if (createFolder) {
-			const createFolderElement = screen.getByTestId('create-folder-test-id');
+			const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 			await user.click(createFolderElement);
 		} else {
 			fail();
@@ -260,45 +274,46 @@ describe('Create folder', () => {
 
 		// create action
 		await createNode(node2, user);
-		await screen.findByTestId(`node-item-${node2.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
 		expect(screen.getByText(node2.name)).toBeVisible();
 
-		const node2Item = screen.getByTestId(`node-item-${node2.id}`);
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+		const node2Item = screen.getByTestId(SELECTORS.nodeItem(node2.id));
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
 		expect(node2Item).toBeVisible();
 		expect(within(node2Item).getByText(node2.name)).toBeVisible();
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 1);
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(node2Item);
 
-		const createFolderElement = screen.getByTestId('create-folder-test-id');
+		const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 		await user.click(createFolderElement);
 
 		// create action
 		await createNode(node1, user);
-		await screen.findByTestId(`node-item-${node1.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node1.id));
 		expect(screen.getByText(node1.name)).toBeVisible();
 
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
-		const node1Item = screen.getByTestId(`node-item-${node1.id}`);
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
 		expect(node1Item).toBeVisible();
 		expect(within(node1Item).getByText(node1.name)).toBeVisible();
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 2);
 		// node1 is before node2 of the list
 		expect(nodes[nodes.length - 2]).toBe(node1Item);
 		// node2 is last element of the list
-		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(`node-item-${node2.id}`));
+		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(SELECTORS.nodeItem(node2.id)));
 		// trigger load more
 		await triggerLoadMore();
 		// wait for the load to be completed (node3 is now loaded)
-		await screen.findByTestId(`node-item-${node3.id}`);
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		await screen.findByTestId(SELECTORS.nodeItem(node3.id));
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 3);
 		// node1, node2 and node3 should have the correct order
-		expect(screen.getByTestId(`node-item-${node1.id}`)).toBe(nodes[nodes.length - 3]);
-		expect(screen.getByTestId(`node-item-${node2.id}`)).toBe(nodes[nodes.length - 2]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node1.id))).toBe(nodes[nodes.length - 3]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node2.id))).toBe(nodes[nodes.length - 2]);
 		expect(screen.getByTestId(`node-item-${node3.id}`)).toBe(nodes[nodes.length - 1]);
 	});
 
@@ -331,14 +346,17 @@ describe('Create folder', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 
-		const createFolder = find(mockedCreateOptions, (option) => option.id === 'create-folder');
+		const createFolder = find(
+			mockedCreateOptions,
+			(option) => option.id === ACTION_IDS.CREATE_FOLDER
+		);
 		expect(createFolder).toBeDefined();
 		if (createFolder) {
-			const createFolderElement = screen.getByTestId('create-folder-test-id');
+			const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 			await user.click(createFolderElement);
 		} else {
 			fail();
@@ -349,10 +367,10 @@ describe('Create folder', () => {
 		await screen.findByTestId(`node-item-${newNode.id}`);
 		expect(screen.getByText(newNode.name)).toBeVisible();
 		const nodeItem = await screen.findByTestId(`node-item-${newNode.id}`);
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
 		expect(within(nodeItem).getByText(newNode.name)).toBeVisible();
-		const nodes = screen.getAllByTestId('node-item', { exact: false });
+		const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(NODES_LOAD_LIMIT);
 		expect(nodes[newPos]).toBe(nodeItem);
 		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();

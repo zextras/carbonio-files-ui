@@ -69,7 +69,7 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(
 					'icon: RestoreOutline'
@@ -124,7 +124,7 @@ describe('Filter View', () => {
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 				expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
 					'icon: RestoreOutline'
@@ -165,7 +165,7 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 				fireEvent.contextMenu(nodeItem);
 				const renameAction = await screen.findByText(ACTION_REGEXP.rename);
 				expect(renameAction).toBeVisible();

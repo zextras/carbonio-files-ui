@@ -15,7 +15,7 @@ import UploadView from './UploadView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { REST_ENDPOINT, UPLOAD_PATH } from '../constants';
-import { EMITTER_CODES, ICON_REGEXP } from '../constants/test';
+import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -87,10 +87,10 @@ describe('Upload View', () => {
 			await screen.findByText(subFolder.name);
 			await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			const subFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(subFolder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(subFolderItem).toBeDefined();
@@ -209,7 +209,7 @@ describe('Upload View', () => {
 			expect(screen.queryByText(/queued/i)).not.toBeInTheDocument();
 			// now retry the upload of the failed item
 			const failedItem = screen
-				.getAllByTestId('details-node-item-', { exact: false })
+				.getAllByTestId(SELECTORS.detailsNodeItem(), { exact: false })
 				.find((item) => within(item).queryByTestId(ICON_REGEXP.uploadFailed) !== null);
 			expect(failedItem).toBeDefined();
 			await user.hover(failedItem as HTMLElement);
@@ -435,7 +435,7 @@ describe('Upload View', () => {
 			await screen.findByText(/content/i);
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
@@ -541,7 +541,7 @@ describe('Upload View', () => {
 			await screen.findByText(/content/i);
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
@@ -614,7 +614,7 @@ describe('Upload View', () => {
 			await screen.findAllByTestId(ICON_REGEXP.uploadFailed);
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadFailed)).toHaveLength(2);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
@@ -694,7 +694,7 @@ describe('Upload View', () => {
 			await screen.findByText(/content/i);
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
@@ -757,7 +757,7 @@ describe('Upload View', () => {
 				expect(screen.getByText('1/2')).toBeVisible();
 
 				const fileItem = screen
-					.getAllByTestId('node-item', { exact: false })
+					.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 					.find((item) => within(item).queryByText(level3File.name) !== null) as HTMLElement;
 				expect(fileItem).toBeDefined();
 
@@ -819,14 +819,14 @@ describe('Upload View', () => {
 				expect(screen.getByText('2/3')).toBeVisible();
 
 				const folder2Item = screen
-					.getAllByTestId('node-item', { exact: false })
+					.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 					.find((item) => within(item).queryByText(level2Folder.name) !== null) as HTMLElement;
 				expect(folder2Item).toBeDefined();
 
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(5);
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(5);
 				await user.click(within(folder2Item).getByTestId(ICON_REGEXP.removeUpload));
 				await waitFor(() =>
-					expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(3)
+					expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(3)
 				);
 
 				expect(screen.getByText('2/3')).toBeVisible();
@@ -879,16 +879,16 @@ describe('Upload View', () => {
 				expect(screen.getByText('1/2')).toBeVisible();
 
 				const file3Item = screen
-					.getAllByTestId('node-item', { exact: false })
+					.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 					.find((item) => within(item).queryByText(level3File.name) !== null) as HTMLElement;
 				expect(file3Item).toBeDefined();
 
 				expect(within(file3Item).getByTestId(ICON_REGEXP.removeUpload)).toBeInTheDocument();
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(5);
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(5);
 				await user.click(within(file3Item).getByTestId(ICON_REGEXP.removeUpload));
 				await screen.findByText('3/4');
 				await waitFor(() =>
-					expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(4)
+					expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(4)
 				);
 
 				expect(screen.getByText('3/4')).toBeVisible();

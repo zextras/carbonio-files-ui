@@ -80,7 +80,7 @@ describe('Filter View', () => {
 				);
 				// unflagged elements are not in the list anymore
 				forEach(nodesIdsToUnflag, (nodeId) => {
-					expect(screen.queryByTestId(`node-item-${nodeId}`)).not.toBeInTheDocument();
+					expect(screen.queryByTestId(SELECTORS.nodeItem(nodeId))).not.toBeInTheDocument();
 				});
 			});
 		});
@@ -116,7 +116,7 @@ describe('Filter View', () => {
 				expect(screen.queryAllByTestId('icon: Flag')).toHaveLength(nodes.length);
 
 				// right click to open contextual menu on first node
-				const nodeItem = screen.getByTestId(`node-item-${nodes[0].id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodes[0].id));
 				// open context menu and click on unflag action
 				fireEvent.contextMenu(nodeItem);
 				const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
@@ -127,7 +127,7 @@ describe('Filter View', () => {
 				await screen.findByText(/Item unflagged successfully/i);
 				expect(screen.getAllByTestId('icon: Flag')).toHaveLength(nodes.length - 1);
 				// unflagged element is not in the list anymore
-				expect(screen.queryByTestId(`node-item-${nodes[0].id}`)).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.nodeItem(nodes[0].id))).not.toBeInTheDocument();
 			});
 		});
 

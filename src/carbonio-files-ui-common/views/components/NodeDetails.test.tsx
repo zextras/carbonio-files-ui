@@ -12,7 +12,7 @@ import { DefaultTheme } from 'styled-components';
 
 import { NodeDetails } from './NodeDetails';
 import { NODES_LOAD_LIMIT, PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -515,7 +515,7 @@ describe('Node Details', () => {
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
-		expect(screen.queryAllByTestId(`details-node-item-`, { exact: false })).toHaveLength(
+		expect(screen.queryAllByTestId(SELECTORS.detailsNodeItem(), { exact: false })).toHaveLength(
 			nodes.length
 		);
 

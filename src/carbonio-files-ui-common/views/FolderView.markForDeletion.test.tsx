@@ -207,7 +207,7 @@ describe('Mark for deletion - trash', () => {
 			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(5);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
 			fireEvent.contextMenu(nodeItem);
 
@@ -262,7 +262,7 @@ describe('Mark for deletion - trash', () => {
 			await selectNodes([element0.id, element1.id], user);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element0.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			// open context menu
 			fireEvent.contextMenu(nodeItem);
 

@@ -264,7 +264,7 @@ describe('Node Sharing', () => {
 			];
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
 			await screen.findByText(getChipLabel(shareToUpdate.share_target));
-			const collaboratorsContainer = screen.getByTestId('node-sharing-collaborators');
+			const collaboratorsContainer = screen.getByTestId(SELECTORS.sharingTabCollaborators);
 			// all shares are set to be read-only so all chips should show EyeOutline icon
 			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(
 				shares.length
@@ -289,7 +289,7 @@ describe('Node Sharing', () => {
 			await screen.findByTestId('icon: CheckmarkSquare');
 			await user.click(screen.getByRole('button', { name: /save/i }));
 			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
-			await within(screen.getByTestId('node-sharing-collaborators')).findByTestId(
+			await within(screen.getByTestId(SELECTORS.sharingTabCollaborators)).findByTestId(
 				'icon: Edit2Outline'
 			);
 			await screen.findByTestId('icon: Share');
@@ -350,7 +350,7 @@ describe('Node Sharing', () => {
 				initialRouterEntries: [`/?node=${node.id}`]
 			});
 			await screen.findByText(getChipLabel(share.share_target as SharedTarget));
-			const collaboratorsContainer = screen.getByTestId('node-sharing-collaborators');
+			const collaboratorsContainer = screen.getByTestId(SELECTORS.sharingTabCollaborators);
 			await within(collaboratorsContainer).findByTestId('icon: EyeOutline');
 			expect(screen.getByText(/Add new people or groups/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /share/i })).toBeVisible();
@@ -407,7 +407,9 @@ describe('Node Sharing', () => {
 			// and one in the new share chip.
 			// The one inside the popover is not count because we are finding in collaboratorsContainer.
 			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(2);
-			expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
+			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
+				'disabled'
+			);
 			// click on editor
 			await user.click(screen.getByText(/editor/i));
 			// icon on chip is immediately updated, so the edit icons become 2
@@ -507,7 +509,7 @@ describe('Node Sharing', () => {
 				initialRouterEntries: [`/?node=${node.id}`]
 			});
 			await screen.findByText(getChipLabel(share.share_target as SharedTarget));
-			const collaboratorsContainer = screen.getByTestId('node-sharing-collaborators');
+			const collaboratorsContainer = screen.getByTestId(SELECTORS.sharingTabCollaborators);
 			await within(collaboratorsContainer).findByTestId('icon: EyeOutline');
 			expect(screen.getByText(/Add new people or groups/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /share/i })).toBeVisible();
@@ -539,7 +541,9 @@ describe('Node Sharing', () => {
 			await screen.findByText(/editor/i);
 			// register listeners of the popover
 			jest.advanceTimersToNextTimer();
-			expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
+			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
+				'disabled'
+			);
 			// click on editor to set read and write share permissions
 			await user.click(screen.getByText(/editor/i));
 			// icon on chip is immediately updated, so the edit icons become 2
@@ -589,7 +593,7 @@ describe('Node Sharing', () => {
 			// click on share button to complete the creation of the new share
 			await user.click(screen.getByRole('button', { name: /share/i }));
 			// chips are removed from the add section
-			const addSharesChipInput = screen.getByTestId('add-sharing-chip-input');
+			const addSharesChipInput = screen.getByTestId(SELECTORS.addShareChipInput);
 			expect(
 				within(addSharesChipInput).queryByText(userAccount1.full_name)
 			).not.toBeInTheDocument();

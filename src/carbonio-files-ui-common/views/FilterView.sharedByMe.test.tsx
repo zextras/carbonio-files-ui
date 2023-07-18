@@ -20,6 +20,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
+import { SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNode, populateNodes, populateShares } from '../mocks/mockUtils';
 import {
@@ -81,7 +82,7 @@ describe('Filter view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			expect(screen.queryByTestId('missing-filter')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 
 		test('Deletion of all collaborators remove node from list. Displayer is closed', async () => {
@@ -150,7 +151,7 @@ describe('Filter view', () => {
 			// render of the collaborators
 			await screen.findByText(getChipLabel(shares[0].share_target));
 			// there should be 2 chips for collaborators
-			const chipItems = screen.getAllByTestId('chip-with-popover');
+			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
 			expect(chipItems).toHaveLength(2);
 			const share1Item = find(
 				chipItems,
@@ -160,7 +161,7 @@ describe('Filter view', () => {
 				chipItems,
 				(chipItem) => within(chipItem).queryByText(getChipLabel(shares[1].share_target)) !== null
 			);
-			const nodeItem = screen.getByTestId(`node-item-${nodeWithShares.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodeWithShares.id));
 			expect(nodeItem).toBeVisible();
 			expect(share1Item).toBeDefined();
 			expect(share2Item).toBeDefined();

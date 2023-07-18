@@ -54,7 +54,46 @@ export const SELECTORS = {
 	dropdownList: 'dropdown-popper-list',
 	checkedAvatar: 'icon: Checkmark',
 	pdfPreview: 'pdf-preview-container',
-	uncheckedAvatar: 'file-icon-selecting'
+	uncheckedAvatar: 'file-icon-selecting',
+	nodeAvatar: 'file-icon-preview',
+	nodeDetails: 'node-details',
+	nodeSharing: 'node-sharing',
+	collaborationLinkContainer: 'collaboration-link-container',
+	collaborationLinkReadShare: 'read-share-collaboration-link-container',
+	collaborationLinkWriteShare: 'read-write-share-collaboration-link-container',
+	sharingTabCollaborators: 'node-sharing-collaborators',
+	exclusiveSelectionEditor: 'exclusive-selection-editor',
+	exclusiveSelectionViewer: 'exclusive-selection-viewer',
+	chipWithPopover: 'chip-with-popover',
+	listHeader: 'list-header',
+	listHeaderSelectionMode: 'list-header-selectionModeActive',
+	list(id = ''): string {
+		return `list-${id}`;
+	},
+	modal: 'modal',
+	modalList(id = ''): string {
+		return `modal-list-${id}`;
+	},
+	modalListHeader: 'modal-list-header',
+	nodeItem(id = ''): string {
+		return `node-item-${id}`;
+	},
+	dropzone: 'dropzone-overlay',
+	dropCrumb: 'drop-crumb',
+	versionIcons(version: number): string {
+		return `version${version}-icons`;
+	},
+	addShareInputContainer: 'add-shares-input-container',
+	addShareChipInput: 'add-sharing-chip-input',
+	displayer: 'displayer',
+	displayerHeader: 'displayerHeader',
+	displayerActionsHeader: 'displayerActionsHeader',
+	detailsNodeItem(id = ''): string {
+		return `details-node-item-${id}`;
+	},
+	avatar: 'avatar',
+	customBreadcrumbs: 'customBreadcrumbs',
+	missingFilter: 'missing-filter'
 };
 
 export const EMITTER_CODES = {

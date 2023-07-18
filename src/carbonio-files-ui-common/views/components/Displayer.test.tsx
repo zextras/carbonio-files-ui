@@ -9,7 +9,7 @@ import React from 'react';
 import { screen, within } from '@testing-library/react';
 
 import { Displayer } from './Displayer';
-import { ACTION_REGEXP, ICON_REGEXP } from '../../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
 	populateFolder,
@@ -70,7 +70,7 @@ describe('Displayer', () => {
 		});
 		await screen.findAllByText(node.name);
 
-		const copyIcon = within(screen.getByTestId('displayer-actions-header')).queryByTestId(
+		const copyIcon = within(screen.getByTestId(SELECTORS.displayerActionsHeader)).queryByTestId(
 			ICON_REGEXP.copy
 		);
 		if (copyIcon) {
@@ -238,7 +238,7 @@ describe('Displayer', () => {
 		});
 		await screen.findAllByText(node.name);
 		await screen.findByTestId('icon: MoreHorizontalOutline');
-		expect(screen.getAllByTestId('avatar')).toHaveLength(6);
+		expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(6);
 		expect(screen.getByTestId('icon: MoreHorizontalOutline')).toBeVisible();
 		await user.click(screen.getByTestId('icon: MoreHorizontalOutline'));
 		await screen.findByText(collaborator0Name);

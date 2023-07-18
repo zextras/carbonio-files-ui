@@ -111,7 +111,7 @@ describe('Move', () => {
 			await screen.findByText(/Item moved/i);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-			expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - 1
 			);
 
@@ -197,7 +197,7 @@ describe('Move', () => {
 			}
 			expect(moveAction).toBeVisible();
 			await user.click(moveAction);
-			const modalList = await screen.findByTestId('modal-list-', { exact: false });
+			const modalList = await screen.findByTestId(SELECTORS.modalList(), { exact: false });
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
 			await waitFor(() =>
@@ -209,7 +209,7 @@ describe('Move', () => {
 			await screen.findByText(/Item moved/i);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-			expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - nodesToMove.length
 			);
 
@@ -290,7 +290,7 @@ describe('Move', () => {
 			expect(moveAction).not.toHaveAttribute('disabled', '');
 			await user.click(moveAction);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name, currentFolder.name));
-			const modalList = screen.getByTestId('modal-list-', { exact: false });
+			const modalList = screen.getByTestId(SELECTORS.modalList(), { exact: false });
 			await within(modalList).findByText((currentFolder.children.nodes[0] as Node).name);
 			const moveModalButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });
 			expect(moveModalButton).toHaveAttribute('disabled', '');
@@ -375,7 +375,7 @@ describe('Move', () => {
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
 
-			expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - 1
 			);
 
@@ -439,7 +439,7 @@ describe('Move', () => {
 			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1].name)).not.toBeInTheDocument();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				firstPage.length - 1
 			);
 			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();

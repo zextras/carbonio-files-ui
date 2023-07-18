@@ -46,7 +46,7 @@ describe('Mark for deletion - trash', () => {
 				currentFolder.children.nodes.length
 			);
 
-			const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 			const trashIcon = within(selectionModeActiveListHeader).getByTestId('icon: Trash2Outline');
 
@@ -94,7 +94,7 @@ describe('Mark for deletion - trash', () => {
 				currentFolder.children.nodes.length
 			);
 
-			const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 			const trashIcon = within(selectionModeActiveListHeader).queryByTestId('icon: Trash2Outline');
 

@@ -139,7 +139,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 				height={BREADCRUMB_ROW_HEIGHT}
 				mainAlignment="flex-start"
 				flexShrink={0}
-				data-testid="modal-listHeader"
+				data-testid="modal-list-header"
 			>
 				{crumbs && <InteractiveBreadcrumbs crumbs={crumbs} />}
 				{(loading || loadingPath) && (

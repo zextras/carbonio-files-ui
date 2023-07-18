@@ -237,18 +237,18 @@ describe('Filter View', () => {
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
 				await user.click(screen.getByTestId('icon: MoreVertical'));
-				screen.getByTestId(`node-item-${element.id}`);
+				screen.getByTestId(SELECTORS.nodeItem(element.id));
 				await renameNode(newName, user);
 				// check the node. It should have the new name and be at same position
-				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(nodeItem).toBeVisible();
 				expect(within(nodeItem).getByText(newName)).toBeVisible();
-				const nodeItems = screen.getAllByTestId('node-item', { exact: false });
+				const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 				expect(nodeItems).toHaveLength(nodes.length);
 				expect(nodeItems[0]).toBe(nodeItem);
 				// selection mode is de-activate
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-				const list = screen.getByTestId('list-');
+				const list = screen.getByTestId(SELECTORS.list());
 				expect(within(list).queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
 			});
 		});
@@ -277,8 +277,8 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const node1Item = screen.getByTestId(`node-item-${nodes[0].id}`);
-				const node2Item = screen.getByTestId(`node-item-${nodes[1].id}`);
+				const node1Item = screen.getByTestId(SELECTORS.nodeItem(nodes[0].id));
+				const node2Item = screen.getByTestId(SELECTORS.nodeItem(nodes[1].id));
 				fireEvent.contextMenu(node1Item);
 				// check that the flag action becomes visible (contextual menu of first node)
 				const flagAction1 = await screen.findByText(ACTION_REGEXP.flag);
@@ -324,7 +324,7 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 				fireEvent.contextMenu(nodeItem);
 				// wait for copy action to check that popper is open
 				await screen.findByText(ACTION_REGEXP.copy);
@@ -372,15 +372,15 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
 				fireEvent.contextMenu(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name, and it's located at same position
-				const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(updatedNodeItem).toBeVisible();
 				expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
-				const nodeItems = screen.getAllByTestId('node-item', { exact: false });
+				const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 				expect(nodeItems).toHaveLength(nodes.length);
 				// element should be the second last in the list
 				expect(nodeItems[1]).toBe(updatedNodeItem);
@@ -469,15 +469,15 @@ describe('Filter View', () => {
 					element.id
 				);
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
 				fireEvent.contextMenu(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name, and it is at same position in the filter list
-				const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(updatedNodeItem).toBeVisible();
 				expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
-				const nodes = screen.getAllByTestId('node-item', { exact: false });
+				const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 				expect(nodes).toHaveLength(currentFilter.length);
 				expect(nodes[0]).toBe(updatedNodeItem);
 				// check that in the parent folder the node has changed its position to last position
@@ -582,15 +582,15 @@ describe('Filter View', () => {
 					)
 				).toBe(undefined);
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
 				fireEvent.contextMenu(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name and its located at same position
-				const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(updatedNodeItem).toBeVisible();
 				expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
-				const nodes = screen.getAllByTestId('node-item', { exact: false });
+				const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 				expect(nodes).toHaveLength(currentFilter.length);
 				expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 				// check that in the parent folder the node has changed its position to first position

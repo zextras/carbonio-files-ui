@@ -23,7 +23,7 @@ import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
-import { EMITTER_CODES, ICON_REGEXP } from '../../constants/test';
+import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import handleUploadFileRequest, {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -95,7 +95,7 @@ describe('Upload list', () => {
 
 			await uploadWithDnD(dropzone, dataTransferObj);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -170,7 +170,7 @@ describe('Upload list', () => {
 			const draggedNodeItem = screen.getByText(nodesToDrag[0].name);
 			expect(draggedNodeItem).toBeInTheDocument();
 			expect(draggedNodeItem).not.toHaveAttribute('disabled', '');
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		});
 
 		test('Drop of mixed files and folder in the upload list create folder and upload file', async () => {
@@ -205,7 +205,7 @@ describe('Upload list', () => {
 			const dropzone = await screen.findByText(/nothing here/i);
 
 			await uploadWithDnD(dropzone, dataTransferObj);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -280,7 +280,7 @@ describe('Upload list', () => {
 			expect(screen.getAllByText(/\d+%/i)).toHaveLength(3);
 
 			const queuedItem = find(
-				screen.getAllByTestId('node-item', { exact: false }),
+				screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false }),
 				(item) => within(item).queryByText(/queued/i) !== null
 			) as HTMLElement;
 			expect(queuedItem).toBeDefined();
@@ -291,7 +291,7 @@ describe('Upload list', () => {
 			const loadingItems = await screen.findAllByText('0%');
 			expect(loadingItems).toHaveLength(3);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -350,7 +350,7 @@ describe('Upload list', () => {
 
 			await uploadWithDnD(dropzone, dataTransferObj);
 
-			expect(screen.getAllByTestId('node-item-', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(uploadedFiles.length);
@@ -406,13 +406,13 @@ describe('Upload list', () => {
 
 			await uploadWithDnD(dropzone, dataTransferObj);
 
-			await screen.findAllByTestId('node-item-', { exact: false });
-			expect(screen.getAllByTestId('node-item-', { exact: false })).toHaveLength(
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(uploadedFiles.length);
 			expect(screen.getByText(/queued/i)).toBeVisible();
-			const firstFileItem = screen.getAllByTestId('node-item-', { exact: false })[0];
+			const firstFileItem = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })[0];
 			expect(screen.getByText(uploadedFiles[0].name)).toBeVisible();
 			const cancelAction = within(firstFileItem).getByTestId(ICON_REGEXP.removeUpload);
 			await user.click(cancelAction);
@@ -424,7 +424,7 @@ describe('Upload list', () => {
 			emitter.emit(EMITTER_CODES.success);
 			await waitForElementToBeRemoved(screen.queryAllByTestId(ICON_REGEXP.uploadLoading));
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(3);
-			expect(screen.getAllByTestId('node-item-', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length - 1
 			);
 			expect(screen.queryByText(uploadedFiles[0].name)).not.toBeInTheDocument();
@@ -475,13 +475,13 @@ describe('Upload list', () => {
 			// immediately drag and drop the last two files
 			const dropzone2 = screen.getByText(uploadedFiles[0].name);
 			await uploadWithDnD(dropzone2, dataTransferObj2);
-			expect(screen.getAllByTestId('node-item-', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(uploadedFiles.length);
 			// last files are queued
 			expect(screen.getAllByText(/queued/i)).toHaveLength(uploadedFiles.length - UploadQueue.LIMIT);
-			const nodeItems = screen.getAllByTestId('node-item-', { exact: false });
+			const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			forEach(nodeItems, (nodeItem, index) => {
 				if (index < UploadQueue.LIMIT) {
 					expect(within(nodeItem).getByText(/\d+%/)).toBeVisible();
@@ -573,7 +573,7 @@ describe('Upload list', () => {
 
 			expect(screen.getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 			expect(screen.getByText(RegExp(`\\d/${numberOfNodes}`))).toBeVisible();
-			expect(screen.getByTestId('node-item', { exact: false })).toBeInTheDocument();
+			expect(screen.getByTestId(SELECTORS.nodeItem(), { exact: false })).toBeInTheDocument();
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 
 			await waitFor(() => expect(uploadFileHandler).toHaveBeenCalledTimes(numberOfFiles));

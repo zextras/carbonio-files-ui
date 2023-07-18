@@ -11,7 +11,8 @@ import { forEach } from 'lodash';
 import { ContextualMenuProps } from './ContextualMenu';
 import { EmptySpaceFiller } from './EmptySpaceFiller';
 import { List } from './List';
-import { ACTION_REGEXP } from '../../constants/test';
+import { ACTION_IDS } from '../../../constants';
+import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { mockGetPath } from '../../utils/mockUtils';
@@ -37,28 +38,28 @@ describe('Contextual menu actions', () => {
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
-						id: 'create-folder',
+						id: ACTION_IDS.CREATE_FOLDER,
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
-						id: 'create-docs-document',
+						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-spreadsheet',
+						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-presentation',
+						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
@@ -139,28 +140,28 @@ describe('Contextual menu actions', () => {
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
-						id: 'create-folder',
+						id: ACTION_IDS.CREATE_FOLDER,
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
-						id: 'create-docs-document',
+						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-spreadsheet',
+						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-presentation',
+						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
@@ -238,28 +239,28 @@ describe('Contextual menu actions', () => {
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
-						id: 'create-folder',
+						id: ACTION_IDS.CREATE_FOLDER,
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
-						id: 'create-docs-document',
+						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-spreadsheet',
+						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-presentation',
+						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
@@ -335,28 +336,28 @@ describe('Contextual menu actions', () => {
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
-						id: 'create-folder',
+						id: ACTION_IDS.CREATE_FOLDER,
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
-						id: 'create-docs-document',
+						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-spreadsheet',
+						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-presentation',
+						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
@@ -451,7 +452,7 @@ describe('Contextual menu actions', () => {
 			await selectNodes([element0.id, element1.id], user);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element0.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			fireEvent.contextMenu(nodeItem);
 
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);

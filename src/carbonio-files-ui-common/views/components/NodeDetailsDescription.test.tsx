@@ -8,7 +8,7 @@ import React from 'react';
 
 import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
 import { NodeDetailsDescription } from './NodeDetailsDescription';
 import { populateFile } from '../../mocks/mockUtils';
@@ -112,8 +112,7 @@ describe('NodeDetailsDescription component', () => {
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
 
-		const inputFieldDiv = await screen.findByTestId('input-description');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
@@ -153,8 +152,7 @@ describe('NodeDetailsDescription component', () => {
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
 
-		const inputFieldDiv = await screen.findByTestId('input-description');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
@@ -191,8 +189,7 @@ describe('NodeDetailsDescription component', () => {
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
 
-		let inputFieldDiv = await screen.findByTestId('input-description');
-		let inputField = within(inputFieldDiv).getByRole('textbox');
+		let inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
@@ -210,8 +207,7 @@ describe('NodeDetailsDescription component', () => {
 
 		await user.click(editIcon);
 
-		inputFieldDiv = await screen.findByTestId('input-description');
-		inputField = within(inputFieldDiv).getByRole('textbox');
+		inputField = await screen.findByRole('textbox');
 
 		expect(inputField).toHaveValue(node.description);
 	});
@@ -256,8 +252,7 @@ describe('NodeDetailsDescription component', () => {
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
 
-		const inputFieldDiv = await screen.findByTestId('input-description');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = await screen.findByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 

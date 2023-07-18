@@ -96,7 +96,7 @@ describe('Search list', () => {
 				dataTransfer: dataTransferObj
 			});
 
-			await screen.findByTestId('dropzone-overlay');
+			await screen.findByTestId(SELECTORS.dropzone);
 			expect(
 				screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 			).toBeVisible();
@@ -107,7 +107,7 @@ describe('Search list', () => {
 
 			await screen.findByText(/upload occurred in Files' home/i);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentSearch.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -188,8 +188,8 @@ describe('Search list', () => {
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 			// dropzone overlay of the list is shown
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.getByText(/drag&drop mode/i)).toBeVisible();
 			expect(screen.getByText(/you cannot drop your items in this area/i)).toBeVisible();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
@@ -197,12 +197,12 @@ describe('Search list', () => {
 			// drag and drop on folder without permissions
 			const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 			fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.queryByText('Drag&Drop Mode')).not.toBeInTheDocument();
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(itemToDrag).toBeVisible();
 			expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
@@ -210,13 +210,13 @@ describe('Search list', () => {
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.queryByText('Drag&Drop Mode')).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			await screen.findByText(/item moved/i);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeVisible();
 			expect(screen.getByText(nodesToDrag[0].name)).not.toHaveAttribute('disabled', '');
@@ -279,7 +279,7 @@ describe('Search list', () => {
 			expect(draggedNodeItems).toHaveLength(2);
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
 
 			// drag and drop on folder without permissions. Overlay is not shown.
@@ -291,7 +291,7 @@ describe('Search list', () => {
 						setTimeout(resolve, 100);
 					})
 			);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
@@ -307,7 +307,7 @@ describe('Search list', () => {
 						setTimeout(resolve, 100);
 					})
 			);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
@@ -393,7 +393,7 @@ describe('Search list', () => {
 						setTimeout(resolve, 100);
 					})
 			);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 
@@ -553,7 +553,7 @@ describe('Search list', () => {
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.restore);
 				expect(restoreIcon).toBeInTheDocument();
@@ -603,7 +603,7 @@ describe('Search list', () => {
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.restore);
 				expect(restoreIcon).toBeInTheDocument();
@@ -618,12 +618,12 @@ describe('Search list', () => {
 
 				await screen.findByText(/^success$/i);
 
-				const elementsWithSelectionModeOff = await screen.findAllByTestId('file-icon-preview');
+				const elementsWithSelectionModeOff = await screen.findAllByTestId(SELECTORS.nodeAvatar);
 				const restoredItem = screen.getByText(currentFilter[0].name);
 				expect(restoredItem).toBeInTheDocument();
 				expect(restoredItem).toBeVisible();
 
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(3);
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(3);
 				expect(elementsWithSelectionModeOff).toHaveLength(3);
 				expect.assertions(10);
 			});
@@ -716,7 +716,7 @@ describe('Search list', () => {
 
 				const element = await screen.findByText(currentFilter[0].name);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByTestId(
 					'icon: DeletePermanentlyOutline'
@@ -737,7 +737,7 @@ describe('Search list', () => {
 				expect(confirmButton).not.toBeInTheDocument();
 
 				expect(element).not.toBeInTheDocument();
-				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
 				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
 
 				expect.assertions(8);
@@ -771,7 +771,7 @@ describe('Search list', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.restore

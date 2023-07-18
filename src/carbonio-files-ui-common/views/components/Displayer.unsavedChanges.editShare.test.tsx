@@ -11,6 +11,7 @@ import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
+import { SELECTORS } from '../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../mocks/mockUtils';
 import { SharePermission } from '../../types/graphql/types';
 import {
@@ -50,9 +51,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId('icon: EyeOutline');
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -102,9 +103,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId('icon: EyeOutline');
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -161,9 +162,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId('icon: EyeOutline');
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -194,9 +195,9 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByText(getChipLabel(share.share_target));
 				// chip permissions are not changed
-				const editShareItem2 = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem2 = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId('icon: EyeOutline');
 				expect(editShareItem2).toBeVisible();
 				await user.click(editShareItem2);
 				await screen.findByText(/viewer/i);
@@ -234,9 +235,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId('icon: EyeOutline');
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -267,9 +268,9 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByText(getChipLabel(share.share_target));
 				// chip permissions are changed
-				const editShareItem2 = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: Edit2Outline'
-				);
+				const editShareItem2 = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId('icon: Edit2Outline');
 				expect(editShareItem2).toBeVisible();
 				await user.click(editShareItem2);
 				await screen.findByText(/viewer/i);
@@ -311,7 +312,7 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const nodeSharingArea = screen.getByTestId('node-sharing-collaborators');
+				const nodeSharingArea = screen.getByTestId(SELECTORS.sharingTabCollaborators);
 				const editShareItem = within(nodeSharingArea).getByTestId('icon: EyeOutline');
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);

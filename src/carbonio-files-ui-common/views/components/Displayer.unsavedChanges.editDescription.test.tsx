@@ -11,6 +11,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
+import { SELECTORS } from '../../constants/test';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
 import { NodeType } from '../../types/graphql/types';
 import {
@@ -43,7 +44,7 @@ describe('Displayer', () => {
 				await screen.findByText(node.description);
 				expect(screen.getByText(/details/i)).toBeVisible();
 				expect(screen.getByText(/sharing/i)).toBeVisible();
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
+				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
 					'icon: Edit2Outline'
 				);
 				expect(editDescriptionItem).toBeVisible();
@@ -83,7 +84,7 @@ describe('Displayer', () => {
 					mocks
 				});
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
+				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
 					'icon: Edit2Outline'
 				);
 				expect(editDescriptionItem).toBeVisible();
@@ -132,7 +133,7 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
+				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
 					'icon: Edit2Outline'
 				);
 				expect(editDescriptionItem).toBeVisible();
@@ -195,7 +196,7 @@ describe('Displayer', () => {
 					mocks
 				});
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
+				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
 					'icon: Edit2Outline'
 				);
 				expect(editDescriptionItem).toBeVisible();
@@ -253,7 +254,7 @@ describe('Displayer', () => {
 					mocks
 				});
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
+				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
 					'icon: Edit2Outline'
 				);
 				expect(editDescriptionItem).toBeVisible();

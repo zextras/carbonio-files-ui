@@ -18,7 +18,7 @@ import { NodesSelectionModalContent } from './NodesSelectionModalContent';
 import { HoverContainer } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -360,20 +360,21 @@ describe('Nodes Selection Modal Content', () => {
 		);
 		expect(screen.getByText(/home/i)).toBeVisible();
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
-		const nodeAvatarIcons = screen.getAllByTestId('file-icon-preview');
+		const nodeAvatarIcons = screen.getAllByTestId(SELECTORS.nodeAvatar);
 		expect(nodeAvatarIcons).toHaveLength(2);
 		expect(nodeAvatarIcons[0]).not.toHaveAttribute('disabled', '');
 		expect(nodeAvatarIcons[1]).not.toHaveAttribute('disabled', '');
 		await user.hover(nodeAvatarIcons[0]);
-		await screen.findByText('Node is not selectable');
-		expect(screen.getByText('Node is not selectable')).toBeVisible();
+		const tooltipMsg = 'Node is not selectable';
+		await screen.findByText(tooltipMsg);
+		expect(screen.getByText(tooltipMsg)).toBeVisible();
 		await user.unhover(nodeAvatarIcons[0]);
-		expect(screen.queryByText('Node is not selectable')).not.toBeInTheDocument();
+		expect(screen.queryByText(tooltipMsg)).not.toBeInTheDocument();
 		await user.hover(nodeAvatarIcons[1]);
-		await screen.findByText('Node is not selectable');
-		expect(screen.getByText('Node is not selectable')).toBeVisible();
+		await screen.findByText(tooltipMsg);
+		expect(screen.getByText(tooltipMsg)).toBeVisible();
 		await user.unhover(nodeAvatarIcons[1]);
-		expect(screen.queryByText('Node is not selectable')).not.toBeInTheDocument();
+		expect(screen.queryByText(tooltipMsg)).not.toBeInTheDocument();
 	});
 
 	describe('Single selection', () => {
