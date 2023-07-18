@@ -8,7 +8,7 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { MoveNodesModalContent } from './MoveNodesModalContent';
@@ -22,6 +22,7 @@ import {
 	populateNodePage,
 	populateParents
 } from '../../mocks/mockUtils';
+import { type Node } from '../../types/common';
 import {
 	File,
 	Folder,
@@ -69,93 +70,111 @@ describe('Move Nodes Modal', () => {
 		);
 	});
 
-	test('folders without permission, files and moving nodes are disabled in the list and not navigable', async () => {
-		const currentFolder = populateFolder();
-		const folderWithWriteFile = populateFolder(1);
-		folderWithWriteFile.permissions.can_write_file = true;
-		folderWithWriteFile.permissions.can_write_folder = false;
-		currentFolder.children.nodes.push(folderWithWriteFile);
-		const folderWithWriteFolder = populateFolder(1);
-		folderWithWriteFolder.permissions.can_write_file = false;
-		folderWithWriteFolder.permissions.can_write_folder = true;
-		currentFolder.children.nodes.push(folderWithWriteFolder);
-		const file = populateFile();
-		file.permissions.can_write_file = true;
-		currentFolder.children.nodes.push(file);
-		const folder = populateFolder();
-		folder.permissions.can_write_folder = true;
-		folder.permissions.can_write_file = true;
-		currentFolder.children.nodes.push(folder);
+	describe.each<NonNullable<Node['__typename']>>(['File', 'Folder'])(
+		'when moving a %s',
+		(typename) => {
+			const nodeToMove = populateNode(typename);
+			nodeToMove.permissions.can_write_file = true;
+			nodeToMove.permissions.can_write_folder = true;
 
-		// first move file -> folderWithWriteFolder is disabled
-		let nodesToMove: Array<File | Folder> = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPath({ node_id: folderWithWriteFile.id }, [currentFolder, folderWithWriteFile]),
-			mockGetChildren(getChildrenVariables(folderWithWriteFile.id), folderWithWriteFile),
-			mockGetPath({ node_id: folderWithWriteFolder.id }, [currentFolder, folderWithWriteFolder]),
-			mockGetChildren(getChildrenVariables(folderWithWriteFolder.id), folderWithWriteFolder)
-		];
-		const { rerender, user } = setup(
-			<div onClick={resetToDefault}>
-				<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={nodesToMove} />
-			</div>,
-			{ mocks }
-		);
-		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		let folderWithWriteFolderItem = screen.getByText(folderWithWriteFolder.name);
-		let folderWithWriteFileItem = screen.getByText(folderWithWriteFile.name);
-		let fileItem = screen.getByText(file.name);
-		let folderItem = screen.getByText(folder.name);
-		// folder without write_file permission is disabled and not navigable
-		expect(folderWithWriteFolderItem).toHaveAttribute('disabled', '');
-		// double-click on a disabled folder does nothing
-		await user.dblClick(folderWithWriteFolderItem);
-		expect(folderWithWriteFolderItem).toBeVisible();
-		expect(folderWithWriteFolderItem).toHaveAttribute('disabled', '');
-		// folder is active
-		expect(folderItem).not.toHaveAttribute('disabled', '');
-		// file is disabled
-		expect(fileItem).toHaveAttribute('disabled', '');
-		// folder with write file permission is active and navigable
-		expect(folderWithWriteFileItem).toBeVisible();
-		expect(folderWithWriteFileItem).not.toHaveAttribute('disabled', '');
-		await user.dblClick(folderWithWriteFileItem);
-		// navigate to sub-folder
-		await screen.findByText((folderWithWriteFile.children.nodes[0] as File | Folder).name);
-		expect(folderWithWriteFileItem).not.toBeInTheDocument();
+			test('files are disabled in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToMove);
+				const file = populateFile();
+				file.permissions.can_write_file = true;
+				currentFolder.children.nodes.push(file);
 
-		// then move folder
-		nodesToMove = [folder];
-		rerender(
-			<div onClick={resetToDefault}>
-				<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={nodesToMove} />
-			</div>
-		);
-		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		folderWithWriteFolderItem = screen.getByText(folderWithWriteFolder.name);
-		folderWithWriteFileItem = screen.getByText(folderWithWriteFile.name);
-		fileItem = screen.getByText(file.name);
-		folderItem = screen.getByText(folder.name);
-		// folder without write folder permission is disabled and not navigable
-		expect(folderWithWriteFileItem).toHaveAttribute('disabled', '');
-		// double-click on a disabled folder does nothing
-		await user.dblClick(folderWithWriteFileItem);
-		expect(folderWithWriteFileItem).toBeVisible();
-		expect(folderWithWriteFileItem).toHaveAttribute('disabled', '');
-		// moving folder is disabled
-		expect(folderItem).toHaveAttribute('disabled', '');
-		// file is disabled
-		expect(fileItem).toHaveAttribute('disabled', '');
-		// folder with write_folder permission is active and navigable
-		expect(folderWithWriteFolderItem).toBeVisible();
-		expect(folderWithWriteFolderItem).not.toHaveAttribute('disabled', '');
-		await user.dblClick(folderWithWriteFolderItem);
-		// navigate to sub-folder
-		await screen.findByText((folderWithWriteFolder.children.nodes[0] as File | Folder).name);
-		expect(folderWithWriteFolderItem).not.toBeInTheDocument();
-	});
+				const mocks = [
+					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
+					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
+				];
+				setup(
+					<div onClick={resetToDefault}>
+						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(file.name);
+				const nodeItem = screen.getByText(file.name);
+				expect(nodeItem).toHaveAttribute('disabled', '');
+			});
+
+			test(`folders without can_write_${typename.toLowerCase()} permissions are disabled in the list`, async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToMove);
+				const folder = populateFolder();
+				// enable both permissions, and then disable the specific one
+				folder.permissions.can_write_folder = true;
+				folder.permissions.can_write_file = true;
+				folder.permissions[
+					`can_write_${typename.toLowerCase() as Lowercase<NonNullable<Node['__typename']>>}`
+				] = false;
+				currentFolder.children.nodes.push(folder);
+
+				const mocks = [
+					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
+					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
+				];
+				const { user } = setup(
+					<div onClick={resetToDefault}>
+						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(folder.name);
+				const nodeItem = screen.getByText(folder.name);
+				expect(nodeItem).toHaveAttribute('disabled', '');
+				await user.dblClick(nodeItem);
+				expect(nodeItem).toBeVisible();
+			});
+
+			test('folders with can_write permission are enabled and navigable in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToMove);
+				const folder = populateFolder();
+				folder.permissions.can_write_file = true;
+				folder.permissions.can_write_folder = true;
+				currentFolder.children.nodes.push(folder);
+
+				const mocks = [
+					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
+					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
+					mockGetPath({ node_id: folder.id }, [currentFolder, folder]),
+					mockGetChildren(getChildrenVariables(folder.id), folder)
+				];
+				const { user } = setup(
+					<div onClick={resetToDefault}>
+						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(folder.name);
+				const nodeItem = screen.getByText(folder.name);
+				expect(nodeItem).not.toHaveAttribute('disabled', '');
+				await user.dblClick(nodeItem);
+				await screen.findByText(/it looks like there's nothing here/i);
+			});
+
+			test('moving node is disabled in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToMove);
+
+				const mocks = [
+					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
+					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
+				];
+				setup(
+					<div onClick={resetToDefault}>
+						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(nodeToMove.name);
+				const nodeItem = screen.getByText(nodeToMove.name);
+				expect(nodeItem).toHaveAttribute('disabled', '');
+			});
+		}
+	);
 
 	test('node actions are not shown', async () => {
 		const currentFolder = populateFolder();
@@ -181,25 +200,17 @@ describe('Move Nodes Modal', () => {
 		const folderItem = await screen.findByText(folder.name);
 		// context menu
 		fireEvent.contextMenu(folderItem);
-		// wait a tick to be sure eventual context menu has time to open
-		await waitFor(
-			() =>
-				new Promise((resolve) => {
-					setTimeout(resolve, 0);
-				})
-		);
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		expect(screen.queryByText(ACTION_REGEXP.flag)).not.toBeInTheDocument();
 		// hover bar
 		expect(screen.queryByTestId('icon: FlagOutline')).not.toBeInTheDocument();
 		// selection mode
 		await selectNodes([folder.id], user);
-		// wait a tick to be sure eventual selection icon is shown
-		await waitFor(
-			() =>
-				new Promise((resolve) => {
-					setTimeout(resolve, 0);
-				})
-		);
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 	});
 
