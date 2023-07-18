@@ -267,7 +267,7 @@ describe('Filter View', () => {
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);
 
-				const modalList = await screen.findByTestId(SELECTORS.modalList(parentFolder.id));
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					...map(path.slice(0, path.length - 1), (node) => node.name)
@@ -422,7 +422,7 @@ describe('Filter View', () => {
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);
 
-				const modalList = await screen.findByTestId(SELECTORS.modalList(parentFolder.id));
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					...map(path.slice(0, path.length - 1), (node) => node.name)

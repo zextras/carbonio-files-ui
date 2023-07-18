@@ -197,7 +197,7 @@ describe('Move', () => {
 			}
 			expect(moveAction).toBeVisible();
 			await user.click(moveAction);
-			const modalList = await screen.findByTestId(SELECTORS.modalList(), { exact: false });
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
 			await waitFor(() =>
@@ -290,7 +290,7 @@ describe('Move', () => {
 			expect(moveAction).not.toHaveAttribute('disabled', '');
 			await user.click(moveAction);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name, currentFolder.name));
-			const modalList = screen.getByTestId(SELECTORS.modalList(), { exact: false });
+			const modalList = screen.getByTestId(SELECTORS.modalList);
 			await within(modalList).findByText((currentFolder.children.nodes[0] as Node).name);
 			const moveModalButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });
 			expect(moveModalButton).toHaveAttribute('disabled', '');

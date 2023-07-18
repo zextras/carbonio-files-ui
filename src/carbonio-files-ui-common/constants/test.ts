@@ -71,9 +71,7 @@ export const SELECTORS = {
 		return `list-${id}`;
 	},
 	modal: 'modal',
-	modalList(id = ''): string {
-		return `modal-list-${id}`;
-	},
+	modalList: 'modal-list',
 	modalListHeader: 'modal-list-header',
 	nodeItem(id = ''): string {
 		return `node-item-${id}`;
@@ -87,7 +85,7 @@ export const SELECTORS = {
 	addShareChipInput: 'add-sharing-chip-input',
 	displayer: 'displayer',
 	displayerHeader: 'displayerHeader',
-	displayerActionsHeader: 'displayerActionsHeader',
+	displayerActionsHeader: 'displayer-actions-header',
 	detailsNodeItem(id = ''): string {
 		return `details-node-item-${id}`;
 	},

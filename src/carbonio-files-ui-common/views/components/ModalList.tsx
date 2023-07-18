@@ -129,7 +129,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 		<ModalContainer
 			mainAlignment="flex-start"
 			crossAlignment="flex-start"
-			data-testid={`modal-list-${folderId}`}
+			data-testid={'modal-list'}
 			maxHeight="100%"
 			minHeight={cssCalcBuilder(BREADCRUMB_ROW_HEIGHT, ['+', LIST_ITEM_HEIGHT_COMPACT])}
 		>

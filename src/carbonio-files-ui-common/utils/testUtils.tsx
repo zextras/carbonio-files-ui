@@ -322,7 +322,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	const moveAction = await screen.findByText('Move');
 	expect(moveAction).toBeVisible();
 	await user.click(moveAction);
-	const modalList = await screen.findByTestId(SELECTORS.modalList(), { exact: false });
+	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
 		// run timers of modal
 		jest.runOnlyPendingTimers();

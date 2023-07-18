@@ -135,7 +135,7 @@ describe('Copy', () => {
 			}
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(SELECTORS.modalList(currentFolder.id));
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
 			act(() => {
@@ -216,7 +216,7 @@ describe('Copy', () => {
 			}
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(SELECTORS.modalList(currentFolder.id));
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
@@ -299,7 +299,7 @@ describe('Copy', () => {
 			expect(copyAction).toBeVisible();
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(SELECTORS.modalList(currentFolder.id));
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
 			act(() => {
