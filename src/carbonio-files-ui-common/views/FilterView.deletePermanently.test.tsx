@@ -74,7 +74,7 @@ describe('Filter View', () => {
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByTestId(
-					'icon: DeletePermanentlyOutline'
+					ICON_REGEXP.deletePermanently
 				);
 				expect(deletePermanentlyIcon).toBeInTheDocument();
 				expect(deletePermanentlyIcon).toBeVisible();
@@ -136,21 +136,21 @@ describe('Filter View', () => {
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: RestoreOutline'
+					ICON_REGEXP.restore
 				);
 				expect(restoreIcon).not.toBeInTheDocument();
 
-				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: Trash2Outline'
-				);
+				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(ICON_REGEXP.trash);
 				expect(trashIcon).not.toBeInTheDocument();
 
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: DeletePermanentlyOutline'
+					ICON_REGEXP.deletePermanently
 				);
 				expect(deletePermanentlyIcon).not.toBeInTheDocument();
 
-				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
+				const moreIcon = within(selectionModeActiveListHeader).queryByTestId(
+					ICON_REGEXP.moreVertical
+				);
 				expect(moreIcon).not.toBeInTheDocument();
 
 				expect.assertions(5);
@@ -230,7 +230,7 @@ describe('Filter View', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 
-			const deletePermanentlyAction = await screen.findByTestId('icon: DeletePermanentlyOutline');
+			const deletePermanentlyAction = await screen.findByTestId(ICON_REGEXP.deletePermanently);
 			expect(deletePermanentlyAction).toBeVisible();
 			expect(deletePermanentlyAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(deletePermanentlyAction);

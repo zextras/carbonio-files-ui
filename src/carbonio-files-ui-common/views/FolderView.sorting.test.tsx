@@ -11,6 +11,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { ICON_REGEXP } from '../constants/test';
 import { populateFile, populateFolder } from '../mocks/mockUtils';
 import { NodeSort } from '../types/graphql/types';
 import {
@@ -77,7 +78,7 @@ describe('Sorting', () => {
 		expect(within(items[0]).getByText('a')).toBeVisible();
 		expect(within(items[1]).getByText('b')).toBeVisible();
 
-		const sortIcon = screen.getByTestId('icon: ZaListOutline');
+		const sortIcon = screen.getByTestId(ICON_REGEXP.sortDesc);
 		expect(sortIcon).toBeInTheDocument();
 		expect(sortIcon).toBeVisible();
 		expect(sortIcon.parentElement).not.toHaveAttribute('disabled', '');
@@ -90,7 +91,7 @@ describe('Sorting', () => {
 		await waitFor(() =>
 			expect(screen.getAllByTestId('node-item-', { exact: false })[0]).toHaveTextContent('b')
 		);
-		await user.hover(screen.getByTestId('icon: AzListOutline'));
+		await user.hover(screen.getByTestId(ICON_REGEXP.sortAsc));
 		// run timers of tooltip
 		jest.advanceTimersToNextTimer();
 		await screen.findByText(/descending order by name/i);

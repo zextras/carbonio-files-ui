@@ -71,17 +71,17 @@ describe('Node List Item', () => {
 	test('ArrowCircleRight icon is visible if node is shared by me', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} outgoingShare />);
-		expect(screen.getByTestId('icon: ArrowCircleRight')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: ArrowCircleRight')).toBeVisible();
-		expect(screen.queryByTestId('icon: ArrowCircleLeft')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.sharedWithMe)).not.toBeInTheDocument();
 	});
 
 	test('ArrowCircleLeft icon is visible if node is shared with me', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} incomingShare />);
-		expect(screen.getByTestId('icon: ArrowCircleLeft')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: ArrowCircleLeft')).toBeVisible();
-		expect(screen.queryByTestId('icon: ArrowCircleRight')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
 	});
 
 	test('incoming and outgoing share icons are not visible if node is not shared', () => {
@@ -95,34 +95,34 @@ describe('Node List Item', () => {
 				outgoingShare={false}
 			/>
 		);
-		expect(screen.queryByTestId('icon: ArrowCircleLeft')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: ArrowCircleRight')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.sharedWithMe)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
 	});
 
 	test('link icon is visible if node is linked', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} linkActive />);
-		expect(screen.getByTestId('icon: Link2')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Link2')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.link)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.link)).toBeVisible();
 	});
 
 	test('link icon is not visible if node is not linked', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} linkActive={false} />);
-		expect(screen.queryByTestId('icon: Link2')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.link)).not.toBeInTheDocument();
 	});
 
 	test('flag icon is visible if node is flagged', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} flagActive />);
-		expect(screen.getByTestId('icon: Flag')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Flag')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeVisible();
 	});
 
 	test('flag icon is not visible if node is not flagged', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} flagActive={false} />);
-		expect(screen.queryByTestId('icon: Flag')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 	});
 
 	test('unflag action on hover is visible if node is flagged', () => {
@@ -138,8 +138,8 @@ describe('Node List Item', () => {
 				permittedHoverBarActions={getPermittedHoverBarActions(node)}
 			/>
 		);
-		expect(screen.getByTestId('icon: UnflagOutline')).toBeInTheDocument();
-		expect(screen.queryByTestId('icon: FlagOutline')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.unflag)).toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 	});
 
 	test('flag action on hover is visible if node is not flagged ', async () => {
@@ -154,8 +154,8 @@ describe('Node List Item', () => {
 				permittedHoverBarActions={getPermittedHoverBarActions(node)}
 			/>
 		);
-		expect(screen.getByTestId('icon: FlagOutline')).toBeInTheDocument();
-		expect(screen.queryByTestId('icon: UnflagOutline')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.flag)).toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.unflag)).not.toBeInTheDocument();
 	});
 
 	test('click on hover flag action changes flag icon visibility', async () => {
@@ -174,8 +174,8 @@ describe('Node List Item', () => {
 				permittedHoverBarActions={getPermittedHoverBarActions(node)}
 			/>
 		);
-		expect(screen.queryByTestId('icon: Flag')).not.toBeInTheDocument();
-		await user.click(screen.getByTestId('icon: FlagOutline'));
+		expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
+		await user.click(screen.getByTestId(ICON_REGEXP.flag));
 		expect(toggleFlagTrueFunction).toHaveBeenCalledTimes(1);
 	});
 
@@ -195,9 +195,9 @@ describe('Node List Item', () => {
 				permittedHoverBarActions={getPermittedHoverBarActions(node)}
 			/>
 		);
-		expect(screen.getByTestId('icon: Flag')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Flag')).toBeVisible();
-		await user.click(screen.getByTestId('icon: UnflagOutline'));
+		expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeVisible();
+		await user.click(screen.getByTestId(ICON_REGEXP.unflag));
 		expect(toggleFlagFalseFunction).toHaveBeenCalledTimes(1);
 	});
 

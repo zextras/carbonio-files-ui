@@ -93,8 +93,8 @@ describe('Rename', () => {
 			await selectNodes([element.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			// check that the rename action becomes visible
 			await renameNode(newName, user);
 			// wait for the modal to be closed
@@ -108,7 +108,7 @@ describe('Rename', () => {
 			expect(nodes[newPos]).toBe(screen.getByTestId(`node-item-${element.id}`));
 			// selection mode is de-activate
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 		});
 	});
 
@@ -450,8 +450,8 @@ describe('Rename', () => {
 			await selectNodes(nodesToTrash, user);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length - 1);
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');

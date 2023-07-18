@@ -11,6 +11,7 @@ import { faker } from '@faker-js/faker';
 import { screen, waitFor, within } from '@testing-library/react';
 
 import { NodeDetailsDescription } from './NodeDetailsDescription';
+import { ICON_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockUpdateNodeDescription, mockUpdateNodeDescriptionError } from '../../utils/mockUtils';
@@ -64,7 +65,7 @@ describe('NodeDetailsDescription component', () => {
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 		expect(editIcon.parentNode).toHaveAttribute('disabled', '');
 	});
@@ -82,7 +83,7 @@ describe('NodeDetailsDescription component', () => {
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
 	});
@@ -103,12 +104,12 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByTestId(ICON_REGEXP.save);
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
 
@@ -144,12 +145,12 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByTestId(ICON_REGEXP.save);
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
 
@@ -182,12 +183,12 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		let editIcon = screen.getByTestId('icon: Edit2Outline');
+		let editIcon = screen.getByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByTestId(ICON_REGEXP.save);
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
 
@@ -200,11 +201,11 @@ describe('NodeDetailsDescription component', () => {
 
 		expect(saveIcon.parentNode).not.toHaveAttribute('disabled', '');
 
-		const closeICon = screen.getByTestId('icon: Close');
+		const closeICon = screen.getByTestId(ICON_REGEXP.close);
 		expect(closeICon).toBeVisible();
 		await user.click(closeICon);
 
-		editIcon = await screen.findByTestId('icon: Edit2Outline');
+		editIcon = await screen.findByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
@@ -247,12 +248,12 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		let editIcon = screen.getByTestId('icon: Edit2Outline');
+		let editIcon = screen.getByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByTestId(ICON_REGEXP.save);
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
 
@@ -267,7 +268,7 @@ describe('NodeDetailsDescription component', () => {
 
 		await user.click(saveIcon);
 
-		editIcon = await screen.findByTestId('icon: Edit2Outline');
+		editIcon = await screen.findByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 
 		expect(saveIcon).not.toBeVisible();
@@ -301,10 +302,10 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText(/description/i)).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByTestId(ICON_REGEXP.edit);
 		expect(editIcon).toBeVisible();
 		await user.click(editIcon);
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByTestId(ICON_REGEXP.save);
 		expect(saveIcon).toBeVisible();
 		const inputField = screen.getByRole('textbox', {
 			name: /maximum length allowed is 4096 characters/i
@@ -317,7 +318,7 @@ describe('NodeDetailsDescription component', () => {
 		expect(
 			screen.getByRole('textbox', { name: /maximum length allowed is 4096 characters/i })
 		).toBeVisible();
-		expect(screen.getByTestId('icon: SaveOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.save)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.edit)).not.toBeInTheDocument();
 	});
 });

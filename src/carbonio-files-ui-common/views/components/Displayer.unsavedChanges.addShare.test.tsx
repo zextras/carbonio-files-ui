@@ -12,6 +12,7 @@ import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
+import { ICON_REGEXP } from '../../constants/test';
 import {
 	populateGalContact,
 	populateNode,
@@ -75,7 +76,7 @@ describe('Displayer', () => {
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
 				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.click(screen.getByText(/details/i));
@@ -161,7 +162,7 @@ describe('Displayer', () => {
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
 				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.type(
@@ -213,7 +214,7 @@ describe('Displayer', () => {
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
 				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.type(
@@ -232,7 +233,9 @@ describe('Displayer', () => {
 				expect(actionButton).not.toBeInTheDocument();
 				expect(screen.getByText(userAccount.full_name)).toBeVisible();
 				expect(
-					within(screen.getByTestId('add-shares-input-container')).getByTestId('icon: EyeOutline')
+					within(screen.getByTestId('add-shares-input-container')).getByTestId(
+						ICON_REGEXP.shareCanRead
+					)
 				).toBeVisible();
 				expect(
 					screen.getByRole('textbox', { name: /add a custom message to this notification/i })
@@ -271,7 +274,7 @@ describe('Displayer', () => {
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
 				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.type(
@@ -298,7 +301,7 @@ describe('Displayer', () => {
 				expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 				const sharesInputContainer = screen.getByTestId('add-shares-input-container');
 				expect(
-					within(sharesInputContainer).queryByTestId('icon: EyeOutline')
+					within(sharesInputContainer).queryByTestId(ICON_REGEXP.shareCanRead)
 				).not.toBeInTheDocument();
 				expect(
 					screen.queryByRole('textbox', { name: /add a custom message to this notification/i })
@@ -348,7 +351,7 @@ describe('Displayer', () => {
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
 				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.type(
@@ -375,13 +378,15 @@ describe('Displayer', () => {
 				expect(screen.getByText(userAccount.full_name)).toBeVisible();
 				const addSharesContainer = screen.getByTestId('add-shares-input-container');
 				expect(
-					within(screen.getByTestId('node-sharing-collaborators')).getByTestId('icon: EyeOutline')
+					within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
+						ICON_REGEXP.shareCanRead
+					)
 				).toBeVisible();
 				expect(
 					within(addSharesContainer).queryByText(userAccount.full_name)
 				).not.toBeInTheDocument();
 				expect(
-					within(addSharesContainer).queryByTestId('icon: EyeOutline')
+					within(addSharesContainer).queryByTestId(ICON_REGEXP.shareCanRead)
 				).not.toBeInTheDocument();
 				expect(
 					screen.queryByRole('textbox', { name: /add a custom message to this notification/i })
@@ -449,7 +454,7 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(userAccount1.email));
 				const editShareItem = await within(
 					screen.getByTestId('add-shares-input-container')
-				).findByTestId('icon: EyeOutline');
+				).findByTestId(ICON_REGEXP.shareCanRead);
 				expect(screen.queryByText(userAccount1.email)).not.toBeInTheDocument();
 				// change to edit permission to be fully distinguishable
 				await user.click(editShareItem);
@@ -460,16 +465,16 @@ describe('Displayer', () => {
 				});
 				const nodeSharingArea = screen.getByTestId('node-sharing-collaborators');
 				await user.click(screen.getByText(/editor/i));
-				await within(nodeSharingArea).findByTestId('icon: Edit2Outline');
+				await within(nodeSharingArea).findByTestId(ICON_REGEXP.shareCanWrite);
 				// close popover by clicking on the chip label
 				await user.click(screen.getByText(userAccount1.full_name));
-				expect(screen.queryByTestId('icon: Eye2Outline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
 				// add second share
 				await user.type(chipInput, userAccount2.full_name[0]);
 				await screen.findByText(userAccount2.email);
 				await user.click(screen.getByText(userAccount2.email));
 				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount2.email)).not.toBeInTheDocument();
 				await user.type(
@@ -495,17 +500,19 @@ describe('Displayer', () => {
 				// share 1 has been created
 				expect(screen.getByText(userAccount1.full_name)).toBeVisible();
 				expect(
-					within(screen.getByTestId('node-sharing-collaborators')).getByTestId('icon: Edit2Outline')
+					within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
+						ICON_REGEXP.shareCanWrite
+					)
 				).toBeVisible();
 				expect(
 					within(addSharesContainer).queryByText(userAccount1.full_name)
 				).not.toBeInTheDocument();
 				expect(
-					within(addSharesContainer).queryByTestId('icon: Edit2Outline')
+					within(addSharesContainer).queryByTestId(ICON_REGEXP.shareCanWrite)
 				).not.toBeInTheDocument();
 				// share 2 is still inside add share chip input
 				expect(within(addSharesContainer).getByText(userAccount2.full_name)).toBeVisible();
-				expect(within(addSharesContainer).getByTestId('icon: EyeOutline')).toBeVisible();
+				expect(within(addSharesContainer).getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
 				// custom message input field is valued with the custom text
 				expect(
 					screen.getByRole('textbox', { name: /add a custom message to this notification/i })

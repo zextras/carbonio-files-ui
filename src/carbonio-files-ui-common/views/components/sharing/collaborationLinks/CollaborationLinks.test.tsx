@@ -9,6 +9,7 @@ import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
 
 import { CollaborationLinks } from './CollaborationLinks';
+import { ICON_REGEXP } from '../../../../constants/test';
 import { populateCollaborationLink, populateNode } from '../../../../mocks/mockUtils';
 import { SharePermission } from '../../../../types/graphql/types';
 import {
@@ -56,7 +57,7 @@ describe('Collaboration Link', () => {
 			)
 		).toBeVisible();
 		expect(
-			within(readAndShareCollaborationLinkContainer).getByTestId('icon: EyeOutline')
+			within(readAndShareCollaborationLinkContainer).getByTestId(ICON_REGEXP.shareCanRead)
 		).toBeVisible();
 		expect(
 			within(readAndShareCollaborationLinkContainer).getByText('Read and Share')
@@ -79,7 +80,7 @@ describe('Collaboration Link', () => {
 			'read-write-share-collaboration-link-container'
 		);
 		expect(
-			within(readWriteAndShareCollaborationLinkContainer).getByTestId('icon: Edit2Outline')
+			within(readWriteAndShareCollaborationLinkContainer).getByTestId(ICON_REGEXP.shareCanWrite)
 		).toBeVisible();
 		expect(
 			within(readWriteAndShareCollaborationLinkContainer).getByText('Write and Share')

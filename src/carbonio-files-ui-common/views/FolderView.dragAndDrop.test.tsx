@@ -694,7 +694,7 @@ describe('Drag and drop', () => {
 
 		// load full path
 		await screen.findByText((currentFolder.parent as Folder).name);
-		await user.click(screen.getByTestId('icon: ChevronRight'));
+		await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand));
 		await screen.findByText(path[0].name);
 		// TODO: move fragment to graphql file and add type
 		// add missing data in cache

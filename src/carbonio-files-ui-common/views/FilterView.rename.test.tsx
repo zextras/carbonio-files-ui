@@ -85,9 +85,9 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodes.length);
 
-				expect(screen.queryByTestId('icon: EditOutline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.rename)).not.toBeInTheDocument();
 
-				const moreIconButton = screen.queryByTestId('icon: MoreVertical');
+				const moreIconButton = screen.queryByTestId(ICON_REGEXP.moreVertical);
 				if (moreIconButton) {
 					await user.click(moreIconButton);
 					// wait for trash action to check that popper is open
@@ -122,9 +122,9 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 
-				expect(screen.queryByTestId('icon: EditOutline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.rename)).not.toBeInTheDocument();
 
-				const moreIconButton = screen.queryByTestId('icon: MoreVertical');
+				const moreIconButton = screen.queryByTestId(ICON_REGEXP.moreVertical);
 				if (moreIconButton) {
 					await user.click(moreIconButton);
 					await screen.findByTestId(SELECTORS.dropdownList);
@@ -171,8 +171,8 @@ describe('Filter View', () => {
 				await selectNodes([element.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				await renameNode(newName, user);
 				// following text is in the modal and in snackbar
 				await waitFor(() =>
@@ -235,8 +235,8 @@ describe('Filter View', () => {
 				await selectNodes([element.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				screen.getByTestId(`node-item-${element.id}`);
 				await renameNode(newName, user);
 				// check the node. It should have the new name and be at same position
@@ -249,7 +249,7 @@ describe('Filter View', () => {
 				// selection mode is de-activate
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 				const list = screen.getByTestId('list-');
-				expect(within(list).queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
+				expect(within(list).queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			});
 		});
 

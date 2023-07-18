@@ -128,8 +128,8 @@ describe('Copy', () => {
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 			let copyAction = screen.queryByTestId(ICON_REGEXP.copy);
 			if (!copyAction) {
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				copyAction = await screen.findByText(ACTION_REGEXP.copy);
 				expect(copyAction).toBeVisible();
 			}
@@ -209,8 +209,8 @@ describe('Copy', () => {
 
 			let copyAction = screen.queryByTestId(ICON_REGEXP.copy);
 			if (!copyAction) {
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				copyAction = await screen.findByText(ACTION_REGEXP.copy);
 				expect(copyAction).toBeVisible();
 			}

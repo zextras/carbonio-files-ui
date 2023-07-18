@@ -107,8 +107,8 @@ describe('Rename', () => {
 			await selectNodes([element.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			// check that the rename action becomes visible
 			await renameNode(newName, user);
 			const error = await within(screen.getByTestId('modal')).findByText(

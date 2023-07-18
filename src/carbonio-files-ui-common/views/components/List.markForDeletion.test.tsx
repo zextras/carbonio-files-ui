@@ -9,7 +9,7 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 
 import { List } from './List';
-import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { setup, selectNodes } from '../../utils/testUtils';
@@ -48,7 +48,7 @@ describe('Mark for deletion - trash', () => {
 
 			const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 
-			const trashIcon = within(selectionModeActiveListHeader).getByTestId('icon: Trash2Outline');
+			const trashIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.moveToTrash);
 
 			expect(trashIcon).toBeVisible();
 			expect(trashIcon.parentElement).not.toHaveAttribute('disable');
@@ -96,7 +96,9 @@ describe('Mark for deletion - trash', () => {
 
 			const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 
-			const trashIcon = within(selectionModeActiveListHeader).queryByTestId('icon: Trash2Outline');
+			const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
+				ICON_REGEXP.moveToTrash
+			);
 
 			expect(trashIcon).not.toBeInTheDocument();
 

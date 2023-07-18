@@ -105,8 +105,8 @@ describe('Move', () => {
 			await selectNodes([nodeToMove.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
@@ -191,8 +191,8 @@ describe('Move', () => {
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesToMove.length);
 			let moveAction = screen.queryByTestId(ICON_REGEXP.move);
 			if (!moveAction) {
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				moveAction = await screen.findByText('Move');
 			}
 			expect(moveAction).toBeVisible();
@@ -283,8 +283,8 @@ describe('Move', () => {
 			);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const moveAction = await screen.findByText(ACTION_REGEXP.move);
 			expect(moveAction).toBeVisible();
 			expect(moveAction).not.toHaveAttribute('disabled', '');

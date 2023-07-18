@@ -71,9 +71,7 @@ describe('Filter View', () => {
 
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 
-				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(
-					'icon: RestoreOutline'
-				);
+				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.restore);
 				expect(restoreIcon).toBeInTheDocument();
 				expect(restoreIcon).toBeVisible();
 				expect(restoreIcon).not.toHaveAttribute('disabled', '');
@@ -127,16 +125,18 @@ describe('Filter View', () => {
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: RestoreOutline'
+					ICON_REGEXP.restore
 				);
 				expect(restoreIcon).not.toBeInTheDocument();
 
 				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: Trash2Outline'
+					ICON_REGEXP.moveToTrash
 				);
 				expect(trashIcon).not.toBeInTheDocument();
 
-				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
+				const moreIcon = within(selectionModeActiveListHeader).queryByTestId(
+					ICON_REGEXP.moreVertical
+				);
 				expect(moreIcon).not.toBeInTheDocument();
 
 				expect.assertions(5);

@@ -10,7 +10,7 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import { forEach } from 'lodash';
 
 import { NodeSharing } from './NodeSharing';
-import { SELECTORS } from '../../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
 	populateDistributionList,
@@ -125,8 +125,8 @@ describe('Node Sharing', () => {
 			await screen.findByText(getChipLabel(shares[0].share_target as SharedTarget));
 			expect(screen.getByText(/you$/i)).toBeVisible();
 			// only 1 icon close is shown, and it is the one of the logged user chip
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
-			await user.click(screen.getByTestId('icon: Close'));
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			// run timers of modal
 			act(() => {
@@ -149,7 +149,7 @@ describe('Node Sharing', () => {
 			// logged user chip is removed from the list of collaborators
 			expect(screen.queryByText(/you$/)).not.toBeInTheDocument();
 			// no other chip is removable
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 	});
 
@@ -189,7 +189,7 @@ describe('Node Sharing', () => {
 			setup(<NodeSharing node={node} />, { mocks });
 			await screen.findByText(getChipLabel(shares[0].share_target as SharedTarget));
 			expect(screen.getByText(node.owner.full_name)).toBeVisible();
-			expect(screen.getAllByTestId('icon: Close')).toHaveLength(shares.length);
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(shares.length);
 		});
 
 		test('collaborator chip is removed if share is deleted', async () => {
@@ -212,8 +212,8 @@ describe('Node Sharing', () => {
 			});
 			await screen.findByText(userAccount.full_name);
 			// only 1 icon close is shown, and it is the one of the collaborator
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
-			await user.click(screen.getByTestId('icon: Close'));
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			// run timers of modal
 			act(() => {
@@ -235,7 +235,7 @@ describe('Node Sharing', () => {
 			// collaborator chip is removed from the list of collaborators
 			expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 			// no other chip is removable
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('click on a collaborator chip open edit popover. On save only active chip is updated', async () => {
@@ -266,15 +266,15 @@ describe('Node Sharing', () => {
 			await screen.findByText(getChipLabel(shareToUpdate.share_target));
 			const collaboratorsContainer = screen.getByTestId('node-sharing-collaborators');
 			// all shares are set to be read-only so all chips should show EyeOutline icon
-			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(
+			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
 				shares.length
 			);
 			expect(
-				within(collaboratorsContainer).queryByTestId('icon: Edit2Outline')
+				within(collaboratorsContainer).queryByTestId(ICON_REGEXP.shareCanWrite)
 			).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 			// open on chip to open popover
-			await user.click(screen.getAllByTestId('icon: EyeOutline')[0]);
+			await user.click(screen.getAllByTestId(ICON_REGEXP.shareCanRead)[0]);
 			await screen.findByText(/viewer/i);
 			// await screen.findByText(/edit collaboration/i);
 			expect(screen.getByText(/viewer/i)).toBeVisible();
@@ -285,20 +285,20 @@ describe('Node Sharing', () => {
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled')
 			);
-			await user.click(screen.getByTestId('icon: Square'));
-			await screen.findByTestId('icon: CheckmarkSquare');
+			await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
+			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
 			await user.click(screen.getByRole('button', { name: /save/i }));
 			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 			await within(screen.getByTestId('node-sharing-collaborators')).findByTestId(
-				'icon: Edit2Outline'
+				ICON_REGEXP.shareCanWrite
 			);
-			await screen.findByTestId('icon: Share');
+			await screen.findByTestId(ICON_REGEXP.shareCanShare);
 			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
-			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(
+			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
 				shares.length - 1
 			);
-			expect(within(collaboratorsContainer).getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(within(collaboratorsContainer).getByTestId('icon: Share')).toBeVisible();
+			expect(within(collaboratorsContainer).getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(within(collaboratorsContainer).getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 		});
 
 		test('add of a collaborator render the new chip in the collaborators list', async () => {
@@ -351,12 +351,12 @@ describe('Node Sharing', () => {
 			});
 			await screen.findByText(getChipLabel(share.share_target as SharedTarget));
 			const collaboratorsContainer = screen.getByTestId('node-sharing-collaborators');
-			await within(collaboratorsContainer).findByTestId('icon: EyeOutline');
+			await within(collaboratorsContainer).findByTestId(ICON_REGEXP.shareCanRead);
 			expect(screen.getByText(/Add new people or groups/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /share/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
 			// only 1 icon EyeOutline is visible, the one of the existing share
-			expect(within(collaboratorsContainer).getByTestId('icon: EyeOutline')).toBeVisible();
+			expect(within(collaboratorsContainer).getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
 			const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });
 			// type just the first character because the network search is requested only one time with first character.
 			// All characters typed after the first one are just used to filter out the result obtained before
@@ -382,15 +382,17 @@ describe('Node Sharing', () => {
 			expect(screen.queryByText(/other-contact/i)).not.toBeInTheDocument();
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			// new share is created with read-only permissions by default so now there are 2 icons EyeOutline
-			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(2);
+			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
+				2
+			);
 			// no one has the edit icon for now
 			expect(
-				within(collaboratorsContainer).queryByTestId('icon: Edit2Outline')
+				within(collaboratorsContainer).queryByTestId(ICON_REGEXP.shareCanWrite)
 			).not.toBeInTheDocument();
 			// share button is enabled
 			expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
 			// change permissions on the new share
-			await user.click(screen.getAllByTestId('icon: EyeOutline')[1]);
+			await user.click(screen.getAllByTestId(ICON_REGEXP.shareCanRead)[1]);
 			// the popover to change permission is shown
 			await screen.findByText(/editor/i);
 			// wait for the listener of the popover to be registered
@@ -400,25 +402,29 @@ describe('Node Sharing', () => {
 						setTimeout(resolve, 2);
 					})
 			);
-			expect(screen.getByTestId('icon: Square')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
 			// save button is not present since the changes on the chip are immediate
 			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 			// now there are 2 icons EyeOutline because one is on the already existing share chip
 			// and one in the new share chip.
 			// The one inside the popover is not count because we are finding in collaboratorsContainer.
-			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(2);
+			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
+				2
+			);
 			expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
 			// click on editor
 			await user.click(screen.getByText(/editor/i));
 			// icon on chip is immediately updated, so the edit icons become 2
-			await within(collaboratorsContainer).findByTestId('icon: Edit2Outline');
+			await within(collaboratorsContainer).findByTestId(ICON_REGEXP.shareCanWrite);
 			// so now we have 1 icons EyeOutline, the one in the existing share chip
-			expect(within(collaboratorsContainer).getByTestId('icon: EyeOutline')).toBeInTheDocument();
+			expect(
+				within(collaboratorsContainer).getByTestId(ICON_REGEXP.shareCanRead)
+			).toBeInTheDocument();
 			// give share permissions to the new share
-			await user.click(screen.getByTestId('icon: Square'));
-			await screen.findByTestId('icon: Share');
+			await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
+			await screen.findByTestId(ICON_REGEXP.shareCanShare);
 			// icon share is now visible on chip
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 			// click on chip to close popover
 			await user.click(screen.getByText(userAccount.full_name));
 			expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
@@ -431,10 +437,10 @@ describe('Node Sharing', () => {
 			expect(screen.queryByText(/editor/i)).not.toBeInTheDocument();
 			// share is created with read, write and share permissions, so edit and share icons are visible
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(within(collaboratorsContainer).getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
+			expect(within(collaboratorsContainer).getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 			// in the collaborators list now there are 2 close icons, one for each collaborator
-			expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
 		});
 
 		test('multiple share creation clears the add section and update collaborators list with newly created shares', async () => {
@@ -508,12 +514,12 @@ describe('Node Sharing', () => {
 			});
 			await screen.findByText(getChipLabel(share.share_target as SharedTarget));
 			const collaboratorsContainer = screen.getByTestId('node-sharing-collaborators');
-			await within(collaboratorsContainer).findByTestId('icon: EyeOutline');
+			await within(collaboratorsContainer).findByTestId(ICON_REGEXP.shareCanRead);
 			expect(screen.getByText(/Add new people or groups/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /share/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
 			// 1 icon EyeOutline is visible, from the existing share
-			expect(within(collaboratorsContainer).getByTestId('icon: EyeOutline')).toBeVisible();
+			expect(within(collaboratorsContainer).getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
 			const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });
 			// type just the first character because the network search is requested only one time with first character.
 			// All characters typed after the first one are just used to filter out the result obtained before
@@ -532,9 +538,11 @@ describe('Node Sharing', () => {
 			await screen.findByText(userAccount1.full_name);
 			expect(screen.getByText(userAccount1.full_name)).toBeVisible();
 			// new share is created with read-only permissions by default so now there are 2 icons EyeOutline
-			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(2);
+			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
+				2
+			);
 			// change permissions on the new share
-			await user.click(screen.getAllByTestId('icon: EyeOutline')[1]);
+			await user.click(screen.getAllByTestId(ICON_REGEXP.shareCanRead)[1]);
 			// the popover to change permission is shown
 			await screen.findByText(/editor/i);
 			// register listeners of the popover
@@ -543,7 +551,7 @@ describe('Node Sharing', () => {
 			// click on editor to set read and write share permissions
 			await user.click(screen.getByText(/editor/i));
 			// icon on chip is immediately updated, so the edit icons become 2
-			await within(collaboratorsContainer).findByTestId('icon: Edit2Outline');
+			await within(collaboratorsContainer).findByTestId(ICON_REGEXP.shareCanWrite);
 			// now create the second share
 			// type just the first character because the network search is requested only one time with first character.
 			// All characters typed after the first one are just used to filter out the result obtained before
@@ -563,29 +571,33 @@ describe('Node Sharing', () => {
 			expect(screen.getByText(userAccount2.full_name)).toBeVisible();
 			// new share is created with read-only permissions by default so there are again two icon EyeOutline
 			// because the other share is set on editor
-			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(2);
+			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
+				2
+			);
 			// change permissions on the new share
-			await user.click(screen.getAllByTestId('icon: EyeOutline')[1]);
+			await user.click(screen.getAllByTestId(ICON_REGEXP.shareCanRead)[1]);
 			// the popover to change permission is shown
-			await screen.findByTestId('icon: Square');
+			await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 			// wait for the listener of the popover to be registered
 			jest.advanceTimersToNextTimer();
 			// click on the checkbox to set read and share permissions
-			await user.click(screen.getByTestId('icon: Square'));
-			await screen.findByTestId('icon: CheckmarkSquare');
+			await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
+			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
 			// the chip is updated immediately so the icon share is shown
-			await screen.findByTestId('icon: Share');
+			await screen.findByTestId(ICON_REGEXP.shareCanShare);
 			// click outside to close popover
 			await user.click(screen.getByText(/Collaborators/i));
 			// popover is closed
 			expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 			expect(screen.queryByText(/editor/i)).not.toBeInTheDocument();
 			// so now we have 1 share with write permissions (editor icon is shown)
-			expect(within(collaboratorsContainer).getByTestId('icon: Edit2Outline')).toBeVisible();
+			expect(within(collaboratorsContainer).getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
 			// 2 with read permission (the second one created and the already existing share)
-			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(2);
+			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
+				2
+			);
 			// and 1 with share permissions
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 			// click on share button to complete the creation of the new share
 			await user.click(screen.getByRole('button', { name: /share/i }));
 			// chips are removed from the add section
@@ -601,13 +613,15 @@ describe('Node Sharing', () => {
 			await screen.findByText(userAccount2.full_name);
 			// shares are created with previously set permissions
 			// share 1 with write
-			expect(within(collaboratorsContainer).getByTestId('icon: Edit2Outline')).toBeVisible();
+			expect(within(collaboratorsContainer).getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
 			// share 2 with share
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 			// and share 2 and pre-existing one with read
-			expect(within(collaboratorsContainer).getAllByTestId('icon: EyeOutline')).toHaveLength(2);
+			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
+				2
+			);
 			// in the collaborators list now there are 3 close icons, one for each collaborator
-			expect(screen.getAllByTestId('icon: Close')).toHaveLength(3);
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(3);
 		});
 	});
 });

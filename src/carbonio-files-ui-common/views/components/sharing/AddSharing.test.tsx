@@ -10,6 +10,7 @@ import { ApolloError } from '@apollo/client';
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { AddSharing } from './AddSharing';
+import { ICON_REGEXP } from '../../../constants/test';
 import {
 	populateGalContact,
 	populateNode,
@@ -249,9 +250,9 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
@@ -295,7 +296,7 @@ describe('Add Sharing', () => {
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 		await screen.findByText(userAccount.full_name);
 		// click on the chip to open the popover
-		await user.click(screen.getByTestId('icon: EyeOutline'));
+		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
@@ -369,47 +370,47 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// click on chip to open popover
-		await user.click(screen.getByTestId('icon: EyeOutline'));
+		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		expect(screen.getByText(/editor/i)).toBeVisible();
 		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-		expect(screen.getByTestId('icon: Square')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
 		expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
-		expect(screen.getByTestId('icon: Square')).not.toHaveAttribute('disabled');
+		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one
 		// there are 2 editor icons because one is inside the popover
-		await waitFor(() => expect(screen.getAllByTestId('icon: Edit2Outline')).toHaveLength(2));
+		await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2));
 		// just 1 viewer icon is shown, the one inside the popover
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
 		// share permission is not selected yet
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// double check that the popover is kept open
 		expect(screen.getByText(/viewer/i)).toBeVisible();
 		// now select the share permission
-		await user.click(screen.getByTestId('icon: Square'));
-		await screen.findByTestId('icon: Share');
+		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
+		await screen.findByTestId(ICON_REGEXP.shareCanShare);
 		// popover is still open so there are 2 editor icons (chip and popover), 1 viewer (popover) and 1 share (chip)
-		expect(screen.getAllByTestId('icon: Edit2Outline')).toHaveLength(2);
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
+		expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2);
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 		expect(screen.getByText(/viewer/i)).toBeVisible();
 		// and sharing allowed is now checked inside the popover
-		expect(screen.queryByTestId('icon: Square')).not.toBeInTheDocument();
-		expect(screen.getByTestId('icon: CheckmarkSquare')).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.checkboxUnchecked)).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 		// close popover
 		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
 		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 		// now only the chip is shown, so we have 1 editor icon, 1 share and no viewer
-		expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
-		expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
 		// confirm add with share button
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
@@ -475,30 +476,30 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// click on chip to open popover
-		await user.click(screen.getByTestId('icon: EyeOutline'));
+		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		expect(screen.getByText(/editor/i)).toBeVisible();
 		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-		expect(screen.getByTestId('icon: Square')).toBeVisible();
-		expect(screen.getByTestId('icon: Square')).not.toHaveAttribute('disabled');
+		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		// click on editor shouldn't do anything
 		await user.click(screen.getByText(/editor/i));
 		// click on share should set share permissions
-		await user.click(screen.getByTestId('icon: Square'));
+		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 		// chip is updated
-		await screen.findByTestId('icon: Share');
+		await screen.findByTestId(ICON_REGEXP.shareCanShare);
 		// close popover
 		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
 		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 		// chip has read and share permissions since click on editor did nothing
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
 	});
@@ -551,9 +552,9 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
 		// write a custom message
 		// const customMessageInputField = screen.getByRole('textbox', {
@@ -567,7 +568,7 @@ describe('Add Sharing', () => {
 		// expect(customMessageInputField).toHaveValue('');
 		expect(screen.queryByText(userAccount.full_name[0])).not.toBeInTheDocument();
 		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
 		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
 	});
 
@@ -767,9 +768,9 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount1.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// create second chip
 		await user.type(chipInput, userAccount2.full_name[0]);
 		await waitFor(() => expect(chipInput).toHaveValue(userAccount2.full_name[0]));
@@ -781,14 +782,14 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount2.full_name);
 		// chip is created with read-only permissions, so now we have 2 chips in read-only
-		expect(screen.getAllByTestId('icon: EyeOutline')).toHaveLength(2);
-		expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(2);
+		expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 
 		// edit first share to be an editor
 		// click on chip to open popover
-		await user.click(screen.getAllByTestId('icon: EyeOutline')[0]);
+		await user.click(screen.getAllByTestId(ICON_REGEXP.shareCanRead)[0]);
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
@@ -797,30 +798,30 @@ describe('Add Sharing', () => {
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one
 		// there are 2 editor icons because one is inside the popover
-		await waitFor(() => expect(screen.getAllByTestId('icon: Edit2Outline')).toHaveLength(2));
+		await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2));
 		// click on chip to close popover
 		await user.click(screen.getByText(userAccount1.full_name));
-		expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
 
 		// edit second share to allow re-share
-		await user.click(screen.getByTestId('icon: EyeOutline'));
+		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		// previous popover is closed and the one related to second share is opened
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		// select the share permission
-		await user.click(screen.getByTestId('icon: Square'));
+		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 		// chip is updated, only this chip has the share icon
-		await screen.findByTestId('icon: Share');
+		await screen.findByTestId(ICON_REGEXP.shareCanShare);
 		// close popover
 		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
 		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 
 		// now we have 2 chips, one with editor role and one with viewer with sharing role
-		expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
-		expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
+		expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
+		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 
 		// confirm add with share button
 		await user.click(screen.getByRole('button', { name: /share/i }));

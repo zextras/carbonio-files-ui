@@ -11,6 +11,7 @@ import { graphql } from 'msw';
 
 import SearchView from './SearchView';
 import { INTERNAL_PATH, ROOTS } from '../carbonio-files-ui-common/constants';
+import { ICON_REGEXP } from '../carbonio-files-ui-common/constants/test';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import { populateNodePage, populateNodes } from '../carbonio-files-ui-common/mocks/mockUtils';
 import {
@@ -191,7 +192,7 @@ describe('Search view', () => {
 			});
 			expect(screen.getByText(/home/i)).toBeInTheDocument();
 			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: CheckmarkSquare')).toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /choose folder/i })).toHaveAttribute(
 				'disabled',
 				''
@@ -204,12 +205,12 @@ describe('Search view', () => {
 				)
 			);
 			await user.click(screen.getByText(/search also in contained folders/i));
-			await screen.findByTestId('icon: Square');
+			await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 			await user.click(screen.getByText(/search also in contained folders/i));
-			await screen.findByTestId('icon: CheckmarkSquare');
+			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
 			await user.click(screen.getByRole('button', { name: /choose folder/i }));
 			await screen.findByText(/home/i);
-			expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
 			expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '');
 			await user.click(screen.getByRole('button', { name: /search/i }));
 			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
@@ -265,7 +266,7 @@ describe('Search view', () => {
 			});
 			expect(screen.getByText(/home/i)).toBeInTheDocument();
 			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: CheckmarkSquare')).toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /choose folder/i })).toHaveAttribute(
 				'disabled',
 				''
@@ -278,11 +279,11 @@ describe('Search view', () => {
 				)
 			);
 			await user.click(screen.getByText(/search also in contained folders/i));
-			await screen.findByTestId('icon: Square');
-			expect(screen.queryByTestId('icon: CheckmarkSquare')).not.toBeInTheDocument();
+			await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
+			expect(screen.queryByTestId(ICON_REGEXP.checkboxChecked)).not.toBeInTheDocument();
 			await user.click(screen.getByRole('button', { name: /choose folder/i }));
 			await screen.findByText(/home/i);
-			expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
 			expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '');
 			await user.click(screen.getByRole('button', { name: /search/i }));
 			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
@@ -333,14 +334,14 @@ describe('Search view', () => {
 
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			// wait for chips to be created (1 chip + icon close of the modal)
-			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(2));
+			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
 			expect(screen.getByText(/keyword1/i)).toBeVisible();
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword2;');
 			// wait for chips to be created (2 chips + icon close of the modal)
-			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(3));
+			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(3));
 			expect(screen.getByText(/keyword2/i)).toBeVisible();
 
 			await user.click(screen.getByRole('button', { name: /search/i }));
@@ -399,14 +400,14 @@ describe('Search view', () => {
 
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			// wait for chips to be created (1 chip + icon close of the modal)
-			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(2));
+			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
 			expect(screen.getByText(/keyword1/i)).toBeVisible();
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword2;');
 			// wait for chips to be created (2 chips + icon close of the modal)
-			await waitFor(() => expect(screen.getAllByTestId('icon: Close')).toHaveLength(3));
+			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(3));
 			expect(screen.getByText(/keyword2/i)).toBeVisible();
 			// flagged
 			await user.click(screen.getByText(/^flagged/i));
@@ -421,7 +422,7 @@ describe('Search view', () => {
 			});
 			expect(screen.getByText(/home/i)).toBeInTheDocument();
 			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: CheckmarkSquare')).toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /choose folder/i })).toHaveAttribute(
 				'disabled',
 				''
@@ -434,7 +435,7 @@ describe('Search view', () => {
 				)
 			);
 			await user.click(screen.getByText(/search also in contained folders/i));
-			await screen.findByTestId('icon: Square');
+			await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 			await user.click(screen.getByRole('button', { name: /choose folder/i }));
 			await screen.findByText(/home/i);
 			await user.click(screen.getByRole('button', { name: /search/i }));
@@ -556,7 +557,7 @@ describe('Search view', () => {
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /search/i })).not.toHaveAttribute('disabled', '')
 			);
-			await user.click(screen.getByTestId('icon: Close'));
+			await user.click(screen.getByTestId(ICON_REGEXP.close));
 			expect(screen.queryByRole('button', { name: /search/i })).not.toBeInTheDocument();
 			expect(mockedFindNodes).not.toHaveBeenCalled();
 			expect(screen.getByText(/no search executed/i)).toBeVisible();

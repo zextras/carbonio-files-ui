@@ -206,8 +206,8 @@ describe('Filter view', () => {
 		await screen.findByTestId(`node-item-${node.id}`);
 		expect(screen.getByTestId('node-item', { exact: false })).toBeInTheDocument();
 		// flag the node through the hover bar
-		await user.click(screen.getByTestId('icon: FlagOutline'));
-		await screen.findByTestId('icon: Flag');
+		await user.click(screen.getByTestId(ICON_REGEXP.flag));
+		await screen.findByTestId(ICON_REGEXP.flagged);
 		// navigate to filter again
 		await user.click(screen.getByRole('link', { name: 'Go to filter' }));
 		// filter list, second load but with a new network request. Wait for loading icon to be removed
@@ -255,7 +255,7 @@ describe('Filter view', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.restore)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.deletePermanently)).not.toBeInTheDocument();
 
-			const arrowBack = screen.getByTestId('icon: ArrowBackOutline');
+			const arrowBack = screen.getByTestId(ICON_REGEXP.exitSelectionMode);
 			expect(arrowBack).toBeVisible();
 			await user.click(arrowBack);
 			expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
