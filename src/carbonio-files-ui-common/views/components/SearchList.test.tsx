@@ -6,14 +6,7 @@
 
 import React from 'react';
 
-import {
-	act,
-	fireEvent,
-	screen,
-	waitFor,
-	waitForElementToBeRemoved,
-	within
-} from '@testing-library/react';
+import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { graphql } from 'msw';
 
@@ -41,7 +34,7 @@ import {
 	mockRestoreNodes,
 	mockTrashNodes
 } from '../../utils/mockUtils';
-import { buildChipsFromKeywords, setup, selectNodes } from '../../utils/testUtils';
+import { buildChipsFromKeywords, setup, selectNodes, screen, within } from '../../utils/testUtils';
 
 describe('Search list', () => {
 	describe('Drag and drop', () => {
@@ -554,12 +547,11 @@ describe('Search list', () => {
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
-
-				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.restore);
-				expect(restoreIcon).toBeInTheDocument();
+				const restoreIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.restore
+				});
 				expect(restoreIcon).toBeVisible();
-				expect(restoreIcon).not.toHaveAttribute('disabled', '');
-
+				expect(restoreIcon).toBeEnabled();
 				await user.click(restoreIcon);
 
 				await screen.findByText(/^success$/i);
@@ -604,12 +596,11 @@ describe('Search list', () => {
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
-
-				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.restore);
-				expect(restoreIcon).toBeInTheDocument();
+				const restoreIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.restore
+				});
 				expect(restoreIcon).toBeVisible();
-				expect(restoreIcon).not.toHaveAttribute('disabled', '');
-
+				expect(restoreIcon).toBeEnabled();
 				const unselectAllIcon = screen.getByTestId('icon: ArrowBackOutline');
 				expect(unselectAllIcon).toBeInTheDocument();
 				expect(unselectAllIcon).toBeVisible();
@@ -717,14 +708,12 @@ describe('Search list', () => {
 				const element = await screen.findByText(currentFilter[0].name);
 
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
-
-				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByTestId(
-					'icon: DeletePermanentlyOutline'
+				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByRoleWithIcon(
+					'button',
+					{ icon: 'icon: DeletePermanentlyOutline' }
 				);
-				expect(deletePermanentlyIcon).toBeInTheDocument();
 				expect(deletePermanentlyIcon).toBeVisible();
-				expect(deletePermanentlyIcon).not.toHaveAttribute('disabled', '');
-
+				expect(deletePermanentlyIcon).toBeEnabled();
 				await user.click(deletePermanentlyIcon);
 
 				const confirmButton = await screen.findByRole('button', { name: /delete permanently/i });

@@ -108,7 +108,7 @@ describe('Move Nodes Modal', () => {
 		let folderWithWriteFileItem = screen.getByText(folderWithWriteFile.name);
 		let fileItem = screen.getByText(file.name);
 		let folderItem = screen.getByText(folder.name);
-		// folder without write file permission is disabled and not navigable
+		// folder without write_file permission is disabled and not navigable
 		expect(folderWithWriteFolderItem).toHaveAttribute('disabled', '');
 		// double-click on a disabled folder does nothing
 		await user.dblClick(folderWithWriteFolderItem);
@@ -148,7 +148,7 @@ describe('Move Nodes Modal', () => {
 		expect(folderItem).toHaveAttribute('disabled', '');
 		// file is disabled
 		expect(fileItem).toHaveAttribute('disabled', '');
-		// folder with write folder permission is active and navigable
+		// folder with write_folder permission is active and navigable
 		expect(folderWithWriteFolderItem).toBeVisible();
 		expect(folderWithWriteFolderItem).not.toHaveAttribute('disabled', '');
 		await user.dblClick(folderWithWriteFolderItem);
@@ -242,7 +242,7 @@ describe('Move Nodes Modal', () => {
 
 		const folderItem = await screen.findByText(folder.name);
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.move });
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		const confirmButtonLabel = within(confirmButton).getByText(ACTION_REGEXP.move);
 		await user.hover(confirmButtonLabel);
 		await screen.findByText(/you can't perform this action here/i);
@@ -250,11 +250,11 @@ describe('Move Nodes Modal', () => {
 		await user.unhover(confirmButtonLabel);
 		expect(screen.queryByText(/you can't perform this action here/i)).not.toBeInTheDocument();
 		await user.click(folderItem);
-		expect(confirmButtonLabel).not.toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeEnabled();
 		await user.dblClick(folderItem);
 		await screen.findByText(/It looks like there's nothing here./i);
-		expect(confirmButtonLabel).not.toHaveAttribute('disabled', '');
-		await user.click(confirmButtonLabel);
+		expect(confirmButton).toBeEnabled();
+		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item moved/i);
 		await waitFor(() => {
@@ -305,9 +305,9 @@ describe('Move Nodes Modal', () => {
 
 		const folderItem = await screen.findByText(folder.name);
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.move });
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		await user.click(folderItem);
-		expect(confirmButton).not.toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item moved/i);
@@ -359,18 +359,18 @@ describe('Move Nodes Modal', () => {
 		const folderItem = await screen.findByText(folder.name);
 		const fileItem = screen.getByText(file.name);
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.move });
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		// click on valid destination folder
 		await user.click(folderItem);
 		// confirm button becomes active
-		await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(confirmButton).toBeEnabled());
 		// click on disabled node
 		await user.click(fileItem);
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		// click again on valid destination folder
 		await user.click(folderItem);
 		// confirm button becomes active
-		await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(confirmButton).toBeEnabled());
 		// click on modal title
 		await user.click(screen.getByText(/move items/i));
 	});

@@ -234,7 +234,7 @@ describe('Copy Nodes Modal', () => {
 		expect(folderItem).toHaveAttribute('disabled');
 		// file is disabled
 		expect(fileItem).toHaveAttribute('disabled');
-		// folder with write folder permission is active and navigable
+		// folder with write_folder permission is active and navigable
 		expect(folderWithWriteFolderItem).toBeVisible();
 		expect(folderWithWriteFolderItem).not.toHaveAttribute('disabled');
 		await user.dblClick(folderWithWriteFolderItem);
@@ -277,9 +277,7 @@ describe('Copy Nodes Modal', () => {
 		);
 		const filesHome = await screen.findByText('Home');
 		await user.click(filesHome);
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-			'disabled'
-		);
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 		// navigate inside local root
 		await user.dblClick(filesHome);
 		await screen.findByText((localRoot.children.nodes[0] as Node).name);
@@ -290,9 +288,7 @@ describe('Copy Nodes Modal', () => {
 		expect(breadcrumb).toBeVisible();
 		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
 		expect(screen.getByText((localRoot.children.nodes[1] as Node).name)).toBeVisible();
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-			'disabled'
-		);
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 
 		// go back to roots list
 		await user.click(screen.getByText('Files'));
@@ -301,7 +297,7 @@ describe('Copy Nodes Modal', () => {
 		breadcrumb = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
 		expect(breadcrumb).toBeVisible();
 		await user.click(sharedWithMeItem);
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toHaveAttribute('disabled');
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
 
 		// navigate inside shared with me filter
 		await user.dblClick(sharedWithMeItem);
@@ -312,18 +308,16 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getByText(sharedWithMeFilter[2].name)).toBeVisible();
 		breadcrumb = await findByTextWithMarkup(buildBreadCrumbRegExp('Files', 'Shared with me'));
 		expect(breadcrumb).toBeVisible();
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toHaveAttribute('disabled');
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
 		// select destination folder from filter
 		await user.click(screen.getByText(sharedWithMeFilter[0].name));
 		await waitFor(() =>
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-				'disabled'
-			)
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled()
 		);
 		// reset active node by clicking on modal title
 		await user.click(screen.getByText('Copy items'));
 		await waitFor(() =>
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toHaveAttribute('disabled')
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled()
 		);
 
 		// navigate inside folder of shared with me filter
@@ -341,9 +335,7 @@ describe('Copy Nodes Modal', () => {
 			buildBreadCrumbRegExp('Files', sharedWithMeFilter[0].name)
 		);
 		expect(breadcrumb).toBeVisible();
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-			'disabled'
-		);
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 	});
 
 	test('node actions are not shown', async () => {
@@ -439,7 +431,7 @@ describe('Copy Nodes Modal', () => {
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);
@@ -506,13 +498,13 @@ describe('Copy Nodes Modal', () => {
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name));
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(folderItem);
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.dblClick(folderItem);
 		await screen.findByText(/It looks like there's nothing here./i);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name, folder.name));
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);
@@ -579,7 +571,7 @@ describe('Copy Nodes Modal', () => {
 		const folderItem = await screen.findByText(folder.name);
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
 		await user.click(folderItem);
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);
@@ -666,7 +658,7 @@ describe('Copy Nodes Modal', () => {
 		const confirmButtonLabel = within(confirmButton).getByText(ACTION_REGEXP.copy);
 		expect(screen.getByText('Home')).toBeVisible();
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
-		expect(confirmButton).toHaveAttribute('disabled');
+		expect(confirmButton).toBeDisabled();
 		// register tooltip listener
 		jest.advanceTimersToNextTimer();
 		await user.hover(confirmButtonLabel);
@@ -679,7 +671,7 @@ describe('Copy Nodes Modal', () => {
 		await user.unhover(confirmButtonLabel);
 		expect(tooltip).not.toBeInTheDocument();
 		await user.click(screen.getByText('Home'));
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.hover(confirmButtonLabel);
 		// run timers of tooltip
 		jest.advanceTimersToNextTimer();
@@ -743,9 +735,9 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getByText('Home')).toBeVisible();
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
-		expect(confirmButton).toHaveAttribute('disabled');
+		expect(confirmButton).toBeDisabled();
 		await user.click(screen.getByText('Home'));
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);

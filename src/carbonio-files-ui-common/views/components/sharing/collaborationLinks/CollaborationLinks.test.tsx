@@ -47,7 +47,7 @@ describe('Collaboration Link', () => {
 				name: /generate link/i
 			}
 		);
-		await waitFor(() => expect(readAndShareGenerateButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(readAndShareGenerateButton).toBeEnabled());
 		const collaborationLinkContainer = screen.getByTestId('collaboration-link-container');
 		expect(within(collaborationLinkContainer).getByText('Collaboration Links')).toBeVisible();
 		expect(

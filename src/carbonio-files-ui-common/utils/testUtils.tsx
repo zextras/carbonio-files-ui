@@ -342,9 +342,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	});
 	const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 	await user.click(destinationFolderItem);
-	await waitFor(() =>
-		expect(screen.getByRole('button', { name: /move/i })).not.toHaveAttribute('disabled', '')
-	);
+	await waitFor(() => expect(screen.getByRole('button', { name: /move/i })).toBeEnabled());
 	await user.click(screen.getByRole('button', { name: /move/i }));
 	await waitFor(() =>
 		expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument()
