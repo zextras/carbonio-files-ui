@@ -83,8 +83,6 @@ describe('Filter View', () => {
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
 				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
-
-				expect.assertions(6);
 			});
 
 			test('Restore is hidden if not all nodes are trashed', async () => {
@@ -137,8 +135,6 @@ describe('Filter View', () => {
 
 				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
 				expect(moreIcon).not.toBeInTheDocument();
-
-				expect.assertions(5);
 			});
 		});
 

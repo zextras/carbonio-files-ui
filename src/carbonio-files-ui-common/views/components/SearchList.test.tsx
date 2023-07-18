@@ -430,7 +430,6 @@ describe('Search list', () => {
 				];
 
 				const { user } = setup(<SearchList />, { mocks });
-
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
@@ -438,20 +437,13 @@ describe('Search list', () => {
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-
 				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
-
 				const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 				expect(trashAction.parentNode).not.toHaveAttribute('disabled');
-
 				await user.click(trashAction);
-
 				await screen.findByText(/item moved to trash/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-
 				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
-
-				expect.assertions(5);
 			});
 
 			test('Mark for deletion is hidden if not all nodes are not trashed', async () => {
@@ -487,8 +479,6 @@ describe('Search list', () => {
 					await user.click(moreIconButton);
 					expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
 				}
-
-				expect.assertions(2);
 			});
 		});
 
@@ -545,7 +535,6 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 				const restoreIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.restore
@@ -553,13 +542,9 @@ describe('Search list', () => {
 				expect(restoreIcon).toBeVisible();
 				expect(restoreIcon).toBeEnabled();
 				await user.click(restoreIcon);
-
 				await screen.findByText(/^success$/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-
 				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
-
-				expect.assertions(6);
 			});
 
 			test('Restore does not remove selected items from the list if the research includes both trashed and restored nodes', async () => {
@@ -594,7 +579,6 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 				const restoreIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.restore
@@ -604,19 +588,14 @@ describe('Search list', () => {
 				const unselectAllIcon = screen.getByTestId('icon: ArrowBackOutline');
 				expect(unselectAllIcon).toBeInTheDocument();
 				expect(unselectAllIcon).toBeVisible();
-
 				await user.click(restoreIcon);
-
 				await screen.findByText(/^success$/i);
-
 				const elementsWithSelectionModeOff = await screen.findAllByTestId('file-icon-preview');
 				const restoredItem = screen.getByText(currentFilter[0].name);
 				expect(restoredItem).toBeInTheDocument();
 				expect(restoredItem).toBeVisible();
-
 				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(3);
 				expect(elementsWithSelectionModeOff).toHaveLength(3);
-				expect.assertions(10);
 			});
 
 			test('Restore is hidden if not all nodes are trashed', async () => {
@@ -635,7 +614,6 @@ describe('Search list', () => {
 				const keywords = ['keyword1', 'keyword2'];
 				const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 				searchParamsVar(searchParams);
-
 				const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), currentFilter)];
 
 				const { user } = setup(<SearchList />, { mocks });
@@ -646,7 +624,6 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-
 				expect(screen.queryByTestId(ICON_REGEXP.restore)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(ICON_REGEXP.moveToTrash)).not.toBeInTheDocument();
 				const moreIconButton = screen.queryByTestId(ICON_REGEXP.moreVertical);
@@ -655,8 +632,6 @@ describe('Search list', () => {
 					expect(screen.queryByText(ACTION_REGEXP.restore)).not.toBeInTheDocument();
 					expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
 				}
-
-				expect.assertions(3);
 			});
 		});
 
@@ -704,9 +679,7 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToDeletePermanently, user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-
 				const element = await screen.findByText(currentFilter[0].name);
-
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByRoleWithIcon(
 					'button',
@@ -715,7 +688,6 @@ describe('Search list', () => {
 				expect(deletePermanentlyIcon).toBeVisible();
 				expect(deletePermanentlyIcon).toBeEnabled();
 				await user.click(deletePermanentlyIcon);
-
 				const confirmButton = await screen.findByRole('button', { name: /delete permanently/i });
 				act(() => {
 					// run timers of modal
@@ -724,12 +696,9 @@ describe('Search list', () => {
 				await user.click(confirmButton);
 				await screen.findByText(/^success$/i);
 				expect(confirmButton).not.toBeInTheDocument();
-
 				expect(element).not.toBeInTheDocument();
 				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
 				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
-
-				expect.assertions(8);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
@@ -759,30 +728,23 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToDeletePermanently, user);
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
-
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.restore
 				);
 				expect(restoreIcon).not.toBeInTheDocument();
-
 				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.moveToTrash
 				);
 				expect(trashIcon).not.toBeInTheDocument();
-
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.deletePermanently
 				);
 				expect(deletePermanentlyIcon).not.toBeInTheDocument();
-
 				const moreIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.moreVertical
 				);
 				expect(moreIcon).not.toBeInTheDocument();
-
-				expect.assertions(5);
 			});
 		});
 

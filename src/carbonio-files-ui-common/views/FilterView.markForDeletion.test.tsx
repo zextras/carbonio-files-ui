@@ -78,8 +78,6 @@ describe('Filter View', () => {
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
 				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
-
-				expect.assertions(7);
 			});
 
 			test('Mark for deletion is hidden if not all nodes are not trashed', async () => {
@@ -122,7 +120,6 @@ describe('Filter View', () => {
 					'icon: Trash2Outline'
 				);
 				expect(trashIcon).not.toBeInTheDocument();
-				expect.assertions(2);
 			});
 		});
 

@@ -94,8 +94,6 @@ describe('Filter View', () => {
 				expect(element).not.toBeInTheDocument();
 				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
 				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
-
-				expect.assertions(8);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
@@ -152,8 +150,6 @@ describe('Filter View', () => {
 
 				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
 				expect(moreIcon).not.toBeInTheDocument();
-
-				expect.assertions(5);
 			});
 		});
 

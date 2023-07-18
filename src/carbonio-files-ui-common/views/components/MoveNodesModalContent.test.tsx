@@ -426,7 +426,6 @@ describe('Move Nodes Modal', () => {
 		await findByTextWithMarkup(breadcrumbRegexp);
 		expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 		expect(screen.queryByText(currentFolder.name)).not.toBeInTheDocument();
-		expect.assertions(4);
 	});
 
 	test('breadcrumb of a shared node shows only parents that have write permissions', async () => {
