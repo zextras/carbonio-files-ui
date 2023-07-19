@@ -11,6 +11,7 @@ import styled from 'styled-components';
 
 import { ShimmerText } from './StyledComponents';
 import useUserInfo from '../../../hooks/useUserInfo';
+import { DATE_FORMAT_SHORT } from '../../constants';
 import { User } from '../../types/graphql/types';
 import { formatDate, formatTime } from '../../utils/utils';
 
@@ -96,7 +97,7 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 							</Row>
 							{dateTime && (
 								<DateText size="small">
-									{`${formatDate(dateTime, undefined, zimbraPrefTimeZoneId)} - ${formatTime(
+									{`${formatDate(dateTime, DATE_FORMAT_SHORT, zimbraPrefTimeZoneId)} - ${formatTime(
 										dateTime,
 										zimbraPrefTimeZoneId
 									)}`}
