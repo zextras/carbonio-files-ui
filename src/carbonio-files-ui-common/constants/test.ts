@@ -84,7 +84,7 @@ export const SELECTORS = {
 	addShareInputContainer: 'add-shares-input-container',
 	addShareChipInput: 'add-sharing-chip-input',
 	displayer: 'displayer',
-	displayerHeader: 'displayerHeader',
+	displayerHeader: 'DisplayerHeader',
 	displayerActionsHeader: 'displayer-actions-header',
 	detailsNodeItem(id = ''): string {
 		return `details-node-item-${id}`;
