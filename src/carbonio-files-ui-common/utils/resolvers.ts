@@ -12,8 +12,11 @@ function resolveByTypename<T>(obj: { __typename?: T }): T {
 	throw new Error('typename is undefined');
 }
 
-export const resolvers: Resolvers = {
+export const resolvers = {
 	Node: {
 		__resolveType: resolveByTypename
+	},
+	SharedTarget: {
+		__resolveType: resolveByTypename
 	}
-};
+} satisfies Resolvers;

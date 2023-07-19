@@ -9,17 +9,17 @@ import { map, find, filter, some } from 'lodash';
 
 import { LOGGED_USER } from '../../mocks/constants';
 import { CONFIGS, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, ROOTS } from '../constants';
-import { SortableNode, UploadFolderItem } from '../types/common';
+import { Node, SortableNode, UploadFolderItem } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
 import {
 	Config,
 	DistributionList,
+	Node as GQLNode,
 	File as FilesFile,
 	Folder,
 	CollaborationLink,
 	Link,
 	Maybe,
-	Node,
 	NodePage,
 	NodeSort,
 	NodeType,
@@ -141,7 +141,7 @@ function populateNodeFields(
 	type?: NodeType,
 	id?: string,
 	name?: string
-): MakeRequiredNonNull<Node, 'owner'> {
+): MakeRequiredNonNull<GQLNode, 'owner'> {
 	const types = filter(Object.values(NodeType), (t) => t !== NodeType.Root);
 	const nodeType = type || faker.helpers.arrayElement(types);
 	return {
@@ -271,14 +271,16 @@ export function populateParents(
 	const parentsLimit = withRoot ? limit - 1 : limit;
 	if (node.id !== ROOTS.LOCAL_ROOT) {
 		for (let i = 0; i < parentsLimit; i += 1) {
-			currentNode.parent = populateFolder(0, undefined, `parent${i}`);
-			path.unshift(currentNode.parent);
-			currentNode = currentNode.parent;
+			const parent = populateFolder(0, undefined, `parent${i}`);
+			currentNode.parent = parent;
+			path.unshift(parent);
+			currentNode = parent;
 		}
 	}
 	if (withRoot) {
-		currentNode.parent = populateLocalRoot();
-		path.unshift(currentNode.parent);
+		const parent = populateLocalRoot();
+		currentNode.parent = parent;
+		path.unshift(parent);
 	}
 	return {
 		node,

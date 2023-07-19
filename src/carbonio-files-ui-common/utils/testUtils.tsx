@@ -8,7 +8,7 @@ import React, { ReactElement, useMemo } from 'react';
 
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import { SchemaLink } from '@apollo/client/link/schema';
-import { addMocksToSchema, type IMocks } from '@graphql-tools/mock';
+import { addMocksToSchema } from '@graphql-tools/mock';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
 	act,
@@ -31,7 +31,7 @@ import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
 import { EventEmitter } from 'events';
 import { GraphQLError } from 'graphql';
-import { forEach, map, filter, reduce } from 'lodash';
+import { forEach, map, filter, reduce, merge } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -175,7 +175,7 @@ export function generateError(message: string): GraphQLError {
 interface WrapperProps {
 	children?: React.ReactNode;
 	initialRouterEntries?: string[];
-	mocks?: IMocks<Resolvers>;
+	mocks?: Partial<Resolvers>;
 }
 const ApolloProviderWrapper = ({
 	children,
@@ -186,10 +186,7 @@ const ApolloProviderWrapper = ({
 			const schema = makeExecutableSchema({ typeDefs: GRAPHQL_SCHEMA });
 			const mockSchema = addMocksToSchema({
 				schema,
-				resolvers: () => ({
-					...resolvers,
-					...mocks
-				})
+				resolvers: merge(resolvers, mocks)
 			});
 			return new ApolloClient({
 				link: new SchemaLink({ schema: mockSchema }),

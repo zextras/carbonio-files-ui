@@ -5,8 +5,7 @@
  */
 
 import { ApolloError, ServerError } from '@apollo/client';
-import { MockedResponse } from '@apollo/client/testing';
-import { DocumentNode } from 'graphql';
+import { find } from 'lodash';
 
 import {
 	FULL_SHARES_LOAD_LIMIT,
@@ -15,328 +14,73 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
-import CLONE_VERSION from '../graphql/mutations/cloneVersion.graphql';
-import COPY_NODES from '../graphql/mutations/copyNodes.graphql';
-import CREATE_COLLABORATION_LINK from '../graphql/mutations/createCollaborationLink.graphql';
-import CREATE_FOLDER from '../graphql/mutations/createFolder.graphql';
-import CREATE_SHARE from '../graphql/mutations/createShare.graphql';
-import DELETE_COLLABORATION_LINKS from '../graphql/mutations/deleteCollaborationLinks.graphql';
-import DELETE_NODES from '../graphql/mutations/deleteNodes.graphql';
-import DELETE_SHARE from '../graphql/mutations/deleteShare.graphql';
-import DELETE_VERSIONS from '../graphql/mutations/deleteVersions.graphql';
-import FLAG_NODES from '../graphql/mutations/flagNodes.graphql';
-import KEEP_VERSIONS from '../graphql/mutations/keepVersions.graphql';
-import MOVE_NODES from '../graphql/mutations/moveNodes.graphql';
-import RESTORE_NODES from '../graphql/mutations/restoreNodes.graphql';
-import TRASH_NODES from '../graphql/mutations/trashNodes.graphql';
-import UPDATE_NODE from '../graphql/mutations/updateNode.graphql';
-import UPDATE_NODE_DESCRIPTION from '../graphql/mutations/updateNodeDescription.graphql';
-import UPDATE_SHARE from '../graphql/mutations/updateShare.graphql';
-import FIND_NODES from '../graphql/queries/findNodes.graphql';
-import GET_ACCOUNT_BY_EMAIL from '../graphql/queries/getAccountByEmail.graphql';
-import GET_ACCOUNTS_BY_EMAIL from '../graphql/queries/getAccountsByEmail.graphql';
-import GET_BASE_NODE from '../graphql/queries/getBaseNode.graphql';
-import GET_CHILD from '../graphql/queries/getChild.graphql';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
-import GET_CONFIGS from '../graphql/queries/getConfigs.graphql';
-import GET_NODE from '../graphql/queries/getNode.graphql';
-import GET_PERMISSIONS from '../graphql/queries/getPermissions.graphql';
-import GET_ROOTS_LIST from '../graphql/queries/getRootsList.graphql';
-import GET_SHARES from '../graphql/queries/getShares.graphql';
-import GET_VERSIONS from '../graphql/queries/getVersions.graphql';
 import { populateConfigs, populateNodePage } from '../mocks/mockUtils';
-import {
-	CopyNodesMutationVariables,
-	CreateFolderMutationVariables,
-	DeleteNodesMutationVariables,
-	FindNodesQueryVariables,
-	FlagNodesMutationVariables,
-	GetBaseNodeQueryVariables,
-	GetChildrenQueryVariables,
-	GetNodeQueryVariables,
-	GetPathQueryVariables,
-	GetSharesQueryVariables,
-	MoveNodesMutationVariables,
-	Node,
-	Query as QueryType,
-	TrashNodesMutationVariables,
-	RestoreNodesMutationVariables,
-	UpdateNodeDescriptionMutationVariables,
-	UpdateNodeMutationVariables,
-	DeleteShareMutationVariables,
-	CreateShareMutationVariables,
-	UpdateShareMutationVariables,
-	Share,
-	GetAccountByEmailQueryVariables,
-	GetVersionsQueryVariables,
-	File,
-	DeleteVersionsMutationVariables,
-	Maybe,
-	Scalars,
-	KeepVersionsMutationVariables,
-	CloneVersionMutationVariables,
-	FindNodesQuery,
-	TrashNodesMutation,
-	RestoreNodesMutation,
-	DeleteNodesMutation,
-	UpdateNodeMutation,
-	UpdateNodeDescriptionMutation,
-	FlagNodesMutation,
-	GetChildrenQuery,
-	MoveNodesMutation,
-	CopyNodesMutation,
-	CreateFolderMutation,
-	GetPathQuery,
-	GetNodeQuery,
-	Folder,
-	GetSharesQuery,
-	GetBaseNodeQuery,
-	DeleteShareMutation,
-	CreateShareMutation,
-	UpdateShareMutation,
-	GetAccountByEmailQuery,
-	GetVersionsQuery,
-	DeleteVersionsMutation,
-	KeepVersionsMutation,
-	CloneVersionMutation,
-	GetRootsListQuery,
-	GetRootsListQueryVariables,
-	GetPermissionsQueryVariables,
-	GetPermissionsQuery,
-	GetConfigsQuery,
-	GetConfigsQueryVariables,
-	GetAccountsByEmailQueryVariables,
-	GetAccountsByEmailQuery,
-	GetCollaborationLinksDocument,
-	GetCollaborationLinksQueryVariables,
-	GetCollaborationLinksQuery,
-	CollaborationLink,
-	CreateCollaborationLinkMutationVariables,
-	CreateCollaborationLinkMutation,
-	DeleteCollaborationLinksMutationVariables,
-	DeleteCollaborationLinksMutation,
-	GetChildQuery,
-	GetChildQueryVariables,
-	CreateLinkMutationVariables,
-	Link,
-	CreateLinkMutation,
-	UpdateLinkMutationVariables,
-	UpdateLinkMutation,
-	GetLinksDocument,
-	GetLinksQueryVariables,
-	GetLinksQuery,
-	CreateLinkDocument,
-	UpdateLinkDocument,
-	GetPathDocument
-} from '../types/graphql/types';
+import { Node } from '../types/common';
+import * as GQLTypes from '../types/graphql/types';
+import { Maybe, Scalars } from '../types/graphql/types';
 
 type Id = string;
 
-export interface Mock<
-	TData extends Record<string, unknown> = Record<string, unknown>,
-	V extends Record<string, unknown> = Record<string, unknown>
-> extends MockedResponse<TData> {
-	request: {
-		query: DocumentNode;
-		variables: V;
-	};
-	error?: ServerError | ApolloError;
-}
+type QueryName<TData> = keyof TData & keyof GQLTypes.QueryResolvers;
 
-/**
- * Find Nodes Mock
- */
-export function getFindNodesVariables(
-	variables: Partial<FindNodesQueryVariables>,
-	withCursor = false
-): FindNodesQueryVariables {
-	return {
-		limit: NODES_LOAD_LIMIT,
-		sort: NODES_SORT_DEFAULT,
-		page_token: withCursor ? 'next_page_token' : undefined,
-		shares_limit: SHARES_LOAD_LIMIT,
-		...variables
+type MutationName<TData> = keyof TData & keyof GQLTypes.MutationResolvers;
+
+type Mock<TData> = TData extends Pick<GQLTypes.Query, '__typename'>
+	? GQLTypes.QueryResolvers[QueryName<TData>]
+	: GQLTypes.MutationResolvers[MutationName<TData>];
+
+export function mockFindNodes(...findNodes: Node[][]): Mock<GQLTypes.FindNodesQuery> {
+	return () => {
+		const nodes = findNodes.pop() || [];
+		return populateNodePage(nodes);
 	};
 }
 
-export function mockFindNodes(
-	variables: FindNodesQueryVariables,
-	nodes: Node[]
-): Mock<FindNodesQuery, FindNodesQueryVariables> {
-	return {
-		request: {
-			query: FIND_NODES,
-			variables
-		},
-		result: {
-			data: {
-				findNodes: populateNodePage(nodes, variables.limit)
-			}
-		}
-	};
+export function mockTrashNodes(trashNodes: Id[]): Mock<GQLTypes.TrashNodesMutation> {
+	return () => trashNodes;
 }
 
-/**
- * Trash Nodes Mock
- */
-
-export function mockTrashNodes(
-	variables: TrashNodesMutationVariables,
-	trashNodes: Id[]
-): Mock<TrashNodesMutation, TrashNodesMutationVariables> {
-	return {
-		request: {
-			query: TRASH_NODES,
-			variables
-		},
-		result: {
-			data: {
-				trashNodes
-			}
-		}
-	};
+export function mockRestoreNodes(restoreNodes: Array<Node>): Mock<GQLTypes.RestoreNodesMutation> {
+	return () => restoreNodes;
 }
 
-/**
- * Restore Nodes Mock
- */
-export function mockRestoreNodes(
-	variables: RestoreNodesMutationVariables,
-	restoreNodes: Array<Node>
-): Mock<RestoreNodesMutation, RestoreNodesMutationVariables> {
-	return {
-		request: {
-			query: RESTORE_NODES,
-			variables
-		},
-		result: {
-			data: {
-				restoreNodes
-			}
-		}
-	};
+export function mockDeletePermanently(deleteNodes: Id[]): Mock<GQLTypes.DeleteNodesMutation> {
+	return () => deleteNodes;
 }
 
-/**
- * Delete Permanently Mock
- */
-export function mockDeletePermanently(
-	variables: DeleteNodesMutationVariables,
-	deleteNodes: Id[]
-): Mock<DeleteNodesMutation, DeleteNodesMutationVariables> {
-	return {
-		request: {
-			query: DELETE_NODES,
-			variables
-		},
-		result: {
-			data: {
-				deleteNodes
-			}
-		}
-	};
+export function mockUpdateNode(updateNode: Node): Mock<GQLTypes.UpdateNodeMutation> {
+	return () => updateNode;
 }
 
-/**
- * Update Node Mock
- */
-export function mockUpdateNode(
-	variables: UpdateNodeMutationVariables,
-	updateNode: Node
-): Mock<UpdateNodeMutation, UpdateNodeMutationVariables> {
-	return {
-		request: {
-			query: UPDATE_NODE,
-			variables
-		},
-		result: {
-			data: {
-				updateNode
-			}
-		}
-	};
+export function mockUpdateNodeError(error: ServerError | ApolloError): never {
+	throw error;
 }
 
-export function mockUpdateNodeError(
-	variables: UpdateNodeMutationVariables,
-	error: ServerError | ApolloError
-): Mock<UpdateNodeMutation, UpdateNodeMutationVariables> {
-	return {
-		request: {
-			query: UPDATE_NODE,
-			variables
-		},
-		error
-	};
-}
-
-/**
- * Update Node Description Mock
- */
 export function mockUpdateNodeDescription(
-	variables: UpdateNodeDescriptionMutationVariables,
 	updateNode: Node,
 	callback?: () => void
-): Mock<UpdateNodeDescriptionMutation, UpdateNodeDescriptionMutationVariables> {
-	return {
-		request: {
-			query: UPDATE_NODE_DESCRIPTION,
-			variables
-		},
-		result: (): { data: UpdateNodeDescriptionMutation } => {
-			callback && callback();
-			return {
-				data: {
-					updateNode
-				}
-			};
-		}
+): Mock<GQLTypes.UpdateNodeDescriptionMutation> {
+	return (): typeof updateNode => {
+		callback?.();
+		return updateNode;
 	};
 }
 
-export function mockUpdateNodeDescriptionError(
-	variables: UpdateNodeDescriptionMutationVariables,
-	error: ServerError | ApolloError
-): Mock<UpdateNodeDescriptionMutation, UpdateNodeDescriptionMutationVariables> {
-	return {
-		request: {
-			query: UPDATE_NODE_DESCRIPTION,
-			variables
-		},
-		error
-	};
+export function mockUpdateNodeDescriptionError(error: ServerError | ApolloError): never {
+	throw error;
 }
 
-/**
- * Flag Nodes Mock
- */
-export function mockFlagNodes(
-	variables: FlagNodesMutationVariables,
-	flagNodes: Id[]
-): Mock<FlagNodesMutation, FlagNodesMutationVariables> {
-	return {
-		request: {
-			query: FLAG_NODES,
-			variables
-		},
-		result: {
-			data: {
-				flagNodes
-			}
-		}
-	};
+export function mockFlagNodes(flagNodes: Id[]): Mock<GQLTypes.FlagNodesMutation> {
+	return () => flagNodes;
 }
 
-/**
- * Get Children Mock
- */
 export function getChildrenVariables(
 	folderId: Id,
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
 	sharesLimit = SHARES_LOAD_LIMIT,
 	withCursor = false
-): GetChildrenQueryVariables {
+): GQLTypes.GetChildrenQueryVariables {
 	return {
 		node_id: folderId,
 		children_limit: childrenLimit,
@@ -346,166 +90,44 @@ export function getChildrenVariables(
 	};
 }
 
-export function mockGetChildren(
-	variables: GetChildrenQueryVariables,
-	getNode: Node
-): Mock<GetChildrenQuery, GetChildrenQueryVariables> {
-	return {
-		request: {
-			query: GET_CHILDREN,
-			variables
-		},
-		result: {
-			data: {
-				getNode
-			}
-		}
-	};
+export function mockGetChildren(getNode: Node): Mock<GQLTypes.GetChildrenQuery> {
+	return () => getNode;
 }
 
-export function mockGetChildrenError(
-	variables: GetChildrenQueryVariables,
-	error: ServerError | ApolloError
-): Mock<GetChildrenQuery, GetChildrenQueryVariables> {
-	return {
-		request: {
-			query: GET_CHILDREN,
-			variables
-		},
-		error
-	};
+export function mockGetChildrenError(error: ServerError | ApolloError): never {
+	throw error;
 }
 
-/**
- * Move Nodes Mock
- */
-export function mockMoveNodes(
-	variables: MoveNodesMutationVariables,
-	moveNodes: Node[],
-	callback?: () => void
-): Mock<MoveNodesMutation, MoveNodesMutationVariables> {
-	return {
-		request: {
-			query: MOVE_NODES,
-			variables
-		},
-		result: (): { data: MoveNodesMutation } => {
-			callback && callback();
-			return {
-				data: {
-					moveNodes
-				}
-			};
-		}
-	};
+export function mockMoveNodes(...moveNodes: Node[][]): Mock<GQLTypes.MoveNodesMutation> {
+	return () => moveNodes.pop() || [];
 }
 
-/**
- * Copy Nodes Mock
- */
-export function mockCopyNodes(
-	variables: MoveNodesMutationVariables,
-	copyNodes: Node[]
-): Mock<CopyNodesMutation, CopyNodesMutationVariables> {
-	return {
-		request: {
-			query: COPY_NODES,
-			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
-		},
-		result: {
-			data: {
-				copyNodes
-			}
-		}
-	};
+export function mockCopyNodes(copyNodes: Node[]): Mock<GQLTypes.CopyNodesMutation> {
+	return () => copyNodes;
 }
 
-/**
- * Create Folder Mock
- */
-export function mockCreateFolder(
-	variables: CreateFolderMutationVariables,
-	createFolder: Node
-): Mock<CreateFolderMutation, CreateFolderMutationVariables> {
-	return {
-		request: {
-			query: CREATE_FOLDER,
-			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
-		},
-		result: {
-			data: {
-				createFolder
-			}
-		}
-	};
+export function mockCreateFolder(createFolder: Node): Mock<GQLTypes.CreateFolderMutation> {
+	return () => createFolder;
 }
 
-export function mockCreateFolderError(
-	variables: CreateFolderMutationVariables,
-	error: ServerError | ApolloError
-): Mock<CreateFolderMutation, CreateFolderMutationVariables> {
-	return {
-		request: {
-			query: CREATE_FOLDER,
-			variables: { ...variables, shares_limit: SHARES_LOAD_LIMIT }
-		},
-		error
-	};
+export function mockCreateFolderError(error: ServerError | ApolloError): never {
+	throw error;
 }
 
-/**
- * Get path mock
- */
-export function mockGetPath(
-	variables: GetPathQueryVariables,
-	getPath: Node[],
-	callback?: () => void
-): Mock<GetPathQuery, GetPathQueryVariables> {
-	return {
-		request: {
-			query: GetPathDocument,
-			variables
-		},
-		result: (): { data: GetPathQuery } => {
-			callback?.();
-			return {
-				data: {
-					getPath
-				}
-			};
-		}
-	};
+export function mockGetPath(...getPath: Node[][]): Mock<GQLTypes.GetPathQuery> {
+	return () => getPath.pop() || [];
 }
 
-/**
- * Get permissions mock
- */
-export function mockGetPermissions(
-	variables: GetPermissionsQueryVariables,
-	node: Node
-): Mock<GetPermissionsQuery, GetPermissionsQueryVariables> {
-	return {
-		request: {
-			query: GET_PERMISSIONS,
-			variables
-		},
-		result: {
-			data: {
-				getNode: node
-			}
-		}
-	};
+export function mockGetPermissions(node: Node): Mock<GQLTypes.GetPermissionsQuery> {
+	return () => node;
 }
 
-/**
- * Get node mock
- */
 export function getNodeVariables(
 	nodeId: Id,
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
 	sharesLimit = SHARES_LOAD_LIMIT
-): GetNodeQueryVariables {
+): GQLTypes.GetNodeQueryVariables {
 	return {
 		node_id: nodeId,
 		children_limit: childrenLimit,
@@ -515,483 +137,156 @@ export function getNodeVariables(
 }
 
 export function mockGetNode(
-	variables: GetNodeQueryVariables,
-	getNode: File | Folder
-): Mock<GetNodeQuery, GetNodeQueryVariables> {
-	return {
-		request: {
-			query: GET_NODE,
-			variables
-		},
-		result: {
-			data: {
-				getNode
-			}
-		}
-	};
+	...getNode: Array<GQLTypes.File | GQLTypes.Folder>
+): Mock<GQLTypes.GetNodeQuery> {
+	return (parent, args) => find<Node>(getNode, (node) => node.id === args.node_id) || null;
 }
 
-/**
- * Get shares mock
- */
 export function getSharesVariables(
 	nodeId: Id,
 	sharesLimit = FULL_SHARES_LOAD_LIMIT
-): GetSharesQueryVariables {
+): GQLTypes.GetSharesQueryVariables {
 	return {
 		node_id: nodeId,
 		shares_limit: sharesLimit
 	};
 }
 
-export function mockGetShares(
-	variables: GetSharesQueryVariables,
-	getNode: Node
-): Mock<GetSharesQuery, GetSharesQueryVariables> {
-	return {
-		request: {
-			query: GET_SHARES,
-			variables
-		},
-		result: {
-			data: {
-				getNode
-			}
-		}
-	};
+export function mockGetShares(getNode: Node): Mock<GQLTypes.GetSharesQuery> {
+	return () => getNode;
 }
 
-/**
- * Get node mock
- */
-export function mockGetBaseNode(
-	variables: GetBaseNodeQueryVariables,
-	getNode: Node
-): Mock<GetBaseNodeQuery, GetBaseNodeQueryVariables> {
-	return {
-		request: {
-			query: GET_BASE_NODE,
-			variables
-		},
-		result: {
-			data: {
-				getNode
-			}
-		}
-	};
+export function mockGetBaseNode(getNode: Node): Mock<GQLTypes.GetBaseNodeQuery> {
+	return () => getNode;
 }
 
-/**
- * Delete share mock
- */
-export function mockDeleteShare(
-	variables: DeleteShareMutationVariables,
-	deleteShare: boolean
-): Mock<DeleteShareMutation, DeleteShareMutationVariables> {
-	return {
-		request: {
-			query: DELETE_SHARE,
-			variables
-		},
-		result: {
-			data: {
-				deleteShare
-			}
-		}
-	};
+export function mockDeleteShare(deleteShare: boolean): Mock<GQLTypes.DeleteShareMutation> {
+	return () => deleteShare;
 }
 
-/**
- * Create share mock
- */
 export function mockCreateShare(
-	variables: CreateShareMutationVariables,
-	createShare: Share,
+	createShare: GQLTypes.Share,
 	callback?: (...args: unknown[]) => void
-): Mock<CreateShareMutation, CreateShareMutationVariables> {
-	return {
-		request: {
-			query: CREATE_SHARE,
-			variables
-		},
-		result: (): { data: CreateShareMutation } => {
-			callback && callback();
-			return {
-				data: {
-					createShare
-				}
-			};
-		}
+): Mock<GQLTypes.CreateShareMutation> {
+	return (): typeof createShare => {
+		callback?.();
+		return createShare;
 	};
 }
 
-export function mockCreateShareError(
-	variables: CreateShareMutationVariables,
-	error: ApolloError | ServerError
-): Mock<CreateShareMutation, CreateShareMutationVariables> {
-	return {
-		request: {
-			query: CREATE_SHARE,
-			variables
-		},
-		error
-	};
+export function mockCreateShareError(error: ApolloError | ServerError): never {
+	throw error;
 }
 
-/**
- * Create share mock
- */
 export function mockUpdateShare(
-	variables: UpdateShareMutationVariables,
-	updateShare?: Share | null,
+	updateShare: GQLTypes.Share,
 	callback?: () => void
-): Mock<UpdateShareMutation, UpdateShareMutationVariables> {
-	return {
-		request: {
-			query: UPDATE_SHARE,
-			variables
-		},
-		result: (): { data: UpdateShareMutation } => {
-			callback && callback();
-			return {
-				data: {
-					updateShare
-				}
-			};
-		}
+): Mock<GQLTypes.UpdateShareMutation> {
+	return (): typeof updateShare => {
+		callback?.();
+		return updateShare;
 	};
 }
 
-export function mockUpdateShareError(
-	variables: UpdateShareMutationVariables,
-	error: ApolloError | ServerError
-): Mock<UpdateShareMutation, UpdateShareMutationVariables> {
-	return {
-		request: {
-			query: UPDATE_SHARE,
-			variables
-		},
-		error
-	};
+export function mockUpdateShareError(error: ApolloError | ServerError): never {
+	throw error;
 }
 
-/**
- * Get account by email mock
- */
 export function mockGetAccountByEmail(
-	variables: GetAccountByEmailQueryVariables,
-	account: QueryType['getAccountByEmail'],
+	account: GQLTypes.Account,
 	error?: ApolloError
-): Mock<GetAccountByEmailQuery, GetAccountByEmailQueryVariables> {
-	return {
-		request: {
-			query: GET_ACCOUNT_BY_EMAIL,
-			variables
-		},
-		result: {
-			data: {
-				getAccountByEmail: account
-			}
-		},
-		error
-	};
+): Mock<GQLTypes.GetAccountByEmailQuery> {
+	if (error !== undefined) {
+		throw error;
+	}
+	return () => account;
 }
 
 export function mockGetAccountsByEmail(
-	variables: GetAccountsByEmailQueryVariables,
-	accounts: QueryType['getAccountsByEmail'],
+	accounts: GQLTypes.Account[],
 	error?: ApolloError
-): Mock<GetAccountsByEmailQuery, GetAccountsByEmailQueryVariables> {
-	return {
-		request: {
-			query: GET_ACCOUNTS_BY_EMAIL,
-			variables
-		},
-		result: {
-			data: {
-				getAccountsByEmail: accounts
-			}
-		},
-		error
-	};
+): Mock<GQLTypes.GetAccountsByEmailQuery> {
+	if (error !== undefined) {
+		throw error;
+	}
+	return () => accounts;
 }
 
-export function mockGetLinks(
-	variables: GetLinksQueryVariables,
-	links: Maybe<Link>[]
-): Mock<GetLinksQuery, GetLinksQueryVariables> {
-	return {
-		request: {
-			query: GetLinksDocument,
-			variables
-		},
-		result: {
-			data: {
-				getLinks: links
-			}
-		}
-	};
+export function mockGetLinks(links: Maybe<GQLTypes.Link>[]): Mock<GQLTypes.GetLinksQuery> {
+	return () => links;
 }
 
 export function mockGetCollaborationLinks(
-	variables: GetCollaborationLinksQueryVariables,
-	collaborationLinks?: Array<Maybe<CollaborationLink>>
-): Mock<GetCollaborationLinksQuery, GetCollaborationLinksQueryVariables> {
-	return {
-		request: {
-			query: GetCollaborationLinksDocument,
-			variables
-		},
-		result: {
-			data: {
-				getCollaborationLinks: collaborationLinks || []
-			}
-		}
-	};
+	collaborationLinks?: Array<Maybe<GQLTypes.CollaborationLink>>
+): Mock<GQLTypes.GetCollaborationLinksQuery> {
+	return () => collaborationLinks || [];
 }
 
-/**
- * Create collaboration link mock
- */
 export function mockCreateCollaborationLink(
-	variables: CreateCollaborationLinkMutationVariables,
-	createCollaborationLink: CollaborationLink
-): Mock<CreateCollaborationLinkMutation, CreateCollaborationLinkMutationVariables> {
-	return {
-		request: {
-			query: CREATE_COLLABORATION_LINK,
-			variables
-		},
-		result: {
-			data: {
-				createCollaborationLink
-			}
-		}
-	};
+	createCollaborationLink: GQLTypes.CollaborationLink
+): Mock<GQLTypes.CreateCollaborationLinkMutation> {
+	return () => createCollaborationLink;
 }
 
-/**
- * Delete collaboration links mock
- */
 export function mockDeleteCollaborationLinks(
-	variables: DeleteCollaborationLinksMutationVariables,
 	deleteCollaborationLinks: Array<string>
-): Mock<DeleteCollaborationLinksMutation, DeleteCollaborationLinksMutationVariables> {
-	return {
-		request: {
-			query: DELETE_COLLABORATION_LINKS,
-			variables
-		},
-		result: {
-			data: {
-				deleteCollaborationLinks
-			}
-		}
-	};
+): Mock<GQLTypes.DeleteCollaborationLinksMutation> {
+	return () => deleteCollaborationLinks;
 }
 
-/**
- * Get File Versions mock
- */
-export function mockGetVersions(
-	variables: GetVersionsQueryVariables,
-	files: File[]
-): Mock<GetVersionsQuery, GetVersionsQueryVariables> {
-	return {
-		request: {
-			query: GET_VERSIONS,
-			variables
-		},
-		result: {
-			data: {
-				getVersions: files
-			}
-		}
-	};
+export function mockGetVersions(files: GQLTypes.File[]): Mock<GQLTypes.GetVersionsQuery> {
+	return () => files;
 }
 
-/**
- * Delete versions mock
- */
 export function mockDeleteVersions(
-	variables: DeleteVersionsMutationVariables,
 	versions: Array<Maybe<Scalars['Int']>>
-): Mock<DeleteVersionsMutation, DeleteVersionsMutationVariables> {
-	return {
-		request: {
-			query: DELETE_VERSIONS,
-			variables
-		},
-		result: {
-			data: {
-				deleteVersions: versions
-			}
-		}
-	};
+): Mock<GQLTypes.DeleteVersionsMutation> {
+	return () => versions;
 }
 
-/**
- * keep versions mock
- */
 export function mockKeepVersions(
-	variables: KeepVersionsMutationVariables,
 	versions: Array<Maybe<Scalars['Int']>>
-): Mock<KeepVersionsMutation, KeepVersionsMutationVariables> {
-	return {
-		request: {
-			query: KEEP_VERSIONS,
-			variables
-		},
-		result: {
-			data: {
-				keepVersions: versions
-			}
-		}
-	};
+): Mock<GQLTypes.KeepVersionsMutation> {
+	return () => versions;
 }
 
-/**
- * Clone version mock
- */
-export function mockCloneVersion(
-	variables: CloneVersionMutationVariables,
-	file: File
-): Mock<CloneVersionMutation, CloneVersionMutationVariables> {
-	return {
-		request: {
-			query: CLONE_VERSION,
-			variables
-		},
-		result: {
-			data: {
-				cloneVersion: file
-			}
-		}
-	};
+export function mockCloneVersion(file: GQLTypes.File): Mock<GQLTypes.CloneVersionMutation> {
+	return () => file;
 }
 
-/**
- * Get root list mock
- */
-export function mockGetRootsList(): Mock<GetRootsListQuery, GetRootsListQueryVariables> {
-	return {
-		request: {
-			query: GET_ROOTS_LIST,
-			variables: {}
-		},
-		result: {
-			data: {
-				getRootsList: [
-					{ __typename: 'Root', id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT },
-					{ __typename: 'Root', id: ROOTS.TRASH, name: ROOTS.TRASH }
-				]
-			}
-		}
-	};
+export function mockGetRootsList(): Mock<GQLTypes.GetRootsListQuery> {
+	return () => [
+		{ __typename: 'Root', id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT },
+		{ __typename: 'Root', id: ROOTS.TRASH, name: ROOTS.TRASH }
+	];
 }
 
 export function mockGetConfigs(
 	configs: Array<{ name: string; value: string }> = populateConfigs()
-): Mock<GetConfigsQuery, GetConfigsQueryVariables> {
-	return {
-		request: {
-			query: GET_CONFIGS,
-			variables: {}
-		},
-		result: {
-			data: {
-				getConfigs: configs
-			}
-		}
-	};
+): Mock<GQLTypes.GetConfigsQuery> {
+	return () => configs;
 }
 
-/**
- * Get Child mock
- */
-
-export function mockGetChild(
-	variables: GetChildQueryVariables,
-	node: GetChildQuery['getNode']
-): Mock<GetChildQuery, GetChildQueryVariables> {
-	return {
-		request: {
-			query: GET_CHILD,
-			variables: {
-				node_id: variables.node_id,
-				shares_limit: variables?.shares_limit || SHARES_LOAD_LIMIT
-			}
-		},
-		result: {
-			data: {
-				getNode: node
-			}
-		}
-	};
+export function mockGetChild(node: Node): Mock<GQLTypes.GetChildQuery> {
+	return () => node;
 }
 
-/**
- * Create link mock
- */
-export function mockCreateLink(
-	variables: CreateLinkMutationVariables,
-	link: Link
-): Mock<CreateLinkMutation, CreateLinkMutationVariables> {
-	return {
-		request: {
-			query: CreateLinkDocument,
-			variables
-		},
-		result: {
-			data: {
-				createLink: link
-			}
-		}
-	};
+export function mockCreateLink(link: GQLTypes.Link): Mock<GQLTypes.CreateLinkMutation> {
+	return () => link;
 }
 
 export function mockCreateLinkError(
-	variables: CreateLinkMutationVariables,
 	error: ApolloError | ServerError
-): Mock<CreateLinkMutation, CreateLinkMutationVariables> {
-	return {
-		request: {
-			query: CreateLinkDocument,
-			variables
-		},
-		error
-	};
+): Mock<GQLTypes.CreateLinkMutation> {
+	throw error;
 }
 
-/**
- * Update link mock
- */
-export function mockUpdateLink(
-	variables: UpdateLinkMutationVariables,
-	link: Link
-): Mock<UpdateLinkMutation, UpdateLinkMutationVariables> {
-	return {
-		request: {
-			query: UpdateLinkDocument,
-			variables
-		},
-		result: {
-			data: {
-				updateLink: link
-			}
-		}
-	};
+export function mockUpdateLink(link: GQLTypes.Link): Mock<GQLTypes.UpdateLinkMutation> {
+	return () => link;
 }
 
 export function mockUpdateLinkError(
-	variables: UpdateLinkMutationVariables,
 	error: ApolloError | ServerError
-): Mock<UpdateLinkMutation, UpdateLinkMutationVariables> {
-	return {
-		request: {
-			query: UpdateLinkDocument,
-			variables
-		},
-		error
-	};
+): Mock<GQLTypes.UpdateLinkMutation> {
+	throw error;
 }
