@@ -6,8 +6,10 @@
 
 import React, { ReactElement, useMemo } from 'react';
 
-import { ApolloProvider } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { SchemaLink } from '@apollo/client/link/schema';
+import { addMocksToSchema, type IMocks } from '@graphql-tools/mock';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
 	act,
 	ByRoleMatcher,
@@ -33,13 +35,14 @@ import { forEach, map, filter, reduce } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
-import { Mock } from './mockUtils';
+import { resolvers } from './resolvers';
 import { isFile, isFolder } from './utils';
 import I18nFactory from '../../i18n/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
-import { File as FilesFile, Folder } from '../types/graphql/types';
+import { File as FilesFile, Folder, Resolvers } from '../types/graphql/types';
 
 export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
 
@@ -170,10 +173,34 @@ export function generateError(message: string): GraphQLError {
 }
 
 interface WrapperProps {
-	children?: React.ReactNode | undefined;
+	children?: React.ReactNode;
 	initialRouterEntries?: string[];
-	mocks?: Mock[];
+	mocks?: IMocks<Resolvers>;
 }
+const ApolloProviderWrapper = ({
+	children,
+	mocks
+}: Pick<WrapperProps, 'children' | 'mocks'>): JSX.Element => {
+	const client = useMemo(() => {
+		if (mocks !== undefined) {
+			const schema = makeExecutableSchema({ typeDefs: GRAPHQL_SCHEMA });
+			const mockSchema = addMocksToSchema({
+				schema,
+				resolvers: () => ({
+					...resolvers,
+					...mocks
+				})
+			});
+			return new ApolloClient({
+				link: new SchemaLink({ schema: mockSchema }),
+				cache: global.apolloClient.cache
+			});
+		}
+		return global.apolloClient;
+	}, [mocks]);
+
+	return <ApolloProvider client={client}>{children}</ApolloProvider>;
+};
 
 const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): JSX.Element => {
 	const i18n = useMemo(() => {
@@ -181,17 +208,8 @@ const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): JSX.E
 		return i18nFactory.getAppI18n();
 	}, []);
 
-	const ApolloProviderWrapper: React.FC = ({ children: apolloChildren }) =>
-		mocks ? (
-			<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
-				{apolloChildren}
-			</MockedProvider>
-		) : (
-			<ApolloProvider client={global.apolloClient}>{apolloChildren}</ApolloProvider>
-		);
-
 	return (
-		<ApolloProviderWrapper>
+		<ApolloProviderWrapper mocks={mocks}>
 			<MemoryRouter
 				initialEntries={initialRouterEntries}
 				initialIndex={(initialRouterEntries?.length || 1) - 1}
