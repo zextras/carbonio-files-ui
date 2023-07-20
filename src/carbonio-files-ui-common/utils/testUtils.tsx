@@ -42,7 +42,8 @@ import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
-import { File as FilesFile, Folder, Resolvers } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { File as FilesFile, Folder } from '../types/graphql/types';
 
 export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
 

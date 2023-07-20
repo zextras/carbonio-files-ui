@@ -5,6 +5,7 @@
  */
 
 import { ApolloError, ServerError } from '@apollo/client';
+import { GraphQLError } from 'graphql';
 import { find } from 'lodash';
 
 import {
@@ -16,22 +17,30 @@ import {
 } from '../constants';
 import { populateConfigs, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
+import { MutationResolvers, QueryResolvers } from '../types/graphql/resolvers-types';
 import * as GQLTypes from '../types/graphql/types';
 import { Maybe, Scalars } from '../types/graphql/types';
+import { ArrayOneOrMore, OneOrMany } from '../types/utils';
 
 type Id = string;
 
-type QueryName<TData> = keyof TData & keyof GQLTypes.QueryResolvers;
+type QueryName<TData> = keyof TData & keyof QueryResolvers;
 
-type MutationName<TData> = keyof TData & keyof GQLTypes.MutationResolvers;
+type MutationName<TData> = keyof TData & keyof MutationResolvers;
 
-type Mock<TData> = TData extends Pick<GQLTypes.Query, '__typename'>
-	? GQLTypes.QueryResolvers[QueryName<TData>]
-	: GQLTypes.MutationResolvers[MutationName<TData>];
+type Mock<
+	TData extends Pick<GQLTypes.Query, '__typename'> | Pick<GQLTypes.Mutation, '__typename'>
+> = TData extends Pick<GQLTypes.Query, '__typename'>
+	? QueryResolvers[QueryName<TData>]
+	: MutationResolvers[MutationName<TData>];
+
+export function mockErrorResolver(error: GraphQLError): never {
+	throw error;
+}
 
 export function mockFindNodes(...findNodes: Node[][]): Mock<GQLTypes.FindNodesQuery> {
 	return () => {
-		const nodes = findNodes.pop() || [];
+		const nodes = findNodes.shift() || [];
 		return populateNodePage(nodes);
 	};
 }
@@ -90,16 +99,8 @@ export function getChildrenVariables(
 	};
 }
 
-export function mockGetChildren(getNode: Node): Mock<GQLTypes.GetChildrenQuery> {
-	return () => getNode;
-}
-
-export function mockGetChildrenError(error: ServerError | ApolloError): never {
-	throw error;
-}
-
 export function mockMoveNodes(...moveNodes: Node[][]): Mock<GQLTypes.MoveNodesMutation> {
-	return () => moveNodes.pop() || [];
+	return () => moveNodes.shift() || [];
 }
 
 export function mockCopyNodes(copyNodes: Node[]): Mock<GQLTypes.CopyNodesMutation> {
@@ -114,12 +115,40 @@ export function mockCreateFolderError(error: ServerError | ApolloError): never {
 	throw error;
 }
 
-export function mockGetPath(...getPath: Node[][]): Mock<GQLTypes.GetPathQuery> {
-	return () => getPath.pop() || [];
-}
-
-export function mockGetPermissions(node: Node): Mock<GQLTypes.GetPermissionsQuery> {
-	return () => node;
+export function mockGetPath(
+	...getPath: Array<OneOrMany<ArrayOneOrMore<Node>>>
+): Mock<GQLTypes.GetPathQuery> {
+	// this resolver assumes that the path has always at least one node,
+	// and that the last node of the path is always the node for which the getPath
+	// request has been made
+	return (parent, args) => {
+		const match = find(getPath, (path) => {
+			if (path.length > 0) {
+				// if the current iterated item is an array,
+				// check if the last element of the first sub-path matches the id
+				if (Array.isArray(path[0]) && path[0].length > 0) {
+					return path[0][path[0].length - 1].id === args.node_id;
+				}
+				// otherwise, check if the last element of the current path matches the id
+				const lastNodeOfPath = path[path.length - 1];
+				if (!Array.isArray(lastNodeOfPath)) {
+					return lastNodeOfPath.id === args.node_id;
+				}
+			}
+			return false;
+		});
+		if (match !== undefined) {
+			if (Array.isArray(match[0])) {
+				const firstPath = (match as ArrayOneOrMore<Node>[]).shift();
+				if (firstPath !== undefined) {
+					return firstPath;
+				}
+			} else {
+				return match as ArrayOneOrMore<Node>;
+			}
+		}
+		throw new Error('no more getPath responses provided to resolver');
+	};
 }
 
 export function getNodeVariables(
@@ -152,25 +181,19 @@ export function getSharesVariables(
 	};
 }
 
-export function mockGetShares(getNode: Node): Mock<GQLTypes.GetSharesQuery> {
-	return () => getNode;
-}
-
-export function mockGetBaseNode(getNode: Node): Mock<GQLTypes.GetBaseNodeQuery> {
-	return () => getNode;
-}
-
 export function mockDeleteShare(deleteShare: boolean): Mock<GQLTypes.DeleteShareMutation> {
 	return () => deleteShare;
 }
 
 export function mockCreateShare(
-	createShare: GQLTypes.Share,
-	callback?: (...args: unknown[]) => void
+	...createShare: GQLTypes.Share[]
 ): Mock<GQLTypes.CreateShareMutation> {
-	return (): typeof createShare => {
-		callback?.();
-		return createShare;
+	return () => {
+		const result = createShare.shift();
+		if (result !== undefined) {
+			return result;
+		}
+		throw new Error('no more createShares response provided to resolver');
 	};
 }
 
@@ -178,14 +201,8 @@ export function mockCreateShareError(error: ApolloError | ServerError): never {
 	throw error;
 }
 
-export function mockUpdateShare(
-	updateShare: GQLTypes.Share,
-	callback?: () => void
-): Mock<GQLTypes.UpdateShareMutation> {
-	return (): typeof updateShare => {
-		callback?.();
-		return updateShare;
-	};
+export function mockUpdateShare(updateShare: GQLTypes.Share): Mock<GQLTypes.UpdateShareMutation> {
+	return (): typeof updateShare => updateShare;
 }
 
 export function mockUpdateShareError(error: ApolloError | ServerError): never {
@@ -193,13 +210,11 @@ export function mockUpdateShareError(error: ApolloError | ServerError): never {
 }
 
 export function mockGetAccountByEmail(
-	account: GQLTypes.Account,
-	error?: ApolloError
+	...accounts: GQLTypes.Account[]
 ): Mock<GQLTypes.GetAccountByEmailQuery> {
-	if (error !== undefined) {
-		throw error;
-	}
-	return () => account;
+	return (parent, args) =>
+		find(accounts, (account) => account.__typename === 'User' && account.email === args.email) ||
+		null;
 }
 
 export function mockGetAccountsByEmail(
@@ -217,9 +232,9 @@ export function mockGetLinks(links: Maybe<GQLTypes.Link>[]): Mock<GQLTypes.GetLi
 }
 
 export function mockGetCollaborationLinks(
-	collaborationLinks?: Array<Maybe<GQLTypes.CollaborationLink>>
+	collaborationLinks: Array<Maybe<GQLTypes.CollaborationLink>>
 ): Mock<GQLTypes.GetCollaborationLinksQuery> {
-	return () => collaborationLinks || [];
+	return () => collaborationLinks;
 }
 
 export function mockCreateCollaborationLink(
@@ -262,13 +277,9 @@ export function mockGetRootsList(): Mock<GQLTypes.GetRootsListQuery> {
 }
 
 export function mockGetConfigs(
-	configs: Array<{ name: string; value: string }> = populateConfigs()
+	configs: Array<GQLTypes.Config> = populateConfigs()
 ): Mock<GQLTypes.GetConfigsQuery> {
 	return () => configs;
-}
-
-export function mockGetChild(node: Node): Mock<GQLTypes.GetChildQuery> {
-	return () => node;
 }
 
 export function mockCreateLink(link: GQLTypes.Link): Mock<GQLTypes.CreateLinkMutation> {
