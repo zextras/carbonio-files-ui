@@ -15,24 +15,12 @@ import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
-import {
-	populateFolder,
-	populateNodePage,
-	populateNodes,
-	populateParents
-} from '../mocks/mockUtils';
+import { populateFolder, populateNodes, populateParents } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import {
-	FindNodesQuery,
-	FindNodesQueryVariables,
-	Folder,
-	GetChildrenQuery,
-	GetChildrenQueryVariables,
-	GetNodeQuery,
-	GetNodeQueryVariables,
-	GetPathQuery,
-	GetPathQueryVariables
-} from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { FindNodesQuery, FindNodesQueryVariables, Folder } from '../types/graphql/types';
+import { ArrayOneOrMore } from '../types/utils';
+import { mockFindNodes, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
 const mockedRequestHandler = jest.fn();
@@ -56,22 +44,19 @@ describe('Filter View', () => {
 		test('Single click on a node opens the details tab on displayer', async () => {
 			const nodes = populateNodes(10);
 			const node = nodes[0];
-			server.use(
-				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', (req, res, ctx) =>
-					res(ctx.data({ findNodes: populateNodePage(nodes) }))
-				),
-				graphql.query<GetNodeQuery, GetNodeQueryVariables>('getNode', (req, res, ctx) => {
-					const { node_id: id } = req.variables;
-					const result = id === node.id ? node : null;
-					return res(ctx.data({ getNode: result as Node }));
-				})
-			);
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode(node)
+				}
+			} satisfies Partial<Resolvers>;
 			const { getByTextWithMarkup, user } = setup(
 				<Route path={`/:view/:filter?`}>
 					<FilterView />
 				</Route>,
 				{
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
+					mocks
 				}
 			);
 			// wait the content to be rendered
@@ -95,8 +80,9 @@ describe('Filter View', () => {
 		test('Move action does not close the displayer if node is not removed from the main list', async () => {
 			const nodes = populateNodes(2);
 			const node = nodes[0];
-			node.parent = populateFolder();
-			const { path: parentPath } = populateParents(node.parent);
+			const parentNode = populateFolder();
+			node.parent = parentNode;
+			const { path: parentPath } = populateParents(parentNode);
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
@@ -106,60 +92,27 @@ describe('Filter View', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.flagged = true;
-			const path = [...parentPath, node];
-			const pathUpdated = [...parentPath, destinationFolder, node];
-			const pathResponse = [path, pathUpdated];
-			server.use(
-				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', (req, res, ctx) =>
-					res(ctx.data({ findNodes: populateNodePage(nodes) }))
-				),
-				graphql.query<GetNodeQuery, GetNodeQueryVariables>('getNode', (req, res, ctx) => {
-					let result = null;
-					const { node_id: id } = req.variables;
-					switch (id) {
-						case node.id:
-							result = node;
-							break;
-						case (node.parent as Folder).id:
-							result = node.parent;
-							break;
-						case destinationFolder.id:
-							result = destinationFolder;
-							break;
-						default:
-							break;
-					}
-					return res(ctx.data({ getNode: result as Node }));
-				}),
-				graphql.query<GetPathQuery, GetPathQueryVariables>('getPath', (req, res, ctx) => {
-					let result = null;
-					const { node_id: id } = req.variables;
-					switch (id) {
-						case node.id:
-							result = pathResponse.shift() || [];
-							break;
-						case (node.parent as Folder).id:
-							result = parentPath;
-							break;
-						case destinationFolder.id:
-							result = [...parentPath, destinationFolder];
-							break;
-						default:
-							break;
-					}
-					return res(ctx.data({ getPath: result || [] }));
-				}),
-				graphql.query<GetChildrenQuery, GetChildrenQueryVariables>('getChildren', (req, res, ctx) =>
-					res(ctx.data({ getNode: node.parent }))
-				)
-			);
+			const path: ArrayOneOrMore<Node> = [...parentPath, node];
+			const pathUpdated: ArrayOneOrMore<Node> = [...parentPath, destinationFolder, node];
+			const pathResponse: ArrayOneOrMore<Node>[] = [path, pathUpdated];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode(node, parentNode, destinationFolder),
+					getPath: mockGetPath(pathResponse, parentPath, [...parentPath, destinationFolder])
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([node])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
 				<Route path={`/:view/:filter?`}>
 					<FilterView />
 				</Route>,
 				{
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
+					mocks
 				}
 			);
 			// wait the content to be rendered

@@ -23,6 +23,7 @@ import {
 	populateConfigs,
 	populateFile
 } from '../../../mocks/mockUtils';
+import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
 	GetVersionsQuery,
@@ -58,14 +59,12 @@ describe('Versioning', () => {
 		const version2 = getVersionFromFile(fileVersion2);
 		const version3 = getVersionFromFile(fileVersion3);
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: fileVersion3.id }, [
-				version3 as FilesFile,
-				version2 as FilesFile,
-				version1 as FilesFile
-			])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions([version3, version2, version1] as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		setup(<Versioning node={fileVersion3} />, { mocks });
 
@@ -108,19 +107,21 @@ describe('Versioning', () => {
 			const version4 = getVersionFromFile(fileVersion4);
 			const version5 = getVersionFromFile(fileVersion5);
 
-			const mocks = [
-				mockGetConfigs(),
-				mockGetVersions({ node_id: fileVersion5.id }, [
-					version5 as FilesFile,
-					version4 as FilesFile,
-					version3 as FilesFile,
-					version2 as FilesFile,
-					version1 as FilesFile
-				]),
-				mockDeleteVersions({ node_id: fileVersion5.id, versions: [version2.version] }, [
-					version2.version
-				])
-			];
+			const mocks = {
+				Query: {
+					getConfigs: mockGetConfigs(),
+					getVersions: mockGetVersions([
+						version5,
+						version4,
+						version3,
+						version2,
+						version1
+					] as FilesFile[])
+				},
+				Mutation: {
+					deleteVersions: mockDeleteVersions([version2.version])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<Versioning node={fileVersion5} />, { mocks });
 			await screen.findByText(getChipLabel(fileVersion5.last_editor));
 
@@ -175,21 +176,21 @@ describe('Versioning', () => {
 			const version4 = getVersionFromFile(fileVersion4);
 			const version5 = getVersionFromFile(fileVersion5);
 
-			const mocks = [
-				mockGetConfigs(),
-				mockGetVersions({ node_id: fileVersion5.id }, [
-					version5 as FilesFile,
-					version4 as FilesFile,
-					version3 as FilesFile,
-					version2 as FilesFile,
-					version1 as FilesFile
-				]),
-				mockDeleteVersions({ node_id: fileVersion5.id }, [
-					version4.version,
-					version3.version,
-					version1.version
-				])
-			];
+			const mocks = {
+				Query: {
+					getConfigs: mockGetConfigs(),
+					getVersions: mockGetVersions([
+						version5,
+						version4,
+						version3,
+						version2,
+						version1
+					] as FilesFile[])
+				},
+				Mutation: {
+					deleteVersions: mockDeleteVersions([version4.version, version3.version, version1.version])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<Versioning node={fileVersion5} />, { mocks });
 			await screen.findByText(getChipLabel(fileVersion5.last_editor));
 
@@ -241,12 +242,15 @@ describe('Versioning', () => {
 		const version1 = getVersionFromFile(fileVersion1);
 		const version2 = getVersionFromFile(fileVersion2);
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: fileVersion2.id }, [version2 as FilesFile, version1 as FilesFile]),
-			mockKeepVersions({ node_id: fileVersion2.id, versions: [2], keep_forever: true }, [2]),
-			mockKeepVersions({ node_id: fileVersion2.id, versions: [2], keep_forever: false }, [2])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions([version2, version1] as FilesFile[])
+			},
+			Mutation: {
+				keepVersions: mockKeepVersions([version2.version], [version2.version])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={fileVersion2} />, { mocks });
 		await screen.findByText(getChipLabel(fileVersion2.last_editor));
@@ -298,11 +302,15 @@ describe('Versioning', () => {
 		const version2 = getVersionFromFile(fileVersion2);
 		const version3 = getVersionFromFile(fileVersion3);
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: fileVersion2.id }, [version2 as FilesFile, version1 as FilesFile]),
-			mockCloneVersion({ node_id: fileVersion2.id, version: 2 }, version3 as FilesFile)
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions([version2, version1] as FilesFile[])
+			},
+			Mutation: {
+				cloneVersion: mockCloneVersion(version3 as FilesFile)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={fileVersion2} />, { mocks });
 		await screen.findByText(getChipLabel(fileVersion2.last_editor));
@@ -337,10 +345,12 @@ describe('Versioning', () => {
 
 		const version1 = getVersionFromFile(fileVersion1);
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: fileVersion1.id }, [version1 as FilesFile])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions([version1] as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={fileVersion1} />, { mocks });
 		await screen.findByText(getChipLabel(fileVersion1.last_editor));
@@ -372,10 +382,12 @@ describe('Versioning', () => {
 
 		const version1 = getVersionFromFile(fileVersion1);
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: fileVersion1.id }, [version1 as FilesFile])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions([version1] as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={fileVersion1} />, { mocks });
 		await screen.findByText(getChipLabel(fileVersion1.last_editor));
@@ -431,7 +443,12 @@ describe('Versioning', () => {
 			version1 as FilesFile
 		];
 
-		const mocks = [mockGetConfigs(), mockGetVersions({ node_id: fileVersion4.id }, versions)];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions)
+			}
+		} satisfies Partial<Resolvers>;
 
 		server.use(
 			rest.post<UploadRequestBody, UploadVersionRequestParams, UploadVersionResponse>(
@@ -494,10 +511,12 @@ describe('Versioning', () => {
 			versions.unshift(version);
 		}
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
@@ -551,10 +570,12 @@ describe('Versioning', () => {
 		fileVersions.unshift(fileVersionWithoutKeep);
 		versions.unshift(versionWithoutKeep);
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
@@ -616,11 +637,12 @@ describe('Versioning', () => {
 
 		// remove first version from list to simulate auto-deletion of backend
 		const updatedVersions = [versionUpload].concat(versions.slice(0, versions.length - 1));
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[]),
-			mockGetVersions({ node_id: baseFile.id }, updatedVersions as FilesFile[])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		server.use(
 			rest.post<UploadRequestBody, UploadVersionRequestParams, UploadVersionResponse>(
@@ -678,11 +700,15 @@ describe('Versioning', () => {
 			versions.unshift(version);
 		}
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[]),
-			mockKeepVersions({ node_id: baseFile.id, versions: [1], keep_forever: false }, [1])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			},
+			Mutation: {
+				keepVersions: mockKeepVersions([1])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
@@ -724,11 +750,15 @@ describe('Versioning', () => {
 			versions.unshift(version);
 		}
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[]),
-			mockDeleteVersions({ node_id: baseFile.id, versions: [1] }, [1])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			},
+			Mutation: {
+				deleteVersions: mockDeleteVersions([1])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
@@ -766,11 +796,15 @@ describe('Versioning', () => {
 		}
 
 		const purgedVersions = map(versions.slice(1), (version) => version.version);
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[]),
-			mockDeleteVersions({ node_id: baseFile.id }, purgedVersions)
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			},
+			Mutation: {
+				deleteVersions: mockDeleteVersions(purgedVersions)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
@@ -808,14 +842,16 @@ describe('Versioning', () => {
 			versions.unshift(version);
 		}
 
-		const mocks = [
-			mockGetConfigs(
-				populateConfigs({
-					[CONFIGS.MAX_VERSIONS]: `${maxVersions}`
-				})
-			),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(
+					populateConfigs({
+						[CONFIGS.MAX_VERSIONS]: `${maxVersions}`
+					})
+				),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
@@ -857,14 +893,16 @@ describe('Versioning', () => {
 			versions.unshift(version);
 		}
 
-		const mocks = [
-			mockGetConfigs(
-				populateConfigs({
-					[CONFIGS.MAX_VERSIONS]: `${maxVersions}`
-				})
-			),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(
+					populateConfigs({
+						[CONFIGS.MAX_VERSIONS]: `${maxVersions}`
+					})
+				),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
@@ -905,10 +943,12 @@ describe('Versioning', () => {
 		const openNodeWithDocsSpy = jest.fn();
 		jest.spyOn(moduleUtils, 'openNodeWithDocs').mockImplementation(openNodeWithDocsSpy);
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
@@ -941,10 +981,12 @@ describe('Versioning', () => {
 		const version = getVersionFromFile(baseFile);
 		const versions = [version];
 
-		const mocks = [
-			mockGetConfigs(),
-			mockGetVersions({ node_id: baseFile.id }, versions as FilesFile[])
-		];
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions(versions as FilesFile[])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);

@@ -6,14 +6,14 @@
 
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
 import { screen, waitFor, within } from '@testing-library/react';
 
 import { NodeDetailsDescription } from './NodeDetailsDescription';
 import { populateFile } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
-import { mockUpdateNodeDescription, mockUpdateNodeDescriptionError } from '../../utils/mockUtils';
+import { mockErrorResolver } from '../../utils/mockUtils';
 import { generateError, setup } from '../../utils/testUtils';
 
 describe('NodeDetailsDescription component', () => {
@@ -27,7 +27,7 @@ describe('NodeDetailsDescription component', () => {
 				description={node.description}
 				canUpsertDescription={canUpsertDescription(node)}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText('Click the edit button to add a description')).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe('NodeDetailsDescription component', () => {
 				description={node.description}
 				canUpsertDescription={canUpsertDescription(node)}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(
@@ -60,7 +60,7 @@ describe('NodeDetailsDescription component', () => {
 				description={node.description}
 				canUpsertDescription={canUpsertDescription(node)}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 
@@ -78,7 +78,7 @@ describe('NodeDetailsDescription component', () => {
 				description={node.description}
 				canUpsertDescription={canUpsertDescription(node)}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 
@@ -98,7 +98,7 @@ describe('NodeDetailsDescription component', () => {
 				description={node.description}
 				canUpsertDescription={canUpsertDescription(node)}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe('NodeDetailsDescription component', () => {
 				description={node.description}
 				canUpsertDescription={canUpsertDescription(node)}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
@@ -177,7 +177,7 @@ describe('NodeDetailsDescription component', () => {
 				description={node.description}
 				canUpsertDescription={canUpsertDescription(node)}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
@@ -221,21 +221,15 @@ describe('NodeDetailsDescription component', () => {
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';
 
-		const updateNodeDescriptionMutationCallback = jest.fn();
-
-		const mocks = [
-			mockUpdateNodeDescription(
-				{
-					node_id: node.id,
-					description: newDescription
-				},
-				{
+		const mocks = {
+			Mutation: {
+				updateNode: jest.fn(() => ({
 					...node,
 					description: newDescription
-				},
-				updateNodeDescriptionMutationCallback
-			)
-		];
+				}))
+			}
+		} satisfies Partial<Resolvers>;
+
 		const { user } = setup(
 			<NodeDetailsDescription
 				id={node.id}
@@ -272,24 +266,19 @@ describe('NodeDetailsDescription component', () => {
 
 		expect(saveIcon).not.toBeVisible();
 
-		await waitFor(() => expect(updateNodeDescriptionMutationCallback).toHaveBeenCalled());
-		expect(updateNodeDescriptionMutationCallback).toHaveBeenCalledTimes(1);
+		await waitFor(() => expect(mocks.Mutation.updateNode).toHaveBeenCalled());
+		expect(mocks.Mutation.updateNode).toHaveBeenCalledTimes(1);
 	});
 
 	test('if save operation throws an error, description input field is shown with last description typed', async () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';
-
-		const mocks = [
-			mockUpdateNodeDescriptionError(
-				{
-					node_id: node.id,
-					description: newDescription
-				},
-				new ApolloError({ graphQLErrors: [generateError('update description error')] })
-			)
-		];
+		const mocks = {
+			Mutation: {
+				updateNode: mockErrorResolver(generateError('update description error'))
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(
 			<NodeDetailsDescription
 				id={node.id}

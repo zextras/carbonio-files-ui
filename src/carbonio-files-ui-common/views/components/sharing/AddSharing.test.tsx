@@ -6,8 +6,8 @@
 
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { GraphQLError } from 'graphql';
 
 import { AddSharing } from './AddSharing';
 import {
@@ -16,12 +16,17 @@ import {
 	populateShare,
 	populateUser
 } from '../../../mocks/mockUtils';
-import { GetNodeQuery, GetNodeQueryVariables, SharePermission } from '../../../types/graphql/types';
+import { Resolvers } from '../../../types/graphql/resolvers-types';
+import {
+	GetNodeDocument,
+	GetNodeQuery,
+	GetNodeQueryVariables,
+	SharePermission
+} from '../../../types/graphql/types';
 import {
 	getNodeVariables,
-	mockCreateShare,
-	mockGetAccountByEmail,
-	mockGetNode
+	mockErrorResolver,
+	mockGetAccountByEmail
 } from '../../../utils/mockUtils';
 import { generateError, setup } from '../../../utils/testUtils';
 
@@ -44,7 +49,11 @@ describe('Add Sharing', () => {
 		const userAccount = populateUser();
 		// set email to lowercase to be compatible with the contacts regexp
 		userAccount.email = userAccount.email.toLowerCase();
-		const mocks = [mockGetAccountByEmail({ email: userAccount.email }, userAccount)];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -86,7 +95,11 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'existing-share-1', userAccount);
 		node.shares = [share];
-		const mocks = [mockGetAccountByEmail({ email: userAccount.email }, userAccount)];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -129,7 +142,7 @@ describe('Add Sharing', () => {
 			]
 		});
 
-		const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
@@ -159,7 +172,7 @@ describe('Add Sharing', () => {
 			]
 		});
 
-		const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		await user.type(chipInput, 'c');
@@ -186,7 +199,7 @@ describe('Add Sharing', () => {
 			]
 		});
 
-		const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		await user.type(chipInput, 'c');
@@ -210,19 +223,14 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadOnly;
-		const createShareMutationFn = jest.fn();
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadOnly
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(() => share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -255,7 +263,7 @@ describe('Add Sharing', () => {
 		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 	});
 
 	test('when user click on a new share permissions icon button of the chip the popover is shown', async () => {
@@ -264,7 +272,11 @@ describe('Add Sharing', () => {
 		const userAccount = populateUser();
 		// set email to lowercase to be compatible with the contacts regexp
 		userAccount.email = userAccount.email.toLowerCase();
-		const mocks = [mockGetAccountByEmail({ email: userAccount.email }, userAccount)];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		const contact = populateGalContact(userAccount.full_name, userAccount.email);
 		mockedSoapFetch.mockReturnValue({
@@ -319,19 +331,14 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadWriteAndShare;
-		const createShareMutationFn = jest.fn();
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadWriteAndShare
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(() => share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -341,9 +348,9 @@ describe('Add Sharing', () => {
 			]
 		});
 		// write getNode in cache since it is used to establish permissions
-		const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			...mockedGetNodeQuery.request,
+			query: GetNodeDocument,
+			variables: getNodeVariables(node.id),
 			data: {
 				getNode: node
 			}
@@ -412,7 +419,7 @@ describe('Add Sharing', () => {
 		expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
 		// confirm add with share button
 		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 	});
 
 	test('without write permissions editor role cannot be selected', async () => {
@@ -425,19 +432,14 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadAndShare;
-		const createShareMutationFn = jest.fn();
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadAndShare
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(() => share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -447,9 +449,9 @@ describe('Add Sharing', () => {
 			]
 		});
 		// write getNode in cache since it is used to establish permissions
-		const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			...mockedGetNodeQuery.request,
+			query: GetNodeDocument,
+			variables: getNodeVariables(node.id),
 			data: {
 				getNode: node
 			}
@@ -500,7 +502,7 @@ describe('Add Sharing', () => {
 		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
 		expect(screen.getByTestId('icon: Share')).toBeVisible();
 		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 	});
 
 	test('when user click on share button shares are created, chip input and custom message textarea are cleared and shared button is disabled', async () => {
@@ -513,18 +515,14 @@ describe('Add Sharing', () => {
 		share.permission = SharePermission.ReadOnly;
 		const createShareMutationFn = jest.fn();
 		// const customMessage = 'this is a custom message';
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadOnly
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(() => share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -563,7 +561,7 @@ describe('Add Sharing', () => {
 		// expect(customMessageInputField).toHaveValue(customMessage);
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 		// expect(customMessageInputField).toHaveValue('');
 		expect(screen.queryByText(userAccount.full_name[0])).not.toBeInTheDocument();
 		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
@@ -579,20 +577,15 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadOnly;
-		const createShareMutationFn = jest.fn();
 		// const customMessage = 'this is a custom message';
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadOnly
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(() => share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -630,10 +623,9 @@ describe('Add Sharing', () => {
 		await screen.findByText(userAccount.full_name);
 		// share button is now active
 		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
-
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 		// share button returns to be disabled after creation success
 		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
 	});
@@ -646,13 +638,11 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		// force error
 		const error = generateError('account not found');
-		const mocks = [
-			mockGetAccountByEmail(
-				{ email: userAccount.email },
-				null,
-				new ApolloError({ graphQLErrors: [error] })
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockErrorResolver(error)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -699,29 +689,20 @@ describe('Add Sharing', () => {
 		userAccount2.email = userAccount2.email.toLowerCase();
 		const share2 = populateShare(node, 'new-share-2', userAccount2);
 		share2.permission = SharePermission.ReadAndShare;
-		const createShareMutationFn = jest.fn();
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount1.email }, userAccount1),
-			mockGetAccountByEmail({ email: userAccount2.email }, userAccount2),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount1.id,
-					permission: SharePermission.ReadAndWrite
-				},
-				share1,
-				createShareMutationFn
-			),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount2.id,
-					permission: SharePermission.ReadAndShare
-				},
-				share2,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
+			},
+			Mutation: {
+				createShare: jest.fn(() => {
+					const result = [share1, share2].shift();
+					if (result !== undefined) {
+						return result;
+					}
+					throw new GraphQLError('no more createShare response provided');
+				})
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation for both the calls
 		mockedSoapFetch
 			.mockReturnValueOnce({
@@ -739,9 +720,9 @@ describe('Add Sharing', () => {
 				]
 			});
 		// write getNode in cache since it is used to establish permissions
-		const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			...mockedGetNodeQuery.request,
+			query: GetNodeDocument,
+			variables: getNodeVariables(node.id),
 			data: {
 				getNode: node
 			}
@@ -824,8 +805,8 @@ describe('Add Sharing', () => {
 
 		// confirm add with share button
 		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 		// mutation is called 2 times, one for each new collaborator
-		expect(createShareMutationFn).toHaveBeenCalledTimes(2);
+		expect(mocks.Mutation.createShare).toHaveBeenCalledTimes(2);
 	});
 });

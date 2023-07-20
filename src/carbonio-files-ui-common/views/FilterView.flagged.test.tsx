@@ -21,11 +21,13 @@ import {
 } from '../constants';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
-import { getFindNodesVariables, mockFindNodes } from '../utils/mockUtils';
+import { mockFindNodes } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../utils/testUtils';
 
-const mockedRequestHandler = jest.fn();
+type FindNodesHandler = typeof handleFindNodesRequest;
+const mockedRequestHandler = jest.fn<ReturnType<FindNodesHandler>, Parameters<FindNodesHandler>>();
 
 beforeEach(() => {
 	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
@@ -69,12 +71,11 @@ describe('Filter view', () => {
 
 		test('breadcrumb show Flagged', async () => {
 			const nodes = populateNodes(1);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					nodes
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup } = setup(
 				<Route path={`/:view/:filter?`} component={FilterView} />,

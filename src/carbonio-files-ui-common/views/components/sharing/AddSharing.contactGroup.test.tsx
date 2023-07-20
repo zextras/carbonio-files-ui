@@ -6,7 +6,7 @@
 import React from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
-import { forEach, map, find, reduce } from 'lodash';
+import { forEach, find, reduce } from 'lodash';
 
 import { AddSharing } from './AddSharing';
 import { soapFetch } from '../../../../network/network';
@@ -19,6 +19,7 @@ import {
 	populateMembers,
 	populateShare
 } from '../../../mocks/mockUtils';
+import { Resolvers } from '../../../types/graphql/resolvers-types';
 import { User } from '../../../types/graphql/types';
 import {
 	AutocompleteResponse,
@@ -60,7 +61,7 @@ describe('Add Sharing', () => {
 				]
 			});
 
-			const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+			const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
 			await user.type(chipInput, 'c');
@@ -118,9 +119,11 @@ describe('Add Sharing', () => {
 				[[], [], []]
 			);
 
-			const mocks = [
-				mockGetAccountsByEmail({ emails: contactsNoGalEmails }, contactsNoGalAccounts)
-			];
+			const mocks = {
+				Query: {
+					getAccountsByEmail: mockGetAccountsByEmail(contactsNoGalAccounts)
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<AddSharing node={node} />, { mocks });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
@@ -171,13 +174,14 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const mocks = [
-				mockGetAccountsByEmail(
-					{ emails: map(invalidMembers, (invalidMember) => invalidMember.value) },
-					// return array of null to indicate emails are not associated to any account
-					new Array(invalidMembers.length).fill(null)
-				)
-			];
+			const mocks = {
+				Query: {
+					getAccountsByEmail: mockGetAccountsByEmail(
+						// return array of null to indicate emails are not associated to any account
+						new Array(invalidMembers.length).fill(null)
+					)
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<AddSharing node={node} />, { mocks });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
@@ -238,7 +242,7 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+			const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
 			await user.type(chipInput, 'c');
@@ -278,7 +282,7 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+			const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
 			await user.type(chipInput, 'c');

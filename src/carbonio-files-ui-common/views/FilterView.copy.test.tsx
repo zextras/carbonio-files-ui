@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent, screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -13,7 +13,6 @@ import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import {
 	populateFile,
 	populateFolder,
@@ -21,13 +20,20 @@ import {
 	populateNodes,
 	populateParents
 } from '../mocks/mockUtils';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import { Node } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import {
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
+import { ArrayOneOrMore } from '../types/utils';
 import {
 	getChildrenVariables,
-	getFindNodesVariables,
 	mockCopyNodes,
 	mockFindNodes,
-	mockGetChildren,
+	mockGetNode,
 	mockGetPath
 } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, selectNodes, setup } from '../utils/testUtils';
@@ -50,12 +56,11 @@ describe('Filter View', () => {
 				folder.parent = populateFolder();
 				currentFilter.push(file, folder);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -85,27 +90,23 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetPath({ node_id: parentFolder.id }, path.slice(0, path.length - 1)),
-					mockGetChildren(getChildrenVariables(parentFolder.id), parentFolder),
-					mockCopyNodes(
-						{
-							node_ids: [nodeToCopy.id],
-							destination_id: destinationFolder.id
-						},
-						[{ ...nodeToCopy, parent: destinationFolder }]
-					)
-				];
+
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode(parentFolder),
+						getPath: mockGetPath(path.slice(0, path.length - 1) as ArrayOneOrMore<Node>)
+					},
+					Mutation: {
+						copyNodes: mockCopyNodes([{ ...nodeToCopy, parent: destinationFolder }])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -118,7 +119,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -145,7 +146,11 @@ describe('Filter View', () => {
 					'Files',
 					...map(path.slice(0, path.length - 1), (node) => node.name)
 				);
-				await findByTextWithMarkup(buildBreadCrumbRegExp(path[0].name));
+				await findByTextWithMarkup(breadcrumbRegexp);
+				act(() => {
+					// run modal timers
+					jest.runOnlyPendingTimers();
+				});
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
@@ -169,7 +174,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -191,28 +196,25 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetPath({ node_id: parentFolder.id }, [parentFolder]),
-					mockGetChildren(getChildrenVariables(parentFolder.id), parentFolder),
-					mockCopyNodes(
-						{
-							node_ids: map(nodesToCopy, (node) => node.id),
-							destination_id: destinationFolder.id
-						},
-						map(nodesToCopy, (node) => ({ ...node, parent: destinationFolder }))
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode(parentFolder),
+						getPath: mockGetPath([parentFolder])
+					},
+					Mutation: {
+						copyNodes: mockCopyNodes(
+							map(nodesToCopy, (node) => ({ ...node, parent: destinationFolder }))
+						)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -225,7 +227,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -247,6 +249,10 @@ describe('Filter View', () => {
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(parentFolder.name);
 				const breadcrumb = await findByTextWithMarkup(breadcrumbRegexp);
+				act(() => {
+					// run modal timers
+					jest.runOnlyPendingTimers();
+				});
 				expect(breadcrumb).toBeVisible();
 
 				await user.click(destinationFolderItem);
@@ -270,7 +276,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -291,28 +297,25 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockCopyNodes(
-						{
-							node_ids: map(nodesToCopy, (node) => node.id),
-							destination_id: destinationFolder.id
-						},
-						map(nodesToCopy, (node) => ({ ...node, parent: destinationFolder }))
-					),
-					mockGetPath({ node_id: localRoot.id }, [localRoot])
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode(localRoot),
+						getPath: mockGetPath([localRoot])
+					},
+					Mutation: {
+						copyNodes: mockCopyNodes(
+							map(nodesToCopy, (node) => ({ ...node, parent: destinationFolder }))
+						)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -325,7 +328,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -384,7 +387,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -405,27 +408,23 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetPath({ node_id: parentFolder.id }, path.slice(0, path.length - 1)),
-					mockGetChildren(getChildrenVariables(parentFolder.id), parentFolder),
-					mockCopyNodes(
-						{
-							node_ids: [nodeToCopy.id],
-							destination_id: destinationFolder.id
-						},
-						[{ ...nodeToCopy, parent: destinationFolder }]
-					)
-				];
+
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode(parentFolder),
+						getPath: mockGetPath(path.slice(0, path.length - 1) as ArrayOneOrMore<Node>)
+					},
+					Mutation: {
+						copyNodes: mockCopyNodes([{ ...nodeToCopy, parent: destinationFolder }])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -438,7 +437,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -459,6 +458,10 @@ describe('Filter View', () => {
 					...map(path.slice(0, path.length - 1), (node) => node.name)
 				);
 				await findByTextWithMarkup(breadcrumbRegexp);
+				act(() => {
+					// run modal timers
+					jest.runOnlyPendingTimers();
+				});
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
@@ -482,7 +485,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 

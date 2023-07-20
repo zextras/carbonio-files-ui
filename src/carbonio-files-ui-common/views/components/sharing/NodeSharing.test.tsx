@@ -19,7 +19,9 @@ import {
 	populateShares,
 	populateUser
 } from '../../../mocks/mockUtils';
+import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
+	GetNodeDocument,
 	GetNodeQuery,
 	GetNodeQueryVariables,
 	SharedTarget,
@@ -27,16 +29,14 @@ import {
 	User
 } from '../../../types/graphql/types';
 import {
-	getNodeVariables,
-	getSharesVariables,
 	mockCreateShare,
 	mockDeleteShare,
 	mockGetAccountByEmail,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks,
-	mockGetShares,
-	mockUpdateShare
+	mockUpdateShare,
+	getNodeVariables
 } from '../../../utils/mockUtils';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
@@ -67,11 +67,13 @@ describe('Node Sharing', () => {
 		node.shares = [userShare, dlShare, loggedUserShare];
 		// set an owner different from logged user
 		node.owner = populateUser();
-		const mocks = [
-			mockGetShares(getSharesVariables(node.id), node),
-			mockGetLinks({ node_id: node.id }, node.links),
-			mockGetCollaborationLinks({ node_id: node.id })
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode(node),
+				getLinks: mockGetLinks(node.links),
+				getCollaborationLinks: mockGetCollaborationLinks([])
+			}
+		} satisfies Partial<Resolvers>;
 		const { getByTextWithMarkup } = setup(<NodeSharing node={node} />, { mocks });
 		await screen.findByText(/collaborators/i);
 		await screen.findByText(userAccount.full_name);
@@ -94,7 +96,11 @@ describe('Node Sharing', () => {
 			node.permissions.can_share = false;
 			const shares = populateShares(node, 10);
 			node.shares = shares;
-			const mocks = [mockGetShares(getSharesVariables(node.id), node)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode(node)
+				}
+			} satisfies Partial<Resolvers>;
 			setup(<NodeSharing node={node} />, { mocks });
 			await screen.findByText(getChipLabel(shares[0].share_target as SharedTarget));
 			expect(screen.getByText(/collaborators/i)).toBeVisible();
@@ -114,13 +120,16 @@ describe('Node Sharing', () => {
 			node.shares = shares;
 			// set owner different from logged user
 			node.owner = populateUser();
-			const mocks = [
-				mockGetShares(getSharesVariables(node.id), node),
-				mockDeleteShare(
-					{ node_id: node.id, share_target_id: (loggedUserShare.share_target as SharedTarget).id },
-					true
-				)
-			];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode(node),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				},
+				Mutation: {
+					deleteShare: mockDeleteShare(true)
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
 			await screen.findByText(getChipLabel(shares[0].share_target as SharedTarget));
 			expect(screen.getByText(/you$/i)).toBeVisible();
@@ -159,11 +168,13 @@ describe('Node Sharing', () => {
 			node.permissions.can_share = true;
 			const shares = populateShares(node, 5);
 			node.shares = shares;
-			const mocks = [
-				mockGetShares(getSharesVariables(node.id), node),
-				mockGetLinks({ node_id: node.id }, node.links),
-				mockGetCollaborationLinks({ node_id: node.id })
-			];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode(node),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				}
+			} satisfies Partial<Resolvers>;
 			setup(<NodeSharing node={node} />, { mocks });
 			await screen.findByText(getChipLabel(shares[0].share_target as SharedTarget));
 			expect(screen.getByText(/collaborators/i)).toBeVisible();
@@ -181,11 +192,13 @@ describe('Node Sharing', () => {
 			node.shares = shares;
 			// set owner different from logged user
 			node.owner = populateUser();
-			const mocks = [
-				mockGetShares(getSharesVariables(node.id), node),
-				mockGetLinks({ node_id: node.id }, node.links),
-				mockGetCollaborationLinks({ node_id: node.id })
-			];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode(node),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				}
+			} satisfies Partial<Resolvers>;
 			setup(<NodeSharing node={node} />, { mocks });
 			await screen.findByText(getChipLabel(shares[0].share_target as SharedTarget));
 			expect(screen.getByText(node.owner.full_name)).toBeVisible();
@@ -198,15 +211,16 @@ describe('Node Sharing', () => {
 			const userAccount = populateUser();
 			const share = populateShare(node, 'key', userAccount);
 			node.shares = [share];
-			const mocks = [
-				mockGetShares(getSharesVariables(node.id), node),
-				mockGetLinks({ node_id: node.id }, node.links),
-				mockGetCollaborationLinks({ node_id: node.id }),
-				mockDeleteShare(
-					{ node_id: node.id, share_target_id: (share.share_target as SharedTarget).id },
-					true
-				)
-			];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode(node),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				},
+				Mutation: {
+					deleteShare: mockDeleteShare(true)
+				}
+			} satisfies Partial<Resolvers>;
 			const { getByTextWithMarkup, user } = setup(<NodeSharing node={node} />, {
 				mocks
 			});
@@ -249,19 +263,19 @@ describe('Node Sharing', () => {
 			});
 			node.shares = shares;
 			const shareToUpdate = { ...shares[0], share_target: shares[0].share_target as SharedTarget };
-			const mocks = [
-				mockGetShares(getSharesVariables(node.id), node),
-				mockGetLinks({ node_id: node.id }, node.links),
-				mockGetCollaborationLinks({ node_id: node.id }),
-				mockUpdateShare(
-					{
-						share_target_id: shareToUpdate.share_target.id,
-						node_id: node.id,
+			const mocks = {
+				Query: {
+					getNode: mockGetNode(node),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				},
+				Mutation: {
+					updateShare: mockUpdateShare({
+						...shareToUpdate,
 						permission: SharePermission.ReadWriteAndShare
-					},
-					{ ...shareToUpdate, permission: SharePermission.ReadWriteAndShare }
-				)
-			];
+					})
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
 			await screen.findByText(getChipLabel(shareToUpdate.share_target));
 			const collaboratorsContainer = screen.getByTestId('node-sharing-collaborators');
@@ -322,25 +336,22 @@ describe('Node Sharing', () => {
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
 				]
 			});
-			const mocks = [
-				mockGetShares(getSharesVariables(node.id), node),
-				mockGetLinks({ node_id: node.id }, node.links),
-				mockGetCollaborationLinks({ node_id: node.id }),
-				mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-				mockCreateShare(
-					{
-						node_id: node.id,
-						permission: SharePermission.ReadWriteAndShare,
-						share_target_id: (shareToCreate.share_target as SharedTarget).id
-					},
-					shareToCreate
-				)
-			];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode(node),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([]),
+					getAccountByEmail: mockGetAccountByEmail(userAccount)
+				},
+				Mutation: {
+					createShare: mockCreateShare(shareToCreate)
+				}
+			} satisfies Partial<Resolvers>;
 
 			// write getNode query in cache and set initial router entry to contain active node id
-			const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
 			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				...mockedGetNodeQuery.request,
+				query: GetNodeDocument,
+				variables: getNodeVariables(node.id),
 				data: {
 					getNode: node
 				}
@@ -394,12 +405,9 @@ describe('Node Sharing', () => {
 			// the popover to change permission is shown
 			await screen.findByText(/editor/i);
 			// wait for the listener of the popover to be registered
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 2);
-					})
-			);
+			act(() => {
+				jest.advanceTimersToNextTimer();
+			});
 			expect(screen.getByTestId('icon: Square')).toBeVisible();
 			// save button is not present since the changes on the chip are immediate
 			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
@@ -470,34 +478,23 @@ describe('Node Sharing', () => {
 						populateGalContact(userAccount2.full_name, userAccount2.email)
 					]
 				});
-			const mocks = [
-				mockGetShares(getSharesVariables(node.id), node),
-				mockGetLinks({ node_id: node.id }, node.links),
-				mockGetCollaborationLinks({ node_id: node.id }),
-				mockGetAccountByEmail({ email: userAccount1.email }, userAccount1),
-				mockGetAccountByEmail({ email: userAccount2.email }, userAccount2),
-				mockCreateShare(
-					{
-						node_id: node.id,
-						permission: shareToCreate1.permission,
-						share_target_id: (shareToCreate1.share_target as SharedTarget).id
-					},
-					shareToCreate1
-				),
-				mockCreateShare(
-					{
-						node_id: node.id,
-						permission: shareToCreate2.permission,
-						share_target_id: (shareToCreate2.share_target as SharedTarget).id
-					},
-					shareToCreate2
-				)
-			];
+
+			const mocks = {
+				Query: {
+					getNode: mockGetNode(node),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([]),
+					getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
+				},
+				Mutation: {
+					createShare: mockCreateShare(shareToCreate1, shareToCreate2)
+				}
+			} satisfies Partial<Resolvers>;
 
 			// write getNode query in cache and set initial router entry to contain active node id
-			const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
 			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				...mockedGetNodeQuery.request,
+				query: GetNodeDocument,
+				variables: getNodeVariables(node.id),
 				data: {
 					getNode: node
 				}

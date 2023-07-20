@@ -12,7 +12,8 @@ import { UploadListItemWrapper } from './UploadListItemWrapper';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateUploadItem } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
-import { mockGetBaseNode } from '../../utils/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockGetNode } from '../../utils/mockUtils';
 import { setup } from '../../utils/testUtils';
 
 describe('Upload List Item Wrapper', () => {
@@ -24,15 +25,18 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.FAILED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mockSelectedId = jest.fn();
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(destinationFolder)
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
 						isSelectionModeActive={false}
-						selectId={mockSelectId}
+						selectId={mockSelectedId}
 					/>,
 					{ mocks }
 				);
@@ -50,15 +54,18 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.LOADING,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mockSelectedId = jest.fn();
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(destinationFolder)
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
 						isSelectionModeActive={false}
-						selectId={mockSelectId}
+						selectId={mockSelectedId}
 					/>,
 					{ mocks }
 				);
@@ -76,15 +83,18 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.QUEUED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mockSelectedId = jest.fn();
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(destinationFolder)
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
 						isSelectionModeActive={false}
-						selectId={mockSelectId}
+						selectId={mockSelectedId}
 					/>,
 					{ mocks }
 				);
@@ -103,15 +113,18 @@ describe('Upload List Item Wrapper', () => {
 					nodeId: faker.datatype.uuid(),
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mockSelectedId = jest.fn();
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(destinationFolder)
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
 						isSelectionModeActive={false}
-						selectId={mockSelectId}
+						selectId={mockSelectedId}
 					/>,
 					{ mocks }
 				);
@@ -131,15 +144,18 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.FAILED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mockSelectedId = jest.fn();
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(destinationFolder)
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
 						isSelectionModeActive={false}
-						selectId={mockSelectId}
+						selectId={mockSelectedId}
 					/>,
 					{ mocks }
 				);
@@ -156,15 +172,18 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.LOADING,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mockSelectedId = jest.fn();
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(destinationFolder)
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
 						isSelectionModeActive={false}
-						selectId={mockSelectId}
+						selectId={mockSelectedId}
 					/>,
 					{ mocks }
 				);
@@ -181,15 +200,18 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.QUEUED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mockSelectedId = jest.fn();
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(destinationFolder)
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
 						isSelectionModeActive={false}
-						selectId={mockSelectId}
+						selectId={mockSelectedId}
 					/>,
 					{ mocks }
 				);
@@ -206,15 +228,18 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.COMPLETED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mockSelectedId = jest.fn();
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(destinationFolder)
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
 						isSelectionModeActive={false}
-						selectId={mockSelectId}
+						selectId={mockSelectedId}
 					/>,
 					{ mocks }
 				);

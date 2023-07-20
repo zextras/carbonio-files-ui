@@ -24,19 +24,19 @@ import { INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNodes } from '../../mocks/mockUtils';
 import { AdvancedFilters } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
 	GetChildQuery,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables
 } from '../../types/graphql/types';
 import {
 	getChildrenVariables,
-	getFindNodesVariables,
 	mockDeletePermanently,
 	mockFindNodes,
 	mockFlagNodes,
-	mockGetChildren,
 	mockMoveNodes,
 	mockRestoreNodes,
 	mockTrashNodes
@@ -57,9 +57,9 @@ describe('Search list', () => {
 			let reqIndex = 0;
 
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
@@ -81,7 +81,11 @@ describe('Search list', () => {
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 			searchParamsVar(searchParams);
 
-			const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), currentSearch)];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentSearch)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransferObj = {
 				types: ['Files'],
@@ -116,7 +120,10 @@ describe('Search list', () => {
 				const localRootCachedData = global.apolloClient.readQuery<
 					GetChildrenQuery,
 					GetChildrenQueryVariables
-				>(getChildrenMockedQuery.request);
+				>({
+					query: GetChildrenDocument,
+					variables: getChildrenVariables(localRoot.id)
+				});
 				return expect(localRootCachedData?.getNode || null).not.toBeNull();
 			});
 		});
@@ -144,16 +151,16 @@ describe('Search list', () => {
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 			searchParamsVar(searchParams);
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), currentSearch),
-				mockMoveNodes(
-					{
-						node_ids: map(nodesToDrag, (node) => node.id),
-						destination_id: destinationFolder.id
-					},
-					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentSearch)
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(
+						map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+					)
+				}
+			} satisfies Partial<Resolvers>;
 
 			let dataTransferData: Record<string, string> = {};
 			let dataTransferTypes: string[] = [];
@@ -245,7 +252,11 @@ describe('Search list', () => {
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 			searchParamsVar(searchParams);
 
-			const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), currentSearch)];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentSearch)
+				}
+			} satisfies Partial<Resolvers>;
 
 			let dataTransferData: Record<string, string> = {};
 			let dataTransferTypes: string[] = [];
@@ -335,16 +346,16 @@ describe('Search list', () => {
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 			searchParamsVar(searchParams);
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), currentFilter),
-				mockMoveNodes(
-					{
-						node_ids: map(nodesToDrag, (node) => node.id),
-						destination_id: destinationFolder.id
-					},
-					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter)
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(
+						map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+					)
+				}
+			} satisfies Partial<Resolvers>;
 
 			let dataTransferData: Record<string, string> = {};
 			let dataTransferTypes: string[] = [];
@@ -419,22 +430,14 @@ describe('Search list', () => {
 				};
 				searchParamsVar(searchParams);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ keywords, folder_id: ROOTS.LOCAL_ROOT }),
-						currentFilter
-					),
-					mockTrashNodes(
-						{
-							node_ids: nodesIdsToMFD
-						},
-						nodesIdsToMFD
-					),
-					mockFindNodes(
-						getFindNodesVariables({ keywords, folder_id: ROOTS.LOCAL_ROOT }),
-						currentFilter.slice(1)
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter, currentFilter.slice(1))
+					},
+					Mutation: {
+						trashNodes: mockTrashNodes(nodesIdsToMFD)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<SearchList />, { mocks });
 
@@ -477,7 +480,11 @@ describe('Search list', () => {
 				const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 				searchParamsVar(searchParams);
 
-				const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), currentFilter)];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<SearchList />, { mocks });
 
@@ -519,30 +526,14 @@ describe('Search list', () => {
 				};
 				searchParamsVar(searchParams);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({
-							keywords,
-							folder_id: ROOTS.TRASH,
-							cascade: false
-						}),
-						currentFilter
-					),
-					mockRestoreNodes(
-						{
-							node_ids: nodesIdsToRestore
-						},
-						[currentFilter[0]]
-					),
-					mockFindNodes(
-						getFindNodesVariables({
-							keywords,
-							folder_id: ROOTS.TRASH,
-							cascade: false
-						}),
-						currentFilter.slice(1)
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter, currentFilter.slice(1))
+					},
+					Mutation: {
+						restoreNodes: mockRestoreNodes([currentFilter[0]])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<SearchList />, { mocks });
 
@@ -583,16 +574,14 @@ describe('Search list', () => {
 				const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 				searchParamsVar(searchParams);
 
-				const mocks = [
-					mockFindNodes(getFindNodesVariables({ keywords }), currentFilter),
-					mockRestoreNodes(
-						{
-							node_ids: nodesIdsToRestore
-						},
-						[currentFilter[0]]
-					),
-					mockFindNodes(getFindNodesVariables({ keywords }), currentFilter)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter, currentFilter)
+					},
+					Mutation: {
+						restoreNodes: mockRestoreNodes([currentFilter[0]])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<SearchList />, { mocks });
 
@@ -645,7 +634,11 @@ describe('Search list', () => {
 				const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 				searchParamsVar(searchParams);
 
-				const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), currentFilter)];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<SearchList />, { mocks });
 
@@ -684,26 +677,14 @@ describe('Search list', () => {
 				const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 				searchParamsVar(searchParams);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({
-							keywords
-						}),
-						currentFilter
-					),
-					mockDeletePermanently(
-						{
-							node_ids: nodesIdsToDeletePermanently
-						},
-						nodesIdsToDeletePermanently
-					),
-					mockFindNodes(
-						getFindNodesVariables({
-							keywords
-						}),
-						currentFilter.slice(1)
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter, currentFilter.slice(1))
+					},
+					Mutation: {
+						deleteNodes: mockDeletePermanently(nodesIdsToDeletePermanently)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<SearchList />, { mocks });
 
@@ -760,7 +741,11 @@ describe('Search list', () => {
 				const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 				searchParamsVar(searchParams);
 
-				const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), currentFilter)];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<SearchList />, { mocks });
 
@@ -802,7 +787,11 @@ describe('Search list', () => {
 			const keywords = ['k1', 'k2'];
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 			searchParamsVar(searchParams);
-			const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), nodes)];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<SearchList />, {
 				mocks,
 				initialRouterEntries: [INTERNAL_PATH.SEARCH]
@@ -868,17 +857,14 @@ describe('Search list', () => {
 			searchParamsVar(searchParams);
 			const nodesToTrash = map(firstPage, (node) => node.id);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ keywords, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					firstPage
-				),
-				mockTrashNodes({ node_ids: nodesToTrash }, nodesToTrash),
-				mockFindNodes(
-					getFindNodesVariables({ keywords, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					secondPage
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage, secondPage)
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes(nodesToTrash)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchList />, { mocks });
 
@@ -896,7 +882,7 @@ describe('Search list', () => {
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
 			await user.click(trashAction);
-			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
+			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/item moved to trash/i);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1].name)).not.toBeInTheDocument();
@@ -925,17 +911,14 @@ describe('Search list', () => {
 			searchParamsVar(searchParams);
 			const nodesToRestore = map(firstPage, (node) => node.id);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ keywords, folder_id: ROOTS.TRASH, cascade: false }),
-					firstPage
-				),
-				mockRestoreNodes({ node_ids: nodesToRestore }, firstPage),
-				mockFindNodes(
-					getFindNodesVariables({ keywords, folder_id: ROOTS.TRASH, cascade: false }),
-					secondPage
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage, secondPage)
+				},
+				Mutation: {
+					restoreNodes: mockRestoreNodes(firstPage)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchList />, { mocks });
 
@@ -953,7 +936,7 @@ describe('Search list', () => {
 			expect(restoreAction).toBeVisible();
 			expect(restoreAction).not.toHaveAttribute('disabled', '');
 			await user.click(restoreAction);
-			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
+			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/^success$/i);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1].name)).not.toBeInTheDocument();
@@ -984,17 +967,14 @@ describe('Search list', () => {
 			searchParamsVar(searchParams);
 			const nodesToDelete = map(firstPage, (node) => node.id);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ keywords, folder_id: ROOTS.TRASH, cascade: false }),
-					firstPage
-				),
-				mockDeletePermanently({ node_ids: nodesToDelete }, nodesToDelete),
-				mockFindNodes(
-					getFindNodesVariables({ keywords, folder_id: ROOTS.TRASH, cascade: false }),
-					secondPage
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage, secondPage)
+				},
+				Mutation: {
+					deleteNodes: mockDeletePermanently(nodesToDelete)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchList />, { mocks });
 
@@ -1013,8 +993,18 @@ describe('Search list', () => {
 			const modalConfirmButton = await screen.findByRole('button', {
 				name: ACTION_REGEXP.deletePermanently
 			});
+			act(() => {
+				// run modal timers
+				jest.runOnlyPendingTimers();
+			});
 			await user.click(modalConfirmButton);
-			await waitForElementToBeRemoved(modalConfirmButton);
+			await waitFor(() =>
+				expect(
+					screen.queryByRole('button', {
+						name: ACTION_REGEXP.deletePermanently
+					})
+				).not.toBeInTheDocument()
+			);
 			await screen.findByText(/^success$/i);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument();
@@ -1037,10 +1027,14 @@ describe('Search list', () => {
 			searchParamsVar(searchParams);
 			const nodesToUnflag = [firstPage[0].id, firstPage[1].id];
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords, flagged: true }), firstPage),
-				mockFlagNodes({ node_ids: nodesToUnflag, flag: false }, nodesToUnflag)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage)
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes(nodesToUnflag)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchList />, {
 				mocks,

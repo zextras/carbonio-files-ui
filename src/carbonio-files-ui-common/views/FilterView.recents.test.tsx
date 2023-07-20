@@ -13,7 +13,6 @@ import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
-	FILTER_PARAMS,
 	FILTER_TYPE,
 	INTERNAL_PATH,
 	NODES_LOAD_LIMIT,
@@ -22,8 +21,9 @@ import {
 } from '../constants';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
-import { getFindNodesVariables, mockFindNodes } from '../utils/mockUtils';
+import { mockFindNodes } from '../utils/mockUtils';
 import { setup } from '../utils/testUtils';
 
 const mockedRequestHandler = jest.fn();
@@ -68,23 +68,11 @@ describe('Filter View', () => {
 
 		test('Sorting component is hidden', async () => {
 			const nodes = populateNodes(10);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({
-						...FILTER_PARAMS.recents,
-						sort: NodeSort.UpdatedAtDesc
-					}),
-					nodes
-				),
-				mockFindNodes(
-					getFindNodesVariables({
-						folder_id: ROOTS.LOCAL_ROOT,
-						cascade: true,
-						sort: NodeSort.UpdatedAtDesc
-					}),
-					nodes
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`],
