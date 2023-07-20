@@ -11,8 +11,8 @@ import { screen } from '@testing-library/react';
 import { AddShareChip } from './AddShareChip';
 import { populateGalContact, populateNode } from '../../../mocks/mockUtils';
 import { Role, ShareChip } from '../../../types/common';
-import { GetNodeQuery, GetNodeQueryVariables } from '../../../types/graphql/types';
-import { getNodeVariables, mockGetNode } from '../../../utils/mockUtils';
+import { GetNodeDocument, GetNodeQuery, GetNodeQueryVariables } from '../../../types/graphql/types';
+import { getNodeVariables } from '../../../utils/mockUtils';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 
@@ -167,10 +167,9 @@ describe('Add Share Chip', () => {
 			const onCloseFn = jest.fn();
 			const contact = populateGalContact();
 
-			const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
-
 			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				...mockedGetNodeQuery.request,
+				query: GetNodeDocument,
+				variables: getNodeVariables(node.id),
 				data: {
 					getNode: node
 				}
@@ -209,10 +208,9 @@ describe('Add Share Chip', () => {
 			const onCloseFn = jest.fn();
 			const contact = populateGalContact();
 
-			const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
-
 			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				...mockedGetNodeQuery.request,
+				query: GetNodeDocument,
+				variables: getNodeVariables(node.id),
 				data: {
 					getNode: node
 				}
@@ -253,10 +251,9 @@ describe('Add Share Chip', () => {
 			const onCloseFn = jest.fn();
 			const contact = populateGalContact();
 
-			const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
-
 			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				...mockedGetNodeQuery.request,
+				query: GetNodeDocument,
+				variables: getNodeVariables(node.id),
 				data: {
 					getNode: node
 				}
@@ -300,10 +297,9 @@ describe('Add Share Chip', () => {
 			const onCloseFn = jest.fn();
 			const contact = populateGalContact();
 
-			const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
-
 			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				...mockedGetNodeQuery.request,
+				query: GetNodeDocument,
+				variables: getNodeVariables(node.id),
 				data: {
 					getNode: node
 				}
