@@ -5,7 +5,6 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { fireEvent, screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
@@ -13,8 +12,9 @@ import { List } from './List';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode, sortNodes } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeSort } from '../../types/graphql/types';
-import { mockUpdateNodeError } from '../../utils/mockUtils';
+import { mockErrorResolver } from '../../utils/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../../utils/testUtils';
 
 describe('Rename', () => {
@@ -84,15 +84,11 @@ describe('Rename', () => {
 			const element = currentFolder.children.nodes[0] as Node;
 			const newName = (currentFolder.children.nodes[1] as Node).name;
 
-			const mocks = [
-				mockUpdateNodeError(
-					{
-						node_id: element.id,
-						name: newName
-					},
-					new ApolloError({ graphQLErrors: [generateError('Error! Name already assigned')] })
-				)
-			];
+			const mocks = {
+				Mutation: {
+					updateNode: mockErrorResolver(generateError('Error! Name already assigned'))
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
 				<List

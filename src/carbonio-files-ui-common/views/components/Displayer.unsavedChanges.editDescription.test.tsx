@@ -5,23 +5,20 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
 import { waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeType } from '../../types/graphql/types';
 import {
-	getNodeVariables,
-	getSharesVariables,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks,
-	mockGetShares,
-	mockUpdateNodeDescription,
-	mockUpdateNodeDescriptionError
+	mockUpdateNode,
+	mockErrorResolver
 } from '../../utils/mockUtils';
 import { generateError, setup, screen, within } from '../../utils/testUtils';
 
@@ -34,7 +31,11 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_share = false;
 				const newDescription = faker.lorem.words();
-				const mocks = [mockGetNode(getNodeVariables(node.id), node)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(node)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
@@ -80,7 +81,11 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_share = false;
 				const newDescription = faker.lorem.words();
-				const mocks = [mockGetNode(getNodeVariables(node.id), node)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(node)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
@@ -125,12 +130,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.description = faker.lorem.words();
 				const newDescription = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(node),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
@@ -185,16 +191,16 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_share = true;
 				const newDescription = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockUpdateNodeDescription(
-						{ node_id: node.id, description: newDescription },
-						{ ...node, description: newDescription }
-					),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(node),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						updateNode: mockUpdateNode({ ...node, description: newDescription })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
@@ -245,14 +251,14 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_share = true;
 				const newDescription = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockUpdateNodeDescriptionError(
-						{ node_id: node.id, description: newDescription },
-						new ApolloError({ graphQLErrors: [generateError('update error')] })
-					),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode(node)
+					},
+					Mutation: {
+						updateNode: mockErrorResolver(generateError('update error'))
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],

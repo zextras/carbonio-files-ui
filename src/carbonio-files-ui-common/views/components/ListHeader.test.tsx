@@ -12,6 +12,7 @@ import { map } from 'lodash';
 import ListHeader from '../../../components/ListHeader';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateFolder, populateParents } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
@@ -20,7 +21,11 @@ describe('ListHeader', () => {
 	describe('Breadcrumb', () => {
 		test('show only current folder if it has not a parent', async () => {
 			const currentFolder = populateFolder();
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, [currentFolder])];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const selectAll = jest.fn();
 			const unSelectAll = jest.fn();
@@ -46,7 +51,11 @@ describe('ListHeader', () => {
 
 		test('by default shows two level (current folder and its parent)', async () => {
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, path)];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const selectAll = jest.fn();
 			const unSelectAll = jest.fn();
@@ -75,7 +84,11 @@ describe('ListHeader', () => {
 
 		test('consecutive clicks on the cta expand and collapse the path with a single API request to retrieve the full path', async () => {
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, path)];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const selectAll = jest.fn();
 			const unSelectAll = jest.fn();
@@ -145,7 +158,7 @@ describe('ListHeader', () => {
 					isAllSelected={false}
 					selectedCount={selectedCount}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByTestId('list-header-selectionModeActive')).toBeVisible();
 			expect(screen.getByText(selectedCount)).toBeVisible();
@@ -168,7 +181,7 @@ describe('ListHeader', () => {
 					isAllSelected={false}
 					selectedCount={selectedCount}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.queryByText(selectedCount)).not.toBeInTheDocument();
 		});
