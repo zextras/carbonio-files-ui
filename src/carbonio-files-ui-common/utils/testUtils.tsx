@@ -175,10 +175,6 @@ export const buildBreadCrumbRegExp = (...nodesNames: string[]): RegExp => {
 	return RegExp(regExp, 'g');
 };
 
-/**
- * Utility to generate an error for mocks that can be decoded with {@link decodeError}
- * @param message
- */
 export function generateError(message: string): GraphQLError {
 	return new GraphQLError(`Controlled error: ${message}`);
 }
@@ -209,17 +205,6 @@ const ApolloProviderWrapper = ({
 
 	return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
-
-type ApolloProviderWrapperProps = Pick<WrapperProps, 'children' | 'mocks'>;
-
-const ApolloProviderWrapper = ({ children, mocks }: ApolloProviderWrapperProps): JSX.Element =>
-	mocks ? (
-		<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
-			{children}
-		</MockedProvider>
-	) : (
-		<ApolloProvider client={global.apolloClient}>{children}</ApolloProvider>
-	);
 
 const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): JSX.Element => {
 	const i18n = useMemo(() => {
