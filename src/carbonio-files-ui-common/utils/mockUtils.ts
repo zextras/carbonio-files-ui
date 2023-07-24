@@ -155,9 +155,28 @@ export function getNodeVariables(
 }
 
 export function mockGetNode(
-	...getNode: Array<GQLTypes.File | GQLTypes.Folder>
+	...getNode: Array<OneOrMany<GQLTypes.File | GQLTypes.Folder>>
 ): Mock<GQLTypes.GetNodeQuery> {
-	return (parent, args) => find<Node>(getNode, (node) => node.id === args.node_id) || null;
+	return (parent, args) => {
+		const match =
+			find(getNode, (node) => {
+				if (!Array.isArray(node)) {
+					return node.id === args.node_id;
+				}
+				return node.length > 0 && node[0].id === args.node_id;
+			}) || null;
+		if (match !== undefined) {
+			if (Array.isArray(match)) {
+				const result = match.shift();
+				if (result !== undefined) {
+					return result;
+				}
+			} else {
+				return match;
+			}
+		}
+		throw new Error('no more getNode responses provided to resolver');
+	};
 }
 
 export function getSharesVariables(
