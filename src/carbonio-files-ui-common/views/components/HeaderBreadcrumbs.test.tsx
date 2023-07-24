@@ -21,7 +21,7 @@ import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, TIMERS } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import { COLORS, ICON_REGEXP } from '../../constants/test';
 import {
 	populateFolder,
 	populateNodes,
@@ -68,10 +68,10 @@ describe('Header Breadcrumbs', () => {
 			const breadcrumbCrumbs = screen.queryByTestId('drop-crumb');
 			expect(breadcrumbCrumbs).not.toBeInTheDocument();
 			expect(destinationCrumbItem).not.toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			expect(destinationCrumbItem).not.toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 		});
 
@@ -144,7 +144,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).toHaveStyle({
@@ -244,7 +244,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).not.toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -324,7 +324,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(parent.name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			// wait for navigation to start
 			await waitFor(() => expect(mockedUseNavigationHook.navigateToFolder).toHaveBeenCalled());
@@ -401,7 +401,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(parent.name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 			// wait for navigation to start eventually
 			jest.advanceTimersByTime(TIMERS.DRAG_NAVIGATION_TRIGGER);
@@ -502,7 +502,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).toHaveStyle({
@@ -758,11 +758,11 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			fireEvent.drop(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).not.toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			const snackbar = await screen.findByText(/Item moved/i);
 			expect(snackbar).toBeVisible();
@@ -858,11 +858,11 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).not.toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 			// wait a tick to allow mutation to eventually be executed
 			expect(moveMutationFn).not.toHaveBeenCalled();

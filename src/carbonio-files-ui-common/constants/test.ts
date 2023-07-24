@@ -62,3 +62,16 @@ export const EMITTER_CODES = {
 	fail: 'done-fail',
 	never: 'never'
 };
+
+export const COLORS = {
+	primary: {
+		regular: '#2b73d2'
+	},
+	highlight: {
+		regular: '#d5e3f6'
+	},
+	dropzone: {
+		enabled: 'rgba(43, 115, 210, 0.4)',
+		disabled: 'rgba(130, 130, 130, 0.4)'
+	}
+};
