@@ -35,7 +35,7 @@ import {
 } from '../types/graphql/types';
 import { mockGetBaseNode } from '../utils/mockUtils';
 import {
-	createDataTransfer,
+	createUploadDataTransfer,
 	delayUntil,
 	generateError,
 	setup,
@@ -63,7 +63,7 @@ describe('Upload View', () => {
 			});
 			folder.children = populateNodePage(children);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -112,7 +112,7 @@ describe('Upload View', () => {
 			});
 			folder.children = populateNodePage(children);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -160,7 +160,7 @@ describe('Upload View', () => {
 			folder.children = populateNodePage(children);
 			const externalFiles = populateNodes(UploadQueue.LIMIT, 'File');
 
-			const dataTransferObj = createDataTransfer([folder, ...externalFiles]);
+			const dataTransferObj = createUploadDataTransfer([folder, ...externalFiles]);
 
 			const emitter = new EventEmitter();
 
@@ -246,7 +246,7 @@ describe('Upload View', () => {
 			level3File.parent = level2Folder;
 			level2Folder.children = populateNodePage([level3File]);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -375,7 +375,7 @@ describe('Upload View', () => {
 			level3File.parent = level2Folder;
 			level2Folder.children = populateNodePage([level3File]);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -481,7 +481,7 @@ describe('Upload View', () => {
 			level3File.parent = level2Folder;
 			level2Folder.children = populateNodePage([level3File]);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -584,7 +584,7 @@ describe('Upload View', () => {
 			});
 			folder.children = populateNodePage(children);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
 
@@ -638,7 +638,7 @@ describe('Upload View', () => {
 				subSubFolder.children.nodes.length +
 				1;
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
 
@@ -668,7 +668,7 @@ describe('Upload View', () => {
 			level3File.parent = level2Folder;
 			level2Folder.children = populateNodePage([level3File]);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -726,7 +726,7 @@ describe('Upload View', () => {
 				level3File.parent = level2Folder;
 				level2Folder.children = populateNodePage([level3File]);
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const emitter = new EventEmitter();
 
@@ -789,7 +789,7 @@ describe('Upload View', () => {
 				level3File.parent = level2Folder;
 				level2Folder.children = populateNodePage([level3File]);
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const emitter = new EventEmitter();
 
@@ -853,7 +853,7 @@ describe('Upload View', () => {
 				level3File.parent = level2Folder;
 				level2Folder.children = populateNodePage([level3File]);
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				server.use(
 					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(

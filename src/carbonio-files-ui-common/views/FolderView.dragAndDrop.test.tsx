@@ -47,7 +47,12 @@ import {
 	mockGetPermissions,
 	mockMoveNodes
 } from '../utils/mockUtils';
-import { setup, selectNodes, createDataTransfer } from '../utils/testUtils';
+import {
+	setup,
+	selectNodes,
+	createUploadDataTransfer,
+	createMoveDataTransfer
+} from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -93,7 +98,7 @@ describe('Drag and drop', () => {
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -157,7 +162,7 @@ describe('Drag and drop', () => {
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -216,7 +221,7 @@ describe('Drag and drop', () => {
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -275,7 +280,7 @@ describe('Drag and drop', () => {
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -338,7 +343,7 @@ describe('Drag and drop', () => {
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -406,21 +411,7 @@ describe('Drag and drop', () => {
 			)
 		];
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -498,21 +489,7 @@ describe('Drag and drop', () => {
 			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
 		];
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -581,21 +558,7 @@ describe('Drag and drop', () => {
 			)
 		];
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -669,21 +632,7 @@ describe('Drag and drop', () => {
 			)
 		];
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -692,7 +641,7 @@ describe('Drag and drop', () => {
 
 		const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 
-		// load full path
+		// load the full path
 		await screen.findByText((currentFolder.parent as Folder).name);
 		await user.click(screen.getByTestId('icon: ChevronRight'));
 		await screen.findByText(path[0].name);
@@ -813,21 +762,7 @@ describe('Drag and drop', () => {
 			} as Folder)
 		];
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],

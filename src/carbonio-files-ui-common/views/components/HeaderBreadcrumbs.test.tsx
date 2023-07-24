@@ -30,7 +30,7 @@ import {
 } from '../../mocks/mockUtils';
 import { Node } from '../../types/graphql/types';
 import { mockGetPath, mockMoveNodes } from '../../utils/mockUtils';
-import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
+import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../utils/testUtils';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
 
@@ -38,33 +38,7 @@ jest.mock('../../../hooks/useNavigation', () => ({
 	useNavigation: (): ReturnType<UseNavigationHook> => mockedUseNavigationHook
 }));
 
-let dataTransfer: (
-	initialData?: Map<string, string>
-) => Pick<DataTransfer, 'setData' | 'setDragImage' | 'getData' | 'types' | 'clearData'>;
-
 beforeEach(() => {
-	const dataTransferData = new Map();
-	dataTransfer = jest.fn(
-		(
-			initialData?: Map<string, string>
-		): Pick<DataTransfer, 'setData' | 'setDragImage' | 'getData' | 'types' | 'clearData'> => {
-			if (initialData) {
-				initialData.forEach((value, key) => dataTransferData.set(key, value));
-			}
-			return {
-				setDragImage: jest.fn(),
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData.set(type, data);
-				}),
-				getData: jest.fn().mockImplementation((type: string) => dataTransferData.get(type)),
-				types: Array.from(dataTransferData.keys()),
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferData.clear();
-				})
-			};
-		}
-	);
-
 	mockedUseNavigationHook = {
 		navigateTo: jest.fn(),
 		navigateToFolder: jest.fn(),
@@ -76,6 +50,7 @@ describe('Header Breadcrumbs', () => {
 	describe('Drag and drop', () => {
 		test('Drag and drop is disabled if folder id is empty', () => {
 			const crumbs = [{ id: 'Filter', label: 'Filter' }];
+			const dataTransfer = createMoveDataTransfer();
 			setup(
 				<>
 					<HeaderBreadcrumbs crumbs={crumbs} />
@@ -130,7 +105,7 @@ describe('Header Breadcrumbs', () => {
 					map(movingNodes, (node) => ({ ...node, parent: path[0] }))
 				)
 			];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -213,7 +188,7 @@ describe('Header Breadcrumbs', () => {
 					moveMutationFn
 				)
 			];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -304,7 +279,7 @@ describe('Header Breadcrumbs', () => {
 			});
 
 			const mocks = [mockGetPath({ node_id: currentFolder.id }, [parent, currentFolder])];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -381,7 +356,7 @@ describe('Header Breadcrumbs', () => {
 			});
 
 			const mocks = [mockGetPath({ node_id: currentFolder.id }, [parent, currentFolder])];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -470,7 +445,7 @@ describe('Header Breadcrumbs', () => {
 					moveMutationFn
 				)
 			];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -559,7 +534,7 @@ describe('Header Breadcrumbs', () => {
 			});
 
 			const mocks = [mockGetPath({ node_id: currentFolder.id }, path)];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -611,7 +586,7 @@ describe('Header Breadcrumbs', () => {
 			});
 
 			const mocks = [mockGetPath({ node_id: currentFolder.id }, path)];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -712,7 +687,7 @@ describe('Header Breadcrumbs', () => {
 					map(movingNodes, (node) => ({ ...node, parent: path[0] }))
 				)
 			];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -828,7 +803,7 @@ describe('Header Breadcrumbs', () => {
 					moveMutationFn
 				)
 			];
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
