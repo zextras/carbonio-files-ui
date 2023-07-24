@@ -10,7 +10,14 @@ import { screen } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeListItem } from './NodeListItem';
-import { INTERNAL_PATH, PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT, ROOTS } from '../../constants';
+import {
+	DATE_FORMAT_SHORT,
+	INTERNAL_PATH,
+	PREVIEW_PATH,
+	PREVIEW_TYPE,
+	REST_ENDPOINT,
+	ROOTS
+} from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode, populateUser } from '../../mocks/mockUtils';
 import { NodeType, User } from '../../types/graphql/types';
@@ -49,7 +56,7 @@ describe('Node List Item', () => {
 		expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toBeVisible();
 		expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).not.toBeEmptyDOMElement();
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(formatDate(node.updated_at, undefined, 'UTC'))).toBeVisible();
+		expect(screen.getByText(formatDate(node.updated_at, DATE_FORMAT_SHORT, 'UTC'))).toBeVisible();
 		expect(screen.queryByText(mockedUserLogged.full_name)).not.toBeInTheDocument();
 	});
 

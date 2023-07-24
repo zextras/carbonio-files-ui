@@ -53,7 +53,8 @@ import {
 } from '../../utils/mockUtils';
 import {
 	buildBreadCrumbRegExp,
-	createDataTransfer,
+	createMoveDataTransfer,
+	createUploadDataTransfer,
 	delayUntil,
 	selectNodes,
 	setup,
@@ -85,7 +86,7 @@ describe('Upload list', () => {
 				}
 			});
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
 
@@ -142,22 +143,7 @@ describe('Upload list', () => {
 
 			const nodesToDrag = [uploadedFiles[0]];
 
-			let dataTransferData: Record<string, string> = {};
-			let dataTransferTypes: string[] = [];
-			const dataTransfer = (): unknown => ({
-				setDragImage: jest.fn(),
-				items: dataTransferData,
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData[type] = data;
-					dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-				}),
-				getData: jest.fn().mockImplementation((type: string) => dataTransferData[type]),
-				types: dataTransferTypes,
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferTypes = [];
-					dataTransferData = {};
-				})
-			});
+			const dataTransfer = createMoveDataTransfer();
 
 			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
 
@@ -190,7 +176,7 @@ describe('Upload list', () => {
 				}
 			});
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 			const mocks = [
 				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
@@ -261,7 +247,7 @@ describe('Upload list', () => {
 				)
 			);
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
 
@@ -340,7 +326,7 @@ describe('Upload list', () => {
 				)
 			);
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
 
@@ -396,7 +382,7 @@ describe('Upload list', () => {
 				)
 			);
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
 
@@ -461,9 +447,9 @@ describe('Upload list', () => {
 				)
 			);
 
-			const dataTransferObj1 = createDataTransfer(uploadedFiles.slice(0, 4));
+			const dataTransferObj1 = createUploadDataTransfer(uploadedFiles.slice(0, 4));
 
-			const dataTransferObj2 = createDataTransfer(uploadedFiles.slice(4));
+			const dataTransferObj2 = createUploadDataTransfer(uploadedFiles.slice(4));
 
 			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
 
@@ -550,7 +536,7 @@ describe('Upload list', () => {
 			const numberOfFolders = 3;
 			const numberOfNodes = numberOfFiles + numberOfFolders;
 
-			const dataTransferObj = createDataTransfer([folderToUpload]);
+			const dataTransferObj = createUploadDataTransfer([folderToUpload]);
 
 			const uploadFileHandler = jest.fn(handleUploadFileRequest);
 

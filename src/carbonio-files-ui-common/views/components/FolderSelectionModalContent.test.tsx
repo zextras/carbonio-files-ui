@@ -17,7 +17,7 @@ import { FolderSelectionModalContent } from './FolderSelectionModalContent';
 import { HoverContainer } from './StyledComponents';
 import { destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
-import { SELECTORS } from '../../constants/test';
+import { COLORS, SELECTORS } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -184,7 +184,7 @@ describe('Folder Selection Modal Content', () => {
 		// ugly but it's the only way to check the item is visibly active
 		expect(
 			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
-		).toHaveStyle('background-color: #d5e3f6');
+		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		expect(screen.getByText(/trash/i)).toBeVisible();
 		// choose button is disabled because active folder is same as set one
@@ -197,10 +197,10 @@ describe('Folder Selection Modal Content', () => {
 		// active root is become the clicked root
 		expect(
 			findStyled(screen.getByTestId(SELECTORS.nodeItem(ROOTS.SHARED_WITH_ME)), HoverContainer)
-		).toHaveStyle('background-color: #d5e3f6');
+		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		expect(
 			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
-		).not.toHaveStyle('background-color: #d5e3f6');
+		).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		// click on subtitle to reset active folder
 		await user.click(screen.getByText(/searched only inside the selected folder/i));
 		// choose button becomes disabled because the root list entry point is not a valid selection
@@ -239,7 +239,7 @@ describe('Folder Selection Modal Content', () => {
 		// ugly but it's the only way to check the item is visibly active
 		expect(
 			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
-		).toHaveStyle({ 'background-color': '#d5e3f6' });
+		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
 		expect(screen.getByText(folder.name)).toBeVisible();
@@ -260,7 +260,7 @@ describe('Folder Selection Modal Content', () => {
 		// local root item is not visibly active
 		expect(
 			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
-		).not.toHaveStyle(expect.objectContaining({ 'background-color': '#d5e3f6' }));
+		).not.toHaveStyle(expect.objectContaining({ 'background-color': COLORS.highlight.regular }));
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
 		// navigate again inside local root
@@ -429,7 +429,9 @@ describe('Folder Selection Modal Content', () => {
 		// ugly but it's the only way to check the item is visibly active
 		expect(
 			findStyled(screen.getByTestId(SELECTORS.nodeItem(ROOTS.TRASH)), HoverContainer)
-		).toHaveStyle('background-color: #d5e3f6');
+		).toHaveStyle({
+			'background-color': COLORS.highlight.regular
+		});
 		await user.dblClick(screen.getByText(/shared with me/i));
 		await screen.findByText(sharedWithMeFilter[0].name);
 		expect(screen.getByText(sharedWithMeFilter[0].name)).toBeVisible();
