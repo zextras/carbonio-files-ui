@@ -14,7 +14,7 @@ import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { searchParamsVar } from '../apollo/searchVar';
 import { INTERNAL_PATH, ROOTS } from '../constants';
 import { ACTION_REGEXP } from '../constants/test';
-import BASE_NODE from '../graphql/fragments/baseNode.graphql';
+import BaseNodeFragmentDoc from '../graphql/fragments/baseNode.graphql';
 import {
 	populateFolder,
 	populateNode,
@@ -24,20 +24,16 @@ import {
 	populateShares
 } from '../mocks/mockUtils';
 import { AdvancedFilters, Node } from '../types/common';
-import { BaseNodeFragment, Folder, NodeType, SharedTarget } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { BaseNodeFragment, Folder, NodeType } from '../types/graphql/types';
+import { ArrayOneOrMore } from '../types/utils';
 import {
-	getChildrenVariables,
-	getFindNodesVariables,
-	getNodeVariables,
-	getSharesVariables,
 	mockDeleteShare,
 	mockFindNodes,
-	mockGetChildren,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks,
 	mockGetPath,
-	mockGetShares,
 	mockMoveNodes,
 	mockRestoreNodes,
 	mockTrashNodes
@@ -63,28 +59,17 @@ describe('Search view', () => {
 			nodeWithShares.shares = shares;
 			nodeWithShares.permissions.can_share = true;
 			nodes.push(nodeWithShares);
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ shared_by_me: true, keywords: [] }), nodes),
-				mockGetNode(getNodeVariables(nodeWithShares.id), nodeWithShares),
-				mockGetShares(getSharesVariables(nodeWithShares.id), nodeWithShares),
-				mockGetLinks({ node_id: nodeWithShares.id }, nodeWithShares.links),
-				mockGetCollaborationLinks({ node_id: nodeWithShares.id }),
-				mockDeleteShare(
-					{
-						node_id: nodeWithShares.id,
-						share_target_id: (shares[0].share_target as SharedTarget).id
-					},
-					true
-				),
-				mockDeleteShare(
-					{
-						node_id: nodeWithShares.id,
-						share_target_id: (shares[1].share_target as SharedTarget).id
-					},
-					true
-				),
-				mockFindNodes(getFindNodesVariables({ shared_by_me: true, keywords: [] }), nodes)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode(nodeWithShares),
+					getLinks: mockGetLinks(nodeWithShares.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				},
+				Mutation: {
+					deleteShare: mockDeleteShare(true)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [`${INTERNAL_PATH.SEARCH}/?node=${nodeWithShares.id}&tab=sharing`],
@@ -147,12 +132,12 @@ describe('Search view', () => {
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 			searchParamsVar(searchParams);
 			const currentSearch = populateNodes(2);
-			// prepare cache so that apollo client read data from the cache
-
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), currentSearch),
-				mockGetNode(getNodeVariables(currentSearch[0].id), currentSearch[0] as Node)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentSearch),
+					getNode: mockGetNode(currentSearch[0])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup, user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -195,22 +180,20 @@ describe('Search view', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.flagged = true;
-			const path = [...parentPath, node];
-			const pathUpdated = [...parentPath, destinationFolder, node];
-			const pathResponse = [path, pathUpdated];
+			const path: ArrayOneOrMore<Node> = [...parentPath, node];
+			const pathUpdated: ArrayOneOrMore<Node> = [...parentPath, destinationFolder, node];
+			const pathResponse: ArrayOneOrMore<Node>[] = [path, pathUpdated];
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockGetNode(getNodeVariables(destinationFolder.id), destinationFolder),
-				mockGetPath({ node_id: node.id }, pathResponse[0]),
-				mockGetPath({ node_id: node.id }, pathResponse[1]),
-				mockGetPath({ node_id: node.parent.id }, parentPath),
-				mockGetPath({ node_id: destinationFolder.id }, [...parentPath, destinationFolder]),
-				mockGetChildren(getChildrenVariables(node.parent.id), node.parent),
-				mockMoveNodes({ node_ids: [node.id], destination_id: destinationFolder.id }, [node])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode(node, node.parent, destinationFolder),
+					getPath: mockGetPath(pathResponse, parentPath, [...parentPath, destinationFolder])
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([node])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
 				<SearchView />,
@@ -279,15 +262,15 @@ describe('Search view', () => {
 			node.permissions.can_write_file = true;
 			node.permissions.can_delete = true;
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ keywords, folder_id: folder.id, cascade: true }),
-					nodes
-				),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockTrashNodes({ node_ids: [node.id] }, [node.id])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode(node, node.parent)
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes([node.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -340,12 +323,15 @@ describe('Search view', () => {
 			node.permissions.can_write_file = true;
 			node.permissions.can_delete = true;
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockTrashNodes({ node_ids: [node.id] }, [node.id])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode(node, node.parent)
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes([node.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -402,7 +388,7 @@ describe('Search view', () => {
 			node.rootId = ROOTS.TRASH;
 
 			global.apolloClient.writeFragment<BaseNodeFragment>({
-				fragment: BASE_NODE,
+				fragment: BaseNodeFragmentDoc,
 				fragmentName: 'BaseNode',
 				data: {
 					__typename: 'Folder',
@@ -415,12 +401,15 @@ describe('Search view', () => {
 				}
 			});
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords, folder_id: ROOTS.TRASH }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockRestoreNodes({ node_ids: [node.id] }, [{ ...node, rootId: ROOTS.LOCAL_ROOT }])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode(node, node.parent)
+				},
+				Mutation: {
+					restoreNodes: mockRestoreNodes([{ ...node, rootId: ROOTS.LOCAL_ROOT }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -475,7 +464,7 @@ describe('Search view', () => {
 			node.rootId = ROOTS.TRASH;
 
 			global.apolloClient.writeFragment<BaseNodeFragment>({
-				fragment: BASE_NODE,
+				fragment: BaseNodeFragmentDoc,
 				fragmentName: 'BaseNode',
 				data: {
 					__typename: 'Folder',
@@ -488,12 +477,15 @@ describe('Search view', () => {
 				}
 			});
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockRestoreNodes({ node_ids: [node.id] }, [{ ...node, rootId: ROOTS.LOCAL_ROOT }])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode(node, node.parent)
+				},
+				Mutation: {
+					restoreNodes: mockRestoreNodes([{ ...node, rootId: ROOTS.LOCAL_ROOT }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],

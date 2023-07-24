@@ -13,7 +13,8 @@ import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { populateFolder, populateNode, populateParents } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { Resolvers } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { ArrayOneOrMore } from '../types/utils';
 import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/mockUtils';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
@@ -41,12 +42,12 @@ describe('Folder View', () => {
 			currentFolder.permissions.can_write_folder = false;
 			currentFolder.permissions.can_write_file = false;
 
-			const mocks: Partial<Resolvers> = {
+			const mocks = {
 				Query: {
 					getNode: mockGetNode(currentFolder),
 					getPath: mockGetPath([currentFolder])
 				}
-			};
+			} satisfies Partial<Resolvers>;
 			const { findByTextWithMarkup } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
@@ -61,12 +62,12 @@ describe('Folder View', () => {
 		test('Create folder option is active if current folder has can_write_folder permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = true;
-			const mocks: Partial<Resolvers> = {
+			const mocks = {
 				Query: {
 					getNode: mockGetNode(currentFolder),
 					getPath: mockGetPath([currentFolder])
 				}
-			};
+			} satisfies Partial<Resolvers>;
 
 			setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -82,12 +83,12 @@ describe('Folder View', () => {
 	describe('Displayer', () => {
 		test('Single click on a node opens the details tab on displayer', async () => {
 			const currentFolder = populateFolder(2);
-			const mocks: Partial<Resolvers> = {
+			const mocks = {
 				Query: {
 					getNode: mockGetNode(currentFolder, currentFolder.children.nodes[0] as Node),
 					getPath: mockGetPath([currentFolder])
 				}
-			};
+			} satisfies Partial<Resolvers>;
 			const { getByTextWithMarkup, user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
@@ -120,9 +121,9 @@ describe('Folder View', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			currentFolder.children.nodes.push(node);
-			const path = [...parentPath, node];
+			const path: ArrayOneOrMore<Node> = [...parentPath, node];
 
-			const mocks: Partial<Resolvers> = {
+			const mocks = {
 				Query: {
 					getNode: mockGetNode(currentFolder, node),
 					getPath: mockGetPath(path, parentPath)
@@ -130,7 +131,7 @@ describe('Folder View', () => {
 				Mutation: {
 					moveNodes: mockMoveNodes([{ ...node, parent: destinationFolder }])
 				}
-			};
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}&node=${node.id}`],
 				mocks
@@ -163,12 +164,12 @@ describe('Folder View', () => {
 		test('Create file options are disabled if current folder has not can_write_file permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = false;
-			const mocks: Partial<Resolvers> = {
+			const mocks = {
 				Query: {
 					getNode: mockGetNode(currentFolder),
 					getPath: mockGetPath([currentFolder])
 				}
-			};
+			} satisfies Partial<Resolvers>;
 			setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
@@ -186,12 +187,12 @@ describe('Folder View', () => {
 		test('Create docs files options are active if current folder has can_write_file permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = true;
-			const mocks: Partial<Resolvers> = {
+			const mocks = {
 				Query: {
 					getNode: mockGetNode(currentFolder),
 					getPath: mockGetPath([currentFolder])
 				}
-			};
+			} satisfies Partial<Resolvers>;
 			setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
