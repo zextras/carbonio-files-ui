@@ -77,7 +77,7 @@ describe('Filter View', () => {
 				await screen.findByText(/item moved to trash/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
+				expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(2);
 			});
 
 			test('Mark for deletion is hidden if not all nodes are not trashed', async () => {

@@ -502,7 +502,7 @@ describe('Contextual menu actions', () => {
 			await selectNodes([element0.id, element1.id], user);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element0.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			fireEvent.contextMenu(nodeItem);
 
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
@@ -528,7 +528,7 @@ describe('Contextual menu actions', () => {
 			expect(screen.queryByText(ACTION_REGEXP.unflag)).not.toBeInTheDocument();
 
 			// right click on unSelected node close open contextual menu
-			const nodeItem2 = screen.getByTestId(`node-item-${element2.id}`);
+			const nodeItem2 = screen.getByTestId(SELECTORS.nodeItem(element2.id));
 			fireEvent.contextMenu(nodeItem2);
 
 			expect(moveToTrashAction).not.toBeVisible();
@@ -562,8 +562,8 @@ describe('Contextual menu actions', () => {
 		);
 
 		// right click to open contextual menu
-		const node1Item = screen.getByTestId(`node-item-${node1.id}`);
-		const node2Item = screen.getByTestId(`node-item-${node2.id}`);
+		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
+		const node2Item = screen.getByTestId(SELECTORS.nodeItem(node2.id));
 		fireEvent.contextMenu(node1Item);
 		// check that the flag action becomes visible (contextual menu of first node)
 		const flagAction = await screen.findByText(ACTION_REGEXP.flag);

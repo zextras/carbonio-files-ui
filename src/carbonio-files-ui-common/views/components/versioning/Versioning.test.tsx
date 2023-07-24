@@ -564,7 +564,7 @@ describe('Versioning', () => {
 		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions);
 
 		const versionWithoutKeepIcons = screen.getByTestId(
-			`version${versionWithoutKeep.version}-icons`
+			SELECTORS.versionIcons(versionWithoutKeep.version)
 		);
 		const versionWithoutKeepMoreButton = within(versionWithoutKeepIcons).getByTestId(
 			'icon: MoreVerticalOutline'
@@ -691,7 +691,7 @@ describe('Versioning', () => {
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions);
 
-		const versionIcons = screen.getByTestId(`version1-icons`);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
 		expect(within(versionIcons).getByTestId('icon: InfinityOutline')).toBeVisible();
 		const versionMoreButton = within(versionIcons).getByTestId('icon: MoreVerticalOutline');
 		await user.click(versionMoreButton);

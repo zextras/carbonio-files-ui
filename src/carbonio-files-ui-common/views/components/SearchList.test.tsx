@@ -443,7 +443,7 @@ describe('Search list', () => {
 				await user.click(trashAction);
 				await screen.findByText(/item moved to trash/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
+				expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(2);
 			});
 
 			test('Mark for deletion is hidden if not all nodes are not trashed', async () => {
@@ -544,7 +544,7 @@ describe('Search list', () => {
 				await user.click(restoreIcon);
 				await screen.findByText(/^success$/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
+				expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(2);
 			});
 
 			test('Restore does not remove selected items from the list if the research includes both trashed and restored nodes', async () => {
@@ -698,7 +698,7 @@ describe('Search list', () => {
 				expect(confirmButton).not.toBeInTheDocument();
 				expect(element).not.toBeInTheDocument();
 				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
-				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
+				expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(2);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
@@ -1000,7 +1000,7 @@ describe('Search list', () => {
 
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
-			const nodeToUnflagItem1 = screen.getByTestId(`node-item-${nodesToUnflag[0]}`);
+			const nodeToUnflagItem1 = screen.getByTestId(SELECTORS.nodeItem(nodesToUnflag[0]));
 			expect(nodeToUnflagItem1).toBeVisible();
 			expect(within(nodeToUnflagItem1).getByTestId('icon: Flag')).toBeVisible();
 			await selectNodes(nodesToUnflag, user);

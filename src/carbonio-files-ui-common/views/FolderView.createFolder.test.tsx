@@ -314,7 +314,7 @@ describe('Create folder', () => {
 		// node1, node2 and node3 should have the correct order
 		expect(screen.getByTestId(SELECTORS.nodeItem(node1.id))).toBe(nodes[nodes.length - 3]);
 		expect(screen.getByTestId(SELECTORS.nodeItem(node2.id))).toBe(nodes[nodes.length - 2]);
-		expect(screen.getByTestId(`node-item-${node3.id}`)).toBe(nodes[nodes.length - 1]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node3.id))).toBe(nodes[nodes.length - 1]);
 	});
 
 	test('Create folder that fill a page size does not trigger new page request', async () => {
@@ -364,9 +364,9 @@ describe('Create folder', () => {
 
 		// create action
 		await createNode(newNode, user);
-		await screen.findByTestId(`node-item-${newNode.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(newNode.id));
 		expect(screen.getByText(newNode.name)).toBeVisible();
-		const nodeItem = await screen.findByTestId(`node-item-${newNode.id}`);
+		const nodeItem = await screen.findByTestId(SELECTORS.nodeItem(newNode.id));
 		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
 		expect(within(nodeItem).getByText(newNode.name)).toBeVisible();

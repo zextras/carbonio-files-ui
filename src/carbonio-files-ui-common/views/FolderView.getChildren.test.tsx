@@ -147,10 +147,10 @@ describe('Get children', () => {
 			within(screen.getByTestId(SELECTORS.listHeader)).queryByTestId(ICON_REGEXP.queryLoading)
 		);
 		// wait the rendering of the first item
-		await screen.findByTestId(`node-item-${(currentFolder.children.nodes[0] as Node).id}`);
+		await screen.findByTestId(SELECTORS.nodeItem((currentFolder.children.nodes[0] as Node).id));
 		expect(
 			screen.getByTestId(
-				`node-item-${(currentFolder.children.nodes[NODES_LOAD_LIMIT - 1] as Node).id}`
+				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT - 1] as Node).id)
 			)
 		).toBeVisible();
 		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
@@ -159,7 +159,7 @@ describe('Get children', () => {
 		// elements after the limit should not be rendered
 		expect(
 			screen.queryByTestId(
-				`node-item-${(currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id}`
+				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
 			)
 		).not.toBeInTheDocument();
 
@@ -167,15 +167,15 @@ describe('Get children', () => {
 
 		// wait for the response
 		await screen.findByTestId(
-			`node-item-${(currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id}`
+			SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
 		);
 
 		// now all elements are loaded so last children should be visible and no loading icon should be rendered
 		expect(
 			screen.getByTestId(
-				`node-item-${
+				SELECTORS.nodeItem(
 					(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as Node).id
-				}`
+				)
 			)
 		).toBeVisible();
 		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();

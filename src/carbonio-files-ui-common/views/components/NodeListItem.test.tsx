@@ -251,7 +251,7 @@ describe('Node List Item', () => {
 				navigateTo={mockedNavigation}
 			/>
 		);
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
+		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 		expect(mockedNavigation).toHaveBeenCalledTimes(1);
 		expect(mockedHistory).toContain(node.id);
 		expect(mockedHistory[mockedHistory.length - 1]).toBe(node.id);
@@ -270,7 +270,7 @@ describe('Node List Item', () => {
 				navigateTo={mockedNavigation}
 			/>
 		);
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
+		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 		expect(mockedNavigation).not.toHaveBeenCalled();
 	});
 
@@ -286,7 +286,7 @@ describe('Node List Item', () => {
 				trashed
 			/>
 		);
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
+		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 		expect(mockedNavigation).not.toHaveBeenCalled();
 	});
 
@@ -302,7 +302,7 @@ describe('Node List Item', () => {
 				disabled
 			/>
 		);
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
+		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 		expect(mockedNavigation).not.toHaveBeenCalled();
 	});
 

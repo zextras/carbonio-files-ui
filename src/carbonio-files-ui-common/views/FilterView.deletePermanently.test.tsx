@@ -93,7 +93,7 @@ describe('Filter View', () => {
 
 				expect(element).not.toBeInTheDocument();
 				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
-				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
+				expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(2);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
