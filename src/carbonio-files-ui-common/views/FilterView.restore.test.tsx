@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
+import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -15,7 +15,8 @@ import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constant
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { getFindNodesVariables, mockFindNodes, mockRestoreNodes } from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockFindNodes, mockRestoreNodes } from '../utils/mockUtils';
 import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
@@ -40,22 +41,16 @@ describe('Filter View', () => {
 
 				const nodesIdsToRestore = [currentFilter[0].id];
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({
-							folder_id: ROOTS.TRASH,
-							cascade: false,
-							shared_with_me: false
-						}),
-						currentFilter
-					),
-					mockRestoreNodes(
-						{
-							node_ids: nodesIdsToRestore
-						},
-						[{ ...currentFilter[0], rootId: ROOTS.LOCAL_ROOT, parent: populateLocalRoot() }]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					},
+					Mutation: {
+						restoreNodes: mockRestoreNodes([
+							{ ...currentFilter[0], rootId: ROOTS.LOCAL_ROOT, parent: populateLocalRoot() }
+						])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -101,12 +96,11 @@ describe('Filter View', () => {
 
 				const nodesIdsToRestore = [currentFilter[0].id, currentFilter[1].id];
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -144,12 +138,11 @@ describe('Filter View', () => {
 				node.permissions.can_write_file = true;
 				node.rootId = ROOTS.LOCAL_ROOT;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						[node]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes([node])
+					}
+				} satisfies Partial<Resolvers>;
 
 				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -186,17 +179,14 @@ describe('Filter View', () => {
 			});
 			const nodesToRestore = map(firstPage, (node) => node.id);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
-					firstPage
-				),
-				mockRestoreNodes({ node_ids: nodesToRestore }, firstPage),
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
-					secondPage
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage, secondPage)
+				},
+				Mutation: {
+					restoreNodes: mockRestoreNodes(firstPage)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				mocks,
@@ -219,7 +209,7 @@ describe('Filter View', () => {
 			expect(restoreAction).toBeVisible();
 			expect(restoreAction).toBeEnabled();
 			await user.click(restoreAction);
-			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
+			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/^success$/i);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();

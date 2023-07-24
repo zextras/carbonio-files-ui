@@ -26,7 +26,9 @@ import GET_NODE from '../graphql/queries/getNode.graphql';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNode, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import {
+	FindNodesDocument,
 	FindNodesQuery,
 	FindNodesQueryVariables,
 	GetNodeQuery,
@@ -67,7 +69,7 @@ describe('Filter view', () => {
 			await screen.findByText(/view files and folders/i);
 			await screen.findAllByTestId('node-item', { exact: false });
 			const queryResult = global.apolloClient.readQuery<FindNodesQuery, FindNodesQueryVariables>({
-				query: FIND_NODES,
+				query: FindNodesDocument,
 				variables: getFindNodesVariables({
 					shared_with_me: false,
 					folder_id: ROOTS.TRASH,
@@ -279,12 +281,11 @@ describe('Filter view', () => {
 				mockedNode.rootId = ROOTS.TRASH;
 			});
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
-					nodes
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				mocks,

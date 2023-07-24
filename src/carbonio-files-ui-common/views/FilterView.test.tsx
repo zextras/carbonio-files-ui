@@ -15,20 +15,13 @@ import FilterView from './FilterView';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
-import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
+import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	getFindNodesVariables,
-	mockFindNodes,
-	mockFlagNodes,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions
-} from '../utils/mockUtils';
+import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/mockUtils';
 import { selectNodes, setup, triggerLoadMore } from '../utils/testUtils';
 
 let mockedRequestHandler: jest.Mock;
@@ -75,12 +68,11 @@ describe('Filter view', () => {
 
 	test('first access to a filter show loading state and than show nodes', async () => {
 		const nodes = populateNodes();
-		const mocks = [
-			mockFindNodes(
-				getFindNodesVariables({ flagged: true, cascade: true, folder_id: ROOTS.LOCAL_ROOT }),
-				nodes
-			)
-		];
+		const mocks = {
+			Query: {
+				findNodes: mockFindNodes(nodes)
+			}
+		} satisfies Partial<Resolvers>;
 
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
@@ -101,16 +93,14 @@ describe('Filter view', () => {
 	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
 		const currentFilter = populateNodes(NODES_LOAD_LIMIT + Math.floor(NODES_LOAD_LIMIT / 2));
 
-		const mocks = [
-			mockFindNodes(
-				getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-				currentFilter.slice(0, NODES_LOAD_LIMIT)
-			),
-			mockFindNodes(
-				getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }, true),
-				currentFilter.slice(NODES_LOAD_LIMIT)
-			)
-		];
+		const mocks = {
+			Query: {
+				findNodes: mockFindNodes(
+					currentFilter.slice(0, NODES_LOAD_LIMIT),
+					currentFilter.slice(NODES_LOAD_LIMIT)
+				)
+			}
+		} satisfies Partial<Resolvers>;
 
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
@@ -156,26 +146,16 @@ describe('Filter view', () => {
 		node.flagged = false;
 		currentFolder.children.nodes.push(node);
 
-		const mocks = [
-			mockFindNodes(
-				getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-				nodes
-			),
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockFlagNodes(
-				{
-					node_ids: [node.id],
-					flag: true
-				},
-				[node.id]
-			),
-			mockFindNodes(
-				getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-				[...nodes, node]
-			)
-		];
+		const mocks = {
+			Query: {
+				findNodes: mockFindNodes(nodes, [...nodes, node]),
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode(currentFolder)
+			},
+			Mutation: {
+				flagNodes: mockFlagNodes([node.id])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(
 			<div>
@@ -220,12 +200,11 @@ describe('Filter view', () => {
 	describe('Selection mode', () => {
 		test('if there is no element selected, all actions are visible and disabled', async () => {
 			const nodes = populateNodes(10);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					nodes
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				mocks,
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]

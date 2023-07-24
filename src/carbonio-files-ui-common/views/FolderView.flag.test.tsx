@@ -15,13 +15,8 @@ import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import {
-	getChildrenVariables,
-	mockFlagNodes,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions
-} from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockFlagNodes, mockGetNode, mockGetPath } from '../utils/mockUtils';
 import { setup, selectNodes } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
@@ -54,25 +49,15 @@ describe('Flag', () => {
 
 			const nodesIdsToUnflag = nodesIdsToFlag.slice(0, nodesIdsToFlag.length / 2);
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockFlagNodes(
-					{
-						node_ids: nodesIdsToFlag,
-						flag: true
-					},
-					nodesIdsToFlag
-				),
-				mockFlagNodes(
-					{
-						node_ids: nodesIdsToUnflag,
-						flag: false
-					},
-					nodesIdsToUnflag
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode(currentFolder)
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes(nodesIdsToFlag, nodesIdsToUnflag)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -124,25 +109,15 @@ describe('Flag', () => {
 			node.flagged = false;
 			currentFolder.children.nodes.push(node);
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockFlagNodes(
-					{
-						node_ids: [node.id],
-						flag: true
-					},
-					[node.id]
-				),
-				mockFlagNodes(
-					{
-						node_ids: [node.id],
-						flag: false
-					},
-					[node.id]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode(currentFolder)
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes([node.id], [node.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],

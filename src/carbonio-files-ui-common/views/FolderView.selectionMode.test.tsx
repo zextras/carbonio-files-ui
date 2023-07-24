@@ -16,13 +16,9 @@ import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
+import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions
-} from '../utils/mockUtils';
+import { mockGetNode, mockGetPath } from '../utils/mockUtils';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
@@ -43,11 +39,13 @@ jest.mock('./components/Displayer', () => ({
 describe('Folder View Selection mode', () => {
 	test('if there is no element selected, all actions are visible and disabled', async () => {
 		const currentFolder = populateFolder(10);
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
-		];
+
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode(currentFolder)
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
@@ -95,15 +93,22 @@ describe('Folder View Selection mode', () => {
 		forEach(secondPage, (mockedNode) => {
 			mockedNode.parent = currentFolder;
 		});
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(
-				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-				{ ...currentFolder, children: populateNodePage(secondPage) } as Folder
-			)
-		];
+
+		const childrenResolver: FolderResolvers['children'] = (parent, args) => {
+			if (args.page_token !== undefined && args.page_token !== null) {
+				return populateNodePage(secondPage);
+			}
+			return currentFolder.children;
+		};
+		const mocks = {
+			Folder: {
+				children: childrenResolver
+			},
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode(currentFolder)
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
