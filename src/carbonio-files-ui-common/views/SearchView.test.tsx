@@ -177,7 +177,6 @@ describe('Search view', () => {
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
 			expect(screen.getByText(currentSearch[0].name)).toBeVisible();
 			await screen.findByText(/view files and folders/i);
-			expect.assertions(8);
 		});
 
 		test('Move action does not close the displayer if node is not removed from the main list', async () => {

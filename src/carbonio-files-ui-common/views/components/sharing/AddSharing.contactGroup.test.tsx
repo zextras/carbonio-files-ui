@@ -135,9 +135,7 @@ describe('Add Sharing', () => {
 					contactGroup.m?.length || 0
 				)
 			);
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled', '')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /share/i })).toBeEnabled());
 			// dropdown is closed
 			expect(screen.queryByText(/contact-group-1/i)).not.toBeInTheDocument();
 			// contact group members are exploded in different chips
@@ -208,7 +206,7 @@ describe('Add Sharing', () => {
 				expect(screen.getByText(contact.cn[0]._attrs.email)).toBeVisible();
 			});
 			// share button is disabled
-			expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		});
 
 		test('When a member is already set as collaborator, chip is not created', async () => {

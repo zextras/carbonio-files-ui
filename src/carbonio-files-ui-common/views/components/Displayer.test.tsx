@@ -6,8 +6,6 @@
 
 import React from 'react';
 
-import { screen, within } from '@testing-library/react';
-
 import { Displayer } from './Displayer';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
@@ -36,7 +34,7 @@ import {
 	mockMoveNodes,
 	mockUpdateNode
 } from '../../utils/mockUtils';
-import { buildBreadCrumbRegExp, renameNode, setup } from '../../utils/testUtils';
+import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
 describe('Displayer', () => {
@@ -70,11 +68,12 @@ describe('Displayer', () => {
 		});
 		await screen.findAllByText(node.name);
 
-		const copyIcon = within(screen.getByTestId(SELECTORS.displayerActionsHeader)).queryByTestId(
-			ICON_REGEXP.copy
+		const copyIcon = within(screen.getByTestId(SELECTORS.displayerActionsHeader)).queryByRoleWithIcon(
+			'button',
+			{ icon: ICON_REGEXP.copy }
 		);
 		if (copyIcon) {
-			expect(copyIcon.parentNode).not.toHaveAttribute('disabled');
+			expect(copyIcon).toBeEnabled();
 			await user.click(copyIcon);
 		} else {
 			const moreVertical = await screen.findByTestId('icon: MoreVertical');
@@ -93,7 +92,7 @@ describe('Displayer', () => {
 		await findByTextWithMarkup(buildBreadCrumbRegExp(parent.name));
 		// folder loading
 		await screen.findByText((parent.children.nodes[0] as File | Folder).name);
-		expect(copyButton).not.toHaveAttribute('disabled');
+		expect(copyButton).toBeEnabled();
 		await user.click(copyButton);
 		expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 		await screen.findByText(/item copied/i);
@@ -149,9 +148,9 @@ describe('Displayer', () => {
 		);
 		// breadcrumb loading
 		await findByTextWithMarkup(buildBreadCrumbRegExp(parent.name));
-		expect(moveButton).toHaveAttribute('disabled');
+		expect(moveButton).toBeDisabled();
 		await user.click(destinationFolderItem);
-		expect(moveButton).not.toHaveAttribute('disabled');
+		expect(moveButton).toBeEnabled();
 		await user.click(moveButton);
 		expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 		await screen.findByText(/item moved/i);

@@ -200,9 +200,7 @@ describe('Move', () => {
 			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /move/i })).not.toHaveAttribute('disabled', '')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /move/i })).toBeEnabled());
 			await user.click(screen.getByRole('button', { name: /move/i }));
 			expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument();
 			expect(screen.queryByText('Move')).not.toBeInTheDocument();
@@ -293,7 +291,7 @@ describe('Move', () => {
 			const modalList = screen.getByTestId(SELECTORS.modalList);
 			await within(modalList).findByText((currentFolder.children.nodes[0] as Node).name);
 			const moveModalButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });
-			expect(moveModalButton).toHaveAttribute('disabled', '');
+			expect(moveModalButton).toBeDisabled();
 			await user.click(screen.getByText(commonParent.name));
 			await findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name));
 			await screen.findByText(destinationFolder.name);
@@ -304,7 +302,7 @@ describe('Move', () => {
 			expect(screen.getByText(destinationFolder.name)).toBeVisible();
 			expect(screen.getByText(currentFolder.name)).toBeVisible();
 			await user.click(screen.getByText(destinationFolder.name));
-			await waitFor(() => expect(moveModalButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(moveModalButton).toBeEnabled());
 			await user.click(moveModalButton);
 			await screen.findByText(/Item moved/i);
 			await screen.findByText(secondPage[0].name);

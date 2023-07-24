@@ -253,7 +253,7 @@ describe('Add Sharing', () => {
 		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
 		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
 		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
+		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
 		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
@@ -555,7 +555,7 @@ describe('Add Sharing', () => {
 		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
 		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
 		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
+		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 		// write a custom message
 		// const customMessageInputField = screen.getByRole('textbox', {
 		// 	name: /add a custom message to this notification/i
@@ -569,7 +569,7 @@ describe('Add Sharing', () => {
 		expect(screen.queryByText(userAccount.full_name[0])).not.toBeInTheDocument();
 		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 		expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 	});
 
 	test('share button is enabled only when a valid new share chip is created', async () => {
@@ -607,7 +607,7 @@ describe('Add Sharing', () => {
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		// share button is disabled
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// write a custom message
 		// const customMessageInputField = screen.getByRole('textbox', {
 		// 	name: /add a custom message to this notification/i
@@ -615,7 +615,7 @@ describe('Add Sharing', () => {
 		// await user.type(customMessageInputField, customMessage);
 		// expect(customMessageInputField).toHaveValue(customMessage);
 		// share button is still disabled
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
@@ -630,13 +630,13 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// share button is now active
-		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
+		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
 		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
 		// share button returns to be disabled after creation success
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 	});
 
 	test('if no valid account is found chip is not added and share button remains disabled', async () => {
@@ -667,7 +667,7 @@ describe('Add Sharing', () => {
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		// share button is disabled
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
@@ -683,7 +683,7 @@ describe('Add Sharing', () => {
 		// dropdown is closed
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 		// share button returns to be disabled after creation success
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 	});
 
 	test('multiple shares are creatable at once. Popover changes permissions of the active share only', async () => {

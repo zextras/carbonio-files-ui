@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act, fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -25,7 +25,7 @@ import {
 	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -70,9 +70,9 @@ describe('Copy', () => {
 
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-			const copyAction = await screen.findByTestId(ICON_REGEXP.copy);
+			const copyAction = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 			expect(copyAction).toBeVisible();
-			expect(copyAction).not.toHaveAttribute('disabled', '');
+			expect(copyAction).toBeEnabled();
 		});
 
 		test('Copy confirm action close the modal and clear cached data for destination folder if destination folder is not current folder', async () => {
@@ -142,10 +142,7 @@ describe('Copy', () => {
 				// run timers of modal
 				jest.advanceTimersToNextTimer();
 			});
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-				'disabled',
-				''
-			);
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
 			await screen.findByText(/Item copied/i);
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
@@ -224,10 +221,7 @@ describe('Copy', () => {
 			expect(within(modalList).getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length
 			);
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-				'disabled',
-				''
-			);
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
 			await screen.findByText(/Item copied/i);
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
@@ -306,10 +300,7 @@ describe('Copy', () => {
 				// run timers of modal
 				jest.advanceTimersToNextTimer();
 			});
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-				'disabled',
-				''
-			);
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
 			await screen.findByText(/Item copied/i);
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
