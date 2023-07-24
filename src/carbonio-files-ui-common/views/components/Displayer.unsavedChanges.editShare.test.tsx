@@ -62,9 +62,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -114,9 +112,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -138,7 +134,7 @@ describe('Displayer', () => {
 					// run timers of popover
 					jest.runOnlyPendingTimers();
 				});
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
 			});
 
 			test.skip('leave anyway continue with navigation and does not save the permissions', async () => {
@@ -173,9 +169,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -202,7 +196,7 @@ describe('Displayer', () => {
 				await user.click(editShareItem2);
 				await screen.findByText(/viewer/i);
 				// save button is disabled because permissions are reset
-				expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave continue with navigation and save the new permissions', async () => {
@@ -246,9 +240,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -279,7 +271,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				// save button is disabled because permissions are updated and saved
-				expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave with error keeps navigation on sharing tab', async () => {
@@ -322,9 +314,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -349,7 +339,7 @@ describe('Displayer', () => {
 				).not.toBeInTheDocument();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
 			});
 		});
 	});

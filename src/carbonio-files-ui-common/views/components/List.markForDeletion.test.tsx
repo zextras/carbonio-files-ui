@@ -57,9 +57,7 @@ describe('Mark for deletion - trash', () => {
 				map(currentFolder.children.nodes, (node) => (node as Node).id),
 				user
 			);
-
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			expect.assertions(4);
 		});
 
 		test('Mark for deletion is visible but disabled in selection when one file do not have permission', async () => {
@@ -106,9 +104,7 @@ describe('Mark for deletion - trash', () => {
 				map(currentFolder.children.nodes, (node) => (node as Node).id),
 				user
 			);
-
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			expect.assertions(3);
 		});
 	});
 
@@ -133,7 +129,6 @@ describe('Mark for deletion - trash', () => {
 			fireEvent.contextMenu(nodeItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
-			expect.assertions(1);
 		});
 	});
 });

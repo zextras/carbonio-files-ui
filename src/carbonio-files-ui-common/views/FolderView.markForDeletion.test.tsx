@@ -108,9 +108,7 @@ describe('Mark for deletion - trash', () => {
 			// wait for copy action to check that popper is open
 			const copyAction = await screen.findByText(ACTION_REGEXP.copy);
 			expect(copyAction.parentNode).not.toHaveAttribute('disabled');
-
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
-			expect.assertions(10);
 		});
 
 		test('Mark for deletion of all loaded nodes trigger refetch of first page', async () => {
@@ -218,9 +216,7 @@ describe('Mark for deletion - trash', () => {
 
 			// contextual menu is closed
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
-
 			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(4);
-			expect.assertions(3);
 		});
 
 		test('Mark for deletion from context menu on selected nodes', async () => {

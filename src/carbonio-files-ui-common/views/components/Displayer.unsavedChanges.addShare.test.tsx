@@ -240,7 +240,7 @@ describe('Displayer', () => {
 				expect(
 					screen.getByRole('textbox', { name: /add a custom message to this notification/i })
 				).toHaveDisplayValue(customText);
-				expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 			});
 
 			test.skip('leave anyway action reset fields and continue navigation', async () => {
@@ -306,7 +306,7 @@ describe('Displayer', () => {
 				expect(
 					screen.queryByRole('textbox', { name: /add a custom message to this notification/i })
 				).not.toHaveDisplayValue(customText);
-				expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave action create shares and continue navigation', async () => {
@@ -391,7 +391,7 @@ describe('Displayer', () => {
 				expect(
 					screen.queryByRole('textbox', { name: /add a custom message to this notification/i })
 				).not.toHaveDisplayValue(customText);
-				expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave action with errors leaves fields valued with only shares that went in error and navigation is kept on sharing tab', async () => {
@@ -518,7 +518,7 @@ describe('Displayer', () => {
 					screen.getByRole('textbox', { name: /add a custom message to this notification/i })
 				).toHaveDisplayValue(customText);
 				// share button is enabled
-				expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 			});
 		});
 	});

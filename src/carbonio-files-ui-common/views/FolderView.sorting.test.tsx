@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitFor, within } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -20,7 +20,7 @@ import {
 	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
-import { setup } from '../utils/testUtils';
+import { setup, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -78,10 +78,9 @@ describe('Sorting', () => {
 		expect(within(items[0]).getByText('a')).toBeVisible();
 		expect(within(items[1]).getByText('b')).toBeVisible();
 
-		const sortIcon = screen.getByTestId(ICON_REGEXP.sortDesc);
-		expect(sortIcon).toBeInTheDocument();
+		const sortIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc });
 		expect(sortIcon).toBeVisible();
-		expect(sortIcon.parentElement).not.toHaveAttribute('disabled', '');
+		expect(sortIcon).toBeEnabled();
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
 		await user.click(sortIcon);
