@@ -7,14 +7,14 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { screen, waitFor, within } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 
 import { NodeDetailsDescription } from './NodeDetailsDescription';
 import { populateFile } from '../../mocks/mockUtils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockErrorResolver } from '../../utils/mockUtils';
-import { generateError, setup } from '../../utils/testUtils';
+import { generateError, setup, screen } from '../../utils/testUtils';
 
 describe('NodeDetailsDescription component', () => {
 	test('Missing description show missing description label', () => {
@@ -64,9 +64,9 @@ describe('NodeDetailsDescription component', () => {
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
-		expect(editIcon.parentNode).toHaveAttribute('disabled', '');
+		expect(editIcon).toBeDisabled();
 	});
 
 	test('Edit icon not disabled if can_write_file is true', () => {
@@ -82,9 +82,9 @@ describe('NodeDetailsDescription component', () => {
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
-		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(editIcon).toBeEnabled();
 	});
 
 	test('save button is disabled when description is the same', async () => {
@@ -103,26 +103,25 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
-		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(editIcon).toBeEnabled();
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
 		expect(saveIcon).toBeVisible();
-		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeDisabled();
 
-		const inputFieldDiv = await screen.findByTestId('input-description');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
-		expect(saveIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeEnabled();
 
 		await user.clear(inputField);
 		await user.type(inputField, node.description);
 
-		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeDisabled();
 	});
 
 	test('save button is disabled when description has more than 4096 characters', async () => {
@@ -144,26 +143,25 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
-		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(editIcon).toBeEnabled();
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
 		expect(saveIcon).toBeVisible();
-		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeDisabled();
 
-		const inputFieldDiv = await screen.findByTestId('input-description');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
-		expect(saveIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeEnabled();
 
 		await user.clear(inputField);
 		await user.paste(moreThan4096Description);
 
-		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeDisabled();
 	});
 
 	test('close button do not save changes', async () => {
@@ -182,36 +180,34 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		let editIcon = screen.getByTestId('icon: Edit2Outline');
+		let editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
-		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(editIcon).toBeEnabled();
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
 		expect(saveIcon).toBeVisible();
-		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeDisabled();
 
-		let inputFieldDiv = await screen.findByTestId('input-description');
-		let inputField = within(inputFieldDiv).getByRole('textbox');
+		let inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
 		expect(inputField).toHaveValue(newDescription);
 
-		expect(saveIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeEnabled();
 
-		const closeICon = screen.getByTestId('icon: Close');
+		const closeICon = screen.getByRoleWithIcon('button', { icon: 'icon: Close' });
 		expect(closeICon).toBeVisible();
 		await user.click(closeICon);
 
-		editIcon = await screen.findByTestId('icon: Edit2Outline');
+		editIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
 		await user.click(editIcon);
 
-		inputFieldDiv = await screen.findByTestId('input-description');
-		inputField = within(inputFieldDiv).getByRole('textbox');
+		inputField = screen.getByRole('textbox');
 
 		expect(inputField).toHaveValue(node.description);
 	});
@@ -241,27 +237,26 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		let editIcon = screen.getByTestId('icon: Edit2Outline');
+		let editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
-		expect(editIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(editIcon).toBeEnabled();
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
 		expect(saveIcon).toBeVisible();
-		expect(saveIcon.parentNode).toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeDisabled();
 
-		const inputFieldDiv = await screen.findByTestId('input-description');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
 		expect(inputField).toHaveValue(newDescription);
 
-		expect(saveIcon.parentNode).not.toHaveAttribute('disabled', '');
+		expect(saveIcon).toBeEnabled();
 
 		await user.click(saveIcon);
 
-		editIcon = await screen.findByTestId('icon: Edit2Outline');
+		editIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
 
 		expect(saveIcon).not.toBeVisible();
@@ -290,10 +285,10 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText(/description/i)).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
 
-		const editIcon = screen.getByTestId('icon: Edit2Outline');
+		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 		expect(editIcon).toBeVisible();
 		await user.click(editIcon);
-		const saveIcon = await screen.findByTestId('icon: SaveOutline');
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
 		expect(saveIcon).toBeVisible();
 		const inputField = screen.getByRole('textbox', {
 			name: /maximum length allowed is 4096 characters/i
@@ -306,7 +301,9 @@ describe('NodeDetailsDescription component', () => {
 		expect(
 			screen.getByRole('textbox', { name: /maximum length allowed is 4096 characters/i })
 		).toBeVisible();
-		expect(screen.getByTestId('icon: SaveOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
+		expect(screen.getByRoleWithIcon('button', { icon: 'icon: SaveOutline' })).toBeVisible();
+		expect(
+			screen.queryByRoleWithIcon('button', { icon: 'icon: Edit2Outline' })
+		).not.toBeInTheDocument();
 	});
 });

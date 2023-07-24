@@ -21,9 +21,9 @@ import {
 	render,
 	RenderOptions,
 	RenderResult,
-	screen,
+	screen as rtlScreen,
 	waitFor,
-	within
+	within as rtlWithin
 } from '@testing-library/react';
 import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
@@ -37,7 +37,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { resolvers } from './resolvers';
 import { isFile, isFolder } from './utils';
-import I18nFactory from '../../i18n/i18n-test-factory';
+import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
@@ -51,7 +51,7 @@ export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
  * Matcher function to search a string in more html elements and not just in a single element.
  */
 const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) =>
-	screen.queryAllByText((_content, element) => {
+	rtlScreen.queryAllByText((_content, element) => {
 		if (element && element instanceof HTMLElement) {
 			const hasText = (singleNode: Element): boolean => {
 				const regExp = RegExp(text);
@@ -84,8 +84,8 @@ const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> =
 	{ icon, ...options }
 ) =>
 	filter(
-		screen.queryAllByRole('button', options),
-		(element) => within(element).queryByTestId(icon) !== null
+		rtlScreen.queryAllByRole('button', options),
+		(element) => rtlWithin(element).queryByTestId(icon) !== null
 	);
 const getByRoleWithIconMultipleError = (
 	container: Element | null,
@@ -136,6 +136,16 @@ const customQueries = {
 	findAllByRoleWithIcon,
 	findByRoleWithIcon
 };
+
+const queriesExtended = { ...queries, ...customQueries };
+
+export function within(
+	element: Parameters<typeof rtlWithin<typeof queriesExtended>>[0]
+): ReturnType<typeof rtlWithin<typeof queriesExtended>> {
+	return rtlWithin(element, queriesExtended);
+}
+
+export const screen = within(document.body);
 
 function escapeRegExp(string: string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -200,6 +210,17 @@ const ApolloProviderWrapper = ({
 	return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
 
+type ApolloProviderWrapperProps = Pick<WrapperProps, 'children' | 'mocks'>;
+
+const ApolloProviderWrapper = ({ children, mocks }: ApolloProviderWrapperProps): JSX.Element =>
+	mocks ? (
+		<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
+			{children}
+		</MockedProvider>
+	) : (
+		<ApolloProvider client={global.apolloClient}>{children}</ApolloProvider>
+	);
+
 const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): JSX.Element => {
 	const i18n = useMemo(() => {
 		const i18nFactory = new I18nFactory();
@@ -235,7 +256,7 @@ function customRender(
 	}: WrapperProps & {
 		options?: Omit<RenderOptions, 'queries' | 'wrapper'>;
 	} = {}
-): RenderResult<typeof queries & typeof customQueries> {
+): RenderResult<typeof queriesExtended> {
 	return render(ui, {
 		wrapper: ({ children }: Pick<WrapperProps, 'children'>) => (
 			<Wrapper initialRouterEntries={initialRouterEntries} mocks={mocks}>
@@ -346,9 +367,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	});
 	const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 	await user.click(destinationFolderItem);
-	await waitFor(() =>
-		expect(screen.getByRole('button', { name: /move/i })).not.toHaveAttribute('disabled', '')
-	);
+	await waitFor(() => expect(screen.getByRole('button', { name: /move/i })).toBeEnabled());
 	await user.click(screen.getByRole('button', { name: /move/i }));
 	await waitFor(() =>
 		expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument()
@@ -391,8 +410,7 @@ function createFileSystemDirectoryEntryReader(
 	// clone array to mutate with the splice in order to simulate the readEntries called until it returns an empty array (or undefined)
 	const children = [...node.children.nodes];
 	const readEntries = (
-		successCallback: FileSystemEntriesCallback,
-		_errorCallback?: ErrorCallback
+		successCallback: FileSystemEntriesCallback
 	): ReturnType<FileSystemDirectoryReader['readEntries']> => {
 		const childrenEntries = reduce<(typeof node.children.nodes)[number], FileSystemEntry[]>(
 			children.splice(0, Math.min(children.length, 10)),
@@ -500,12 +518,7 @@ export async function uploadWithDnD(
 
 	if (dataTransferObj.files.length > 0) {
 		// use find all to make this work also when there is the displayer open
-		await screen.findAllByText(dataTransferObj.files[0].name, undefined, {
-			onTimeout: (err) => {
-				screen.logTestingPlaygroundURL();
-				return err;
-			}
-		});
+		await screen.findAllByText(dataTransferObj.files[0].name);
 	}
 	expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 }

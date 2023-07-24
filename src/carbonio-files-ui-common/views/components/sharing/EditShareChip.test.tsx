@@ -700,15 +700,13 @@ describe('Edit Share Chip', () => {
 			await user.click(screen.getByTestId('icon: EyeOutline'));
 			await screen.findByRole('button', { name: /save/i });
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
-			expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			expect(screen.getByText(/viewer/i)).toBeVisible();
 			expect(screen.getByTestId('exclusive-selection-viewer')).not.toHaveAttribute('disabled');
 			expect(screen.getByText(/editor/i)).toBeVisible();
 			expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
 			await user.click(screen.getByText(/editor/i));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
 		});
 
@@ -742,11 +740,11 @@ describe('Edit Share Chip', () => {
 			await user.click(screen.getByTestId('icon: EyeOutline'));
 			await screen.findByRole('button', { name: /save/i });
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
-			expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			expect(screen.getByText(/viewer/i)).toBeVisible();
 			expect(screen.getByText(/editor/i)).toBeVisible();
 			await user.click(screen.getByText(/editor/i));
-			expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
 		});
 
@@ -780,15 +778,13 @@ describe('Edit Share Chip', () => {
 			await user.click(screen.getByTestId('icon: EyeOutline'));
 			await screen.findByRole('button', { name: /save/i });
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
-			expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			expect(screen.getByText(/viewer/i)).toBeVisible();
 			expect(screen.getByText(/sharing allowed/i)).toBeVisible();
 			expect(screen.getByTestId('icon: Square')).toBeVisible();
 			expect(screen.queryByTestId('icon: CheckmarkSquare')).not.toBeInTheDocument();
 			await user.click(screen.getByTestId('icon: Square'));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			await screen.findByTestId('icon: CheckmarkSquare');
 			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
 			expect(screen.queryByTestId('icon: Square')).not.toBeInTheDocument();
@@ -826,9 +822,7 @@ describe('Edit Share Chip', () => {
 			await screen.findByRole('button', { name: /save/i });
 			expect(screen.getByTestId('icon: Square')).toBeVisible();
 			await user.click(screen.getByTestId('icon: Square'));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			await screen.findByTestId('icon: CheckmarkSquare');
 			await user.click(screen.getByText(/editor/i));
 			await user.click(screen.getByRole('button', { name: /save/i }));

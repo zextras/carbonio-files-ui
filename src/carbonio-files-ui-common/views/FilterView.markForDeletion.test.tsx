@@ -5,13 +5,7 @@
  */
 import React from 'react';
 
-import {
-	fireEvent,
-	screen,
-	waitFor,
-	waitForElementToBeRemoved,
-	within
-} from '@testing-library/react';
+import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -23,7 +17,7 @@ import { populateFile, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes, mockTrashNodes } from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -69,20 +63,18 @@ describe('Filter View', () => {
 				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
 				await user.click(screen.getByTestId('icon: MoreVertical'));
 
-				const trashIcon = await screen.findByText(ACTION_REGEXP.moveToTrash);
-				expect(trashIcon).toBeInTheDocument();
-				expect(trashIcon).toBeVisible();
-				expect(trashIcon).not.toHaveAttribute('disabled', '');
+				const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
+				expect(trashAction).toBeInTheDocument();
+				expect(trashAction).toBeVisible();
+				expect(trashAction).not.toHaveAttribute('disabled', '');
 
-				await user.click(trashIcon);
+				await user.click(trashAction);
 
 				// wait for the snackbar to appear and disappear
 				await screen.findByText(/item moved to trash/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
 				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
-
-				expect.assertions(7);
 			});
 
 			test('Mark for deletion is hidden if not all nodes are not trashed', async () => {
@@ -124,7 +116,6 @@ describe('Filter View', () => {
 					'icon: Trash2Outline'
 				);
 				expect(trashIcon).not.toBeInTheDocument();
-				expect.assertions(2);
 			});
 		});
 

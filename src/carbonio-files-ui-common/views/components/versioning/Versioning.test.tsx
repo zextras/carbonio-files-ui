@@ -667,7 +667,7 @@ describe('Versioning', () => {
 
 		const uploadButton = await screen.findByRole('button', { name: /upload version/i });
 		expect(uploadButton).toBeVisible();
-		expect(uploadButton).not.toHaveAttribute('disabled', '');
+		expect(uploadButton).toBeEnabled();
 		await user.click(uploadButton);
 
 		const file = new File(['(⌐□_□)'], fileVersionUpload.name, {
@@ -812,7 +812,7 @@ describe('Versioning', () => {
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
 
 		const purgeAllButton = await screen.findByRole('button', { name: /purge all versions/i });
-		expect(purgeAllButton).not.toHaveAttribute('disabled', '');
+		expect(purgeAllButton).toBeEnabled();
 		await user.click(purgeAllButton);
 		await screen.findByText(
 			/All versions that are not marked to be kept forever, except the current one, will be deleted/i

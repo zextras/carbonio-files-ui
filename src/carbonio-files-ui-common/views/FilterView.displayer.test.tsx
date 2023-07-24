@@ -74,7 +74,6 @@ describe('Filter View', () => {
 			await within(displayer).findAllByText(node.name);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			expect(getByTextWithMarkup(buildBreadCrumbRegExp(node.name))).toBeVisible();
-			expect.assertions(6);
 		});
 
 		test('Move action does not close the displayer if node is not removed from the main list', async () => {

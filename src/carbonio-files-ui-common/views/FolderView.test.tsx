@@ -56,7 +56,6 @@ describe('Folder View', () => {
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
 				expect.arrayContaining([expect.objectContaining({ id: 'create-folder', disabled: true })])
 			);
-			expect.assertions(1);
 		});
 
 		test('Create folder option is active if current folder has can_write_folder permission', async () => {
@@ -77,7 +76,6 @@ describe('Folder View', () => {
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
 				expect.arrayContaining([expect.objectContaining({ id: 'create-folder', disabled: false })])
 			);
-			expect.assertions(1);
 		});
 	});
 
@@ -106,7 +104,6 @@ describe('Folder View', () => {
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp((currentFolder.children.nodes[0] as Node).name))
 			).toBeVisible();
-			expect.assertions(4);
 		});
 
 		test('Move action close the displayer if node is removed from the main list', async () => {
@@ -184,7 +181,6 @@ describe('Folder View', () => {
 					expect.objectContaining({ id: 'create-docs-presentation', disabled: true })
 				])
 			);
-			expect.assertions(1);
 		});
 
 		test('Create docs files options are active if current folder has can_write_file permission', async () => {
@@ -208,7 +204,6 @@ describe('Folder View', () => {
 					expect.objectContaining({ id: 'create-docs-presentation', disabled: false })
 				])
 			);
-			expect.assertions(1);
 		});
 	});
 });
