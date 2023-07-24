@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ApolloError, ServerError } from '@apollo/client';
 import { GraphQLError } from 'graphql';
 import { find } from 'lodash';
 
@@ -18,7 +17,7 @@ import {
 import { populateConfigs, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { MutationResolvers, QueryResolvers } from '../types/graphql/resolvers-types';
-import * as GQLTypes from '../types/graphql/types';
+import type * as GQLTypes from '../types/graphql/types';
 import { Maybe, Scalars } from '../types/graphql/types';
 import { ArrayOneOrMore, OneOrMany } from '../types/utils';
 
@@ -34,8 +33,10 @@ type Mock<
 	? QueryResolvers[QueryName<TData>]
 	: MutationResolvers[MutationName<TData>];
 
-export function mockErrorResolver(error: GraphQLError): never {
-	throw error;
+export function mockErrorResolver(error: GraphQLError): () => never {
+	return () => {
+		throw error;
+	};
 }
 
 export function mockFindNodes(...findNodes: Node[][]): Mock<GQLTypes.FindNodesQuery> {
@@ -61,10 +62,6 @@ export function mockUpdateNode(updateNode: Node): Mock<GQLTypes.UpdateNodeMutati
 	return () => updateNode;
 }
 
-export function mockUpdateNodeError(error: ServerError | ApolloError): never {
-	throw error;
-}
-
 export function mockUpdateNodeDescription(
 	updateNode: Node,
 	callback?: () => void
@@ -73,10 +70,6 @@ export function mockUpdateNodeDescription(
 		callback?.();
 		return updateNode;
 	};
-}
-
-export function mockUpdateNodeDescriptionError(error: ServerError | ApolloError): never {
-	throw error;
 }
 
 export function mockFlagNodes(flagNodes: Id[]): Mock<GQLTypes.FlagNodesMutation> {
@@ -109,10 +102,6 @@ export function mockCopyNodes(copyNodes: Node[]): Mock<GQLTypes.CopyNodesMutatio
 
 export function mockCreateFolder(createFolder: Node): Mock<GQLTypes.CreateFolderMutation> {
 	return () => createFolder;
-}
-
-export function mockCreateFolderError(error: ServerError | ApolloError): never {
-	throw error;
 }
 
 export function mockGetPath(
@@ -197,16 +186,8 @@ export function mockCreateShare(
 	};
 }
 
-export function mockCreateShareError(error: ApolloError | ServerError): never {
-	throw error;
-}
-
 export function mockUpdateShare(updateShare: GQLTypes.Share): Mock<GQLTypes.UpdateShareMutation> {
 	return (): typeof updateShare => updateShare;
-}
-
-export function mockUpdateShareError(error: ApolloError | ServerError): never {
-	throw error;
 }
 
 export function mockGetAccountByEmail(
@@ -218,12 +199,8 @@ export function mockGetAccountByEmail(
 }
 
 export function mockGetAccountsByEmail(
-	accounts: GQLTypes.Account[],
-	error?: ApolloError
+	accounts: GQLTypes.Account[]
 ): Mock<GQLTypes.GetAccountsByEmailQuery> {
-	if (error !== undefined) {
-		throw error;
-	}
 	return () => accounts;
 }
 
@@ -249,8 +226,16 @@ export function mockDeleteCollaborationLinks(
 	return () => deleteCollaborationLinks;
 }
 
-export function mockGetVersions(files: GQLTypes.File[]): Mock<GQLTypes.GetVersionsQuery> {
-	return () => files;
+export function mockGetVersions(
+	...files: GQLTypes.Query['getVersions'][]
+): Mock<GQLTypes.GetVersionsQuery> {
+	return () => {
+		const result = files.shift();
+		if (result) {
+			return result;
+		}
+		throw new Error('no more getVersions responses provided to resolver');
+	};
 }
 
 export function mockDeleteVersions(
@@ -260,9 +245,15 @@ export function mockDeleteVersions(
 }
 
 export function mockKeepVersions(
-	versions: Array<Maybe<Scalars['Int']>>
+	...versions: Array<Maybe<Scalars['Int']>>[]
 ): Mock<GQLTypes.KeepVersionsMutation> {
-	return () => versions;
+	return () => {
+		const result = versions.shift();
+		if (result) {
+			return result;
+		}
+		throw new Error('no more keepVersions responses provided to resolver');
+	};
 }
 
 export function mockCloneVersion(file: GQLTypes.File): Mock<GQLTypes.CloneVersionMutation> {
@@ -270,10 +261,11 @@ export function mockCloneVersion(file: GQLTypes.File): Mock<GQLTypes.CloneVersio
 }
 
 export function mockGetRootsList(): Mock<GQLTypes.GetRootsListQuery> {
-	return () => [
-		{ __typename: 'Root', id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT },
-		{ __typename: 'Root', id: ROOTS.TRASH, name: ROOTS.TRASH }
-	];
+	return () =>
+		[
+			{ __typename: 'Root', id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT },
+			{ __typename: 'Root', id: ROOTS.TRASH, name: ROOTS.TRASH }
+		] satisfies GQLTypes.GetRootsListQuery['getRootsList'];
 }
 
 export function mockGetConfigs(
@@ -286,18 +278,6 @@ export function mockCreateLink(link: GQLTypes.Link): Mock<GQLTypes.CreateLinkMut
 	return () => link;
 }
 
-export function mockCreateLinkError(
-	error: ApolloError | ServerError
-): Mock<GQLTypes.CreateLinkMutation> {
-	throw error;
-}
-
 export function mockUpdateLink(link: GQLTypes.Link): Mock<GQLTypes.UpdateLinkMutation> {
 	return () => link;
-}
-
-export function mockUpdateLinkError(
-	error: ApolloError | ServerError
-): Mock<GQLTypes.UpdateLinkMutation> {
-	throw error;
 }
