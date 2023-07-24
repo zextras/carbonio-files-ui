@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Resolvers } from '../types/graphql/resolvers-types';
+import { NodeResolvers, Resolvers } from '../types/graphql/resolvers-types';
 
 function resolveByTypename<T>(obj: { __typename?: T }): T {
 	if (obj.__typename) {
@@ -13,9 +13,18 @@ function resolveByTypename<T>(obj: { __typename?: T }): T {
 	throw new Error(`typename is undefined in object ${obj}`);
 }
 
+const sharesResolver: NodeResolvers['shares'] = (parent, args) =>
+	parent.shares.slice(0, args.limit);
+
 export const resolvers = {
 	Node: {
 		__resolveType: resolveByTypename
+	},
+	File: {
+		shares: sharesResolver
+	},
+	Folder: {
+		shares: sharesResolver
 	},
 	SharedTarget: {
 		__resolveType: resolveByTypename
