@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { getFindNodesVariables, mockDeletePermanently, mockFindNodes } from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -73,12 +73,12 @@ describe('Filter View', () => {
 
 				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
 
-				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByTestId(
-					'icon: DeletePermanentlyOutline'
+				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByRoleWithIcon(
+					'button',
+					{ icon: 'icon: DeletePermanentlyOutline' }
 				);
-				expect(deletePermanentlyIcon).toBeInTheDocument();
 				expect(deletePermanentlyIcon).toBeVisible();
-				expect(deletePermanentlyIcon).not.toHaveAttribute('disabled', '');
+				expect(deletePermanentlyIcon).toBeEnabled();
 
 				await user.click(deletePermanentlyIcon);
 
@@ -94,8 +94,6 @@ describe('Filter View', () => {
 				expect(element).not.toBeInTheDocument();
 				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
 				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
-
-				expect.assertions(8);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
@@ -152,8 +150,6 @@ describe('Filter View', () => {
 
 				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
 				expect(moreIcon).not.toBeInTheDocument();
-
-				expect.assertions(5);
 			});
 		});
 
@@ -230,9 +226,11 @@ describe('Filter View', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 
-			const deletePermanentlyAction = await screen.findByTestId('icon: DeletePermanentlyOutline');
+			const deletePermanentlyAction = await screen.findByRoleWithIcon('button', {
+				icon: 'icon: DeletePermanentlyOutline'
+			});
 			expect(deletePermanentlyAction).toBeVisible();
-			expect(deletePermanentlyAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(deletePermanentlyAction).toBeEnabled();
 			await user.click(deletePermanentlyAction);
 			const confirmDeleteButton = await screen.findByRole('button', {
 				name: ACTION_REGEXP.deletePermanently

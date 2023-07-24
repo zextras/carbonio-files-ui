@@ -276,10 +276,7 @@ describe('Filter View', () => {
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.move }));
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 				await screen.findByText(/item moved/i);
@@ -349,7 +346,7 @@ describe('Filter View', () => {
 
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 
-				// right click to open contextual menu on node with permission
+				// right click to open the contextual menu on node with permission
 				const nodeItem = await screen.findByText(node.name);
 				fireEvent.contextMenu(nodeItem);
 				const moveAction = await screen.findByText(ACTION_REGEXP.move);
@@ -431,10 +428,7 @@ describe('Filter View', () => {
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.move }));
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 				await screen.findByText(/item moved/i);

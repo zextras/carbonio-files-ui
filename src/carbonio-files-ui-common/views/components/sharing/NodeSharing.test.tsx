@@ -282,9 +282,7 @@ describe('Node Sharing', () => {
 			expect(screen.getByText(/sharing allowed/i)).toBeVisible();
 			// change share role to be editor allowed to share
 			await user.click(screen.getByText(/editor/i));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			await user.click(screen.getByTestId('icon: Square'));
 			await screen.findByTestId('icon: CheckmarkSquare');
 			await user.click(screen.getByRole('button', { name: /save/i }));
@@ -354,7 +352,7 @@ describe('Node Sharing', () => {
 			await within(collaboratorsContainer).findByTestId('icon: EyeOutline');
 			expect(screen.getByText(/Add new people or groups/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /share/i })).toBeVisible();
-			expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 			// only 1 icon EyeOutline is visible, the one of the existing share
 			expect(within(collaboratorsContainer).getByTestId('icon: EyeOutline')).toBeVisible();
 			const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });
@@ -373,7 +371,7 @@ describe('Node Sharing', () => {
 				screen.getByText(RegExp(`${userAccount.full_name[0]}-other-contact-2`, 'i'))
 			).toBeVisible();
 			// share button is still disabled since no valid contact has been selected yet
-			expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 			// now click on the dropdown element to create the chip
 			await user.click(screen.getByText(userAccount.full_name));
 			// and then the new share is created as a chip
@@ -388,7 +386,7 @@ describe('Node Sharing', () => {
 				within(collaboratorsContainer).queryByTestId('icon: Edit2Outline')
 			).not.toBeInTheDocument();
 			// share button is enabled
-			expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
+			expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 			// change permissions on the new share
 			await user.click(screen.getAllByTestId('icon: EyeOutline')[1]);
 			// the popover to change permission is shown
@@ -511,7 +509,7 @@ describe('Node Sharing', () => {
 			await within(collaboratorsContainer).findByTestId('icon: EyeOutline');
 			expect(screen.getByText(/Add new people or groups/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /share/i })).toBeVisible();
-			expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 			// 1 icon EyeOutline is visible, from the existing share
 			expect(within(collaboratorsContainer).getByTestId('icon: EyeOutline')).toBeVisible();
 			const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });
