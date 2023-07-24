@@ -44,12 +44,11 @@ describe('Displayer', () => {
 				await screen.findByText(node.description);
 				expect(screen.getByText(/details/i)).toBeVisible();
 				expect(screen.getByText(/sharing/i)).toBeVisible();
-				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByRoleWithIcon(
-					'button',
-					{
-						icon: 'icon: Edit2Outline'
-					}
-				);
+				const editDescriptionItem = within(
+					screen.getByTestId(SELECTORS.nodeDetails)
+				).getByRoleWithIcon('button', {
+					icon: 'icon: Edit2Outline'
+				});
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
 				const input = await screen.findByRole('textbox', {
@@ -88,10 +87,9 @@ describe('Displayer', () => {
 					mocks
 				});
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByRoleWithIcon(
-					'button',
-					{ icon: 'icon: Edit2Outline' }
-				);
+				const editDescriptionItem = within(
+					screen.getByTestId(SELECTORS.nodeDetails)
+				).getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
 				const input = await screen.findByRole('textbox', {
@@ -260,10 +258,9 @@ describe('Displayer', () => {
 					mocks
 				});
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByRoleWithIcon(
-					'button',
-					{ icon: 'icon: Edit2Outline' }
-				);
+				const editDescriptionItem = within(
+					screen.getByTestId(SELECTORS.nodeDetails)
+				).getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
 				const input = await screen.findByRole('textbox', {

@@ -68,10 +68,9 @@ describe('Displayer', () => {
 		});
 		await screen.findAllByText(node.name);
 
-		const copyIcon = within(screen.getByTestId(SELECTORS.displayerActionsHeader)).queryByRoleWithIcon(
-			'button',
-			{ icon: ICON_REGEXP.copy }
-		);
+		const copyIcon = within(
+			screen.getByTestId(SELECTORS.displayerActionsHeader)
+		).queryByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 		if (copyIcon) {
 			expect(copyIcon).toBeEnabled();
 			await user.click(copyIcon);
