@@ -39,6 +39,19 @@ export function mockErrorResolver(error: GraphQLError): () => never {
 	};
 }
 
+export function getFindNodesVariables(
+	variables: Partial<GQLTypes.FindNodesQueryVariables>,
+	withCursor = false
+): GQLTypes.FindNodesQueryVariables {
+	return {
+		limit: NODES_LOAD_LIMIT,
+		sort: NODES_SORT_DEFAULT,
+		page_token: withCursor ? 'next_page_token' : undefined,
+		shares_limit: SHARES_LOAD_LIMIT,
+		...variables
+	};
+}
+
 export function mockFindNodes(...findNodes: Node[][]): Mock<GQLTypes.FindNodesQuery> {
 	return () => {
 		const nodes = findNodes.shift() || [];
@@ -62,18 +75,14 @@ export function mockUpdateNode(updateNode: Node): Mock<GQLTypes.UpdateNodeMutati
 	return () => updateNode;
 }
 
-export function mockUpdateNodeDescription(
-	updateNode: Node,
-	callback?: () => void
-): Mock<GQLTypes.UpdateNodeDescriptionMutation> {
-	return (): typeof updateNode => {
-		callback?.();
-		return updateNode;
+export function mockFlagNodes(...flagNodes: Id[][]): Mock<GQLTypes.FlagNodesMutation> {
+	return () => {
+		const result = flagNodes.shift();
+		if (result) {
+			return result;
+		}
+		throw new Error('no more flagNodes responses provided to resolver');
 	};
-}
-
-export function mockFlagNodes(flagNodes: Id[]): Mock<GQLTypes.FlagNodesMutation> {
-	return () => flagNodes;
 }
 
 export function getChildrenVariables(
@@ -81,14 +90,15 @@ export function getChildrenVariables(
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
 	sharesLimit = SHARES_LOAD_LIMIT,
-	withCursor = false
+	withCursor = false,
+	pageToken = 'next_page_token'
 ): GQLTypes.GetChildrenQueryVariables {
 	return {
 		node_id: folderId,
 		children_limit: childrenLimit,
 		sort,
 		shares_limit: sharesLimit,
-		page_token: withCursor ? 'next_page_token' : undefined
+		page_token: withCursor ? pageToken : undefined
 	};
 }
 
@@ -100,8 +110,14 @@ export function mockCopyNodes(copyNodes: Node[]): Mock<GQLTypes.CopyNodesMutatio
 	return () => copyNodes;
 }
 
-export function mockCreateFolder(createFolder: Node): Mock<GQLTypes.CreateFolderMutation> {
-	return () => createFolder;
+export function mockCreateFolder(...createFolder: Node[]): Mock<GQLTypes.CreateFolderMutation> {
+	return () => {
+		const result = createFolder.shift();
+		if (result) {
+			return result;
+		}
+		throw new Error('No more createFolder responses provided to resolver');
+	};
 }
 
 export function mockGetPath(
