@@ -53,12 +53,13 @@ export function sortNodes(
 
 export function populateNodePage(
 	nodes: Maybe<Node>[],
-	pageSize: number = NODES_LOAD_LIMIT
+	pageSize: number = NODES_LOAD_LIMIT,
+	pageToken = 'next_page_token'
 ): NodePage {
 	return {
 		__typename: 'NodePage',
 		nodes,
-		page_token: nodes.length === pageSize ? 'next_page_token' : null
+		page_token: nodes.length === pageSize ? pageToken : null
 	};
 }
 
