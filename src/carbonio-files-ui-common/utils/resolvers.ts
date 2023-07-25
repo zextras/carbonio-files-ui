@@ -15,10 +15,10 @@ function resolveByTypename<T>(obj: { __typename?: T }): T {
 	throw new Error(`typename is undefined in object ${obj}`);
 }
 
-const sharesResolver: NodeResolvers['shares'] = (parent, args) =>
+const defaultSharesResolver: NodeResolvers['shares'] = (parent, args) =>
 	parent.shares.slice(0, args.limit);
 
-const childrenResolver: FolderResolvers['children'] = (parent, args) => {
+const defaultChildrenResolver: FolderResolvers['children'] = (parent, args) => {
 	if (args.page_token !== undefined && args.page_token !== null) {
 		return populateNodePage(parent.children.nodes.slice(NODES_LOAD_LIMIT, NODES_LOAD_LIMIT * 2));
 	}
@@ -30,11 +30,11 @@ export const resolvers = {
 		__resolveType: resolveByTypename
 	},
 	File: {
-		shares: sharesResolver
+		shares: defaultSharesResolver
 	},
 	Folder: {
-		children: childrenResolver,
-		shares: sharesResolver
+		children: defaultChildrenResolver,
+		shares: defaultSharesResolver
 	},
 	SharedTarget: {
 		__resolveType: resolveByTypename

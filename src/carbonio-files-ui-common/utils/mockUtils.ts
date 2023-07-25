@@ -174,13 +174,12 @@ export function mockGetNode(
 	...getNode: Array<OneOrMany<GQLTypes.File | GQLTypes.Folder>>
 ): Mock<GQLTypes.GetNodeQuery> {
 	return (parent, args) => {
-		const match =
-			find(getNode, (node) => {
-				if (!Array.isArray(node)) {
-					return node.id === args.node_id;
-				}
-				return node.length > 0 && node[0].id === args.node_id;
-			}) || null;
+		const match = find(getNode, (node) => {
+			if (!Array.isArray(node)) {
+				return node.id === args.node_id;
+			}
+			return node.length > 0 && node[0].id === args.node_id;
+		});
 		if (match !== undefined) {
 			if (Array.isArray(match)) {
 				const result = match.shift();

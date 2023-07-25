@@ -193,7 +193,7 @@ const ApolloProviderWrapper = ({
 			const schema = makeExecutableSchema({ typeDefs: GRAPHQL_SCHEMA });
 			const mockSchema = addMocksToSchema({
 				schema,
-				resolvers: merge(resolvers, mocks)
+				resolvers: merge({}, resolvers, mocks)
 			});
 			return new ApolloClient({
 				link: new SchemaLink({ schema: mockSchema }),
