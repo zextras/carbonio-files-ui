@@ -15,15 +15,9 @@ import { MoveNodesModalContent } from './MoveNodesModalContent';
 import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
-import {
-	populateFile,
-	populateFolder,
-	populateNode,
-	populateNodePage,
-	populateParents
-} from '../../mocks/mockUtils';
+import { populateFile, populateFolder, populateNode, populateParents } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
-import { QueryResolvers, Resolvers } from '../../types/graphql/resolvers-types';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File,
 	Folder,
@@ -545,27 +539,11 @@ describe('Move Nodes Modal', () => {
 	test('scroll trigger pagination', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2 - 1);
 		const nodesToMove = [currentFolder.children.nodes[0] as File | Folder];
-		const firstPage: Folder = {
-			...currentFolder,
-			children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))
-		};
-		const secondPage: Folder = {
-			...currentFolder,
-			children: populateNodePage(currentFolder.children.nodes.slice(NODES_LOAD_LIMIT))
-		};
-		const getNodeResponses = [firstPage, secondPage];
-		const getNodeResolver: QueryResolvers['getNode'] = () => {
-			const response = getNodeResponses.shift();
-			if (response !== undefined) {
-				return response;
-			}
-			throw new Error('no more getNode responses provided for the resolver');
-		};
 
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: getNodeResolver
+				getNode: mockGetNode(currentFolder)
 			}
 		} satisfies Partial<Resolvers>;
 

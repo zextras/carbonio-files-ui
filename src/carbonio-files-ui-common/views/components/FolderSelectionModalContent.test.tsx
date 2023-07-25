@@ -25,14 +25,9 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Node } from '../../types/graphql/types';
-import {
-	getChildrenVariables,
-	getFindNodesVariables,
-	mockFindNodes,
-	mockGetChildren,
-	mockGetPath
-} from '../../utils/mockUtils';
+import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
 let confirmAction = jest.fn();
@@ -56,7 +51,7 @@ describe('Folder Selection Modal Content', () => {
 				<FolderSelectionModalContent confirmAction={confirmAction} />
 			</div>,
 			{
-				mocks: []
+				mocks: {}
 			}
 		);
 
@@ -82,13 +77,12 @@ describe('Folder Selection Modal Content', () => {
 		folder2.parent = parent;
 		file.parent = parent;
 
-		const mocks = [
-			// request to find out parent
-			mockGetPath({ node_id: folder.id }, [...path, folder]),
-			// request to create breadcrumb
-			mockGetPath({ node_id: parent.id }, path),
-			mockGetChildren(getChildrenVariables(parent.id), parent)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([...path, folder], path),
+				getNode: mockGetNode(parent)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -161,11 +155,12 @@ describe('Folder Selection Modal Content', () => {
 	test('root items are valid, roots entry point is not valid', async () => {
 		const localRoot = populateFolder(2, ROOTS.LOCAL_ROOT);
 
-		const mocks = [
-			// request to find out parent
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([localRoot]),
+				getNode: mockGetNode(localRoot)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -214,12 +209,12 @@ describe('Folder Selection Modal Content', () => {
 		localRoot.children.nodes.push(folder);
 		folder.parent = localRoot;
 
-		const getPathMock = jest.fn();
-		const mocks = [
-			// request to find out parent
-			mockGetPath({ node_id: localRoot.id }, [localRoot], getPathMock),
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot)
-		];
+		const mocks = {
+			Query: {
+				getPath: jest.fn(() => [localRoot]),
+				getNode: mockGetNode(localRoot)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -231,7 +226,7 @@ describe('Folder Selection Modal Content', () => {
 		);
 
 		await screen.findByText(/home/i);
-		await waitFor(() => expect(getPathMock).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Query.getPath).toHaveBeenCalled());
 		let breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
 		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
@@ -291,7 +286,11 @@ describe('Folder Selection Modal Content', () => {
 
 	test('search in sub-folders is checked if cascade is true', async () => {
 		const localRoot = populateLocalRoot();
-		const mocks = [mockGetPath({ node_id: localRoot.id }, [localRoot])];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([localRoot])
+			}
+		} satisfies Partial<Resolvers>;
 		setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent
@@ -318,7 +317,11 @@ describe('Folder Selection Modal Content', () => {
 
 	test('search in sub-folders check set cascade param', async () => {
 		const localRoot = populateLocalRoot();
-		const mocks = [mockGetPath({ node_id: localRoot.id }, [localRoot])];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([localRoot])
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent folderId={localRoot.id} confirmAction={confirmAction} />
@@ -369,17 +372,11 @@ describe('Folder Selection Modal Content', () => {
 
 	test('shared with me roots is navigable. trash is not navigable. both are selectable', async () => {
 		const sharedWithMeFilter = populateNodes(4);
-		const mocks = [
-			mockFindNodes(
-				getFindNodesVariables({
-					shared_with_me: true,
-					cascade: true,
-					direct_share: true,
-					folder_id: ROOTS.LOCAL_ROOT
-				}),
-				sharedWithMeFilter
-			)
-		];
+		const mocks = {
+			Query: {
+				findNodes: mockFindNodes(sharedWithMeFilter)
+			}
+		} satisfies Partial<Resolvers>;
 		const { getByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent confirmAction={confirmAction} />
@@ -447,12 +444,12 @@ describe('Folder Selection Modal Content', () => {
 		const folder = populateFolder(3);
 		folder.parent = localRoot;
 		localRoot.children.nodes.push(folder);
-		const mocks = [
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetPath({ node_id: folder.id }, [localRoot, folder])
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([localRoot], [localRoot, folder]),
+				getNode: mockGetNode(localRoot, folder)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(
 			<div onClick={resetToDefault}>
@@ -483,19 +480,13 @@ describe('Folder Selection Modal Content', () => {
 		const filter = populateNodes(2);
 		const folder = populateFolder(3);
 		filter.push(folder);
-		const mocks = [
-			mockFindNodes(
-				getFindNodesVariables({
-					shared_with_me: true,
-					cascade: true,
-					direct_share: true,
-					folder_id: ROOTS.LOCAL_ROOT
-				}),
-				filter
-			),
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetPath({ node_id: folder.id }, [folder])
-		];
+		const mocks = {
+			Query: {
+				findNodes: mockFindNodes(filter),
+				getPath: mockGetPath([folder]),
+				getNode: mockGetNode(folder)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(
 			<div onClick={resetToDefault}>

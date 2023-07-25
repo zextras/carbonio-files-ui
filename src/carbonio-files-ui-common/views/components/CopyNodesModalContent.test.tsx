@@ -836,17 +836,9 @@ describe('Copy Nodes Modal', () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2 - 1);
 		const nodesToCopy = [currentFolder.children.nodes[0] as File | Folder];
 
-		const firstPage: Folder = {
-			...currentFolder,
-			children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))
-		};
-		const secondPage = {
-			...currentFolder,
-			children: populateNodePage(currentFolder.children.nodes.slice(NODES_LOAD_LIMIT))
-		};
 		const mocks = {
 			Query: {
-				getNode: mockGetNode([firstPage, secondPage]),
+				getNode: mockGetNode(currentFolder),
 				getPath: mockGetPath([currentFolder])
 			}
 		} satisfies Partial<Resolvers>;

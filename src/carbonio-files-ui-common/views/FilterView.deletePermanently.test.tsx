@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
