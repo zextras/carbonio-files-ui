@@ -464,7 +464,7 @@ function createFileSystemEntry(
 	return fileEntry;
 }
 
-export function createDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
+export function createUploadDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
 	const fileBlobs: File[] = [];
 	const items = map<Node, { webkitGetAsEntry: () => Partial<FileSystemEntry> }>(nodes, (node) => {
 		const fileBlob = new File(['(⌐□_□)😂😂😂😂'], node.name, {
@@ -482,6 +482,32 @@ export function createDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
 		items,
 		types: ['Files']
 	};
+}
+
+type DataTransferMoveStub = Pick<
+	DataTransfer,
+	'setDragImage' | 'setData' | 'getData' | 'types' | 'clearData'
+>;
+export function createMoveDataTransfer(): () => DataTransferMoveStub {
+	const dataTransferData = new Map<string, string>();
+	const dataTransferTypes: string[] = [];
+	return (): DataTransferMoveStub => ({
+		setDragImage(): void {
+			// do nothing
+		},
+		setData(type, data): void {
+			dataTransferData.set(type, data);
+			dataTransferTypes.includes(type) || dataTransferTypes.push(type);
+		},
+		getData(key): string {
+			return dataTransferData.get(key) || '';
+		},
+		types: dataTransferTypes,
+		clearData(): void {
+			dataTransferTypes.splice(0, dataTransferTypes.length);
+			dataTransferData.clear();
+		}
+	});
 }
 
 export async function uploadWithDnD(

@@ -21,7 +21,7 @@ import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, TIMERS } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import { COLORS, ICON_REGEXP } from '../../constants/test';
 import {
 	populateFolder,
 	populateNodes,
@@ -31,7 +31,7 @@ import {
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Node } from '../../types/graphql/types';
 import { mockGetPath, mockMoveNodes } from '../../utils/mockUtils';
-import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
+import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../utils/testUtils';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
 
@@ -39,33 +39,7 @@ jest.mock('../../../hooks/useNavigation', () => ({
 	useNavigation: (): ReturnType<UseNavigationHook> => mockedUseNavigationHook
 }));
 
-let dataTransfer: (
-	initialData?: Map<string, string>
-) => Pick<DataTransfer, 'setData' | 'setDragImage' | 'getData' | 'types' | 'clearData'>;
-
 beforeEach(() => {
-	const dataTransferData = new Map();
-	dataTransfer = jest.fn(
-		(
-			initialData?: Map<string, string>
-		): Pick<DataTransfer, 'setData' | 'setDragImage' | 'getData' | 'types' | 'clearData'> => {
-			if (initialData) {
-				initialData.forEach((value, key) => dataTransferData.set(key, value));
-			}
-			return {
-				setDragImage: jest.fn(),
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData.set(type, data);
-				}),
-				getData: jest.fn().mockImplementation((type: string) => dataTransferData.get(type)),
-				types: Array.from(dataTransferData.keys()),
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferData.clear();
-				})
-			};
-		}
-	);
-
 	mockedUseNavigationHook = {
 		navigateTo: jest.fn(),
 		navigateToFolder: jest.fn(),
@@ -77,6 +51,7 @@ describe('Header Breadcrumbs', () => {
 	describe('Drag and drop', () => {
 		test('Drag and drop is disabled if folder id is empty', () => {
 			const crumbs = [{ id: 'Filter', label: 'Filter' }];
+			const dataTransfer = createMoveDataTransfer();
 			setup(
 				<>
 					<HeaderBreadcrumbs crumbs={crumbs} />
@@ -94,10 +69,10 @@ describe('Header Breadcrumbs', () => {
 			const breadcrumbCrumbs = screen.queryByTestId('drop-crumb');
 			expect(breadcrumbCrumbs).not.toBeInTheDocument();
 			expect(destinationCrumbItem).not.toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			expect(destinationCrumbItem).not.toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 		});
 
@@ -129,7 +104,7 @@ describe('Header Breadcrumbs', () => {
 					moveNodes: mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] })))
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -168,7 +143,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).toHaveStyle({
@@ -207,7 +182,7 @@ describe('Header Breadcrumbs', () => {
 					moveNodes: jest.fn(() => map(movingNodes, (node) => ({ ...node, parent: currentFolder })))
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -263,7 +238,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).not.toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -302,7 +277,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath([parent, currentFolder])
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -347,7 +322,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(parent.name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			// wait for navigation to start
 			await waitFor(() => expect(mockedUseNavigationHook.navigateToFolder).toHaveBeenCalled());
@@ -383,7 +358,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath([parent, currentFolder])
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -428,7 +403,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(parent.name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 			// wait for navigation to start eventually
 			jest.advanceTimersByTime(TIMERS.DRAG_NAVIGATION_TRIGGER);
@@ -467,7 +442,7 @@ describe('Header Breadcrumbs', () => {
 					moveNodes: jest.fn(() => map(movingNodes, (node) => ({ ...node, parent: path[0] })))
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -524,7 +499,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).toHaveStyle({
@@ -560,7 +535,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -616,7 +591,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -715,7 +690,7 @@ describe('Header Breadcrumbs', () => {
 					moveNodes: mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] })))
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -786,11 +761,11 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			fireEvent.drop(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).not.toHaveStyle({
-				'background-color': 'rgba(43, 115, 210, 0.4)'
+				'background-color': COLORS.dropzone.enabled
 			});
 			const snackbar = await screen.findByText(/Item moved/i);
 			expect(snackbar).toBeVisible();
@@ -826,7 +801,7 @@ describe('Header Breadcrumbs', () => {
 					moveNodes: jest.fn(() => map(movingNodes, (node) => ({ ...node, parent: path[0] })))
 				}
 			} satisfies Partial<Resolvers>;
-
+			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
@@ -881,11 +856,11 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).not.toHaveStyle({
-				'background-color': 'rgba(130, 130, 130, 0.4)'
+				'background-color': COLORS.dropzone.disabled
 			});
 			// wait a tick to allow mutation to eventually be executed
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();

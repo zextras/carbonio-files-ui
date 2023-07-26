@@ -23,7 +23,7 @@ import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode } from '../utils/mockUtils';
-import { createDataTransfer, setup, uploadWithDnD } from '../utils/testUtils';
+import { createUploadDataTransfer, setup, uploadWithDnD } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -38,7 +38,7 @@ describe('Upload view', () => {
 		const node = populateFile();
 		node.parent = localRoot;
 
-		const dataTransferObj = createDataTransfer([node]);
+		const dataTransferObj = createUploadDataTransfer([node]);
 
 		const mocks = {
 			Query: {
@@ -75,7 +75,7 @@ describe('Upload view', () => {
 				node.parent = localRoot;
 			});
 
-			const dataTransferObj = createDataTransfer([folder, ...otherUploads]);
+			const dataTransferObj = createUploadDataTransfer([folder, ...otherUploads]);
 
 			const mocks = {
 				Query: {
@@ -114,7 +114,7 @@ describe('Upload view', () => {
 			});
 			uploadVar(keyBy(uploadItemsInList, (uploadItem) => uploadItem.id));
 
-			const dataTransferObj = createDataTransfer([folder, ...otherUploads]);
+			const dataTransferObj = createUploadDataTransfer([folder, ...otherUploads]);
 
 			const mocks = {
 				Query: {
@@ -151,7 +151,7 @@ describe('Upload view', () => {
 				node.parent = localRoot;
 			});
 
-			const dataTransferObj = createDataTransfer([...otherUploads, folder]);
+			const dataTransferObj = createUploadDataTransfer([...otherUploads, folder]);
 
 			const mocks = {
 				Query: {

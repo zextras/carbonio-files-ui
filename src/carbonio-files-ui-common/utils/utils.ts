@@ -193,22 +193,18 @@ export const buildCrumbs = (
 		.value();
 
 export const formatDate = (
-	date?: Moment | Date | string | number,
-	format?: string,
+	date: Moment | Date | string | number | undefined | null,
+	format: string,
 	zimbraPrefTimeZoneId?: string
 ): string => {
 	if (!date) {
 		return '';
 	}
 	// TODO manage locale
-	let $format = format;
-	if (!$format) {
-		$format = 'DD/MM/YY';
-	}
 	if (zimbraPrefTimeZoneId) {
-		return moment(date).tz(zimbraPrefTimeZoneId).format($format);
+		return moment(date).tz(zimbraPrefTimeZoneId).format(format);
 	}
-	return moment(date).format($format);
+	return moment(date).format(format);
 };
 
 export const formatTime = (

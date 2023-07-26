@@ -34,7 +34,14 @@ import {
 	mockRestoreNodes,
 	mockTrashNodes
 } from '../../utils/mockUtils';
-import { buildChipsFromKeywords, setup, selectNodes, screen, within } from '../../utils/testUtils';
+import {
+	buildChipsFromKeywords,
+	createMoveDataTransfer,
+	setup,
+	selectNodes,
+	screen,
+	within
+} from '../../utils/testUtils';
 
 describe('Search list', () => {
 	describe('Drag and drop', () => {
@@ -155,21 +162,7 @@ describe('Search list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			let dataTransferData: Record<string, string> = {};
-			let dataTransferTypes: string[] = [];
-			const dataTransfer = (): Partial<DataTransfer> => ({
-				setDragImage: jest.fn(),
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData[type] = data;
-					dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-				}),
-				getData: jest.fn().mockImplementation((type: string) => dataTransferData[type]),
-				types: dataTransferTypes,
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferTypes = [];
-					dataTransferData = {};
-				})
-			});
+			const dataTransfer = createMoveDataTransfer();
 
 			setup(<SearchList />, { mocks });
 
@@ -251,21 +244,7 @@ describe('Search list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			let dataTransferData: Record<string, string> = {};
-			let dataTransferTypes: string[] = [];
-			const dataTransfer = (): Partial<DataTransfer> => ({
-				setDragImage: jest.fn(),
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData[type] = data;
-					dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-				}),
-				getData: jest.fn().mockImplementation((type: string) => dataTransferData[type]),
-				types: dataTransferTypes,
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferTypes = [];
-					dataTransferData = {};
-				})
-			});
+			const dataTransfer = createMoveDataTransfer();
 
 			setup(<SearchList />, { mocks });
 
@@ -350,21 +329,7 @@ describe('Search list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			let dataTransferData: Record<string, string> = {};
-			let dataTransferTypes: string[] = [];
-			const dataTransfer = (): Partial<DataTransfer> => ({
-				setDragImage: jest.fn(),
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData[type] = data;
-					dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-				}),
-				getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-				types: dataTransferTypes,
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferTypes = [];
-					dataTransferData = {};
-				})
-			});
+			const dataTransfer = createMoveDataTransfer();
 
 			const { user } = setup(<SearchList />, {
 				mocks

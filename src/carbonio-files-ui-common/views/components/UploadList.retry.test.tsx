@@ -39,7 +39,7 @@ import {
 } from '../../types/graphql/types';
 import { mockGetNode } from '../../utils/mockUtils';
 import {
-	createDataTransfer,
+	createUploadDataTransfer,
 	delayUntil,
 	generateError,
 	selectNodes,
@@ -150,7 +150,7 @@ describe('Upload List', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const dataTransferObj = createDataTransfer(uploadedFiles);
+				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, {
 					mocks
@@ -201,7 +201,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn(handleUploadFileRequest);
 
@@ -247,7 +247,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn();
 				const createFolderMutation = jest.fn();
@@ -321,7 +321,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn(handleUploadFileRequest);
 
@@ -407,7 +407,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn();
 				let uploadFailedCalled = false;

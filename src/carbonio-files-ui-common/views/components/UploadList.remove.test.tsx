@@ -43,7 +43,7 @@ import {
 } from '../../types/graphql/types';
 import { getChildrenVariables, mockGetNode } from '../../utils/mockUtils';
 import {
-	createDataTransfer,
+	createUploadDataTransfer,
 	delayUntil,
 	generateError,
 	selectNodes,
@@ -103,7 +103,7 @@ describe('Upload List', () => {
 					file.parent = localRoot;
 				});
 
-				const dataTransferObj = createDataTransfer(filesToUpload);
+				const dataTransferObj = createUploadDataTransfer(filesToUpload);
 
 				const emitter = new EventEmitter();
 
@@ -216,7 +216,7 @@ describe('Upload List', () => {
 
 					const itemsToUpload = [...otherItems, folder];
 
-					const dataTransferObj = createDataTransfer(itemsToUpload);
+					const dataTransferObj = createUploadDataTransfer(itemsToUpload);
 
 					// write local root data in cache as if it was already loaded
 					global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -283,7 +283,7 @@ describe('Upload List', () => {
 						child.parent = folder;
 					});
 
-					const dataTransferObj = createDataTransfer([folder]);
+					const dataTransferObj = createUploadDataTransfer([folder]);
 
 					// write local root data in cache as if it was already loaded
 					global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -358,7 +358,7 @@ describe('Upload List', () => {
 						child.parent = folder;
 					});
 
-					const dataTransferObj = createDataTransfer([folder]);
+					const dataTransferObj = createUploadDataTransfer([folder]);
 
 					// write local root data in cache as if it was already loaded
 					global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -431,7 +431,7 @@ describe('Upload List', () => {
 						child.parent = folder;
 					});
 
-					const dataTransferObj = createDataTransfer([folder]);
+					const dataTransferObj = createUploadDataTransfer([folder]);
 
 					// write local root data in cache as if it was already loaded
 					global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
