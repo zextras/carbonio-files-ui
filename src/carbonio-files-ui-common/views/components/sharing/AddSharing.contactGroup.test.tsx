@@ -95,7 +95,7 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const [contactsNoGalEmails, contactsNoGalAccounts, contactsGal] = reduce<
+			const [, contactsNoGalAccounts, contactsGal] = reduce<
 				Member,
 				[string[], User[], DerefMember[]]
 			>(

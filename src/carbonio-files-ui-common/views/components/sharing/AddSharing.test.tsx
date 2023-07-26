@@ -513,7 +513,6 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadOnly;
-		const createShareMutationFn = jest.fn();
 		// const customMessage = 'this is a custom message';
 		const mocks = {
 			Query: {
