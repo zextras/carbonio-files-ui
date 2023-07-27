@@ -13,6 +13,7 @@ import { Link, Switch, Route, useLocation } from 'react-router-dom';
 import { PrimaryBarElement } from './PrimaryBarElement';
 import { uploadVar } from '../carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
+import { ICON_REGEXP } from '../carbonio-files-ui-common/constants/test';
 import { populateUploadItems } from '../carbonio-files-ui-common/mocks/mockUtils';
 import { UploadStatus } from '../carbonio-files-ui-common/types/graphql/client-types';
 import { setup } from '../carbonio-files-ui-common/utils/testUtils';
@@ -24,14 +25,14 @@ describe('PrimaryBarElement', () => {
 		uploadItems[1].status = UploadStatus.COMPLETED;
 		uploadVar(keyBy(uploadItems, (item) => item.id));
 		setup(<PrimaryBarElement active />);
-		expect(screen.getByTestId('icon: AlertCircle')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
 		act(() => {
 			uploadVar({
 				...uploadVar(),
 				[uploadItems[0].id]: { ...uploadItems[0], status: UploadStatus.COMPLETED }
 			});
 		});
-		expect(screen.queryByTestId('icon: AlertCircle')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.uploadFailed)).not.toBeInTheDocument();
 	});
 	test('when return to a visited module, the last visited view is preserved', async () => {
 		// we are using the '/test' because in the PrimaryBarElement.tsx component we used a replace function

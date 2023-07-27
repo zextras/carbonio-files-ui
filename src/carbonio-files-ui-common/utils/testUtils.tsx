@@ -307,8 +307,8 @@ export async function triggerLoadMore(): Promise<void> {
 export async function selectNodes(nodesToSelect: string[], user: UserEvent): Promise<void> {
 	for (let i = 0; i < nodesToSelect.length; i += 1) {
 		const id = nodesToSelect[i];
-		const node = within(screen.getByTestId(`node-item-${id}`));
-		let clickableItem = node.queryByTestId('file-icon-preview');
+		const node = within(screen.getByTestId(SELECTORS.nodeItem(id)));
+		let clickableItem = node.queryByTestId(SELECTORS.nodeAvatar);
 		if (clickableItem == null) {
 			clickableItem = node.queryByTestId(SELECTORS.uncheckedAvatar);
 		}
@@ -327,12 +327,11 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 	await screen.findByText(/\brename\b/i);
 	await user.click(screen.getByText(/\brename\b/i));
 	// fill new name in modal input field
-	const inputFieldDiv = await screen.findByTestId('input-name');
+	const inputField = await screen.findByRole('textbox');
 	act(() => {
 		// run timers of modal
 		jest.advanceTimersToNextTimer();
 	});
-	const inputField = within(inputFieldDiv).getByRole('textbox');
 	await user.clear(inputField);
 	await user.type(inputField, newName);
 	expect(inputField).toHaveValue(newName);
@@ -345,7 +344,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	const moveAction = await screen.findByText('Move');
 	expect(moveAction).toBeVisible();
 	await user.click(moveAction);
-	const modalList = await screen.findByTestId('modal-list-', { exact: false });
+	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
 		// run timers of modal
 		jest.runOnlyPendingTimers();
@@ -518,7 +517,7 @@ export async function uploadWithDnD(
 		dataTransfer: dataTransferObj
 	});
 
-	await screen.findByTestId('dropzone-overlay');
+	await screen.findByTestId(SELECTORS.dropzone);
 	expect(
 		screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 	).toBeVisible();

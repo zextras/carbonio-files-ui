@@ -10,7 +10,7 @@ import { screen } from '@testing-library/react';
 import { map } from 'lodash';
 
 import ListHeader from '../../../components/ListHeader';
-import { ICON_REGEXP } from '../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateParents } from '../../mocks/mockUtils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder } from '../../types/graphql/types';
@@ -160,7 +160,7 @@ describe('ListHeader', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByTestId('list-header-selectionModeActive')).toBeVisible();
+			expect(screen.getByTestId(SELECTORS.listHeaderSelectionMode)).toBeVisible();
 			expect(screen.getByText(selectedCount)).toBeVisible();
 		});
 		test('Should not render the badge with 0 if selectedCount is 0', () => {

@@ -56,7 +56,7 @@ describe('Filter View', () => {
 
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-				expect(screen.queryAllByTestId('icon: Flag')).toHaveLength(currentFilter.length);
+				expect(screen.queryAllByTestId(ICON_REGEXP.flagged)).toHaveLength(currentFilter.length);
 
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToUnflag, user);
@@ -71,12 +71,12 @@ describe('Filter View', () => {
 				await user.click(unflagIcon);
 				// wait the snackbar with successful state to appear
 				await screen.findByText(/Item unflagged successfully/i);
-				expect(screen.getAllByTestId('icon: Flag')).toHaveLength(
+				expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(
 					currentFilter.length - nodesIdsToUnflag.length
 				);
 				// unflagged elements are not in the list anymore
 				forEach(nodesIdsToUnflag, (nodeId) => {
-					expect(screen.queryByTestId(`node-item-${nodeId}`)).not.toBeInTheDocument();
+					expect(screen.queryByTestId(SELECTORS.nodeItem(nodeId))).not.toBeInTheDocument();
 				});
 			});
 		});
@@ -104,10 +104,10 @@ describe('Filter View', () => {
 
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-				expect(screen.queryAllByTestId('icon: Flag')).toHaveLength(nodes.length);
+				expect(screen.queryAllByTestId(ICON_REGEXP.flagged)).toHaveLength(nodes.length);
 
 				// right click to open contextual menu on first node
-				const nodeItem = screen.getByTestId(`node-item-${nodes[0].id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodes[0].id));
 				// open context menu and click on unflag action
 				fireEvent.contextMenu(nodeItem);
 				const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
@@ -116,9 +116,9 @@ describe('Filter View', () => {
 				// wait the snackbar with successful state to appear
 				expect(unflagAction).not.toBeInTheDocument();
 				await screen.findByText(/Item unflagged successfully/i);
-				expect(screen.getAllByTestId('icon: Flag')).toHaveLength(nodes.length - 1);
+				expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(nodes.length - 1);
 				// unflagged element is not in the list anymore
-				expect(screen.queryByTestId(`node-item-${nodes[0].id}`)).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.nodeItem(nodes[0].id))).not.toBeInTheDocument();
 			});
 		});
 

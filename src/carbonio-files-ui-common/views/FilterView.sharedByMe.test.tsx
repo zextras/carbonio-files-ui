@@ -20,6 +20,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNode, populateNodes, populateShares } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
@@ -73,7 +74,7 @@ describe('Filter view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			expect(screen.queryByTestId('missing-filter')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 
 		test('Deletion of all collaborators remove node from list. Displayer is closed', async () => {
@@ -116,7 +117,7 @@ describe('Filter view', () => {
 			// render of the collaborators
 			await screen.findByText(getChipLabel(shares[0].share_target));
 			// there should be 2 chips for collaborators
-			const chipItems = screen.getAllByTestId('chip-with-popover');
+			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
 			expect(chipItems).toHaveLength(2);
 			const share1Item = find(
 				chipItems,
@@ -126,14 +127,14 @@ describe('Filter view', () => {
 				chipItems,
 				(chipItem) => within(chipItem).queryByText(getChipLabel(shares[1].share_target)) !== null
 			);
-			const nodeItem = screen.getByTestId(`node-item-${nodeWithShares.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodeWithShares.id));
 			expect(nodeItem).toBeVisible();
 			expect(share1Item).toBeDefined();
 			expect(share2Item).toBeDefined();
 			expect(share1Item).toBeVisible();
 			expect(share2Item).toBeVisible();
 			// delete first share
-			await user.click(within(share1Item as HTMLElement).getByTestId('icon: Close'));
+			await user.click(within(share1Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			// await waitForElementToBeRemoved(screen.queryByText(getChipLabel(shares[0].share_target)));
@@ -141,7 +142,7 @@ describe('Filter view', () => {
 			expect(share2Item).toBeVisible();
 			expect(nodeItem).toBeVisible();
 			// delete second share
-			await user.click(within(share2Item as HTMLElement).getByTestId('icon: Close'));
+			await user.click(within(share2Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			// await waitForElementToBeRemoved(screen.queryByText(getChipLabel(shares[1].share_target)));

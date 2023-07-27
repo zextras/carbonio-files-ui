@@ -12,6 +12,7 @@ import { graphql, rest } from 'msw';
 import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
 import { CONFIGS, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	UploadRequestBody,
 	UploadVersionRequestParams,
@@ -139,9 +140,9 @@ describe('Versioning', () => {
 			expect(screen.getByText('Current version')).toBeVisible();
 			expect(screen.getByText('Last week')).toBeVisible();
 
-			const versions2Icons = screen.getByTestId('version2-icons');
-			const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-			await user.click(versions2MoreButton);
+			const versionIcons = screen.getByTestId(SELECTORS.versionIcons(2));
+			const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+			await user.click(versionMoreButton);
 
 			const deleteVersionItem = await screen.findByText(/delete version/i);
 			await user.click(deleteVersionItem);
@@ -216,13 +217,13 @@ describe('Versioning', () => {
 			);
 
 			expect(screen.getAllByRole('button', { name: /purge all versions/i })).toHaveLength(2);
-			const modalPurgeAllButton = within(screen.getByTestId('modal')).getByRole('button', {
+			const modalPurgeAllButton = within(screen.getByTestId(SELECTORS.modal)).getByRole('button', {
 				name: /purge all versions/i
 			});
 
 			expect(modalPurgeAllButton).toBeInTheDocument();
 			await user.click(modalPurgeAllButton);
-			expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.modal)).not.toBeInTheDocument();
 			await waitFor(() => expect(screen.getAllByText(/Version \d+/)).toHaveLength(2));
 			expect(version3LastEditor).not.toBeInTheDocument();
 		});
@@ -263,20 +264,20 @@ describe('Versioning', () => {
 		expect(screen.getByText('Current version')).toBeVisible();
 		expect(screen.getByText('Last week')).toBeVisible();
 
-		const versions2Icons = screen.getByTestId('version2-icons');
-		const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-		await user.click(versions2MoreButton);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(2));
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+		await user.click(versionMoreButton);
 
 		const keepForeverVersionItem = await screen.findByText(/keep this version forever/i);
 		await user.click(keepForeverVersionItem);
 
 		await screen.findByText(/Version marked as to be kept forever/i);
 
-		await within(versions2Icons).findByTestId('icon: InfinityOutline');
-		const keepIcon = within(versions2Icons).getByTestId('icon: InfinityOutline');
+		await within(versionIcons).findByTestId(ICON_REGEXP.versionKeepForever);
+		const keepIcon = within(versionIcons).getByTestId(ICON_REGEXP.versionKeepForever);
 		expect(keepIcon).toBeVisible();
 
-		await user.click(versions2MoreButton);
+		await user.click(versionMoreButton);
 		const removeKeepForeverItem = await screen.findByText(/remove keep forever/i);
 		await user.click(removeKeepForeverItem);
 
@@ -325,9 +326,9 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(2);
 
-		const versions2Icons = screen.getByTestId('version2-icons');
-		const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-		await user.click(versions2MoreButton);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(2));
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+		await user.click(versionMoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
 		await user.click(cloneAsCurrentItem);
@@ -362,9 +363,9 @@ describe('Versioning', () => {
 
 		expect(screen.getByText(/Version \d+/)).toBeInTheDocument();
 
-		const versions2Icons = screen.getByTestId('version1-icons');
-		const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-		await user.click(versions2MoreButton);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+		await user.click(versionMoreButton);
 
 		const downloadItem = await screen.findByText(/download version/i);
 		await user.click(downloadItem);
@@ -399,9 +400,9 @@ describe('Versioning', () => {
 
 		expect(screen.getByText(/Version \d+/)).toBeInTheDocument();
 
-		const versions2Icons = screen.getByTestId('version1-icons');
-		const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-		await user.click(versions2MoreButton);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+		await user.click(versionMoreButton);
 
 		const openDocumentItem = await screen.findByText(/open document version/i);
 		await user.click(openDocumentItem);
@@ -523,8 +524,8 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
@@ -581,13 +582,13 @@ describe('Versioning', () => {
 		await screen.findByText(/Version 1/i);
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
-		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions);
+		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions);
 
 		const versionWithoutKeepIcons = screen.getByTestId(
-			`version${versionWithoutKeep.version}-icons`
+			SELECTORS.versionIcons(versionWithoutKeep.version)
 		);
 		const versionWithoutKeepMoreButton = within(versionWithoutKeepIcons).getByTestId(
-			'icon: MoreVerticalOutline'
+			ICON_REGEXP.moreVertical
 		);
 		await user.click(versionWithoutKeepMoreButton);
 
@@ -611,7 +612,7 @@ describe('Versioning', () => {
 		// click outside to close context menu
 		await user.click(screen.getByText(RegExp(`version ${versionWithoutKeep.version}`, 'i')));
 		expect(screen.queryByText(/keep this version forever/i)).not.toBeInTheDocument();
-		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions);
+		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions);
 	});
 
 	test('upload version action is enabled if max number of versions is reached', async () => {
@@ -714,11 +715,11 @@ describe('Versioning', () => {
 		await screen.findByText(/Version 1/i);
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
-		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions);
+		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions);
 
-		const versionIcons = screen.getByTestId(`version1-icons`);
-		expect(within(versionIcons).getByTestId('icon: InfinityOutline')).toBeVisible();
-		const versionMoreButton = within(versionIcons).getByTestId('icon: MoreVerticalOutline');
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
+		expect(within(versionIcons).getByTestId(ICON_REGEXP.versionKeepForever)).toBeVisible();
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versionMoreButton);
 
 		const keepVersionItem = await screen.findByText(/remove keep forever/i);
@@ -728,8 +729,10 @@ describe('Versioning', () => {
 		await screen.findByText(/Keep forever removed/i);
 
 		expect(screen.queryByText(/rmeove keep forever/i)).not.toBeInTheDocument();
-		expect(within(versionIcons).queryByTestId('icon: InfinityOutline')).not.toBeInTheDocument();
-		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions - 1);
+		expect(
+			within(versionIcons).queryByTestId(ICON_REGEXP.versionKeepForever)
+		).not.toBeInTheDocument();
+		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions - 1);
 	});
 
 	test('delete version is enabled if max number of versions is reached and node is not marked to be kept forever', async () => {
@@ -765,8 +768,8 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
 
-		const version2Icons = screen.getByTestId('version1-icons');
-		const version2MoreButton = within(version2Icons).getByTestId('icon: MoreVerticalOutline');
+		const version2Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const version2MoreButton = within(version2Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(version2MoreButton);
 
 		const deleteVersionItem = await screen.findByText(/delete version/i);
@@ -858,8 +861,8 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
@@ -909,8 +912,8 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const deleteVersion = await screen.findByText(/delete version/i);
@@ -955,8 +958,8 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const openDocumentVersion = await screen.findByText(/open document version/i);
@@ -993,8 +996,8 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const keepVersion = await screen.findByText(/(keep this version forever|remove keep forever)/i);

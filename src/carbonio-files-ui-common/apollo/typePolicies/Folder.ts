@@ -7,7 +7,7 @@ import { FieldFunctionOptions, TypePolicy } from '@apollo/client';
 import { forEach } from 'lodash';
 
 import { mergeNodesList, readNodesList } from './utils';
-import { FindNodesCachedObject, NodesPage, NodesPageCachedObject } from '../../types/apollo';
+import { NodesPage, NodesPageCachedObject } from '../../types/apollo';
 import { Folder, FolderChildrenArgs, ParentIdFragmentDoc } from '../../types/graphql/types';
 
 export const folderTypePolicies: TypePolicy = {
@@ -34,7 +34,7 @@ export const folderTypePolicies: TypePolicy = {
 			// Return all items stored so far, to avoid ambiguities
 			// about the order of the items.
 			read(
-				existing: FindNodesCachedObject | undefined,
+				existing: NodesPageCachedObject | undefined,
 				fieldFunctions: FieldFunctionOptions<Partial<FolderChildrenArgs>, Record<string, unknown>>
 			): NodesPage | undefined {
 				if (existing) {

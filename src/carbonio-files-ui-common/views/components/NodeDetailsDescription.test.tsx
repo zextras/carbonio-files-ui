@@ -10,6 +10,7 @@ import { faker } from '@faker-js/faker';
 import { waitFor } from '@testing-library/react';
 
 import { NodeDetailsDescription } from './NodeDetailsDescription';
+import { ICON_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
@@ -64,7 +65,7 @@ describe('NodeDetailsDescription component', () => {
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 
-		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 		expect(editIcon).toBeDisabled();
 	});
@@ -82,7 +83,7 @@ describe('NodeDetailsDescription component', () => {
 		);
 		expect(screen.getByText('Description')).toBeInTheDocument();
 
-		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 		expect(editIcon).toBeEnabled();
 	});
@@ -103,12 +104,12 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 		expect(editIcon).toBeEnabled();
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon).toBeDisabled();
 
@@ -143,12 +144,12 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 		expect(editIcon).toBeEnabled();
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon).toBeDisabled();
 
@@ -180,12 +181,12 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		let editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		let editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 		expect(editIcon).toBeEnabled();
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon).toBeDisabled();
 
@@ -197,11 +198,11 @@ describe('NodeDetailsDescription component', () => {
 
 		expect(saveIcon).toBeEnabled();
 
-		const closeICon = screen.getByRoleWithIcon('button', { icon: 'icon: Close' });
+		const closeICon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close });
 		expect(closeICon).toBeVisible();
 		await user.click(closeICon);
 
-		editIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		editIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
@@ -237,12 +238,12 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText('Description')).toBeInTheDocument();
 		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		let editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		let editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 		expect(editIcon).toBeEnabled();
 		await user.click(editIcon);
 
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
 		expect(saveIcon).toBeVisible();
 		expect(saveIcon).toBeDisabled();
 
@@ -256,7 +257,7 @@ describe('NodeDetailsDescription component', () => {
 
 		await user.click(saveIcon);
 
-		editIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		editIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 
 		expect(saveIcon).not.toBeVisible();
@@ -285,10 +286,10 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.getByText(/description/i)).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
 
-		const editIcon = screen.getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 		expect(editIcon).toBeVisible();
 		await user.click(editIcon);
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
+		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
 		expect(saveIcon).toBeVisible();
 		const inputField = screen.getByRole('textbox', {
 			name: /maximum length allowed is 4096 characters/i
@@ -301,9 +302,9 @@ describe('NodeDetailsDescription component', () => {
 		expect(
 			screen.getByRole('textbox', { name: /maximum length allowed is 4096 characters/i })
 		).toBeVisible();
-		expect(screen.getByRoleWithIcon('button', { icon: 'icon: SaveOutline' })).toBeVisible();
+		expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.save })).toBeVisible();
 		expect(
-			screen.queryByRoleWithIcon('button', { icon: 'icon: Edit2Outline' })
+			screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.edit })
 		).not.toBeInTheDocument();
 	});
 });

@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { Displayer } from './Displayer';
-import { ACTION_REGEXP, ICON_REGEXP } from '../../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
 	populateFolder,
@@ -69,15 +69,14 @@ describe('Displayer', () => {
 		});
 		await screen.findAllByText(node.name);
 
-		const copyIcon = within(screen.getByTestId('displayer-actions-header')).queryByRoleWithIcon(
-			'button',
-			{ icon: ICON_REGEXP.copy }
-		);
+		const copyIcon = within(
+			screen.getByTestId(SELECTORS.displayerActionsHeader)
+		).queryByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 		if (copyIcon) {
 			expect(copyIcon).toBeEnabled();
 			await user.click(copyIcon);
 		} else {
-			const moreVertical = await screen.findByTestId('icon: MoreVertical');
+			const moreVertical = await screen.findByTestId(ICON_REGEXP.moreVertical);
 			if (moreVertical) {
 				await user.click(moreVertical);
 				const copyAction = await screen.findByText(ACTION_REGEXP.copy);
@@ -136,7 +135,7 @@ describe('Displayer', () => {
 			mocks
 		});
 		await screen.findAllByText(node.name);
-		const moreVertical = screen.getByTestId('icon: MoreVertical');
+		const moreVertical = screen.getByTestId(ICON_REGEXP.moreVertical);
 		expect(moreVertical).toBeVisible();
 		await user.click(moreVertical);
 		const moveAction = await screen.findByText(ACTION_REGEXP.move);
@@ -187,7 +186,7 @@ describe('Displayer', () => {
 			mocks
 		});
 		await screen.findAllByText(node.name);
-		const moreVertical = screen.getByTestId('icon: MoreVertical');
+		const moreVertical = screen.getByTestId(ICON_REGEXP.moreVertical);
 		expect(moreVertical).toBeVisible();
 		await user.click(moreVertical);
 		await renameNode(newName, user);
@@ -214,11 +213,11 @@ describe('Displayer', () => {
 			mocks
 		});
 		await screen.findAllByText(node.name);
-		await screen.findByTestId('icon: MoreHorizontalOutline');
+		await screen.findByTestId(ICON_REGEXP.moreHorizontal);
 		expect(screen.queryByText(collaborator0Name)).not.toBeInTheDocument();
 		expect(screen.queryByText(collaborator5Name)).not.toBeInTheDocument();
-		expect(screen.getByTestId('icon: MoreHorizontalOutline')).toBeVisible();
-		await user.click(screen.getByTestId('icon: MoreHorizontalOutline'));
+		expect(screen.getByTestId(ICON_REGEXP.moreHorizontal)).toBeVisible();
+		await user.click(screen.getByTestId(ICON_REGEXP.moreHorizontal));
 		await screen.findByText(collaborator0Name);
 		await screen.findByText(collaborator5Name);
 		await screen.findAllByTestId(/icon: (EyeOutline|Edit2Outline)/);
@@ -244,10 +243,10 @@ describe('Displayer', () => {
 			mocks
 		});
 		await screen.findAllByText(node.name);
-		await screen.findByTestId('icon: MoreHorizontalOutline');
-		expect(screen.getAllByTestId('avatar')).toHaveLength(6);
-		expect(screen.getByTestId('icon: MoreHorizontalOutline')).toBeVisible();
-		await user.click(screen.getByTestId('icon: MoreHorizontalOutline'));
+		await screen.findByTestId(ICON_REGEXP.moreHorizontal);
+		expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(6);
+		expect(screen.getByTestId(ICON_REGEXP.moreHorizontal)).toBeVisible();
+		await user.click(screen.getByTestId(ICON_REGEXP.moreHorizontal));
 		await screen.findByText(collaborator0Name);
 		await screen.findByText(collaborator99Name);
 		// tab is changed and all collaborators are loaded

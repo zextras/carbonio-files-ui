@@ -10,6 +10,7 @@ import { forEach, find, reduce } from 'lodash';
 
 import { AddSharing } from './AddSharing';
 import { soapFetch } from '../../../../network/network';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
 	populateContactGroupMatch,
@@ -131,9 +132,11 @@ describe('Add Sharing', () => {
 			// wait for the dropdown to be shown
 			await screen.findByText(/contact-group-1/i);
 			await user.click(screen.getByText(/contact-group-1/i));
-			await screen.findAllByTestId('chip-with-popover');
+			await screen.findAllByTestId(SELECTORS.chipWithPopover);
 			await waitFor(() =>
-				expect(screen.getAllByTestId('chip-with-popover')).toHaveLength(contactGroup.m?.length || 0)
+				expect(screen.getAllByTestId(SELECTORS.chipWithPopover)).toHaveLength(
+					contactGroup.m?.length || 0
+				)
 			);
 			await waitFor(() => expect(screen.getByRole('button', { name: /share/i })).toBeEnabled());
 			// dropdown is closed
@@ -189,9 +192,9 @@ describe('Add Sharing', () => {
 			expect(screen.getByText(/contact-group-1/i)).toBeVisible();
 			const contactGroupDropdownItem = screen.getByText(/contact-group-1/i);
 			await user.click(contactGroupDropdownItem);
-			await screen.findAllByTestId('chip-with-popover');
+			await screen.findAllByTestId(SELECTORS.chipWithPopover);
 			await waitFor(() =>
-				expect(screen.getAllByTestId('chip-with-popover')).toHaveLength(
+				expect(screen.getAllByTestId(SELECTORS.chipWithPopover)).toHaveLength(
 					invalidMembers.length + validMembers.length
 				)
 			);
@@ -295,13 +298,13 @@ describe('Add Sharing', () => {
 			expect(screen.getByText(members[0].cn[0]._attrs.email)).toBeVisible();
 			expect(screen.getByText(members[1].cn[0]._attrs.email)).toBeVisible();
 			// delete chip of one of the members
-			const chipItems = screen.getAllByTestId('chip-with-popover');
+			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
 			const member0Chip = find(
 				chipItems,
 				(chipItem) => within(chipItem).queryByText(members[0].cn[0]._attrs.email) !== null
 			);
 			expect(member0Chip).toBeDefined();
-			const removeShareMember0 = within(member0Chip as HTMLElement).getByTestId('icon: Close');
+			const removeShareMember0 = within(member0Chip as HTMLElement).getByTestId(ICON_REGEXP.close);
 			await user.click(removeShareMember0);
 			expect(screen.queryByText(members[0].cn[0]._attrs.email)).not.toBeInTheDocument();
 			expect(screen.getByText(members[1].cn[0]._attrs.email)).toBeVisible();

@@ -81,7 +81,7 @@ describe('Filter View', () => {
 				dataTransfer: dataTransferObj
 			});
 
-			await screen.findByTestId('dropzone-overlay');
+			await screen.findByTestId(SELECTORS.dropzone);
 			expect(
 				screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 			).toBeVisible();
@@ -92,7 +92,7 @@ describe('Filter View', () => {
 
 			await screen.findByText(/upload occurred in Files' home/i);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFilter.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -148,14 +148,14 @@ describe('Filter View', () => {
 				dataTransfer: dataTransferObj
 			});
 
-			await screen.findByTestId('dropzone-overlay');
+			await screen.findByTestId(SELECTORS.dropzone);
 			expect(screen.getByText(/You cannot drop an attachment in this area/im)).toBeVisible();
 
 			fireEvent.drop(screen.getByText(currentFilter[0].name), {
 				dataTransfer: dataTransferObj
 			});
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFilter.length
 			);
 			expect(
@@ -201,7 +201,7 @@ describe('Filter View', () => {
 				dataTransfer: dataTransferObj
 			});
 
-			await screen.findByTestId('dropzone-overlay');
+			await screen.findByTestId(SELECTORS.dropzone);
 			expect(
 				screen.queryByText(/Drop here your attachments to quick-add them to this folder/m)
 			).not.toBeInTheDocument();
@@ -211,7 +211,7 @@ describe('Filter View', () => {
 			});
 
 			await screen.findByText(new RegExp(`Upload occurred in ${destinationFolder.name}`, 'i'));
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		});
 
 		test('Drag of files in a folder node without right permissions inside a filter shows upload dropzone of the list item. Drop does nothing', async () => {
@@ -243,7 +243,7 @@ describe('Filter View', () => {
 				dataTransfer: dataTransferObj
 			});
 
-			await screen.findByTestId('dropzone-overlay');
+			await screen.findByTestId(SELECTORS.dropzone);
 			expect(
 				screen.queryByText(/Drop here your attachments to quick-add them to this folder/m)
 			).not.toBeInTheDocument();
@@ -252,7 +252,7 @@ describe('Filter View', () => {
 				dataTransfer: dataTransferObj
 			});
 
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(screen.queryByText(/upload occurred/i)).not.toBeInTheDocument();
 		});
 
@@ -285,7 +285,7 @@ describe('Filter View', () => {
 				dataTransfer: dataTransferObj
 			});
 
-			await screen.findByTestId('dropzone-overlay');
+			await screen.findByTestId(SELECTORS.dropzone);
 			expect(screen.getByText(/You cannot drop an attachment in this area/im)).toBeVisible();
 
 			fireEvent.drop(screen.getByText(destinationFolder.name), {
@@ -340,7 +340,7 @@ describe('Filter View', () => {
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		});
@@ -394,8 +394,8 @@ describe('Filter View', () => {
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 			// dropzone overlay of the list is shown
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.getByText(/drag&drop mode/i)).toBeVisible();
 			expect(screen.getByText(/you cannot drop your items in this area/i)).toBeVisible();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
@@ -403,13 +403,13 @@ describe('Filter View', () => {
 			// drag and drop on folder without permissions
 			const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 			fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.queryByText('Drag&Drop Mode')).not.toBeInTheDocument();
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(itemToDrag).toBeVisible();
 			expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
@@ -417,13 +417,13 @@ describe('Filter View', () => {
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.queryByText('Drag&Drop Mode')).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			await screen.findByText(/item moved/i);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeVisible();
 			expect(screen.getByText(nodesToDrag[0].name)).not.toHaveAttribute('disabled', '');
@@ -470,14 +470,14 @@ describe('Filter View', () => {
 			expect(draggedNodeItems).toHaveLength(2);
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
 
 			// drag and drop on folder without permissions. Overlay is not shown.
 			const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 			fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
@@ -488,7 +488,7 @@ describe('Filter View', () => {
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
@@ -550,7 +550,7 @@ describe('Filter View', () => {
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 
@@ -594,8 +594,8 @@ describe('Filter View', () => {
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 			// dropzone overlay of the list is shown
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.getByText(/drag&drop mode/i)).toBeVisible();
 			expect(screen.getByText(/you cannot drop your items in this area/i)).toBeVisible();
 			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
@@ -603,7 +603,7 @@ describe('Filter View', () => {
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 			expect(screen.queryByText(/item moved/i)).not.toBeInTheDocument();
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		});
 	});
 });

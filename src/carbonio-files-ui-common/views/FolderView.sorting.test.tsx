@@ -11,6 +11,7 @@ import { waitFor } from '@testing-library/react';
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodePage } from '../mocks/mockUtils';
 import { FolderResolvers, NodeSort, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/mockUtils';
@@ -74,11 +75,11 @@ describe('Sorting', () => {
 
 		await screen.findByText(filename1);
 
-		const items = screen.getAllByTestId('node-item-', { exact: false });
+		const items = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(within(items[0]).getByText('a')).toBeVisible();
 		expect(within(items[1]).getByText('b')).toBeVisible();
 
-		const sortIcon = screen.getByRoleWithIcon('button', { icon: 'icon: ZaListOutline' });
+		const sortIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc });
 		expect(sortIcon).toBeVisible();
 		expect(sortIcon).toBeEnabled();
 		// register tooltip listeners
@@ -88,13 +89,15 @@ describe('Sorting', () => {
 		await screen.findByText(/ascending order by name/i);
 		await user.click(descendingOrderOption);
 		await waitFor(() =>
-			expect(screen.getAllByTestId('node-item-', { exact: false })[0]).toHaveTextContent('b')
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })[0]).toHaveTextContent(
+				'b'
+			)
 		);
-		await user.hover(screen.getByTestId('icon: AzListOutline'));
+		await user.hover(screen.getByTestId(ICON_REGEXP.sortAsc));
 		// run timers of tooltip
 		jest.advanceTimersToNextTimer();
 		await screen.findByText(/descending order by name/i);
-		const descItems = screen.getAllByTestId('node-item-', { exact: false });
+		const descItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(within(descItems[0]).getByText('b')).toBeVisible();
 		expect(within(descItems[1]).getByText('a')).toBeVisible();
 	});

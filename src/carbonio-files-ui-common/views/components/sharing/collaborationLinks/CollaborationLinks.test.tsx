@@ -9,6 +9,7 @@ import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
 
 import { CollaborationLinks } from './CollaborationLinks';
+import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateCollaborationLink, populateNode } from '../../../../mocks/mockUtils';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { SharePermission } from '../../../../types/graphql/types';
@@ -44,7 +45,7 @@ describe('Collaboration Link', () => {
 			{ mocks }
 		);
 		const readAndShareCollaborationLinkContainer = await screen.findByTestId(
-			'read-share-collaboration-link-container'
+			SELECTORS.collaborationLinkReadShare
 		);
 		const readAndShareGenerateButton = within(readAndShareCollaborationLinkContainer).getByRole(
 			'button',
@@ -53,7 +54,7 @@ describe('Collaboration Link', () => {
 			}
 		);
 		await waitFor(() => expect(readAndShareGenerateButton).toBeEnabled());
-		const collaborationLinkContainer = screen.getByTestId('collaboration-link-container');
+		const collaborationLinkContainer = screen.getByTestId(SELECTORS.collaborationLinkContainer);
 		expect(within(collaborationLinkContainer).getByText('Collaboration Links')).toBeVisible();
 		expect(
 			within(collaborationLinkContainer).getByText(
@@ -61,7 +62,7 @@ describe('Collaboration Link', () => {
 			)
 		).toBeVisible();
 		expect(
-			within(readAndShareCollaborationLinkContainer).getByTestId('icon: EyeOutline')
+			within(readAndShareCollaborationLinkContainer).getByTestId(ICON_REGEXP.shareCanRead)
 		).toBeVisible();
 		expect(
 			within(readAndShareCollaborationLinkContainer).getByText('Read and Share')
@@ -81,10 +82,10 @@ describe('Collaboration Link', () => {
 		expect(readAndShareRevokeButton).not.toBeInTheDocument();
 
 		const readWriteAndShareCollaborationLinkContainer = screen.getByTestId(
-			'read-write-share-collaboration-link-container'
+			SELECTORS.collaborationLinkWriteShare
 		);
 		expect(
-			within(readWriteAndShareCollaborationLinkContainer).getByTestId('icon: Edit2Outline')
+			within(readWriteAndShareCollaborationLinkContainer).getByTestId(ICON_REGEXP.shareCanWrite)
 		).toBeVisible();
 		expect(
 			within(readWriteAndShareCollaborationLinkContainer).getByText('Write and Share')
@@ -142,7 +143,7 @@ describe('Collaboration Link', () => {
 		);
 		await screen.findByText(readAndShareCollaborationLink.url);
 		const readWriteAndShareCollaborationLinkContainer = screen.getByTestId(
-			'read-write-share-collaboration-link-container'
+			SELECTORS.collaborationLinkWriteShare
 		);
 		const readWriteAndShareGenerateButton = within(
 			readWriteAndShareCollaborationLinkContainer
@@ -189,7 +190,7 @@ describe('Collaboration Link', () => {
 		);
 		await screen.findByText(readWriteAndShareCollaborationLink.url);
 		const readAndShareCollaborationLinkContainer = screen.getByTestId(
-			'read-share-collaboration-link-container'
+			SELECTORS.collaborationLinkReadShare
 		);
 		const readAndShareGenerateButton = within(readAndShareCollaborationLinkContainer).getByRole(
 			'button',
@@ -233,7 +234,7 @@ describe('Collaboration Link', () => {
 		);
 		const urlElement = await screen.findByText(readAndShareCollaborationLink.url);
 		const readAndShareCollaborationLinkContainer = screen.getByTestId(
-			'read-share-collaboration-link-container'
+			SELECTORS.collaborationLinkReadShare
 		);
 		const readAndShareRevokeButton = within(readAndShareCollaborationLinkContainer).getByRole(
 			'button',
@@ -256,7 +257,7 @@ describe('Collaboration Link', () => {
 		});
 
 		expect(modalContent).toBeVisible();
-		const revokeButton = within(screen.getByTestId('modal')).getByRole('button', {
+		const revokeButton = within(screen.getByTestId(SELECTORS.modal)).getByRole('button', {
 			name: /revoke/i
 		});
 		expect(revokeButton).toBeVisible();
@@ -299,7 +300,7 @@ describe('Collaboration Link', () => {
 		);
 		const urlElement = await screen.findByText(readWriteAndShareCollaborationLink.url);
 		const readWriteAndShareCollaborationLinkContainer = screen.getByTestId(
-			'read-write-share-collaboration-link-container'
+			SELECTORS.collaborationLinkWriteShare
 		);
 		const readWriteAndShareRevokeButton = within(
 			readWriteAndShareCollaborationLinkContainer
@@ -322,7 +323,7 @@ describe('Collaboration Link', () => {
 		});
 
 		expect(modalContent).toBeVisible();
-		const revokeButton = within(screen.getByTestId('modal')).getByRole('button', {
+		const revokeButton = within(screen.getByTestId(SELECTORS.modal)).getByRole('button', {
 			name: /revoke/i
 		});
 		expect(revokeButton).toBeVisible();
