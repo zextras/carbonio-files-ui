@@ -46,7 +46,7 @@ describe('Mark for deletion - trash', () => {
 				currentFolder.children.nodes.length
 			);
 
-			const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 			const trashIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.moveToTrash);
 
@@ -92,7 +92,7 @@ describe('Mark for deletion - trash', () => {
 				currentFolder.children.nodes.length
 			);
 
-			const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 			const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
 				ICON_REGEXP.moveToTrash
@@ -125,7 +125,7 @@ describe('Mark for deletion - trash', () => {
 			);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();

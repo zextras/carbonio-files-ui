@@ -12,6 +12,7 @@ import { DefaultTheme } from 'styled-components';
 
 import { NodeDetailsListItem } from './NodeDetailsListItem';
 import { DATE_FORMAT } from '../../constants';
+import { SELECTORS } from '../../constants/test';
 import { populateNode, populateUser } from '../../mocks/mockUtils';
 import { NodeType, User } from '../../types/graphql/types';
 import { setup } from '../../utils/testUtils';
@@ -41,7 +42,7 @@ describe('Node List Item', () => {
 			/>
 		);
 
-		const nodeItem = screen.getByTestId(`details-node-item-${node.id}`);
+		const nodeItem = screen.getByTestId(SELECTORS.detailsNodeItem(node.id));
 		expect(nodeItem).toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
 		expect(nodeItem).not.toBeEmptyDOMElement();

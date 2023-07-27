@@ -17,7 +17,7 @@ import { FolderSelectionModalContent } from './FolderSelectionModalContent';
 import { HoverContainer } from './StyledComponents';
 import { destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
-import { COLORS, ICON_REGEXP } from '../../constants/test';
+import { COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -108,9 +108,9 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText(folder2.name)).toBeVisible();
 		expect(screen.getByText(file.name)).toBeVisible();
 		// file nodes are disabled
-		// expect(screen.getByTestId(`node-item-${file.id}`)).toHaveAttribute('disabled', '');
-		// expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
-		// expect(screen.getByTestId(`node-item-${folder2.id}`)).not.toHaveAttribute('disabled', '');
+		// expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).toHaveAttribute('disabled', '');
+		// expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute('disabled', '');
+		// expect(screen.getByTestId(SELECTORS.nodeItem(folder2.id))).not.toHaveAttribute('disabled', '');
 		// choose button is disabled because active folder is same as set one
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
@@ -182,9 +182,9 @@ describe('Folder Selection Modal Content', () => {
 		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
-		expect(findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)).toHaveStyle(
-			{ 'background-color': COLORS.highlight.regular }
-		);
+		expect(
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		expect(screen.getByText(/trash/i)).toBeVisible();
 		// choose button is disabled because active folder is same as set one
@@ -196,10 +196,10 @@ describe('Folder Selection Modal Content', () => {
 		await waitFor(() => expect(chooseButton).toBeEnabled());
 		// active root is become the clicked root
 		expect(
-			findStyled(screen.getByTestId(`node-item-${ROOTS.SHARED_WITH_ME}`), HoverContainer)
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(ROOTS.SHARED_WITH_ME)), HoverContainer)
 		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		expect(
-			findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
 		).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		// click on subtitle to reset active folder
 		await user.click(screen.getByText(/searched only inside the selected folder/i));
@@ -237,9 +237,9 @@ describe('Folder Selection Modal Content', () => {
 		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
-		expect(findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)).toHaveStyle(
-			{ 'background-color': COLORS.highlight.regular }
-		);
+		expect(
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
 		expect(screen.getByText(folder.name)).toBeVisible();
@@ -259,7 +259,7 @@ describe('Folder Selection Modal Content', () => {
 		expect(chooseButton).toBeDisabled();
 		// local root item is not visibly active
 		expect(
-			findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
 		).not.toHaveStyle(expect.objectContaining({ 'background-color': COLORS.highlight.regular }));
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
@@ -427,7 +427,9 @@ describe('Folder Selection Modal Content', () => {
 		// choose button is now active because trash is the active item
 		expect(chooseButton).toBeEnabled();
 		// ugly but it's the only way to check the item is visibly active
-		expect(findStyled(screen.getByTestId(`node-item-${ROOTS.TRASH}`), HoverContainer)).toHaveStyle({
+		expect(
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(ROOTS.TRASH)), HoverContainer)
+		).toHaveStyle({
 			'background-color': COLORS.highlight.regular
 		});
 		await user.dblClick(screen.getByText(/shared with me/i));

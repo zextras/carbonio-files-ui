@@ -10,7 +10,7 @@ import { ApolloError } from '@apollo/client';
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { AddSharing } from './AddSharing';
-import { ICON_REGEXP } from '../../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
 	populateNode,
@@ -381,7 +381,7 @@ describe('Add Sharing', () => {
 		expect(screen.getByText(/editor/i)).toBeVisible();
 		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
-		expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
+		expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute('disabled');
 		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one
@@ -794,7 +794,7 @@ describe('Add Sharing', () => {
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		expect(screen.getByText(/editor/i)).toBeVisible();
-		expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
+		expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one
 		// there are 2 editor icons because one is inside the popover

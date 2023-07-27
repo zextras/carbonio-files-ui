@@ -153,7 +153,7 @@ describe('Flag', () => {
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			// open context menu and click on flag action
 			fireEvent.contextMenu(nodeItem);
 			const flagAction = await screen.findByText(ACTION_REGEXP.flag);

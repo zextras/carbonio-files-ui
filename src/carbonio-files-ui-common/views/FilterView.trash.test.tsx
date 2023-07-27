@@ -65,7 +65,7 @@ describe('Filter view', () => {
 			);
 			// wait the content to be rendered
 			await screen.findByText(/view files and folders/i);
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			const queryResult = global.apolloClient.readQuery<FindNodesQuery, FindNodesQueryVariables>({
 				query: FIND_NODES,
 				variables: getFindNodesVariables({
@@ -96,13 +96,13 @@ describe('Filter view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			const restoreAction = within(displayer).getByTestId(ICON_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
 			await user.click(restoreAction);
 			await waitFor(() =>
-				expect(screen.queryAllByTestId('node-item-', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					nodes.length - 1
 				)
 			);
@@ -126,7 +126,7 @@ describe('Filter view', () => {
 			);
 			// wait the content to be rendered
 			await screen.findByText(/view files and folders/i);
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			const queryResult = global.apolloClient.readQuery<FindNodesQuery, FindNodesQueryVariables>({
 				query: FIND_NODES,
 				variables: getFindNodesVariables({
@@ -158,7 +158,7 @@ describe('Filter view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			const deletePermanentlyAction = within(displayer).getByTestId(ICON_REGEXP.deletePermanently);
 			expect(deletePermanentlyAction).toBeVisible();
@@ -168,7 +168,7 @@ describe('Filter view', () => {
 			});
 			await user.click(deletePermanentlyConfirm);
 			await waitFor(() =>
-				expect(screen.queryAllByTestId('node-item-', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					nodes.length - 1
 				)
 			);
@@ -191,7 +191,7 @@ describe('Filter view', () => {
 			);
 			// right click to open contextual menu
 			await screen.findByText(/view files and folders/i);
-			const nodeItems = await screen.findAllByTestId('node-item', { exact: false });
+			const nodeItems = await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			fireEvent.contextMenu(nodeItems[0]);
 			// check that restore action becomes visible
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
@@ -220,11 +220,11 @@ describe('Filter view', () => {
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			const restoreActionSelection = await within(
-				screen.getByTestId('list-header-selectionModeActive')
+				screen.getByTestId(SELECTORS.listHeaderSelectionMode)
 			).findByTestId(ICON_REGEXP.restore);
 			expect(restoreActionSelection).toBeVisible();
 			expect(
-				within(screen.getByTestId('list-header-selectionModeActive')).getByTestId(
+				within(screen.getByTestId(SELECTORS.listHeaderSelectionMode)).getByTestId(
 					ICON_REGEXP.deletePermanently
 				)
 			).toBeVisible();
@@ -257,7 +257,7 @@ describe('Filter view', () => {
 			// displayer
 			await user.click(nodeItems[0]);
 			await screen.findByText(/details/i);
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			await within(displayer).findAllByText(nodes[0].name);
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(within(displayer).getByTestId(ICON_REGEXP.restore)).toBeVisible();
@@ -308,7 +308,7 @@ describe('Filter view', () => {
 
 			expect(screen.getByTestId(ICON_REGEXP.exitSelectionMode)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.exitSelectionMode));
-			const listHeader = screen.getByTestId('list-header', { exact: false });
+			const listHeader = screen.getByTestId(SELECTORS.listHeader, { exact: false });
 			expect(screen.queryByTestId(ICON_REGEXP.exitSelectionMode)).not.toBeInTheDocument();
 			expect(within(listHeader).queryByTestId(ICON_REGEXP.restore)).not.toBeInTheDocument();
 			expect(
@@ -341,7 +341,7 @@ describe('Filter view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			expect(screen.queryByTestId('missing-filter')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 	});
 
@@ -366,7 +366,7 @@ describe('Filter view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			expect(screen.queryByTestId('missing-filter')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 	});
 });

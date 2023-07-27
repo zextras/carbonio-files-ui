@@ -9,6 +9,7 @@ import React from 'react';
 import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 
 import { Dropzone } from './Dropzone';
+import { SELECTORS } from '../../constants/test';
 import { setup } from '../../utils/testUtils';
 
 describe('Dropzone', () => {
@@ -35,17 +36,17 @@ describe('Dropzone', () => {
 		fireEvent.dragEnter(dropzone1.firstElementChild as Element, {
 			dataTransfer: { types: ['test'] }
 		});
-		await screen.findByTestId('dropzone-overlay');
-		expect(within(dropzone1).getByTestId('dropzone-overlay')).toBeVisible();
+		await screen.findByTestId(SELECTORS.dropzone);
+		expect(within(dropzone1).getByTestId(SELECTORS.dropzone)).toBeVisible();
 		fireEvent.dragEnter(dropzone2.firstElementChild as Element, {
 			dataTransfer: { types: ['test'] }
 		});
 		// first the dropzone1 is removed
-		await waitForElementToBeRemoved(screen.queryByTestId('dropzone-overlay'));
+		await waitForElementToBeRemoved(screen.queryByTestId(SELECTORS.dropzone));
 		// and then the dropzone2 is shown
-		await screen.findByTestId('dropzone-overlay');
-		expect(within(dropzone2).getByTestId('dropzone-overlay')).toBeVisible();
-		expect(within(dropzone1).queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		await screen.findByTestId(SELECTORS.dropzone);
+		expect(within(dropzone2).getByTestId(SELECTORS.dropzone)).toBeVisible();
+		expect(within(dropzone1).queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 	});
 
 	test('Hide dropzone overlay if a valid nested dropzone is reached', async () => {
@@ -80,26 +81,26 @@ describe('Dropzone', () => {
 		fireEvent.dragEnter(dropzone1.firstElementChild as Element, {
 			dataTransfer: { types: ['type1'] }
 		});
-		await screen.findByTestId('dropzone-overlay');
-		expect(within(dropzone1).getByTestId('dropzone-overlay')).toBeVisible();
+		await screen.findByTestId(SELECTORS.dropzone);
+		expect(within(dropzone1).getByTestId(SELECTORS.dropzone)).toBeVisible();
 		fireEvent.dragEnter(dropzone2.firstElementChild as Element, {
 			dataTransfer: { types: ['type1'] }
 		});
 		// dropzone1 is removed
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		// and then the dropzone2 is shown
-		await screen.findByTestId('dropzone-overlay');
+		await screen.findByTestId(SELECTORS.dropzone);
 		// only 1 dropzone is shown, and this is assured by the getBy selector which throws exception if more than one element is found
-		expect(within(dropzone2).getByTestId('dropzone-overlay')).toBeVisible();
+		expect(within(dropzone2).getByTestId(SELECTORS.dropzone)).toBeVisible();
 		// enter dropzone 3, which is an invalid dropzone for the type defined in dataTransfer
 		fireEvent.dragEnter(dropzone3.firstElementChild as Element, {
 			dataTransfer: { types: ['type1'] }
 		});
 		// overlay is removed from dropzone 2
-		await waitForElementToBeRemoved(within(dropzone2).queryByTestId('dropzone-overlay'));
+		await waitForElementToBeRemoved(within(dropzone2).queryByTestId(SELECTORS.dropzone));
 		// and is shown for dropzone 1
-		await screen.findByTestId('dropzone-overlay');
+		await screen.findByTestId(SELECTORS.dropzone);
 		// dropzone 3 trigger dropzone 1 because it is an invalid dropzone
-		expect(within(dropzone3).queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(within(dropzone3).queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 	});
 });

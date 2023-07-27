@@ -69,7 +69,7 @@ describe('Copy Nodes Modal', () => {
 			}
 		);
 		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 	});
@@ -94,7 +94,7 @@ describe('Copy Nodes Modal', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', parentFolder.name));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			parentFolder.children.nodes.length
 		);
 	});
@@ -124,7 +124,7 @@ describe('Copy Nodes Modal', () => {
 		const breadcrumbRegexp = buildBreadCrumbRegExp('Files', parentFolder.name);
 		const breadcrumb = await findByTextWithMarkup(breadcrumbRegexp);
 		expect(breadcrumb).toBeVisible();
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			parentFolder.children.nodes.length
 		);
 		expect(screen.getByText(nodesToCopy[0].name)).toBeVisible();
@@ -847,21 +847,23 @@ describe('Copy Nodes Modal', () => {
 		);
 
 		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		const modalListHeader = screen.getByTestId('modal-listHeader');
+		const modalListHeader = screen.getByTestId(SELECTORS.modalListHeader);
 		await waitFor(() =>
 			expect(
 				within(modalListHeader).queryByTestId(ICON_REGEXP.queryLoading)
 			).not.toBeInTheDocument()
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(NODES_LOAD_LIMIT);
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+			NODES_LOAD_LIMIT
+		);
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeInTheDocument();
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 		await triggerLoadMore();
 		await screen.findByText(
 			(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as File | Folder).name
 		);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();

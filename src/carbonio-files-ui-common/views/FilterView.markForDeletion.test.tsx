@@ -77,7 +77,7 @@ describe('Filter View', () => {
 				await screen.findByText(/item moved to trash/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
+				expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(2);
 			});
 
 			test('Mark for deletion is hidden if not all nodes are not trashed', async () => {
@@ -114,7 +114,7 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.moveToTrash
@@ -145,7 +145,7 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 				fireEvent.contextMenu(nodeItem);
 				const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 				expect(restoreAction).toBeVisible();

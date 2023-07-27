@@ -95,7 +95,7 @@ describe('Mark for deletion - trash', () => {
 			expect(trashAction).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(1);
+			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(1);
 
 			// activate selection mode by selecting items
 			await selectNodes([fileId1], user);
@@ -202,10 +202,10 @@ describe('Mark for deletion - trash', () => {
 			// wait for the load to be completed
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
-			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(5);
+			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(5);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
 			fireEvent.contextMenu(nodeItem);
 
@@ -216,7 +216,7 @@ describe('Mark for deletion - trash', () => {
 
 			// contextual menu is closed
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
-			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(4);
+			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(4);
 		});
 
 		test('Mark for deletion from context menu on selected nodes', async () => {
@@ -253,12 +253,12 @@ describe('Mark for deletion - trash', () => {
 			// wait for the load to be completed
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
-			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(5);
+			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(5);
 
 			await selectNodes([element0.id, element1.id], user);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element0.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			// open context menu
 			fireEvent.contextMenu(nodeItem);
 
@@ -269,7 +269,7 @@ describe('Mark for deletion - trash', () => {
 			// contextual menu is closed
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
 
-			expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(3);
+			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(3);
 		});
 
 		test('Mark for deletion of last ordered node trigger load of the new page with the new cursor', async () => {

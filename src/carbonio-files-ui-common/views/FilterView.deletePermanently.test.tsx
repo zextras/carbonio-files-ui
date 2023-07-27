@@ -71,7 +71,7 @@ describe('Filter View', () => {
 
 				const element = await screen.findByText(currentFilter[0].name);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByRoleWithIcon(
 					'button',
@@ -92,8 +92,8 @@ describe('Filter View', () => {
 				expect(confirmButton).not.toBeInTheDocument();
 
 				expect(element).not.toBeInTheDocument();
-				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
-				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
+				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
+				expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(2);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
@@ -131,7 +131,7 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.restore
@@ -175,7 +175,7 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 				fireEvent.contextMenu(nodeItem);
 				const renameAction = await screen.findByText(ACTION_REGEXP.rename);
 				expect(renameAction).toBeVisible();

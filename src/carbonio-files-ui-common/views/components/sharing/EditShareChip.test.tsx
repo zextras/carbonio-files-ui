@@ -9,7 +9,7 @@ import React from 'react';
 import { act, screen, waitFor } from '@testing-library/react';
 
 import { EditShareChip } from './EditShareChip';
-import { ICON_REGEXP } from '../../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
 import { SharedTarget, SharePermission } from '../../../types/graphql/types';
 import { mockDeleteShare, mockUpdateShare } from '../../../utils/mockUtils';
@@ -437,7 +437,7 @@ describe('Edit Share Chip', () => {
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 
-			await user.click(screen.getByTestId('exclusive-selection-editor'));
+			await user.click(screen.getByTestId(SELECTORS.exclusiveSelectionEditor));
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 		});
 	});
@@ -569,8 +569,12 @@ describe('Edit Share Chip', () => {
 
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 
-			expect(screen.getByTestId('exclusive-selection-viewer')).not.toHaveAttribute('disabled');
-			expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
+			expect(screen.getByTestId(SELECTORS.exclusiveSelectionViewer)).not.toHaveAttribute(
+				'disabled'
+			);
+			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
+				'disabled'
+			);
 		});
 	});
 
@@ -712,9 +716,13 @@ describe('Edit Share Chip', () => {
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			expect(screen.getByText(/viewer/i)).toBeVisible();
-			expect(screen.getByTestId('exclusive-selection-viewer')).not.toHaveAttribute('disabled');
+			expect(screen.getByTestId(SELECTORS.exclusiveSelectionViewer)).not.toHaveAttribute(
+				'disabled'
+			);
 			expect(screen.getByText(/editor/i)).toBeVisible();
-			expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
+			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
+				'disabled'
+			);
 			await user.click(screen.getByText(/editor/i));
 			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			expect(updateShareMutationFn).not.toHaveBeenCalled();

@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { Displayer } from './Displayer';
-import { ACTION_REGEXP, ICON_REGEXP } from '../../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
 	populateFolder,
@@ -68,10 +68,9 @@ describe('Displayer', () => {
 		});
 		await screen.findAllByText(node.name);
 
-		const copyIcon = within(screen.getByTestId('displayer-actions-header')).queryByRoleWithIcon(
-			'button',
-			{ icon: ICON_REGEXP.copy }
-		);
+		const copyIcon = within(
+			screen.getByTestId(SELECTORS.displayerActionsHeader)
+		).queryByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 		if (copyIcon) {
 			expect(copyIcon).toBeEnabled();
 			await user.click(copyIcon);
@@ -237,7 +236,7 @@ describe('Displayer', () => {
 		});
 		await screen.findAllByText(node.name);
 		await screen.findByTestId(ICON_REGEXP.moreHorizontal);
-		expect(screen.getAllByTestId('avatar')).toHaveLength(6);
+		expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(6);
 		expect(screen.getByTestId(ICON_REGEXP.moreHorizontal)).toBeVisible();
 		await user.click(screen.getByTestId(ICON_REGEXP.moreHorizontal));
 		await screen.findByText(collaborator0Name);

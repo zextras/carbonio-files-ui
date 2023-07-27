@@ -267,7 +267,7 @@ describe('Filter View', () => {
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					...map(path.slice(0, path.length - 1), (node) => node.name)
@@ -284,7 +284,7 @@ describe('Filter View', () => {
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -419,7 +419,7 @@ describe('Filter View', () => {
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					...map(path.slice(0, path.length - 1), (node) => node.name)
@@ -436,7 +436,7 @@ describe('Filter View', () => {
 				// context menu is closed
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 

@@ -17,7 +17,7 @@ import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
-import { EMITTER_CODES, ICON_REGEXP } from '../../constants/test';
+import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import handleUploadFileRequest, {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -160,7 +160,7 @@ describe('Upload List', () => {
 
 				await uploadWithDnD(dropzoneArea, dataTransferObj);
 
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					uploadedFiles.length
 				);
 				expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();

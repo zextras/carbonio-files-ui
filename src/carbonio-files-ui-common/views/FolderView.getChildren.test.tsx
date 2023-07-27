@@ -16,7 +16,7 @@ import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { NODES_LOAD_LIMIT } from '../constants';
-import { ICON_REGEXP } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
@@ -95,10 +95,10 @@ describe('Get children', () => {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`]
 		});
 
-		const listHeader = screen.getByTestId('list-header');
+		const listHeader = screen.getByTestId(SELECTORS.listHeader);
 		expect(within(listHeader).getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 		await waitFor(() =>
-			expect(screen.getByTestId(`list-${currentFolder.id}`)).not.toBeEmptyDOMElement()
+			expect(screen.getByTestId(SELECTORS.list(currentFolder.id))).not.toBeEmptyDOMElement()
 		);
 		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 		const queryResult = global.apolloClient.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -107,8 +107,8 @@ describe('Get children', () => {
 		});
 		forEach((queryResult?.getNode as Folder).children.nodes, (child) => {
 			const $child = child as Node;
-			expect(screen.getByTestId(`node-item-${$child.id}`)).toBeInTheDocument();
-			expect(screen.getByTestId(`node-item-${$child.id}`)).toHaveTextContent($child.name);
+			expect(screen.getByTestId(SELECTORS.nodeItem($child.id))).toBeInTheDocument();
+			expect(screen.getByTestId(SELECTORS.nodeItem($child.id))).toHaveTextContent($child.name);
 		});
 	});
 
@@ -137,20 +137,20 @@ describe('Get children', () => {
 		});
 
 		// this is the loading refresh icon
-		expect(screen.getByTestId('list-header')).toContainElement(
+		expect(screen.getByTestId(SELECTORS.listHeader)).toContainElement(
 			screen.getByTestId(ICON_REGEXP.queryLoading)
 		);
 		expect(
-			within(screen.getByTestId('list-header')).getByTestId(ICON_REGEXP.queryLoading)
+			within(screen.getByTestId(SELECTORS.listHeader)).getByTestId(ICON_REGEXP.queryLoading)
 		).toBeVisible();
 		await waitForElementToBeRemoved(
-			within(screen.getByTestId('list-header')).queryByTestId(ICON_REGEXP.queryLoading)
+			within(screen.getByTestId(SELECTORS.listHeader)).queryByTestId(ICON_REGEXP.queryLoading)
 		);
 		// wait the rendering of the first item
-		await screen.findByTestId(`node-item-${(currentFolder.children.nodes[0] as Node).id}`);
+		await screen.findByTestId(SELECTORS.nodeItem((currentFolder.children.nodes[0] as Node).id));
 		expect(
 			screen.getByTestId(
-				`node-item-${(currentFolder.children.nodes[NODES_LOAD_LIMIT - 1] as Node).id}`
+				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT - 1] as Node).id)
 			)
 		).toBeVisible();
 		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
@@ -159,7 +159,7 @@ describe('Get children', () => {
 		// elements after the limit should not be rendered
 		expect(
 			screen.queryByTestId(
-				`node-item-${(currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id}`
+				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
 			)
 		).not.toBeInTheDocument();
 
@@ -167,15 +167,15 @@ describe('Get children', () => {
 
 		// wait for the response
 		await screen.findByTestId(
-			`node-item-${(currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id}`
+			SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
 		);
 
 		// now all elements are loaded so last children should be visible and no loading icon should be rendered
 		expect(
 			screen.getByTestId(
-				`node-item-${
+				SELECTORS.nodeItem(
 					(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as Node).id
-				}`
+				)
 			)
 		).toBeVisible();
 		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
