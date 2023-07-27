@@ -140,7 +140,7 @@ describe('Upload View', () => {
 			await uploadWithDnD(dropzone, dataTransferObj);
 			await screen.findByText(/content/i);
 			await screen.findByTestId(ICON_REGEXP.uploadCompleted);
-			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted));
+			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted)).toBeVisible();
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(2);
 			expect(screen.getByText('2/3')).toBeVisible();
 

@@ -6,7 +6,7 @@
 
 module.exports = {
 	extends: ['./node_modules/@zextras/carbonio-ui-configs/rules/eslint.js'],
-	plugins: ['unused-imports', 'jest-dom', 'testing-library', 'notice'],
+	plugins: ['notice', 'no-autofix'],
 	overrides: [
 		{
 			// enable eslint-plugin-testing-library rules or preset only for test files
@@ -15,13 +15,11 @@ module.exports = {
 			rules: {
 				'testing-library/no-node-access': 'off',
 				'jest-dom/prefer-enabled-disabled': 'off',
-				'testing-library/no-unnecessary-act': 'warn',
-				'testing-library/no-global-regexp-flag-in-query': 'error',
-				'testing-library/prefer-user-event': 'warn'
+				'no-autofix/jest-dom/prefer-enabled-disabled': 'warn'
 			}
 		},
 		{
-			// disable check for licence header on graphql files
+			// disable check for license header on graphql files
 			files: ['*.graphql'],
 			rules: {
 				'notice/notice': 'off'
@@ -50,6 +48,17 @@ module.exports = {
 				'@graphql-eslint/strict-id-in-types': 'off',
 				'@graphql-eslint/description-style': 'off'
 			}
+		},
+		{
+			files: [
+				'**/mocks/**/*.[jt]s?(x)',
+				'**/types/**/*.[jt]s?(x)',
+				'**/jest-*.ts?(x)',
+				'**/test*.ts?(x)'
+			],
+			rules: {
+				'import/no-extraneous-dependencies': 'off'
+			}
 		}
 	],
 	parserOptions: {
@@ -59,40 +68,7 @@ module.exports = {
 		],
 		operations: 'src/carbonio-files-ui-common/graphql/**/*.graphql'
 	},
-	globals: {
-		IS_SERVER: 'readonly'
-	},
 	rules: {
-		'import/order': [
-			'error',
-			{
-				groups: [['builtin', 'external']],
-				pathGroups: [
-					{
-						pattern: 'react',
-						group: 'external',
-						position: 'before'
-					}
-				],
-				pathGroupsExcludedImportTypes: ['react'],
-				'newlines-between': 'always',
-				alphabetize: {
-					order: 'asc',
-					caseInsensitive: true
-				}
-			}
-		],
-		'no-unused-vars': 'off',
-		'@typescript-eslint/no-unused-vars': 'off',
-		'unused-imports/no-unused-imports': 'error',
-		'unused-imports/no-unused-vars': [
-			'warn',
-			{ vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' }
-		],
-		'no-shadow': 'off',
-		'@typescript-eslint/no-shadow': ['error'],
-		'import/no-extraneous-dependencies': 'off',
-		'no-console': ['warn', { allow: ['error'] }],
 		'no-param-reassign': [
 			'error',
 			{
@@ -104,12 +80,8 @@ module.exports = {
 			{
 				templateFile: './notice.template.js'
 			}
-		]
-	},
-	settings: {
-		react: {
-			version: 'detect'
-		}
+		],
+		'sonarjs/cognitive-complexity': 'warn'
 	},
 	ignorePatterns: ['notice.template.js']
 };

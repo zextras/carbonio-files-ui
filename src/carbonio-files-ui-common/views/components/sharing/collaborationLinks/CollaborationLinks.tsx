@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/* eslint-disable no-nested-ternary */
 import React, { useCallback, useMemo } from 'react';
 
 import {
@@ -30,7 +29,6 @@ import { copyToClipboard } from '../../../../utils/utils';
 import { TextWithLineHeight } from '../../StyledComponents';
 
 interface CollaborationLinksProps {
-	nodeTypename: 'File' | 'Folder' | undefined;
 	nodeId: string;
 	canWrite: boolean;
 	nodeName: string;
@@ -38,7 +36,6 @@ interface CollaborationLinksProps {
 
 export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 	nodeId,
-	nodeTypename,
 	canWrite,
 	nodeName
 }) => {

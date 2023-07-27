@@ -135,20 +135,17 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 		[expiresAt, id, linkDescriptionValue, onEditConfirm, updatedTimestamp]
 	);
 
-	const copyUrl = useCallback(
-		(_event) => {
-			copyToClipboard(url as string).then(() => {
-				createSnackbar({
-					key: new Date().toLocaleString(),
-					type: 'info',
-					label: t('snackbar.publicLink.copyLink', 'Public link copied'),
-					replace: true,
-					hideButton: true
-				});
+	const copyUrl = useCallback(() => {
+		copyToClipboard(url as string).then(() => {
+			createSnackbar({
+				key: new Date().toLocaleString(),
+				type: 'info',
+				label: t('snackbar.publicLink.copyLink', 'Public link copied'),
+				replace: true,
+				hideButton: true
 			});
-		},
-		[createSnackbar, t, url]
-	);
+		});
+	}, [createSnackbar, t, url]);
 
 	const [pickerIsOpen, setPickerIsOpen] = useState(false);
 

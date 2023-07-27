@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { ApolloError } from '@apollo/client';
-import { Location } from 'history';
+import type { Location } from 'history';
 import type { TFunction } from 'i18next';
 import {
 	chain,
@@ -68,6 +68,18 @@ export const humanFileSize = (inputSize: number): string => {
 	return `${(inputSize / 1024 ** i).toFixed(2).toString()} ${['B', 'KB', 'MB', 'GB', 'TB'][i]}`;
 };
 
+function getIconByRootId(rootId: Maybe<string> | undefined): keyof DefaultTheme['icons'] {
+	switch (rootId) {
+		case ROOTS.LOCAL_ROOT:
+			return 'Folder';
+		case ROOTS.TRASH:
+			return 'Trash2';
+		case ROOTS.SHARED_WITH_ME:
+			return 'ArrowCircleLeft';
+		default:
+			return 'File';
+	}
+}
 /**
  * Given a file type returns the DS icon name
  */
@@ -81,12 +93,7 @@ export const getIconByFileType = (
 			case NodeType.Folder:
 				return 'Folder';
 			case NodeType.Text:
-				switch (subType) {
-					case 'application/pdf':
-						return 'FilePdf';
-					default:
-						return 'FileText';
-				}
+				return subType === 'application/pdf' ? 'FilePdf' : 'FileText';
 			case NodeType.Video:
 				return 'Video';
 			case NodeType.Audio:
@@ -102,16 +109,7 @@ export const getIconByFileType = (
 			case NodeType.Application:
 				return 'Code';
 			case NodeType.Root: {
-				switch (subType) {
-					case ROOTS.LOCAL_ROOT:
-						return 'Folder';
-					case ROOTS.TRASH:
-						return 'Trash2';
-					case ROOTS.SHARED_WITH_ME:
-						return 'ArrowCircleLeft';
-					default:
-						return 'File';
-				}
+				return getIconByRootId(subType);
 			}
 			default:
 				return 'File';
@@ -130,12 +128,9 @@ export const getIconColorByFileType = (
 		case NodeType.Folder:
 			return theme.palette.secondary.regular;
 		case NodeType.Text:
-			switch (subType) {
-				case 'application/pdf':
-					return theme.palette.error.regular;
-				default:
-					return theme.palette.primary.regular;
-			}
+			return subType === 'application/pdf'
+				? theme.palette.error.regular
+				: theme.palette.primary.regular;
 		case NodeType.Video:
 			return theme.palette.error.regular;
 		case NodeType.Audio:
@@ -150,14 +145,10 @@ export const getIconColorByFileType = (
 			return theme.palette.success.regular;
 		case NodeType.Application:
 			return theme.palette.gray0.regular;
-		case NodeType.Root: {
-			switch (subType) {
-				case ROOTS.SHARED_WITH_ME:
-					return theme.palette.linked.regular;
-				default:
-					return theme.palette.gray1.regular;
-			}
-		}
+		case NodeType.Root:
+			return subType === ROOTS.SHARED_WITH_ME
+				? theme.palette.linked.regular
+				: theme.palette.gray1.regular;
 		default:
 			return theme.palette.primary.regular;
 	}
@@ -355,8 +346,8 @@ export const scrollToNodeItem = debounce((nodeId: string, isLast = false) => {
 }, 500);
 
 export function propertyComparator<T extends SortableNode[keyof SortableNode]>(
-	a: Maybe<SortableNode> | undefined,
-	b: Maybe<SortableNode> | undefined,
+	nodeA: Maybe<SortableNode> | undefined,
+	nodeB: Maybe<SortableNode> | undefined,
 	property: keyof SortableNode,
 	{
 		defaultIfNull,
@@ -366,8 +357,10 @@ export function propertyComparator<T extends SortableNode[keyof SortableNode]>(
 		propertyModifier?: (p: NonNullable<T>) => NonNullable<T>;
 	} = {}
 ): number {
-	let propA = (a == null || a[property] == null ? defaultIfNull : (a[property] as T)) || null;
-	let propB = (b == null || b[property] == null ? defaultIfNull : (b[property] as T)) || null;
+	let propA =
+		(nodeA == null || nodeA[property] == null ? defaultIfNull : (nodeA[property] as T)) || null;
+	let propB =
+		(nodeB == null || nodeB[property] == null ? defaultIfNull : (nodeB[property] as T)) || null;
 	if (propA === propB) {
 		return 0;
 	}
@@ -527,9 +520,9 @@ export function getInverseOrder(order: OrderTrend): OrderTrend {
 }
 
 export function hexToRGBA(hexColor: string, alpha = 1): string {
-	let r = '0';
-	let g = '0';
-	let b = '0';
+	let r;
+	let g;
+	let b;
 
 	// 3 digits
 	if (hexColor.length === 4) {

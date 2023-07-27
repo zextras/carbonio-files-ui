@@ -31,7 +31,7 @@ const roleAssignChecker: {
 } = {
 	[Role.Editor]: (node: Pick<Node, 'type' | 'permissions'>): boolean =>
 		(toLower(node.type) === 'folder' && node.permissions.can_write_folder) ||
-		(!(toLower(node.type) === 'folder') && node.permissions.can_write_file),
+		(toLower(node.type) !== 'folder' && node.permissions.can_write_file),
 	[Role.Viewer]: (): boolean => true
 };
 
@@ -178,7 +178,7 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, Omit<ShareChip, 'la
 				}
 				ref={ref}
 			>
-				{(_closePopover: () => void): JSX.Element => (
+				{(): JSX.Element => (
 					<NewShareChipPopoverContainer
 						activeRow={rowRoleToIdxMap[value.role]}
 						disabledRows={disabledRows}

@@ -32,7 +32,6 @@ describe('Collaboration Link', () => {
 			<CollaborationLinks
 				nodeId={node.id}
 				nodeName={node.name}
-				nodeTypename={node.__typename}
 				canWrite={
 					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
 				}
@@ -128,7 +127,6 @@ describe('Collaboration Link', () => {
 			<CollaborationLinks
 				nodeId={node.id}
 				nodeName={node.name}
-				nodeTypename={node.__typename}
 				canWrite={
 					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
 				}
@@ -174,7 +172,6 @@ describe('Collaboration Link', () => {
 			<CollaborationLinks
 				nodeId={node.id}
 				nodeName={node.name}
-				nodeTypename={node.__typename}
 				canWrite={
 					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
 				}
@@ -216,7 +213,6 @@ describe('Collaboration Link', () => {
 			<CollaborationLinks
 				nodeId={node.id}
 				nodeName={node.name}
-				nodeTypename={node.__typename}
 				canWrite={
 					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
 				}
@@ -279,7 +275,6 @@ describe('Collaboration Link', () => {
 			<CollaborationLinks
 				nodeId={node.id}
 				nodeName={node.name}
-				nodeTypename={node.__typename}
 				canWrite={
 					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
 				}
@@ -340,7 +335,6 @@ describe('Collaboration Link', () => {
 			<CollaborationLinks
 				nodeId={node.id}
 				nodeName={node.name}
-				nodeTypename={node.__typename}
 				canWrite={
 					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
 				}
@@ -379,7 +373,6 @@ describe('Collaboration Link', () => {
 			<CollaborationLinks
 				nodeId={node.id}
 				nodeName={node.name}
-				nodeTypename={node.__typename}
 				canWrite={
 					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
 				}

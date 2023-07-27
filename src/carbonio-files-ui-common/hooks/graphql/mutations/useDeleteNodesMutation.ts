@@ -47,7 +47,7 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 
 	useErrorHandler(error, 'DELETE_NODES', { type: 'error' });
 
-	const deleteNodes = useCallback<DeleteNodesType>(
+	return useCallback<DeleteNodesType>(
 		(...nodes: PickIdNodeType[]) => {
 			const nodesIds: string[] = map(nodes, (node: PickIdNodeType) => node.id);
 
@@ -101,6 +101,4 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 		},
 		[activeNodeId, createSnackbar, deleteNodesMutation, removeActiveNode, removeNodesFromFilter, t]
 	);
-
-	return deleteNodes;
 }

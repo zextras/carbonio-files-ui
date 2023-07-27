@@ -185,8 +185,7 @@ describe('Filter View', () => {
 				});
 				// when find only 1 occurrence means that snackbar is hidden
 				expect(screen.getByText(/Error! Name already assigned/)).toBeVisible();
-				const inputFieldDiv = screen.getByTestId('input-name');
-				const inputField = within(inputFieldDiv).getByRole('textbox');
+				const inputField = screen.getByRole('textbox');
 				expect(inputField).toBeVisible();
 				expect(inputField).toHaveValue(newName);
 			});

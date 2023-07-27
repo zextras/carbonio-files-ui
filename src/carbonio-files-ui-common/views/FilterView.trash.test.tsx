@@ -24,7 +24,7 @@ import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import FIND_NODES from '../graphql/queries/findNodes.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
-import { populateNode, populateNodes } from '../mocks/mockUtils';
+import { populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import {
 	FindNodesQuery,
@@ -33,17 +33,14 @@ import {
 	GetNodeQueryVariables,
 	NodeSort
 } from '../types/graphql/types';
-import { getFindNodesVariables, getNodeVariables, mockFindNodes } from '../utils/mockUtils';
+import {
+	getFindNodesVariables,
+	getNodeVariables,
+	mockDeletePermanently,
+	mockFindNodes,
+	mockGetNode
+} from '../utils/mockUtils';
 import { selectNodes, setup } from '../utils/testUtils';
-
-const mockedRequestHandler = jest.fn();
-
-beforeEach(() => {
-	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
-	server.use(
-		graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
-	);
-});
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -115,42 +112,34 @@ describe('Filter view', () => {
 			).toBeVisible();
 		});
 
-		test('Delete permanently close the displayer from trash views', async () => {
+		test('Delete permanently close the displayer from trash view', async () => {
+			const node = populateNode();
+			node.rootId = ROOTS.TRASH;
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_delete = true;
+
+			const mocks = [
+				mockFindNodes(
+					getFindNodesVariables({ folder_id: ROOTS.TRASH, shared_with_me: false, cascade: false }),
+					[node]
+				),
+				mockGetNode(getNodeVariables(node.id), node),
+				mockDeletePermanently({ node_ids: [node.id] }, [node.id])
+			];
+
 			const { user } = setup(
 				<Route path={`/:view/:filter?`}>
 					<FilterView />
 				</Route>,
 				{
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`],
+					mocks
 				}
 			);
 			// wait the content to be rendered
 			await screen.findByText(/view files and folders/i);
 			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
-			const queryResult = global.apolloClient.readQuery<FindNodesQuery, FindNodesQueryVariables>({
-				query: FIND_NODES,
-				variables: getFindNodesVariables({
-					shared_with_me: false,
-					folder_id: ROOTS.TRASH,
-					cascade: false
-				})
-			});
-			expect(queryResult?.findNodes?.nodes || null).not.toBeNull();
-			const nodes = queryResult?.findNodes?.nodes as Node[];
-			expect(nodes.length).toBeGreaterThan(0);
-			const cachedNode = nodes[0];
-			const node = populateNode(cachedNode.__typename, cachedNode.id, cachedNode.name);
-			node.rootId = ROOTS.TRASH;
-			node.permissions.can_write_file = true;
-			node.permissions.can_write_folder = true;
-			node.permissions.can_delete = true;
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GET_NODE,
-				variables: getNodeVariables(node.id),
-				data: {
-					getNode: { ...node, description: '' }
-				}
-			});
 
 			const nodeItem = screen.getByText(node.name);
 			expect(nodeItem).toBeVisible();
@@ -167,32 +156,38 @@ describe('Filter view', () => {
 				name: ACTION_REGEXP.deletePermanently
 			});
 			await user.click(deletePermanentlyConfirm);
-			await waitFor(() =>
-				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
-					nodes.length - 1
-				)
-			);
-			await screen.findByText(/^success$/i);
+			await screen.findByText(/The trash is empty/i);
+			await screen.findByText(/success/i);
 			await screen.findByText(/view files and folders/i);
 			expect(deletePermanentlyConfirm).not.toBeInTheDocument();
 			expect(within(displayer).queryByText(node.name)).not.toBeInTheDocument();
 			expect(deletePermanentlyAction).not.toBeInTheDocument();
-			expect(
-				screen.getByText(/View files and folders, share them with your contacts/i)
-			).toBeVisible();
 		});
 
 		test('in trash filter only restore and delete permanently actions are visible', async () => {
+			const node = populateNode();
+			node.rootId = ROOTS.TRASH;
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_delete = true;
+			node.parent = populateLocalRoot();
+			const mocks = [
+				mockFindNodes(
+					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
+					[node]
+				),
+				mockGetNode(getNodeVariables(node.id), node)
+			];
 			const { user } = setup(
 				<Route path={`/:view/:filter?`}>
 					<FilterView />
 				</Route>,
-				{ initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`] }
+				{ initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`], mocks }
 			);
 			// right click to open contextual menu
 			await screen.findByText(/view files and folders/i);
-			const nodeItems = await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
-			fireEvent.contextMenu(nodeItems[0]);
+			const nodeItem = await screen.findByText(node.name);
+			fireEvent.contextMenu(nodeItem);
 			// check that restore action becomes visible
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
@@ -205,18 +200,8 @@ describe('Filter view', () => {
 			expect(screen.queryByText(ACTION_REGEXP.download)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.copy)).not.toBeInTheDocument();
 
-			const queryResult = global.apolloClient.readQuery<FindNodesQuery, FindNodesQueryVariables>({
-				query: FIND_NODES,
-				variables: getFindNodesVariables({
-					shared_with_me: false,
-					folder_id: ROOTS.TRASH,
-					cascade: false
-				})
-			});
-			expect(queryResult?.findNodes?.nodes || null).not.toBeNull();
-			const nodes = queryResult?.findNodes?.nodes as Node[];
 			// selection mode
-			await selectNodes([nodes[0].id], user);
+			await selectNodes([node.id], user);
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			const restoreActionSelection = await within(
@@ -241,24 +226,11 @@ describe('Filter view', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-			const node = populateNode(nodes[0].__typename, nodes[0].id, nodes[0].name);
-			node.permissions.can_write_folder = true;
-			node.permissions.can_write_file = true;
-			node.permissions.can_delete = true;
-			node.rootId = ROOTS.TRASH;
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GET_NODE,
-				variables: getNodeVariables(node.id),
-				data: {
-					getNode: node
-				}
-			});
-
 			// displayer
-			await user.click(nodeItems[0]);
+			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			const displayer = screen.getByTestId(SELECTORS.displayer);
-			await within(displayer).findAllByText(nodes[0].name);
+			await within(displayer).findAllByText(node.name);
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(within(displayer).getByTestId(ICON_REGEXP.restore)).toBeVisible();
 			expect(within(displayer).getByTestId(ICON_REGEXP.deletePermanently)).toBeVisible();
@@ -322,6 +294,10 @@ describe('Filter view', () => {
 
 	describe('My Trash filter', () => {
 		test('My Trash filter sharedWithMe=false and includes only trashed nodes', async () => {
+			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			server.use(
+				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
+			);
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
 			});
@@ -347,6 +323,10 @@ describe('Filter view', () => {
 
 	describe('Shared Trash filter', () => {
 		test('Shared trash filter has sharedWithMe=true and includes only trashed nodes', async () => {
+			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			server.use(
+				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
+			);
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`]
 			});
