@@ -6,13 +6,13 @@
 
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
+import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { map } from 'lodash';
 
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import { SELECTORS } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
 import GET_PERMISSIONS from '../graphql/queries/getPermissions.graphql';
@@ -314,5 +314,20 @@ describe('Folder View', () => {
 				])
 			);
 		});
+	});
+
+	test('should show the list of valid nodes even if the children include some invalid node', async () => {
+		const folder = populateFolder(2);
+		const node = populateNode();
+		folder.children.nodes.push(null, node);
+		const mocks = [
+			mockGetChildren(getChildrenVariables(folder.id), folder),
+			mockGetPermissions({ node_id: folder.id }, folder),
+			mockGetPath({ node_id: folder.id }, [folder])
+		];
+		setup(<FolderView />, { initialRouterEntries: [`/?folder=${folder.id}`], mocks });
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		await screen.findByText(node.name);
+		expect(screen.getByText(node.name)).toBeVisible();
 	});
 });
