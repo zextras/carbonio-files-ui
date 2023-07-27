@@ -67,11 +67,8 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 						cache.gc();
 					}
 				},
-				onQueryUpdated(observableQuery, { missing, result }) {
+				onQueryUpdated(observableQuery, { result }) {
 					const { query } = observableQuery.options;
-					if (missing) {
-						return observableQuery.refetch();
-					}
 					if (isQueryResult<FindNodesQuery>(query, result, FIND_NODES)) {
 						const listNodes = result.findNodes?.nodes;
 						if (
