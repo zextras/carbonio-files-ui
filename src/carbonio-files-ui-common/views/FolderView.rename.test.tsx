@@ -454,6 +454,7 @@ describe('Rename', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);

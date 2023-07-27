@@ -508,6 +508,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(cloneAsCurrentItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -567,6 +568,7 @@ describe('Versioning', () => {
 		await user.click(versionWithoutKeepMoreButton);
 
 		const keepVersionItem = await screen.findByText(/keep this version forever/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersionItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -688,6 +690,7 @@ describe('Versioning', () => {
 		await user.click(versionMoreButton);
 
 		const keepVersionItem = await screen.findByText(/remove keep forever/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersionItem.parentElement).not.toHaveAttribute('disabled', '');
 		await user.click(keepVersionItem);
 
@@ -732,6 +735,7 @@ describe('Versioning', () => {
 		await user.click(version2MoreButton);
 
 		const deleteVersionItem = await screen.findByText(/delete version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(deleteVersionItem).not.toHaveAttribute('disabled', '');
 		await user.click(deleteVersionItem);
 		await waitFor(() => expect(screen.getAllByText(/version \d+/i)).toHaveLength(maxVersions - 1));
@@ -815,6 +819,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(cloneAsCurrentItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -862,6 +867,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const deleteVersion = await screen.findByText(/delete version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(deleteVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -906,6 +912,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const openDocumentVersion = await screen.findByText(/open document version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(openDocumentVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -942,6 +949,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const keepVersion = await screen.findByText(/(keep this version forever|remove keep forever)/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();

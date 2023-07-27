@@ -197,9 +197,11 @@ describe('Edit Share Chip', () => {
 
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(screen.getByTestId(SELECTORS.exclusiveSelectionViewer)).not.toHaveAttribute(
 				'disabled'
 			);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
 				'disabled'
 			);
@@ -344,10 +346,12 @@ describe('Edit Share Chip', () => {
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			expect(screen.getByText(/viewer/i)).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(screen.getByTestId(SELECTORS.exclusiveSelectionViewer)).not.toHaveAttribute(
 				'disabled'
 			);
 			expect(screen.getByText(/editor/i)).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
 				'disabled'
 			);

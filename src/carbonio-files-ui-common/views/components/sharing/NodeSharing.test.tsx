@@ -409,6 +409,7 @@ describe('Node Sharing', () => {
 			expect(within(collaboratorsContainer).getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(
 				2
 			);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
 				'disabled'
 			);
@@ -547,6 +548,7 @@ describe('Node Sharing', () => {
 			await screen.findByText(/editor/i);
 			// register listeners of the popover
 			jest.advanceTimersToNextTimer();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
 				'disabled'
 			);

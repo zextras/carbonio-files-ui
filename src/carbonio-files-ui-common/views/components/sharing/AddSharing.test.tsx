@@ -381,7 +381,9 @@ describe('Add Sharing', () => {
 		expect(screen.getByText(/editor/i)).toBeVisible();
 		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute('disabled');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one
@@ -487,6 +489,7 @@ describe('Add Sharing', () => {
 		expect(screen.getByText(/editor/i)).toBeVisible();
 		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		// click on editor shouldn't do anything
 		await user.click(screen.getByText(/editor/i));
@@ -794,6 +797,7 @@ describe('Add Sharing', () => {
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		expect(screen.getByText(/editor/i)).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one

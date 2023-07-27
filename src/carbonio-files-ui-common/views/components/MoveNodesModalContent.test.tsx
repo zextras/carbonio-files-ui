@@ -96,6 +96,7 @@ describe('Move Nodes Modal', () => {
 				);
 				await screen.findByText(file.name);
 				const nodeItem = screen.getByText(file.name);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(nodeItem).toHaveAttribute('disabled', '');
 			});
 
@@ -123,6 +124,7 @@ describe('Move Nodes Modal', () => {
 				);
 				await screen.findByText(folder.name);
 				const nodeItem = screen.getByText(folder.name);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(nodeItem).toHaveAttribute('disabled', '');
 				await user.dblClick(nodeItem);
 				expect(nodeItem).toBeVisible();
@@ -150,6 +152,7 @@ describe('Move Nodes Modal', () => {
 				);
 				await screen.findByText(folder.name);
 				const nodeItem = screen.getByText(folder.name);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(nodeItem).not.toHaveAttribute('disabled', '');
 				await user.dblClick(nodeItem);
 				await screen.findByText(/it looks like there's nothing here/i);
@@ -171,6 +174,7 @@ describe('Move Nodes Modal', () => {
 				);
 				await screen.findByText(nodeToMove.name);
 				const nodeItem = screen.getByText(nodeToMove.name);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(nodeItem).toHaveAttribute('disabled', '');
 			});
 		}

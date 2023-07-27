@@ -351,6 +351,7 @@ describe('Filter View', () => {
 				fireEvent.contextMenu(nodeItem);
 				const moveAction = await screen.findByText(ACTION_REGEXP.move);
 				expect(moveAction).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(moveAction).not.toHaveAttribute('disabled', '');
 			});
 

@@ -65,6 +65,7 @@ describe('Move', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			moveAction = await screen.findByText(ACTION_REGEXP.move);
 			expect(moveAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(moveAction).not.toHaveAttribute('disabled', '');
 		});
 
@@ -100,6 +101,7 @@ describe('Move', () => {
 
 			const moveIcon = await screen.findByTestId(ICON_REGEXP.move);
 			expect(moveIcon).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(moveIcon.parentElement).not.toHaveAttribute('disabled', '');
 		});
 	});

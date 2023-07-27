@@ -81,7 +81,8 @@ module.exports = {
 				templateFile: './notice.template.js'
 			}
 		],
-		'sonarjs/cognitive-complexity': 'warn'
+		'sonarjs/cognitive-complexity': 'warn',
+		'sonarjs/no-duplicate-string': 'off'
 	},
 	ignorePatterns: ['notice.template.js']
 };
