@@ -12,6 +12,7 @@ import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
+import { SELECTORS } from '../../constants/test';
 import {
 	populateGalContact,
 	populateNode,
@@ -74,7 +75,7 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
 					'icon: EyeOutline'
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
@@ -160,7 +161,7 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
 					'icon: EyeOutline'
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
@@ -212,7 +213,7 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
 					'icon: EyeOutline'
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
@@ -232,7 +233,9 @@ describe('Displayer', () => {
 				expect(actionButton).not.toBeInTheDocument();
 				expect(screen.getByText(userAccount.full_name)).toBeVisible();
 				expect(
-					within(screen.getByTestId('add-shares-input-container')).getByTestId('icon: EyeOutline')
+					within(screen.getByTestId(SELECTORS.addShareInputContainer)).getByTestId(
+						'icon: EyeOutline'
+					)
 				).toBeVisible();
 				expect(
 					screen.getByRole('textbox', { name: /add a custom message to this notification/i })
@@ -270,7 +273,7 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
 					'icon: EyeOutline'
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
@@ -296,7 +299,7 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByRole('button', { name: /share/i });
 				expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
-				const sharesInputContainer = screen.getByTestId('add-shares-input-container');
+				const sharesInputContainer = screen.getByTestId(SELECTORS.addShareInputContainer);
 				expect(
 					within(sharesInputContainer).queryByTestId('icon: EyeOutline')
 				).not.toBeInTheDocument();
@@ -347,7 +350,7 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
 					'icon: EyeOutline'
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
@@ -373,9 +376,11 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByRole('button', { name: /share/i });
 				expect(screen.getByText(userAccount.full_name)).toBeVisible();
-				const addSharesContainer = screen.getByTestId('add-shares-input-container');
+				const addSharesContainer = screen.getByTestId(SELECTORS.addShareInputContainer);
 				expect(
-					within(screen.getByTestId('node-sharing-collaborators')).getByTestId('icon: EyeOutline')
+					within(screen.getByTestId(SELECTORS.sharingTabCollaborators)).getByTestId(
+						'icon: EyeOutline'
+					)
 				).toBeVisible();
 				expect(
 					within(addSharesContainer).queryByText(userAccount.full_name)
@@ -448,7 +453,7 @@ describe('Displayer', () => {
 				await screen.findByText(userAccount1.email);
 				await user.click(screen.getByText(userAccount1.email));
 				const editShareItem = await within(
-					screen.getByTestId('add-shares-input-container')
+					screen.getByTestId(SELECTORS.addShareInputContainer)
 				).findByTestId('icon: EyeOutline');
 				expect(screen.queryByText(userAccount1.email)).not.toBeInTheDocument();
 				// change to edit permission to be fully distinguishable
@@ -458,7 +463,7 @@ describe('Displayer', () => {
 					// run timers of popover
 					jest.runOnlyPendingTimers();
 				});
-				const nodeSharingArea = screen.getByTestId('node-sharing-collaborators');
+				const nodeSharingArea = screen.getByTestId(SELECTORS.sharingTabCollaborators);
 				await user.click(screen.getByText(/editor/i));
 				await within(nodeSharingArea).findByTestId('icon: Edit2Outline');
 				// close popover by clicking on the chip label
@@ -468,7 +473,7 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount2.full_name[0]);
 				await screen.findByText(userAccount2.email);
 				await user.click(screen.getByText(userAccount2.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
 					'icon: EyeOutline'
 				);
 				expect(screen.queryByText(userAccount2.email)).not.toBeInTheDocument();
@@ -491,11 +496,13 @@ describe('Displayer', () => {
 				expect(actionButton).not.toBeInTheDocument();
 				// navigation is kept on sharing tab
 				expect(screen.getByRole('button', { name: /share/i })).toBeVisible();
-				const addSharesContainer = screen.getByTestId('add-shares-input-container');
+				const addSharesContainer = screen.getByTestId(SELECTORS.addShareInputContainer);
 				// share 1 has been created
 				expect(screen.getByText(userAccount1.full_name)).toBeVisible();
 				expect(
-					within(screen.getByTestId('node-sharing-collaborators')).getByTestId('icon: Edit2Outline')
+					within(screen.getByTestId(SELECTORS.sharingTabCollaborators)).getByTestId(
+						'icon: Edit2Outline'
+					)
 				).toBeVisible();
 				expect(
 					within(addSharesContainer).queryByText(userAccount1.full_name)

@@ -9,6 +9,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { AddShareChip } from './AddShareChip';
+import { SELECTORS } from '../../../constants/test';
 import { populateGalContact, populateNode } from '../../../mocks/mockUtils';
 import { Role, ShareChip } from '../../../types/common';
 import { GetNodeQuery, GetNodeQueryVariables } from '../../../types/graphql/types';
@@ -236,7 +237,7 @@ describe('Add Share Chip', () => {
 
 			await user.click(screen.getByTestId('icon: EyeOutline'));
 
-			expect(screen.getByTestId('exclusive-selection-editor')).toBeInTheDocument();
+			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).toBeInTheDocument();
 			expect(screen.getByText('Editor')).toBeVisible();
 			await user.click(screen.getByText('Editor'));
 			expect(onUpdateFn).not.toHaveBeenCalled();

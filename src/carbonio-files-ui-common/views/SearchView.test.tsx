@@ -13,7 +13,7 @@ import { SearchView } from './SearchView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { searchParamsVar } from '../apollo/searchVar';
 import { INTERNAL_PATH, ROOTS } from '../constants';
-import { ACTION_REGEXP } from '../constants/test';
+import { ACTION_REGEXP, SELECTORS } from '../constants/test';
 import BASE_NODE from '../graphql/fragments/baseNode.graphql';
 import {
 	populateFolder,
@@ -99,7 +99,7 @@ describe('Search view', () => {
 			// render of the collaborators
 			await screen.findByText(getChipLabel(shares[0].share_target));
 			// there should be 2 chips for collaborators
-			const chipItems = screen.getAllByTestId('chip-with-popover');
+			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
 			expect(chipItems).toHaveLength(2);
 			const share1Item = find(
 				chipItems,
@@ -109,14 +109,14 @@ describe('Search view', () => {
 				chipItems,
 				(chipItem) => within(chipItem).queryByText(getChipLabel(shares[1].share_target)) !== null
 			);
-			const nodeItem = screen.getByTestId(`node-item-${nodeWithShares.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodeWithShares.id));
 			expect(nodeItem).toBeVisible();
 			expect(within(nodeItem).getByTestId('icon: ArrowCircleRight')).toBeVisible();
 			expect(share1Item).toBeDefined();
 			expect(share2Item).toBeDefined();
 			expect(share1Item).toBeVisible();
 			expect(share2Item).toBeVisible();
-			const list = screen.getByTestId('list-');
+			const list = screen.getByTestId(SELECTORS.list());
 			// delete first share
 			await user.click(within(share1Item as HTMLElement).getByTestId('icon: Close'));
 			await screen.findByRole('button', { name: /remove/i });
@@ -135,7 +135,9 @@ describe('Search view', () => {
 			expect(nodeItem).toBeVisible();
 			expect(within(nodeItem).queryByTestId('icon: ArrowCircleRight')).not.toBeInTheDocument();
 			// displayer remains open
-			expect(within(screen.getByTestId('displayer')).getByText(nodeWithShares.name)).toBeVisible();
+			expect(
+				within(screen.getByTestId(SELECTORS.displayer)).getByText(nodeWithShares.name)
+			).toBeVisible();
 			expect(screen.getByText(/sharing/i)).toBeVisible();
 			expect(screen.getByText(/collaborators/i)).toBeVisible();
 		});
@@ -161,15 +163,15 @@ describe('Search view', () => {
 			expect(screen.queryByText('Previous view')).not.toBeInTheDocument();
 			const nodeItem = await screen.findByText(currentSearch[0].name);
 			expect(nodeItem).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(within(displayer).getAllByText(currentSearch[0].name)).toHaveLength(2);
 			expect(getByTextWithMarkup(buildBreadCrumbRegExp(currentSearch[0].name))).toBeVisible();
-			const closeDisplayerAction = within(screen.getByTestId('DisplayerHeader')).getByTestId(
-				'icon: Close'
-			);
+			const closeDisplayerAction = within(
+				screen.getByTestId(SELECTORS.displayerHeader)
+			).getByTestId('icon: Close');
 			expect(closeDisplayerAction).toBeVisible();
 			await user.click(closeDisplayerAction);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
@@ -221,7 +223,7 @@ describe('Search view', () => {
 			);
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -230,7 +232,7 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			expect(getByTextWithMarkup(buildBreadCrumbRegExp(node.name))).toBeVisible();
 			const showPathButton = screen.getByRole('button', { name: /show path/i });
@@ -241,7 +243,7 @@ describe('Search view', () => {
 			);
 			expect(fullPathOrig).toBeVisible();
 			// right click to open contextual menu
-			const nodeToMoveItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToMoveItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			jest.advanceTimersToNextTimer();
@@ -255,8 +257,10 @@ describe('Search view', () => {
 			).not.toBeInTheDocument();
 			// updated breadcrumb is visible instead
 			expect(fullPath).toBeVisible();
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 		});
 
@@ -295,7 +299,7 @@ describe('Search view', () => {
 			});
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -304,20 +308,22 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToTrashItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToTrashItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToTrashItem);
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(moveToTrashAction).toBeVisible();
 			await user.click(moveToTrashAction);
 			// await snackbar to be shown
 			await screen.findByText(/item moved to trash/i);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
-			const trashedNodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const trashedNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(trashedNodeItem).toBeVisible();
 			fireEvent.contextMenu(trashedNodeItem);
 			await screen.findByText(ACTION_REGEXP.restore);
@@ -353,7 +359,7 @@ describe('Search view', () => {
 			});
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -362,20 +368,22 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToTrashItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToTrashItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToTrashItem);
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(moveToTrashAction).toBeVisible();
 			await user.click(moveToTrashAction);
 			// await snackbar to be shown
 			await screen.findByText(/item moved to trash/i);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
-			const trashedNodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const trashedNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(trashedNodeItem).toBeVisible();
 			fireEvent.contextMenu(trashedNodeItem);
 			await screen.findByText(ACTION_REGEXP.restore);
@@ -428,7 +436,7 @@ describe('Search view', () => {
 			});
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -437,10 +445,10 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToRestoreItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToRestoreItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToRestoreItem);
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
@@ -448,10 +456,14 @@ describe('Search view', () => {
 			await user.click(restoreAction);
 			// await snackbar to be shown
 			await screen.findByText(/^success$/i);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
-			expect(within(screen.getByTestId('displayer')).getAllByText(node.name)).toHaveLength(2);
-			const restoredNodeItem = screen.getByTestId(`node-item-${node.id}`);
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
+			expect(within(screen.getByTestId(SELECTORS.displayer)).getAllByText(node.name)).toHaveLength(
+				2
+			);
+			const restoredNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(restoredNodeItem).toBeVisible();
 			fireEvent.contextMenu(restoredNodeItem);
 			await screen.findByText(ACTION_REGEXP.moveToTrash);
@@ -501,7 +513,7 @@ describe('Search view', () => {
 			});
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -510,10 +522,10 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToRestoreItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToRestoreItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToRestoreItem);
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
@@ -521,10 +533,14 @@ describe('Search view', () => {
 			await user.click(restoreAction);
 			// await snackbar to be shown
 			await screen.findByText(/^success$/i);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
-			expect(within(screen.getByTestId('displayer')).getAllByText(node.name)).toHaveLength(2);
-			const restoredNodeItem = screen.getByTestId(`node-item-${node.id}`);
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
+			expect(within(screen.getByTestId(SELECTORS.displayer)).getAllByText(node.name)).toHaveLength(
+				2
+			);
+			const restoredNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(restoredNodeItem).toBeVisible();
 			fireEvent.contextMenu(restoredNodeItem);
 			await screen.findByText(ACTION_REGEXP.moveToTrash);

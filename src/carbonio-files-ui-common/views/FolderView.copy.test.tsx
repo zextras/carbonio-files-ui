@@ -135,7 +135,7 @@ describe('Copy', () => {
 			}
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(`modal-list-${currentFolder.id}`);
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
 			act(() => {
@@ -193,7 +193,7 @@ describe('Copy', () => {
 
 			await screen.findByText(nodesToCopy[0].name);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length
 			);
 			// activate selection mode by selecting items
@@ -213,12 +213,12 @@ describe('Copy', () => {
 			}
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(`modal-list-${currentFolder.id}`);
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(within(modalList).getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(within(modalList).getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length
 			);
 			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
@@ -227,13 +227,13 @@ describe('Copy', () => {
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-			const nodeItems = screen.getAllByTestId('node-item', { exact: false });
+			const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByText(copiedNodes[0].name)).toBeVisible();
 			expect(screen.getByText(copiedNodes[1].name)).toBeVisible();
 			expect(nodeItems).toHaveLength(currentFolder.children.nodes.length + copiedNodes.length);
 			// each node is positioned after its original
-			expect(screen.getByTestId(`node-item-${copiedNodes[0].id}`)).toBe(nodeItems[1]);
-			expect(screen.getByTestId(`node-item-${copiedNodes[1].id}`)).toBe(nodeItems[3]);
+			expect(screen.getByTestId(SELECTORS.nodeItem(copiedNodes[0].id))).toBe(nodeItems[1]);
+			expect(screen.getByTestId(SELECTORS.nodeItem(copiedNodes[1].id))).toBe(nodeItems[3]);
 		});
 	});
 
@@ -293,7 +293,7 @@ describe('Copy', () => {
 			expect(copyAction).toBeVisible();
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(`modal-list-${currentFolder.id}`);
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
 			act(() => {

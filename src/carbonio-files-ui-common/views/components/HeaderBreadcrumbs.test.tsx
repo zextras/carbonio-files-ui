@@ -21,7 +21,7 @@ import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, TIMERS } from '../../constants';
-import { COLORS, ICON_REGEXP } from '../../constants/test';
+import { COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFolder,
 	populateNodes,
@@ -65,7 +65,7 @@ describe('Header Breadcrumbs', () => {
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.queryByTestId('drop-crumb');
+			const breadcrumbCrumbs = screen.queryByTestId(SELECTORS.dropCrumb);
 			expect(breadcrumbCrumbs).not.toBeInTheDocument();
 			expect(destinationCrumbItem).not.toHaveStyle({
 				'background-color': COLORS.dropzone.enabled
@@ -138,7 +138,7 @@ describe('Header Breadcrumbs', () => {
 			draggedItemsVar(movingNodes);
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId('drop-crumb');
+			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
 			const destinationCrumb = find(
 				breadcrumbCrumbs,
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
@@ -238,7 +238,7 @@ describe('Header Breadcrumbs', () => {
 			draggedItemsVar(movingNodes);
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId('drop-crumb');
+			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
 			const destinationCrumb = find(
 				breadcrumbCrumbs,
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
@@ -318,7 +318,7 @@ describe('Header Breadcrumbs', () => {
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId('drop-crumb');
+			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
 			const destinationCrumb = find(
 				breadcrumbCrumbs,
 				(crumb) => within(crumb).queryByText(parent.name) !== null
@@ -395,7 +395,7 @@ describe('Header Breadcrumbs', () => {
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId('drop-crumb');
+			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
 			const destinationCrumb = find(
 				breadcrumbCrumbs,
 				(crumb) => within(crumb).queryByText(parent.name) !== null
@@ -496,7 +496,7 @@ describe('Header Breadcrumbs', () => {
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId('drop-crumb');
+			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
 			const destinationCrumb = find(
 				breadcrumbCrumbs,
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
@@ -612,7 +612,7 @@ describe('Header Breadcrumbs', () => {
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 
-			const breadcrumbsComponent = screen.getByTestId('customBreadcrumbs');
+			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
 			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
 
@@ -730,7 +730,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			});
 
-			const breadcrumbsComponent = screen.getByTestId('customBreadcrumbs');
+			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
 			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
 
@@ -752,7 +752,7 @@ describe('Header Breadcrumbs', () => {
 			fireEvent.dragLeave(collapserItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId('drop-crumb');
+			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
 			const destinationCrumb = find(
 				breadcrumbCrumbs,
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
@@ -830,7 +830,7 @@ describe('Header Breadcrumbs', () => {
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 
-			const breadcrumbsComponent = screen.getByTestId('customBreadcrumbs');
+			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
 			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
 
@@ -852,7 +852,7 @@ describe('Header Breadcrumbs', () => {
 			fireEvent.dragLeave(collapserItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId('drop-crumb');
+			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
 			const destinationCrumb = find(
 				breadcrumbCrumbs,
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
