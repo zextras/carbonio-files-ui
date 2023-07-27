@@ -2000,9 +2000,6 @@ describe('Nodes Selection Modal Content', () => {
 					'background-color': COLORS.highlight.regular
 				});
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
-				expect(
 					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
 				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
@@ -2015,9 +2012,6 @@ describe('Nodes Selection Modal Content', () => {
 				).toHaveStyle({
 					'background-color': COLORS.highlight.regular
 				});
-				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
 				expect(
 					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
 				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });

@@ -262,7 +262,7 @@ describe('Displayer', () => {
 				// chip permissions are changed
 				const editShareItem2 = within(
 					screen.getByTestId(SELECTORS.sharingTabCollaborators)
-				).getByTestId(ICON_REGEXP.shareCanRead);
+				).getByTestId(ICON_REGEXP.shareCanWrite);
 				expect(editShareItem2).toBeVisible();
 				await user.click(editShareItem2);
 				await screen.findByText(/viewer/i);
