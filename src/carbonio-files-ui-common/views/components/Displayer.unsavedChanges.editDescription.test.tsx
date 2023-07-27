@@ -11,7 +11,7 @@ import { waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
-import { SELECTORS } from '../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
 import { NodeType } from '../../types/graphql/types';
 import {
@@ -47,7 +47,7 @@ describe('Displayer', () => {
 				const editDescriptionItem = within(
 					screen.getByTestId(SELECTORS.nodeDetails)
 				).getByRoleWithIcon('button', {
-					icon: 'icon: Edit2Outline'
+					icon: ICON_REGEXP.edit
 				});
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
@@ -57,7 +57,7 @@ describe('Displayer', () => {
 				await user.clear(input);
 				await user.type(input, newDescription);
 				await waitFor(() => expect(input).toHaveDisplayValue(newDescription));
-				const saveButton = screen.getByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
+				const saveButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.save });
 				expect(saveButton).toBeVisible();
 				expect(saveButton).toBeEnabled();
 				await user.click(screen.getByText(/sharing/i));
@@ -89,7 +89,7 @@ describe('Displayer', () => {
 				await screen.findByText(node.description);
 				const editDescriptionItem = within(
 					screen.getByTestId(SELECTORS.nodeDetails)
-				).getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+				).getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
 				const input = await screen.findByRole('textbox', {
@@ -108,10 +108,10 @@ describe('Displayer', () => {
 				expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
 				expect(input).toBeVisible();
 				expect(input).toHaveDisplayValue(newDescription);
-				const saveButton = screen.getByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
+				const saveButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.save });
 				expect(saveButton).toBeVisible();
 				expect(saveButton).toBeEnabled();
-				expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.edit)).not.toBeInTheDocument();
 			});
 
 			test.skip('leave anyway closes description input field, continue with navigation and does not save the description', async () => {
@@ -138,7 +138,7 @@ describe('Displayer', () => {
 
 				await screen.findByText(node.description);
 				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
-					'icon: Edit2Outline'
+					ICON_REGEXP.edit
 				);
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
@@ -171,8 +171,8 @@ describe('Displayer', () => {
 				expect(
 					screen.queryByRole('textbox', { name: /maximum length allowed is 4096 characters/i })
 				).not.toBeInTheDocument();
-				expect(screen.queryByTestId('icon: SaveOutline')).not.toBeInTheDocument();
-				expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
+				expect(screen.queryByTestId(ICON_REGEXP.save)).not.toBeInTheDocument();
+				expect(screen.getByTestId(ICON_REGEXP.edit)).toBeVisible();
 				expect(screen.getByText(node.description)).toBeVisible();
 				expect(screen.queryByText(newDescription)).not.toBeInTheDocument();
 				expect(screen.queryByText(/you have unsaved changes/i)).not.toBeInTheDocument();
@@ -201,7 +201,7 @@ describe('Displayer', () => {
 				});
 				await screen.findByText(node.description);
 				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
-					'icon: Edit2Outline'
+					ICON_REGEXP.edit
 				);
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
@@ -229,9 +229,9 @@ describe('Displayer', () => {
 				expect(
 					screen.queryByRole('textbox', { name: /maximum length allowed is 4096 characters/i })
 				).not.toBeInTheDocument();
-				expect(screen.queryByTestId('icon: SaveOutline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.save)).not.toBeInTheDocument();
 				expect(
-					within(screen.getByTestId('displayer-content')).getByTestId('icon: Edit2Outline')
+					within(screen.getByTestId('displayer-content')).getByTestId(ICON_REGEXP.edit)
 				).toBeVisible();
 				expect(screen.getByText(newDescription)).toBeVisible();
 				expect(screen.queryByText(node.description)).not.toBeInTheDocument();
@@ -260,7 +260,7 @@ describe('Displayer', () => {
 				await screen.findByText(node.description);
 				const editDescriptionItem = within(
 					screen.getByTestId(SELECTORS.nodeDetails)
-				).getByRoleWithIcon('button', { icon: 'icon: Edit2Outline' });
+				).getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
 				const input = await screen.findByRole('textbox', {
@@ -289,10 +289,10 @@ describe('Displayer', () => {
 					})
 				).toHaveDisplayValue(newDescription);
 				expect(screen.queryByText(node.description)).not.toBeInTheDocument();
-				const saveButton = screen.getByRoleWithIcon('button', { icon: 'icon: SaveOutline' });
+				const saveButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.save });
 				expect(saveButton).toBeVisible();
 				expect(saveButton).toBeEnabled();
-				expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.edit)).not.toBeInTheDocument();
 				// modal of unsaved changes is closed
 				expect(screen.queryByText(/you have unsaved changes/i)).not.toBeInTheDocument();
 			});

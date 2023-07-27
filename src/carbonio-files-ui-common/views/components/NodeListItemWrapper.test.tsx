@@ -9,6 +9,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { NodeListItemWrapper } from './NodeListItemWrapper';
+import { ICON_REGEXP } from '../../constants/test';
 import { populateNode } from '../../mocks/mockUtils';
 import { setup } from '../../utils/testUtils';
 
@@ -25,8 +26,8 @@ describe('NodeListItemWrapper', () => {
 			});
 
 			const { user } = setup(<NodeListItemWrapper node={node} toggleFlag={toggleFlag} />);
-			expect(screen.queryByTestId('icon: Flag')).not.toBeInTheDocument();
-			await user.click(screen.getByTestId('icon: FlagOutline'));
+			expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
+			await user.click(screen.getByTestId(ICON_REGEXP.flag));
 			expect(toggleFlag).toHaveBeenCalledTimes(1);
 			expect(node.flagged).toBeTruthy();
 		});
@@ -42,9 +43,9 @@ describe('NodeListItemWrapper', () => {
 			});
 
 			const { user } = setup(<NodeListItemWrapper node={node} toggleFlag={toggleFlag} />);
-			expect(screen.getByTestId('icon: Flag')).toBeInTheDocument();
-			expect(screen.getByTestId('icon: Flag')).toBeVisible();
-			await user.click(screen.getByTestId('icon: UnflagOutline'));
+			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.unflag));
 			expect(toggleFlag).toHaveBeenCalledTimes(1);
 			expect(node.flagged).toBeFalsy();
 		});

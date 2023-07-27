@@ -12,6 +12,7 @@ import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { DATE_FORMAT, DISPLAYER_TABS } from '../../constants';
+import { ICON_REGEXP } from '../../constants/test';
 import { populateFile, populateLinks } from '../../mocks/mockUtils';
 import { Link } from '../../types/graphql/types';
 import {
@@ -94,7 +95,7 @@ describe('Displayer', () => {
 				const link = node.links[0] as Link;
 				await screen.findByText(link.url as string);
 				await user.click(screen.getAllByRole('button', { name: /edit/i })[0]);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
@@ -144,7 +145,7 @@ describe('Displayer', () => {
 				});
 				await user.clear(descriptionInput);
 				await user.type(descriptionInput, description);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
@@ -200,7 +201,7 @@ describe('Displayer', () => {
 					name: /link's description/i
 				});
 				await user.type(descriptionInput, description);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
@@ -274,7 +275,7 @@ describe('Displayer', () => {
 				});
 				await user.clear(descriptionInput);
 				await user.type(descriptionInput, newDescription);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
@@ -355,7 +356,7 @@ describe('Displayer', () => {
 				});
 				await user.clear(descriptionInput);
 				await user.type(descriptionInput, newDescription);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month

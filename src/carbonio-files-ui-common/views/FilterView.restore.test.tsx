@@ -72,7 +72,7 @@ describe('Filter View', () => {
 				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
-					icon: 'icon: RestoreOutline'
+					icon: ICON_REGEXP.restore
 				});
 				expect(restoreIcon).toBeVisible();
 				expect(restoreIcon).toBeEnabled();
@@ -124,16 +124,18 @@ describe('Filter View', () => {
 				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: RestoreOutline'
+					ICON_REGEXP.restore
 				);
 				expect(restoreIcon).not.toBeInTheDocument();
 
 				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: Trash2Outline'
+					ICON_REGEXP.moveToTrash
 				);
 				expect(trashIcon).not.toBeInTheDocument();
 
-				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
+				const moreIcon = within(selectionModeActiveListHeader).queryByTestId(
+					ICON_REGEXP.moreVertical
+				);
 				expect(moreIcon).not.toBeInTheDocument();
 			});
 		});

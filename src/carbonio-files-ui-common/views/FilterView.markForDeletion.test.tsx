@@ -63,8 +63,8 @@ describe('Filter View', () => {
 				await selectNodes(nodesIdsToMFD, user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 				const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 				expect(trashAction).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe('Filter View', () => {
 				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: Trash2Outline'
+					ICON_REGEXP.moveToTrash
 				);
 				expect(trashIcon).not.toBeInTheDocument();
 			});
@@ -193,8 +193,8 @@ describe('Filter View', () => {
 			await selectNodes(nodesToTrash, user);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');

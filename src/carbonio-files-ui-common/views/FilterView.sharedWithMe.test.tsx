@@ -19,7 +19,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
-import { SELECTORS } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes, populateShare, populateUser } from '../mocks/mockUtils';
 import { Node } from '../types/common';
@@ -125,8 +125,8 @@ describe('Filter view', () => {
 			// owner chip is visible
 			expect(within(sharingContent).getByText(node.owner.full_name)).toBeVisible();
 			// close button is visible on logged user chip
-			expect(within(sharingContent).getByTestId('icon: Close')).toBeVisible();
-			await user.click(within(sharingContent).getByTestId('icon: Close'));
+			expect(within(sharingContent).getByTestId(ICON_REGEXP.close)).toBeVisible();
+			await user.click(within(sharingContent).getByTestId(ICON_REGEXP.close));
 			// confirmation modal
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));

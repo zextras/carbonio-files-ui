@@ -205,7 +205,7 @@ describe('Move Nodes Modal', () => {
 		});
 		expect(screen.queryByText(ACTION_REGEXP.flag)).not.toBeInTheDocument();
 		// hover bar
-		expect(screen.queryByTestId('icon: FlagOutline')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 		// selection mode
 		await selectNodes([folder.id], user);
 		act(() => {

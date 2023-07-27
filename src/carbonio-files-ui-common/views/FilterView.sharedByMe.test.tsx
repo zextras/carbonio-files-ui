@@ -20,7 +20,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
-import { SELECTORS } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNode, populateNodes, populateShares } from '../mocks/mockUtils';
 import {
@@ -168,7 +168,7 @@ describe('Filter view', () => {
 			expect(share1Item).toBeVisible();
 			expect(share2Item).toBeVisible();
 			// delete first share
-			await user.click(within(share1Item as HTMLElement).getByTestId('icon: Close'));
+			await user.click(within(share1Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			// await waitForElementToBeRemoved(screen.queryByText(getChipLabel(shares[0].share_target)));
@@ -176,7 +176,7 @@ describe('Filter view', () => {
 			expect(share2Item).toBeVisible();
 			expect(nodeItem).toBeVisible();
 			// delete second share
-			await user.click(within(share2Item as HTMLElement).getByTestId('icon: Close'));
+			await user.click(within(share2Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			// await waitForElementToBeRemoved(screen.queryByText(getChipLabel(shares[1].share_target)));

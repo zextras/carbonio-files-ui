@@ -199,7 +199,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 			},
 			[Action.Rename]: {
 				id: 'Rename',
-				icon: 'EditOutline',
+				icon: 'Edit2Outline',
 				label: t('actions.rename', 'Rename'),
 				onClick: (): void => {
 					openRenameModal(node);

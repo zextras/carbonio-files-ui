@@ -13,7 +13,7 @@ import { SearchView } from './SearchView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { searchParamsVar } from '../apollo/searchVar';
 import { INTERNAL_PATH, ROOTS } from '../constants';
-import { ACTION_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import BASE_NODE from '../graphql/fragments/baseNode.graphql';
 import {
 	populateFolder,
@@ -111,14 +111,14 @@ describe('Search view', () => {
 			);
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodeWithShares.id));
 			expect(nodeItem).toBeVisible();
-			expect(within(nodeItem).getByTestId('icon: ArrowCircleRight')).toBeVisible();
+			expect(within(nodeItem).getByTestId(ICON_REGEXP.sharedByMe)).toBeVisible();
 			expect(share1Item).toBeDefined();
 			expect(share2Item).toBeDefined();
 			expect(share1Item).toBeVisible();
 			expect(share2Item).toBeVisible();
 			const list = screen.getByTestId(SELECTORS.list());
 			// delete first share
-			await user.click(within(share1Item as HTMLElement).getByTestId('icon: Close'));
+			await user.click(within(share1Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			expect(screen.queryByText(getChipLabel(shares[0].share_target))).not.toBeInTheDocument();
@@ -126,14 +126,14 @@ describe('Search view', () => {
 			expect(share2Item).toBeVisible();
 			expect(within(list).getByText(nodeWithShares.name)).toBeVisible();
 			// delete second share
-			await user.click(within(share2Item as HTMLElement).getByTestId('icon: Close'));
+			await user.click(within(share2Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			expect(screen.queryByText(getChipLabel(shares[1].share_target))).not.toBeInTheDocument();
 			await screen.findByText(/success/i);
 			// node is kept in main list but share icon is removed
 			expect(nodeItem).toBeVisible();
-			expect(within(nodeItem).queryByTestId('icon: ArrowCircleRight')).not.toBeInTheDocument();
+			expect(within(nodeItem).queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
 			// displayer remains open
 			expect(
 				within(screen.getByTestId(SELECTORS.displayer)).getByText(nodeWithShares.name)
@@ -171,7 +171,7 @@ describe('Search view', () => {
 			expect(getByTextWithMarkup(buildBreadCrumbRegExp(currentSearch[0].name))).toBeVisible();
 			const closeDisplayerAction = within(
 				screen.getByTestId(SELECTORS.displayerHeader)
-			).getByTestId('icon: Close');
+			).getByTestId(ICON_REGEXP.close);
 			expect(closeDisplayerAction).toBeVisible();
 			await user.click(closeDisplayerAction);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();

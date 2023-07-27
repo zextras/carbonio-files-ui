@@ -10,7 +10,7 @@ import { forEach, map, find, reduce } from 'lodash';
 
 import { AddSharing } from './AddSharing';
 import { soapFetch } from '../../../../network/network';
-import { SELECTORS } from '../../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
 	populateContactGroupMatch,
@@ -300,7 +300,7 @@ describe('Add Sharing', () => {
 				(chipItem) => within(chipItem).queryByText(members[0].cn[0]._attrs.email) !== null
 			);
 			expect(member0Chip).toBeDefined();
-			const removeShareMember0 = within(member0Chip as HTMLElement).getByTestId('icon: Close');
+			const removeShareMember0 = within(member0Chip as HTMLElement).getByTestId(ICON_REGEXP.close);
 			await user.click(removeShareMember0);
 			expect(screen.queryByText(members[0].cn[0]._attrs.email)).not.toBeInTheDocument();
 			expect(screen.getByText(members[1].cn[0]._attrs.email)).toBeVisible();

@@ -17,7 +17,7 @@ import { FolderSelectionModalContent } from './FolderSelectionModalContent';
 import { HoverContainer } from './StyledComponents';
 import { destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
-import { COLORS, SELECTORS } from '../../constants/test';
+import { COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -309,7 +309,7 @@ describe('Folder Selection Modal Content', () => {
 		await screen.findByText(/home/i);
 		const checkboxLabel = screen.getByText('search also in contained folders');
 		expect(checkboxLabel).toBeVisible();
-		const checkboxChecked = screen.getByTestId('icon: CheckmarkSquare');
+		const checkboxChecked = screen.getByTestId(ICON_REGEXP.checkboxChecked);
 		expect(checkboxChecked).toBeVisible();
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
@@ -338,7 +338,7 @@ describe('Folder Selection Modal Content', () => {
 		);
 		await screen.findByText(/home/i);
 		const checkboxLabel = screen.getByText('search also in contained folders');
-		let checkboxChecked = screen.getByTestId('icon: CheckmarkSquare');
+		let checkboxChecked = screen.getByTestId(ICON_REGEXP.checkboxChecked);
 		expect(checkboxLabel).toBeVisible();
 		expect(checkboxChecked).toBeVisible();
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
@@ -346,17 +346,17 @@ describe('Folder Selection Modal Content', () => {
 		// choose button is disabled because active folder and cascade have same value as current filter
 		expect(chooseButton).toBeDisabled();
 		await user.click(checkboxLabel);
-		const checkboxUnchecked = await screen.findByTestId('icon: Square');
+		const checkboxUnchecked = await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 		expect(checkboxUnchecked).toBeVisible();
 		// choose button is active because cascade has changed its value
 		expect(chooseButton).toBeEnabled();
 		await user.click(checkboxUnchecked);
-		checkboxChecked = await screen.findByTestId('icon: CheckmarkSquare');
+		checkboxChecked = await screen.findByTestId(ICON_REGEXP.checkboxChecked);
 		expect(checkboxChecked).toBeVisible();
 		// choose button is disabled because active folder and cascade have same value as current filter
 		expect(chooseButton).toBeDisabled();
 		await user.click(checkboxChecked);
-		await screen.findByTestId('icon: Square');
+		await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(

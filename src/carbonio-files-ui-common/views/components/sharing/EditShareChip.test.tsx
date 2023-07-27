@@ -9,7 +9,7 @@ import React from 'react';
 import { act, screen, waitFor } from '@testing-library/react';
 
 import { EditShareChip } from './EditShareChip';
-import { SELECTORS } from '../../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
 import { SharedTarget, SharePermission } from '../../../types/graphql/types';
 import { mockDeleteShare, mockUpdateShare } from '../../../utils/mockUtils';
@@ -36,10 +36,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('render a chip of a read-and-write share', () => {
@@ -61,10 +61,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('render a chip of a read-and-share share', () => {
@@ -86,10 +86,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('render a chip of a read-write-and-share share', () => {
@@ -111,10 +111,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('click on chip does not open popover', async () => {
@@ -163,10 +163,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('render a chip of a read-and-write share', () => {
@@ -188,10 +188,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('render a chip of a read-and-share share', () => {
@@ -213,10 +213,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('render a chip of a read-write-and-share share', () => {
@@ -238,10 +238,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
-			expect(screen.queryByTestId('icon: Close')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.close)).not.toBeInTheDocument();
 		});
 
 		test('click on chip does not open popover', async () => {
@@ -290,10 +290,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 		});
 
 		test('render a chip of a read-and-write share', () => {
@@ -315,10 +315,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 		});
 
 		test('render a chip of a read-and-share share', () => {
@@ -340,10 +340,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 		});
 
 		test('render a chip of a read-write-and-share share', () => {
@@ -365,10 +365,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 		});
 
 		test('click on close action open confirmation dialog and then delete share', async () => {
@@ -399,8 +399,8 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
-			await user.click(screen.getByTestId('icon: Close'));
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			// run timers of modal
 			act(() => {
@@ -430,7 +430,7 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			await user.click(screen.getByTestId('icon: EyeOutline'));
+			await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 			expect(screen.getByText('Viewer')).toBeVisible();
 			expect(screen.getByText('Editor')).toBeVisible();
 			expect(screen.getByText('Sharing allowed')).toBeVisible();
@@ -462,10 +462,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 		});
 
 		test('render a chip of a read-and-write share', () => {
@@ -487,10 +487,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 		});
 
 		test('render a chip of a read-and-share share', () => {
@@ -512,10 +512,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-			expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 		});
 
 		test('render a chip of a read-write-and-share share', () => {
@@ -537,10 +537,10 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-			expect(screen.getByTestId('icon: Share')).toBeVisible();
-			expect(screen.getByTestId('icon: Close')).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 		});
 
 		test('click on chip open popover with all items enabled', async () => {
@@ -562,7 +562,7 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			await user.click(screen.getByTestId('icon: EyeOutline'));
+			await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 			expect(screen.getByText('Viewer')).toBeVisible();
 			expect(screen.getByText('Editor')).toBeVisible();
 			expect(screen.getByText('Sharing allowed')).toBeVisible();
@@ -603,8 +603,8 @@ describe('Edit Share Chip', () => {
 
 		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 		expect(screen.getByText(/you/i)).toBeVisible();
-		expect(screen.getByTestId('icon: Close')).toBeVisible();
-		await user.click(screen.getByTestId('icon: Close'));
+		expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
+		await user.click(screen.getByTestId(ICON_REGEXP.close));
 		await screen.findByRole('button', { name: /remove/i });
 		// run timers of modal
 		act(() => {
@@ -652,8 +652,8 @@ describe('Edit Share Chip', () => {
 		);
 
 		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByTestId('icon: Close')).toBeVisible();
-		await user.click(screen.getByTestId('icon: Close'));
+		expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
+		await user.click(screen.getByTestId(ICON_REGEXP.close));
 		await screen.findByRole('button', { name: /remove/i });
 		// run timers of modal
 		act(() => {
@@ -711,7 +711,7 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			await user.click(screen.getByTestId('icon: EyeOutline'));
+			await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 			await screen.findByRole('button', { name: /save/i });
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
@@ -763,7 +763,7 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			await user.click(screen.getByTestId('icon: EyeOutline'));
+			await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 			await screen.findByRole('button', { name: /save/i });
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
@@ -809,21 +809,21 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			await user.click(screen.getByTestId('icon: EyeOutline'));
+			await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 			await screen.findByRole('button', { name: /save/i });
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			expect(screen.getByText(/viewer/i)).toBeVisible();
 			expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-			expect(screen.getByTestId('icon: Square')).toBeVisible();
-			expect(screen.queryByTestId('icon: CheckmarkSquare')).not.toBeInTheDocument();
-			await user.click(screen.getByTestId('icon: Square'));
+			expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.checkboxChecked)).not.toBeInTheDocument();
+			await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
-			await screen.findByTestId('icon: CheckmarkSquare');
+			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
 
 			expect(updateShareMutationFn).not.toHaveBeenCalled();
-			expect(screen.queryByTestId('icon: Square')).not.toBeInTheDocument();
-			expect(screen.getByTestId('icon: CheckmarkSquare')).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.checkboxUnchecked)).not.toBeInTheDocument();
+			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 		});
 
 		test('click on save trigger chip update. Popover is closed', async () => {
@@ -861,12 +861,12 @@ describe('Edit Share Chip', () => {
 			);
 
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
-			await user.click(screen.getByTestId('icon: EyeOutline'));
+			await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 			await screen.findByRole('button', { name: /save/i });
-			expect(screen.getByTestId('icon: Square')).toBeVisible();
-			await user.click(screen.getByTestId('icon: Square'));
+			expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
-			await screen.findByTestId('icon: CheckmarkSquare');
+			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
 
 			await user.click(screen.getByText(/editor/i));
 			await user.click(screen.getByRole('button', { name: /save/i }));

@@ -516,7 +516,7 @@ export const List: React.VFC<ListProps> = ({
 			},
 			[Action.Rename]: {
 				id: 'Rename',
-				icon: 'EditOutline',
+				icon: 'Edit2Outline',
 				label: t('actions.rename', 'Rename'),
 				onClick: openRenameModalSelection
 			},

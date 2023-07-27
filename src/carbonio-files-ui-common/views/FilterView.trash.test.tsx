@@ -98,7 +98,7 @@ describe('Filter view', () => {
 			expect(screen.getByText(/details/i)).toBeVisible();
 			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
-			const restoreAction = within(displayer).getByTestId('icon: RestoreOutline');
+			const restoreAction = within(displayer).getByTestId(ICON_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
 			await user.click(restoreAction);
 			await waitFor(() =>
@@ -160,9 +160,7 @@ describe('Filter view', () => {
 			expect(screen.getByText(/details/i)).toBeVisible();
 			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
-			const deletePermanentlyAction = within(displayer).getByTestId(
-				'icon: DeletePermanentlyOutline'
-			);
+			const deletePermanentlyAction = within(displayer).getByTestId(ICON_REGEXP.deletePermanently);
 			expect(deletePermanentlyAction).toBeVisible();
 			await user.click(deletePermanentlyAction);
 			const deletePermanentlyConfirm = await screen.findByRole('button', {
@@ -220,14 +218,14 @@ describe('Filter view', () => {
 			// selection mode
 			await selectNodes([nodes[0].id], user);
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			const restoreActionSelection = await within(
 				screen.getByTestId(SELECTORS.listHeaderSelectionMode)
-			).findByTestId('icon: RestoreOutline');
+			).findByTestId(ICON_REGEXP.restore);
 			expect(restoreActionSelection).toBeVisible();
 			expect(
 				within(screen.getByTestId(SELECTORS.listHeaderSelectionMode)).getByTestId(
-					'icon: DeletePermanentlyOutline'
+					ICON_REGEXP.deletePermanently
 				)
 			).toBeVisible();
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
@@ -238,9 +236,9 @@ describe('Filter view', () => {
 			expect(screen.queryByText(ACTION_REGEXP.download)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.copy)).not.toBeInTheDocument();
 			// exit selection mode
-			await user.click(screen.getByTestId('icon: ArrowBackOutline'));
+			await user.click(screen.getByTestId(ICON_REGEXP.exitSelectionMode));
 			expect(restoreActionSelection).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
 			const node = populateNode(nodes[0].__typename, nodes[0].id, nodes[0].name);
@@ -261,9 +259,9 @@ describe('Filter view', () => {
 			await screen.findByText(/details/i);
 			const displayer = screen.getByTestId(SELECTORS.displayer);
 			await within(displayer).findAllByText(nodes[0].name);
-			expect(screen.queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
-			expect(within(displayer).getByTestId('icon: RestoreOutline')).toBeVisible();
-			expect(within(displayer).getByTestId('icon: DeletePermanentlyOutline')).toBeVisible();
+			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
+			expect(within(displayer).getByTestId(ICON_REGEXP.restore)).toBeVisible();
+			expect(within(displayer).getByTestId(ICON_REGEXP.deletePermanently)).toBeVisible();
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.flag)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.unflag)).not.toBeInTheDocument();
@@ -308,13 +306,13 @@ describe('Filter view', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.deletePermanently)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.moveToTrash)).not.toBeInTheDocument();
 
-			expect(screen.getByTestId('icon: ArrowBackOutline')).toBeVisible();
-			await user.click(screen.getByTestId('icon: ArrowBackOutline'));
+			expect(screen.getByTestId(ICON_REGEXP.exitSelectionMode)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.exitSelectionMode));
 			const listHeader = screen.getByTestId(SELECTORS.listHeader, { exact: false });
-			expect(screen.queryByTestId('icon: ArrowBackOutline')).not.toBeInTheDocument();
-			expect(within(listHeader).queryByTestId('icon: RestoreOutline')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.exitSelectionMode)).not.toBeInTheDocument();
+			expect(within(listHeader).queryByTestId(ICON_REGEXP.restore)).not.toBeInTheDocument();
 			expect(
-				within(listHeader).queryByTestId('icon: DeletePermanentlyOutline')
+				within(listHeader).queryByTestId(ICON_REGEXP.deletePermanently)
 			).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();

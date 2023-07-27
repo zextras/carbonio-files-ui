@@ -83,9 +83,9 @@ describe('Mark for deletion - trash', () => {
 			await selectNodes([folderId1], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
 
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled');
@@ -101,9 +101,9 @@ describe('Mark for deletion - trash', () => {
 			await selectNodes([fileId1], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
 
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 			// wait for copy action to check that popper is open
 			const copyAction = await screen.findByText(ACTION_REGEXP.copy);
@@ -147,9 +147,9 @@ describe('Mark for deletion - trash', () => {
 			await selectNodes(nodesToTrash, user);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
 
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();

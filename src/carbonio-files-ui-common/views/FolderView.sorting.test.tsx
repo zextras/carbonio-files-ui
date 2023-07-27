@@ -11,7 +11,7 @@ import { waitFor } from '@testing-library/react';
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import { SELECTORS } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder } from '../mocks/mockUtils';
 import { NodeSort } from '../types/graphql/types';
 import {
@@ -78,7 +78,7 @@ describe('Sorting', () => {
 		expect(within(items[0]).getByText('a')).toBeVisible();
 		expect(within(items[1]).getByText('b')).toBeVisible();
 
-		const sortIcon = screen.getByRoleWithIcon('button', { icon: 'icon: ZaListOutline' });
+		const sortIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc });
 		expect(sortIcon).toBeVisible();
 		expect(sortIcon).toBeEnabled();
 		// register tooltip listeners
@@ -92,7 +92,7 @@ describe('Sorting', () => {
 				'b'
 			)
 		);
-		await user.hover(screen.getByTestId('icon: AzListOutline'));
+		await user.hover(screen.getByTestId(ICON_REGEXP.sortAsc));
 		// run timers of tooltip
 		jest.advanceTimersToNextTimer();
 		await screen.findByText(/descending order by name/i);
