@@ -1266,9 +1266,11 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// folder is not disabled
-				// expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByText(folder.name)).not.toHaveAttribute('disabled', '');
 				// file is disabled
-				// expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByText(file.name)).toHaveAttribute('disabled', '');
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is disabled because local root is not selectable by param
 				expect(confirmButton).toBeDisabled();
@@ -1362,9 +1364,17 @@ describe('Nodes Selection Modal Content', () => {
 					''
 				);
 				// valid file is not disabled
-				// expect(screen.getByTestId(SELECTORS.nodeItem(validFile.id))).not.toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByTestId(SELECTORS.nodeItem(validFile.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
 				// invalid file is disabled
-				// expect(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id))).toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id))).toHaveAttribute(
+					'disabled',
+					''
+				);
 				// invalid folder is not disabled because is navigable
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id))).not.toHaveAttribute(
@@ -2351,10 +2361,13 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder2.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// folder is not disabled
-				// expect(screen.getByTestId(SELECTORS.nodeItem(folder1.id))).not.toHaveAttribute('disabled', '');
-				// expect(screen.getByTestId(SELECTORS.nodeItem(folder2.id))).not.toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByText(folder1.name)).not.toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByText(folder2.name)).not.toHaveAttribute('disabled', '');
 				// file is disabled
-				// expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByText(file.name)).toHaveAttribute('disabled', '');
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is enabled because local root is a valid node
 				expect(confirmButton).toBeEnabled();
@@ -2480,14 +2493,15 @@ describe('Nodes Selection Modal Content', () => {
 					''
 				);
 				// valid file is not disabled
-				// expect(screen.getByTestId(SELECTORS.nodeItem(validFile.id))).not.toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByText(validFile.name)).not.toHaveAttribute('disabled', '');
 				// invalid file is disabled
-				// expect(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id))).toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByText(invalidFile.name)).toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				// invalid folder is not disabled because is navigable
-				// expect(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id))).not.toHaveAttribute(
-				//	'disabled',
-				//	''
-				// );
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(screen.getByText(invalidFolder.name)).not.toHaveAttribute('disabled', '');
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is disabled because local root is not selectable by param
 				expect(confirmButton).toBeDisabled();

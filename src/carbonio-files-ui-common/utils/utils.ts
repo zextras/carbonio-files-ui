@@ -170,18 +170,17 @@ export const buildCrumbs = (
 	// the array can contain null if path is requested for a node with no accessible parent
 	chain(nodes)
 		.filter((node): node is CrumbNode => node !== undefined && node !== null)
-		.map((node): Crumb => {
-			const $node = node as Node;
-			return {
-				id: $node.id,
+		.map(
+			(node): Crumb => ({
+				id: node.id,
 				/* i18next-extract-disable-next-line */
-				label: (t && t('node.alias.name', $node.name, { context: $node.id })) || $node.name,
+				label: (t && t('node.alias.name', node.name, { context: node.id })) || node.name,
 				onClick:
 					node && clickHandler && nodeClickCondition(node)
-						? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler($node.id, event)
+						? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler(node.id, event)
 						: undefined
-			};
-		})
+			})
+		)
 		.value();
 
 export const formatDate = (

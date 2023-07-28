@@ -283,8 +283,6 @@ describe('Add Sharing', () => {
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
 		expect(chipInput).toHaveValue(userAccount.full_name[0]);
-		// wait for the single character to be typed
-		// await screen.findByText(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
 		await screen.findByText(userAccount.email);
 		expect(screen.getByText(userAccount.full_name)).toBeVisible();
@@ -507,7 +505,7 @@ describe('Add Sharing', () => {
 		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
 	});
 
-	test('when user click on share button shares are created, chip input and custom message textarea are cleared and shared button is disabled', async () => {
+	test('when user click on share button shares are created, chip input is cleared and shared button is disabled', async () => {
 		const node = populateNode();
 		node.permissions.can_share = true;
 		const userAccount = populateUser();
@@ -516,7 +514,6 @@ describe('Add Sharing', () => {
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadOnly;
 		const createShareMutationFn = jest.fn();
-		// const customMessage = 'this is a custom message';
 		const mocks = [
 			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
 			mockCreateShare(
@@ -559,16 +556,9 @@ describe('Add Sharing', () => {
 		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
 		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
-		// write a custom message
-		// const customMessageInputField = screen.getByRole('textbox', {
-		// 	name: /add a custom message to this notification/i
-		// });
-		// await user.type(customMessageInputField, customMessage);
-		// expect(customMessageInputField).toHaveValue(customMessage);
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
 		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
-		// expect(customMessageInputField).toHaveValue('');
 		expect(screen.queryByText(userAccount.full_name[0])).not.toBeInTheDocument();
 		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 		expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
@@ -584,7 +574,6 @@ describe('Add Sharing', () => {
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadOnly;
 		const createShareMutationFn = jest.fn();
-		// const customMessage = 'this is a custom message';
 		const mocks = [
 			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
 			mockCreateShare(
@@ -611,12 +600,6 @@ describe('Add Sharing', () => {
 		expect(chipInput).toBeVisible();
 		// share button is disabled
 		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
-		// write a custom message
-		// const customMessageInputField = screen.getByRole('textbox', {
-		// 	name: /add a custom message to this notification/i
-		// });
-		// await user.type(customMessageInputField, customMessage);
-		// expect(customMessageInputField).toHaveValue(customMessage);
 		// share button is still disabled
 		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// type just the first character because the network search is requested only one time with first character.

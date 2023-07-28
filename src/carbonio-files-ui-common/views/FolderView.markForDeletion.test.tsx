@@ -116,12 +116,14 @@ describe('Mark for deletion - trash', () => {
 		test('Mark for deletion of all loaded nodes trigger refetch of first page', async () => {
 			const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT);
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT);
-			const nodesToTrash = map(firstPage, (node) => (node as Node).id);
+			const nodesToTrash = map(firstPage, (node) => node?.id || '');
 
 			const mocks = [
 				mockGetChildren(getChildrenVariables(currentFolder.id), {
@@ -175,9 +177,11 @@ describe('Mark for deletion - trash', () => {
 			const currentFolder = populateFolder(5);
 			// enable permission to MfD
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				}
 			});
 			const sort = NodeSort.NameAsc; // sort only by name
 			sortNodes(currentFolder.children.nodes, sort);
@@ -225,9 +229,11 @@ describe('Mark for deletion - trash', () => {
 			const currentFolder = populateFolder(5);
 			// enable permission to Mfd
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				}
 			});
 			const sort = NodeSort.NameAsc; // sort only by name
 			sortNodes(currentFolder.children.nodes, sort);
@@ -279,9 +285,11 @@ describe('Mark for deletion - trash', () => {
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];

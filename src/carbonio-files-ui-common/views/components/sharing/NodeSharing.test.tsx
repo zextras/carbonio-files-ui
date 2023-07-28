@@ -276,7 +276,6 @@ describe('Node Sharing', () => {
 			// open on chip to open popover
 			await user.click(screen.getAllByTestId(ICON_REGEXP.shareCanRead)[0]);
 			await screen.findByText(/viewer/i);
-			// await screen.findByText(/edit collaboration/i);
 			expect(screen.getByText(/viewer/i)).toBeVisible();
 			expect(screen.getByText(/editor/i)).toBeVisible();
 			expect(screen.getByText(/sharing allowed/i)).toBeVisible();
@@ -533,7 +532,6 @@ describe('Node Sharing', () => {
 			// now click on the dropdown element to create the chip
 			await user.click(screen.getByText(userAccount1.full_name));
 			// first contacts dropdown is closed
-			// await waitForElementToBeRemoved(screen.queryByText(userAccount1.email));
 			expect(screen.queryByText(userAccount1.email)).not.toBeInTheDocument();
 			// and then the new share is created as a chip
 			await screen.findByText(userAccount1.full_name);

@@ -203,7 +203,7 @@ describe('Search view', () => {
 
 			const mocks = [
 				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
+				mockGetNode(getNodeVariables(node.id), node),
 				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
 				mockGetNode(getNodeVariables(destinationFolder.id), destinationFolder),
 				mockGetPath({ node_id: node.id }, pathResponse[0]),
@@ -288,7 +288,7 @@ describe('Search view', () => {
 					getFindNodesVariables({ keywords, folder_id: folder.id, cascade: true }),
 					nodes
 				),
-				mockGetNode(getNodeVariables(node.id), node as Node),
+				mockGetNode(getNodeVariables(node.id), node),
 				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
 				mockTrashNodes({ node_ids: [node.id] }, [node.id])
 			];
@@ -348,7 +348,7 @@ describe('Search view', () => {
 
 			const mocks = [
 				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
+				mockGetNode(getNodeVariables(node.id), node),
 				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
 				mockTrashNodes({ node_ids: [node.id] }, [node.id])
 			];
@@ -425,7 +425,7 @@ describe('Search view', () => {
 
 			const mocks = [
 				mockFindNodes(getFindNodesVariables({ keywords, folder_id: ROOTS.TRASH }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
+				mockGetNode(getNodeVariables(node.id), node),
 				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
 				mockRestoreNodes({ node_ids: [node.id] }, [{ ...node, rootId: ROOTS.LOCAL_ROOT }])
 			];
@@ -503,7 +503,7 @@ describe('Search view', () => {
 
 			const mocks = [
 				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
+				mockGetNode(getNodeVariables(node.id), node),
 				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
 				mockRestoreNodes({ node_ids: [node.id] }, [{ ...node, rootId: ROOTS.LOCAL_ROOT }])
 			];
