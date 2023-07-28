@@ -47,7 +47,7 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 
 	useErrorHandler(error, 'DELETE_NODES', { type: 'error' });
 
-	const deleteNodes = useCallback<DeleteNodesType>(
+	return useCallback<DeleteNodesType>(
 		(...nodes: PickIdNodeType[]) => {
 			const nodesIds: string[] = map(nodes, (node: PickIdNodeType) => node.id);
 
@@ -67,11 +67,8 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 						cache.gc();
 					}
 				},
-				onQueryUpdated(observableQuery, { missing, result }) {
+				onQueryUpdated(observableQuery, { result }) {
 					const { query } = observableQuery.options;
-					if (missing) {
-						return observableQuery.refetch();
-					}
 					if (isQueryResult<FindNodesQuery>(query, result, FIND_NODES)) {
 						const listNodes = result.findNodes?.nodes;
 						if (
@@ -101,6 +98,4 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 		},
 		[activeNodeId, createSnackbar, deleteNodesMutation, removeActiveNode, removeNodesFromFilter, t]
 	);
-
-	return deleteNodes;
 }

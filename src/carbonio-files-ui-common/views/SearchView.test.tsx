@@ -452,6 +452,7 @@ describe('Search view', () => {
 			fireEvent.contextMenu(nodeToRestoreItem);
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(restoreAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(restoreAction);
 			// await snackbar to be shown
@@ -529,6 +530,7 @@ describe('Search view', () => {
 			fireEvent.contextMenu(nodeToRestoreItem);
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(restoreAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(restoreAction);
 			// await snackbar to be shown

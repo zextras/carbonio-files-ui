@@ -79,6 +79,7 @@ describe('Displayer', () => {
 			if (moreVertical) {
 				await user.click(moreVertical);
 				const copyAction = await screen.findByText(ACTION_REGEXP.copy);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(copyAction.parentNode).not.toHaveAttribute('disabled');
 				await user.click(copyAction);
 			} else {
@@ -137,6 +138,7 @@ describe('Displayer', () => {
 		expect(moreVertical).toBeVisible();
 		await user.click(moreVertical);
 		const moveAction = await screen.findByText(ACTION_REGEXP.move);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(moveAction.parentNode).not.toHaveAttribute('disabled');
 		await user.click(moveAction);
 		// modal opening

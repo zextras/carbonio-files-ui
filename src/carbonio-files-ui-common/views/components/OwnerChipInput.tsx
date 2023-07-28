@@ -27,7 +27,7 @@ function contactInfoToContact(contactInfo: ContactInfo): Contact {
 
 const removeGroups: (autocompleteGalResponse: AutocompleteGalResponse) => ContactInfo[] = ({
 	cn
-}) => filter(cn, (item) => !(item._attrs.type === 'group'));
+}) => filter(cn, (item) => item._attrs.type !== 'group');
 
 interface OwnerChipInputProps {
 	currentFilters: AdvancedFilters;

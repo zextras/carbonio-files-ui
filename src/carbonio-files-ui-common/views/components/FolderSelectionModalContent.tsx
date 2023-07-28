@@ -6,7 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ReactiveVar, useApolloClient, useReactiveVar } from '@apollo/client';
+import { ReactiveVar, useReactiveVar } from '@apollo/client';
 import {
 	Checkbox,
 	Divider,
@@ -33,7 +33,7 @@ import { isFile, isFolder } from '../../utils/utils';
 
 interface FolderSelectionModalContentProps {
 	folderId?: string;
-	cascadeDefault?: boolean | undefined;
+	cascadeDefault?: boolean;
 	confirmAction: (folder: Pick<Folder, 'id' | 'name'>, cascade: boolean) => void;
 	closeAction?: () => void;
 }
@@ -93,6 +93,7 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 		} else if (folderId) {
 			setCurrent({
 				id: folderId,
+				/* i18next-extract-disable-next-line */
 				name: t('node.alias.name', folderId, { context: folderId })
 			});
 		} else {
@@ -145,8 +146,6 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 			closeHandler();
 		}
 	}, [selectedFolder, confirmAction, cascade, closeHandler]);
-
-	const apolloClient = useApolloClient();
 
 	const navigateTo = useCallback(
 		(id: string) => {

@@ -457,7 +457,7 @@ describe('Upload List', () => {
 				await screen.findByText(folder.name);
 				expect(screen.getByText(folder.name)).toBeVisible();
 				await screen.findByTestId(ICON_REGEXP.uploadFailed);
-				expect(screen.getByText(/9\/10/));
+				expect(screen.getByText(/9\/10/)).toBeVisible();
 				await user.hover(screen.getByText(folder.name));
 				expect(screen.getByTestId(ICON_REGEXP.retryUpload)).toBeInTheDocument();
 				expect(uploadHandler).toHaveBeenCalledTimes(children.length + subFolderChildren.length - 1);

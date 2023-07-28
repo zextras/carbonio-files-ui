@@ -25,8 +25,6 @@ export const DOUBLE_CLICK_DELAY = 200;
 export const DISPLAYER_TABS = {
 	details: 'details',
 	sharing: 'sharing',
-	// TODO: uncomment each tab when implemented
-	// activities: 'activities',
 	versioning: 'versioning'
 } as const;
 export const ROOTS: RootsType = {

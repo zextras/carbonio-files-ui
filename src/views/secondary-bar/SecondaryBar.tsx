@@ -27,7 +27,7 @@ import { useNavigation } from '../../hooks/useNavigation';
 
 type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
-	completeTotalBadgeCounter?: string | undefined;
+	completeTotalBadgeCounter?: string;
 	isUploadFailed?: boolean;
 };
 

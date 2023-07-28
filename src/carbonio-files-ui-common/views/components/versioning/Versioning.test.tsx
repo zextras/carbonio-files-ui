@@ -479,7 +479,6 @@ describe('Versioning', () => {
 	});
 
 	test('clone action is disabled if max number of version is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxVersions = Number(
@@ -491,7 +490,6 @@ describe('Versioning', () => {
 			const fileVersion = { ...baseFile };
 			fileVersion.version = i + 1;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -510,6 +508,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(cloneAsCurrentItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -528,7 +527,6 @@ describe('Versioning', () => {
 	});
 
 	test('keep forever action is disabled if max number of keep is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxKeepVersions = Number(
@@ -541,7 +539,6 @@ describe('Versioning', () => {
 			fileVersion.version = i + 1;
 			fileVersion.keep_forever = true;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 		// add a version without keep
@@ -549,7 +546,6 @@ describe('Versioning', () => {
 		fileVersionWithoutKeep.version = maxKeepVersions + 1;
 		fileVersionWithoutKeep.keep_forever = false;
 		const versionWithoutKeep = getVersionFromFile(fileVersionWithoutKeep);
-		fileVersions.unshift(fileVersionWithoutKeep);
 		versions.unshift(versionWithoutKeep);
 
 		const mocks = [
@@ -572,6 +568,7 @@ describe('Versioning', () => {
 		await user.click(versionWithoutKeepMoreButton);
 
 		const keepVersionItem = await screen.findByText(/keep this version forever/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersionItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -595,7 +592,6 @@ describe('Versioning', () => {
 	});
 
 	test('upload version action is enabled if max number of versions is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxVersions = Number(
@@ -607,7 +603,6 @@ describe('Versioning', () => {
 			const fileVersion = { ...baseFile };
 			fileVersion.version = i + 1;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -662,7 +657,6 @@ describe('Versioning', () => {
 	});
 
 	test('remove keep forever action is enabled if max version of keep is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxKeepVersions = Number(
@@ -675,7 +669,6 @@ describe('Versioning', () => {
 			fileVersion.version = i + 1;
 			fileVersion.keep_forever = true;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -697,6 +690,7 @@ describe('Versioning', () => {
 		await user.click(versionMoreButton);
 
 		const keepVersionItem = await screen.findByText(/remove keep forever/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersionItem.parentElement).not.toHaveAttribute('disabled', '');
 		await user.click(keepVersionItem);
 
@@ -710,7 +704,6 @@ describe('Versioning', () => {
 	});
 
 	test('delete version is enabled if max number of versions is reached and node is not marked to be kept forever', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxVersions = Number(
@@ -723,7 +716,6 @@ describe('Versioning', () => {
 			fileVersion.version = i + 1;
 			fileVersion.keep_forever = false;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -743,6 +735,7 @@ describe('Versioning', () => {
 		await user.click(version2MoreButton);
 
 		const deleteVersionItem = await screen.findByText(/delete version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(deleteVersionItem).not.toHaveAttribute('disabled', '');
 		await user.click(deleteVersionItem);
 		await waitFor(() => expect(screen.getAllByText(/version \d+/i)).toHaveLength(maxVersions - 1));
@@ -751,7 +744,6 @@ describe('Versioning', () => {
 	});
 
 	test('purge all is enabled if max number of versions is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxVersions = Number(
@@ -764,7 +756,6 @@ describe('Versioning', () => {
 			fileVersion.version = i + 1;
 			fileVersion.keep_forever = false;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -798,7 +789,6 @@ describe('Versioning', () => {
 	});
 
 	test('clone version is disabled and shows a tooltip if user does not have write permissions', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const baseFile = populateFile();
 		baseFile.permissions.can_write_file = false;
@@ -807,7 +797,6 @@ describe('Versioning', () => {
 			const fileVersion = { ...baseFile };
 			fileVersion.version = i + 1;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -830,6 +819,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(cloneAsCurrentItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -847,7 +837,6 @@ describe('Versioning', () => {
 	});
 
 	test('delete version is disabled and shows a tooltip if user does not have write permissions', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const baseFile = populateFile();
 		baseFile.permissions.can_write_file = false;
@@ -856,7 +845,6 @@ describe('Versioning', () => {
 			const fileVersion = { ...baseFile };
 			fileVersion.version = i + 1;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -879,6 +867,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const deleteVersion = await screen.findByText(/delete version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(deleteVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -923,6 +912,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const openDocumentVersion = await screen.findByText(/open document version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(openDocumentVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -959,6 +949,7 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const keepVersion = await screen.findByText(/(keep this version forever|remove keep forever)/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();

@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -22,7 +22,7 @@ import {
 	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -89,7 +89,7 @@ describe('Flag', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesIdsToFlag.length);
 
-			const flagIcon = await screen.findByTestId(ICON_REGEXP.flag);
+			const flagIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.flag });
 			// click on flag action on header bar
 			await user.click(flagIcon);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();

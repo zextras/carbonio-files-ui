@@ -47,7 +47,7 @@ const CustomAccordionItem = styled(AccordionItem)<{ $dragging: boolean }>`
 
 interface SecondaryBarItemProps {
 	item: AccordionItemType & {
-		completeTotalBadgeCounter?: string | undefined;
+		completeTotalBadgeCounter?: string;
 		isUploadFailed?: boolean;
 	};
 	expanded: boolean;

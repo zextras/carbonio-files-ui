@@ -189,7 +189,6 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 				<CollaborationLinks
 					nodeId={node.id}
 					nodeName={node.name}
-					nodeTypename={node.__typename}
 					canWrite={
 						isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
 					}

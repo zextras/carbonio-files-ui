@@ -7,7 +7,7 @@
 // Although this method doesn't give you absolute certainty that a file is a folder:
 // it might be a file without extension and with a size of 0 or exactly N x 4096B.
 // https://stackoverflow.com/a/25095250/17280436
-import { ApolloClient, ApolloQueryResult, NormalizedCacheObject } from '@apollo/client';
+import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import { forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -37,26 +37,6 @@ export function isUploadFolderItem(item: Partial<UploadItem>): item is UploadFol
 	return item !== undefined && 'children' in item;
 }
 
-export function missingFolderElementsCount(id: string): number {
-	const uploadFolderItem = uploadVar()[id];
-	if (isUploadFolderItem(uploadFolderItem)) {
-		return uploadFolderItem.contentCount - uploadFolderItem.progress - uploadFolderItem.failedCount;
-	}
-	throw new Error('Unable to find contentCount on uploadItem');
-}
-
-export function isTheLastElement(id: string): boolean {
-	return missingFolderElementsCount(id) === 1;
-}
-
-export function thereAreFailedElements(id: string): boolean {
-	const uploadFolderItem = uploadVar()[id];
-	if (isUploadFolderItem(uploadFolderItem)) {
-		return uploadFolderItem.failedCount > 0;
-	}
-	throw new Error('Unable to find failedCount on uploadItem');
-}
-
 type UploadActionUpdateValueType = { id: string } & (
 	| Partial<UploadItem>
 	| Partial<UploadFolderItem>
@@ -74,7 +54,6 @@ export function uploadVarReducer(action: UploadAction): UploadRecord {
 			return uploadVar();
 		case 'update':
 			if (action.value instanceof Array) {
-				// TODO
 				return uploadVar();
 			}
 			if (uploadVar()[action.value.id]) {
@@ -247,7 +226,7 @@ export function removeFromParentChildren(uploadItem: UploadItem): void {
 }
 
 export function addVersionToCache(
-	apolloClient: ApolloClient<NormalizedCacheObject>,
+	apolloClient: ApolloClient<object>,
 	nodeId: string
 ): Promise<ApolloQueryResult<GetVersionsQuery>> {
 	return apolloClient.query<GetVersionsQuery, GetVersionsQueryVariables>({
@@ -294,7 +273,7 @@ export function singleRetry(id: string): void {
 function loadItemAsChild(
 	nodeId: string,
 	parentId: string,
-	apolloClient: ApolloClient<NormalizedCacheObject>,
+	apolloClient: ApolloClient<object>,
 	nodeSort: NodeSort,
 	addNodeToFolder: UpdateFolderContentType['addNodeToFolder']
 ): Promise<void> {
@@ -396,7 +375,7 @@ export const UploadQueue = ((): {
 export function uploadCompleted(
 	xhr: XMLHttpRequest,
 	fileEnriched: UploadItem,
-	apolloClient: ApolloClient<NormalizedCacheObject>,
+	apolloClient: ApolloClient<object>,
 	nodeSort: NodeSort,
 	addNodeToFolder: UpdateFolderContentType['addNodeToFolder'],
 	isUploadVersion: boolean
@@ -445,7 +424,7 @@ export function uploadCompleted(
 
 export function upload(
 	fileEnriched: UploadItem,
-	apolloClient: ApolloClient<NormalizedCacheObject>,
+	apolloClient: ApolloClient<object>,
 	nodeSort: NodeSort,
 	addNodeToFolder: UpdateFolderContentType['addNodeToFolder']
 ): UploadFunctions['abort'] {
@@ -469,8 +448,8 @@ export function upload(
 	xhr.setRequestHeader('Filename', encodeBase64(fileEnriched.file.name));
 	xhr.setRequestHeader('ParentId', fileEnriched.parentNodeId);
 
-	// FIXME: fix in order to be able to test the upload with msw
-	//   see https://github.com/mswjs/interceptors/issues/187
+	// check for upload existence in order to be able to test the upload with msw
+	// see https://github.com/mswjs/interceptors/issues/187
 	if (xhr.upload?.addEventListener) {
 		xhr.upload.addEventListener('progress', (ev: ProgressEvent) =>
 			updateProgress(ev, fileEnriched)
@@ -503,7 +482,7 @@ export function upload(
 
 export function uploadVersion(
 	fileEnriched: UploadItem,
-	apolloClient: ApolloClient<NormalizedCacheObject>,
+	apolloClient: ApolloClient<object>,
 	nodeSort: NodeSort,
 	addNodeToFolder: UpdateFolderContentType['addNodeToFolder'],
 	overwriteVersion = false
@@ -519,8 +498,8 @@ export function uploadVersion(
 	xhr.setRequestHeader('Filename', encodeBase64(fileEnriched.file.name));
 	xhr.setRequestHeader('OverwriteVersion', `${overwriteVersion}`);
 
-	// FIXME: fix in order to be able to test the upload with msw
-	//   see https://github.com/mswjs/interceptors/issues/187
+	// check for upload existence in order to be able to test the upload with msw
+	// see https://github.com/mswjs/interceptors/issues/187
 	if (xhr.upload?.addEventListener) {
 		xhr.upload.addEventListener('progress', (ev: ProgressEvent) =>
 			updateProgress(ev, fileEnriched)
