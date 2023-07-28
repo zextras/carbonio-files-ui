@@ -7,7 +7,7 @@
 const path = require('path');
 
 module.exports = {
-	process(sourceText, sourcePath, _options) {
+	process(sourceText, sourcePath) {
 		return {
 			code: `module.exports = ${JSON.stringify(path.basename(sourcePath))};`
 		};

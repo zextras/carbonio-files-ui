@@ -22,7 +22,7 @@ import {
 } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
-import { populateNodes } from '../mocks/mockUtils';
+import { populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
@@ -32,15 +32,6 @@ import {
 	mockRestoreNodes
 } from '../utils/resolverMocks';
 import { selectNodes, setup } from '../utils/testUtils';
-
-const mockedRequestHandler = jest.fn();
-
-beforeEach(() => {
-	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
-	server.use(
-		graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
-	);
-});
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -106,17 +97,14 @@ describe('Filter view', () => {
 		});
 
 		test('Delete permanently close the displayer from trash views', async () => {
-			const nodes = populateNodes(10);
-			nodes.forEach((node) => {
-				node.rootId = ROOTS.TRASH;
-				node.permissions.can_write_file = true;
-				node.permissions.can_write_folder = true;
-				node.permissions.can_delete = true;
-			});
-			const node = nodes[0];
+			const node = populateNode();
+			node.rootId = ROOTS.TRASH;
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_delete = true;
 			const mocks = {
 				Query: {
-					findNodes: mockFindNodes(nodes),
+					findNodes: mockFindNodes([node]),
 					getNode: mockGetNode({ getNode: [node] })
 				},
 				Mutation: {
@@ -135,7 +123,6 @@ describe('Filter view', () => {
 			// wait the content to be rendered
 			await screen.findByText(/view files and folders/i);
 			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
-			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
 			expect(nodeItem).toBeVisible();
 			expect(screen.queryByText(/details/)).not.toBeInTheDocument();
@@ -151,33 +138,24 @@ describe('Filter view', () => {
 				name: ACTION_REGEXP.deletePermanently
 			});
 			await user.click(deletePermanentlyConfirm);
-			await waitFor(() =>
-				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
-					nodes.length - 1
-				)
-			);
-			await screen.findByText(/^success$/i);
+			await screen.findByText(/The trash is empty/i);
+			await screen.findByText(/success/i);
 			await screen.findByText(/view files and folders/i);
 			expect(deletePermanentlyConfirm).not.toBeInTheDocument();
 			expect(within(displayer).queryByText(node.name)).not.toBeInTheDocument();
 			expect(deletePermanentlyAction).not.toBeInTheDocument();
-			expect(
-				screen.getByText(/View files and folders, share them with your contacts/i)
-			).toBeVisible();
 		});
 
 		test('in trash filter only restore and delete permanently actions are visible', async () => {
-			const nodes = populateNodes(10);
-			nodes.forEach((node) => {
-				node.rootId = ROOTS.TRASH;
-				node.permissions.can_write_file = true;
-				node.permissions.can_write_folder = true;
-				node.permissions.can_delete = true;
-			});
-			const node = nodes[0];
+			const node = populateNode();
+			node.rootId = ROOTS.TRASH;
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_delete = true;
+			node.parent = populateLocalRoot();
 			const mocks = {
 				Query: {
-					findNodes: mockFindNodes(nodes),
+					findNodes: mockFindNodes([node]),
 					getNode: mockGetNode({ getNode: [node] })
 				}
 			} satisfies Partial<Resolvers>;
@@ -189,8 +167,8 @@ describe('Filter view', () => {
 			);
 			// right click to open contextual menu
 			await screen.findByText(/view files and folders/i);
-			const nodeItems = await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
-			fireEvent.contextMenu(nodeItems[0]);
+			const nodeItem = await screen.findByText(node.name);
+			fireEvent.contextMenu(nodeItem);
 			// check that restore action becomes visible
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
@@ -204,7 +182,7 @@ describe('Filter view', () => {
 			expect(screen.queryByText(ACTION_REGEXP.copy)).not.toBeInTheDocument();
 
 			// selection mode
-			await selectNodes([nodes[0].id], user);
+			await selectNodes([node.id], user);
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			const restoreActionSelection = await within(
@@ -229,10 +207,10 @@ describe('Filter view', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 			// displayer
-			await user.click(nodeItems[0]);
+			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			const displayer = screen.getByTestId(SELECTORS.displayer);
-			await within(displayer).findAllByText(nodes[0].name);
+			await within(displayer).findAllByText(node.name);
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(within(displayer).getByTestId(ICON_REGEXP.restore)).toBeVisible();
 			expect(within(displayer).getByTestId(ICON_REGEXP.deletePermanently)).toBeVisible();
@@ -295,6 +273,10 @@ describe('Filter view', () => {
 
 	describe('My Trash filter', () => {
 		test('My Trash filter sharedWithMe=false and includes only trashed nodes', async () => {
+			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			server.use(
+				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
+			);
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
 			});
@@ -320,6 +302,10 @@ describe('Filter view', () => {
 
 	describe('Shared Trash filter', () => {
 		test('Shared trash filter has sharedWithMe=true and includes only trashed nodes', async () => {
+			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			server.use(
+				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
+			);
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`]
 			});

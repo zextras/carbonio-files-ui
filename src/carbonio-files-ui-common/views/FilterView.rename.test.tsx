@@ -87,6 +87,7 @@ describe('Filter View', () => {
 					await user.click(moreIconButton);
 					// wait for trash action to check that popper is open
 					const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
+					// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 					expect(trashAction).not.toHaveAttribute('disabled');
 					expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 				}
@@ -174,8 +175,7 @@ describe('Filter View', () => {
 				});
 				// when find only 1 occurrence means that snackbar is hidden
 				expect(screen.getByText(/Error! Name already assigned/)).toBeVisible();
-				const inputFieldDiv = screen.getByTestId('input-name');
-				const inputField = within(inputFieldDiv).getByRole('textbox');
+				const inputField = screen.getByRole('textbox');
 				expect(inputField).toBeVisible();
 				expect(inputField).toHaveValue(newName);
 			});

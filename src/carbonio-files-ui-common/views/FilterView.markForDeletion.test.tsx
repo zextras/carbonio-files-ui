@@ -66,6 +66,7 @@ describe('Filter View', () => {
 				const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 				expect(trashAction).toBeInTheDocument();
 				expect(trashAction).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(trashAction).not.toHaveAttribute('disabled', '');
 
 				await user.click(trashAction);
@@ -189,6 +190,7 @@ describe('Filter View', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(trashAction);
 			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());

@@ -171,6 +171,7 @@ describe('Rename', () => {
 			fireEvent.contextMenu(nodeItem);
 			renameAction = await screen.findByText(ACTION_REGEXP.rename);
 			expect(renameAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(renameAction).not.toHaveAttribute('disabled', '');
 		});
 	});

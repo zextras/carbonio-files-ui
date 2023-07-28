@@ -243,12 +243,10 @@ describe('Create docs file', () => {
 		// --> list should be updated with the correct order
 		const childrenResolver: FolderResolvers['children'] = (parent, args) => {
 			if (parent.id === currentFolder.id) {
-				switch (args.page_token) {
-					case 'page2':
-						return populateNodePage([node1, node2, node3]);
-					default:
-						return populateNodePage(currentFolder.children.nodes, NODES_LOAD_LIMIT, 'page2');
+				if (args.page_token === 'page2') {
+					return populateNodePage([node1, node2, node3]);
 				}
+				return populateNodePage(currentFolder.children.nodes, NODES_LOAD_LIMIT, 'page2');
 			}
 			return parent.children;
 		};

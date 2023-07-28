@@ -312,9 +312,14 @@ const FolderView: React.VFC = () => {
 		return [];
 	}, [currentFolder]);
 
+	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
+		() => <SortingComponent />,
+		[]
+	);
+
 	const ListComponent = useMemo(
 		() => (
-			<ListHeaderActionContext.Provider value={<SortingComponent />}>
+			<ListHeaderActionContext.Provider value={listHeaderActionValue}>
 				<List
 					nodes={nodes}
 					folderId={currentFolderId}
@@ -328,11 +333,23 @@ const FolderView: React.VFC = () => {
 				/>
 			</ListHeaderActionContext.Provider>
 		),
-		[actions, currentFolderId, hasMore, isCanUploadFile, loadMore, loading, nodes, t]
+		[
+			actions,
+			currentFolderId,
+			hasMore,
+			isCanUploadFile,
+			listHeaderActionValue,
+			loadMore,
+			loading,
+			nodes,
+			t
+		]
 	);
 
+	const listContextValue = useMemo(() => ({ isEmpty, setIsEmpty }), [isEmpty]);
+
 	return (
-		<ListContext.Provider value={{ isEmpty, setIsEmpty }}>
+		<ListContext.Provider value={listContextValue}>
 			<Container
 				orientation="row"
 				crossAlignment="flex-start"

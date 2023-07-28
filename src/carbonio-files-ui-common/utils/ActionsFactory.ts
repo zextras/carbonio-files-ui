@@ -344,8 +344,6 @@ export function canDownload(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean
 		throw Error('cannot evaluate canDownload on empty nodes array');
 	}
 	const $nodes = nodes as ActionsFactoryNodeType[];
-	// TODO: evaluate when batch will be enabled
-	// TODO: remove file check when download will be implemented also for folders
 	return size($nodes) === 1 && isFile($nodes[0]) && $nodes[0].rootId !== ROOTS.TRASH;
 }
 
@@ -477,8 +475,6 @@ export function canSendViaMail(nodes: OneOrMany<ActionsFactoryGlobalType>): bool
 		throw Error('cannot evaluate canSendViaMail on empty nodes array');
 	}
 	const $nodes = nodes as ActionsFactoryNodeType[];
-	// TODO: evaluate when batch will be enabled
-	// TODO: remove file check when canSendViaMail will be implemented also for folders
 	return size($nodes) === 1 && isFile($nodes[0]) && $nodes[0].rootId !== ROOTS.TRASH;
 }
 

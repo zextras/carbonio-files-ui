@@ -7,5 +7,4 @@ import { faker } from '@faker-js/faker';
 
 export function v4(): string {
 	return faker.datatype.uuid();
-	// return `${Math.random() * 10000000000000000}`;
 }

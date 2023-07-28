@@ -81,6 +81,7 @@ describe('Mark for deletion - trash', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled');
 			await user.click(trashAction);
 
@@ -100,6 +101,7 @@ describe('Mark for deletion - trash', () => {
 
 			// wait for copy action to check that popper is open
 			const copyAction = await screen.findByText(ACTION_REGEXP.copy);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(copyAction.parentNode).not.toHaveAttribute('disabled');
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
 		});
@@ -308,6 +310,7 @@ describe('Mark for deletion - trash', () => {
 			fireEvent.contextMenu(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name));
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(moveToTrashAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(moveToTrashAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(moveToTrashAction);
 			await screen.findByText(/Item moved to trash/i);

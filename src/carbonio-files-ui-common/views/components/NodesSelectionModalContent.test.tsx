@@ -379,7 +379,9 @@ describe('Nodes Selection Modal Content', () => {
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		const nodeAvatarIcons = screen.getAllByTestId(SELECTORS.nodeAvatar);
 		expect(nodeAvatarIcons).toHaveLength(2);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(nodeAvatarIcons[0]).not.toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(nodeAvatarIcons[1]).not.toHaveAttribute('disabled', '');
 		act(() => {
 			// run tooltip timer to register listeners
@@ -686,11 +688,9 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// all nodes are enabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
 					'disabled',
 					''
@@ -767,11 +767,9 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// all nodes are enabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
 					'disabled',
 					''
@@ -1235,11 +1233,13 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// folder is not disabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
 					'disabled',
 					''
 				);
 				// file is not disabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is disabled because local root is not a file
@@ -1409,6 +1409,7 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(validFile.name)).toBeVisible();
 				expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
 				// valid folder is not disabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(validFolder.id))).not.toHaveAttribute(
 					'disabled',
 					''
@@ -1418,6 +1419,7 @@ describe('Nodes Selection Modal Content', () => {
 				// invalid file is disabled
 				// expect(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id))).toHaveAttribute('disabled', '');
 				// invalid folder is not disabled because is navigable
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id))).not.toHaveAttribute(
 					'disabled',
 					''
@@ -1812,11 +1814,9 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// all nodes are enabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
 					'disabled',
 					''
@@ -1895,11 +1895,9 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// all nodes are enabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
 					'disabled',
 					''
@@ -2331,11 +2329,13 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(file1.name)).toBeVisible();
 				expect(screen.getByText(file2.name)).toBeVisible();
 				// folder is not disabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
 					'disabled',
 					''
 				);
 				// file is not disabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(file1.id))).not.toHaveAttribute(
 					'disabled',
 					''
@@ -2576,6 +2576,7 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(validFile.name)).toBeVisible();
 				expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
 				// valid folder is not disabled
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(screen.getByTestId(SELECTORS.nodeItem(validFolder.id))).not.toHaveAttribute(
 					'disabled',
 					''

@@ -48,7 +48,7 @@ export interface NodeDetailsUserRowProps {
 	tooltip: string;
 	dateTime?: number;
 	clickAction?: (event: React.MouseEvent<HTMLElement> | KeyboardEvent) => void;
-	loading?: boolean | undefined;
+	loading?: boolean;
 }
 
 export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({

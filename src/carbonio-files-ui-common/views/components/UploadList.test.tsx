@@ -163,6 +163,7 @@ describe('Upload list', () => {
 			// drag image item is not shown
 			const draggedNodeItem = screen.getByText(nodesToDrag[0].name);
 			expect(draggedNodeItem).toBeInTheDocument();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItem).not.toHaveAttribute('disabled', '');
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		});

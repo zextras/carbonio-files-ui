@@ -37,7 +37,6 @@ export const UploadListItemWrapper = React.memo<UploadListItemWrapperProps>(
 				id={node.id}
 				nodeId={node.nodeId || undefined}
 				name={node.name}
-				mimeType={node.file?.type || ''}
 				size={(!isUploadFolderItem(node) && node.file?.size) || undefined}
 				status={node.status}
 				progress={node.progress}

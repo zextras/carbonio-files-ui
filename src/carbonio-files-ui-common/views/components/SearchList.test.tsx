@@ -178,7 +178,9 @@ describe('Search list', () => {
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 			// dropzone overlay of the list is shown
 			await screen.findByTestId(SELECTORS.dropzone);
@@ -197,6 +199,7 @@ describe('Search list', () => {
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(itemToDrag).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 			// drag and drop on folder with permissions
@@ -212,6 +215,7 @@ describe('Search list', () => {
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(screen.getByText(nodesToDrag[0].name)).not.toHaveAttribute('disabled', '');
 		});
 
@@ -260,7 +264,9 @@ describe('Search list', () => {
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
@@ -278,6 +284,7 @@ describe('Search list', () => {
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 			// drag and drop on folder with permissions. Overlay is not shown.
@@ -294,6 +301,7 @@ describe('Search list', () => {
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(itemToDrag).not.toHaveAttribute('disabled', '');
 		});
 
@@ -349,7 +357,9 @@ describe('Search list', () => {
 			forEach(nodesToDrag, (node) => {
 				const draggedImage = screen.getAllByText(node.name);
 				expect(draggedImage).toHaveLength(2);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(draggedImage[0]).toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(draggedImage[1]).not.toHaveAttribute('disabled', '');
 			});
 
@@ -407,6 +417,7 @@ describe('Search list', () => {
 				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
 				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(trashAction.parentNode).not.toHaveAttribute('disabled');
 				await user.click(trashAction);
 				await screen.findByText(/item moved to trash/i);
@@ -850,6 +861,7 @@ describe('Search list', () => {
 
 			const restoreAction = screen.getByTestId(ICON_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(restoreAction).not.toHaveAttribute('disabled', '');
 			await user.click(restoreAction);
 			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
@@ -904,6 +916,7 @@ describe('Search list', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			const deletePermanentlyAction = screen.getByTestId(ICON_REGEXP.deletePermanently);
 			expect(deletePermanentlyAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(deletePermanentlyAction).not.toHaveAttribute('disabled', '');
 			await user.click(deletePermanentlyAction);
 			const modalConfirmButton = await screen.findByRole('button', {
@@ -968,6 +981,7 @@ describe('Search list', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			const unflagIcon = await screen.findByTestId(ICON_REGEXP.unflag);
 			expect(unflagIcon).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(unflagIcon).not.toHaveAttribute('disabled', '');
 			await user.click(unflagIcon);
 			expect(within(nodeToUnflagItem1).queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();

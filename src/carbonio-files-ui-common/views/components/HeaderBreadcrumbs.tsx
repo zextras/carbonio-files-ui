@@ -79,8 +79,8 @@ export const HeaderBreadcrumbs: React.VFC<HeaderBreadcrumbsProps> = ({ folderId,
 		>
 			{folderId && expandable && (
 				<Tooltip
+					/* i18next-extract-disable-next-line */
 					label={t(
-						/* i18next-extract-disable-next-line */
 						`breadcrumb.expander.${expanded ? 'hide' : 'show'}`,
 						expanded ? 'Hide previous folders' : 'Show previous folders'
 					)}

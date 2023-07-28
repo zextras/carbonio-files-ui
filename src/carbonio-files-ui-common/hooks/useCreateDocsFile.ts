@@ -52,11 +52,9 @@ const createFileCompleted = (
 					}
 				})
 				.then((result) => {
-					if (result.data.getNode?.parent) {
-						if (isFolder(result.data.getNode.parent)) {
-							const { isLast } = addNodeToFolder(result.data.getNode.parent, result.data.getNode);
-							scrollToNodeItem(result.data.getNode.id, isLast);
-						}
+					if (result.data.getNode?.parent && isFolder(result.data.getNode.parent)) {
+						const { isLast } = addNodeToFolder(result.data.getNode.parent, result.data.getNode);
+						scrollToNodeItem(result.data.getNode.id, isLast);
 					}
 					return result;
 				})

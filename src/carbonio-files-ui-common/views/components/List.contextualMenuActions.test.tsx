@@ -93,6 +93,7 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).toBeCalledTimes(1);
@@ -103,6 +104,7 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).toBeCalledTimes(1);
@@ -113,6 +115,7 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).toBeCalledTimes(1);
@@ -123,6 +126,7 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).toBeCalledTimes(1);
@@ -199,6 +203,7 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).not.toBeCalled();
@@ -209,6 +214,7 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).not.toBeCalled();
@@ -219,6 +225,7 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).not.toBeCalled();
@@ -229,6 +236,7 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).not.toBeCalled();
@@ -302,6 +310,7 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).toBeCalledTimes(1);
@@ -312,6 +321,7 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).toBeCalledTimes(1);
@@ -322,6 +332,7 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).toBeCalledTimes(1);
@@ -332,6 +343,7 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).toBeCalledTimes(1);
@@ -403,6 +415,7 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).not.toBeCalled();
@@ -413,6 +426,7 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).not.toBeCalled();
@@ -423,6 +437,7 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).not.toBeCalled();
@@ -433,6 +448,7 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).not.toBeCalled();

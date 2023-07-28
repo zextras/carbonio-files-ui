@@ -6,11 +6,10 @@
 
 import React from 'react';
 
-import { screen } from '@testing-library/react';
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
 
 import { NodeHoverBar } from './NodeHoverBar';
-import { setup } from '../../utils/testUtils';
+import { setup, screen } from '../../utils/testUtils';
 
 describe('Node Hover Bar', () => {
 	test('render nothing if no actions are provided', () => {
@@ -38,14 +37,14 @@ describe('Node Hover Bar', () => {
 		];
 
 		const { user } = setup(<NodeHoverBar style={{ display: 'flex' }} actions={actions} />);
-		expect(screen.getByTestId('icon: action1Icon')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: action1Icon')).toBeVisible();
-		expect(screen.getByTestId('icon: action2Icon')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: action2Icon')).toBeVisible();
-		await user.click(screen.getByTestId('icon: action1Icon'));
+		const action1 = screen.getByRoleWithIcon('button', { icon: 'icon: action1Icon' });
+		const action2 = screen.getByRoleWithIcon('button', { icon: 'icon: action2Icon' });
+		expect(action1).toBeVisible();
+		expect(action2).toBeVisible();
+		await user.click(action1);
 		expect(action1Fn).toHaveBeenCalledTimes(1);
 		expect(action2Fn).not.toHaveBeenCalled();
-		await user.click(screen.getByTestId('icon: action2Icon'));
+		await user.click(action2);
 		expect(action1Fn).toHaveBeenCalledTimes(1);
 		expect(action2Fn).toHaveBeenCalledTimes(1);
 	});

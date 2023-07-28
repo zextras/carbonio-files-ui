@@ -66,7 +66,6 @@ describe('Node Details', () => {
 			/>,
 			{ mocks: {} }
 		);
-		// expect(screen.getByText(`/${node.name}`)).toBeVisible();
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		expect(
 			screen.getByText(

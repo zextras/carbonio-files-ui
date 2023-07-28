@@ -424,7 +424,9 @@ describe('Drag and drop', () => {
 		// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 		const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 		expect(draggedNodeItems).toHaveLength(2);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 		// dropzone of the folder is shown
 		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
@@ -445,6 +447,7 @@ describe('Drag and drop', () => {
 		jest.advanceTimersByTime(TIMERS.HIDE_DROPZONE);
 		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		expect(itemToDrag).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 		// drag and drop on folder with permissions
@@ -503,7 +506,9 @@ describe('Drag and drop', () => {
 		// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 		const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 		expect(draggedNodeItems).toHaveLength(2);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
@@ -516,6 +521,7 @@ describe('Drag and drop', () => {
 		fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 		// drag and drop on folder with permissions. Overlay is not shown.
@@ -527,6 +533,7 @@ describe('Drag and drop', () => {
 		fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 	});
 
@@ -576,7 +583,9 @@ describe('Drag and drop', () => {
 		forEach(nodesToDrag, (node) => {
 			const draggedImage = screen.getAllByText(node.name);
 			expect(draggedImage).toHaveLength(2);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedImage[0]).toHaveAttribute('disabled', '');
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedImage[1]).not.toHaveAttribute('disabled', '');
 		});
 
@@ -694,6 +703,7 @@ describe('Drag and drop', () => {
 		fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 		expect(folderWithoutPermissionsCrumb).toHaveStyle({
