@@ -17,7 +17,7 @@ import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
-import { EMITTER_CODES, ICON_REGEXP } from '../../constants/test';
+import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import handleUploadFileRequest, {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -40,7 +40,7 @@ import {
 } from '../../types/graphql/types';
 import { mockGetBaseNode } from '../../utils/mockUtils';
 import {
-	createDataTransfer,
+	createUploadDataTransfer,
 	delayUntil,
 	generateError,
 	selectNodes,
@@ -150,7 +150,7 @@ describe('Upload List', () => {
 
 				const mocks = [mockGetBaseNode({ node_id: ROOTS.LOCAL_ROOT }, localRoot)];
 
-				const dataTransferObj = createDataTransfer(uploadedFiles);
+				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, {
 					mocks
@@ -160,7 +160,7 @@ describe('Upload List', () => {
 
 				await uploadWithDnD(dropzoneArea, dataTransferObj);
 
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					uploadedFiles.length
 				);
 				expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -201,7 +201,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn(handleUploadFileRequest);
 
@@ -251,7 +251,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn();
 				const createFolderMutation = jest.fn();
@@ -329,7 +329,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn(handleUploadFileRequest);
 
@@ -419,7 +419,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn();
 				let uploadFailedCalled = false;

@@ -20,6 +20,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
@@ -63,7 +64,7 @@ describe('Filter View', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			expect(screen.queryByText('missing-filter')).not.toBeInTheDocument();
+			expect(screen.queryByText(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 
 		test('Sorting component is hidden', async () => {
@@ -92,8 +93,8 @@ describe('Filter View', () => {
 			});
 
 			await screen.findByText(nodes[0].name);
-			expect(screen.queryByTestId('icon: AzListOutline')).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: ZaListOutline')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.sortAsc)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.sortDesc)).not.toBeInTheDocument();
 		});
 	});
 });

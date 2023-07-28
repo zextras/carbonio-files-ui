@@ -13,6 +13,7 @@ import { Link, Route, Switch } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import FolderView from './FolderView';
+import { ACTION_IDS } from '../../constants';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
@@ -58,7 +59,7 @@ describe('Filter view', () => {
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}/`]
 		});
-		await screen.findByTestId('missing-filter');
+		await screen.findByTestId(SELECTORS.missingFilter);
 		expect(screen.getByText(/it looks like there's nothing here/i)).toBeVisible();
 		expect(mockedRequestHandler).not.toHaveBeenCalled();
 	});
@@ -69,7 +70,9 @@ describe('Filter view', () => {
 		});
 		await screen.findByText(/view files and folders/i);
 		expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
-			expect.arrayContaining([expect.objectContaining({ id: 'create-folder', disabled: true })])
+			expect.arrayContaining([
+				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
+			])
 		);
 	});
 
@@ -87,14 +90,14 @@ describe('Filter view', () => {
 			mocks
 		});
 
-		const listHeader = screen.getByTestId('list-header');
+		const listHeader = screen.getByTestId(SELECTORS.listHeader);
 		expect(within(listHeader).getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-		await waitFor(() => expect(screen.getByTestId(`list-`)).not.toBeEmptyDOMElement());
+		await waitFor(() => expect(screen.getByTestId(SELECTORS.list())).not.toBeEmptyDOMElement());
 		await screen.findByText(nodes[0].name);
 		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 		forEach(nodes, (node) => {
-			expect(screen.getByTestId(`node-item-${node.id}`)).toBeInTheDocument();
-			expect(screen.getByTestId(`node-item-${node.id}`)).toHaveTextContent(node.name);
+			expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toBeInTheDocument();
+			expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toHaveTextContent(node.name);
 		});
 	});
 
@@ -118,18 +121,20 @@ describe('Filter view', () => {
 		});
 
 		// this is the loading refresh icon
-		expect(screen.getByTestId('list-header')).toContainElement(
+		expect(screen.getByTestId(SELECTORS.listHeader)).toContainElement(
 			screen.getByTestId(ICON_REGEXP.queryLoading)
 		);
 		expect(
-			within(screen.getByTestId('list-header')).getByTestId(ICON_REGEXP.queryLoading)
+			within(screen.getByTestId(SELECTORS.listHeader)).getByTestId(ICON_REGEXP.queryLoading)
 		).toBeVisible();
 		await waitForElementToBeRemoved(
-			within(screen.getByTestId('list-header')).queryByTestId(ICON_REGEXP.queryLoading)
+			within(screen.getByTestId(SELECTORS.listHeader)).queryByTestId(ICON_REGEXP.queryLoading)
 		);
 		// wait the rendering of the first item
-		await screen.findByTestId(`node-item-${currentFilter[0].id}`);
-		expect(screen.getByTestId(`node-item-${currentFilter[NODES_LOAD_LIMIT - 1].id}`)).toBeVisible();
+		await screen.findByTestId(SELECTORS.nodeItem(currentFilter[0].id));
+		expect(
+			screen.getByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT - 1].id))
+		).toBeVisible();
 		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
@@ -138,14 +143,16 @@ describe('Filter view', () => {
 		await triggerLoadMore();
 
 		// wait for the response
-		await screen.findByTestId(`node-item-${currentFilter[NODES_LOAD_LIMIT].id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT].id));
 
 		// now all elements are loaded so last node and first node should be visible and no loading icon should be rendered
 		expect(
-			screen.getByTestId(`node-item-${currentFilter[currentFilter.length - 1].id}`)
+			screen.getByTestId(SELECTORS.nodeItem(currentFilter[currentFilter.length - 1].id))
 		).toBeVisible();
-		expect(screen.getByTestId(`node-item-${currentFilter[0].id}`)).toBeVisible();
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(currentFilter.length);
+		expect(screen.getByTestId(SELECTORS.nodeItem(currentFilter[0].id))).toBeVisible();
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+			currentFilter.length
+		);
 		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 
@@ -197,24 +204,24 @@ describe('Filter view', () => {
 		);
 
 		// filter list, first load to write data in cache
-		await screen.findByTestId(`node-item-${nodes[0].id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(nodes[0].id));
 		// only 1 item load
-		expect(screen.getByTestId('node-item', { exact: false })).toBeInTheDocument();
+		expect(screen.getByTestId(SELECTORS.nodeItem(), { exact: false })).toBeInTheDocument();
 		// navigate to folder
 		await user.click(screen.getByRole('link', { name: 'Go to folder' }));
 		// folder list, first load
-		await screen.findByTestId(`node-item-${node.id}`);
-		expect(screen.getByTestId('node-item', { exact: false })).toBeInTheDocument();
+		await screen.findByTestId(SELECTORS.nodeItem(node.id));
+		expect(screen.getByTestId(SELECTORS.nodeItem(), { exact: false })).toBeInTheDocument();
 		// flag the node through the hover bar
-		await user.click(screen.getByTestId('icon: FlagOutline'));
-		await screen.findByTestId('icon: Flag');
+		await user.click(screen.getByTestId(ICON_REGEXP.flag));
+		await screen.findByTestId(ICON_REGEXP.flagged);
 		// navigate to filter again
 		await user.click(screen.getByRole('link', { name: 'Go to filter' }));
 		// filter list, second load but with a new network request. Wait for loading icon to be removed
 		await screen.findByText(node.name);
-		const nodesItems = screen.getAllByTestId('node-item', { exact: false });
+		const nodesItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodesItems).toHaveLength(2);
-		expect(screen.getByTestId(`node-item-${node.id}`)).toBe(nodesItems[1]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toBe(nodesItems[1]);
 	});
 
 	describe('Selection mode', () => {
@@ -255,7 +262,7 @@ describe('Filter view', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.restore)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.deletePermanently)).not.toBeInTheDocument();
 
-			const arrowBack = screen.getByTestId('icon: ArrowBackOutline');
+			const arrowBack = screen.getByTestId(ICON_REGEXP.exitSelectionMode);
 			expect(arrowBack).toBeVisible();
 			await user.click(arrowBack);
 			expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();

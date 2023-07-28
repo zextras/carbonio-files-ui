@@ -20,14 +20,15 @@ import {
 	populateFile,
 	populateFolder,
 	populateLocalRoot,
+	populateNode,
 	populateNodePage,
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
 import {
 	Folder,
 	File,
-	Node,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	Maybe
@@ -68,7 +69,7 @@ describe('Copy Nodes Modal', () => {
 			}
 		);
 		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 	});
@@ -93,7 +94,7 @@ describe('Copy Nodes Modal', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', parentFolder.name));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			parentFolder.children.nodes.length
 		);
 	});
@@ -123,7 +124,7 @@ describe('Copy Nodes Modal', () => {
 		const breadcrumbRegexp = buildBreadCrumbRegExp('Files', parentFolder.name);
 		const breadcrumb = await findByTextWithMarkup(breadcrumbRegexp);
 		expect(breadcrumb).toBeVisible();
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			parentFolder.children.nodes.length
 		);
 		expect(screen.getByText(nodesToCopy[0].name)).toBeVisible();
@@ -155,93 +156,111 @@ describe('Copy Nodes Modal', () => {
 		expect(breadcrumb).toBeVisible();
 	});
 
-	test('folders without permission, nodes to copy and files are disabled in the list and not navigable', async () => {
-		const currentFolder = populateFolder();
-		const folderWithWriteFile = populateFolder(1);
-		folderWithWriteFile.permissions.can_write_file = true;
-		folderWithWriteFile.permissions.can_write_folder = false;
-		currentFolder.children.nodes.push(folderWithWriteFile);
-		const folderWithWriteFolder = populateFolder(1);
-		folderWithWriteFolder.permissions.can_write_file = false;
-		folderWithWriteFolder.permissions.can_write_folder = true;
-		currentFolder.children.nodes.push(folderWithWriteFolder);
-		const file = populateFile();
-		file.permissions.can_write_file = true;
-		currentFolder.children.nodes.push(file);
-		const folder = populateFolder();
-		folder.permissions.can_write_folder = true;
-		folder.permissions.can_write_file = true;
-		currentFolder.children.nodes.push(folder);
+	describe.each<NonNullable<Node['__typename']>>(['File', 'Folder'])(
+		'when copying a %s',
+		(typename) => {
+			const nodeToCopy = populateNode(typename);
+			nodeToCopy.permissions.can_write_file = true;
+			nodeToCopy.permissions.can_write_folder = true;
 
-		// first copy file -> folderWithWriteFolder is disabled
-		let nodesToCopy: Array<File | Folder> = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPath({ node_id: folderWithWriteFile.id }, [currentFolder, folderWithWriteFile]),
-			mockGetChildren(getChildrenVariables(folderWithWriteFile.id), folderWithWriteFile),
-			mockGetPath({ node_id: folderWithWriteFolder.id }, [currentFolder, folderWithWriteFolder]),
-			mockGetChildren(getChildrenVariables(folderWithWriteFolder.id), folderWithWriteFolder)
-		];
-		const { rerender, user } = setup(
-			<div onClick={resetToDefault}>
-				<CopyNodesModalContent folderId={currentFolder.id} nodesToCopy={nodesToCopy} />
-			</div>,
-			{ mocks }
-		);
-		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		let folderWithWriteFolderItem = screen.getByText(folderWithWriteFolder.name);
-		let folderWithWriteFileItem = screen.getByText(folderWithWriteFile.name);
-		let fileItem = screen.getByText(file.name);
-		let folderItem = screen.getByText(folder.name);
-		// folder without write file permission is disabled and not navigable
-		expect(folderWithWriteFolderItem).toHaveAttribute('disabled');
-		// double click on a disabled folder does nothing
-		await user.dblClick(folderWithWriteFolderItem);
-		expect(folderWithWriteFolderItem).toBeVisible();
-		expect(folderWithWriteFolderItem).toHaveAttribute('disabled');
-		// folder is active
-		expect(folderItem).not.toHaveAttribute('disabled');
-		// file is disabled
-		expect(fileItem).toHaveAttribute('disabled');
-		// folder with write file permission is active and navigable
-		expect(folderWithWriteFileItem).toBeVisible();
-		expect(folderWithWriteFileItem).not.toHaveAttribute('disabled');
-		await user.dblClick(folderWithWriteFileItem);
-		// navigate to sub-folder
-		await screen.findByText((folderWithWriteFile.children.nodes[0] as File | Folder).name);
-		expect(folderWithWriteFileItem).not.toBeInTheDocument();
+			test('files are disabled in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToCopy);
+				const file = populateFile();
+				file.permissions.can_write_file = true;
+				currentFolder.children.nodes.push(file);
 
-		// then copy folder
-		nodesToCopy = [folder];
-		rerender(
-			<div onClick={resetToDefault}>
-				<CopyNodesModalContent folderId={currentFolder.id} nodesToCopy={nodesToCopy} />
-			</div>
-		);
-		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		folderWithWriteFolderItem = screen.getByText(folderWithWriteFolder.name);
-		folderWithWriteFileItem = screen.getByText(folderWithWriteFile.name);
-		fileItem = screen.getByText(file.name);
-		folderItem = screen.getByText(folder.name);
-		// folder without write folder permission is disabled and not navigable
-		expect(folderWithWriteFileItem).toHaveAttribute('disabled');
-		// double-click on a disabled folder does nothing
-		await user.dblClick(folderWithWriteFileItem);
-		await waitFor(() => expect(folderWithWriteFileItem).toBeVisible());
-		expect(folderWithWriteFileItem).toHaveAttribute('disabled');
-		// moving folder is disabled
-		expect(folderItem).toHaveAttribute('disabled');
-		// file is disabled
-		expect(fileItem).toHaveAttribute('disabled');
-		// folder with write folder permission is active and navigable
-		expect(folderWithWriteFolderItem).toBeVisible();
-		expect(folderWithWriteFolderItem).not.toHaveAttribute('disabled');
-		await user.dblClick(folderWithWriteFolderItem);
-		// navigate to sub-folder
-		await screen.findByText((folderWithWriteFolder.children.nodes[0] as File | Folder).name);
-		expect(folderWithWriteFolderItem).not.toBeInTheDocument();
-	});
+				const mocks = [
+					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
+					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
+				];
+				setup(
+					<div onClick={resetToDefault}>
+						<CopyNodesModalContent folderId={currentFolder.id} nodesToCopy={[nodeToCopy]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(file.name);
+				const nodeItem = screen.getByText(file.name);
+				expect(nodeItem).toHaveAttribute('disabled', '');
+			});
+
+			test(`folders without can_write_${typename.toLowerCase()} permission are disabled in the list`, async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToCopy);
+				const folder = populateFolder();
+				// enable both permissions, and then disable the specific one
+				folder.permissions.can_write_folder = true;
+				folder.permissions.can_write_file = true;
+				folder.permissions[
+					`can_write_${typename.toLowerCase() as Lowercase<NonNullable<Node['__typename']>>}`
+				] = false;
+				currentFolder.children.nodes.push(folder);
+
+				const mocks = [
+					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
+					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
+				];
+				const { user } = setup(
+					<div onClick={resetToDefault}>
+						<CopyNodesModalContent folderId={currentFolder.id} nodesToCopy={[nodeToCopy]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(folder.name);
+				const nodeItem = screen.getByText(folder.name);
+				expect(nodeItem).toHaveAttribute('disabled', '');
+				await user.dblClick(nodeItem);
+				expect(nodeItem).toBeVisible();
+			});
+
+			test('folders with can_write permission are enabled and navigable in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToCopy);
+				const folder = populateFolder();
+				folder.permissions.can_write_file = true;
+				folder.permissions.can_write_folder = true;
+				currentFolder.children.nodes.push(folder);
+
+				const mocks = [
+					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
+					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
+					mockGetPath({ node_id: folder.id }, [currentFolder, folder]),
+					mockGetChildren(getChildrenVariables(folder.id), folder)
+				];
+				const { user } = setup(
+					<div onClick={resetToDefault}>
+						<CopyNodesModalContent folderId={currentFolder.id} nodesToCopy={[nodeToCopy]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(folder.name);
+				const nodeItem = screen.getByText(folder.name);
+				expect(nodeItem).not.toHaveAttribute('disabled', '');
+				await user.dblClick(nodeItem);
+				await screen.findByText(/it looks like there's nothing here/i);
+			});
+
+			test('node to copy is disabled in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToCopy);
+
+				const mocks = [
+					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
+					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
+				];
+				setup(
+					<div onClick={resetToDefault}>
+						<CopyNodesModalContent folderId={currentFolder.id} nodesToCopy={[nodeToCopy]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(nodeToCopy.name);
+				const nodeItem = screen.getByText(nodeToCopy.name);
+				expect(nodeItem).toHaveAttribute('disabled', '');
+			});
+		}
+	);
 
 	test('roots are navigable, only local root is selectable', async () => {
 		const nodesToCopy = populateNodes(2);
@@ -277,9 +296,7 @@ describe('Copy Nodes Modal', () => {
 		);
 		const filesHome = await screen.findByText('Home');
 		await user.click(filesHome);
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-			'disabled'
-		);
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 		// navigate inside local root
 		await user.dblClick(filesHome);
 		await screen.findByText((localRoot.children.nodes[0] as Node).name);
@@ -290,9 +307,7 @@ describe('Copy Nodes Modal', () => {
 		expect(breadcrumb).toBeVisible();
 		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
 		expect(screen.getByText((localRoot.children.nodes[1] as Node).name)).toBeVisible();
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-			'disabled'
-		);
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 
 		// go back to roots list
 		await user.click(screen.getByText('Files'));
@@ -301,7 +316,7 @@ describe('Copy Nodes Modal', () => {
 		breadcrumb = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
 		expect(breadcrumb).toBeVisible();
 		await user.click(sharedWithMeItem);
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toHaveAttribute('disabled');
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
 
 		// navigate inside shared with me filter
 		await user.dblClick(sharedWithMeItem);
@@ -312,18 +327,16 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getByText(sharedWithMeFilter[2].name)).toBeVisible();
 		breadcrumb = await findByTextWithMarkup(buildBreadCrumbRegExp('Files', 'Shared with me'));
 		expect(breadcrumb).toBeVisible();
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toHaveAttribute('disabled');
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
 		// select destination folder from filter
 		await user.click(screen.getByText(sharedWithMeFilter[0].name));
 		await waitFor(() =>
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-				'disabled'
-			)
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled()
 		);
 		// reset active node by clicking on modal title
 		await user.click(screen.getByText('Copy items'));
 		await waitFor(() =>
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toHaveAttribute('disabled')
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled()
 		);
 
 		// navigate inside folder of shared with me filter
@@ -341,9 +354,7 @@ describe('Copy Nodes Modal', () => {
 			buildBreadCrumbRegExp('Files', sharedWithMeFilter[0].name)
 		);
 		expect(breadcrumb).toBeVisible();
-		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-			'disabled'
-		);
+		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 	});
 
 	test('node actions are not shown', async () => {
@@ -370,16 +381,12 @@ describe('Copy Nodes Modal', () => {
 		const folderItem = await screen.findByText(folder.name);
 		// context menu
 		fireEvent.contextMenu(folderItem);
-		// wait a tick to be sure eventual context menu has time to open
-		await waitFor(
-			() =>
-				new Promise((resolve) => {
-					setTimeout(resolve, 0);
-				})
-		);
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		expect(screen.queryByText(ACTION_REGEXP.flag)).not.toBeInTheDocument();
 		// hover bar
-		expect(screen.queryByTestId('icon: FlagOutline')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 		// selection mode
 		await selectNodes([folder.id], user);
 		// wait a tick to be sure eventual selection icon is shown
@@ -439,7 +446,7 @@ describe('Copy Nodes Modal', () => {
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);
@@ -506,13 +513,13 @@ describe('Copy Nodes Modal', () => {
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name));
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(folderItem);
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.dblClick(folderItem);
 		await screen.findByText(/It looks like there's nothing here./i);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name, folder.name));
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);
@@ -579,7 +586,7 @@ describe('Copy Nodes Modal', () => {
 		const folderItem = await screen.findByText(folder.name);
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
 		await user.click(folderItem);
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);
@@ -666,7 +673,7 @@ describe('Copy Nodes Modal', () => {
 		const confirmButtonLabel = within(confirmButton).getByText(ACTION_REGEXP.copy);
 		expect(screen.getByText('Home')).toBeVisible();
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
-		expect(confirmButton).toHaveAttribute('disabled');
+		expect(confirmButton).toBeDisabled();
 		// register tooltip listener
 		jest.advanceTimersToNextTimer();
 		await user.hover(confirmButtonLabel);
@@ -679,7 +686,7 @@ describe('Copy Nodes Modal', () => {
 		await user.unhover(confirmButtonLabel);
 		expect(tooltip).not.toBeInTheDocument();
 		await user.click(screen.getByText('Home'));
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.hover(confirmButtonLabel);
 		// run timers of tooltip
 		jest.advanceTimersToNextTimer();
@@ -743,9 +750,9 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getByText('Home')).toBeVisible();
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.copy });
-		expect(confirmButton).toHaveAttribute('disabled');
+		expect(confirmButton).toBeDisabled();
 		await user.click(screen.getByText('Home'));
-		expect(confirmButton).not.toHaveAttribute('disabled');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);
@@ -840,21 +847,23 @@ describe('Copy Nodes Modal', () => {
 		);
 
 		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		const modalListHeader = screen.getByTestId('modal-listHeader');
+		const modalListHeader = screen.getByTestId(SELECTORS.modalListHeader);
 		await waitFor(() =>
 			expect(
 				within(modalListHeader).queryByTestId(ICON_REGEXP.queryLoading)
 			).not.toBeInTheDocument()
 		);
 		await findByTextWithMarkup(buildBreadCrumbRegExp('Files', currentFolder.name));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(NODES_LOAD_LIMIT);
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+			NODES_LOAD_LIMIT
+		);
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeInTheDocument();
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 		await triggerLoadMore();
 		await screen.findByText(
 			(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as File | Folder).name
 		);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();

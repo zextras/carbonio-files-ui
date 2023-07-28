@@ -18,7 +18,7 @@ import { NodesSelectionModalContent } from './NodesSelectionModalContent';
 import { HoverContainer } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import { ICON_REGEXP, COLORS, SELECTORS } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -159,7 +159,7 @@ describe('Nodes Selection Modal Content', () => {
 		// confirm button is disabled
 		const confirmButton = screen.getByRole('button', { name: /select/i });
 		expect(confirmButton).toBeVisible();
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
 		const breadcrumbItem = await findByTextWithMarkup(
@@ -169,7 +169,7 @@ describe('Nodes Selection Modal Content', () => {
 		expect(screen.getByText(folder.name)).toBeVisible();
 		expect(screen.getByText(file.name)).toBeVisible();
 		// confirm button becomes enabled because opened folder is valid both by param and by validity check
-		await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(confirmButton).toBeEnabled());
 		expect(isValidSelection).toHaveBeenCalled();
 		expect(isValidSelection).toHaveBeenCalledWith(expect.objectContaining({ id: localRoot.id }));
 		await user.click(confirmButton);
@@ -229,7 +229,7 @@ describe('Nodes Selection Modal Content', () => {
 		// confirm button is disabled
 		const confirmButton = screen.getByRole('button', { name: /select/i });
 		expect(confirmButton).toBeVisible();
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
 		const breadcrumbItem = await findByTextWithMarkup(
@@ -239,7 +239,7 @@ describe('Nodes Selection Modal Content', () => {
 		expect(screen.getByText(folder.name)).toBeVisible();
 		expect(screen.getByText(file.name)).toBeVisible();
 		// confirm button remains disabled because opened folder is not valid by validity check
-		await waitFor(() => expect(confirmButton).toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(confirmButton).toBeDisabled());
 		expect(isValidSelection).toHaveBeenCalled();
 		expect(isValidSelection).toHaveBeenCalledWith(expect.objectContaining({ id: localRoot.id }));
 		await user.click(confirmButton);
@@ -296,7 +296,7 @@ describe('Nodes Selection Modal Content', () => {
 		// confirm button is disabled
 		const confirmButton = screen.getByRole('button', { name: /select/i });
 		expect(confirmButton).toBeVisible();
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		// reset number of calls
 		isValidSelection.mockReset();
 		await user.dblClick(screen.getByText(/home/i));
@@ -315,7 +315,7 @@ describe('Nodes Selection Modal Content', () => {
 				})
 		);
 		// confirm button remains disabled because opened folder is not valid by validity check
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		expect(isValidSelection).not.toHaveBeenCalledWith(
 			expect.objectContaining({ id: localRoot.id })
 		);
@@ -360,20 +360,21 @@ describe('Nodes Selection Modal Content', () => {
 		);
 		expect(screen.getByText(/home/i)).toBeVisible();
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
-		const nodeAvatarIcons = screen.getAllByTestId('file-icon-preview');
+		const nodeAvatarIcons = screen.getAllByTestId(SELECTORS.nodeAvatar);
 		expect(nodeAvatarIcons).toHaveLength(2);
 		expect(nodeAvatarIcons[0]).not.toHaveAttribute('disabled', '');
 		expect(nodeAvatarIcons[1]).not.toHaveAttribute('disabled', '');
 		await user.hover(nodeAvatarIcons[0]);
-		await screen.findByText('Node is not selectable');
-		expect(screen.getByText('Node is not selectable')).toBeVisible();
+		const tooltipMsg = 'Node is not selectable';
+		await screen.findByText(tooltipMsg);
+		expect(screen.getByText(tooltipMsg)).toBeVisible();
 		await user.unhover(nodeAvatarIcons[0]);
-		expect(screen.queryByText('Node is not selectable')).not.toBeInTheDocument();
+		expect(screen.queryByText(tooltipMsg)).not.toBeInTheDocument();
 		await user.hover(nodeAvatarIcons[1]);
-		await screen.findByText('Node is not selectable');
-		expect(screen.getByText('Node is not selectable')).toBeVisible();
+		await screen.findByText(tooltipMsg);
+		expect(screen.getByText(tooltipMsg)).toBeVisible();
 		await user.unhover(nodeAvatarIcons[1]);
-		expect(screen.queryByText('Node is not selectable')).not.toBeInTheDocument();
+		expect(screen.queryByText(tooltipMsg)).not.toBeInTheDocument();
 	});
 
 	describe('Single selection', () => {
@@ -411,9 +412,9 @@ describe('Nodes Selection Modal Content', () => {
 				).not.toBeNull()
 			);
 			const confirmButton = screen.getByRole('button', { name: /confirm/i });
-			expect(confirmButton).toHaveAttribute('disabled', '');
+			expect(confirmButton).toBeDisabled();
 			await user.click(screen.getByText(/home/i));
-			await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(confirmButton).toBeEnabled());
 			expect(screen.queryByText(/element selected/i)).not.toBeInTheDocument();
 		});
 
@@ -453,7 +454,7 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.queryByText('Trash')).not.toBeInTheDocument();
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled');
+				expect(confirmButton).toBeDisabled();
 				await user.click(confirmButton);
 				expect(confirmAction).not.toHaveBeenCalled();
 			});
@@ -508,7 +509,7 @@ describe('Nodes Selection Modal Content', () => {
 				// click on a folder enable confirm button
 				await user.click(screen.getByText(folder.name));
 				// confirm button is active
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				// click on confirm button
 				await user.click(confirmButton);
 				await waitFor(() => expect(confirmAction).toHaveBeenCalled());
@@ -572,7 +573,7 @@ describe('Nodes Selection Modal Content', () => {
 				// click on a file
 				await user.click(screen.getByText(file.name));
 				// confirm button becomes active
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				// click on confirm button
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
@@ -631,7 +632,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				let confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				const breadcrumbItem = await findByTextWithMarkup(
@@ -641,20 +642,26 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// all nodes are enabled
-				expect(screen.getByTestId(`node-item-${file.id}`)).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
 				// confirm button is enabled because navigation set opened folder as selected node
 				confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenCalledWith(
 					expect.arrayContaining([expect.objectContaining({ id: localRoot.id })])
 				);
 				// confirm leave selection as it is and button remains enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 			});
 
 			test('confirm button is disabled when navigating inside a folder if opened folder is not selectable by param', async () => {
@@ -702,7 +709,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				let confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				const breadcrumbItem = await findByTextWithMarkup(
@@ -712,17 +719,23 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// all nodes are enabled
-				expect(screen.getByTestId(`node-item-${file.id}`)).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
 				// confirm button is enabled because navigation set opened folder as selected node
 				confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(confirmButton);
 				expect(confirmAction).not.toHaveBeenCalled();
 				// confirm leave selection as it is and button remains disabled
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 			});
 
 			test('local root item is valid, other roots are not valid', async () => {
@@ -764,18 +777,18 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				// click on other root
 				await user.click(screen.getByText(/shared with me/i));
 				// item is not a valid selection
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(screen.getByText(/home/i));
 				// confirm button becomes enabled because local root is a valid selection
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				// ugly but it's the only way to check the item is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledWith(
 					expect.arrayContaining([expect.objectContaining({ id: localRoot.id })])
@@ -831,8 +844,8 @@ describe('Nodes Selection Modal Content', () => {
 				// ugly but it's the only way to check the item is visibly active
 				await waitFor(() =>
 					expect(
-						findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
-					).toHaveStyle('background-color: #d5e3f6')
+						findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+					).toHaveStyle({ 'background-color': COLORS.highlight.regular })
 				);
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
@@ -845,7 +858,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is enabled because of navigation
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				// navigate back to the roots list through breadcrumb
 				await user.click(screen.getByText('Files'));
 				// wait roots list to be rendered
@@ -854,11 +867,11 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(/home/i)).toBeVisible();
 				expect(screen.getByText(/shared with me/i)).toBeVisible();
 				// confirm button is disabled because is now referring the entry point, which is not valid
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				// local root item is not visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				await user.click(confirmButton);
 				expect(confirmAction).not.toHaveBeenCalled();
 				// navigate again inside local root
@@ -872,7 +885,7 @@ describe('Nodes Selection Modal Content', () => {
 				expect(breadcrumbItem).toBeVisible();
 				// confirm button is disabled
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenCalledWith(
@@ -886,7 +899,7 @@ describe('Nodes Selection Modal Content', () => {
 				// select a valid node
 				await user.click(screen.getByText(folder.name));
 				// confirm button is active because folder is a valid selection
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenCalledWith(
@@ -951,8 +964,8 @@ describe('Nodes Selection Modal Content', () => {
 				// ugly but it's the only way to check the item is visibly active
 				await waitFor(() =>
 					expect(
-						findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
-					).toHaveStyle('background-color: #d5e3f6')
+						findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+					).toHaveStyle({ 'background-color': COLORS.highlight.regular })
 				);
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
@@ -963,7 +976,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled because of navigation
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				// navigate inside a sub-folder
 				await user.dblClick(screen.getByText(folder.name));
 				await screen.findByText(/nothing here/i);
@@ -975,13 +988,13 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.queryByText(/nothing here/i)).not.toBeInTheDocument();
 				expect(screen.getByText(folder.name)).toBeVisible();
 				// confirm button is disabled because opened folder is not selectable by param
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(confirmButton);
 				expect(confirmAction).not.toHaveBeenCalled();
 				// select a valid node
 				await user.click(screen.getByText(folder.name));
 				// confirm button is active because folder is a valid selection
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenCalledWith(
@@ -1042,10 +1055,10 @@ describe('Nodes Selection Modal Content', () => {
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
 				// confirm button is disabled because entry point is not a valid selection
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(screen.getByText(/shared with me/i));
 				// shared with me item is not a valid selection
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(confirmButton);
 				expect(confirmAction).not.toHaveBeenCalled();
 				expect(screen.queryByText(/trash/i)).not.toBeInTheDocument();
@@ -1054,7 +1067,7 @@ describe('Nodes Selection Modal Content', () => {
 				await screen.findByText(sharedWithMeFilter[0].name);
 				expect(screen.getByText(sharedWithMeFilter[0].name)).toBeVisible();
 				expect(getByTextWithMarkup(buildBreadCrumbRegExp('Files', 'Shared with me'))).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(confirmButton);
 				expect(confirmAction).not.toHaveBeenCalled();
 			});
@@ -1109,9 +1122,9 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(filter[0].name)).toBeVisible();
 				expect(screen.getByText(folder.name)).toBeVisible();
 				const confirmButton = screen.getByRole('button', { name: /select/i });
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(screen.getByText(folder.name));
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenLastCalledWith(
@@ -1174,9 +1187,12 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// folder is not disabled
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
 				// file is not disabled
-				expect(screen.getByTestId(`node-item-${file.id}`)).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is disabled because local root is not a file
 				expect(confirmButton).toBeDisabled();
@@ -1187,7 +1203,7 @@ describe('Nodes Selection Modal Content', () => {
 				// click on file
 				await user.click(screen.getByText(file.name));
 				// confirm button becomes enabled
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenCalledWith([
@@ -1250,27 +1266,27 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// folder is not disabled
-				// expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute('disabled', '');
 				// file is disabled
-				// expect(screen.getByTestId(`node-item-${file.id}`)).toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).toHaveAttribute('disabled', '');
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is disabled because local root is not selectable by param
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				// reset calls
 				resetToDefault.mockClear();
 				// click on folder
 				await user.click(screen.getByText(folder.name));
 				// confirm button becomes enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				// click on file
 				await user.click(screen.getByText(file.name));
 				expect(resetToDefault).toHaveBeenCalledTimes(1);
 				// confirm button becomes disabled
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				// click again on folder
 				await user.click(screen.getByText(folder.name));
 				// confirm button becomes enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenCalledWith([
@@ -1340,26 +1356,26 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(validFile.name)).toBeVisible();
 				expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
 				// valid folder is not disabled
-				expect(screen.getByTestId(`node-item-${validFolder.id}`)).not.toHaveAttribute(
+				expect(screen.getByTestId(SELECTORS.nodeItem(validFolder.id))).not.toHaveAttribute(
 					'disabled',
 					''
 				);
 				// valid file is not disabled
-				// expect(screen.getByTestId(`node-item-${validFile.id}`)).not.toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(validFile.id))).not.toHaveAttribute('disabled', '');
 				// invalid file is disabled
-				// expect(screen.getByTestId(`node-item-${invalidFile.id}`)).toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id))).toHaveAttribute('disabled', '');
 				// invalid folder is not disabled because is navigable
-				expect(screen.getByTestId(`node-item-${invalidFolder.id}`)).not.toHaveAttribute(
+				expect(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id))).not.toHaveAttribute(
 					'disabled',
 					''
 				);
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is disabled because local root is not selectable by param
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				// click on valid folder
 				await user.click(screen.getByText(validFolder.name));
 				// confirm button becomes enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledTimes(1);
 				expect(confirmAction).toHaveBeenCalledWith([
@@ -1368,13 +1384,13 @@ describe('Nodes Selection Modal Content', () => {
 				// click on invalid folder
 				await user.click(screen.getByText(invalidFolder.name));
 				// confirm button becomes disabled
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledTimes(1);
 				// click on valid file
 				await user.click(screen.getByText(validFile.name));
 				// confirm button becomes enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledTimes(2);
 				expect(confirmAction).toHaveBeenLastCalledWith([
@@ -1383,7 +1399,7 @@ describe('Nodes Selection Modal Content', () => {
 				// click on invalid file
 				await user.click(screen.getByText(invalidFile.name));
 				// confirm button remains disabled
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledTimes(2);
 				// navigation inside invalid folder is enabled
@@ -1395,7 +1411,7 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.queryByText(validFolder.name)).not.toBeInTheDocument();
 				expect(screen.queryByText(validFile.name)).not.toBeInTheDocument();
 				expect(screen.queryByText(invalidFile.name)).not.toBeInTheDocument();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 			});
 		});
 	});
@@ -1451,19 +1467,19 @@ describe('Nodes Selection Modal Content', () => {
 			expect(screen.getByText(folder.name)).toBeVisible();
 			expect(screen.getByText(file.name)).toBeVisible();
 			const confirmButton = screen.getByRole('button', { name: /select/i });
-			expect(confirmButton).toHaveAttribute('disabled', '');
+			expect(confirmButton).toBeDisabled();
 			// number of selected items is hidden
 			expect(screen.queryByText(/elements? selected/i)).not.toBeInTheDocument();
 			// select a node
 			await user.click(screen.getByText(folder.name));
 			// confirm button becomes enabled
-			await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(confirmButton).toBeEnabled());
 			// number of selected items becomes visible
 			expect(screen.getByText(/1 element selected/i)).toBeVisible();
 			// select a second node
 			await user.click(screen.getByText(file.name));
 			// confirm button is still enabled
-			expect(confirmButton).not.toHaveAttribute('disabled', '');
+			expect(confirmButton).toBeEnabled();
 			// number of selected items is updated
 			expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 		});
@@ -1517,13 +1533,13 @@ describe('Nodes Selection Modal Content', () => {
 			await findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
 			expect(screen.getByText(nodes[0].name)).toBeVisible();
 			const confirmButton = screen.getByRole('button', { name: /select/i });
-			expect(confirmButton).toHaveAttribute('disabled', '');
+			expect(confirmButton).toBeDisabled();
 			// number of selected items is hidden
 			expect(screen.queryByText(/elements? selected/i)).not.toBeInTheDocument();
 			// select a node
 			await user.click(screen.getByText(nodes[0].name));
 			// confirm button becomes enabled
-			await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(confirmButton).toBeEnabled());
 			// number of selected items becomes visible
 			expect(screen.getByText(/1 element selected/i)).toBeVisible();
 			// select a second node
@@ -1531,7 +1547,7 @@ describe('Nodes Selection Modal Content', () => {
 			// select a third node
 			await user.click(screen.getByText(nodes[2].name));
 			// confirm button is still enabled
-			expect(confirmButton).not.toHaveAttribute('disabled', '');
+			expect(confirmButton).toBeEnabled();
 			// number of selected items is updated
 			expect(screen.getByText(/3 elements selected/i)).toBeVisible();
 			// try to click a fourth node
@@ -1539,7 +1555,7 @@ describe('Nodes Selection Modal Content', () => {
 			// number of selected items is updated
 			expect(screen.getByText(/4 elements selected/i)).toBeVisible();
 			// confirm button becomes disabled
-			expect(confirmButton).toHaveAttribute('disabled', '');
+			expect(confirmButton).toBeDisabled();
 		});
 
 		describe('without criteria to select nodes', () => {
@@ -1588,7 +1604,7 @@ describe('Nodes Selection Modal Content', () => {
 				// click on a folder enable confirm button
 				await user.click(screen.getByText(folder.name));
 				// confirm button is active
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				// click on confirm button
 				await user.click(confirmButton);
 				await waitFor(() => expect(confirmAction).toHaveBeenCalled());
@@ -1652,7 +1668,7 @@ describe('Nodes Selection Modal Content', () => {
 				// click on a file
 				await user.click(screen.getByText(file.name));
 				// confirm button becomes active
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				// click on confirm button
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
@@ -1713,7 +1729,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				let confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				const breadcrumbItem = await findByTextWithMarkup(
@@ -1723,13 +1739,19 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// all nodes are enabled
-				expect(screen.getByTestId(`node-item-${file.id}`)).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
 				// confirm button is enabled because navigation set opened folder as selected node
 				confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				// number of element selected is visible
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				await user.click(confirmButton);
@@ -1786,7 +1808,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				let confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				const breadcrumbItem = await findByTextWithMarkup(
@@ -1796,18 +1818,24 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// all nodes are enabled
-				expect(screen.getByTestId(`node-item-${file.id}`)).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
 				// confirm button is enabled because navigation set opened folder as selected node
 				confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				expect(screen.queryByText(/elements? selected/i)).not.toBeInTheDocument();
 				await user.click(confirmButton);
 				expect(confirmAction).not.toHaveBeenCalled();
 				// confirm leave selection as it is and button remains disabled
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 			});
 
 			test('Single click on a valid unselected node set the node as selected', async () => {
@@ -1857,7 +1885,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				const breadcrumbItem = await findByTextWithMarkup(
@@ -1868,29 +1896,31 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(file.name)).toBeVisible();
 				expect(screen.queryByText(/elements? selected/i)).not.toBeInTheDocument();
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				await user.click(screen.getByText(folder.name));
 				// ugly but it's the only way to check the item is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledWith([expect.objectContaining({ id: folder.id })]);
 				// ugly but it's the only way to check the item is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${file.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 
 				await user.click(screen.getByText(file.name));
 				// both nodes are visibly active
-				expect(findStyled(screen.getByTestId(`node-item-${file.id}`), HoverContainer)).toHaveStyle(
-					'background-color: #d5e3f6'
-				);
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+				).toHaveStyle({
+					'background-color': COLORS.highlight.regular
+				});
+				expect(
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledWith([
@@ -1946,7 +1976,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				const breadcrumbItem = await findByTextWithMarkup(
@@ -1957,30 +1987,34 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(file.name)).toBeVisible();
 				expect(screen.queryByText(/elements? selected/i)).not.toBeInTheDocument();
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 
 				await user.click(screen.getByText(folder.name));
 
 				await user.click(screen.getByText(file.name));
 				// both nodes are visibly active
-				expect(findStyled(screen.getByTestId(`node-item-${file.id}`), HoverContainer)).toHaveStyle(
-					'background-color: #d5e3f6'
-				);
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+				).toHaveStyle({
+					'background-color': COLORS.highlight.regular
+				});
+				expect(
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 				// click again on folder item to deselect it
 
 				await user.click(screen.getByText(folder.name));
 				// file remains visibly active, folder returns normal
-				expect(findStyled(screen.getByTestId(`node-item-${file.id}`), HoverContainer)).toHaveStyle(
-					'background-color: #d5e3f6'
-				);
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+				).toHaveStyle({
+					'background-color': COLORS.highlight.regular
+				});
+				expect(
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledWith([expect.objectContaining({ id: file.id })]);
 			});
@@ -2032,7 +2066,7 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				const breadcrumbItem = await findByTextWithMarkup(
@@ -2043,23 +2077,23 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(file.name)).toBeVisible();
 				expect(screen.queryByText(/elements? selected/i)).not.toBeInTheDocument();
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 
 				await user.click(screen.getByText(folder.name));
 				// ugly but it's the only way to check the item is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// click again on folder item to deselect it
 
 				await user.click(screen.getByText(folder.name));
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// confirm button becomes disabled since opened folder is not valid
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				expect(screen.queryByText(/elements? selected/i)).not.toBeInTheDocument();
 
 				await user.click(confirmButton);
@@ -2113,33 +2147,33 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled
 				const confirmButton = screen.getByRole('button', { name: /select/i });
 				expect(confirmButton).toBeVisible();
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				await findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
 				// confirm button is enabled because opened folder is a valid selection
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				expect(screen.getByText(folder.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 
 				await user.click(screen.getByText(folder.name));
 				// ugly but it's the only way to check the item is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// click again on folder item to deselect it
 
 				await user.click(screen.getByText(folder.name));
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// confirm button remains enabled since opened folder is valid
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				await user.click(confirmButton);
 				// confirm action is called with local root node
@@ -2200,51 +2234,57 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(file1.name)).toBeVisible();
 				expect(screen.getByText(file2.name)).toBeVisible();
 				// folder is not disabled
-				expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
 				// file is not disabled
-				expect(screen.getByTestId(`node-item-${file1.id}`)).not.toHaveAttribute('disabled', '');
+				expect(screen.getByTestId(SELECTORS.nodeItem(file1.id))).not.toHaveAttribute(
+					'disabled',
+					''
+				);
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is disabled because local root is not a file
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				// click on file
 				await user.click(screen.getByText(file1.name));
 				// confirm button becomes enabled
-				await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+				await waitFor(() => expect(confirmButton).toBeEnabled());
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// ugly but it's the only way to check the item is visibly active
-				expect(findStyled(screen.getByTestId(`node-item-${file1.id}`), HoverContainer)).toHaveStyle(
-					'background-color: #d5e3f6'
-				);
+				expect(
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file1.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// click on folder
 				await user.click(screen.getByText(folder.name));
 				// confirm button remains enabled but selection is not changed
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				// file 1 is still active
-				expect(findStyled(screen.getByTestId(`node-item-${file1.id}`), HoverContainer)).toHaveStyle(
-					'background-color: #d5e3f6'
-				);
+				expect(
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file1.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// folder is not visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// number of selected node is not changed
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// click on other file
 				await user.click(screen.getByText(file2.name));
 				// confirm button remains enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				// file 1 is still active
-				expect(findStyled(screen.getByTestId(`node-item-${file1.id}`), HoverContainer)).toHaveStyle(
-					'background-color: #d5e3f6'
-				);
+				expect(
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file1.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// folder is not visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// file 2 is now also active
-				expect(findStyled(screen.getByTestId(`node-item-${file2.id}`), HoverContainer)).toHaveStyle(
-					'background-color: #d5e3f6'
-				);
+				expect(
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file2.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenCalledWith([
@@ -2311,38 +2351,38 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(folder2.name)).toBeVisible();
 				expect(screen.getByText(file.name)).toBeVisible();
 				// folder is not disabled
-				// expect(screen.getByTestId(`node-item-${folder1.id}`)).not.toHaveAttribute('disabled', '');
-				// expect(screen.getByTestId(`node-item-${folder2.id}`)).not.toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(folder1.id))).not.toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(folder2.id))).not.toHaveAttribute('disabled', '');
 				// file is disabled
-				// expect(screen.getByTestId(`node-item-${file.id}`)).toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).toHaveAttribute('disabled', '');
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is enabled because local root is a valid node
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// click on folder
 
 				await user.click(screen.getByText(folder1.name));
 				// confirm button is still enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				// folder 1 is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder1.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder1.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// number of selected element is not changed because folder item from list has replaced opened folder in selection
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// click on file
 
 				await user.click(screen.getByText(file.name));
 				// confirm button remains enable but selection is not changed
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				// folder 1 is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder1.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder1.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// file is not visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${file.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// number of selected element is not changed because folder item from list has replaced opened folder in selection
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// click on other folder
@@ -2350,20 +2390,20 @@ describe('Nodes Selection Modal Content', () => {
 				await user.click(screen.getByText(folder2.name));
 				// folder 2 is now also active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder2.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder2.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// folder 1 is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${folder1.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder1.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// file is not visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${file.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// number of selected element is changed
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 				// confirm button is enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalled();
 				expect(confirmAction).toHaveBeenCalledWith([
@@ -2434,74 +2474,74 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.getByText(validFile.name)).toBeVisible();
 				expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
 				// valid folder is not disabled
-				expect(screen.getByTestId(`node-item-${validFolder.id}`)).not.toHaveAttribute(
+				expect(screen.getByTestId(SELECTORS.nodeItem(validFolder.id))).not.toHaveAttribute(
 					'disabled',
 					''
 				);
 				// valid file is not disabled
-				// expect(screen.getByTestId(`node-item-${validFile.id}`)).not.toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(validFile.id))).not.toHaveAttribute('disabled', '');
 				// invalid file is disabled
-				// expect(screen.getByTestId(`node-item-${invalidFile.id}`)).toHaveAttribute('disabled', '');
+				// expect(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id))).toHaveAttribute('disabled', '');
 				// invalid folder is not disabled because is navigable
-				// expect(screen.getByTestId(`node-item-${invalidFolder.id}`)).not.toHaveAttribute(
+				// expect(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id))).not.toHaveAttribute(
 				//	'disabled',
 				//	''
 				// );
 				const confirmButton = screen.getByRole('button', { name: /confirm/i });
 				// confirm button is disabled because local root is not selectable by param
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				// click on valid folder
 
 				await user.click(screen.getByText(validFolder.name));
 				// confirm button becomes enabled
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				// valid folder is visibly active
 				expect(
-					findStyled(screen.getByTestId(`node-item-${validFolder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFolder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// click on invalid folder does not change selection
 
 				await user.click(screen.getByText(invalidFolder.name));
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				expect(
-					findStyled(screen.getByTestId(`node-item-${validFolder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFolder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(`node-item-${invalidFolder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// click on valid file change selection
 
 				await user.click(screen.getByText(validFile.name));
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 				expect(
-					findStyled(screen.getByTestId(`node-item-${validFolder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFolder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(`node-item-${invalidFolder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(`node-item-${validFile.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFile.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// click on invalid file does not change selection
 
 				await user.click(screen.getByText(invalidFile.name));
-				expect(confirmButton).not.toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeEnabled();
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 				expect(
-					findStyled(screen.getByTestId(`node-item-${validFolder.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFolder.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(`node-item-${invalidFolder.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(`node-item-${validFile.id}`), HoverContainer)
-				).toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFile.id)), HoverContainer)
+				).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(`node-item-${invalidFile.id}`), HoverContainer)
-				).not.toHaveStyle('background-color: #d5e3f6');
+					findStyled(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id)), HoverContainer)
+				).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 				// call confirm action
 
 				await user.click(confirmButton);
@@ -2522,7 +2562,7 @@ describe('Nodes Selection Modal Content', () => {
 				expect(screen.queryByText(invalidFile.name)).not.toBeInTheDocument();
 				// confirm button is disabled because navigation has reset selection and opened
 				// folder is not a valid selection by param (and also by validity check)
-				expect(confirmButton).toHaveAttribute('disabled', '');
+				expect(confirmButton).toBeDisabled();
 				expect(screen.queryByText(/elements? selected/i)).not.toBeInTheDocument();
 				// reset calls
 				confirmAction.mockReset();
@@ -2780,7 +2820,7 @@ describe('Nodes Selection Modal Content', () => {
 			const createFolderButton = screen.getByRole('button', { name: /new folder/i });
 			const createFolderButtonLabel = within(createFolderButton).getByText(/new folder/i);
 			expect(createFolderButton).toBeVisible();
-			expect(createFolderButton).toHaveAttribute('disabled', '');
+			expect(createFolderButton).toBeDisabled();
 			await user.hover(createFolderButtonLabel);
 			const tooltip = await screen.findByText(/you don't have the correct permissions/i);
 			expect(tooltip).toBeVisible();
@@ -2849,14 +2889,14 @@ describe('Nodes Selection Modal Content', () => {
 			// new folder button is visible inside a folder
 			let newFolderButton = screen.getByRole('button', { name: /new folder/i });
 			expect(newFolderButton).toBeVisible();
-			expect(newFolderButton).not.toHaveAttribute('disabled', '');
+			expect(newFolderButton).toBeEnabled();
 
 			await user.click(newFolderButton);
 			let inputElement = await screen.findByRole('textbox', { name: /new folder's name/i });
 			let createActionButton = await screen.findByRole('button', { name: /create/i });
-			expect(createActionButton).toHaveAttribute('disabled', '');
+			expect(createActionButton).toBeDisabled();
 			await user.type(inputElement, newFolderName);
-			await waitFor(() => expect(createActionButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(createActionButton).toBeEnabled());
 			expect(inputElement).toHaveValue(newFolderName);
 			await user.dblClick(screen.getByText(folder.name));
 			await findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name, folder.name));
@@ -2865,12 +2905,12 @@ describe('Nodes Selection Modal Content', () => {
 			expect(newFolderButton).toBeVisible();
 			expect(inputElement).not.toBeInTheDocument();
 			expect(createActionButton).not.toBeInTheDocument();
-			expect(newFolderButton).not.toHaveAttribute('disabled', '');
+			expect(newFolderButton).toBeEnabled();
 
 			await user.click(newFolderButton);
 			inputElement = await screen.findByRole('textbox', { name: /new folder's name/i });
 			createActionButton = await screen.findByRole('button', { name: /create/i });
-			expect(createActionButton).toHaveAttribute('disabled', '');
+			expect(createActionButton).toBeDisabled();
 			expect(inputElement).not.toHaveValue(newFolderName);
 			expect(inputElement).toHaveValue('');
 		});
@@ -2930,29 +2970,27 @@ describe('Nodes Selection Modal Content', () => {
 			// new folder button is visible inside a folder
 			let newFolderButton = screen.getByRole('button', { name: /new folder/i });
 			expect(newFolderButton).toBeVisible();
-			expect(newFolderButton).not.toHaveAttribute('disabled', '');
+			expect(newFolderButton).toBeEnabled();
 
 			await user.click(newFolderButton);
 			let inputElement = await screen.findByRole('textbox', { name: /new folder's name/i });
 			let createActionButton = await screen.findByRole('button', { name: /create/i });
-			expect(createActionButton).toHaveAttribute('disabled', '');
+			expect(createActionButton).toBeDisabled();
 			await user.type(inputElement, newFolderName);
-			await waitFor(() => expect(createActionButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(createActionButton).toBeEnabled());
 			expect(inputElement).toHaveValue(newFolderName);
 			await user.click(screen.getByText(folder.name));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /select/i })).not.toHaveAttribute('disabled', '')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /select/i })).toBeEnabled());
 			newFolderButton = await screen.findByRole('button', { name: /new folder/i });
 			expect(newFolderButton).toBeVisible();
 			expect(inputElement).not.toBeInTheDocument();
 			expect(createActionButton).not.toBeInTheDocument();
-			expect(newFolderButton).not.toHaveAttribute('disabled', '');
+			expect(newFolderButton).toBeEnabled();
 
 			await user.click(newFolderButton);
 			inputElement = await screen.findByRole('textbox', { name: /new folder's name/i });
 			createActionButton = await screen.findByRole('button', { name: /create/i });
-			expect(createActionButton).toHaveAttribute('disabled', '');
+			expect(createActionButton).toBeDisabled();
 			expect(inputElement).not.toHaveValue(newFolderName);
 			expect(inputElement).toHaveValue('');
 		});
@@ -3012,21 +3050,21 @@ describe('Nodes Selection Modal Content', () => {
 			await findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
 			const newFolderButton = screen.getByRole('button', { name: /new folder/i });
 			expect(newFolderButton).toBeVisible();
-			expect(newFolderButton).not.toHaveAttribute('disabled', '');
+			expect(newFolderButton).toBeEnabled();
 
 			await user.click(newFolderButton);
 			const inputElement = await screen.findByRole('textbox', { name: /new folder's name/i });
 			const createActionButton = await screen.findByRole('button', { name: /create/i });
-			expect(createActionButton).toHaveAttribute('disabled', '');
+			expect(createActionButton).toBeDisabled();
 			await user.type(inputElement, newFolder.name);
-			await waitFor(() => expect(createActionButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(createActionButton).toBeEnabled());
 			await user.click(createActionButton);
-			await screen.findByTestId(`node-item-${newFolder.id}`);
+			await screen.findByTestId(SELECTORS.nodeItem(newFolder.id));
 			expect(screen.queryByRole(/create/i)).not.toBeInTheDocument();
 			expect(screen.queryByRole('textbox', { name: /new folder's name/i })).not.toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /new folder/i })).toBeVisible();
 			expect(screen.getByText(newFolder.name)).toBeVisible();
-			expect(screen.getByRole('button', { name: /select/i })).not.toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /select/i })).toBeEnabled();
 
 			await user.click(screen.getByRole('button', { name: /select/i }));
 			expect(confirmAction).toHaveBeenCalled();
@@ -3099,7 +3137,7 @@ describe('Nodes Selection Modal Content', () => {
 			const inputElement = await screen.findByRole('textbox', { name: /new folder's name/i });
 			const createActionButton = await screen.findByRole('button', { name: /create/i });
 			await user.type(inputElement, newFolder.name);
-			await waitFor(() => expect(createActionButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(createActionButton).toBeEnabled());
 			await user.click(createActionButton);
 			await screen.findAllByText(/A folder with same name already exists/i);
 			expect(screen.getAllByText(/A folder with same name already exists/i)).toHaveLength(2);
@@ -3171,9 +3209,7 @@ describe('Nodes Selection Modal Content', () => {
 			// confirm button is disabled
 			expect(screen.getByRole('button', { name: /select/i })).toBeVisible();
 			await user.click(screen.getByText(/home/i));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /select/i })).not.toHaveAttribute('disabled', '')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /select/i })).toBeEnabled());
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.close));
 			expect(closeAction).toHaveBeenCalled();
@@ -3241,14 +3277,14 @@ describe('Nodes Selection Modal Content', () => {
 			// new folder button is visible inside a folder
 			let newFolderButton = screen.getByRole('button', { name: /new folder/i });
 			expect(newFolderButton).toBeVisible();
-			expect(newFolderButton).not.toHaveAttribute('disabled', '');
+			expect(newFolderButton).toBeEnabled();
 
 			await user.click(newFolderButton);
 			let inputElement = await screen.findByRole('textbox', { name: /new folder's name/i });
 			let createActionButton = await screen.findByRole('button', { name: /create/i });
-			expect(createActionButton).toHaveAttribute('disabled', '');
+			expect(createActionButton).toBeDisabled();
 			await user.type(inputElement, newFolderName);
-			await waitFor(() => expect(createActionButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(createActionButton).toBeEnabled());
 			expect(inputElement).toHaveValue(newFolderName);
 			// navigate back to local root folder
 			await user.click(screen.getByText(localRoot.name));
@@ -3259,16 +3295,16 @@ describe('Nodes Selection Modal Content', () => {
 			expect(newFolderButton).toBeVisible();
 			expect(inputElement).not.toBeInTheDocument();
 			expect(createActionButton).not.toBeInTheDocument();
-			expect(newFolderButton).not.toHaveAttribute('disabled', '');
+			expect(newFolderButton).toBeEnabled();
 			// input value is reset
 
 			await user.click(newFolderButton);
 			inputElement = await screen.findByRole('textbox', { name: /new folder's name/i });
 			createActionButton = await screen.findByRole('button', { name: /create/i });
-			expect(createActionButton).toHaveAttribute('disabled', '');
+			expect(createActionButton).toBeDisabled();
 			// write again inside the input element
 			await user.type(inputElement, newFolderName);
-			await waitFor(() => expect(createActionButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(createActionButton).toBeEnabled());
 			expect(inputElement).toHaveValue(newFolderName);
 			// navigate back to root list through breadcrumb
 			await user.click(screen.getByText(/files/i));

@@ -99,6 +99,9 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 	[DocsType.MS_SPREADSHEET]: 'xlsx',
 	[DocsType.MS_PRESENTATION]: 'pptx'
 } as const;
+// TODO: use locale aware date format (L)
+export const DATE_FORMAT = 'DD/MM/YYYY';
+export const DATE_FORMAT_SHORT = 'DD/MM/YY';
 
 // endpoint
 // keep endpoint without trailing slash

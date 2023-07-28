@@ -78,22 +78,22 @@ describe('Filter View', () => {
 				await selectNodes([file.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				await screen.findByText(ACTION_REGEXP.copy);
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 				// activate selection mode by selecting items
 				await selectNodes([file.id, folder.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(ICON_REGEXP.move)).not.toBeInTheDocument();
 				// activate selection mode by selecting items
 				await selectNodes([folder.id, node.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				expect(await screen.findByText(ACTION_REGEXP.move)).toBeInTheDocument();
 			});
 
@@ -169,8 +169,8 @@ describe('Filter View', () => {
 				await selectNodes([file.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 				await screen.findByText(ACTION_REGEXP.copy);
 
@@ -180,8 +180,8 @@ describe('Filter View', () => {
 				await selectNodes([file.id, folder.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 				await screen.findByText(ACTION_REGEXP.moveToTrash);
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
@@ -191,8 +191,8 @@ describe('Filter View', () => {
 				await selectNodes([folder.id, node.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				await screen.findByText(ACTION_REGEXP.moveToTrash);
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(ICON_REGEXP.move)).not.toBeInTheDocument();
@@ -261,13 +261,13 @@ describe('Filter View', () => {
 				await selectNodes([nodeToMove.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				const moveAction = await screen.findByText(ACTION_REGEXP.move);
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					...map(path.slice(0, path.length - 1), (node) => node.name)
@@ -276,10 +276,7 @@ describe('Filter View', () => {
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.move }));
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 				await screen.findByText(/item moved/i);
@@ -287,7 +284,7 @@ describe('Filter View', () => {
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -349,7 +346,7 @@ describe('Filter View', () => {
 
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 
-				// right click to open contextual menu on node with permission
+				// right click to open the contextual menu on node with permission
 				const nodeItem = await screen.findByText(node.name);
 				fireEvent.contextMenu(nodeItem);
 				const moveAction = await screen.findByText(ACTION_REGEXP.move);
@@ -422,7 +419,7 @@ describe('Filter View', () => {
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					...map(path.slice(0, path.length - 1), (node) => node.name)
@@ -431,10 +428,7 @@ describe('Filter View', () => {
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.move }));
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 				await screen.findByText(/item moved/i);
@@ -442,7 +436,7 @@ describe('Filter View', () => {
 				// context menu is closed
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 

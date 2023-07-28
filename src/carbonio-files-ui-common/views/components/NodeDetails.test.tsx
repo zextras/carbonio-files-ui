@@ -11,8 +11,14 @@ import { forEach, map } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeDetails } from './NodeDetails';
-import { NODES_LOAD_LIMIT, PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import {
+	DATE_FORMAT_SHORT,
+	NODES_LOAD_LIMIT,
+	PREVIEW_PATH,
+	PREVIEW_TYPE,
+	REST_ENDPOINT
+} from '../../constants';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -63,14 +69,20 @@ describe('Node Details', () => {
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		expect(
 			screen.getByText(
-				`${formatDate(node.created_at, undefined, 'UTC')} - ${formatTime(node.created_at, 'UTC')}`
+				`${formatDate(node.created_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
+					node.created_at,
+					'UTC'
+				)}`
 			)
 		).toBeVisible();
 		expect(screen.getByText(node.last_editor.full_name)).toBeVisible();
 		expect(screen.getByText(node.last_editor.email)).toBeVisible();
 		expect(
 			screen.getByText(
-				`${formatDate(node.updated_at, undefined, 'UTC')} - ${formatTime(node.updated_at, 'UTC')}`
+				`${formatDate(node.updated_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
+					node.updated_at,
+					'UTC'
+				)}`
 			)
 		).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
@@ -113,14 +125,20 @@ describe('Node Details', () => {
 		expect(screen.getAllByText(node.owner.full_name)).toHaveLength(children.length + 1);
 		expect(
 			screen.getByText(
-				`${formatDate(node.created_at, undefined, 'UTC')} - ${formatTime(node.created_at, 'UTC')}`
+				`${formatDate(node.created_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
+					node.created_at,
+					'UTC'
+				)}`
 			)
 		).toBeVisible();
 		expect(screen.getByText(node.last_editor.full_name)).toBeVisible();
 		expect(screen.getByText(node.last_editor.email)).toBeVisible();
 		expect(
 			screen.getByText(
-				`${formatDate(node.updated_at, undefined, 'UTC')} - ${formatTime(node.updated_at, 'UTC')}`
+				`${formatDate(node.updated_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
+					node.updated_at,
+					'UTC'
+				)}`
 			)
 		).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
@@ -160,7 +178,10 @@ describe('Node Details', () => {
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		expect(
 			screen.getByText(
-				`${formatDate(node.created_at, undefined, 'UTC')} - ${formatTime(node.created_at, 'UTC')}`
+				`${formatDate(node.created_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
+					node.created_at,
+					'UTC'
+				)}`
 			)
 		).toBeVisible();
 		expect(screen.queryByText('Last edit')).not.toBeInTheDocument();
@@ -515,7 +536,7 @@ describe('Node Details', () => {
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
-		expect(screen.queryAllByTestId(`details-node-item-`, { exact: false })).toHaveLength(
+		expect(screen.queryAllByTestId(SELECTORS.detailsNodeItem(), { exact: false })).toHaveLength(
 			nodes.length
 		);
 

@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -30,7 +30,7 @@ import {
 	mockGetChildren,
 	mockGetPath
 } from '../utils/mockUtils';
-import { buildBreadCrumbRegExp, selectNodes, setup } from '../utils/testUtils';
+import { buildBreadCrumbRegExp, selectNodes, setup, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -68,9 +68,9 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 
-				const copyAction = await screen.findByTestId(ICON_REGEXP.copy);
+				const copyAction = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 				expect(copyAction).toBeVisible();
-				expect(copyAction).not.toHaveAttribute('disabled', '');
+				expect(copyAction).toBeEnabled();
 			});
 
 			test('Copy open modal showing parent folder content. Confirm action close the modal and clear cached data for destination folder', async () => {
@@ -139,7 +139,7 @@ describe('Filter View', () => {
 				expect(copyAction).toBeVisible();
 				await user.click(copyAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					'Files',
@@ -149,19 +149,16 @@ describe('Filter View', () => {
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
-				expect(screen.queryByTestId('modal-list', { exact: false })).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.modalList)).not.toBeInTheDocument();
 				await screen.findByText(/item copied/i);
 
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -243,26 +240,23 @@ describe('Filter View', () => {
 				expect(copyAction).toBeVisible();
 				await user.click(copyAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(parentFolder.name);
 				const breadcrumb = await findByTextWithMarkup(breadcrumbRegexp);
 				expect(breadcrumb).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
-				expect(screen.queryByTestId('modal-list', { exact: false })).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.modalList)).not.toBeInTheDocument();
 				await screen.findByText(/item copied/i);
 
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -348,35 +342,29 @@ describe('Filter View', () => {
 				await user.click(copyAction);
 
 				// open modal with roots
-				let modalList = await screen.findByTestId('modal-list-roots');
+				let modalList = await screen.findByTestId(SELECTORS.modalList);
 				expect(within(modalList).getByText('Shared with me')).toBeInTheDocument();
 				expect(within(modalList).getByText(localRoot.name)).toBeInTheDocument();
 				expect(within(modalList).queryByText('Trash')).not.toBeInTheDocument();
 				expect(getByTextWithMarkup(buildBreadCrumbRegExp('Files'))).toBeInTheDocument();
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
 
 				await user.dblClick(within(modalList).getByText(localRoot.name));
 
-				modalList = await screen.findByTestId(`modal-list-${localRoot.id}`);
+				modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
-				expect(screen.queryByTestId('modal-list', { exact: false })).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.modalList)).not.toBeInTheDocument();
 				await screen.findByText(/item copied/i);
 
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -445,14 +433,14 @@ describe('Filter View', () => {
 				expect(destinationFolderCachedData?.getNode || null).not.toBeNull();
 				expect((destinationFolderCachedData?.getNode as Folder).id).toBe(destinationFolder.id);
 
-				// right click to open contextual menu on folder
+				// right click to open the contextual menu on folder
 				const nodeToCopyItem = await screen.findByText(nodeToCopy.name);
 				fireEvent.contextMenu(nodeToCopyItem);
 				const copyAction = await screen.findByText(ACTION_REGEXP.copy);
 				expect(copyAction).toBeVisible();
 				await user.click(copyAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					'Files',
@@ -462,19 +450,16 @@ describe('Filter View', () => {
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
-				expect(screen.queryByTestId('modal-list', { exact: false })).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.modalList)).not.toBeInTheDocument();
 				await screen.findByText(/item copied/i);
 
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 				// context menu is closed
 				expect(screen.queryByText(ACTION_REGEXP.copy)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
