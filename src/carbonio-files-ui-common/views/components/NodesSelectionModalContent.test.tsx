@@ -40,7 +40,7 @@ import {
 	mockGetNode,
 	mockGetPath,
 	mockGetRootsList
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, generateError, setup } from '../../utils/testUtils';
 import { isFile, isFolder } from '../../utils/utils';
 

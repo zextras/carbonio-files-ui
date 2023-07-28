@@ -16,7 +16,7 @@ import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { mockFindNodes, mockTrashNodes } from '../utils/mockUtils';
+import { mockFindNodes, mockTrashNodes } from '../utils/resolverMocks';
 import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({

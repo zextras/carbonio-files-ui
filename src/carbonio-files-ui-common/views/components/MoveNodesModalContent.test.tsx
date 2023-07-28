@@ -32,7 +32,7 @@ import {
 	mockGetNode,
 	mockGetPath,
 	mockMoveNodes
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
 
 const resetToDefault = jest.fn(() => {

@@ -47,7 +47,7 @@ import {
 	GetChildrenQueryVariables,
 	Maybe
 } from '../../types/graphql/types';
-import { getChildrenVariables, mockCreateFolder, mockGetNode } from '../../utils/mockUtils';
+import { getChildrenVariables, mockCreateFolder, mockGetNode } from '../../utils/resolverMocks';
 import {
 	buildBreadCrumbRegExp,
 	createMoveDataTransfer,

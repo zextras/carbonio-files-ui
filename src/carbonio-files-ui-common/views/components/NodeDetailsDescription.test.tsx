@@ -14,7 +14,7 @@ import { ICON_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
-import { mockErrorResolver } from '../../utils/mockUtils';
+import { mockErrorResolver } from '../../utils/resolverMocks';
 import { generateError, setup, screen } from '../../utils/testUtils';
 
 describe('NodeDetailsDescription component', () => {

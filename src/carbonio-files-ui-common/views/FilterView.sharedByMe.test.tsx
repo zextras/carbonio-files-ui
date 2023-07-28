@@ -31,7 +31,7 @@ import {
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import { setup } from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
 

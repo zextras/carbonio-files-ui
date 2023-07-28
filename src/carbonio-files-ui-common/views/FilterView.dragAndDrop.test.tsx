@@ -28,7 +28,7 @@ import {
 	mockFindNodes,
 	mockGetNode,
 	mockMoveNodes
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import {
 	setup,
 	selectNodes,

@@ -29,7 +29,7 @@ import {
 	Member,
 	RequestName
 } from '../../../types/network';
-import { mockGetAccountsByEmail } from '../../../utils/mockUtils';
+import { mockGetAccountsByEmail } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 

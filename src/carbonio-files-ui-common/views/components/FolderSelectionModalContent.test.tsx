@@ -28,7 +28,7 @@ import {
 } from '../../mocks/mockUtils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Node } from '../../types/graphql/types';
-import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/mockUtils';
+import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
 let confirmAction = jest.fn();

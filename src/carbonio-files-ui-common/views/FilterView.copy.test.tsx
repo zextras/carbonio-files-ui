@@ -35,7 +35,7 @@ import {
 	mockFindNodes,
 	mockGetNode,
 	mockGetPath
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, selectNodes, setup, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({

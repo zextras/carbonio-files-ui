@@ -41,7 +41,7 @@ import {
 	GetChildQuery,
 	GetChildQueryVariables
 } from '../types/graphql/types';
-import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/mockUtils';
+import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import {
 	setup,
 	selectNodes,
@@ -742,10 +742,10 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder], [currentFolder, destinationFolder]),
-				getNode: mockGetNode(currentFolder, [
-					destinationFolder,
-					{ ...destinationFolder, children: populateNodePage(nodesToDrag) }
-				])
+				getNode: mockGetNode(currentFolder, destinationFolder, {
+					...destinationFolder,
+					children: populateNodePage(nodesToDrag)
+				})
 			},
 			Mutation: {
 				moveNodes: mockMoveNodes(

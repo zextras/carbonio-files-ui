@@ -37,7 +37,7 @@ import {
 	CreateFolderMutationVariables,
 	Folder
 } from '../../types/graphql/types';
-import { mockGetNode } from '../../utils/mockUtils';
+import { mockGetNode } from '../../utils/resolverMocks';
 import {
 	createUploadDataTransfer,
 	delayUntil,

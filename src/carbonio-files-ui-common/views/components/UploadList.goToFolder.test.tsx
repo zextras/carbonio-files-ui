@@ -15,7 +15,7 @@ import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateLocalRoot, populateUploadItems } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { mockGetNode } from '../../utils/mockUtils';
+import { mockGetNode } from '../../utils/resolverMocks';
 import { selectNodes, setup } from '../../utils/testUtils';
 
 describe('Upload List', () => {

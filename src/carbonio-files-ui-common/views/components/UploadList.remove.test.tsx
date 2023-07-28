@@ -41,7 +41,7 @@ import {
 	GetChildrenQuery,
 	GetChildrenQueryVariables
 } from '../../types/graphql/types';
-import { getChildrenVariables, mockGetNode } from '../../utils/mockUtils';
+import { getChildrenVariables, mockGetNode } from '../../utils/resolverMocks';
 import {
 	createUploadDataTransfer,
 	delayUntil,

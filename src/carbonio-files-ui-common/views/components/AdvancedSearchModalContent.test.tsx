@@ -15,7 +15,7 @@ import { AdvancedFilters } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeType } from '../../types/graphql/types';
 import { ContactInfo } from '../../types/network';
-import { mockGetPath } from '../../utils/mockUtils';
+import { mockGetPath } from '../../utils/resolverMocks';
 import { setup } from '../../utils/testUtils';
 
 const mockedSoapFetch: jest.Mock = jest.fn();

@@ -23,7 +23,12 @@ import {
 	GetChildrenQuery,
 	GetChildrenQueryVariables
 } from '../types/graphql/types';
-import { getChildrenVariables, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/mockUtils';
+import {
+	getChildrenVariables,
+	mockGetNode,
+	mockGetPath,
+	mockMoveNodes
+} from '../utils/resolverMocks';
 import {
 	buildBreadCrumbRegExp,
 	moveNode,

@@ -13,7 +13,7 @@ import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import { SharePermission } from '../../../types/graphql/types';
-import { mockDeleteShare } from '../../../utils/mockUtils';
+import { mockDeleteShare } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 
 describe('Edit Share Chip', () => {

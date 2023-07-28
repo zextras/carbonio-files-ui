@@ -21,7 +21,7 @@ import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, Folder } from '../types/graphql/types';
 import { ArrayOneOrMore } from '../types/utils';
-import { mockFindNodes, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/mockUtils';
+import { mockFindNodes, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
 const mockedRequestHandler = jest.fn();
@@ -101,7 +101,7 @@ describe('Filter View', () => {
 				Query: {
 					findNodes: mockFindNodes(nodes),
 					getNode: mockGetNode(node, parentNode, destinationFolder),
-					getPath: mockGetPath(pathResponse, parentPath, [...parentPath, destinationFolder])
+					getPath: mockGetPath(...pathResponse, parentPath, [...parentPath, destinationFolder])
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes([node])

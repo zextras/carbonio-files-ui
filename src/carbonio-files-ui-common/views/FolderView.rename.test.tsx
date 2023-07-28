@@ -18,7 +18,7 @@ import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../m
 import { Node } from '../types/common';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
-import { mockGetNode, mockGetPath, mockTrashNodes, mockUpdateNode } from '../utils/mockUtils';
+import { mockGetNode, mockGetPath, mockTrashNodes, mockUpdateNode } from '../utils/resolverMocks';
 import { renameNode, setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({

@@ -14,7 +14,7 @@ import { populateFolder, populateNode, sortNodes } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeSort } from '../../types/graphql/types';
-import { mockErrorResolver } from '../../utils/mockUtils';
+import { mockErrorResolver } from '../../utils/resolverMocks';
 import { generateError, renameNode, setup, selectNodes } from '../../utils/testUtils';
 
 describe('Rename', () => {

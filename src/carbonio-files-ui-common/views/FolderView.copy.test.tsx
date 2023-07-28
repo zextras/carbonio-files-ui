@@ -23,7 +23,12 @@ import {
 	GetChildrenQuery,
 	GetChildrenQueryVariables
 } from '../types/graphql/types';
-import { getChildrenVariables, mockCopyNodes, mockGetNode, mockGetPath } from '../utils/mockUtils';
+import {
+	getChildrenVariables,
+	mockCopyNodes,
+	mockGetNode,
+	mockGetPath
+} from '../utils/resolverMocks';
 import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({

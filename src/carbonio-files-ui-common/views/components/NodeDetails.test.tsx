@@ -35,7 +35,7 @@ import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder, NodeType, QueryGetPathArgs } from '../../types/graphql/types';
 import { ArrayOneOrMore } from '../../types/utils';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
-import { mockGetPath } from '../../utils/mockUtils';
+import { mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../utils/testUtils';
 import { formatDate, formatTime, humanFileSize } from '../../utils/utils';
 
@@ -203,7 +203,7 @@ describe('Node Details', () => {
 
 		const mocks = {
 			Query: {
-				getPath: mockGetPath([path, path2])
+				getPath: mockGetPath(path, path2)
 			}
 		} satisfies Partial<Resolvers>;
 

@@ -19,7 +19,7 @@ import {
 } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { mockGetNode } from '../../utils/mockUtils';
+import { mockGetNode } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
 

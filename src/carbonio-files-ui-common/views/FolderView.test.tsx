@@ -12,11 +12,12 @@ import { map } from 'lodash';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode, populateParents } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { ArrayOneOrMore } from '../types/utils';
-import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/mockUtils';
+import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
 let mockedCreateOptions: CreateOptionsContent['createOptions'];
@@ -217,11 +218,12 @@ describe('Folder View', () => {
 		const folder = populateFolder(2);
 		const node = populateNode();
 		folder.children.nodes.push(null, node);
-		const mocks = [
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetPermissions({ node_id: folder.id }, folder),
-			mockGetPath({ node_id: folder.id }, [folder])
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode(folder, folder),
+				getPath: mockGetPath([folder])
+			}
+		} satisfies Partial<Resolvers>;
 		setup(<FolderView />, { initialRouterEntries: [`/?folder=${folder.id}`], mocks });
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		await screen.findByText(node.name);

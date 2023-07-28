@@ -20,7 +20,7 @@ import {
 	mockGetLinks,
 	mockUpdateNode,
 	mockErrorResolver
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { generateError, setup, screen, within } from '../../utils/testUtils';
 
 describe('Displayer', () => {

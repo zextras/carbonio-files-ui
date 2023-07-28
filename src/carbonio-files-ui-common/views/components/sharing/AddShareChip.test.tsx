@@ -13,7 +13,7 @@ import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateGalContact, populateNode } from '../../../mocks/mockUtils';
 import { Role, ShareChip } from '../../../types/common';
 import { GetNodeDocument, GetNodeQuery, GetNodeQueryVariables } from '../../../types/graphql/types';
-import { getNodeVariables } from '../../../utils/mockUtils';
+import { getNodeVariables } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 

@@ -35,7 +35,7 @@ import {
 	mockFindNodes,
 	mockGetNode,
 	mockUpdateNode
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import { generateError, renameNode, setup, selectNodes } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 

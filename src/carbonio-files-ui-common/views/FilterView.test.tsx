@@ -22,7 +22,7 @@ import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
-import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/mockUtils';
+import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { selectNodes, setup, triggerLoadMore } from '../utils/testUtils';
 
 let mockedRequestHandler: jest.Mock;

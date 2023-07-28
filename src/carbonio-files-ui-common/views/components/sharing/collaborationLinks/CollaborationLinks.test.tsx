@@ -17,7 +17,7 @@ import {
 	mockCreateCollaborationLink,
 	mockDeleteCollaborationLinks,
 	mockGetCollaborationLinks
-} from '../../../../utils/mockUtils';
+} from '../../../../utils/resolverMocks';
 import { setup } from '../../../../utils/testUtils';
 import * as moduleUtils from '../../../../utils/utils';
 import { isFile } from '../../../../utils/utils';

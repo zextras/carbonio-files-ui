@@ -16,7 +16,7 @@ import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { mockGetPath } from '../../utils/mockUtils';
+import { mockGetPath } from '../../utils/resolverMocks';
 import { setup, selectNodes } from '../../utils/testUtils';
 
 describe('Contextual menu actions', () => {

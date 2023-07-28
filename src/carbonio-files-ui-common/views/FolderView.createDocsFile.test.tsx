@@ -35,7 +35,7 @@ import {
 	sortNodes
 } from '../mocks/mockUtils';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
-import { mockGetPath, mockGetNode } from '../utils/mockUtils';
+import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
 import { setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 
 let mockedCreateOptions: CreateOptionsContent['createOptions'];

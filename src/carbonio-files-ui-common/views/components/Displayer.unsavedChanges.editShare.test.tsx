@@ -20,7 +20,7 @@ import {
 	mockGetLinks,
 	mockUpdateShare,
 	mockErrorResolver
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { generateError, setup } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 

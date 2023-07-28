@@ -17,7 +17,7 @@ import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { FolderResolvers, QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
-import { mockGetNode, mockGetPath } from '../utils/mockUtils';
+import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { generateError, setup, triggerLoadMore } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({

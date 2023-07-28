@@ -5,21 +5,14 @@
  */
 
 import { GraphQLError } from 'graphql';
-import { find } from 'lodash';
+import { findIndex, last } from 'lodash';
 
-import {
-	FULL_SHARES_LOAD_LIMIT,
-	NODES_LOAD_LIMIT,
-	NODES_SORT_DEFAULT,
-	ROOTS,
-	SHARES_LOAD_LIMIT
-} from '../constants';
+import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, ROOTS, SHARES_LOAD_LIMIT } from '../constants';
 import { populateConfigs, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { MutationResolvers, QueryResolvers } from '../types/graphql/resolvers-types';
 import type * as GQLTypes from '../types/graphql/types';
 import { Maybe, Scalars } from '../types/graphql/types';
-import { ArrayOneOrMore, OneOrMany } from '../types/utils';
 
 type Id = string;
 
@@ -39,6 +32,14 @@ export function mockErrorResolver(error: GraphQLError): () => never {
 	};
 }
 
+export function shiftData<TData>(data: TData[]): NonNullable<TData> {
+	const result = data.shift();
+	if (result) {
+		return result;
+	}
+	throw new GraphQLError('no more data provided to resolver');
+}
+
 export function getFindNodesVariables(
 	variables: Partial<GQLTypes.FindNodesQueryVariables>,
 	withCursor = false
@@ -54,35 +55,31 @@ export function getFindNodesVariables(
 
 export function mockFindNodes(...findNodes: Node[][]): Mock<GQLTypes.FindNodesQuery> {
 	return () => {
-		const nodes = findNodes.shift() || [];
+		const nodes = shiftData(findNodes);
 		return populateNodePage(nodes);
 	};
 }
 
-export function mockTrashNodes(trashNodes: Id[]): Mock<GQLTypes.TrashNodesMutation> {
-	return () => trashNodes;
+export function mockTrashNodes(...trashNodes: Id[][]): Mock<GQLTypes.TrashNodesMutation> {
+	return () => shiftData(trashNodes);
 }
 
-export function mockRestoreNodes(restoreNodes: Array<Node>): Mock<GQLTypes.RestoreNodesMutation> {
-	return () => restoreNodes;
+export function mockRestoreNodes(
+	...restoreNodes: Array<Node>[]
+): Mock<GQLTypes.RestoreNodesMutation> {
+	return () => shiftData(restoreNodes);
 }
 
-export function mockDeletePermanently(deleteNodes: Id[]): Mock<GQLTypes.DeleteNodesMutation> {
-	return () => deleteNodes;
+export function mockDeletePermanently(...deleteNodes: Id[][]): Mock<GQLTypes.DeleteNodesMutation> {
+	return () => shiftData(deleteNodes);
 }
 
-export function mockUpdateNode(updateNode: Node): Mock<GQLTypes.UpdateNodeMutation> {
-	return () => updateNode;
+export function mockUpdateNode(...updateNode: Node[]): Mock<GQLTypes.UpdateNodeMutation> {
+	return () => shiftData(updateNode);
 }
 
 export function mockFlagNodes(...flagNodes: Id[][]): Mock<GQLTypes.FlagNodesMutation> {
-	return () => {
-		const result = flagNodes.shift();
-		if (result) {
-			return result;
-		}
-		throw new Error('no more flagNodes responses provided to resolver');
-	};
+	return () => shiftData(flagNodes);
 }
 
 export function getChildrenVariables(
@@ -103,56 +100,30 @@ export function getChildrenVariables(
 }
 
 export function mockMoveNodes(...moveNodes: Node[][]): Mock<GQLTypes.MoveNodesMutation> {
-	return () => moveNodes.shift() || [];
+	return () => shiftData(moveNodes);
 }
 
-export function mockCopyNodes(copyNodes: Node[]): Mock<GQLTypes.CopyNodesMutation> {
-	return () => copyNodes;
+export function mockCopyNodes(...copyNodes: Node[][]): Mock<GQLTypes.CopyNodesMutation> {
+	return () => shiftData(copyNodes);
 }
 
 export function mockCreateFolder(...createFolder: Node[]): Mock<GQLTypes.CreateFolderMutation> {
-	return () => {
-		const result = createFolder.shift();
-		if (result) {
-			return result;
-		}
-		throw new Error('No more createFolder responses provided to resolver');
-	};
+	return () => shiftData(createFolder);
 }
 
-export function mockGetPath(
-	...getPath: Array<OneOrMany<ArrayOneOrMore<Node>>>
-): Mock<GQLTypes.GetPathQuery> {
+export function mockGetPath(...getPath: Node[][]): Mock<GQLTypes.GetPathQuery> {
 	// this resolver assumes that the path has always at least one node,
 	// and that the last node of the path is always the node for which the getPath
 	// request has been made
 	return (parent, args) => {
-		const match = find(getPath, (path) => {
-			if (path.length > 0) {
-				// if the current iterated item is an array,
-				// check if the last element of the first sub-path matches the id
-				if (Array.isArray(path[0]) && path[0].length > 0) {
-					return path[0][path[0].length - 1].id === args.node_id;
-				}
-				// otherwise, check if the last element of the current path matches the id
-				const lastNodeOfPath = path[path.length - 1];
-				if (!Array.isArray(lastNodeOfPath)) {
-					return lastNodeOfPath.id === args.node_id;
-				}
-			}
-			return false;
-		});
-		if (match !== undefined) {
-			if (Array.isArray(match[0])) {
-				const firstPath = (match as ArrayOneOrMore<Node>[]).shift();
-				if (firstPath !== undefined) {
-					return firstPath;
-				}
-			} else {
-				return match as ArrayOneOrMore<Node>;
+		const matchIndex = findIndex(getPath, (path) => last(path)?.id === args.node_id);
+		if (matchIndex >= 0) {
+			const resultArray = getPath.splice(matchIndex, 1);
+			if (resultArray.length > 0) {
+				return resultArray[0];
 			}
 		}
-		throw new Error('no more getPath responses provided to resolver');
+		throw new GraphQLError('no more responses provided for resolver');
 	};
 }
 
@@ -171,65 +142,52 @@ export function getNodeVariables(
 }
 
 export function mockGetNode(
-	...getNode: Array<OneOrMany<GQLTypes.File | GQLTypes.Folder>>
+	...getNode: Array<GQLTypes.File | GQLTypes.Folder>
 ): Mock<GQLTypes.GetNodeQuery> {
 	return (parent, args) => {
-		const match = find(getNode, (node) => {
-			if (!Array.isArray(node)) {
-				return node.id === args.node_id;
-			}
-			return node.length > 0 && node[0].id === args.node_id;
-		});
-		if (match !== undefined) {
-			if (Array.isArray(match)) {
-				const result = match.shift();
-				if (result !== undefined) {
-					return result;
-				}
-			} else {
-				return match;
+		const matchIndex = findIndex(getNode, (node) => node.id === args.node_id);
+		if (matchIndex >= 0) {
+			const resultArray = getNode.splice(matchIndex, 1);
+			if (resultArray.length > 0) {
+				return resultArray[0];
 			}
 		}
-		throw new Error('no more getNode responses provided to resolver');
+		throw new GraphQLError('no more responses provided for resolver');
 	};
 }
 
-export function getSharesVariables(
-	nodeId: Id,
-	sharesLimit = FULL_SHARES_LOAD_LIMIT
-): GQLTypes.GetSharesQueryVariables {
-	return {
-		node_id: nodeId,
-		shares_limit: sharesLimit
-	};
-}
-
-export function mockDeleteShare(deleteShare: boolean): Mock<GQLTypes.DeleteShareMutation> {
-	return () => deleteShare;
+export function mockDeleteShare(...deleteShare: boolean[]): Mock<GQLTypes.DeleteShareMutation> {
+	return () => shiftData(deleteShare);
 }
 
 export function mockCreateShare(
 	...createShare: GQLTypes.Share[]
 ): Mock<GQLTypes.CreateShareMutation> {
-	return () => {
-		const result = createShare.shift();
-		if (result !== undefined) {
-			return result;
-		}
-		throw new Error('no more createShares response provided to resolver');
-	};
+	return () => shiftData(createShare);
 }
 
-export function mockUpdateShare(updateShare: GQLTypes.Share): Mock<GQLTypes.UpdateShareMutation> {
-	return (): typeof updateShare => updateShare;
+export function mockUpdateShare(
+	...updateShare: GQLTypes.Share[]
+): Mock<GQLTypes.UpdateShareMutation> {
+	return () => shiftData(updateShare);
 }
 
 export function mockGetAccountByEmail(
 	...accounts: GQLTypes.Account[]
 ): Mock<GQLTypes.GetAccountByEmailQuery> {
-	return (parent, args) =>
-		find(accounts, (account) => account.__typename === 'User' && account.email === args.email) ||
-		null;
+	return (parent, args) => {
+		const matchIndex = findIndex(
+			accounts,
+			(account) => account.__typename === 'User' && account.email === args.email
+		);
+		if (matchIndex >= 0) {
+			const results = accounts.splice(matchIndex, 1);
+			if (results.length > 0) {
+				return results[0];
+			}
+		}
+		throw new GraphQLError('no more responses provided for resolver');
+	};
 }
 
 export function mockGetAccountsByEmail(
@@ -273,25 +231,19 @@ export function mockGetVersions(
 }
 
 export function mockDeleteVersions(
-	versions: Array<Maybe<Scalars['Int']>>
+	...versions: Array<Maybe<Scalars['Int']>>[]
 ): Mock<GQLTypes.DeleteVersionsMutation> {
-	return () => versions;
+	return () => shiftData(versions);
 }
 
 export function mockKeepVersions(
 	...versions: Array<Maybe<Scalars['Int']>>[]
 ): Mock<GQLTypes.KeepVersionsMutation> {
-	return () => {
-		const result = versions.shift();
-		if (result) {
-			return result;
-		}
-		throw new Error('no more keepVersions responses provided to resolver');
-	};
+	return () => shiftData(versions);
 }
 
-export function mockCloneVersion(file: GQLTypes.File): Mock<GQLTypes.CloneVersionMutation> {
-	return () => file;
+export function mockCloneVersion(...file: GQLTypes.File[]): Mock<GQLTypes.CloneVersionMutation> {
+	return () => shiftData(file);
 }
 
 export function mockGetRootsList(): Mock<GQLTypes.GetRootsListQuery> {
@@ -308,10 +260,10 @@ export function mockGetConfigs(
 	return () => configs;
 }
 
-export function mockCreateLink(link: GQLTypes.Link): Mock<GQLTypes.CreateLinkMutation> {
-	return () => link;
+export function mockCreateLink(...link: GQLTypes.Link[]): Mock<GQLTypes.CreateLinkMutation> {
+	return () => shiftData(link);
 }
 
-export function mockUpdateLink(link: GQLTypes.Link): Mock<GQLTypes.UpdateLinkMutation> {
-	return () => link;
+export function mockUpdateLink(...link: GQLTypes.Link[]): Mock<GQLTypes.UpdateLinkMutation> {
+	return () => shiftData(link);
 }

@@ -26,7 +26,7 @@ import {
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { generateError, setup } from '../../utils/testUtils';
 
 const mockedSoapFetch: jest.Mock = jest.fn();

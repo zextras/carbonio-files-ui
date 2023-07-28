@@ -37,7 +37,7 @@ import {
 	mockMoveNodes,
 	mockRestoreNodes,
 	mockTrashNodes
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, buildChipsFromKeywords, moveNode, setup } from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
 
@@ -190,7 +190,7 @@ describe('Search view', () => {
 				Query: {
 					findNodes: mockFindNodes(nodes),
 					getNode: mockGetNode(node, node.parent, destinationFolder),
-					getPath: mockGetPath(pathResponse, parentPath, [...parentPath, destinationFolder])
+					getPath: mockGetPath(...pathResponse, parentPath, [...parentPath, destinationFolder])
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes([node])

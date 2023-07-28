@@ -37,7 +37,7 @@ import {
 	mockGetConfigs,
 	mockGetVersions,
 	mockKeepVersions
-} from '../../../utils/mockUtils';
+} from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 import * as moduleUtils from '../../../utils/utils';
 import { getChipLabel } from '../../../utils/utils';

@@ -14,7 +14,7 @@ import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateParents } from '../../mocks/mockUtils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder } from '../../types/graphql/types';
-import { mockGetPath } from '../../utils/mockUtils';
+import { mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
 describe('ListHeader', () => {

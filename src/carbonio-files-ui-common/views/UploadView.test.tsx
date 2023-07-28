@@ -22,7 +22,7 @@ import {
 import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { mockGetNode } from '../utils/mockUtils';
+import { mockGetNode } from '../utils/resolverMocks';
 import { createUploadDataTransfer, setup, uploadWithDnD } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({

@@ -30,7 +30,7 @@ import {
 	mockGetPath,
 	mockMoveNodes,
 	mockUpdateNode
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
@@ -50,13 +50,10 @@ describe('Displayer', () => {
 
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(node, [
-					parent,
-					{
-						...parent,
-						children: populateNodePage([...parent.children.nodes, copyNode])
-					} as Folder
-				]),
+				getNode: mockGetNode(node, parent, {
+					...parent,
+					children: populateNodePage([...parent.children.nodes, copyNode])
+				} as Folder),
 				getPath: mockGetPath([parent])
 			},
 			Mutation: {

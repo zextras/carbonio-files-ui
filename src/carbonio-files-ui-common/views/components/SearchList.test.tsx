@@ -33,7 +33,7 @@ import {
 	mockMoveNodes,
 	mockRestoreNodes,
 	mockTrashNodes
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import {
 	buildChipsFromKeywords,
 	createMoveDataTransfer,

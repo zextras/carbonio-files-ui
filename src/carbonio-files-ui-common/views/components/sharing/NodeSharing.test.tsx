@@ -37,7 +37,7 @@ import {
 	mockGetLinks,
 	mockUpdateShare,
 	getNodeVariables
-} from '../../../utils/mockUtils';
+} from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 

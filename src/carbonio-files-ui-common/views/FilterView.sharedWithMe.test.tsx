@@ -30,7 +30,7 @@ import {
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import { setup } from '../utils/testUtils';
 
 const mockedRequestHandler = jest.fn();

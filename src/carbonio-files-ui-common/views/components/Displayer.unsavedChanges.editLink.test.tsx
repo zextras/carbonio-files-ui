@@ -21,7 +21,7 @@ import {
 	mockGetLinks,
 	mockUpdateLink,
 	mockErrorResolver
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { generateError, getFirstOfNextMonth, setup } from '../../utils/testUtils';
 import { formatDate, initExpirationDate } from '../../utils/utils';
 

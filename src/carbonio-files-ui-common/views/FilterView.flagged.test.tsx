@@ -24,7 +24,7 @@ import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
-import { mockFindNodes } from '../utils/mockUtils';
+import { mockFindNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../utils/testUtils';
 
 type FindNodesHandler = typeof handleFindNodesRequest;

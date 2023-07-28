@@ -42,7 +42,7 @@ import {
 	mockFindNodes,
 	mockGetNode,
 	mockGetPath
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
 
 const resetToDefault = jest.fn(() => {
@@ -423,13 +423,10 @@ describe('Copy Nodes Modal', () => {
 		}));
 		const mocks = {
 			Query: {
-				getNode: mockGetNode([
-					currentFolder,
-					{
-						...currentFolder,
-						children: populateNodePage([...currentFolder.children.nodes, ...copiedNodes])
-					}
-				]),
+				getNode: mockGetNode(currentFolder, {
+					...currentFolder,
+					children: populateNodePage([...currentFolder.children.nodes, ...copiedNodes])
+				}),
 				getPath: mockGetPath([currentFolder])
 			},
 			Mutation: {
@@ -492,13 +489,10 @@ describe('Copy Nodes Modal', () => {
 		}));
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(currentFolder, [
-					folder,
-					{
-						...folder,
-						children: populateNodePage(copiedNodes)
-					}
-				]),
+				getNode: mockGetNode(currentFolder, folder, {
+					...folder,
+					children: populateNodePage(copiedNodes)
+				}),
 				getPath: mockGetPath([currentFolder], [currentFolder, folder])
 			},
 			Mutation: {
