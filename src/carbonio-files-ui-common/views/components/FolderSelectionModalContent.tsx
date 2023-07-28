@@ -93,6 +93,7 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 		} else if (folderId) {
 			setCurrent({
 				id: folderId,
+				/* i18next-extract-disable-next-line */
 				name: t('node.alias.name', folderId, { context: folderId })
 			});
 		} else {

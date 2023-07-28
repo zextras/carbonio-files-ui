@@ -174,6 +174,7 @@ export const buildCrumbs = (
 			const $node = node as Node;
 			return {
 				id: $node.id,
+				/* i18next-extract-disable-next-line */
 				label: (t && t('node.alias.name', $node.name, { context: $node.id })) || $node.name,
 				onClick:
 					node && clickHandler && nodeClickCondition(node)
@@ -717,6 +718,7 @@ export function uploadToTargetModule(args: {
 
 export function getNewDocumentActionLabel(t: TFunction, docsType: DocsType): string {
 	const [format] = docsType.split('_');
+	/* i18next-extract-disable-next-line */
 	return t(`create.options.new.${format.toLowerCase()}Document`, 'Microsoft {{ext}}', {
 		context: DOCS_EXTENSIONS[docsType],
 		replace: {

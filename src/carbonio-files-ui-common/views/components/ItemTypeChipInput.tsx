@@ -112,6 +112,7 @@ export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
 				if (filterValue === null || item.id.toLowerCase().includes(filterValue.toLowerCase())) {
 					const mappedItem = {
 						icon: `${item.icon}Outline`,
+						/* i18next-extract-disable-next-line */
 						label: t(
 							`search.advancedSearch.modal.itemType.dropdownOption.${item.id.toLowerCase()}`,
 							item.id
