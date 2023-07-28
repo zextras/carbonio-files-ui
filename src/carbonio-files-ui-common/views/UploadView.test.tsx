@@ -42,7 +42,7 @@ describe('Upload view', () => {
 
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(localRoot)
+				getNode: mockGetNode({ getBaseNode: [localRoot] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -79,7 +79,7 @@ describe('Upload view', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -118,7 +118,7 @@ describe('Upload view', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -155,7 +155,7 @@ describe('Upload view', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 

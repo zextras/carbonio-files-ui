@@ -37,7 +37,7 @@ describe('Displayer', () => {
 				node.permissions.can_write_file = true;
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -88,7 +88,7 @@ describe('Displayer', () => {
 				node.permissions.can_write_file = true;
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -146,7 +146,7 @@ describe('Displayer', () => {
 				node.permissions.can_write_file = true;
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -210,7 +210,7 @@ describe('Displayer', () => {
 				node.permissions.can_write_file = true;
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},
@@ -281,7 +281,7 @@ describe('Displayer', () => {
 				node.permissions.can_write_file = true;
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},

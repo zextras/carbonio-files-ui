@@ -81,7 +81,7 @@ describe('Folder Selection Modal Content', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([...path, folder], path),
-				getNode: mockGetNode(parent)
+				getNode: mockGetNode({ getChildren: [parent] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -159,7 +159,7 @@ describe('Folder Selection Modal Content', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([localRoot]),
-				getNode: mockGetNode(localRoot)
+				getNode: mockGetNode({ getChildren: [localRoot] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -213,7 +213,7 @@ describe('Folder Selection Modal Content', () => {
 		const mocks = {
 			Query: {
 				getPath: jest.fn(() => [localRoot]),
-				getNode: mockGetNode(localRoot)
+				getNode: mockGetNode({ getChildren: [localRoot] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -450,7 +450,7 @@ describe('Folder Selection Modal Content', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([localRoot], [localRoot, folder]),
-				getNode: mockGetNode(localRoot, folder)
+				getNode: mockGetNode({ getChildren: [localRoot, folder] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -487,7 +487,7 @@ describe('Folder Selection Modal Content', () => {
 			Query: {
 				findNodes: mockFindNodes(filter),
 				getPath: mockGetPath([folder]),
-				getNode: mockGetNode(folder)
+				getNode: mockGetNode({ getChildren: [folder] })
 			}
 		} satisfies Partial<Resolvers>;
 

@@ -157,7 +157,7 @@ describe('Filter view', () => {
 			Query: {
 				findNodes: mockFindNodes(nodes, [...nodes, node]),
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			},
 			Mutation: {
 				flagNodes: mockFlagNodes([node.id])

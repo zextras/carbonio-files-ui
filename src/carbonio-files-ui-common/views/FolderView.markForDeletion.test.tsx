@@ -16,7 +16,7 @@ import { NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodePage, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { FolderResolvers, QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
+import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { NodeSort } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes } from '../utils/resolverMocks';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
@@ -57,7 +57,7 @@ describe('Mark for deletion - trash', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					trashNodes: mockTrashNodes([folderId1])
@@ -188,7 +188,7 @@ describe('Mark for deletion - trash', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					trashNodes: mockTrashNodes([element.id])
@@ -237,7 +237,7 @@ describe('Mark for deletion - trash', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					trashNodes: mockTrashNodes([element0.id, element1.id])
@@ -283,19 +283,14 @@ describe('Mark for deletion - trash', () => {
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 
-			const childrenResolver: FolderResolvers['children'] = (parent, args) => {
-				if (args.page_token !== undefined && args.page_token !== null) {
-					return populateNodePage(secondPage);
-				}
-				return populateNodePage(firstPage);
-			};
 			const mocks = {
-				Folder: {
-					children: childrenResolver
-				},
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
 				},
 				Mutation: {
 					trashNodes: mockTrashNodes([firstPage[NODES_LOAD_LIMIT - 1].id])

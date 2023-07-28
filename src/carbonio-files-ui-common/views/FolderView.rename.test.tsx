@@ -62,7 +62,7 @@ describe('Rename', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					updateNode: mockUpdateNode({
@@ -126,7 +126,7 @@ describe('Rename', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					updateNode: mockUpdateNode({
@@ -228,7 +228,10 @@ describe('Rename', () => {
 				},
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({
+						getChildren: Array(4).fill(currentFolder),
+						getPermissions: [currentFolder]
+					})
 				},
 				Mutation: {
 					updateNode: mockUpdateNode({
@@ -320,21 +323,14 @@ describe('Rename', () => {
 			const nodeToRename = firstPage[firstPage.length - 1] as Node;
 			const newName = `${(last(secondPage) as Node).name}-renamed`;
 
-			const childrenResolver: FolderResolvers['children'] = (parent, args) => {
-				switch (args.page_token) {
-					case 'page2':
-						return populateNodePage(secondPage);
-					default:
-						return populateNodePage(firstPage, NODES_LOAD_LIMIT, 'page2');
-				}
-			};
 			const mocks = {
-				Folder: {
-					children: childrenResolver
-				},
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
 				},
 				Mutation: {
 					updateNode: mockUpdateNode({
@@ -390,21 +386,14 @@ describe('Rename', () => {
 
 			const nodesToTrash = map(firstPage.slice(0, firstPage.length - 1), (node) => node.id);
 
-			const childrenResolver: FolderResolvers['children'] = (parent, args) => {
-				switch (args.page_token) {
-					case 'page2':
-						return populateNodePage(secondPage);
-					default:
-						return populateNodePage(firstPage, NODES_LOAD_LIMIT, 'page2');
-				}
-			};
 			const mocks = {
-				Folder: {
-					children: childrenResolver
-				},
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
 				},
 				Mutation: {
 					updateNode: mockUpdateNode({

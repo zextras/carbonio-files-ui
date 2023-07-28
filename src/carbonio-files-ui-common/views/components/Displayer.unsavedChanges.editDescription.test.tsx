@@ -34,7 +34,7 @@ describe('Displayer', () => {
 				const newDescription = faker.lorem.words();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node)
+						getNode: mockGetNode({ getNode: [node] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -83,7 +83,7 @@ describe('Displayer', () => {
 				const newDescription = faker.lorem.words();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node)
+						getNode: mockGetNode({ getNode: [node] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -131,7 +131,7 @@ describe('Displayer', () => {
 				const newDescription = faker.lorem.words();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -192,7 +192,7 @@ describe('Displayer', () => {
 				const newDescription = faker.lorem.words();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},
@@ -252,7 +252,7 @@ describe('Displayer', () => {
 				const newDescription = faker.lorem.words();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node)
+						getNode: mockGetNode({ getNode: [node] })
 					},
 					Mutation: {
 						updateNode: mockErrorResolver(generateError('update error'))

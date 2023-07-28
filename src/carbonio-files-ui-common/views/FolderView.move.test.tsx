@@ -16,7 +16,7 @@ import { NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	Folder,
 	GetChildrenDocument,
@@ -77,7 +77,7 @@ describe('Move', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
@@ -155,7 +155,7 @@ describe('Move', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes(
@@ -244,30 +244,18 @@ describe('Move', () => {
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 			const nodesToMove = [...firstPage];
 
-			const getChildrenResponses = [
-				{ ...currentFolder, children: populateNodePage(firstPage) },
-				{ ...currentFolder, children: populateNodePage(secondPage) }
-			];
-			const getNodeResolver: QueryResolvers['getNode'] = (parent, args, context, info) => {
-				if (args.node_id === currentFolder.id) {
-					if (info.operation.name?.value === 'getChildren') {
-						const response = getChildrenResponses.shift();
-						if (response) {
-							return response;
-						}
-						throw new Error('no more getChildren responses provided to getNode resolver');
-					}
-					return currentFolder;
-				}
-				if (args.node_id === commonParent.id) {
-					return commonParent;
-				}
-				return null;
-			};
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([commonParent], [commonParent, currentFolder]),
-					getNode: getNodeResolver
+					// use default children resolver to split chidlren in pages
+					getNode: mockGetNode({
+						getChildren: [
+							{ ...currentFolder, children: populateNodePage(firstPage) },
+							{ ...currentFolder, children: populateNodePage(secondPage) },
+							commonParent
+						],
+						getPermissions: [currentFolder]
+					})
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes(
@@ -348,7 +336,7 @@ describe('Move', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
@@ -412,7 +400,11 @@ describe('Move', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes([

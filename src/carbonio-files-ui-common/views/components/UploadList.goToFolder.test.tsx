@@ -36,7 +36,7 @@ describe('Upload List', () => {
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -68,7 +68,7 @@ describe('Upload List', () => {
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(localRoot, differentParent)
+						getNode: mockGetNode({ getBaseNode: [localRoot, differentParent] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -97,7 +97,7 @@ describe('Upload List', () => {
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 

@@ -87,7 +87,7 @@ describe('Upload list', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -151,7 +151,7 @@ describe('Upload list', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -188,7 +188,7 @@ describe('Upload list', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				},
 				Mutation: {
 					createFolder: mockCreateFolder(uploadedFiles[0])
@@ -263,7 +263,7 @@ describe('Upload list', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -349,7 +349,7 @@ describe('Upload list', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -409,7 +409,7 @@ describe('Upload list', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -480,7 +480,7 @@ describe('Upload list', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -580,7 +580,7 @@ describe('Upload list', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 

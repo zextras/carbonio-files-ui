@@ -90,7 +90,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -155,7 +155,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -215,7 +215,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -275,7 +275,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -339,7 +339,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -401,7 +401,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			},
 			Mutation: {
 				moveNodes: mockMoveNodes(
@@ -485,7 +485,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -548,7 +548,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			},
 			Mutation: {
 				moveNodes: mockMoveNodes(
@@ -621,7 +621,7 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath(path),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			},
 			Mutation: {
 				moveNodes: mockMoveNodes(map(nodesToDrag, (node) => ({ ...node, parent: path[0] })))
@@ -742,9 +742,17 @@ describe('Drag and drop', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder], [currentFolder, destinationFolder]),
-				getNode: mockGetNode(currentFolder, destinationFolder, {
-					...destinationFolder,
-					children: populateNodePage(nodesToDrag)
+
+				getNode: mockGetNode({
+					getChildren: [
+						currentFolder,
+						destinationFolder,
+						{
+							...destinationFolder,
+							children: populateNodePage(nodesToDrag)
+						}
+					],
+					getPermissions: [currentFolder]
 				})
 			},
 			Mutation: {

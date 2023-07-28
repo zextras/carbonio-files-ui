@@ -52,7 +52,7 @@ describe('Flag', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					flagNodes: mockFlagNodes(nodesIdsToFlag, nodesIdsToUnflag)
@@ -112,7 +112,7 @@ describe('Flag', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					flagNodes: mockFlagNodes([node.id], [node.id])

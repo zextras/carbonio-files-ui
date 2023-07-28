@@ -108,7 +108,11 @@ describe('Create docs file', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder, node2)
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node2]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -163,7 +167,11 @@ describe('Create docs file', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder, node2)
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node2]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -250,7 +258,11 @@ describe('Create docs file', () => {
 			},
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder, node1, node2)
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node1, node2]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 

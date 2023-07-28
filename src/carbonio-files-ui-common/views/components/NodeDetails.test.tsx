@@ -30,10 +30,8 @@ import {
 	populateShares,
 	populateUser
 } from '../../mocks/mockUtils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder, NodeType, QueryGetPathArgs } from '../../types/graphql/types';
-import { ArrayOneOrMore } from '../../types/utils';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../utils/testUtils';
@@ -199,7 +197,7 @@ describe('Node Details', () => {
 		const { node, path } = populateParents(populateNode(), 3);
 		const { node: newParent, path: newPath } = populateParents(populateFolder(), 4);
 
-		const path2: ArrayOneOrMore<Node> = [...newPath, { ...node, parent: newParent }];
+		const path2 = [...newPath, { ...node, parent: newParent }];
 
 		const mocks = {
 			Query: {

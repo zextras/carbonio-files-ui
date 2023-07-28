@@ -50,10 +50,16 @@ describe('Displayer', () => {
 
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(node, parent, {
-					...parent,
-					children: populateNodePage([...parent.children.nodes, copyNode])
-				} as Folder),
+				getNode: mockGetNode({
+					getNode: [node],
+					getChildren: [
+						parent,
+						{
+							...parent,
+							children: populateNodePage([...parent.children.nodes, copyNode])
+						} as Folder
+					]
+				}),
 				getPath: mockGetPath([parent])
 			},
 			Mutation: {
@@ -117,10 +123,15 @@ describe('Displayer', () => {
 		node.parent = parent;
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(node, {
-					...parent,
-					children: populateNodePage([...parent.children.nodes, node])
-				} as Folder),
+				getNode: mockGetNode({
+					getNode: [node],
+					getChildren: [
+						{
+							...parent,
+							children: populateNodePage([...parent.children.nodes, node])
+						} as Folder
+					]
+				}),
 				getPath: mockGetPath([parent])
 			},
 			Mutation: {
@@ -171,7 +182,7 @@ describe('Displayer', () => {
 		const newName = 'new name';
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(node, parent),
+				getNode: mockGetNode({ getNode: [node], getChildren: [parent] }),
 				getPath: mockGetPath([parent])
 			},
 			Mutation: {
@@ -199,7 +210,7 @@ describe('Displayer', () => {
 		node.permissions.can_share = false;
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(node)
+				getNode: mockGetNode({ getNode: [node], getShares: [node] })
 			}
 		} satisfies Partial<Resolvers>;
 

@@ -36,7 +36,7 @@ describe('Upload Displayer Node', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -58,7 +58,7 @@ describe('Upload Displayer Node', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -80,7 +80,7 @@ describe('Upload Displayer Node', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -101,7 +101,7 @@ describe('Upload Displayer Node', () => {
 			uploadVar({ [uploadItem.id]: uploadItem });
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -122,7 +122,7 @@ describe('Upload Displayer Node', () => {
 			uploadVar({ [uploadItem.id]: uploadItem });
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -143,7 +143,7 @@ describe('Upload Displayer Node', () => {
 			uploadVar({ [uploadItem.id]: uploadItem });
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -166,7 +166,7 @@ describe('Upload Displayer Node', () => {
 			uploadVar({ [uploadItem.id]: uploadItem });
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -189,7 +189,7 @@ describe('Upload Displayer Node', () => {
 			uploadVar({ [uploadItem.id]: uploadItem });
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -221,7 +221,7 @@ describe('Upload Displayer Node', () => {
 			uploadVar({ [uploadItem.id]: uploadItem, ...childrenMap });
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(parentFolder)
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {

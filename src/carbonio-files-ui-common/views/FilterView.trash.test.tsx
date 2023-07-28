@@ -62,7 +62,7 @@ describe('Filter view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node)
+					getNode: mockGetNode({ getNode: [node] })
 				},
 				Mutation: {
 					restoreNodes: mockRestoreNodes([{ ...node, rootId: ROOTS.LOCAL_ROOT }])
@@ -117,7 +117,7 @@ describe('Filter view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node)
+					getNode: mockGetNode({ getNode: [node] })
 				},
 				Mutation: {
 					deleteNodes: mockDeletePermanently([node.id])
@@ -178,7 +178,7 @@ describe('Filter view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node)
+					getNode: mockGetNode({ getNode: [node] })
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(

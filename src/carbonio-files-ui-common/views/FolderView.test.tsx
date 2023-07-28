@@ -16,7 +16,6 @@ import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode, populateParents } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { ArrayOneOrMore } from '../types/utils';
 import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
@@ -46,7 +45,7 @@ describe('Folder View', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(currentFolder),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
 					getPath: mockGetPath([currentFolder])
 				}
 			} satisfies Partial<Resolvers>;
@@ -68,7 +67,7 @@ describe('Folder View', () => {
 			currentFolder.permissions.can_write_folder = true;
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(currentFolder),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
 					getPath: mockGetPath([currentFolder])
 				}
 			} satisfies Partial<Resolvers>;
@@ -91,7 +90,11 @@ describe('Folder View', () => {
 			const currentFolder = populateFolder(2);
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(currentFolder, currentFolder.children.nodes[0] as Node),
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder],
+						getNode: [currentFolder.children.nodes[0] as Node]
+					}),
 					getPath: mockGetPath([currentFolder])
 				}
 			} satisfies Partial<Resolvers>;
@@ -127,11 +130,15 @@ describe('Folder View', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			currentFolder.children.nodes.push(node);
-			const path: ArrayOneOrMore<Node> = [...parentPath, node];
+			const path = [...parentPath, node];
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(currentFolder, node),
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder],
+						getNode: [node]
+					}),
 					getPath: mockGetPath(path, parentPath)
 				},
 				Mutation: {
@@ -172,7 +179,7 @@ describe('Folder View', () => {
 			currentFolder.permissions.can_write_file = false;
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(currentFolder),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
 					getPath: mockGetPath([currentFolder])
 				}
 			} satisfies Partial<Resolvers>;
@@ -195,7 +202,7 @@ describe('Folder View', () => {
 			currentFolder.permissions.can_write_file = true;
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(currentFolder),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
 					getPath: mockGetPath([currentFolder])
 				}
 			} satisfies Partial<Resolvers>;
@@ -220,7 +227,7 @@ describe('Folder View', () => {
 		folder.children.nodes.push(null, node);
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(folder, folder),
+				getNode: mockGetNode({ getChildren: [folder], getPermissions: [folder] }),
 				getPath: mockGetPath([folder])
 			}
 		} satisfies Partial<Resolvers>;

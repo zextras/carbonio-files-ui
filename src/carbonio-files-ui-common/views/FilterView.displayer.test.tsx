@@ -17,10 +17,8 @@ import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
 import { SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateFolder, populateNodes, populateParents } from '../mocks/mockUtils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, Folder } from '../types/graphql/types';
-import { ArrayOneOrMore } from '../types/utils';
 import { mockFindNodes, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
@@ -48,7 +46,7 @@ describe('Filter View', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node)
+					getNode: mockGetNode({ getNode: [node] })
 				}
 			} satisfies Partial<Resolvers>;
 			const { getByTextWithMarkup, user } = setup(
@@ -94,13 +92,13 @@ describe('Filter View', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.flagged = true;
-			const path: ArrayOneOrMore<Node> = [...parentPath, node];
-			const pathUpdated: ArrayOneOrMore<Node> = [...parentPath, destinationFolder, node];
-			const pathResponse: ArrayOneOrMore<Node>[] = [path, pathUpdated];
+			const path = [...parentPath, node];
+			const pathUpdated = [...parentPath, destinationFolder, node];
+			const pathResponse = [path, pathUpdated];
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node, parentNode, destinationFolder),
+					getNode: mockGetNode({ getNode: [node], getChildren: [parentNode, destinationFolder] }),
 					getPath: mockGetPath(...pathResponse, parentPath, [...parentPath, destinationFolder])
 				},
 				Mutation: {

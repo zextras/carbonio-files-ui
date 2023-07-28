@@ -23,10 +23,9 @@ import {
 	populatePermissions,
 	populateShares
 } from '../mocks/mockUtils';
-import { AdvancedFilters, Node } from '../types/common';
+import { AdvancedFilters } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { BaseNodeFragment, Folder, NodeType } from '../types/graphql/types';
-import { ArrayOneOrMore } from '../types/utils';
 import {
 	mockDeleteShare,
 	mockFindNodes,
@@ -62,12 +61,12 @@ describe('Search view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(nodeWithShares),
+					getNode: mockGetNode({ getNode: [nodeWithShares], getShares: [nodeWithShares] }),
 					getLinks: mockGetLinks(nodeWithShares.links),
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true)
+					deleteShare: mockDeleteShare(true, true)
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -137,7 +136,7 @@ describe('Search view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(currentSearch),
-					getNode: mockGetNode(currentSearch[0])
+					getNode: mockGetNode({ getNode: [currentSearch[0]] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -182,14 +181,17 @@ describe('Search view', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.flagged = true;
-			const path: ArrayOneOrMore<Node> = [...parentPath, node];
-			const pathUpdated: ArrayOneOrMore<Node> = [...parentPath, destinationFolder, node];
-			const pathResponse: ArrayOneOrMore<Node>[] = [path, pathUpdated];
+			const path = [...parentPath, node];
+			const pathUpdated = [...parentPath, destinationFolder, node];
+			const pathResponse = [path, pathUpdated];
 
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node, node.parent, destinationFolder),
+					getNode: mockGetNode({
+						getNode: [node, node.parent, destinationFolder],
+						getChildren: [node.parent]
+					}),
 					getPath: mockGetPath(...pathResponse, parentPath, [...parentPath, destinationFolder])
 				},
 				Mutation: {
@@ -269,7 +271,7 @@ describe('Search view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node, node.parent)
+					getNode: mockGetNode({ getNode: [node, node.parent] })
 				},
 				Mutation: {
 					trashNodes: mockTrashNodes([node.id])
@@ -332,7 +334,7 @@ describe('Search view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node, node.parent)
+					getNode: mockGetNode({ getNode: [node, node.parent] })
 				},
 				Mutation: {
 					trashNodes: mockTrashNodes([node.id])
@@ -412,7 +414,7 @@ describe('Search view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node, node.parent)
+					getNode: mockGetNode({ getNode: [node, node.parent] })
 				},
 				Mutation: {
 					restoreNodes: mockRestoreNodes([{ ...node, rootId: ROOTS.LOCAL_ROOT }])
@@ -492,7 +494,7 @@ describe('Search view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(node, node.parent)
+					getNode: mockGetNode({ getNode: [node, node.parent] })
 				},
 				Mutation: {
 					restoreNodes: mockRestoreNodes([{ ...node, rootId: ROOTS.LOCAL_ROOT }])

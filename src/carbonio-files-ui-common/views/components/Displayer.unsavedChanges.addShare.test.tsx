@@ -56,7 +56,7 @@ describe('Displayer', () => {
 				});
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([]),
 						getAccountByEmail: mockGetAccountByEmail(userAccount)
@@ -99,7 +99,7 @@ describe('Displayer', () => {
 				const customText = faker.lorem.words();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -144,7 +144,7 @@ describe('Displayer', () => {
 				});
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([]),
 						getAccountByEmail: mockGetAccountByEmail(userAccount)
@@ -197,7 +197,7 @@ describe('Displayer', () => {
 				});
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([]),
 						getAccountByEmail: mockGetAccountByEmail(userAccount)
@@ -258,7 +258,7 @@ describe('Displayer', () => {
 				});
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([]),
 						getAccountByEmail: mockGetAccountByEmail(userAccount)
@@ -327,7 +327,7 @@ describe('Displayer', () => {
 				});
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([]),
 						getAccountByEmail: mockGetAccountByEmail(userAccount)
@@ -419,7 +419,7 @@ describe('Displayer', () => {
 				};
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([]),
 						getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)

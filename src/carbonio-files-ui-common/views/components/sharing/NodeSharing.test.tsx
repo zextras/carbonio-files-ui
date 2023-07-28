@@ -69,7 +69,7 @@ describe('Node Sharing', () => {
 		node.owner = populateUser();
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(node),
+				getNode: mockGetNode({ getShares: [node] }),
 				getLinks: mockGetLinks(node.links),
 				getCollaborationLinks: mockGetCollaborationLinks([])
 			}
@@ -98,7 +98,7 @@ describe('Node Sharing', () => {
 			node.shares = shares;
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(node)
+					getNode: mockGetNode({ getShares: [node] })
 				}
 			} satisfies Partial<Resolvers>;
 			setup(<NodeSharing node={node} />, { mocks });
@@ -122,7 +122,7 @@ describe('Node Sharing', () => {
 			node.owner = populateUser();
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(node),
+					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks(node.links),
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
@@ -170,7 +170,7 @@ describe('Node Sharing', () => {
 			node.shares = shares;
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(node),
+					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks(node.links),
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				}
@@ -194,7 +194,7 @@ describe('Node Sharing', () => {
 			node.owner = populateUser();
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(node),
+					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks(node.links),
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				}
@@ -213,7 +213,7 @@ describe('Node Sharing', () => {
 			node.shares = [share];
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(node),
+					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks(node.links),
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
@@ -265,7 +265,7 @@ describe('Node Sharing', () => {
 			const shareToUpdate = { ...shares[0], share_target: shares[0].share_target as SharedTarget };
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(node),
+					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks(node.links),
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
@@ -336,7 +336,7 @@ describe('Node Sharing', () => {
 			});
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(node),
+					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks(node.links),
 					getCollaborationLinks: mockGetCollaborationLinks([]),
 					getAccountByEmail: mockGetAccountByEmail(userAccount)
@@ -487,7 +487,7 @@ describe('Node Sharing', () => {
 
 			const mocks = {
 				Query: {
-					getNode: mockGetNode(node),
+					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks(node.links),
 					getCollaborationLinks: mockGetCollaborationLinks([]),
 					getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)

@@ -198,7 +198,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(nodes),
-						getNode: mockGetNode(nodeWithNewName)
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
 					},
 					Mutation: {
 						updateNode: mockUpdateNode(nodeWithNewName)
@@ -328,7 +328,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(nodes),
-						getNode: mockGetNode(nodeWithNewName)
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
 					},
 					Mutation: {
 						updateNode: mockUpdateNode(nodeWithNewName)
@@ -397,7 +397,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
-						getNode: mockGetNode(nodeWithNewName)
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
 					},
 					Mutation: {
 						updateNode: mockUpdateNode(nodeWithNewName)
@@ -493,7 +493,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
-						getNode: mockGetNode(nodeWithNewName)
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
 					},
 					Mutation: {
 						updateNode: mockUpdateNode(nodeWithNewName)

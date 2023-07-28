@@ -88,7 +88,7 @@ describe('Filter view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(currentFilter),
-					getNode: mockGetNode(node),
+					getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 					getLinks: mockGetLinks(node.links),
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},

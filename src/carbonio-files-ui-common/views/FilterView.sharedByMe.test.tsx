@@ -88,12 +88,12 @@ describe('Filter view', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(nodes),
-					getNode: mockGetNode(nodeWithShares),
+					getNode: mockGetNode({ getNode: [nodeWithShares], getShares: [nodeWithShares] }),
 					getLinks: mockGetLinks(nodeWithShares.links),
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true)
+					deleteShare: mockDeleteShare(true, true)
 				}
 			} satisfies Partial<Resolvers>;
 

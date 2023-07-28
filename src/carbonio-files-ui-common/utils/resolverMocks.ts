@@ -142,17 +142,30 @@ export function getNodeVariables(
 }
 
 export function mockGetNode(
-	...getNode: Array<GQLTypes.File | GQLTypes.Folder>
+	getNode: Partial<
+		Record<
+			'getChildren' | 'getNode' | 'getShares' | 'getBaseNode' | 'getPermissions' | 'getChild',
+			Array<GQLTypes.File | GQLTypes.Folder>
+		>
+	>
 ): Mock<GQLTypes.GetNodeQuery> {
-	return (parent, args) => {
-		const matchIndex = findIndex(getNode, (node) => node.id === args.node_id);
-		if (matchIndex >= 0) {
-			const resultArray = getNode.splice(matchIndex, 1);
-			if (resultArray.length > 0) {
-				return resultArray[0];
+	return (parent, args, context, info) => {
+		const operationName = info.operation.name?.value;
+		if (operationName && operationName in getNode) {
+			const operationResults = getNode[operationName as keyof typeof getNode];
+			if (operationResults !== undefined) {
+				const matchIndex = findIndex(operationResults, (node) => node.id === args.node_id);
+				if (matchIndex >= 0) {
+					const resultArray = operationResults.splice(matchIndex, 1);
+					if (resultArray.length > 0) {
+						return resultArray[0];
+					}
+				}
 			}
 		}
-		throw new GraphQLError('no more responses provided for resolver');
+		throw new GraphQLError(
+			`no more responses provided for resolver getNode and operation ${operationName}`
+		);
 	};
 }
 

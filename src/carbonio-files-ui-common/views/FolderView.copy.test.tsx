@@ -61,7 +61,7 @@ describe('Copy', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -99,7 +99,7 @@ describe('Copy', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					copyNodes: mockCopyNodes([{ ...nodeToCopy, parent: destinationFolder }])
@@ -178,7 +178,7 @@ describe('Copy', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					copyNodes: mockCopyNodes(copiedNodes)
@@ -257,7 +257,7 @@ describe('Copy', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
-					getNode: mockGetNode(currentFolder)
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 				},
 				Mutation: {
 					copyNodes: mockCopyNodes([{ ...nodeToCopy, parent: destinationFolder }])

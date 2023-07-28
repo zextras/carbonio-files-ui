@@ -125,7 +125,11 @@ describe('Nodes Selection Modal Content', () => {
 			Query: {
 				getRootsList: mockGetRootsList(),
 				getPath: mockGetPath([localRoot]),
-				getNode: mockGetNode(localRoot)
+				getNode: mockGetNode({
+					getChildren: [localRoot],
+					getPermissions: [localRoot],
+					getBaseNode: [localRoot]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -193,7 +197,11 @@ describe('Nodes Selection Modal Content', () => {
 			Query: {
 				getRootsList: mockGetRootsList(),
 				getPath: mockGetPath([localRoot]),
-				getNode: mockGetNode(localRoot)
+				getNode: mockGetNode({
+					getChildren: [localRoot],
+					getPermissions: [localRoot],
+					getBaseNode: [localRoot]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -262,7 +270,11 @@ describe('Nodes Selection Modal Content', () => {
 			Query: {
 				getRootsList: mockGetRootsList(),
 				getPath: mockGetPath([localRoot]),
-				getNode: mockGetNode(localRoot)
+				getNode: mockGetNode({
+					getChildren: [localRoot],
+					getPermissions: [localRoot],
+					getBaseNode: [localRoot]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -392,7 +404,7 @@ describe('Nodes Selection Modal Content', () => {
 			const mocks = {
 				Query: {
 					getRootsList: mockGetRootsList(),
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -491,7 +503,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -555,7 +571,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -619,7 +639,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -696,7 +720,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -764,7 +792,7 @@ describe('Nodes Selection Modal Content', () => {
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -830,7 +858,10 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot], [localRoot, folder]),
-						getNode: mockGetNode(localRoot, folder)
+						getNode: mockGetNode({
+							getChildren: [localRoot, folder],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -946,7 +977,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot], [localRoot, folder]),
-						getNode: mockGetNode(localRoot, folder)
+						getNode: mockGetNode({
+							getChildren: [localRoot, folder],
+							getPermissions: [localRoot, folder],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1159,7 +1194,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1236,7 +1275,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1323,7 +1366,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot], [localRoot, invalidFolder]),
-						getNode: mockGetNode(localRoot, invalidFolder)
+						getNode: mockGetNode({
+							getChildren: [localRoot, invalidFolder],
+							getPermissions: [localRoot, invalidFolder],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1435,7 +1482,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot]),
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -1502,7 +1553,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot]),
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -1577,7 +1632,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1636,7 +1695,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1700,7 +1763,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1779,7 +1846,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1856,7 +1927,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -1947,7 +2022,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -2037,7 +2116,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -2118,7 +2201,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -2206,7 +2293,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -2317,7 +2408,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot]),
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -2438,7 +2533,11 @@ describe('Nodes Selection Modal Content', () => {
 					Query: {
 						getRootsList: mockGetRootsList(),
 						getPath: mockGetPath([localRoot], [localRoot, invalidFolder]),
-						getNode: mockGetNode(localRoot, invalidFolder)
+						getNode: mockGetNode({
+							getChildren: [localRoot, invalidFolder],
+							getPermissions: [localRoot, invalidFolder],
+							getBaseNode: [localRoot]
+						})
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -2589,7 +2688,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot]),
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -2642,7 +2745,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot]),
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -2699,7 +2806,11 @@ describe('Nodes Selection Modal Content', () => {
 					getRootsList: mockGetRootsList(),
 					findNodes: mockFindNodes(nodes),
 					getPath: mockGetPath([sharedFolder]),
-					getNode: mockGetNode(sharedFolder)
+					getNode: mockGetNode({
+						getChildren: [sharedFolder],
+						getPermissions: [sharedFolder],
+						getBaseNode: [sharedFolder]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -2761,7 +2872,11 @@ describe('Nodes Selection Modal Content', () => {
 					getRootsList: mockGetRootsList(),
 					findNodes: mockFindNodes(nodes),
 					getPath: mockGetPath([sharedFolder]),
-					getNode: mockGetNode(sharedFolder)
+					getNode: mockGetNode({
+						getChildren: [sharedFolder],
+						getPermissions: [sharedFolder],
+						getBaseNode: [sharedFolder]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -2835,7 +2950,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot], [localRoot, folder]),
-					getNode: mockGetNode(localRoot, folder)
+					getNode: mockGetNode({
+						getChildren: [localRoot, folder],
+						getPermissions: [localRoot, folder],
+						getBaseNode: [localRoot, folder]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -2915,7 +3034,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot]),
-					getNode: mockGetNode(localRoot, folder)
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot, folder]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -2995,7 +3118,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot]),
-					getNode: mockGetNode(localRoot, newFolder)
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot, newFolder]
+					})
 				},
 				Mutation: {
 					createFolder: mockCreateFolder(newFolder)
@@ -3074,7 +3201,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot]),
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
 				},
 				Mutation: {
 					createFolder: mockErrorResolver(generateError('A folder with same name already exists'))
@@ -3150,7 +3281,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot]),
-					getNode: mockGetNode(localRoot)
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
 				},
 				Mutation: {
 					createFolder: mockErrorResolver(generateError('A folder with same name already exists'))
@@ -3208,7 +3343,11 @@ describe('Nodes Selection Modal Content', () => {
 				Query: {
 					getRootsList: mockGetRootsList(),
 					getPath: mockGetPath([localRoot], [localRoot, folder]),
-					getNode: mockGetNode(localRoot, folder)
+					getNode: mockGetNode({
+						getChildren: [localRoot, folder],
+						getPermissions: [localRoot, folder],
+						getBaseNode: [localRoot, folder]
+					})
 				}
 			} satisfies Partial<Resolvers>;
 

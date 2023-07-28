@@ -93,7 +93,10 @@ describe('Create folder', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder]
+				})
 			},
 			Mutation: {
 				createFolder: mockErrorResolver(generateError('Error! Name already assigned'))
@@ -153,7 +156,10 @@ describe('Create folder', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder]
+				})
 			},
 			Mutation: {
 				createFolder: mockCreateFolder(node2)
@@ -222,7 +228,10 @@ describe('Create folder', () => {
 			},
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder]
+				})
 			},
 			Mutation: {
 				createFolder: mockCreateFolder(node2, node1)
@@ -308,7 +317,7 @@ describe('Create folder', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			},
 			Mutation: {
 				createFolder: mockCreateFolder(newNode)

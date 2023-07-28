@@ -27,7 +27,7 @@ describe('Upload List Item Wrapper', () => {
 				const mockSelectId = jest.fn();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(destinationFolder)
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
 				setup(
@@ -56,7 +56,7 @@ describe('Upload List Item Wrapper', () => {
 				const mockSelectId = jest.fn();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(destinationFolder)
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
 				setup(
@@ -85,7 +85,7 @@ describe('Upload List Item Wrapper', () => {
 				const mockSelectId = jest.fn();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(destinationFolder)
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
 				setup(
@@ -114,7 +114,7 @@ describe('Upload List Item Wrapper', () => {
 				const mockSelectId = jest.fn();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(destinationFolder)
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
 				setup(
@@ -145,7 +145,7 @@ describe('Upload List Item Wrapper', () => {
 				const mockSelectId = jest.fn();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(destinationFolder)
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(
@@ -173,7 +173,7 @@ describe('Upload List Item Wrapper', () => {
 				const mockSelectId = jest.fn();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(destinationFolder)
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(
@@ -201,7 +201,7 @@ describe('Upload List Item Wrapper', () => {
 				const mockSelectId = jest.fn();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(destinationFolder)
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(
@@ -229,7 +229,7 @@ describe('Upload List Item Wrapper', () => {
 				const mockSelectId = jest.fn();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(destinationFolder)
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(

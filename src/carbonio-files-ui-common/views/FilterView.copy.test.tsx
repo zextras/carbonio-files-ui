@@ -100,7 +100,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
-						getNode: mockGetNode(parentFolder),
+						getNode: mockGetNode({ getChildren: [parentFolder] }),
 						getPath: mockGetPath(path.slice(0, path.length - 1) as ArrayOneOrMore<Node>)
 					},
 					Mutation: {
@@ -203,7 +203,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
-						getNode: mockGetNode(parentFolder),
+						getNode: mockGetNode({ getChildren: [parentFolder] }),
 						getPath: mockGetPath([parentFolder])
 					},
 					Mutation: {
@@ -301,7 +301,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
-						getNode: mockGetNode(localRoot),
+						getNode: mockGetNode({ getChildren: [localRoot] }),
 						getPath: mockGetPath([localRoot])
 					},
 					Mutation: {
@@ -406,7 +406,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
-						getNode: mockGetNode(parentFolder),
+						getNode: mockGetNode({ getChildren: [parentFolder] }),
 						getPath: mockGetPath(path.slice(0, path.length - 1) as ArrayOneOrMore<Node>)
 					},
 					Mutation: {

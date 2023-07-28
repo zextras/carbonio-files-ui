@@ -16,7 +16,7 @@ import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
@@ -43,7 +43,7 @@ describe('Folder View Selection mode', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 		const { user } = setup(<FolderView />, {
@@ -88,25 +88,24 @@ describe('Folder View Selection mode', () => {
 	});
 
 	test('if all loaded nodes are selected, unselect all action is visible', async () => {
-		const currentFolder = populateFolder(NODES_LOAD_LIMIT);
-		const secondPage = populateNodes(10) as Node[];
-		forEach(secondPage, (mockedNode) => {
-			mockedNode.parent = currentFolder;
+		const currentFolder = populateFolder();
+		const firstPage = populateNodes(NODES_LOAD_LIMIT);
+		const secondPage = populateNodes(10);
+		currentFolder.children = populateNodePage([...firstPage, ...secondPage]);
+		forEach(currentFolder.children.nodes, (node) => {
+			if (node) {
+				node.parent = currentFolder;
+			}
 		});
 
-		const childrenResolver: FolderResolvers['children'] = (parent, args) => {
-			if (args.page_token !== undefined && args.page_token !== null) {
-				return populateNodePage(secondPage);
-			}
-			return currentFolder.children;
-		};
 		const mocks = {
-			Folder: {
-				children: childrenResolver
-			},
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				// use default children resolver to split children in pages
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 		const { user } = setup(<FolderView />, {
@@ -122,28 +121,24 @@ describe('Folder View Selection mode', () => {
 		expect(screen.getByText(/\bselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/\bselect all/i));
 		await screen.findByText(/deselect all/i);
-		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
-			currentFolder.children.nodes.length
-		);
+		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 		expect(screen.getByText(/deselect all/i)).toBeVisible();
 		expect(screen.queryByText(/\bselect all/i)).not.toBeInTheDocument();
 		await triggerLoadMore();
 		await screen.findByText(secondPage[0].name);
-		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
-			currentFolder.children.nodes.length
-		);
+		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 		expect(screen.queryByText(/deselect all/i)).not.toBeInTheDocument();
 		expect(screen.getByText(/\bselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/\bselect all/i));
 		await screen.findByText(/deselect all/i);
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
-			currentFolder.children.nodes.length + secondPage.length
+			firstPage.length + secondPage.length
 		);
 		expect(screen.getByText(/deselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/deselect all/i));
 		await screen.findByText(/\bselect all/i);
 		expect(screen.getAllByTestId(SELECTORS.uncheckedAvatar)).toHaveLength(
-			currentFolder.children.nodes.length + secondPage.length
+			firstPage.length + secondPage.length
 		);
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 	});

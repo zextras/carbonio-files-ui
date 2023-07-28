@@ -58,7 +58,7 @@ describe('Upload List Item Wrapper', () => {
 		const mockSelectId = jest.fn();
 		const mocks = {
 			Query: {
-				getNode: mockGetNode(destinationFolder)
+				getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 

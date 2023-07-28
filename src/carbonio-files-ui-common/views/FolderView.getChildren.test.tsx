@@ -14,9 +14,9 @@ import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
-import { populateFolder, populateNodePage } from '../mocks/mockUtils';
+import { populateFolder } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { FolderResolvers, QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
+import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { generateError, setup, triggerLoadMore } from '../utils/testUtils';
 
@@ -67,7 +67,7 @@ describe('Get children', () => {
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
 			}
 		} satisfies Partial<Resolvers>;
 		setup(<FolderView />, {
@@ -89,19 +89,14 @@ describe('Get children', () => {
 	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT + Math.floor(NODES_LOAD_LIMIT / 2));
 
-		const childrenResolver: FolderResolvers['children'] = (parent, args) => {
-			if (args.page_token !== undefined && args.page_token !== null) {
-				return populateNodePage(currentFolder.children.nodes.slice(NODES_LOAD_LIMIT));
-			}
-			return populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT));
-		};
 		const mocks = {
-			Folder: {
-				children: childrenResolver
-			},
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				// use default children resolver to split children in pages
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 

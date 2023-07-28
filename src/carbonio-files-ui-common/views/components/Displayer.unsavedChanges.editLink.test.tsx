@@ -37,7 +37,7 @@ describe('Displayer', () => {
 				node.links = populateLinks(node);
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -79,7 +79,7 @@ describe('Displayer', () => {
 				node.links = populateLinks(node);
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -126,7 +126,7 @@ describe('Displayer', () => {
 				const description = faker.lorem.words();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -184,7 +184,7 @@ describe('Displayer', () => {
 				const description = faker.lorem.words();
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					}
@@ -254,7 +254,7 @@ describe('Displayer', () => {
 				const newExpiresAt = initExpirationDate(firstOfNextMonth) as Date;
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},
@@ -338,7 +338,7 @@ describe('Displayer', () => {
 				const firstOfNextMonth = getFirstOfNextMonth(link.expires_at);
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(node),
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
 						getLinks: mockGetLinks(node.links),
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},

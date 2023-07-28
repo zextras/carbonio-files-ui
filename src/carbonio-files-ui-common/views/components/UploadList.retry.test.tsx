@@ -59,10 +59,11 @@ describe('Upload List', () => {
 				const uploadMap = keyBy(uploadItems, 'id');
 
 				uploadVar(uploadMap);
+				const localRoot = populateLocalRoot();
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(populateLocalRoot())
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, {
@@ -89,10 +90,11 @@ describe('Upload List', () => {
 				const uploadMap = keyBy(uploadItems, 'id');
 
 				uploadVar(uploadMap);
+				const localRoot = populateLocalRoot();
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(populateLocalRoot())
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, { mocks });
@@ -146,7 +148,7 @@ describe('Upload List', () => {
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(localRoot, ...uploadedFiles)
+						getNode: mockGetNode({ getBaseNode: [localRoot, ...uploadedFiles] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -218,7 +220,7 @@ describe('Upload List', () => {
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -278,7 +280,7 @@ describe('Upload List', () => {
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -364,7 +366,7 @@ describe('Upload List', () => {
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -430,7 +432,7 @@ describe('Upload List', () => {
 
 				const mocks = {
 					Query: {
-						getNode: mockGetNode(localRoot)
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
 

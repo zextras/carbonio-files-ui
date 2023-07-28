@@ -64,7 +64,7 @@ describe('Filter View', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(currentFilter),
-					getNode: mockGetNode(...uploadedFiles)
+					getNode: mockGetNode({ getChild: uploadedFiles })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -131,7 +131,7 @@ describe('Filter View', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(currentFilter),
-					getNode: mockGetNode(...uploadedFiles)
+					getNode: mockGetNode({ getChild: uploadedFiles })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -185,7 +185,7 @@ describe('Filter View', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(currentFilter),
-					getNode: mockGetNode(...uploadedFiles)
+					getNode: mockGetNode({ getChild: uploadedFiles })
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
@@ -226,7 +226,7 @@ describe('Filter View', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(currentFilter),
-					getNode: mockGetNode(...uploadedFiles)
+					getNode: mockGetNode({ getChild: uploadedFiles })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -268,7 +268,7 @@ describe('Filter View', () => {
 			const mocks = {
 				Query: {
 					findNodes: mockFindNodes(currentFilter),
-					getNode: mockGetNode(...uploadedFiles)
+					getNode: mockGetNode({ getChild: uploadedFiles })
 				}
 			} satisfies Partial<Resolvers>;
 

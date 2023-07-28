@@ -230,7 +230,7 @@ describe('Filter View', () => {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
 						getPath: mockGetPath(path.slice(0, path.length - 1) as ArrayOneOrMore<Node>),
-						getNode: mockGetNode(parentFolder)
+						getNode: mockGetNode({ getChildren: [parentFolder] })
 					},
 					Mutation: {
 						moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
@@ -384,7 +384,7 @@ describe('Filter View', () => {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
 						getPath: mockGetPath(path.slice(0, path.length - 1) as ArrayOneOrMore<Node>),
-						getNode: mockGetNode(parentFolder)
+						getNode: mockGetNode({ getChildren: [parentFolder] })
 					},
 					Mutation: {
 						moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])

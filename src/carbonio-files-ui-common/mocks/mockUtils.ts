@@ -36,7 +36,7 @@ import {
 	Match,
 	Member
 } from '../types/network';
-import { ArrayOneOrMore, MakeRequired, MakeRequiredNonNull } from '../types/utils';
+import { MakeRequired, MakeRequiredNonNull } from '../types/utils';
 import { ActionsFactoryNodeType } from '../utils/ActionsFactory';
 import { nodeSortComparator } from '../utils/utils';
 
@@ -266,9 +266,9 @@ export function populateParents(
 	node: Node,
 	limit = 1,
 	withRoot = false
-): { node: Node; path: ArrayOneOrMore<Node> } {
+): { node: Node; path: Node[] } {
 	let currentNode = node;
-	const path: ArrayOneOrMore<Node> = [currentNode];
+	const path = [currentNode];
 	const parentsLimit = withRoot ? limit - 1 : limit;
 	if (node.id !== ROOTS.LOCAL_ROOT) {
 		for (let i = 0; i < parentsLimit; i += 1) {

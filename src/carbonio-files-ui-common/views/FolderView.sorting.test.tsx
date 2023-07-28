@@ -64,7 +64,10 @@ describe('Sorting', () => {
 			},
 			Query: {
 				getPath: mockGetPath([currentFolder]),
-				getNode: mockGetNode(currentFolder)
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder]
+				})
 			}
 		} satisfies Partial<Resolvers>;
 
