@@ -12,8 +12,8 @@ import { EditShareChip } from './EditShareChip';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
-import { SharePermission } from '../../../types/graphql/types';
-import { mockDeleteShare } from '../../../utils/resolverMocks';
+import { Share, SharePermission } from '../../../types/graphql/types';
+import { mockDeleteShare, mockUpdateShare } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 
 describe('Edit Share Chip', () => {
@@ -685,7 +685,7 @@ describe('Edit Share Chip', () => {
 
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(() => share)
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = jest.fn();
@@ -729,7 +729,7 @@ describe('Edit Share Chip', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(() => share)
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = jest.fn();
@@ -767,7 +767,7 @@ describe('Edit Share Chip', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(() => share)
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = jest.fn();
@@ -810,7 +810,7 @@ describe('Edit Share Chip', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(() => share)
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = jest.fn();

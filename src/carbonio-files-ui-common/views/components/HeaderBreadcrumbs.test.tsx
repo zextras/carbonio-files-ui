@@ -28,8 +28,8 @@ import {
 	populateParents,
 	populateUser
 } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { Node } from '../../types/graphql/types';
 import { mockGetPath, mockMoveNodes } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../utils/testUtils';
 
@@ -179,7 +179,11 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: jest.fn(() => map(movingNodes, (node) => ({ ...node, parent: currentFolder })))
+					moveNodes: jest.fn(
+						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: currentFolder }))) as (
+							...args: unknown[]
+						) => Node[]
+					)
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
@@ -439,7 +443,11 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: jest.fn(() => map(movingNodes, (node) => ({ ...node, parent: path[0] })))
+					moveNodes: jest.fn(
+						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] }))) as (
+							...args: unknown[]
+						) => Node[]
+					)
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
@@ -798,7 +806,11 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: jest.fn(() => map(movingNodes, (node) => ({ ...node, parent: path[0] })))
+					moveNodes: jest.fn(
+						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] }))) as (
+							...args: unknown[]
+						) => Node[]
+					)
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();

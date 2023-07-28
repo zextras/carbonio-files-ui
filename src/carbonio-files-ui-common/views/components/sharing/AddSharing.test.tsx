@@ -7,7 +7,6 @@
 import React from 'react';
 
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
-import { GraphQLError } from 'graphql';
 
 import { AddSharing } from './AddSharing';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
@@ -22,10 +21,12 @@ import {
 	GetNodeDocument,
 	GetNodeQuery,
 	GetNodeQueryVariables,
+	Share,
 	SharePermission
 } from '../../../types/graphql/types';
 import {
 	getNodeVariables,
+	mockCreateShare,
 	mockErrorResolver,
 	mockGetAccountByEmail
 } from '../../../utils/resolverMocks';
@@ -229,7 +230,7 @@ describe('Add Sharing', () => {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
 			},
 			Mutation: {
-				createShare: jest.fn(() => share)
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -337,7 +338,7 @@ describe('Add Sharing', () => {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
 			},
 			Mutation: {
-				createShare: jest.fn(() => share)
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -438,7 +439,7 @@ describe('Add Sharing', () => {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
 			},
 			Mutation: {
-				createShare: jest.fn(() => share)
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -520,7 +521,7 @@ describe('Add Sharing', () => {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
 			},
 			Mutation: {
-				createShare: jest.fn(() => share)
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -583,7 +584,7 @@ describe('Add Sharing', () => {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
 			},
 			Mutation: {
-				createShare: jest.fn(() => share)
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -694,13 +695,7 @@ describe('Add Sharing', () => {
 				getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
 			},
 			Mutation: {
-				createShare: jest.fn(() => {
-					const result = [share1, share2].shift();
-					if (result !== undefined) {
-						return result;
-					}
-					throw new GraphQLError('no more createShare response provided');
-				})
+				createShare: jest.fn(mockCreateShare(share1, share2) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation for both the calls

@@ -15,6 +15,7 @@ import {
 	populateNodePage,
 	populateShares
 } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File,
@@ -240,7 +241,9 @@ describe('Displayer', () => {
 		node.permissions.can_share = false;
 		const mocks = {
 			Query: {
-				getNode: jest.fn(() => node)
+				getNode: jest.fn(
+					mockGetNode({ getNode: [node], getShares: [node] }) as (...args: unknown[]) => Node
+				)
 			}
 		} satisfies Partial<Resolvers>;
 

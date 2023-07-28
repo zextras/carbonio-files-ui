@@ -26,8 +26,8 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { Node } from '../../types/graphql/types';
 import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
@@ -212,7 +212,7 @@ describe('Folder Selection Modal Content', () => {
 
 		const mocks = {
 			Query: {
-				getPath: jest.fn(() => [localRoot]),
+				getPath: jest.fn(mockGetPath([localRoot]) as (...args: unknown[]) => Node[]),
 				getNode: mockGetNode({ getChildren: [localRoot] })
 			}
 		} satisfies Partial<Resolvers>;

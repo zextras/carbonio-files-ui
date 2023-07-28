@@ -12,9 +12,10 @@ import { waitFor } from '@testing-library/react';
 import { NodeDetailsDescription } from './NodeDetailsDescription';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
-import { mockErrorResolver } from '../../utils/resolverMocks';
+import { mockErrorResolver, mockUpdateNode } from '../../utils/resolverMocks';
 import { generateError, setup, screen } from '../../utils/testUtils';
 
 describe('NodeDetailsDescription component', () => {
@@ -220,10 +221,12 @@ describe('NodeDetailsDescription component', () => {
 
 		const mocks = {
 			Mutation: {
-				updateNode: jest.fn(() => ({
-					...node,
-					description: newDescription
-				}))
+				updateNode: jest.fn(
+					mockUpdateNode({
+						...node,
+						description: newDescription
+					}) as (...args: unknown[]) => Node
+				)
 			}
 		} satisfies Partial<Resolvers>;
 
