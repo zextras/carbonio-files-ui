@@ -21,7 +21,6 @@ import {
 	populateNodes,
 	populateParents
 } from '../mocks/mockUtils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	Folder,
@@ -29,7 +28,6 @@ import {
 	GetChildrenQuery,
 	GetChildrenQueryVariables
 } from '../types/graphql/types';
-import { ArrayOneOrMore } from '../types/utils';
 import {
 	getChildrenVariables,
 	mockFindNodes,
@@ -229,7 +227,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
-						getPath: mockGetPath(path.slice(0, path.length - 1) as ArrayOneOrMore<Node>),
+						getPath: mockGetPath(path.slice(0, path.length - 1)),
 						getNode: mockGetNode({ getChildren: [parentFolder] })
 					},
 					Mutation: {
@@ -383,7 +381,7 @@ describe('Filter View', () => {
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
-						getPath: mockGetPath(path.slice(0, path.length - 1) as ArrayOneOrMore<Node>),
+						getPath: mockGetPath(path.slice(0, path.length - 1)),
 						getNode: mockGetNode({ getChildren: [parentFolder] })
 					},
 					Mutation: {

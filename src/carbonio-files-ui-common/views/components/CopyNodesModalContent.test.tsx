@@ -35,7 +35,6 @@ import {
 	Maybe,
 	GetChildrenDocument
 } from '../../types/graphql/types';
-import { ArrayOneOrMore } from '../../types/utils';
 import {
 	getChildrenVariables,
 	mockCopyNodes,
@@ -793,11 +792,7 @@ describe('Copy Nodes Modal', () => {
 		ancestor.children.nodes = [path[ancestorIndex + 1]];
 		const mocks = {
 			Query: {
-				getPath: mockGetPath(
-					path,
-					path.concat(folder) as ArrayOneOrMore<Node>,
-					path.slice(0, ancestorIndex + 1) as ArrayOneOrMore<Node>
-				),
+				getPath: mockGetPath(path, path.concat(folder), path.slice(0, ancestorIndex + 1)),
 				getNode: mockGetNode({ getChildren: [currentFolder, folder, ancestor] })
 			}
 		} satisfies Partial<Resolvers>;
