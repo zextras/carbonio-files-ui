@@ -80,7 +80,7 @@ describe('Folder View Selection mode', () => {
 		expect(screen.queryByTestId(ICON_REGEXP.restore)).not.toBeInTheDocument();
 		expect(screen.queryByTestId(ICON_REGEXP.deletePermanently)).not.toBeInTheDocument();
 
-		const arrowBack = screen.getByTestId('icon: ArrowBackOutline');
+		const arrowBack = screen.getByTestId(ICON_REGEXP.exitSelectionMode);
 		expect(arrowBack).toBeVisible();
 		await user.click(arrowBack);
 		expect(arrowBack).not.toBeInTheDocument();

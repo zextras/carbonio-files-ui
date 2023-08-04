@@ -107,15 +107,14 @@ describe('Rename', () => {
 			await selectNodes([element.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			// check that the rename action becomes visible
 			await renameNode(newName, user);
-			const error = await within(screen.getByTestId('modal')).findByText(
+			const error = await within(screen.getByTestId(SELECTORS.modal)).findByText(
 				/Error! Name already assigned/i
 			);
-			const inputFieldDiv = screen.getByTestId('input-name');
-			const inputField = within(inputFieldDiv).getByRole('textbox');
+			const inputField = screen.getByRole('textbox');
 			expect(error).toBeVisible();
 			expect(inputField).toBeVisible();
 			expect(inputField).toHaveValue(newName);
@@ -139,7 +138,7 @@ describe('Rename', () => {
 			);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeItem);
 			await screen.findByText(ACTION_REGEXP.manageShares);
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
@@ -167,7 +166,7 @@ describe('Rename', () => {
 			await selectNodes([element0.id, element1.id], user);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element0.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			fireEvent.contextMenu(nodeItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			let renameAction = screen.queryByText(ACTION_REGEXP.rename);
@@ -176,6 +175,7 @@ describe('Rename', () => {
 			fireEvent.contextMenu(nodeItem);
 			renameAction = await screen.findByText(ACTION_REGEXP.rename);
 			expect(renameAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(renameAction).not.toHaveAttribute('disabled', '');
 		});
 	});

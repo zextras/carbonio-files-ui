@@ -27,7 +27,6 @@ export function useActiveNode(): {
 } {
 	const { navigateTo } = useNavigation();
 
-	// const paramsMap = Object.fromEntries(new URLSearchParams(location.search));
 	const activeNodeId = useQueryParam('node');
 	const tab = useQueryParam('tab');
 

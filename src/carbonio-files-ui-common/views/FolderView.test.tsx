@@ -6,11 +6,13 @@
 
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
+import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { map } from 'lodash';
 
 import FolderView from './FolderView';
+import { ACTION_IDS } from '../../constants';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_NODE from '../graphql/queries/getNode.graphql';
 import GET_PERMISSIONS from '../graphql/queries/getPermissions.graphql';
@@ -91,9 +93,10 @@ describe('Folder View', () => {
 			await screen.findByText(/nothing here/i);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([expect.objectContaining({ id: 'create-folder', disabled: true })])
+				expect.arrayContaining([
+					expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
+				])
 			);
-			expect.assertions(1);
 		});
 
 		test('Create folder option is active if current folder has can_write_folder permission', async () => {
@@ -129,9 +132,10 @@ describe('Folder View', () => {
 			});
 			await screen.findByText(/nothing here/i);
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([expect.objectContaining({ id: 'create-folder', disabled: false })])
+				expect.arrayContaining([
+					expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: false })
+				])
 			);
-			expect.assertions(1);
 		});
 	});
 
@@ -158,7 +162,7 @@ describe('Folder View', () => {
 			});
 			const nodeItem = screen.getByText((currentFolder.children.nodes[0] as Node).name);
 			expect(nodeItem).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
@@ -168,7 +172,6 @@ describe('Folder View', () => {
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp((currentFolder.children.nodes[0] as Node).name))
 			).toBeVisible();
-			expect.assertions(4);
 		});
 
 		test('Move action close the displayer if node is removed from the main list', async () => {
@@ -201,20 +204,20 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${currentFolder.id}&node=${node.id}`],
 				mocks
 			});
-			const displayer = await screen.findByTestId('displayer');
+			const displayer = await screen.findByTestId(SELECTORS.displayer);
 			await screen.findAllByText(node.name);
 			await screen.findByText(destinationFolder.name);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToMoveItem = within(screen.getByTestId(`list-${currentFolder.id}`)).getByText(
+			const nodeToMoveItem = within(screen.getByTestId(SELECTORS.list(currentFolder.id))).getByText(
 				node.name
 			);
 			fireEvent.contextMenu(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/item moved/i);
 			await screen.findByText(/view files and folders/i);
-			expect(screen.queryByTestId(`node-item-${node.id}`)).not.toBeInTheDocument();
-			expect(screen.queryAllByTestId('node-item-', { exact: false })).toHaveLength(
+			expect(screen.queryByTestId(SELECTORS.nodeItem(node.id))).not.toBeInTheDocument();
+			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - 1
 			);
 			expect(screen.queryByText(/details/i)).not.toBeInTheDocument();
@@ -263,12 +266,11 @@ describe('Folder View', () => {
 			await screen.findByText(/nothing here/i);
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
 				expect.arrayContaining([
-					expect.objectContaining({ id: 'create-docs-document', disabled: true }),
-					expect.objectContaining({ id: 'create-docs-spreadsheet', disabled: true }),
-					expect.objectContaining({ id: 'create-docs-presentation', disabled: true })
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: true }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: true }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: true })
 				])
 			);
-			expect.assertions(1);
 		});
 
 		test('Create docs files options are active if current folder has can_write_file permission', async () => {
@@ -306,12 +308,26 @@ describe('Folder View', () => {
 			await screen.findByText(/nothing here/i);
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
 				expect.arrayContaining([
-					expect.objectContaining({ id: 'create-docs-document', disabled: false }),
-					expect.objectContaining({ id: 'create-docs-spreadsheet', disabled: false }),
-					expect.objectContaining({ id: 'create-docs-presentation', disabled: false })
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: false }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: false }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: false })
 				])
 			);
-			expect.assertions(1);
 		});
+	});
+
+	test('should show the list of valid nodes even if the children include some invalid node', async () => {
+		const folder = populateFolder(2);
+		const node = populateNode();
+		folder.children.nodes.push(null, node);
+		const mocks = [
+			mockGetChildren(getChildrenVariables(folder.id), folder),
+			mockGetPermissions({ node_id: folder.id }, folder),
+			mockGetPath({ node_id: folder.id }, [folder])
+		];
+		setup(<FolderView />, { initialRouterEntries: [`/?folder=${folder.id}`], mocks });
+		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		await screen.findByText(node.name);
+		expect(screen.getByText(node.name)).toBeVisible();
 	});
 });

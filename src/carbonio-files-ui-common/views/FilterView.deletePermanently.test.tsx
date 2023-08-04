@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { getFindNodesVariables, mockDeletePermanently, mockFindNodes } from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -71,14 +71,14 @@ describe('Filter View', () => {
 
 				const element = await screen.findByText(currentFilter[0].name);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
-				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByTestId(
-					'icon: DeletePermanentlyOutline'
+				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByRoleWithIcon(
+					'button',
+					{ icon: ICON_REGEXP.deletePermanently }
 				);
-				expect(deletePermanentlyIcon).toBeInTheDocument();
 				expect(deletePermanentlyIcon).toBeVisible();
-				expect(deletePermanentlyIcon).not.toHaveAttribute('disabled', '');
+				expect(deletePermanentlyIcon).toBeEnabled();
 
 				await user.click(deletePermanentlyIcon);
 
@@ -92,10 +92,8 @@ describe('Filter View', () => {
 				expect(confirmButton).not.toBeInTheDocument();
 
 				expect(element).not.toBeInTheDocument();
-				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
-				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
-
-				expect.assertions(8);
+				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
+				expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(2);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
@@ -133,27 +131,25 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: RestoreOutline'
+					ICON_REGEXP.restore
 				);
 				expect(restoreIcon).not.toBeInTheDocument();
 
-				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: Trash2Outline'
-				);
+				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(ICON_REGEXP.trash);
 				expect(trashIcon).not.toBeInTheDocument();
 
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: DeletePermanentlyOutline'
+					ICON_REGEXP.deletePermanently
 				);
 				expect(deletePermanentlyIcon).not.toBeInTheDocument();
 
-				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
+				const moreIcon = within(selectionModeActiveListHeader).queryByTestId(
+					ICON_REGEXP.moreVertical
+				);
 				expect(moreIcon).not.toBeInTheDocument();
-
-				expect.assertions(5);
 			});
 		});
 
@@ -179,7 +175,7 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 				fireEvent.contextMenu(nodeItem);
 				const renameAction = await screen.findByText(ACTION_REGEXP.rename);
 				expect(renameAction).toBeVisible();
@@ -230,9 +226,11 @@ describe('Filter View', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 
-			const deletePermanentlyAction = await screen.findByTestId('icon: DeletePermanentlyOutline');
+			const deletePermanentlyAction = await screen.findByRoleWithIcon('button', {
+				icon: ICON_REGEXP.deletePermanently
+			});
 			expect(deletePermanentlyAction).toBeVisible();
-			expect(deletePermanentlyAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(deletePermanentlyAction).toBeEnabled();
 			await user.click(deletePermanentlyAction);
 			const confirmDeleteButton = await screen.findByRole('button', {
 				name: ACTION_REGEXP.deletePermanently

@@ -28,8 +28,6 @@ interface UploadListItemProps {
 	name: string;
 	parent?: Maybe<Pick<Node, 'id' | 'name' | 'type'>>;
 	size?: number;
-	extension?: string;
-	mimeType: string;
 	status: UploadStatus;
 	progress: number;
 	contentCount?: number;
@@ -56,8 +54,6 @@ export const UploadListItem = React.memo<UploadListItemProps>(
 		name,
 		parent,
 		size,
-		extension: _extension,
-		mimeType: _mimeType,
 		status,
 		progress,
 		isSelected,

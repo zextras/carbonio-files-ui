@@ -44,8 +44,8 @@ describe('Move', () => {
 			await selectNodes([file.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 			// wait copy to be sure that popper is open
 			await screen.findByText(ACTION_REGEXP.copy);
@@ -61,10 +61,11 @@ describe('Move', () => {
 			await selectNodes([folder.id, node.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			moveAction = await screen.findByText(ACTION_REGEXP.move);
 			expect(moveAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(moveAction).not.toHaveAttribute('disabled', '');
 		});
 
@@ -94,12 +95,13 @@ describe('Move', () => {
 
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 
 			const moveIcon = await screen.findByTestId(ICON_REGEXP.move);
 			expect(moveIcon).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(moveIcon.parentElement).not.toHaveAttribute('disabled', '');
 		});
 	});

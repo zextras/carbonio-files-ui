@@ -7,7 +7,7 @@
 import React, { useEffect, useState, FC, useMemo } from 'react';
 
 import { Modal, Button } from '@zextras/carbonio-design-system';
-import { Location } from 'history';
+import type { Location } from 'history';
 import { filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Prompt, useHistory } from 'react-router-dom';

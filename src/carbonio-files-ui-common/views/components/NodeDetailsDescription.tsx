@@ -26,7 +26,7 @@ interface NodeDetailsDescriptionProps {
 	description: string | undefined;
 	canUpsertDescription: boolean;
 	id: string;
-	loading?: boolean | undefined;
+	loading?: boolean;
 }
 
 const Label: React.FC = ({ children }) => (

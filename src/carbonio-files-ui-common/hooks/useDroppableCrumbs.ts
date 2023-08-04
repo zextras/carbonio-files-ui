@@ -6,7 +6,7 @@
 
 import React, { DragEventHandler, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { gql, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import { BreadcrumbsProps, getColor, useSnackbar } from '@zextras/carbonio-design-system';
 import { forEach, isEmpty, map, uniq } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -24,16 +24,6 @@ import { ParentFragmentDoc } from '../types/graphql/types';
 import { canBeMoveDestination, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddType } from '../utils/uploadUtils';
 import { hexToRGBA, isFolder } from '../utils/utils';
-
-const NODE_OWNER = gql`
-	fragment NodeOwner on Node {
-		owner {
-			id
-			email
-			full_name
-		}
-	}
-`;
 
 function setDropzoneActive(color: string, element: HTMLElement, theme: DefaultTheme): void;
 function setDropzoneActive(color: '', element: HTMLElement): void;

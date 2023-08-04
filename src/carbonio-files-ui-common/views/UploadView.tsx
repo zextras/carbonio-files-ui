@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system';
 import { noop } from 'lodash';
@@ -175,8 +175,13 @@ const UploadView: React.VFC = () => {
 		};
 	}, [inputElementOnchange, navigateToFolder, removeCreateOptions, setCreateOptions, t]);
 
+	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
+		() => ({ isEmpty, setIsEmpty }),
+		[isEmpty]
+	);
+
 	return (
-		<ListContext.Provider value={{ isEmpty, setIsEmpty }}>
+		<ListContext.Provider value={listContextValue}>
 			<Container
 				orientation="row"
 				crossAlignment="flex-start"

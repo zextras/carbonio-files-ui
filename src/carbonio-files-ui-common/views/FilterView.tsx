@@ -359,8 +359,13 @@ const FilterView: React.VFC = () => {
 		]
 	);
 
+	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
+		() => ({ isEmpty, setIsEmpty }),
+		[isEmpty]
+	);
+
 	return (
-		<ListContext.Provider value={{ isEmpty, setIsEmpty }}>
+		<ListContext.Provider value={listContextValue}>
 			<Container
 				orientation="row"
 				crossAlignment="flex-start"

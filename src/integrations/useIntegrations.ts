@@ -36,7 +36,7 @@ export const useIntegrations = (): void => {
 	const selectNodesFunction = useMemo(
 		() => ({
 			id: FUNCTION_IDS.SELECT_NODES,
-			fn: selectNodes as AnyFunction
+			fn: selectNodes
 		}),
 		[selectNodes]
 	);

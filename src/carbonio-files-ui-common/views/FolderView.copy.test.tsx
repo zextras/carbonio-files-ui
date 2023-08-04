@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act, fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -25,7 +25,7 @@ import {
 	mockGetPath,
 	mockGetPermissions
 } from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -70,9 +70,9 @@ describe('Copy', () => {
 
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-			const copyAction = await screen.findByTestId(ICON_REGEXP.copy);
+			const copyAction = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 			expect(copyAction).toBeVisible();
-			expect(copyAction).not.toHaveAttribute('disabled', '');
+			expect(copyAction).toBeEnabled();
 		});
 
 		test('Copy confirm action close the modal and clear cached data for destination folder if destination folder is not current folder', async () => {
@@ -128,24 +128,21 @@ describe('Copy', () => {
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 			let copyAction = screen.queryByTestId(ICON_REGEXP.copy);
 			if (!copyAction) {
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				copyAction = await screen.findByText(ACTION_REGEXP.copy);
 				expect(copyAction).toBeVisible();
 			}
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(`modal-list-${currentFolder.id}`);
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
 			act(() => {
 				// run timers of modal
 				jest.advanceTimersToNextTimer();
 			});
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-				'disabled',
-				''
-			);
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
 			await screen.findByText(/Item copied/i);
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
@@ -196,7 +193,7 @@ describe('Copy', () => {
 
 			await screen.findByText(nodesToCopy[0].name);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length
 			);
 			// activate selection mode by selecting items
@@ -209,37 +206,34 @@ describe('Copy', () => {
 
 			let copyAction = screen.queryByTestId(ICON_REGEXP.copy);
 			if (!copyAction) {
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				copyAction = await screen.findByText(ACTION_REGEXP.copy);
 				expect(copyAction).toBeVisible();
 			}
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(`modal-list-${currentFolder.id}`);
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(within(modalList).getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(within(modalList).getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length
 			);
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-				'disabled',
-				''
-			);
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
 			await screen.findByText(/Item copied/i);
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-			const nodeItems = screen.getAllByTestId('node-item', { exact: false });
+			const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByText(copiedNodes[0].name)).toBeVisible();
 			expect(screen.getByText(copiedNodes[1].name)).toBeVisible();
 			expect(nodeItems).toHaveLength(currentFolder.children.nodes.length + copiedNodes.length);
 			// each node is positioned after its original
-			expect(screen.getByTestId(`node-item-${copiedNodes[0].id}`)).toBe(nodeItems[1]);
-			expect(screen.getByTestId(`node-item-${copiedNodes[1].id}`)).toBe(nodeItems[3]);
+			expect(screen.getByTestId(SELECTORS.nodeItem(copiedNodes[0].id))).toBe(nodeItems[1]);
+			expect(screen.getByTestId(SELECTORS.nodeItem(copiedNodes[1].id))).toBe(nodeItems[3]);
 		});
 	});
 
@@ -299,17 +293,14 @@ describe('Copy', () => {
 			expect(copyAction).toBeVisible();
 			await user.click(copyAction);
 
-			const modalList = await screen.findByTestId(`modal-list-${currentFolder.id}`);
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
 			act(() => {
 				// run timers of modal
 				jest.advanceTimersToNextTimer();
 			});
-			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-				'disabled',
-				''
-			);
+			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
 			await screen.findByText(/Item copied/i);
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();

@@ -11,6 +11,7 @@ import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../mocks/mockUtils';
 import { SharePermission } from '../../types/graphql/types';
 import {
@@ -50,9 +51,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -61,9 +62,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -102,9 +101,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -113,9 +112,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -137,7 +134,7 @@ describe('Displayer', () => {
 					// run timers of popover
 					jest.runOnlyPendingTimers();
 				});
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
 			});
 
 			test.skip('leave anyway continue with navigation and does not save the permissions', async () => {
@@ -161,9 +158,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -172,9 +169,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -194,14 +189,14 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByText(getChipLabel(share.share_target));
 				// chip permissions are not changed
-				const editShareItem2 = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem2 = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem2).toBeVisible();
 				await user.click(editShareItem2);
 				await screen.findByText(/viewer/i);
 				// save button is disabled because permissions are reset
-				expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave continue with navigation and save the new permissions', async () => {
@@ -234,9 +229,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -245,9 +240,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -267,9 +260,9 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByText(getChipLabel(share.share_target));
 				// chip permissions are changed
-				const editShareItem2 = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: Edit2Outline'
-				);
+				const editShareItem2 = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanWrite);
 				expect(editShareItem2).toBeVisible();
 				await user.click(editShareItem2);
 				await screen.findByText(/viewer/i);
@@ -278,7 +271,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				// save button is disabled because permissions are updated and saved
-				expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave with error keeps navigation on sharing tab', async () => {
@@ -311,8 +304,8 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const nodeSharingArea = screen.getByTestId('node-sharing-collaborators');
-				const editShareItem = within(nodeSharingArea).getByTestId('icon: EyeOutline');
+				const nodeSharingArea = screen.getByTestId(SELECTORS.sharingTabCollaborators);
+				const editShareItem = within(nodeSharingArea).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -321,9 +314,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -343,10 +334,12 @@ describe('Displayer', () => {
 				expect(screen.queryByText(/description/i)).not.toBeInTheDocument();
 				expect(screen.getByText(getChipLabel(share.share_target))).toBeVisible();
 				expect(editShareItem).toBeVisible();
-				expect(within(nodeSharingArea).queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
+				expect(
+					within(nodeSharingArea).queryByTestId(ICON_REGEXP.shareCanWrite)
+				).not.toBeInTheDocument();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
 			});
 		});
 	});

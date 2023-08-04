@@ -14,6 +14,7 @@ import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
+import { SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import {
 	populateFolder,
@@ -76,8 +77,10 @@ describe('Filter View', () => {
 			);
 			// wait the content to be rendered
 			await screen.findByText(/view files and folders/i);
-			await screen.findAllByTestId('node-item', { exact: false });
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
 			const nodeItem = screen.getByText(node.name);
 			expect(nodeItem).toBeVisible();
 			expect(screen.queryByText(/details/)).not.toBeInTheDocument();
@@ -85,11 +88,10 @@ describe('Filter View', () => {
 			await waitForElementToBeRemoved(screen.queryByText(/view files and folders/i));
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			await within(displayer).findAllByText(node.name);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			expect(getByTextWithMarkup(buildBreadCrumbRegExp(node.name))).toBeVisible();
-			expect.assertions(6);
 		});
 
 		test('Move action does not close the displayer if node is not removed from the main list', async () => {
@@ -164,7 +166,7 @@ describe('Filter View', () => {
 			);
 			// wait the content to be rendered
 			await screen.findByText(/view files and folders/i);
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 
@@ -175,7 +177,7 @@ describe('Filter View', () => {
 
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			expect(getByTextWithMarkup(buildBreadCrumbRegExp(node.name))).toBeVisible();
 			const showPathButton = screen.getByRole('button', { name: /show path/i });
@@ -186,7 +188,7 @@ describe('Filter View', () => {
 			await findByTextWithMarkup(fullPathOriginalRegexp);
 			expect(getByTextWithMarkup(fullPathOriginalRegexp)).toBeVisible();
 			// right click to open contextual menu
-			const nodeToMoveItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToMoveItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/item moved/i);
@@ -197,8 +199,10 @@ describe('Filter View', () => {
 			expect(queryByTextWithMarkup(fullPathOriginalRegexp)).not.toBeInTheDocument();
 			// updated breadcrumb is visible instead
 			expect(fullPathUpdatedItem).toBeVisible();
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 		});
 	});

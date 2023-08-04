@@ -6,7 +6,7 @@
 
 import { Reference } from '@apollo/client';
 
-import { NodeSharesArgs, QueryFindNodesArgs, Share } from './graphql/types';
+import { Maybe, NodeSharesArgs, QueryFindNodesArgs, Share } from './graphql/types';
 
 export interface NodesListCachedObject {
 	ordered: Reference[];
@@ -14,13 +14,11 @@ export interface NodesListCachedObject {
 }
 
 export interface NodesPage {
-	// eslint-disable-next-line camelcase
 	page_token: string;
-	nodes: Reference[];
+	nodes: Maybe<Reference>[];
 }
 
 export interface NodesPageCachedObject {
-	// eslint-disable-next-line camelcase
 	page_token: string;
 	nodes: NodesListCachedObject | undefined;
 }

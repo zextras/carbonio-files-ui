@@ -11,6 +11,7 @@ import { keyBy } from 'lodash';
 import { SecondaryBar } from './SecondaryBar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { ROOTS } from '../../carbonio-files-ui-common/constants';
+import { ICON_REGEXP } from '../../carbonio-files-ui-common/constants/test';
 import {
 	populateUploadItem,
 	populateUploadItems
@@ -57,14 +58,14 @@ describe('SecondaryBar', () => {
 			uploadItems[0].status = UploadStatus.FAILED;
 			uploadVar(keyBy(uploadItems, (item) => item.id));
 			setup(<SecondaryBar expanded />);
-			expect(screen.getByTestId('icon: AlertCircle')).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
 			act(() => {
 				uploadVar({
 					...uploadVar(),
 					[uploadItems[0].id]: { ...uploadItems[0], status: UploadStatus.COMPLETED }
 				});
 			});
-			expect(screen.queryByTestId('icon: AlertCircle')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.uploadFailed)).not.toBeInTheDocument();
 		});
 	});
 });

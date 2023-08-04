@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { getFindNodesVariables, mockFindNodes, mockRestoreNodes } from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -69,23 +69,20 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
-				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(
-					'icon: RestoreOutline'
-				);
-				expect(restoreIcon).toBeInTheDocument();
+				const restoreIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.restore
+				});
 				expect(restoreIcon).toBeVisible();
-				expect(restoreIcon).not.toHaveAttribute('disabled', '');
+				expect(restoreIcon).toBeEnabled();
 
 				await user.click(restoreIcon);
 
 				await screen.findByText(/^success$/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
-
-				expect.assertions(6);
+				expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(2);
 			});
 
 			test('Restore is hidden if not all nodes are trashed', async () => {
@@ -124,22 +121,22 @@ describe('Filter View', () => {
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 				expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: RestoreOutline'
+					ICON_REGEXP.restore
 				);
 				expect(restoreIcon).not.toBeInTheDocument();
 
 				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: Trash2Outline'
+					ICON_REGEXP.moveToTrash
 				);
 				expect(trashIcon).not.toBeInTheDocument();
 
-				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
+				const moreIcon = within(selectionModeActiveListHeader).queryByTestId(
+					ICON_REGEXP.moreVertical
+				);
 				expect(moreIcon).not.toBeInTheDocument();
-
-				expect.assertions(5);
 			});
 		});
 
@@ -165,7 +162,7 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 				fireEvent.contextMenu(nodeItem);
 				const renameAction = await screen.findByText(ACTION_REGEXP.rename);
 				expect(renameAction).toBeVisible();
@@ -218,9 +215,11 @@ describe('Filter View', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 
-			const restoreAction = await screen.findByTestId(ICON_REGEXP.restore);
+			const restoreAction = await screen.findByRoleWithIcon('button', {
+				icon: ICON_REGEXP.restore
+			});
 			expect(restoreAction).toBeVisible();
-			expect(restoreAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(restoreAction).toBeEnabled();
 			await user.click(restoreAction);
 			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
 			await screen.findByText(/^success$/i);

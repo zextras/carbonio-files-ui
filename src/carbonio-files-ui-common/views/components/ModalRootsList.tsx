@@ -88,15 +88,16 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 		if (!isEmpty(filterQueryParams)) {
 			const { sharedWithMe } = filterQueryParams;
 			if (sharedWithMe) {
+				const sharedWithMeLabel = t('modal.roots.sharedWitMe', 'Shared with me');
 				$crumbs.push({
 					id: 'sharedWithMe',
-					label: t('modal.roots.sharedWitMe', 'Shared with me'),
+					label: sharedWithMeLabel,
 					onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
 						setFilterQueryParam(FILTER_PARAMS.sharedWithMe);
 						setActiveNode(
 							{
 								id: ROOTS.SHARED_WITH_ME,
-								name: t('modal.roots.sharedWitMe', 'Shared with me'),
+								name: sharedWithMeLabel,
 								type: NodeType.Root
 							},
 							event
@@ -208,7 +209,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 		<ModalContainer
 			mainAlignment="flex-start"
 			crossAlignment="flex-start"
-			data-testid="modal-list-roots"
+			data-testid="modal-list"
 			maxHeight="100%"
 			minHeight={cssCalcBuilder(BREADCRUMB_ROW_HEIGHT, ['+', LIST_ITEM_HEIGHT_COMPACT])}
 		>
@@ -218,7 +219,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 				height={BREADCRUMB_ROW_HEIGHT}
 				mainAlignment="flex-start"
 				flexShrink={0}
-				data-testid="modal-listHeader-roots"
+				data-testid="modal-list-header"
 			>
 				{crumbs && <InteractiveBreadcrumbs crumbs={crumbs} />}
 				{loading && (

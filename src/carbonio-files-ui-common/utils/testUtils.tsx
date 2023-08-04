@@ -19,9 +19,9 @@ import {
 	render,
 	RenderOptions,
 	RenderResult,
-	screen,
+	screen as rtlScreen,
 	waitFor,
-	within
+	within as rtlWithin
 } from '@testing-library/react';
 import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
@@ -35,7 +35,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { Mock } from './mockUtils';
 import { isFile, isFolder } from './utils';
-import I18nFactory from '../../i18n/i18n-test-factory';
+import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { AdvancedFilters, Node } from '../types/common';
@@ -47,7 +47,7 @@ export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
  * Matcher function to search a string in more html elements and not just in a single element.
  */
 const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) =>
-	screen.queryAllByText((_content, element) => {
+	rtlScreen.queryAllByText((_content, element) => {
 		if (element && element instanceof HTMLElement) {
 			const hasText = (singleNode: Element): boolean => {
 				const regExp = RegExp(text);
@@ -80,8 +80,8 @@ const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> =
 	{ icon, ...options }
 ) =>
 	filter(
-		screen.queryAllByRole('button', options),
-		(element) => within(element).queryByTestId(icon) !== null
+		rtlScreen.queryAllByRole('button', options),
+		(element) => rtlWithin(element).queryByTestId(icon) !== null
 	);
 const getByRoleWithIconMultipleError = (
 	container: Element | null,
@@ -133,6 +133,16 @@ const customQueries = {
 	findByRoleWithIcon
 };
 
+const queriesExtended = { ...queries, ...customQueries };
+
+export function within(
+	element: Parameters<typeof rtlWithin<typeof queriesExtended>>[0]
+): ReturnType<typeof rtlWithin<typeof queriesExtended>> {
+	return rtlWithin(element, queriesExtended);
+}
+
+export const screen = within(document.body);
+
 function escapeRegExp(string: string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -170,10 +180,21 @@ export function generateError(message: string): GraphQLError {
 }
 
 interface WrapperProps {
-	children?: React.ReactNode | undefined;
+	children?: React.ReactNode;
 	initialRouterEntries?: string[];
 	mocks?: Mock[];
 }
+
+type ApolloProviderWrapperProps = Pick<WrapperProps, 'children' | 'mocks'>;
+
+const ApolloProviderWrapper = ({ children, mocks }: ApolloProviderWrapperProps): JSX.Element =>
+	mocks ? (
+		<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
+			{children}
+		</MockedProvider>
+	) : (
+		<ApolloProvider client={global.apolloClient}>{children}</ApolloProvider>
+	);
 
 const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): JSX.Element => {
 	const i18n = useMemo(() => {
@@ -181,17 +202,8 @@ const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): JSX.E
 		return i18nFactory.getAppI18n();
 	}, []);
 
-	const ApolloProviderWrapper: React.FC = ({ children: apolloChildren }) =>
-		mocks ? (
-			<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
-				{apolloChildren}
-			</MockedProvider>
-		) : (
-			<ApolloProvider client={global.apolloClient}>{apolloChildren}</ApolloProvider>
-		);
-
 	return (
-		<ApolloProviderWrapper>
+		<ApolloProviderWrapper mocks={mocks}>
 			<MemoryRouter
 				initialEntries={initialRouterEntries}
 				initialIndex={(initialRouterEntries?.length || 1) - 1}
@@ -219,7 +231,7 @@ function customRender(
 	}: WrapperProps & {
 		options?: Omit<RenderOptions, 'queries' | 'wrapper'>;
 	} = {}
-): RenderResult<typeof queries & typeof customQueries> {
+): RenderResult<typeof queriesExtended> {
 	return render(ui, {
 		wrapper: ({ children }: Pick<WrapperProps, 'children'>) => (
 			<Wrapper initialRouterEntries={initialRouterEntries} mocks={mocks}>
@@ -285,8 +297,8 @@ export async function triggerLoadMore(): Promise<void> {
 export async function selectNodes(nodesToSelect: string[], user: UserEvent): Promise<void> {
 	for (let i = 0; i < nodesToSelect.length; i += 1) {
 		const id = nodesToSelect[i];
-		const node = within(screen.getByTestId(`node-item-${id}`));
-		let clickableItem = node.queryByTestId('file-icon-preview');
+		const node = within(screen.getByTestId(SELECTORS.nodeItem(id)));
+		let clickableItem = node.queryByTestId(SELECTORS.nodeAvatar);
 		if (clickableItem == null) {
 			clickableItem = node.queryByTestId(SELECTORS.uncheckedAvatar);
 		}
@@ -305,12 +317,11 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 	await screen.findByText(/\brename\b/i);
 	await user.click(screen.getByText(/\brename\b/i));
 	// fill new name in modal input field
-	const inputFieldDiv = await screen.findByTestId('input-name');
+	const inputField = await screen.findByRole('textbox');
 	act(() => {
 		// run timers of modal
 		jest.advanceTimersToNextTimer();
 	});
-	const inputField = within(inputFieldDiv).getByRole('textbox');
 	await user.clear(inputField);
 	await user.type(inputField, newName);
 	expect(inputField).toHaveValue(newName);
@@ -323,16 +334,14 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	const moveAction = await screen.findByText('Move');
 	expect(moveAction).toBeVisible();
 	await user.click(moveAction);
-	const modalList = await screen.findByTestId('modal-list-', { exact: false });
+	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
 		// run timers of modal
 		jest.runOnlyPendingTimers();
 	});
 	const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 	await user.click(destinationFolderItem);
-	await waitFor(() =>
-		expect(screen.getByRole('button', { name: /move/i })).not.toHaveAttribute('disabled', '')
-	);
+	await waitFor(() => expect(screen.getByRole('button', { name: /move/i })).toBeEnabled());
 	await user.click(screen.getByRole('button', { name: /move/i }));
 	await waitFor(() =>
 		expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument()
@@ -375,8 +384,7 @@ function createFileSystemDirectoryEntryReader(
 	// clone array to mutate with the splice in order to simulate the readEntries called until it returns an empty array (or undefined)
 	const children = [...node.children.nodes];
 	const readEntries = (
-		successCallback: FileSystemEntriesCallback,
-		_errorCallback?: ErrorCallback
+		successCallback: FileSystemEntriesCallback
 	): ReturnType<FileSystemDirectoryReader['readEntries']> => {
 		const childrenEntries = reduce<(typeof node.children.nodes)[number], FileSystemEntry[]>(
 			children.splice(0, Math.min(children.length, 10)),
@@ -445,7 +453,7 @@ function createFileSystemEntry(
 	return fileEntry;
 }
 
-export function createDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
+export function createUploadDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
 	const fileBlobs: File[] = [];
 	const items = map<Node, { webkitGetAsEntry: () => Partial<FileSystemEntry> }>(nodes, (node) => {
 		const fileBlob = new File(['(⌐□_□)😂😂😂😂'], node.name, {
@@ -465,6 +473,32 @@ export function createDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
 	};
 }
 
+type DataTransferMoveStub = Pick<
+	DataTransfer,
+	'setDragImage' | 'setData' | 'getData' | 'types' | 'clearData'
+>;
+export function createMoveDataTransfer(): () => DataTransferMoveStub {
+	const dataTransferData = new Map<string, string>();
+	const dataTransferTypes: string[] = [];
+	return (): DataTransferMoveStub => ({
+		setDragImage(): void {
+			// do nothing
+		},
+		setData(type, data): void {
+			dataTransferData.set(type, data);
+			dataTransferTypes.includes(type) || dataTransferTypes.push(type);
+		},
+		getData(key): string {
+			return dataTransferData.get(key) || '';
+		},
+		types: dataTransferTypes,
+		clearData(): void {
+			dataTransferTypes.splice(0, dataTransferTypes.length);
+			dataTransferData.clear();
+		}
+	});
+}
+
 export async function uploadWithDnD(
 	dropzoneElement: HTMLElement,
 	dataTransferObj: DataTransferUploadStub
@@ -473,7 +507,7 @@ export async function uploadWithDnD(
 		dataTransfer: dataTransferObj
 	});
 
-	await screen.findByTestId('dropzone-overlay');
+	await screen.findByTestId(SELECTORS.dropzone);
 	expect(
 		screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 	).toBeVisible();
@@ -484,12 +518,7 @@ export async function uploadWithDnD(
 
 	if (dataTransferObj.files.length > 0) {
 		// use find all to make this work also when there is the displayer open
-		await screen.findAllByText(dataTransferObj.files[0].name, undefined, {
-			onTimeout: (err) => {
-				screen.logTestingPlaygroundURL();
-				return err;
-			}
-		});
+		await screen.findAllByText(dataTransferObj.files[0].name);
 	}
 	expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 }

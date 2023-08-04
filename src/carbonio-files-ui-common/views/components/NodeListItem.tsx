@@ -28,6 +28,7 @@ import { HoverContainer, ListItemContainer } from './StyledComponents';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import useUserInfo from '../../../hooks/useUserInfo';
 import {
+	DATE_FORMAT_SHORT,
 	DOUBLE_CLICK_DELAY,
 	LIST_ITEM_AVATAR_HEIGHT,
 	LIST_ITEM_HEIGHT,
@@ -496,7 +497,8 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										)}
 										<Padding left="extrasmall">
 											<Text size="extrasmall" color="gray1" disabled={disabled}>
-												{formatDate(updatedAt, undefined, userInfo.zimbraPrefTimeZoneId)}
+												{/* eslint-disable-next-line max-len */}
+												{formatDate(updatedAt, DATE_FORMAT_SHORT, userInfo.zimbraPrefTimeZoneId)}
 											</Text>
 										</Padding>
 									</Container>

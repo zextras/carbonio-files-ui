@@ -110,7 +110,6 @@ export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
 					value={newName}
 					onChange={changeName}
 					label={inputLabel}
-					data-testid="input-name"
 					inputRef={inputRef}
 					onKeyUp={keyUpHandler}
 					hasError={!!errorMsg}

@@ -6,14 +6,7 @@
 
 import React from 'react';
 
-import {
-	act,
-	fireEvent,
-	screen,
-	waitFor,
-	waitForElementToBeRemoved,
-	within
-} from '@testing-library/react';
+import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { graphql } from 'msw';
 
@@ -41,7 +34,14 @@ import {
 	mockRestoreNodes,
 	mockTrashNodes
 } from '../../utils/mockUtils';
-import { buildChipsFromKeywords, setup, selectNodes } from '../../utils/testUtils';
+import {
+	buildChipsFromKeywords,
+	createMoveDataTransfer,
+	setup,
+	selectNodes,
+	screen,
+	within
+} from '../../utils/testUtils';
 
 describe('Search list', () => {
 	describe('Drag and drop', () => {
@@ -96,7 +96,7 @@ describe('Search list', () => {
 				dataTransfer: dataTransferObj
 			});
 
-			await screen.findByTestId('dropzone-overlay');
+			await screen.findByTestId(SELECTORS.dropzone);
 			expect(
 				screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 			).toBeVisible();
@@ -107,7 +107,7 @@ describe('Search list', () => {
 
 			await screen.findByText(/upload occurred in Files' home/i);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentSearch.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -155,21 +155,7 @@ describe('Search list', () => {
 				)
 			];
 
-			let dataTransferData: Record<string, string> = {};
-			let dataTransferTypes: string[] = [];
-			const dataTransfer = (): Partial<DataTransfer> => ({
-				setDragImage: jest.fn(),
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData[type] = data;
-					dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-				}),
-				getData: jest.fn().mockImplementation((type: string) => dataTransferData[type]),
-				types: dataTransferTypes,
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferTypes = [];
-					dataTransferData = {};
-				})
-			});
+			const dataTransfer = createMoveDataTransfer();
 
 			setup(<SearchList />, { mocks });
 
@@ -185,11 +171,13 @@ describe('Search list', () => {
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 			// dropzone overlay of the list is shown
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.getByText(/drag&drop mode/i)).toBeVisible();
 			expect(screen.getByText(/you cannot drop your items in this area/i)).toBeVisible();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
@@ -197,28 +185,30 @@ describe('Search list', () => {
 			// drag and drop on folder without permissions
 			const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 			fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.queryByText('Drag&Drop Mode')).not.toBeInTheDocument();
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(itemToDrag).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 			// drag and drop on folder with permissions
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-			await screen.findByTestId('dropzone-overlay');
-			expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropzone);
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			expect(screen.queryByText('Drag&Drop Mode')).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			await screen.findByText(/item moved/i);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(screen.getByText(nodesToDrag[0].name)).not.toHaveAttribute('disabled', '');
 		});
 
@@ -247,21 +237,7 @@ describe('Search list', () => {
 
 			const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), currentSearch)];
 
-			let dataTransferData: Record<string, string> = {};
-			let dataTransferTypes: string[] = [];
-			const dataTransfer = (): Partial<DataTransfer> => ({
-				setDragImage: jest.fn(),
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData[type] = data;
-					dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-				}),
-				getData: jest.fn().mockImplementation((type: string) => dataTransferData[type]),
-				types: dataTransferTypes,
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferTypes = [];
-					dataTransferData = {};
-				})
-			});
+			const dataTransfer = createMoveDataTransfer();
 
 			setup(<SearchList />, { mocks });
 
@@ -277,9 +253,11 @@ describe('Search list', () => {
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
 
 			// drag and drop on folder without permissions. Overlay is not shown.
@@ -291,10 +269,11 @@ describe('Search list', () => {
 						setTimeout(resolve, 100);
 					})
 			);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 			// drag and drop on folder with permissions. Overlay is not shown.
@@ -307,10 +286,11 @@ describe('Search list', () => {
 						setTimeout(resolve, 100);
 					})
 			);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(itemToDrag).not.toHaveAttribute('disabled', '');
 		});
 
@@ -346,21 +326,7 @@ describe('Search list', () => {
 				)
 			];
 
-			let dataTransferData: Record<string, string> = {};
-			let dataTransferTypes: string[] = [];
-			const dataTransfer = (): Partial<DataTransfer> => ({
-				setDragImage: jest.fn(),
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData[type] = data;
-					dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-				}),
-				getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-				types: dataTransferTypes,
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferTypes = [];
-					dataTransferData = {};
-				})
-			});
+			const dataTransfer = createMoveDataTransfer();
 
 			const { user } = setup(<SearchList />, {
 				mocks
@@ -380,7 +346,9 @@ describe('Search list', () => {
 			forEach(nodesToDrag, (node) => {
 				const draggedImage = screen.getAllByText(node.name);
 				expect(draggedImage).toHaveLength(2);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(draggedImage[0]).toHaveAttribute('disabled', '');
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(draggedImage[1]).not.toHaveAttribute('disabled', '');
 			});
 
@@ -393,7 +361,7 @@ describe('Search list', () => {
 						setTimeout(resolve, 100);
 					})
 			);
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 
@@ -437,28 +405,21 @@ describe('Search list', () => {
 				];
 
 				const { user } = setup(<SearchList />, { mocks });
-
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToMFD, user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
 				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
-
 				const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(trashAction.parentNode).not.toHaveAttribute('disabled');
-
 				await user.click(trashAction);
-
 				await screen.findByText(/item moved to trash/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-
-				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
-
-				expect.assertions(5);
+				expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(2);
 			});
 
 			test('Mark for deletion is hidden if not all nodes are not trashed', async () => {
@@ -494,8 +455,6 @@ describe('Search list', () => {
 					await user.click(moreIconButton);
 					expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
 				}
-
-				expect.assertions(2);
 			});
 		});
 
@@ -552,22 +511,16 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
-
-				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.restore);
-				expect(restoreIcon).toBeInTheDocument();
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
+				const restoreIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.restore
+				});
 				expect(restoreIcon).toBeVisible();
-				expect(restoreIcon).not.toHaveAttribute('disabled', '');
-
+				expect(restoreIcon).toBeEnabled();
 				await user.click(restoreIcon);
-
 				await screen.findByText(/^success$/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-
-				expect(screen.queryAllByTestId(`file-icon-preview`).length).toEqual(2);
-
-				expect.assertions(6);
+				expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(2);
 			});
 
 			test('Restore does not remove selected items from the list if the research includes both trashed and restored nodes', async () => {
@@ -602,30 +555,23 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
-
-				const restoreIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.restore);
-				expect(restoreIcon).toBeInTheDocument();
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
+				const restoreIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.restore
+				});
 				expect(restoreIcon).toBeVisible();
-				expect(restoreIcon).not.toHaveAttribute('disabled', '');
-
-				const unselectAllIcon = screen.getByTestId('icon: ArrowBackOutline');
+				expect(restoreIcon).toBeEnabled();
+				const unselectAllIcon = screen.getByTestId(ICON_REGEXP.exitSelectionMode);
 				expect(unselectAllIcon).toBeInTheDocument();
 				expect(unselectAllIcon).toBeVisible();
-
 				await user.click(restoreIcon);
-
 				await screen.findByText(/^success$/i);
-
-				const elementsWithSelectionModeOff = await screen.findAllByTestId('file-icon-preview');
+				const elementsWithSelectionModeOff = await screen.findAllByTestId(SELECTORS.nodeAvatar);
 				const restoredItem = screen.getByText(currentFilter[0].name);
 				expect(restoredItem).toBeInTheDocument();
 				expect(restoredItem).toBeVisible();
-
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(3);
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(3);
 				expect(elementsWithSelectionModeOff).toHaveLength(3);
-				expect.assertions(10);
 			});
 
 			test('Restore is hidden if not all nodes are trashed', async () => {
@@ -644,7 +590,6 @@ describe('Search list', () => {
 				const keywords = ['keyword1', 'keyword2'];
 				const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 				searchParamsVar(searchParams);
-
 				const mocks = [mockFindNodes(getFindNodesVariables({ keywords }), currentFilter)];
 
 				const { user } = setup(<SearchList />, { mocks });
@@ -655,7 +600,6 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToRestore, user);
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-
 				expect(screen.queryByTestId(ICON_REGEXP.restore)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(ICON_REGEXP.moveToTrash)).not.toBeInTheDocument();
 				const moreIconButton = screen.queryByTestId(ICON_REGEXP.moreVertical);
@@ -664,8 +608,6 @@ describe('Search list', () => {
 					expect(screen.queryByText(ACTION_REGEXP.restore)).not.toBeInTheDocument();
 					expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
 				}
-
-				expect.assertions(3);
 			});
 		});
 
@@ -713,20 +655,15 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToDeletePermanently, user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-
 				const element = await screen.findByText(currentFilter[0].name);
-
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
-
-				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByTestId(
-					'icon: DeletePermanentlyOutline'
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
+				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByRoleWithIcon(
+					'button',
+					{ icon: ICON_REGEXP.deletePermanently }
 				);
-				expect(deletePermanentlyIcon).toBeInTheDocument();
 				expect(deletePermanentlyIcon).toBeVisible();
-				expect(deletePermanentlyIcon).not.toHaveAttribute('disabled', '');
-
+				expect(deletePermanentlyIcon).toBeEnabled();
 				await user.click(deletePermanentlyIcon);
-
 				const confirmButton = await screen.findByRole('button', { name: /delete permanently/i });
 				act(() => {
 					// run timers of modal
@@ -735,12 +672,9 @@ describe('Search list', () => {
 				await user.click(confirmButton);
 				await screen.findByText(/^success$/i);
 				expect(confirmButton).not.toBeInTheDocument();
-
 				expect(element).not.toBeInTheDocument();
-				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
-				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
-
-				expect.assertions(8);
+				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
+				expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(2);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
@@ -770,30 +704,23 @@ describe('Search list', () => {
 				await selectNodes(nodesIdsToDeletePermanently, user);
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
-
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.restore
 				);
 				expect(restoreIcon).not.toBeInTheDocument();
-
 				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.moveToTrash
 				);
 				expect(trashIcon).not.toBeInTheDocument();
-
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.deletePermanently
 				);
 				expect(deletePermanentlyIcon).not.toBeInTheDocument();
-
 				const moreIcon = within(selectionModeActiveListHeader).queryByTestId(
 					ICON_REGEXP.moreVertical
 				);
 				expect(moreIcon).not.toBeInTheDocument();
-
-				expect.assertions(5);
 			});
 		});
 
@@ -836,11 +763,11 @@ describe('Search list', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.download)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.openDocument)).not.toBeInTheDocument();
 
-			const exitSelectionModeItem = screen.getByTestId('icon: ArrowBackOutline');
+			const exitSelectionModeItem = screen.getByTestId(ICON_REGEXP.exitSelectionMode);
 			expect(exitSelectionModeItem).toBeVisible();
 			await user.click(exitSelectionModeItem);
 			await screen.findByText(/[1-9] advanced filter(s)?/i);
-			expect(screen.queryByTestId('icon: Trash2Outline')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.moveToTrash)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 			expect(screen.queryByText(/select all/i)).not.toBeInTheDocument();
@@ -949,8 +876,9 @@ describe('Search list', () => {
 
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 
-			const restoreAction = screen.getByTestId('icon: RestoreOutline');
+			const restoreAction = screen.getByTestId(ICON_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(restoreAction).not.toHaveAttribute('disabled', '');
 			await user.click(restoreAction);
 			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
@@ -1006,8 +934,9 @@ describe('Search list', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
-			const deletePermanentlyAction = screen.getByTestId('icon: DeletePermanentlyOutline');
+			const deletePermanentlyAction = screen.getByTestId(ICON_REGEXP.deletePermanently);
 			expect(deletePermanentlyAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(deletePermanentlyAction).not.toHaveAttribute('disabled', '');
 			await user.click(deletePermanentlyAction);
 			const modalConfirmButton = await screen.findByRole('button', {
@@ -1049,21 +978,22 @@ describe('Search list', () => {
 
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
-			const nodeToUnflagItem1 = screen.getByTestId(`node-item-${nodesToUnflag[0]}`);
+			const nodeToUnflagItem1 = screen.getByTestId(SELECTORS.nodeItem(nodesToUnflag[0]));
 			expect(nodeToUnflagItem1).toBeVisible();
-			expect(within(nodeToUnflagItem1).getByTestId('icon: Flag')).toBeVisible();
+			expect(within(nodeToUnflagItem1).getByTestId(ICON_REGEXP.flagged)).toBeVisible();
 			await selectNodes(nodesToUnflag, user);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesToUnflag.length);
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			const unflagIcon = await screen.findByTestId(ICON_REGEXP.unflag);
 			expect(unflagIcon).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(unflagIcon).not.toHaveAttribute('disabled', '');
 			await user.click(unflagIcon);
-			expect(within(nodeToUnflagItem1).queryByTestId('icon: Flag')).not.toBeInTheDocument();
+			expect(within(nodeToUnflagItem1).queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[1].name)).toBeVisible();
-			expect(screen.getAllByTestId('icon: Flag')).toHaveLength(
+			expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(
 				firstPage.length - nodesToUnflag.length
 			);
 		});

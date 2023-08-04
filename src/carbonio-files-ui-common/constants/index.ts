@@ -25,8 +25,6 @@ export const DOUBLE_CLICK_DELAY = 200;
 export const DISPLAYER_TABS = {
 	details: 'details',
 	sharing: 'sharing',
-	// TODO: uncomment each tab when implemented
-	// activities: 'activities',
 	versioning: 'versioning'
 } as const;
 export const ROOTS: RootsType = {
@@ -99,6 +97,9 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 	[DocsType.MS_SPREADSHEET]: 'xlsx',
 	[DocsType.MS_PRESENTATION]: 'pptx'
 } as const;
+// TODO: use locale aware date format (L)
+export const DATE_FORMAT = 'DD/MM/YYYY';
+export const DATE_FORMAT_SHORT = 'DD/MM/YY';
 
 // endpoint
 // keep endpoint without trailing slash

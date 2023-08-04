@@ -19,6 +19,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
+import { SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
@@ -64,7 +65,7 @@ describe('Filter view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			expect(screen.queryByTestId('missing-filter')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 
 		test('breadcrumb show Flagged', async () => {

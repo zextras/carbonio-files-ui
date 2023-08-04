@@ -12,6 +12,7 @@ import { graphql, rest } from 'msw';
 import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
 import { CONFIGS, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	UploadRequestBody,
 	UploadVersionRequestParams,
@@ -138,9 +139,9 @@ describe('Versioning', () => {
 			expect(screen.getByText('Current version')).toBeVisible();
 			expect(screen.getByText('Last week')).toBeVisible();
 
-			const versions2Icons = screen.getByTestId('version2-icons');
-			const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-			await user.click(versions2MoreButton);
+			const versionIcons = screen.getByTestId(SELECTORS.versionIcons(2));
+			const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+			await user.click(versionMoreButton);
 
 			const deleteVersionItem = await screen.findByText(/delete version/i);
 			await user.click(deleteVersionItem);
@@ -215,13 +216,13 @@ describe('Versioning', () => {
 			);
 
 			expect(screen.getAllByRole('button', { name: /purge all versions/i })).toHaveLength(2);
-			const modalPurgeAllButton = within(screen.getByTestId('modal')).getByRole('button', {
+			const modalPurgeAllButton = within(screen.getByTestId(SELECTORS.modal)).getByRole('button', {
 				name: /purge all versions/i
 			});
 
 			expect(modalPurgeAllButton).toBeInTheDocument();
 			await user.click(modalPurgeAllButton);
-			expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.modal)).not.toBeInTheDocument();
 			await waitFor(() => expect(screen.getAllByText(/Version \d+/)).toHaveLength(2));
 			expect(version3LastEditor).not.toBeInTheDocument();
 		});
@@ -259,20 +260,20 @@ describe('Versioning', () => {
 		expect(screen.getByText('Current version')).toBeVisible();
 		expect(screen.getByText('Last week')).toBeVisible();
 
-		const versions2Icons = screen.getByTestId('version2-icons');
-		const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-		await user.click(versions2MoreButton);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(2));
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+		await user.click(versionMoreButton);
 
 		const keepForeverVersionItem = await screen.findByText(/keep this version forever/i);
 		await user.click(keepForeverVersionItem);
 
 		await screen.findByText(/Version marked as to be kept forever/i);
 
-		await within(versions2Icons).findByTestId('icon: InfinityOutline');
-		const keepIcon = within(versions2Icons).getByTestId('icon: InfinityOutline');
+		await within(versionIcons).findByTestId(ICON_REGEXP.versionKeepForever);
+		const keepIcon = within(versionIcons).getByTestId(ICON_REGEXP.versionKeepForever);
 		expect(keepIcon).toBeVisible();
 
-		await user.click(versions2MoreButton);
+		await user.click(versionMoreButton);
 		const removeKeepForeverItem = await screen.findByText(/remove keep forever/i);
 		await user.click(removeKeepForeverItem);
 
@@ -317,9 +318,9 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(2);
 
-		const versions2Icons = screen.getByTestId('version2-icons');
-		const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-		await user.click(versions2MoreButton);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(2));
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+		await user.click(versionMoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
 		await user.click(cloneAsCurrentItem);
@@ -352,9 +353,9 @@ describe('Versioning', () => {
 
 		expect(screen.getByText(/Version \d+/)).toBeInTheDocument();
 
-		const versions2Icons = screen.getByTestId('version1-icons');
-		const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-		await user.click(versions2MoreButton);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+		await user.click(versionMoreButton);
 
 		const downloadItem = await screen.findByText(/download version/i);
 		await user.click(downloadItem);
@@ -387,9 +388,9 @@ describe('Versioning', () => {
 
 		expect(screen.getByText(/Version \d+/)).toBeInTheDocument();
 
-		const versions2Icons = screen.getByTestId('version1-icons');
-		const versions2MoreButton = within(versions2Icons).getByTestId('icon: MoreVerticalOutline');
-		await user.click(versions2MoreButton);
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
+		await user.click(versionMoreButton);
 
 		const openDocumentItem = await screen.findByText(/open document version/i);
 		await user.click(openDocumentItem);
@@ -478,7 +479,6 @@ describe('Versioning', () => {
 	});
 
 	test('clone action is disabled if max number of version is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxVersions = Number(
@@ -490,7 +490,6 @@ describe('Versioning', () => {
 			const fileVersion = { ...baseFile };
 			fileVersion.version = i + 1;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -504,11 +503,12 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(cloneAsCurrentItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -527,7 +527,6 @@ describe('Versioning', () => {
 	});
 
 	test('keep forever action is disabled if max number of keep is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxKeepVersions = Number(
@@ -540,7 +539,6 @@ describe('Versioning', () => {
 			fileVersion.version = i + 1;
 			fileVersion.keep_forever = true;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 		// add a version without keep
@@ -548,7 +546,6 @@ describe('Versioning', () => {
 		fileVersionWithoutKeep.version = maxKeepVersions + 1;
 		fileVersionWithoutKeep.keep_forever = false;
 		const versionWithoutKeep = getVersionFromFile(fileVersionWithoutKeep);
-		fileVersions.unshift(fileVersionWithoutKeep);
 		versions.unshift(versionWithoutKeep);
 
 		const mocks = [
@@ -560,17 +557,18 @@ describe('Versioning', () => {
 		await screen.findByText(/Version 1/i);
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
-		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions);
+		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions);
 
 		const versionWithoutKeepIcons = screen.getByTestId(
-			`version${versionWithoutKeep.version}-icons`
+			SELECTORS.versionIcons(versionWithoutKeep.version)
 		);
 		const versionWithoutKeepMoreButton = within(versionWithoutKeepIcons).getByTestId(
-			'icon: MoreVerticalOutline'
+			ICON_REGEXP.moreVertical
 		);
 		await user.click(versionWithoutKeepMoreButton);
 
 		const keepVersionItem = await screen.findByText(/keep this version forever/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersionItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -590,11 +588,10 @@ describe('Versioning', () => {
 		// click outside to close context menu
 		await user.click(screen.getByText(RegExp(`version ${versionWithoutKeep.version}`, 'i')));
 		expect(screen.queryByText(/keep this version forever/i)).not.toBeInTheDocument();
-		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions);
+		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions);
 	});
 
 	test('upload version action is enabled if max number of versions is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxVersions = Number(
@@ -606,7 +603,6 @@ describe('Versioning', () => {
 			const fileVersion = { ...baseFile };
 			fileVersion.version = i + 1;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -645,7 +641,7 @@ describe('Versioning', () => {
 
 		const uploadButton = await screen.findByRole('button', { name: /upload version/i });
 		expect(uploadButton).toBeVisible();
-		expect(uploadButton).not.toHaveAttribute('disabled', '');
+		expect(uploadButton).toBeEnabled();
 		await user.click(uploadButton);
 
 		const file = new File(['(⌐□_□)'], fileVersionUpload.name, {
@@ -661,7 +657,6 @@ describe('Versioning', () => {
 	});
 
 	test('remove keep forever action is enabled if max version of keep is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxKeepVersions = Number(
@@ -674,7 +669,6 @@ describe('Versioning', () => {
 			fileVersion.version = i + 1;
 			fileVersion.keep_forever = true;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -688,26 +682,28 @@ describe('Versioning', () => {
 		await screen.findByText(/Version 1/i);
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
-		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions);
+		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions);
 
-		const versionIcons = screen.getByTestId(`version1-icons`);
-		expect(within(versionIcons).getByTestId('icon: InfinityOutline')).toBeVisible();
-		const versionMoreButton = within(versionIcons).getByTestId('icon: MoreVerticalOutline');
+		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
+		expect(within(versionIcons).getByTestId(ICON_REGEXP.versionKeepForever)).toBeVisible();
+		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versionMoreButton);
 
 		const keepVersionItem = await screen.findByText(/remove keep forever/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersionItem.parentElement).not.toHaveAttribute('disabled', '');
 		await user.click(keepVersionItem);
 
 		await screen.findByText(/Keep forever removed/i);
 
 		expect(screen.queryByText(/rmeove keep forever/i)).not.toBeInTheDocument();
-		expect(within(versionIcons).queryByTestId('icon: InfinityOutline')).not.toBeInTheDocument();
-		expect(screen.getAllByTestId('icon: InfinityOutline')).toHaveLength(maxKeepVersions - 1);
+		expect(
+			within(versionIcons).queryByTestId(ICON_REGEXP.versionKeepForever)
+		).not.toBeInTheDocument();
+		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions - 1);
 	});
 
 	test('delete version is enabled if max number of versions is reached and node is not marked to be kept forever', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxVersions = Number(
@@ -720,7 +716,6 @@ describe('Versioning', () => {
 			fileVersion.version = i + 1;
 			fileVersion.keep_forever = false;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -735,11 +730,12 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
 
-		const version2Icons = screen.getByTestId('version1-icons');
-		const version2MoreButton = within(version2Icons).getByTestId('icon: MoreVerticalOutline');
+		const version2Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const version2MoreButton = within(version2Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(version2MoreButton);
 
 		const deleteVersionItem = await screen.findByText(/delete version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(deleteVersionItem).not.toHaveAttribute('disabled', '');
 		await user.click(deleteVersionItem);
 		await waitFor(() => expect(screen.getAllByText(/version \d+/i)).toHaveLength(maxVersions - 1));
@@ -748,7 +744,6 @@ describe('Versioning', () => {
 	});
 
 	test('purge all is enabled if max number of versions is reached', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const configs = populateConfigs();
 		const maxVersions = Number(
@@ -761,7 +756,6 @@ describe('Versioning', () => {
 			fileVersion.version = i + 1;
 			fileVersion.keep_forever = false;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -778,7 +772,7 @@ describe('Versioning', () => {
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
 
 		const purgeAllButton = await screen.findByRole('button', { name: /purge all versions/i });
-		expect(purgeAllButton).not.toHaveAttribute('disabled', '');
+		expect(purgeAllButton).toBeEnabled();
 		await user.click(purgeAllButton);
 		await screen.findByText(
 			/All versions that are not marked to be kept forever, except the current one, will be deleted/i
@@ -795,7 +789,6 @@ describe('Versioning', () => {
 	});
 
 	test('clone version is disabled and shows a tooltip if user does not have write permissions', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const baseFile = populateFile();
 		baseFile.permissions.can_write_file = false;
@@ -804,7 +797,6 @@ describe('Versioning', () => {
 			const fileVersion = { ...baseFile };
 			fileVersion.version = i + 1;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -822,11 +814,12 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(cloneAsCurrentItem).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -844,7 +837,6 @@ describe('Versioning', () => {
 	});
 
 	test('delete version is disabled and shows a tooltip if user does not have write permissions', async () => {
-		const fileVersions = [];
 		const versions = [];
 		const baseFile = populateFile();
 		baseFile.permissions.can_write_file = false;
@@ -853,7 +845,6 @@ describe('Versioning', () => {
 			const fileVersion = { ...baseFile };
 			fileVersion.version = i + 1;
 			const version = getVersionFromFile(fileVersion);
-			fileVersions.unshift(fileVersion);
 			versions.unshift(version);
 		}
 
@@ -871,11 +862,12 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const deleteVersion = await screen.findByText(/delete version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(deleteVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -915,11 +907,12 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const openDocumentVersion = await screen.findByText(/open document version/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(openDocumentVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
@@ -951,11 +944,12 @@ describe('Versioning', () => {
 
 		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
 
-		const versions1Icons = screen.getByTestId('version1-icons');
-		const versions1MoreButton = within(versions1Icons).getByTestId('icon: MoreVerticalOutline');
+		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
+		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
 		const keepVersion = await screen.findByText(/(keep this version forever|remove keep forever)/i);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(keepVersion).toHaveAttribute('disabled', '');
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();

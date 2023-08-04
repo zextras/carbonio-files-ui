@@ -11,7 +11,8 @@ import { forEach } from 'lodash';
 import { ContextualMenuProps } from './ContextualMenu';
 import { EmptySpaceFiller } from './EmptySpaceFiller';
 import { List } from './List';
-import { ACTION_REGEXP } from '../../constants/test';
+import { ACTION_IDS } from '../../../constants';
+import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { mockGetPath } from '../../utils/mockUtils';
@@ -37,28 +38,28 @@ describe('Contextual menu actions', () => {
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
-						id: 'create-folder',
+						id: ACTION_IDS.CREATE_FOLDER,
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
-						id: 'create-docs-document',
+						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-spreadsheet',
+						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-presentation',
+						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
@@ -87,6 +88,7 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).toBeCalledTimes(1);
@@ -97,6 +99,7 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).toBeCalledTimes(1);
@@ -107,6 +110,7 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).toBeCalledTimes(1);
@@ -117,6 +121,7 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).toBeCalledTimes(1);
@@ -139,28 +144,28 @@ describe('Contextual menu actions', () => {
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
-						id: 'create-folder',
+						id: ACTION_IDS.CREATE_FOLDER,
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
-						id: 'create-docs-document',
+						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-spreadsheet',
+						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-presentation',
+						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
@@ -189,6 +194,7 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).not.toBeCalled();
@@ -199,6 +205,7 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).not.toBeCalled();
@@ -209,6 +216,7 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).not.toBeCalled();
@@ -219,6 +227,7 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).not.toBeCalled();
@@ -238,28 +247,28 @@ describe('Contextual menu actions', () => {
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
-						id: 'create-folder',
+						id: ACTION_IDS.CREATE_FOLDER,
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
-						id: 'create-docs-document',
+						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-spreadsheet',
+						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-presentation',
+						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
@@ -288,6 +297,7 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).toBeCalledTimes(1);
@@ -298,6 +308,7 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).toBeCalledTimes(1);
@@ -308,6 +319,7 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).toBeCalledTimes(1);
@@ -318,6 +330,7 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).toBeCalledTimes(1);
@@ -335,28 +348,28 @@ describe('Contextual menu actions', () => {
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
-						id: 'create-folder',
+						id: ACTION_IDS.CREATE_FOLDER,
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
 						disabled: !isCanCreateFolder
 					},
 					{
-						id: 'create-docs-document',
+						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-spreadsheet',
+						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
 						disabled: !isCanCreateFile
 					},
 					{
-						id: 'create-docs-presentation',
+						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
@@ -385,6 +398,7 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).not.toBeCalled();
@@ -395,6 +409,7 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).not.toBeCalled();
@@ -405,6 +420,7 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).not.toBeCalled();
@@ -415,6 +431,7 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).not.toBeCalled();
@@ -451,7 +468,7 @@ describe('Contextual menu actions', () => {
 			await selectNodes([element0.id, element1.id], user);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element0.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			fireEvent.contextMenu(nodeItem);
 
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
@@ -501,7 +518,7 @@ describe('Contextual menu actions', () => {
 			await selectNodes([element0.id, element1.id], user);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element0.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			fireEvent.contextMenu(nodeItem);
 
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
@@ -527,7 +544,7 @@ describe('Contextual menu actions', () => {
 			expect(screen.queryByText(ACTION_REGEXP.unflag)).not.toBeInTheDocument();
 
 			// right click on unSelected node close open contextual menu
-			const nodeItem2 = screen.getByTestId(`node-item-${element2.id}`);
+			const nodeItem2 = screen.getByTestId(SELECTORS.nodeItem(element2.id));
 			fireEvent.contextMenu(nodeItem2);
 
 			expect(moveToTrashAction).not.toBeVisible();
@@ -561,8 +578,8 @@ describe('Contextual menu actions', () => {
 		);
 
 		// right click to open contextual menu
-		const node1Item = screen.getByTestId(`node-item-${node1.id}`);
-		const node2Item = screen.getByTestId(`node-item-${node2.id}`);
+		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
+		const node2Item = screen.getByTestId(SELECTORS.nodeItem(node2.id));
 		fireEvent.contextMenu(node1Item);
 		// check that the flag action becomes visible (contextual menu of first node)
 		const flagAction = await screen.findByText(ACTION_REGEXP.flag);

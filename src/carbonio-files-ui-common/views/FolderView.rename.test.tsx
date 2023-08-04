@@ -93,22 +93,22 @@ describe('Rename', () => {
 			await selectNodes([element.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			// check that the rename action becomes visible
 			await renameNode(newName, user);
 			// wait for the modal to be closed
-			expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 			// check the node. It should have the new name and be at the end of the updated list
-			const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			expect(nodeItem).toBeVisible();
 			expect(within(nodeItem).getByText(newName)).toBeVisible();
-			const nodes = screen.getAllByTestId('node-item', { exact: false });
+			const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).toHaveLength(currentFolder.children.nodes.length);
-			expect(nodes[newPos]).toBe(screen.getByTestId(`node-item-${element.id}`));
+			expect(nodes[newPos]).toBe(screen.getByTestId(SELECTORS.nodeItem(element.id)));
 			// selection mode is de-activate
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			expect(screen.queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 		});
 	});
 
@@ -157,17 +157,17 @@ describe('Rename', () => {
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
 			fireEvent.contextMenu(nodeItem);
 			await renameNode(newName, user);
 			// wait for the modal to be closed
-			expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 			// check the new item. It has the new name and its located as last element of the updated list
-			const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+			const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			expect(updatedNodeItem).toBeVisible();
 			expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
-			const nodes = screen.getAllByTestId('node-item', { exact: false });
+			const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 			// contextual menu is closed
@@ -270,58 +270,58 @@ describe('Rename', () => {
 			// wait for the load to be completed
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
-			let nodes = screen.getAllByTestId('node-item', { exact: false });
-			expect(screen.getByTestId(`node-item-${firstCursor.id}`)).toBe(nodes[nodes.length - 1]);
+			let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
+			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 1]);
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
 			fireEvent.contextMenu(nodeItem);
 			await renameNode(newName, user);
 			// wait that the modal close
-			expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 			// contextual menu is closed
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 			// check the new item. It has the new name and it's located as last element of the updated list
-			let updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+			let updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			expect(updatedNodeItem).toBeVisible();
 			expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
-			nodes = screen.getAllByTestId('node-item', { exact: false });
+			nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).toHaveLength(NODES_LOAD_LIMIT);
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
-			expect(screen.getByTestId(`node-item-${firstCursor.id}`)).toBe(nodes[nodes.length - 2]);
+			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 2]);
 			// trigger the load of a new page
 			await triggerLoadMore();
 			// wait for the load to complete (last element of second page is loaded)
-			await screen.findByTestId(`node-item-${secondPage[secondPage.length - 1].id}`);
+			await screen.findByTestId(SELECTORS.nodeItem(secondPage[secondPage.length - 1].id));
 			// updated item is still last element
-			nodes = screen.getAllByTestId('node-item', { exact: false });
+			nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).toHaveLength(NODES_LOAD_LIMIT * 2);
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
-			expect(screen.getByTestId(`node-item-${secondCursor.id}`)).toBe(nodes[nodes.length - 2]);
+			expect(screen.getByTestId(SELECTORS.nodeItem(secondCursor.id))).toBe(nodes[nodes.length - 2]);
 			// trigger the load of a new page
 			await triggerLoadMore();
 			// wait for the load to complete (last element of third page is loaded)
-			await screen.findByTestId(`node-item-${(last(thirdPage) as Node).id}`);
-			nodes = screen.getAllByTestId('node-item', { exact: false });
+			await screen.findByTestId(SELECTORS.nodeItem((last(thirdPage) as Node).id));
+			nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			// updated node is now at its ordered position (third position of third page, but considering that first page has 1 less element now)
 			expect(nodes).toHaveLength(NODES_LOAD_LIMIT * 3 - 1);
-			updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+			updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			expect(findIndex(nodes, (node) => node === updatedNodeItem)).toBe(
 				NODES_LOAD_LIMIT * 2 + 2 - 1
 			);
 			// last element is last node of third page
-			expect(screen.getByTestId(`node-item-${thirdPage[thirdPage.length - 1].id}`)).toBe(
+			expect(screen.getByTestId(SELECTORS.nodeItem(thirdPage[thirdPage.length - 1].id))).toBe(
 				nodes[nodes.length - 1]
 			);
 			// trigger the load of a new page
 			await triggerLoadMore();
 			// wait for the load to complete (last element of children is loaded)
 			await screen.findByTestId(
-				`node-item-${
+				SELECTORS.nodeItem(
 					(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as Node).id
-				}`
+				)
 			);
-			nodes = screen.getAllByTestId('node-item', { exact: false });
+			nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			// number of elements shown is the total number of children
 			expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 			// load more icon is not visible
@@ -387,9 +387,9 @@ describe('Rename', () => {
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(newName)).toBeVisible();
-			const nodeItems = screen.getAllByTestId('node-item-', { exact: false });
+			const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodeItems).toHaveLength(currentFolder.children.nodes.length);
-			expect(screen.getByTestId(`node-item-${nodeToRename.id}`)).toBe(last(nodeItems));
+			expect(screen.getByTestId(SELECTORS.nodeItem(nodeToRename.id))).toBe(last(nodeItems));
 		});
 
 		test('Rename of last ordered node to unordered and move to trash of all remaining ordered nodes triggers load of next page', async () => {
@@ -450,10 +450,11 @@ describe('Rename', () => {
 			await selectNodes(nodesToTrash, user);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length - 1);
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);

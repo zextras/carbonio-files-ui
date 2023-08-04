@@ -84,18 +84,18 @@ export function populateDistributionList(limit = 10, id = '', name = ''): Distri
 	};
 }
 
-export function populatePermissions(grantAll = false): Permissions {
+export function populatePermissions(grantAll?: boolean): Permissions {
 	return {
 		can_read: true,
-		can_write_file: grantAll || faker.datatype.boolean(),
-		can_write_folder: grantAll || faker.datatype.boolean(),
-		can_delete: grantAll || faker.datatype.boolean(),
-		can_add_version: grantAll || faker.datatype.boolean(),
-		can_read_link: grantAll || faker.datatype.boolean(),
-		can_change_link: grantAll || faker.datatype.boolean(),
-		can_share: grantAll || faker.datatype.boolean(),
-		can_read_share: grantAll || faker.datatype.boolean(),
-		can_change_share: grantAll || faker.datatype.boolean(),
+		can_write_file: grantAll ?? faker.datatype.boolean(),
+		can_write_folder: grantAll ?? faker.datatype.boolean(),
+		can_delete: grantAll ?? faker.datatype.boolean(),
+		can_add_version: grantAll ?? faker.datatype.boolean(),
+		can_read_link: grantAll ?? faker.datatype.boolean(),
+		can_change_link: grantAll ?? faker.datatype.boolean(),
+		can_share: grantAll ?? faker.datatype.boolean(),
+		can_read_share: grantAll ?? faker.datatype.boolean(),
+		can_change_share: grantAll ?? faker.datatype.boolean(),
 		__typename: 'Permissions'
 	};
 }
@@ -189,16 +189,8 @@ export function populateUnknownNode(
 	};
 }
 
-export function getRandomNodeType(): NodeTypename {
-	const types: Array<NodeTypename> = ['File', 'Folder'];
-	return types[Math.floor(Math.random() * types.length)];
-}
-
 export function populateNode(type?: NodeTypename, id?: string, name?: string): FilesFile | Folder {
-	let __typename = type;
-	if (!__typename) {
-		__typename = getRandomNodeType();
-	}
+	const __typename = type ?? faker.helpers.arrayElement<NodeTypename>(['File', 'Folder']);
 
 	switch (__typename) {
 		case 'File':
@@ -258,7 +250,9 @@ export function populateFolder(
 }
 
 export function populateLocalRoot(childrenLimit = 0): Folder {
-	return populateFolder(childrenLimit, ROOTS.LOCAL_ROOT, 'ROOT');
+	const localRoot = populateFolder(childrenLimit, ROOTS.LOCAL_ROOT, 'ROOT');
+	localRoot.permissions = populatePermissions(true);
+	return localRoot;
 }
 
 export function populateParents(
