@@ -139,8 +139,8 @@ describe('Move', () => {
 				currentFolder.children.nodes[1]
 			] as Node[];
 			forEach(nodesToMove, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).permissions.can_write_file = true;
+				mockedNode.permissions.can_write_folder = true;
+				mockedNode.permissions.can_write_file = true;
 			});
 
 			// write destination folder in cache as if it was already loaded
@@ -236,9 +236,11 @@ describe('Move', () => {
 			destinationFolder.permissions.can_write_file = true;
 			commonParent.children.nodes.push(currentFolder, destinationFolder);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
@@ -255,7 +257,7 @@ describe('Move', () => {
 				mockGetPath({ node_id: commonParent.id }, [commonParent]),
 				mockMoveNodes(
 					{
-						node_ids: map(nodesToMove, (node) => (node as Node).id),
+						node_ids: map(nodesToMove, (node) => node?.id || ''),
 						destination_id: destinationFolder.id
 					},
 					map(nodesToMove, (node) => ({ ...node, parent: destinationFolder }))
@@ -396,9 +398,11 @@ describe('Move', () => {
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];

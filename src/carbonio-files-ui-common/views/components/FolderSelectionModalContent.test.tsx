@@ -108,9 +108,12 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText(folder2.name)).toBeVisible();
 		expect(screen.getByText(file.name)).toBeVisible();
 		// file nodes are disabled
-		// expect(screen.getByTestId(SELECTORS.nodeItem(file.id))).toHaveAttribute('disabled', '');
-		// expect(screen.getByTestId(SELECTORS.nodeItem(folder.id))).not.toHaveAttribute('disabled', '');
-		// expect(screen.getByTestId(SELECTORS.nodeItem(folder2.id))).not.toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByText(file.name)).toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByText(folder.name)).not.toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByText(folder2.name)).not.toHaveAttribute('disabled', '');
 		// choose button is disabled because active folder is same as set one
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();

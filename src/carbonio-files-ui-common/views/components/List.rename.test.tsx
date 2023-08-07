@@ -33,7 +33,7 @@ describe('Rename', () => {
 
 			// activate selection mode by selecting items
 			await selectNodes(
-				map(children, (node) => (node as Node).id),
+				map(children, (node) => node?.id || ''),
 				user
 			);
 			// check that all wanted items are selected
@@ -74,8 +74,10 @@ describe('Rename', () => {
 			const currentFolder = populateFolder(2);
 			// enable permission to rename
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+				}
 			});
 			const sort = NodeSort.NameAsc; // sort only by name
 			sortNodes(currentFolder.children.nodes, sort);
@@ -148,9 +150,11 @@ describe('Rename', () => {
 			const currentFolder = populateFolder(5);
 			// enable permission to Mfd
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				}
 			});
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;

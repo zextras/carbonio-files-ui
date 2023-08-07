@@ -38,7 +38,7 @@ describe('Mark for deletion - trash', () => {
 
 			// activate selection mode by selecting items
 			await selectNodes(
-				map(currentFolder.children.nodes, (node) => (node as Node).id),
+				map(currentFolder.children.nodes, (node) => node?.id || ''),
 				user
 			);
 			// check that all wanted items are selected
@@ -54,7 +54,7 @@ describe('Mark for deletion - trash', () => {
 			expect(trashIcon.parentElement).not.toHaveAttribute('disable');
 
 			await selectNodes(
-				map(currentFolder.children.nodes, (node) => (node as Node).id),
+				map(currentFolder.children.nodes, (node) => node?.id || ''),
 				user
 			);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
@@ -84,7 +84,7 @@ describe('Mark for deletion - trash', () => {
 
 			// activate selection mode by selecting items
 			await selectNodes(
-				map(currentFolder.children.nodes, (node) => (node as Node).id),
+				map(currentFolder.children.nodes, (node) => node?.id || ''),
 				user
 			);
 			// check that all wanted items are selected
@@ -101,7 +101,7 @@ describe('Mark for deletion - trash', () => {
 			expect(trashIcon).not.toBeInTheDocument();
 
 			await selectNodes(
-				map(currentFolder.children.nodes, (node) => (node as Node).id),
+				map(currentFolder.children.nodes, (node) => node?.id || ''),
 				user
 			);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
