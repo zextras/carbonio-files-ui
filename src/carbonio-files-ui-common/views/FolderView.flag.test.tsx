@@ -44,7 +44,9 @@ describe('Flag', () => {
 		test('Flag/Unflag action marks all and only selected items as flagged/unflagged', async () => {
 			const currentFolder = populateFolder(4);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).flagged = false;
+				if (mockedNode) {
+					mockedNode.flagged = false;
+				}
 			});
 
 			const nodesIdsToFlag = map(

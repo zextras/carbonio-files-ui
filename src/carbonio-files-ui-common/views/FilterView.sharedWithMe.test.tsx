@@ -22,7 +22,6 @@ import {
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes, populateShare, populateUser } from '../mocks/mockUtils';
-import { Node } from '../types/common';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
 	getFindNodesVariables,
@@ -99,7 +98,7 @@ describe('Filter view', () => {
 					}),
 					currentFilter
 				),
-				mockGetNode(getNodeVariables(node.id), node as Node),
+				mockGetNode(getNodeVariables(node.id), node),
 				mockGetShares(getSharesVariables(node.id), node),
 				mockGetCollaborationLinks({ node_id: node.id }),
 				mockGetLinks({ node_id: node.id }, node.links),
