@@ -100,7 +100,7 @@ describe('Upload List Item Wrapper', () => {
 
 		expect(screen.getByText(/queued/i)).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
-		expect(screen.queryByText(/\d+\s*%/)).not.toBeInTheDocument();
+		expect(screen.queryByText(/\d{1,3}%/)).not.toBeInTheDocument();
 	});
 
 	test('Progress for files is shown with the percentage', async () => {

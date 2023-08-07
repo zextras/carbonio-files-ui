@@ -137,7 +137,6 @@ describe('Filter view', () => {
 			await user.click(within(share1Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
-			// await waitForElementToBeRemoved(screen.queryByText(getChipLabel(shares[0].share_target)));
 			await screen.findByText(/success/i);
 			expect(share2Item).toBeVisible();
 			expect(nodeItem).toBeVisible();
@@ -145,7 +144,6 @@ describe('Filter view', () => {
 			await user.click(within(share2Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
-			// await waitForElementToBeRemoved(screen.queryByText(getChipLabel(shares[1].share_target)));
 			await screen.findByText(/success/i);
 			// node is removed from main list
 			expect(nodeItem).not.toBeInTheDocument();

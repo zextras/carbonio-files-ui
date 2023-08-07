@@ -6,7 +6,6 @@
 
 import React from 'react';
 
-import { gql } from '@apollo/client';
 import {
 	act,
 	fireEvent,
@@ -211,23 +210,6 @@ describe('Header Breadcrumbs', () => {
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
-			// TODO: move fragment to graphql file and add type
-			// add missing data in cache
-			global.apolloClient.writeFragment({
-				fragment: gql`
-					fragment NodeOwner on Node {
-						owner {
-							id
-							email
-							full_name
-						}
-					}
-				`,
-				id: global.apolloClient.cache.identify(currentFolder),
-				data: {
-					owner
-				}
-			});
 
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
@@ -294,24 +276,6 @@ describe('Header Breadcrumbs', () => {
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(parent.name, currentFolder.name))
 			).toBeVisible();
-			// TODO: move fragment to graphql file and add type
-			// add missing data in cache
-			global.apolloClient.writeFragment({
-				fragment: gql`
-					fragment NodeOwner on Node {
-						owner {
-							id
-							email
-							full_name
-						}
-					}
-				`,
-				id: global.apolloClient.cache.identify(parent),
-				data: {
-					owner
-				}
-			});
-
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -375,24 +339,6 @@ describe('Header Breadcrumbs', () => {
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(parent.name, currentFolder.name))
 			).toBeVisible();
-			// TODO: move fragment to graphql file and add type
-			// add missing data in cache
-			global.apolloClient.writeFragment({
-				fragment: gql`
-					fragment NodeOwner on Node {
-						owner {
-							id
-							email
-							full_name
-						}
-					}
-				`,
-				id: global.apolloClient.cache.identify(parent),
-				data: {
-					owner
-				}
-			});
-
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -475,24 +421,6 @@ describe('Header Breadcrumbs', () => {
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
-			// TODO: move fragment to graphql file and add type
-			// add missing data in cache
-			global.apolloClient.writeFragment({
-				fragment: gql`
-					fragment NodeOwner on Node {
-						owner {
-							id
-							email
-							full_name
-						}
-					}
-				`,
-				id: global.apolloClient.cache.identify(path[0]),
-				data: {
-					owner
-				}
-			});
-
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -723,24 +651,6 @@ describe('Header Breadcrumbs', () => {
 			expect(
 				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
-			// TODO: move fragment to graphql file and add type
-			// add missing data in cache
-			global.apolloClient.writeFragment({
-				fragment: gql`
-					fragment NodeOwner on Node {
-						owner {
-							id
-							email
-							full_name
-						}
-					}
-				`,
-				id: global.apolloClient.cache.identify(path[0]),
-				data: {
-					owner
-				}
-			});
-
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
 			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);

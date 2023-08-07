@@ -44,9 +44,11 @@ describe('Rename', () => {
 			sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);
 			// enable permission to rename
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 
 			// the element to rename is the first of the list. To assure that it changes position,
@@ -109,9 +111,11 @@ describe('Rename', () => {
 			currentFolder.children = populateNodePage(populateNodes(5, 'Folder'));
 			// enable permission to rename
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 			sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);
 
@@ -170,9 +174,11 @@ describe('Rename', () => {
 			// enable permission to rename
 			currentFolder.permissions.can_write_folder = true;
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = { ...currentFolder, children: { nodes: [] } } as Folder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = { ...currentFolder, children: { nodes: [] } } as Folder;
+				}
 			});
 
 			// the element to rename is the first of the list. New position is third position of third page
@@ -191,7 +197,7 @@ describe('Rename', () => {
 				NODES_LOAD_LIMIT * 2
 			) as Node[];
 
-			const secondCursor = secondPage[secondPage.length - 1] as Node;
+			const secondCursor = secondPage[secondPage.length - 1];
 
 			// third page has also the renamed element
 			let thirdPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT * 2) as Node[];
@@ -313,14 +319,16 @@ describe('Rename', () => {
 				sortNodes(populateNodes(NODES_LOAD_LIMIT * 2, 'File'), NODES_SORT_DEFAULT) as Node[]
 			);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 
-			const nodeToRename = firstPage[firstPage.length - 1] as Node;
+			const nodeToRename = firstPage[firstPage.length - 1];
 			const newName = `${(last(secondPage) as Node).name}-renamed`;
 
 			const mocks = {
@@ -374,14 +382,16 @@ describe('Rename', () => {
 				sortNodes(populateNodes(NODES_LOAD_LIMIT * 2, 'File'), NODES_SORT_DEFAULT) as Node[]
 			);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 
-			const nodeToRename = firstPage[firstPage.length - 1] as Node;
+			const nodeToRename = firstPage[firstPage.length - 1];
 			const newName = `${(last(secondPage) as Node).name}-renamed`;
 
 			const nodesToTrash = map(firstPage.slice(0, firstPage.length - 1), (node) => node.id);

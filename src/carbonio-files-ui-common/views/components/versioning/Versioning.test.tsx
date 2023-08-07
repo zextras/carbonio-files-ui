@@ -146,7 +146,7 @@ describe('Versioning', () => {
 
 			const deleteVersionItem = await screen.findByText(/delete version/i);
 			await user.click(deleteVersionItem);
-			await waitFor(() => expect(screen.getAllByText(/Version \d+/)).toHaveLength(4));
+			await waitFor(() => expect(screen.getAllByText(/Version \d/)).toHaveLength(4));
 			expect(version2LastEditor).not.toBeInTheDocument();
 		});
 
@@ -224,7 +224,7 @@ describe('Versioning', () => {
 			expect(modalPurgeAllButton).toBeInTheDocument();
 			await user.click(modalPurgeAllButton);
 			expect(screen.queryByTestId(SELECTORS.modal)).not.toBeInTheDocument();
-			await waitFor(() => expect(screen.getAllByText(/Version \d+/)).toHaveLength(2));
+			await waitFor(() => expect(screen.getAllByText(/Version \d/)).toHaveLength(2));
 			expect(version3LastEditor).not.toBeInTheDocument();
 		});
 	});
@@ -324,7 +324,7 @@ describe('Versioning', () => {
 		expect(screen.getByText('Current version')).toBeVisible();
 		expect(screen.getByText('Last week')).toBeVisible();
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(2);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(2);
 
 		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(2));
 		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
@@ -335,7 +335,7 @@ describe('Versioning', () => {
 
 		await screen.findByText(/Version cloned as the current one/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(3);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(3);
 	});
 
 	test('download version', async () => {
@@ -361,7 +361,7 @@ describe('Versioning', () => {
 
 		expect(screen.getByText('Current version')).toBeVisible();
 
-		expect(screen.getByText(/Version \d+/)).toBeInTheDocument();
+		expect(screen.getByText(/Version \d/)).toBeInTheDocument();
 
 		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
 		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
@@ -398,7 +398,7 @@ describe('Versioning', () => {
 
 		expect(screen.getByText('Current version')).toBeVisible();
 
-		expect(screen.getByText(/Version \d+/)).toBeInTheDocument();
+		expect(screen.getByText(/Version \d/)).toBeInTheDocument();
 
 		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
 		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
@@ -481,7 +481,7 @@ describe('Versioning', () => {
 
 		expect(screen.getByText('Current version')).toBeVisible();
 		expect(screen.getByText('Last week')).toBeVisible();
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(4);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(4);
 
 		const uploadButton = await screen.findByRole('button', { name: /upload version/i });
 		await user.click(uploadButton);
@@ -490,7 +490,7 @@ describe('Versioning', () => {
 		const input = await screen.findByAltText(/Hidden file input/i);
 		await user.upload(input, file);
 
-		await waitFor(() => expect(screen.getAllByText(/Version \d+/)).toHaveLength(5));
+		await waitFor(() => expect(screen.getAllByText(/Version \d/)).toHaveLength(5));
 		const version5LastEditor = screen.getByText(getChipLabel(version5.last_editor));
 		expect(version5LastEditor).toBeVisible();
 	});
@@ -520,7 +520,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(maxVersions);
 
 		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
 		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
@@ -541,7 +541,7 @@ describe('Versioning', () => {
 		await user.click(cloneAsCurrentItem);
 		expect(screen.queryByText(/Version cloned as the current one/i)).not.toBeInTheDocument();
 		// number of version is not changed
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(maxVersions);
 		expect(screen.getByText(/clone as current/i)).toBeVisible();
 	});
 
@@ -577,7 +577,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(versions.length);
 		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions);
 
 		const versionWithoutKeepIcons = screen.getByTestId(
@@ -659,7 +659,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(maxVersions);
 
 		const uploadButton = await screen.findByRole('button', { name: /upload version/i });
 		expect(uploadButton).toBeVisible();
@@ -707,7 +707,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(versions.length);
 		expect(screen.getAllByTestId(ICON_REGEXP.versionKeepForever)).toHaveLength(maxKeepVersions);
 
 		const versionIcons = screen.getByTestId(SELECTORS.versionIcons(1));
@@ -758,7 +758,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(maxVersions);
 
 		const version2Icons = screen.getByTestId(SELECTORS.versionIcons(1));
 		const version2MoreButton = within(version2Icons).getByTestId(ICON_REGEXP.moreVertical);
@@ -768,8 +768,8 @@ describe('Versioning', () => {
 		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(deleteVersionItem).not.toHaveAttribute('disabled', '');
 		await user.click(deleteVersionItem);
-		await waitFor(() => expect(screen.getAllByText(/version \d+/i)).toHaveLength(maxVersions - 1));
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions - 1);
+		await waitFor(() => expect(screen.getAllByText(/Version \d/i)).toHaveLength(maxVersions - 1));
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(maxVersions - 1);
 		expect(screen.queryByText(/version 1/i)).not.toBeInTheDocument();
 	});
 
@@ -803,7 +803,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(maxVersions);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(maxVersions);
 
 		const purgeAllButton = await screen.findByRole('button', { name: /purge all versions/i });
 		expect(purgeAllButton).toBeEnabled();
@@ -818,7 +818,7 @@ describe('Versioning', () => {
 		await user.click(purgeAllModalButton as HTMLElement);
 		await screen.findByRole('button', { name: /purge all versions/i });
 		// only version 1 is visible
-		expect(screen.getByText(/version \d+/i)).toBeVisible();
+		expect(screen.getByText(/Version \d/i)).toBeVisible();
 		expect(screen.getByText(RegExp(`version ${maxVersions}`, 'i'))).toBeVisible();
 	});
 
@@ -848,7 +848,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(versions.length);
 
 		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
 		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
@@ -869,7 +869,7 @@ describe('Versioning', () => {
 		await user.click(cloneAsCurrentItem);
 		expect(screen.queryByText(/Version cloned as the current one/i)).not.toBeInTheDocument();
 		// number of version is not changed
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(versions.length);
 	});
 
 	test('delete version is disabled and shows a tooltip if user does not have write permissions', async () => {
@@ -898,7 +898,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(versions.length);
 
 		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
 		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
@@ -920,7 +920,7 @@ describe('Versioning', () => {
 		await user.click(deleteVersion);
 		expect(screen.getByText(/version 1/i)).toBeVisible();
 		// number of version is not changed
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(versions.length);
 	});
 
 	test('open with docs is disabled and shows a tooltip if file cannot be opened with docs', async () => {
@@ -945,7 +945,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(versions.length);
 
 		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
 		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
@@ -984,7 +984,7 @@ describe('Versioning', () => {
 		const { user } = setup(<Versioning node={baseFile} />, { mocks });
 		await screen.findByText(/Version 1/i);
 
-		expect(screen.getAllByText(/Version \d+/)).toHaveLength(versions.length);
+		expect(screen.getAllByText(/Version \d/)).toHaveLength(versions.length);
 
 		const versions1Icons = screen.getByTestId(SELECTORS.versionIcons(1));
 		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);

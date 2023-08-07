@@ -277,10 +277,10 @@ describe('Upload list', () => {
 			const loadingIcons = await screen.findAllByTestId(ICON_REGEXP.uploadLoading);
 			expect(loadingIcons).toHaveLength(4);
 
-			await screen.findAllByText(/\d+%/);
+			await screen.findAllByText(/\d{1,3}%/);
 
 			expect(screen.getByText(/queued/i)).toBeInTheDocument();
-			expect(screen.getAllByText(/\d+%/i)).toHaveLength(3);
+			expect(screen.getAllByText(/\d{1,3}%/i)).toHaveLength(3);
 
 			const queuedItem = find(
 				screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false }),
@@ -502,11 +502,11 @@ describe('Upload list', () => {
 			const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			forEach(nodeItems, (nodeItem, index) => {
 				if (index < UploadQueue.LIMIT) {
-					expect(within(nodeItem).getByText(/\d+%/)).toBeVisible();
+					expect(within(nodeItem).getByText(/\d{1,3}%/)).toBeVisible();
 					expect(within(nodeItem).queryByText(/queued/i)).not.toBeInTheDocument();
 				} else {
 					expect(within(nodeItem).getByText(/queued/i)).toBeVisible();
-					expect(within(nodeItem).queryByText(/\d+%/)).not.toBeInTheDocument();
+					expect(within(nodeItem).queryByText(/\d{1,3}%/)).not.toBeInTheDocument();
 				}
 			});
 			emitter.emit(EMITTER_CODES.success);
@@ -520,7 +520,7 @@ describe('Upload list', () => {
 				within(nodeItems[UploadQueue.LIMIT - 1]).getByTestId(ICON_REGEXP.uploadCompleted)
 			).toBeVisible();
 			expect(within(nodeItems[UploadQueue.LIMIT]).queryByText(/queued/i)).not.toBeInTheDocument();
-			expect(within(nodeItems[UploadQueue.LIMIT]).getByText(/\d+%/i)).toBeVisible();
+			expect(within(nodeItems[UploadQueue.LIMIT]).getByText(/\d{1,3}%/i)).toBeVisible();
 			expect(within(nodeItems[UploadQueue.LIMIT * 2]).getByText(/queued/i)).toBeVisible();
 			expect(within(nodeItems[uploadedFiles.length - 1]).getByText(/queued/i)).toBeVisible();
 			emitter.emit(EMITTER_CODES.success);
@@ -529,14 +529,14 @@ describe('Upload list', () => {
 					UploadQueue.LIMIT * 2
 				)
 			);
-			expect(within(nodeItems[UploadQueue.LIMIT * 2]).getByText(/\d+%/i)).toBeVisible();
+			expect(within(nodeItems[UploadQueue.LIMIT * 2]).getByText(/\d{1,3}%/i)).toBeVisible();
 			expect(
 				within(nodeItems[UploadQueue.LIMIT * 2]).queryByText(/queued/i)
 			).not.toBeInTheDocument();
 			expect(
 				within(nodeItems[uploadedFiles.length - 1]).queryByText(/queued/i)
 			).not.toBeInTheDocument();
-			expect(within(nodeItems[uploadedFiles.length - 1]).getByText(/\d+%/)).toBeVisible();
+			expect(within(nodeItems[uploadedFiles.length - 1]).getByText(/\d{1,3}%/)).toBeVisible();
 			emitter.emit(EMITTER_CODES.success);
 			await waitFor(() =>
 				expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(

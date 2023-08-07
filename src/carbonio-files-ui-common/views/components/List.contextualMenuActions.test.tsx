@@ -461,10 +461,12 @@ describe('Contextual menu actions', () => {
 			const currentFolder = populateFolder(5);
 			// enable permission to Mfd
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).flagged = false;
-				(mockedNode as Node).parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.flagged = false;
+					mockedNode.parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				}
 			});
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;
@@ -513,11 +515,13 @@ describe('Contextual menu actions', () => {
 			currentFolder.permissions.can_write_folder = true;
 
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
-				(mockedNode as Node).owner = currentFolder.owner;
-				(mockedNode as Node).flagged = false;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+					mockedNode.owner = currentFolder.owner;
+					mockedNode.flagged = false;
+				}
 			});
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;
