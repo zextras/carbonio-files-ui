@@ -171,7 +171,7 @@ describe('Copy', () => {
 			] as Node[];
 			const copiedNodes = map(nodesToCopy, (node) => ({
 				...node,
-				id: faker.datatype.uuid(),
+				id: faker.string.uuid(),
 				name: `${node.name}-copied`
 			}));
 

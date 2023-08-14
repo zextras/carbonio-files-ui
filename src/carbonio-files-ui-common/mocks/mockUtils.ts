@@ -65,22 +65,22 @@ export function populateNodePage(
 
 export function populateUser(id?: string, name?: string, email?: string): User {
 	return {
-		id: id || faker.datatype.uuid(),
-		email: email || faker.internet.exampleEmail(name),
-		full_name: name || faker.name.fullName(),
+		id: id || faker.string.uuid(),
+		email: email || faker.internet.exampleEmail({ firstName: name }),
+		full_name: name || faker.person.fullName(),
 		__typename: 'User'
 	};
 }
 
 export function populateDistributionList(limit = 10, id = '', name = ''): DistributionList {
 	const users = [];
-	for (let i = 0; i < faker.datatype.number(limit); i += 1) {
+	for (let i = 0; i < faker.number.int(limit); i += 1) {
 		users.push(populateUser(undefined, `user${i}`));
 	}
 	return {
 		__typename: 'DistributionList',
-		id: id || faker.datatype.uuid(),
-		name: name || faker.name.jobArea(),
+		id: id || faker.string.uuid(),
+		name: name || faker.person.jobArea(),
 		users
 	};
 }
@@ -121,7 +121,7 @@ export function populateShare(
 				populateDistributionList(undefined, undefined, `share_target_dl_${key}`)
 			]),
 		permission: populateSharePermission(),
-		expires_at: faker.datatype.datetime().getTime()
+		expires_at: faker.date.anytime().getTime()
 	};
 }
 
@@ -146,14 +146,14 @@ function populateNodeFields(
 	const types = filter(Object.values(NodeType), (t) => t !== NodeType.Root);
 	const nodeType = type || faker.helpers.arrayElement(types);
 	return {
-		id: id || faker.datatype.uuid(),
+		id: id || faker.string.uuid(),
 		creator: populateUser(),
 		owner: populateUser(LOGGED_USER.id, LOGGED_USER.name),
 		last_editor: populateUser(),
 		created_at: faker.date.past().getTime(),
 		updated_at: faker.date.recent().getTime(),
 		permissions: populatePermissions(),
-		name: name || faker.random.words(),
+		name: name || faker.word.words(),
 		description: faker.lorem.paragraph(),
 		type: (id && some(ROOTS, (root) => root === id) && NodeType.Root) || nodeType,
 		flagged: faker.datatype.boolean(),
@@ -171,14 +171,14 @@ export function populateUnknownNode(
 	name?: string
 ): Partial<Node> & Omit<ActionsFactoryNodeType, '__typename'> {
 	return {
-		id: id || faker.datatype.uuid(),
+		id: id || faker.string.uuid(),
 		creator: populateUser(),
 		owner: populateUser(),
 		last_editor: populateUser(),
 		created_at: faker.date.past().getTime(),
 		updated_at: faker.date.recent().getTime(),
 		permissions: populatePermissions(),
-		name: name || faker.random.words(),
+		name: name || faker.word.words(),
 		description: '',
 		type: NodeType.Other,
 		flagged: faker.datatype.boolean(),
@@ -237,7 +237,7 @@ export function populateFolder(
 		__typename: 'Folder'
 	};
 	if (!folder.id.includes('LOCAL')) {
-		folder.shares = populateShares(folder, faker.datatype.number(10));
+		folder.shares = populateShares(folder, faker.number.int(10));
 	}
 	for (let i = 0; i < childrenLimit; i += 1) {
 		const child = populateNode();
@@ -321,7 +321,7 @@ export function populateFile(id?: string, name?: string): MakeRequiredNonNull<Fi
 	const file: MakeRequiredNonNull<FilesFile, 'owner'> = {
 		...populateNodeFields(faker.helpers.arrayElement(types), id, name),
 		mime_type: mimeType,
-		size: faker.datatype.number(),
+		size: faker.number.float(),
 		extension: faker.system.commonFileExt(),
 		version: 1,
 		parent: populateFolder(),
@@ -329,7 +329,7 @@ export function populateFile(id?: string, name?: string): MakeRequiredNonNull<Fi
 		cloned_from_version: null,
 		__typename: 'File'
 	};
-	file.shares = populateShares(file, faker.datatype.number(10));
+	file.shares = populateShares(file, faker.number.int(10));
 	return file;
 }
 
@@ -338,12 +338,12 @@ export function populateContact(
 	email?: string
 ): MakeRequired<Match, 'id' | 'email' | 'full'> {
 	return {
-		id: faker.datatype.uuid(),
+		id: faker.string.uuid(),
 		email:
 			email ||
 			(fullName && `${fullName.replace(/\s+/i, '.')}@example.com`) ||
-			faker.internet.exampleEmail(fullName),
-		full: fullName || faker.name.fullName()
+			faker.internet.exampleEmail({ firstName: fullName }),
+		full: fullName || faker.person.fullName()
 	};
 }
 
@@ -357,20 +357,20 @@ export function populateGalContact(fullName?: string, email?: string): GalAccoun
 
 export function populateContactGroupMatch(name?: string): ContactGroupMatch {
 	return {
-		id: faker.datatype.uuid(),
+		id: faker.string.uuid(),
 		type: 'contact',
 		isGroup: true,
-		display: name || `${faker.name.jobArea()} ${faker.name.jobDescriptor()}`
+		display: name || `${faker.person.jobArea()} ${faker.person.jobDescriptor()}`
 	};
 }
 
 export function populateContactInformation(type: Member['type']): ContactInformation {
 	return {
-		id: faker.datatype.uuid(),
+		id: faker.string.uuid(),
 		_attrs: {
 			nickname: faker.internet.userName(),
 			email: faker.internet.email(),
-			zimbraId: (type === 'G' && faker.datatype.uuid()) || undefined
+			zimbraId: (type === 'G' && faker.string.uuid()) || undefined
 		}
 	};
 }
@@ -417,7 +417,7 @@ export function populateContactGroup(
 export function populateLink(node: Node): Link {
 	return {
 		__typename: 'Link',
-		id: faker.datatype.uuid(),
+		id: faker.string.uuid(),
 		created_at: faker.date.recent().getTime(),
 		expires_at: faker.helpers.arrayElement([
 			null,
@@ -439,7 +439,7 @@ export function populateCollaborationLink(
 			sharePermission ||
 			faker.helpers.arrayElement([SharePermission.ReadAndShare, SharePermission.ReadWriteAndShare]),
 		__typename: 'CollaborationLink',
-		id: faker.datatype.uuid(),
+		id: faker.string.uuid(),
 		created_at: faker.date.recent().getTime(),
 		url: faker.internet.url(),
 		node
@@ -473,7 +473,7 @@ export function populateUploadItem(item?: Partial<UploadItem>): UploadItem {
 	const mimeType = faker.system.mimeType();
 	const file = new File(['(⌐□_□)'], name, { type: mimeType });
 	return {
-		id: faker.datatype.uuid(),
+		id: faker.string.uuid(),
 		name,
 		file,
 		parentNodeId: null,

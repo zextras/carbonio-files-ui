@@ -28,7 +28,7 @@ const handleUploadFileRequest: ResponseResolver<
 > = (req, res, ctx) =>
 	res(
 		ctx.json({
-			nodeId: faker.datatype.uuid()
+			nodeId: faker.string.uuid()
 		})
 	);
 

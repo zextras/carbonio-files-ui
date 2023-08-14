@@ -253,7 +253,7 @@ describe('Upload list', () => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						return res(
 							ctx.json({
-								nodeId: faker.datatype.uuid()
+								nodeId: faker.string.uuid()
 							})
 						);
 					}
@@ -341,7 +341,7 @@ describe('Upload list', () => {
 							return res(ctx.status(500));
 						}
 						await delayUntil(emitter, EMITTER_CODES.success);
-						return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+						return res(ctx.json({ nodeId: faker.string.uuid() }));
 					}
 				)
 			);
@@ -401,7 +401,7 @@ describe('Upload list', () => {
 							return res(ctx.status(XMLHttpRequest.UNSENT));
 						}
 						await delayUntil(emitter, EMITTER_CODES.success);
-						return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+						return res(ctx.json({ nodeId: faker.string.uuid() }));
 					}
 				)
 			);
@@ -468,7 +468,7 @@ describe('Upload list', () => {
 							req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
 						const result =
 							find(uploadedFiles, (uploadedFile) => uploadedFile.name === fileName)?.id ||
-							faker.datatype.uuid();
+							faker.string.uuid();
 						await delayUntil(emitter, EMITTER_CODES.success);
 						return res(ctx.json({ nodeId: result }));
 					}
