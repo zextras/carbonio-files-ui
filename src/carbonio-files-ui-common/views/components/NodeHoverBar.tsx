@@ -15,7 +15,7 @@ interface NodeHoverBarProps extends React.ComponentPropsWithoutRef<typeof HoverB
 	actions?: DSAction[];
 }
 
-export const NodeHoverBar = ({ actions, ...rest }: NodeHoverBarProps): JSX.Element => {
+export const NodeHoverBar = ({ actions, ...rest }: NodeHoverBarProps): React.JSX.Element => {
 	const actionsMapped = useMemo(
 		() =>
 			map(actions, (action) => ({

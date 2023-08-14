@@ -55,7 +55,7 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 	})
 }));
 
-const MockDisplayer = (props: DisplayerProps): JSX.Element => (
+const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
 	<div>
 		{props.translationKey}:{props.icons}
 		<button
@@ -81,7 +81,7 @@ const MockDisplayer = (props: DisplayerProps): JSX.Element => (
 );
 
 jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => <MockDisplayer {...props} />
+	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
 describe('Create docs file', () => {

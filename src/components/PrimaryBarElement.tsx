@@ -17,7 +17,7 @@ import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
 import { UploadStatus } from '../carbonio-files-ui-common/types/graphql/client-types';
 import { useNavigation } from '../hooks/useNavigation';
 
-export const PrimaryBarElement = ({ active }: PrimaryBarComponentProps): JSX.Element => {
+export const PrimaryBarElement = ({ active }: PrimaryBarComponentProps): React.JSX.Element => {
 	const uploadStatus = useReactiveVar(uploadVar);
 	const location = useLocation();
 	const lastLocationRef = useRef<string>('');

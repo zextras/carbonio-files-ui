@@ -33,7 +33,7 @@ export interface CollaboratorsRowProps {
 	loading: boolean | undefined;
 }
 
-export const CollaboratorsRow = ({ shares, loading }: CollaboratorsRowProps): JSX.Element => {
+export const CollaboratorsRow = ({ shares, loading }: CollaboratorsRowProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const { activeNodeId, setActiveNode } = useActiveNode();
@@ -46,7 +46,7 @@ export const CollaboratorsRow = ({ shares, loading }: CollaboratorsRowProps): JS
 
 	const collaborators = useMemo(() => {
 		const collaboratorsToShow = 5;
-		return reduce<NonNullableListItem<typeof shares> | null | undefined, JSX.Element[]>(
+		return reduce<NonNullableListItem<typeof shares> | null | undefined, React.JSX.Element[]>(
 			shares,
 			(avatars, share, index) => {
 				if (share) {

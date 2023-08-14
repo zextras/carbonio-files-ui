@@ -23,7 +23,7 @@ export const TextRowWithShim = ({
 	content,
 	shimmerWidth,
 	...rest
-}: TextRowProps): JSX.Element | null =>
+}: TextRowProps): React.JSX.Element | null =>
 	((loading || (content !== undefined && content !== null)) && (
 		<Row
 			orientation="vertical"

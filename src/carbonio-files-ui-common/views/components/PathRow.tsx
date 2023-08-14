@@ -31,7 +31,7 @@ export interface PathRowProps {
 	rootId?: Node['rootId'];
 }
 
-export const PathRow = ({ id, name, type, rootId }: PathRowProps): JSX.Element => {
+export const PathRow = ({ id, name, type, rootId }: PathRowProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const activeFolderId = useQueryParam('folder');
