@@ -12,7 +12,7 @@ import { populateConfigs, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { MutationResolvers, QueryResolvers } from '../types/graphql/resolvers-types';
 import type * as GQLTypes from '../types/graphql/types';
-import { Maybe, Scalars } from '../types/graphql/types';
+import { Maybe } from '../types/graphql/types';
 
 type Id = string;
 
@@ -244,13 +244,13 @@ export function mockGetVersions(
 }
 
 export function mockDeleteVersions(
-	...versions: Array<Maybe<Scalars['Int']>>[]
+	...versions: Array<Maybe<number>>[]
 ): Mock<GQLTypes.DeleteVersionsMutation> {
 	return () => shiftData(versions);
 }
 
 export function mockKeepVersions(
-	...versions: Array<Maybe<Scalars['Int']>>[]
+	...versions: Array<Maybe<number>>[]
 ): Mock<GQLTypes.KeepVersionsMutation> {
 	return () => shiftData(versions);
 }
