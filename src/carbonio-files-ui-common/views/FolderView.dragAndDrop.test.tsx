@@ -20,7 +20,6 @@ import { graphql } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { TIMERS } from '../constants';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -49,14 +48,9 @@ import {
 	createMoveDataTransfer
 } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): JSX.Element => (
 		<div data-testid="displayer">
 			{props.translationKey}:{props.icons}

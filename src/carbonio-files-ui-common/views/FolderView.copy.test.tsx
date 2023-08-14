@@ -12,7 +12,6 @@ import { map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder } from '../mocks/mockUtils';
 import { Node } from '../types/common';
@@ -31,14 +30,9 @@ import {
 } from '../utils/resolverMocks';
 import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}

@@ -11,7 +11,6 @@ import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
 	FILTER_TYPE,
@@ -35,25 +34,15 @@ import {
 import { setup } from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
 
-const mockedRequestHandler = jest.fn();
-
-beforeEach(() => {
-	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
-	server.use(
-		graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
-	);
-});
-
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter view', () => {
 	describe('Shared By Me filter', () => {
 		test('Shared by me filter has sharedByMe=true and excludes trashed nodes', async () => {
+			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			server.use(
+				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
+			);
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`]
 			});

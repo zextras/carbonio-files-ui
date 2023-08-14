@@ -17,7 +17,6 @@ import { forEach, map, find } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodes, sortNodes } from '../mocks/mockUtils';
@@ -39,12 +38,7 @@ import {
 import { generateError, renameNode, setup, selectNodes } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Rename', () => {

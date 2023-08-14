@@ -44,14 +44,10 @@ import {
 } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
 
-const resetToDefault = jest.fn(() => {
+const resetToDefault = (): void => {
 	// clone implementation of the function contained in the click callback of useCopyContent
 	destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
-});
-
-beforeEach(() => {
-	resetToDefault.mockClear();
-});
+};
 
 describe('Copy Nodes Modal', () => {
 	test('if a folder id is provided, list shows content of the folder', async () => {

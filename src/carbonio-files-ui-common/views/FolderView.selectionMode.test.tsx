@@ -11,7 +11,6 @@ import { forEach } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes } from '../mocks/mockUtils';
@@ -21,14 +20,9 @@ import { Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}

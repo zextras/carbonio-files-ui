@@ -14,7 +14,7 @@ import { rest } from 'msw';
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
 	CREATE_FILE_PATH,
@@ -38,20 +38,18 @@ import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
 import { setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 
-let mockedCreateOptions: CreateOptionsContent['createOptions'];
+let mockedCreateOptions: CreateOption[];
 
 beforeEach(() => {
 	mockedCreateOptions = [];
 });
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest
-			.fn()
-			.mockImplementation((...options: Parameters<CreateOptionsContent['setCreateOptions']>[0]) => {
-				mockedCreateOptions = options;
-			}),
-		removeCreateOptions: jest.fn()
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
+	useCreateOptions: (): CreateOptionsReturnType => ({
+		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+			mockedCreateOptions = options;
+		},
+		removeCreateOptions: () => undefined
 	})
 }));
 
@@ -80,7 +78,7 @@ const MockDisplayer = (props: DisplayerProps): JSX.Element => (
 	</div>
 );
 
-jest.mock('./components/Displayer', () => ({
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): JSX.Element => <MockDisplayer {...props} />
 }));
 

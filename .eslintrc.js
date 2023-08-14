@@ -54,7 +54,8 @@ module.exports = {
 				'**/mocks/**/*.[jt]s?(x)',
 				'**/types/**/*.[jt]s?(x)',
 				'**/jest-*.ts?(x)',
-				'**/test*.ts?(x)'
+				'**/test*.ts?(x)',
+				'**/__mocks__/**/*'
 			],
 			rules: {
 				'import/no-extraneous-dependencies': 'off'

@@ -31,7 +31,7 @@ import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
 import { EventEmitter } from 'events';
 import { GraphQLError } from 'graphql';
-import { forEach, map, filter, reduce, merge } from 'lodash';
+import { forEach, map, filter, reduce, merge, noop } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -438,15 +438,15 @@ function createFileSystemEntry(
 			name: node.name,
 			root: new FileSystemDirectoryEntry()
 		},
-		getParent: jest.fn()
+		getParent: noop
 	};
 	if (isFolder(node)) {
 		const reader = createFileSystemDirectoryEntryReader(node);
 		const directoryEntry: FileSystemDirectoryEntry = {
 			...baseEntry,
 			createReader: () => reader,
-			getFile: jest.fn(),
-			getDirectory: jest.fn()
+			getFile: noop,
+			getDirectory: noop
 		};
 		return directoryEntry;
 	}
