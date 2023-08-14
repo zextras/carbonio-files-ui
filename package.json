@@ -41,6 +41,7 @@
 		"@graphql-tools/jest-transform": "^2.0.0",
 		"@graphql-tools/mock": "^9.0.0",
 		"@graphql-tools/schema": "^10.0.0",
+		"@mswjs/interceptors": "0.17.7",
 		"@testing-library/jest-dom": "^6.0.0",
 		"@testing-library/react": "^12.1.5",
 		"@testing-library/react-hooks": "^8.0.1",
@@ -66,7 +67,7 @@
 		"jest-fail-on-console": "^3.1.1",
 		"jest-junit": "^16.0.0",
 		"jest-styled-components": "^7.1.1",
-		"msw": "~1.0.1",
+		"msw": "^1.2.3",
 		"node-fetch": "^2.6.12",
 		"react-test-renderer": "^17.0.2"
 	},
