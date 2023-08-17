@@ -1,7 +1,7 @@
 {
     "actions": {
         "copy": "Copy",
-        "deletePermanently": "Delete Permanently",
+        "deletePermanently": "Delete permanently",
         "download": "Download",
         "edit": "Edit",
         "flag": "Flag",
@@ -45,20 +45,20 @@
                 "writeAndShare": "Write and Share"
             }
         },
-        "title": "Collaboration Links"
+        "title": "Collaboration links"
     },
     "create": {
         "options": {
             "new": {
-                "document": "New Document",
-                "folder": "New Folder",
+                "document": "New document",
+                "folder": "New folder",
                 "libreDocument": "OpenDocument {{ext}}",
                 "msDocument": "Microsoft {{ext}}",
                 "msDocument_docx": "Microsoft Word {{ext}}",
                 "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
                 "msDocument_xlsx": "Microsoft Excel {{ext}}",
-                "presentation": "New Presentation",
-                "spreadsheet": "New Spreadsheet",
+                "presentation": "New presentation",
+                "spreadsheet": "New spreadsheet",
                 "upload": "Upload"
             }
         }
@@ -212,7 +212,7 @@
                 "title": "Click the \"NEW\" button to create a new item and share it with your contacts."
             },
             {
-                "message": "Create a file by clicking the \"NEW\" button",
+                "message": "Create a file by clicking the \"NEW\" button.",
                 "title": "Start editing and sharing your works."
             },
             {
@@ -233,7 +233,7 @@
                 "title": "Select a folder to edit or rename it."
             },
             {
-                "message": "Select the item and then go to the \"Shares\" tab",
+                "message": "Select the item and then go to the \"Shares\" tab.",
                 "title": "Provide your contacts with editing rights to let them edit an item."
             },
             {
@@ -320,7 +320,7 @@
             "versioning": "Versioning"
         },
         "uploads": {
-            "message": "Here you can find all the items that are currently uploading, you can manage them from here",
+            "message": "Here you can find all the items that are currently uploading, you can manage them from here.",
             "title": "Upload suggestions"
         },
         "version": {
@@ -402,8 +402,8 @@
         },
         "folder": {
             "displayerContent": "This folder has no content",
-            "hint": "It seems that this folder is empty",
-            "state": "Drag a file or create a new one clicking \"NEW\""
+            "hint": "It seems that this folder is empty.",
+            "state": "Drag a file or create a new one clicking \"NEW\"."
         },
         "search": {
             "hint": "Your search didn't match any files or folders",
@@ -437,7 +437,7 @@
                 },
                 "input": {
                     "label": {
-                        "name": "Folder Name"
+                        "name": "Folder name"
                     }
                 },
                 "title": "Create New folder"
@@ -542,7 +542,7 @@
         "unsaved_changes": {
             "body": {
                 "line1": "Are you sure you want to leave this page without saving?",
-                "line2": "All your unsaved changes will be lost"
+                "line2": "All your unsaved changes will be lost."
             },
             "button": {
                 "leave_anyway": "Leave anyway",
@@ -601,7 +601,7 @@
                 },
                 "input": {
                     "label": {
-                        "name": "Item Name"
+                        "name": "Item name"
                     }
                 },
                 "title": "Rename item"
@@ -615,7 +615,7 @@
         "actions": {
             "tooltip": {
                 "download": "Download",
-                "manageShares": "Manage Shares"
+                "manageShares": "Manage shares"
             }
         },
         "button": {
@@ -636,7 +636,7 @@
             "description": "Internal and external users that have access to the link can download the file.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
-            "title": "Public Links",
+            "title": "Public links",
             "undo": "Undo"
         },
         "datePickerInput": {

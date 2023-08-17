@@ -358,7 +358,7 @@ export const List: React.VFC<ListProps> = ({
 								{
 									icon: 'ShareOutline',
 									id: 'ShareOutline',
-									tooltipLabel: t('preview.actions.tooltip.manageShares', 'Manage Shares'),
+									tooltipLabel: t('preview.actions.tooltip.manageShares', 'Manage shares'),
 									onClick: (): void => setActiveNode(node.id, DISPLAYER_TABS.sharing)
 								},
 								{
@@ -477,7 +477,7 @@ export const List: React.VFC<ListProps> = ({
 			[Action.ManageShares]: {
 				id: 'ManageShares',
 				icon: 'ShareOutline',
-				label: t('actions.manageShares', 'Manage Shares'),
+				label: t('actions.manageShares', 'Manage shares'),
 				onClick: manageSharesSelection
 			},
 			[Action.Flag]: {
@@ -535,7 +535,7 @@ export const List: React.VFC<ListProps> = ({
 			[Action.DeletePermanently]: {
 				id: 'DeletePermanently',
 				icon: 'DeletePermanentlyOutline',
-				label: t('actions.deletePermanently', 'Delete Permanently'),
+				label: t('actions.deletePermanently', 'Delete permanently'),
 				onClick: openDeletePermanentlyModal
 			}
 		}),

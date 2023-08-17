@@ -187,7 +187,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 				background={'gray6'}
 			>
 				<TextWithLineHeight size="medium">
-					{t('collaborationLinks.title', 'Collaboration Links')}
+					{t('collaborationLinks.title', 'Collaboration links')}
 				</TextWithLineHeight>
 				<TextWithLineHeight size="extrasmall" color="secondary" overflow="break-word">
 					{t(

@@ -49,7 +49,7 @@ describe('Collaboration Link', () => {
 		);
 		await waitFor(() => expect(readAndShareGenerateButton).toBeEnabled());
 		const collaborationLinkContainer = screen.getByTestId(SELECTORS.collaborationLinkContainer);
-		expect(within(collaborationLinkContainer).getByText('Collaboration Links')).toBeVisible();
+		expect(within(collaborationLinkContainer).getByText('Collaboration links')).toBeVisible();
 		expect(
 			within(collaborationLinkContainer).getByText(
 				'Internal users will receive the permissions by opening the link. You can always modify granted permissions.'
