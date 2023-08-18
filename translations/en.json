@@ -556,7 +556,6 @@
     },
     "node": {
         "alias": {
-            "name": "",
             "name_LOCAL_CHAT_ROOT": "Files sent via Team",
             "name_LOCAL_ROOT": "Home",
             "name_SHARED_WITH_ME_ROOT": "Shared with me",
