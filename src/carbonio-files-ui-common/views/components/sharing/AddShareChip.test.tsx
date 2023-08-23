@@ -153,13 +153,13 @@ describe('Add Share Chip', () => {
 
 		expect(screen.getByText('Viewer')).toBeVisible();
 		expect(
-			screen.getByText('It will only be able to view or download the file or folder')
+			screen.getByText('It will only be able to view or download the item or folder')
 		).toBeVisible();
 		expect(screen.getByText('Editor')).toBeVisible();
-		expect(screen.getByText('It will be able to view and edit the file or folder')).toBeVisible();
+		expect(screen.getByText('It will be able to view and edit the item or folder')).toBeVisible();
 		expect(screen.getByText('Sharing allowed')).toBeVisible();
 		expect(
-			screen.getByText('It will be able to manage shares of the file or folder')
+			screen.getByText('It will be able to manage shares of the item or folder')
 		).toBeVisible();
 	});
 

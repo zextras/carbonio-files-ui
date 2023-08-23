@@ -123,7 +123,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 					<TextWithLineHeight size="extrasmall" color="secondary" overflow="break-word">
 						{t(
 							'publicLink.addLink.description',
-							'Anyone on the internet with the link can view or download the file'
+							'Anyone on the internet with the link can view or download the item.'
 						)}
 					</TextWithLineHeight>
 				</Container>

@@ -39,7 +39,7 @@
             }
         },
         "row": {
-            "placeholder": "Create a link in order to share the node",
+            "placeholder": "Create a link in order to share the item",
             "title": {
                 "ReadAndShare": "Read and Share",
                 "writeAndShare": "Write and Share"
@@ -195,7 +195,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Select and restore your documents that are now in the trash."
+                    "title": "Select and restore your items that are now in the trash."
                 },
                 {
                     "message": "Select an item to restore it or delete it permanently.",
@@ -212,7 +212,7 @@
                 "title": "Click the \"NEW\" button to create a new item and share it with your contacts."
             },
             {
-                "message": "Create a file by clicking the \"NEW\" button.",
+                "message": "Create an item by clicking the \"NEW\" button.",
                 "title": "Start editing and sharing your works."
             },
             {
@@ -291,13 +291,13 @@
                 "popover": {
                     "role": {
                         "editor": "Editor",
-                        "editorDescription": "It will be able to view and edit the file or folder",
+                        "editorDescription": "It will be able to view and edit the item or folder",
                         "viewer": "Viewer",
-                        "viewerDescription": "It will only be able to view or download the file or folder"
+                        "viewerDescription": "It will only be able to view or download the item or folder"
                     },
                     "save": "Save",
                     "sharingAllowed": "Sharing allowed",
-                    "sharingAllowedDescription": "It will be able to manage shares of the file or folder"
+                    "sharingAllowedDescription": "It will be able to manage shares of the item or folder"
                 },
                 "tooltip": {
                     "edit": {
@@ -344,7 +344,7 @@
                 "purgeAllVersions": "Purge all versions",
                 "upload": "Upload version"
             },
-            "mainHint": "Files saves the last {{maxVersions}} versions of your files. You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.",
+            "mainHint": "Files saves the last {{maxVersions}} versions of your items. You can manually delete any item version or restore one as the current version. Select one or more versions that you want to keep forever.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Cloned from version {{versionNumber}} ({{cloneDate}})",
@@ -516,7 +516,7 @@
             "header": "Remove {{nodeName}} public link"
         },
         "revokeCollaborationLink": {
-            "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the node.",
+            "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.",
             "button": {
                 "confirm": "Revoke"
             },
@@ -626,14 +626,14 @@
         },
         "loading": {
             "error": "An error occurred while loading the preview. Try again.",
-            "file": "Loading file preview, please wait…",
+            "file": "Loading item preview, please wait…",
             "retrying": "Trying to load the preview…"
         }
     },
     "publicLink": {
         "addLink": {
             "addLink": "Add Link",
-            "description": "Internal and external users that have access to the link can download the file.",
+            "description": "Internal and external users that have access to the link can download the item.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
             "title": "Public links",
@@ -753,10 +753,10 @@
         "filters": "Filters",
         "filtersList": {
             "flagged": "Flagged",
-            "myElements": "My elements",
+            "myElements": "My items",
             "recents": "Recents",
             "sharedByMe": "Shared by me",
-            "sharedElements": "Shared Elements",
+            "sharedElements": "Shared items",
             "sharedWithMe": "Shared with me",
             "trash": "Trash"
         },

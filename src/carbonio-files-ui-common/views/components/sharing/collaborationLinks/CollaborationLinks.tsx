@@ -146,7 +146,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 						<Text overflow="break-word" size="small">
 							{t(
 								'modal.revokeCollaborationLink.body',
-								'By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the node.',
+								'By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.',
 								{
 									replace: { nodeName }
 								}
@@ -242,7 +242,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 						/>
 					) : (
 						<TextWithLineHeight size="extrasmall" color="secondary">
-							{t('collaborationLinks.row.placeholder', 'Create a link in order to share the node')}
+							{t('collaborationLinks.row.placeholder', 'Create a link in order to share the item')}
 						</TextWithLineHeight>
 					)}
 				</Container>
@@ -316,7 +316,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 							<TextWithLineHeight size="extrasmall" color="secondary">
 								{t(
 									'collaborationLinks.row.placeholder',
-									'Create a link in order to share the node'
+									'Create a link in order to share the item'
 								)}
 							</TextWithLineHeight>
 						)}

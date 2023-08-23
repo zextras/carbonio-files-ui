@@ -224,12 +224,12 @@ const FilterView: React.VFC = () => {
 			if (isSharedTrashFilter) {
 				_crumbs.push({
 					id: 'trashSharedWithMe',
-					label: t('secondaryBar.filtersList.sharedElements', 'Shared elements')
+					label: t('secondaryBar.filtersList.sharedElements', 'Shared items')
 				});
 			} else if (isMyTrashFilter) {
 				_crumbs.push({
 					id: 'trashSharedByMe',
-					label: t('secondaryBar.filtersList.myElements', 'My Elements')
+					label: t('secondaryBar.filtersList.myElements', 'My items')
 				});
 			}
 		} else if (isSharedByMeFilter) {
