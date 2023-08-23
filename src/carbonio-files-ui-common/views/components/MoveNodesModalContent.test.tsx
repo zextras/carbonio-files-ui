@@ -15,27 +15,23 @@ import { MoveNodesModalContent } from './MoveNodesModalContent';
 import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
-import {
-	populateFile,
-	populateFolder,
-	populateNode,
-	populateNodePage,
-	populateParents
-} from '../../mocks/mockUtils';
-import { type Node } from '../../types/common';
+import { populateFile, populateFolder, populateNode, populateParents } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File,
 	Folder,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	Maybe
 } from '../../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChildren,
+	mockGetNode,
 	mockGetPath,
 	mockMoveNodes
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
 
 const resetToDefault = jest.fn(() => {
@@ -51,10 +47,12 @@ describe('Move Nodes Modal', () => {
 	test('if a folder id is provided, list shows content of the folder', async () => {
 		const currentFolder = populateFolder(5);
 		const nodesToMove = [currentFolder.children.nodes[0] as File | Folder];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		setup(
 			<div onClick={resetToDefault}>
@@ -84,10 +82,12 @@ describe('Move Nodes Modal', () => {
 				file.permissions.can_write_file = true;
 				currentFolder.children.nodes.push(file);
 
-				const mocks = [
-					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-				];
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder]),
+						getNode: mockGetNode({ getChildren: [currentFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<div onClick={resetToDefault}>
 						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
@@ -112,10 +112,12 @@ describe('Move Nodes Modal', () => {
 				] = false;
 				currentFolder.children.nodes.push(folder);
 
-				const mocks = [
-					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-				];
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder]),
+						getNode: mockGetNode({ getChildren: [currentFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<div onClick={resetToDefault}>
 						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
@@ -138,12 +140,13 @@ describe('Move Nodes Modal', () => {
 				folder.permissions.can_write_folder = true;
 				currentFolder.children.nodes.push(folder);
 
-				const mocks = [
-					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-					mockGetPath({ node_id: folder.id }, [currentFolder, folder]),
-					mockGetChildren(getChildrenVariables(folder.id), folder)
-				];
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder], [currentFolder, folder]),
+						getNode: mockGetNode({ getChildren: [currentFolder, folder] })
+					}
+				} satisfies Partial<Resolvers>;
+
 				const { user } = setup(
 					<div onClick={resetToDefault}>
 						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
@@ -162,10 +165,12 @@ describe('Move Nodes Modal', () => {
 				const currentFolder = populateFolder();
 				currentFolder.children.nodes.push(nodeToMove);
 
-				const mocks = [
-					mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-					mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-				];
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder]),
+						getNode: mockGetNode({ getChildren: [currentFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<div onClick={resetToDefault}>
 						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
@@ -189,10 +194,12 @@ describe('Move Nodes Modal', () => {
 		currentFolder.children.nodes.push(file, folder);
 
 		const nodesToMove = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={nodesToMove} />
@@ -231,16 +238,15 @@ describe('Move Nodes Modal', () => {
 		currentFolder.children.nodes.push(folder);
 
 		const nodesToMove: Array<File | Folder> = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPath({ node_id: folder.id }, [currentFolder, folder]),
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockMoveNodes(
-				{ node_ids: map(nodesToMove, (node) => node.id), destination_id: folder.id },
-				map(nodesToMove, (node) => ({ ...node, parent: folder }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder], [currentFolder, folder]),
+				getNode: mockGetNode({ getChildren: [currentFolder, folder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(map(nodesToMove, (node) => ({ ...node, parent: folder })))
+			}
+		} satisfies Partial<Resolvers>;
 
 		const closeAction = jest.fn();
 
@@ -276,7 +282,10 @@ describe('Move Nodes Modal', () => {
 			const currentFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder).request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(currentFolder.id)
+			});
 			expect(
 				(currentFolderCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 			).toHaveLength(currentFolder.children.nodes.length - nodesToMove.length);
@@ -296,14 +305,15 @@ describe('Move Nodes Modal', () => {
 		currentFolder.children.nodes.push(folder);
 
 		const nodesToMove = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockMoveNodes(
-				{ node_ids: map(nodesToMove, (node) => node.id), destination_id: folder.id },
-				map(nodesToMove, (node) => ({ ...node, parent: folder }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(map(nodesToMove, (node) => ({ ...node, parent: folder })))
+			}
+		} satisfies Partial<Resolvers>;
 
 		const closeAction = jest.fn();
 
@@ -330,7 +340,10 @@ describe('Move Nodes Modal', () => {
 			const currentFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder).request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(currentFolder.id)
+			});
 			expect(
 				(currentFolderCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 			).toHaveLength(currentFolder.children.nodes.length - nodesToMove.length);
@@ -338,7 +351,10 @@ describe('Move Nodes Modal', () => {
 		const folderCachedData = global.apolloClient.readQuery<
 			GetChildrenQuery,
 			GetChildrenQueryVariables
-		>(mockGetChildren(getChildrenVariables(folder.id), folder).request);
+		>({
+			query: GetChildrenDocument,
+			variables: getChildrenVariables(folder.id)
+		});
 		expect(folderCachedData).toBeNull();
 	});
 
@@ -353,10 +369,12 @@ describe('Move Nodes Modal', () => {
 		currentFolder.children.nodes.push(folder);
 
 		const nodesToMove = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const closeAction = jest.fn();
 
@@ -406,14 +424,12 @@ describe('Move Nodes Modal', () => {
 		const ancestorIndex = 1;
 		const ancestor = path[ancestorIndex] as Folder;
 		ancestor.children.nodes = [path[ancestorIndex + 1]];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, path),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPath({ node_id: folder.id }, path.concat(folder)),
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetPath({ node_id: ancestor.id }, path.slice(0, ancestorIndex + 1)),
-			mockGetChildren(getChildrenVariables(ancestor.id), ancestor)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath(path, path.concat(folder), path.slice(0, ancestorIndex + 1)),
+				getNode: mockGetNode({ getChildren: [currentFolder, folder, ancestor] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -487,10 +503,12 @@ describe('Move Nodes Modal', () => {
 			sharedFolder
 		];
 
-		const mocks = [
-			mockGetPath({ node_id: sharedFolder.id }, path),
-			mockGetChildren(getChildrenVariables(sharedFolder.id), sharedFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath(path),
+				getNode: mockGetNode({ getChildren: [sharedFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { getByTextWithMarkup } = setup(
 			<div onClick={resetToDefault}>
@@ -520,20 +538,13 @@ describe('Move Nodes Modal', () => {
 	test('scroll trigger pagination', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2 - 1);
 		const nodesToMove = [currentFolder.children.nodes[0] as File | Folder];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), {
-				...currentFolder,
-				children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))
-			} as Folder),
-			mockGetChildren(
-				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-				{
-					...currentFolder,
-					children: populateNodePage(currentFolder.children.nodes.slice(NODES_LOAD_LIMIT))
-				} as Folder
-			)
-		];
+
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder, currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		setup(
 			<div onClick={resetToDefault}>

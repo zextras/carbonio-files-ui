@@ -24,7 +24,7 @@ import {
 	Maybe,
 	Node
 } from '../../types/graphql/types';
-import { getChildrenVariables } from '../../utils/mockUtils';
+import { getChildrenVariables } from '../../utils/resolverMocks';
 import { setupHook } from '../../utils/testUtils';
 import { addNodeInSortedList } from '../../utils/utils';
 

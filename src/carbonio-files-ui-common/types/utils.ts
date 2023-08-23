@@ -8,7 +8,7 @@ import { Maybe } from './graphql/types';
 
 export type OneOrMany<T> = T | T[];
 
-export type ArrayOneOrMore<T> = [T] & T[];
+export type ArrayOneOrMore<T> = [T, ...T[]];
 
 export type DeepPick<T, K extends keyof T, KK extends keyof NonNullable<T[K]>> = {
 	[P in K]: T[P] extends Record<KK, unknown>
@@ -36,7 +36,7 @@ export type NonNullableList<T extends Array<unknown>> = Array<NonNullable<Unwrap
 
 export type NonNullableListItem<T extends Array<unknown>> = Unwrap<NonNullableList<T>>;
 
-export type MakeRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
+export type MakeRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
 
 export type MakeRequiredNonNull<T, K extends keyof T> = T & { [KK in K]-?: NonNullable<T[KK]> };
 

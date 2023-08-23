@@ -21,25 +21,16 @@ import {
 	SHARES_LOAD_LIMIT
 } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import FIND_NODES from '../graphql/queries/findNodes.graphql';
-import GET_NODE from '../graphql/queries/getNode.graphql';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
-import { Node } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
-	FindNodesQuery,
-	FindNodesQueryVariables,
-	GetNodeQuery,
-	GetNodeQueryVariables,
-	NodeSort
-} from '../types/graphql/types';
-import {
-	getFindNodesVariables,
-	getNodeVariables,
 	mockDeletePermanently,
 	mockFindNodes,
-	mockGetNode
-} from '../utils/mockUtils';
+	mockGetNode,
+	mockRestoreNodes
+} from '../utils/resolverMocks';
 import { selectNodes, setup } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
@@ -52,41 +43,34 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 describe('Filter view', () => {
 	describe('Trash filter', () => {
 		test('Restore close the displayer from trash views', async () => {
+			const nodes = populateNodes(10);
+			nodes.forEach((node) => {
+				node.rootId = ROOTS.TRASH;
+				node.permissions.can_write_file = true;
+				node.permissions.can_write_folder = true;
+			});
+			const node = nodes[0];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode({ getNode: [node] })
+				},
+				Mutation: {
+					restoreNodes: mockRestoreNodes([{ ...node, rootId: ROOTS.LOCAL_ROOT }])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<Route path={`/:view/:filter?`}>
 					<FilterView />
 				</Route>,
 				{
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`],
+					mocks
 				}
 			);
 			// wait the content to be rendered
 			await screen.findByText(/view files and folders/i);
 			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
-			const queryResult = global.apolloClient.readQuery<FindNodesQuery, FindNodesQueryVariables>({
-				query: FIND_NODES,
-				variables: getFindNodesVariables({
-					shared_with_me: false,
-					folder_id: ROOTS.TRASH,
-					cascade: false
-				})
-			});
-			expect(queryResult?.findNodes?.nodes || null).not.toBeNull();
-			const nodes = queryResult?.findNodes?.nodes as Node[];
-			expect(nodes.length).toBeGreaterThan(0);
-			const cachedNode = nodes[0];
-			const node = populateNode(cachedNode.__typename, cachedNode.id, cachedNode.name);
-			node.rootId = ROOTS.TRASH;
-			node.permissions.can_write_file = true;
-			node.permissions.can_write_folder = true;
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GET_NODE,
-				variables: getNodeVariables(node.id),
-				data: {
-					getNode: { ...node, description: '' }
-				}
-			});
-
 			const nodeItem = screen.getByText(node.name);
 			expect(nodeItem).toBeVisible();
 			expect(screen.queryByText(/details/)).not.toBeInTheDocument();
@@ -112,22 +96,21 @@ describe('Filter view', () => {
 			).toBeVisible();
 		});
 
-		test('Delete permanently close the displayer from trash view', async () => {
+		test('Delete permanently close the displayer from trash views', async () => {
 			const node = populateNode();
 			node.rootId = ROOTS.TRASH;
 			node.permissions.can_write_file = true;
 			node.permissions.can_write_folder = true;
 			node.permissions.can_delete = true;
-
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, shared_with_me: false, cascade: false }),
-					[node]
-				),
-				mockGetNode(getNodeVariables(node.id), node),
-				mockDeletePermanently({ node_ids: [node.id] }, [node.id])
-			];
-
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes([node]),
+					getNode: mockGetNode({ getNode: [node] })
+				},
+				Mutation: {
+					deleteNodes: mockDeletePermanently([node.id])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<Route path={`/:view/:filter?`}>
 					<FilterView />
@@ -140,7 +123,6 @@ describe('Filter view', () => {
 			// wait the content to be rendered
 			await screen.findByText(/view files and folders/i);
 			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
-
 			const nodeItem = screen.getByText(node.name);
 			expect(nodeItem).toBeVisible();
 			expect(screen.queryByText(/details/)).not.toBeInTheDocument();
@@ -171,13 +153,12 @@ describe('Filter view', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_delete = true;
 			node.parent = populateLocalRoot();
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
-					[node]
-				),
-				mockGetNode(getNodeVariables(node.id), node)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes([node]),
+					getNode: mockGetNode({ getNode: [node] })
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<Route path={`/:view/:filter?`}>
 					<FilterView />
@@ -225,7 +206,6 @@ describe('Filter view', () => {
 			expect(restoreActionSelection).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-
 			// displayer
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
@@ -249,12 +229,11 @@ describe('Filter view', () => {
 				mockedNode.rootId = ROOTS.TRASH;
 			});
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
-					nodes
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				mocks,

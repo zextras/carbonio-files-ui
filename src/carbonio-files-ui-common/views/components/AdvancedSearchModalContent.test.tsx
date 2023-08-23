@@ -12,9 +12,10 @@ import { ROOTS } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder } from '../../mocks/mockUtils';
 import { AdvancedFilters } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeType } from '../../types/graphql/types';
 import { ContactInfo } from '../../types/network';
-import { mockGetPath } from '../../utils/mockUtils';
+import { mockGetPath } from '../../utils/resolverMocks';
 import { setup } from '../../utils/testUtils';
 
 const mockedSoapFetch: jest.Mock = jest.fn();
@@ -39,7 +40,7 @@ describe('Advanced search modal content', () => {
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText(/advanced filters/i)).toBeVisible();
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
@@ -115,7 +116,7 @@ describe('Advanced search modal content', () => {
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText(/advanced filters/i)).toBeVisible();
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
@@ -204,7 +205,7 @@ describe('Advanced search modal content', () => {
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		// check values
 		// flag and shared switches are on
@@ -264,7 +265,7 @@ describe('Advanced search modal content', () => {
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
 		const searchButton = screen.getByRole('button', { name: /search/i });
@@ -288,7 +289,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
@@ -356,7 +357,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/^flagged/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -392,7 +393,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/^flagged/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -419,7 +420,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/^shared/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -455,7 +456,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/^shared/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -482,7 +483,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -509,7 +510,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -535,7 +536,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -578,7 +579,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -622,7 +623,11 @@ describe('Advanced search modal content', () => {
 			const closeAction = jest.fn();
 			const searchAdvancedFilters = jest.fn();
 			const trashRoot = populateFolder(0, ROOTS.TRASH, ROOTS.TRASH);
-			const mocks = [mockGetPath({ node_id: ROOTS.TRASH }, [trashRoot])];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([trashRoot])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -658,7 +663,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -702,7 +707,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -744,7 +749,11 @@ describe('Advanced search modal content', () => {
 			const closeAction = jest.fn();
 			const searchAdvancedFilters = jest.fn();
 			const trashRoot = populateFolder(0, ROOTS.TRASH, ROOTS.TRASH);
-			const mocks = [mockGetPath({ node_id: ROOTS.TRASH }, [trashRoot])];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([trashRoot])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -821,7 +830,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
@@ -869,7 +878,7 @@ describe('Advanced search modal content', () => {
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
 				/>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();

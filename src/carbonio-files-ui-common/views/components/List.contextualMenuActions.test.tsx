@@ -15,7 +15,8 @@ import { ACTION_IDS } from '../../../constants';
 import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
-import { mockGetPath } from '../../utils/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockGetPath } from '../../utils/resolverMocks';
 import { setup, selectNodes } from '../../utils/testUtils';
 
 describe('Contextual menu actions', () => {
@@ -67,7 +68,11 @@ describe('Contextual menu actions', () => {
 					}
 				];
 
-				const mocks = [mockGetPath({ node_id: currentFolder.id }, [currentFolder])];
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
 					<List
@@ -173,7 +178,11 @@ describe('Contextual menu actions', () => {
 					}
 				];
 
-				const mocks = [mockGetPath({ node_id: currentFolder.id }, [currentFolder])];
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
 					<List
@@ -276,7 +285,11 @@ describe('Contextual menu actions', () => {
 					}
 				];
 
-				const mocks = [mockGetPath({ node_id: currentFolder.id }, [currentFolder])];
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
 					<List
@@ -377,7 +390,11 @@ describe('Contextual menu actions', () => {
 					}
 				];
 
-				const mocks = [mockGetPath({ node_id: currentFolder.id }, [currentFolder])];
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
 					<List
@@ -454,7 +471,11 @@ describe('Contextual menu actions', () => {
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;
 
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, [currentFolder])];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
 				<List
@@ -506,7 +527,11 @@ describe('Contextual menu actions', () => {
 			const element1 = currentFolder.children.nodes[1] as Node;
 			const element2 = currentFolder.children.nodes[2] as Node;
 
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, [currentFolder])];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
 				<List
@@ -568,7 +593,11 @@ describe('Contextual menu actions', () => {
 		node2.flagged = true;
 		currentFolder.children.nodes.push(node2);
 
-		const mocks = [mockGetPath({ node_id: currentFolder.id }, [currentFolder])];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(
 			<List

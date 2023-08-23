@@ -21,7 +21,8 @@ import {
 } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
-import { mockGetBaseNode } from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockGetNode } from '../utils/resolverMocks';
 import { createUploadDataTransfer, setup, uploadWithDnD } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
@@ -39,7 +40,11 @@ describe('Upload view', () => {
 
 		const dataTransferObj = createUploadDataTransfer([node]);
 
-		const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getBaseNode: [localRoot] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user, getByRoleWithIcon } = setup(<UploadView />, { mocks });
 
@@ -72,7 +77,11 @@ describe('Upload view', () => {
 
 			const dataTransferObj = createUploadDataTransfer([folder, ...otherUploads]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { findByRoleWithIcon } = setup(<UploadView />, { mocks });
 
@@ -107,7 +116,11 @@ describe('Upload view', () => {
 
 			const dataTransferObj = createUploadDataTransfer([folder, ...otherUploads]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { queryByRoleWithIcon } = setup(<UploadView />, { mocks });
 
@@ -140,7 +153,11 @@ describe('Upload view', () => {
 
 			const dataTransferObj = createUploadDataTransfer([...otherUploads, folder]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { queryByRoleWithIcon } = setup(<UploadView />, { mocks });
 

@@ -12,8 +12,9 @@ import { difference } from 'lodash';
 import { EditShareChip } from './EditShareChip';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
-import { Permissions, SharedTarget, SharePermission } from '../../../types/graphql/types';
-import { mockDeleteShare, mockUpdateShare } from '../../../utils/mockUtils';
+import { Resolvers } from '../../../types/graphql/resolvers-types';
+import { Permissions, Share, SharePermission } from '../../../types/graphql/types';
+import { mockDeleteShare, mockUpdateShare } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 
 describe('Edit Share Chip', () => {
@@ -212,12 +213,11 @@ describe('Edit Share Chip', () => {
 		const node = populateNode();
 		const userAccount = populateUser(mockedUserLogged.id, mockedUserLogged.name);
 		const share = populateShare(node, 'abc', userAccount);
-		const mocks = [
-			mockDeleteShare(
-				{ node_id: node.id, share_target_id: (share.share_target as SharedTarget).id },
-				true
-			)
-		];
+		const mocks = {
+			Mutation: {
+				deleteShare: mockDeleteShare(true)
+			}
+		} satisfies Partial<Resolvers>;
 		const deleteShare = jest.fn(() => Promise.resolve({ data: { deleteShare: true } }));
 		const { user } = setup(
 			<EditShareChip
@@ -262,12 +262,11 @@ describe('Edit Share Chip', () => {
 		const userAccount = populateUser();
 		const share = populateShare(node, 'abc', userAccount);
 		share.permission = SharePermission.ReadAndShare;
-		const mocks = [
-			mockDeleteShare(
-				{ node_id: node.id, share_target_id: (share.share_target as SharedTarget).id },
-				true
-			)
-		];
+		const mocks = {
+			Mutation: {
+				deleteShare: mockDeleteShare(true)
+			}
+		} satisfies Partial<Resolvers>;
 		const deleteShare = jest.fn(() => Promise.resolve({ data: { deleteShare: true } }));
 		const { getByTextWithMarkup, user } = setup(
 			<EditShareChip
@@ -314,19 +313,12 @@ describe('Edit Share Chip', () => {
 			const userAccount = populateUser();
 			const share = populateShare(node, 'abc', userAccount);
 			share.permission = SharePermission.ReadOnly;
-			const updateShareMutationFn = jest.fn();
 
-			const mocks = [
-				mockUpdateShare(
-					{
-						share_target_id: userAccount.id,
-						node_id: node.id,
-						permission: SharePermission.ReadAndWrite
-					},
-					share,
-					updateShareMutationFn
-				)
-			];
+			const mocks = {
+				Mutation: {
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+				}
+			} satisfies Partial<Resolvers>;
 			const deleteShare = jest.fn();
 			const { user } = setup(
 				<EditShareChip
@@ -357,7 +349,7 @@ describe('Edit Share Chip', () => {
 			);
 			await user.click(screen.getByText(/editor/i));
 			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
-			expect(updateShareMutationFn).not.toHaveBeenCalled();
+			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
 		});
 
 		test('editor entry is disabled if node has not write permissions', async () => {
@@ -368,19 +360,11 @@ describe('Edit Share Chip', () => {
 			const userAccount = populateUser();
 			const share = populateShare(node, 'abc', userAccount);
 			share.permission = SharePermission.ReadOnly;
-			const updateShareMutationFn = jest.fn();
-
-			const mocks = [
-				mockUpdateShare(
-					{
-						share_target_id: userAccount.id,
-						node_id: node.id,
-						permission: SharePermission.ReadAndWrite
-					},
-					share,
-					updateShareMutationFn
-				)
-			];
+			const mocks = {
+				Mutation: {
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+				}
+			} satisfies Partial<Resolvers>;
 			const deleteShare = jest.fn();
 			const { user } = setup(
 				<EditShareChip
@@ -402,7 +386,7 @@ describe('Edit Share Chip', () => {
 			expect(screen.getByText(/editor/i)).toBeVisible();
 			await user.click(screen.getByText(/editor/i));
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
-			expect(updateShareMutationFn).not.toHaveBeenCalled();
+			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
 		});
 
 		test('click on checkbox "sharing allowed" enable save button but does not trigger chip update', async () => {
@@ -413,19 +397,11 @@ describe('Edit Share Chip', () => {
 			const userAccount = populateUser();
 			const share = populateShare(node, 'abc', userAccount);
 			share.permission = SharePermission.ReadOnly;
-			const updateShareMutationFn = jest.fn();
-
-			const mocks = [
-				mockUpdateShare(
-					{
-						share_target_id: userAccount.id,
-						node_id: node.id,
-						permission: SharePermission.ReadAndWrite
-					},
-					share,
-					updateShareMutationFn
-				)
-			];
+			const mocks = {
+				Mutation: {
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+				}
+			} satisfies Partial<Resolvers>;
 			const deleteShare = jest.fn();
 			const { user } = setup(
 				<EditShareChip
@@ -450,8 +426,7 @@ describe('Edit Share Chip', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
-
-			expect(updateShareMutationFn).not.toHaveBeenCalled();
+			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
 			expect(screen.queryByTestId(ICON_REGEXP.checkboxUnchecked)).not.toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 		});
@@ -464,19 +439,11 @@ describe('Edit Share Chip', () => {
 			const userAccount = populateUser();
 			const share = populateShare(node, 'abc', userAccount);
 			share.permission = SharePermission.ReadOnly;
-			const updateShareMutationFn = jest.fn();
-
-			const mocks = [
-				mockUpdateShare(
-					{
-						share_target_id: userAccount.id,
-						node_id: node.id,
-						permission: SharePermission.ReadWriteAndShare
-					},
-					share,
-					updateShareMutationFn
-				)
-			];
+			const mocks = {
+				Mutation: {
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+				}
+			} satisfies Partial<Resolvers>;
 			const deleteShare = jest.fn();
 			const { user } = setup(
 				<EditShareChip
@@ -497,10 +464,9 @@ describe('Edit Share Chip', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
-
 			await user.click(screen.getByText(/editor/i));
 			await user.click(screen.getByRole('button', { name: /save/i }));
-			await waitFor(() => expect(updateShareMutationFn).toHaveBeenCalled());
+			await waitFor(() => expect(mocks.Mutation.updateShare).toHaveBeenCalled());
 			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 			expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 		});

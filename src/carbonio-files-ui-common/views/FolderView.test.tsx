@@ -13,30 +13,10 @@ import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
-import GET_NODE from '../graphql/queries/getNode.graphql';
-import GET_PERMISSIONS from '../graphql/queries/getPermissions.graphql';
 import { populateFolder, populateNode, populateParents } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import {
-	GetChildrenQuery,
-	GetChildrenQueryVariables,
-	GetNodeQuery,
-	GetNodeQueryVariables,
-	GetPathQuery,
-	GetPathQueryVariables,
-	GetPermissionsQuery,
-	GetPermissionsQueryVariables
-} from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	getNodeVariables,
-	mockGetChildren,
-	mockGetNode,
-	mockGetPath,
-	mockGetPermissions,
-	mockMoveNodes
-} from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
 let mockedCreateOptions: CreateOptionsContent['createOptions'];
@@ -62,33 +42,16 @@ describe('Folder View', () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = false;
 			currentFolder.permissions.can_write_file = false;
-			// prepare cache so that apollo client read data from the cache
-			const getChildrenMockedQuery = mockGetChildren(
-				getChildrenVariables(currentFolder.id),
-				currentFolder
-			);
-			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
-				data: {
-					getNode: currentFolder
+
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+					getPath: mockGetPath([currentFolder])
 				}
-			});
-			const getPathMockedQuery = mockGetPath({ node_id: currentFolder.id }, [currentFolder]);
-			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
-				...getPathMockedQuery.request,
-				data: {
-					getPath: [currentFolder]
-				}
-			});
-			global.apolloClient.writeQuery<GetPermissionsQuery, GetPermissionsQueryVariables>({
-				query: GET_PERMISSIONS,
-				variables: { node_id: currentFolder.id },
-				data: {
-					getNode: currentFolder
-				}
-			});
+			} satisfies Partial<Resolvers>;
 			const { findByTextWithMarkup } = setup(<FolderView />, {
-				initialRouterEntries: [`/?folder=${currentFolder.id}`]
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
 			});
 			await screen.findByText(/nothing here/i);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
@@ -102,33 +65,16 @@ describe('Folder View', () => {
 		test('Create folder option is active if current folder has can_write_folder permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = true;
-			const getChildrenMockedQuery = mockGetChildren(
-				getChildrenVariables(currentFolder.id),
-				currentFolder
-			);
-			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
-				data: {
-					getNode: currentFolder
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+					getPath: mockGetPath([currentFolder])
 				}
-			});
-			const getPathMockedQuery = mockGetPath({ node_id: currentFolder.id }, [currentFolder]);
-			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
-				...getPathMockedQuery.request,
-				data: {
-					getPath: [currentFolder]
-				}
-			});
-			// prepare cache so that apollo client read data from the cache
-			global.apolloClient.writeQuery<GetPermissionsQuery, GetPermissionsQueryVariables>({
-				query: GET_PERMISSIONS,
-				variables: { node_id: currentFolder.id },
-				data: {
-					getNode: currentFolder
-				}
-			});
+			} satisfies Partial<Resolvers>;
+
 			setup(<FolderView />, {
-				initialRouterEntries: [`/?folder=${currentFolder.id}`]
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
 			});
 			await screen.findByText(/nothing here/i);
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
@@ -142,25 +88,21 @@ describe('Folder View', () => {
 	describe('Displayer', () => {
 		test('Single click on a node opens the details tab on displayer', async () => {
 			const currentFolder = populateFolder(2);
-			// prepare cache so that apollo client read data from the cache
-			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
-				variables: getChildrenVariables(currentFolder.id),
-				data: {
-					getNode: currentFolder
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder],
+						getNode: [currentFolder.children.nodes[0] as Node]
+					}),
+					getPath: mockGetPath([currentFolder])
 				}
-			});
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GET_NODE,
-				variables: getNodeVariables((currentFolder.children.nodes[0] as Node).id),
-				data: {
-					getNode: currentFolder.children.nodes[0] as Node
-				}
-			});
+			} satisfies Partial<Resolvers>;
 			const { getByTextWithMarkup, user } = setup(<FolderView />, {
-				initialRouterEntries: [`/?folder=${currentFolder.id}`]
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
 			});
-			const nodeItem = screen.getByText((currentFolder.children.nodes[0] as Node).name);
+			const nodeItem = await screen.findByText((currentFolder.children.nodes[0] as Node).name);
 			expect(nodeItem).toBeVisible();
 			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
@@ -190,16 +132,19 @@ describe('Folder View', () => {
 			currentFolder.children.nodes.push(node);
 			const path = [...parentPath, node];
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetNode(getNodeVariables(node.id), node),
-				mockGetPath({ node_id: node.id }, path),
-				mockGetPath({ node_id: currentFolder.id }, parentPath),
-				mockMoveNodes({ destination_id: destinationFolder.id, node_ids: [node.id] }, [
-					{ ...node, parent: destinationFolder }
-				])
-			];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder],
+						getNode: [node]
+					}),
+					getPath: mockGetPath(path, parentPath)
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([{ ...node, parent: destinationFolder }])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}&node=${node.id}`],
 				mocks
@@ -232,37 +177,16 @@ describe('Folder View', () => {
 		test('Create file options are disabled if current folder has not can_write_file permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = false;
-			// prepare cache so that apollo client read data from the cache
-			global.apolloClient.writeQuery<GetPermissionsQuery, GetPermissionsQueryVariables>({
-				query: GET_PERMISSIONS,
-				variables: { node_id: currentFolder.id },
-				data: {
-					getNode: currentFolder
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+					getPath: mockGetPath([currentFolder])
 				}
-			});
-			// prepare cache so that apollo client read data from the cache
-			const mockedGetChildrenQuery = mockGetChildren(
-				getChildrenVariables(currentFolder.id),
-				currentFolder
-			);
-			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...mockedGetChildrenQuery.request,
-				data: {
-					getNode: currentFolder
-				}
-			});
-			const getPathMockedQuery = mockGetPath({ node_id: currentFolder.id }, [currentFolder]);
-			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
-				...getPathMockedQuery.request,
-				data: {
-					getPath: [currentFolder]
-				}
-			});
-
+			} satisfies Partial<Resolvers>;
 			setup(<FolderView />, {
-				initialRouterEntries: [`/?folder=${currentFolder.id}`]
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
 			});
-
 			await screen.findByText(/nothing here/i);
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
 				expect.arrayContaining([
@@ -276,34 +200,15 @@ describe('Folder View', () => {
 		test('Create docs files options are active if current folder has can_write_file permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = true;
-			// prepare cache so that apollo client read data from the cache
-			global.apolloClient.writeQuery<GetPermissionsQuery, GetPermissionsQueryVariables>({
-				query: GET_PERMISSIONS,
-				variables: { node_id: currentFolder.id },
-				data: {
-					getNode: currentFolder
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+					getPath: mockGetPath([currentFolder])
 				}
-			});
-			const mockedGetChildrenQuery = mockGetChildren(
-				getChildrenVariables(currentFolder.id),
-				currentFolder
-			);
-			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...mockedGetChildrenQuery.request,
-				data: {
-					getNode: currentFolder
-				}
-			});
-			const getPathMockedQuery = mockGetPath({ node_id: currentFolder.id }, [currentFolder]);
-			global.apolloClient.writeQuery<GetPathQuery, GetPathQueryVariables>({
-				...getPathMockedQuery.request,
-				data: {
-					getPath: [currentFolder]
-				}
-			});
-
+			} satisfies Partial<Resolvers>;
 			setup(<FolderView />, {
-				initialRouterEntries: [`/?folder=${currentFolder.id}`]
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
 			});
 			await screen.findByText(/nothing here/i);
 			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
@@ -320,11 +225,12 @@ describe('Folder View', () => {
 		const folder = populateFolder(2);
 		const node = populateNode();
 		folder.children.nodes.push(null, node);
-		const mocks = [
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetPermissions({ node_id: folder.id }, folder),
-			mockGetPath({ node_id: folder.id }, [folder])
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [folder], getPermissions: [folder] }),
+				getPath: mockGetPath([folder])
+			}
+		} satisfies Partial<Resolvers>;
 		setup(<FolderView />, { initialRouterEntries: [`/?folder=${folder.id}`], mocks });
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		await screen.findByText(node.name);

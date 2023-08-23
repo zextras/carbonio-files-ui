@@ -5,17 +5,18 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
+import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { getFindNodesVariables, mockFindNodes, mockFlagNodes } from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockFindNodes, mockFlagNodes } from '../utils/resolverMocks';
 import { setup, selectNodes } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
@@ -39,19 +40,14 @@ describe('Filter View', () => {
 					(item) => item.id
 				);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockFlagNodes(
-						{
-							node_ids: nodesIdsToUnflag,
-							flag: false
-						},
-						nodesIdsToUnflag
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					},
+					Mutation: {
+						flagNodes: mockFlagNodes(nodesIdsToUnflag)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -92,19 +88,14 @@ describe('Filter View', () => {
 					mockedNode.flagged = true;
 				});
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					),
-					mockFlagNodes(
-						{
-							node_ids: [nodes[0].id],
-							flag: false
-						},
-						[nodes[0].id]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes)
+					},
+					Mutation: {
+						flagNodes: mockFlagNodes([nodes[0].id])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -142,17 +133,14 @@ describe('Filter View', () => {
 			});
 			const nodesToUnflag = map(firstPage, (node) => node.id);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					firstPage
-				),
-				mockFlagNodes({ node_ids: nodesToUnflag, flag: false }, nodesToUnflag),
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					secondPage
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage, secondPage)
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes(nodesToUnflag)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				mocks,
@@ -171,7 +159,7 @@ describe('Filter View', () => {
 
 			const unflagAction = await screen.findByTestId(ICON_REGEXP.unflag);
 			await user.click(unflagAction);
-			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
+			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/item unflagged successfully/i);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();

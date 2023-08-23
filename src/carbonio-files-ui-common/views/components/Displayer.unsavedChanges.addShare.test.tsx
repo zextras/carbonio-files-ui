@@ -5,7 +5,6 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
@@ -19,18 +18,15 @@ import {
 	populateShare,
 	populateUser
 } from '../../mocks/mockUtils';
+import { MutationResolvers, Resolvers } from '../../types/graphql/resolvers-types';
 import { SharePermission } from '../../types/graphql/types';
 import {
-	getNodeVariables,
-	getSharesVariables,
 	mockCreateShare,
-	mockCreateShareError,
 	mockGetAccountByEmail,
 	mockGetNode,
 	mockGetCollaborationLinks,
-	mockGetLinks,
-	mockGetShares
-} from '../../utils/mockUtils';
+	mockGetLinks
+} from '../../utils/resolverMocks';
 import { generateError, setup } from '../../utils/testUtils';
 
 const mockedSoapFetch: jest.Mock = jest.fn();
@@ -58,13 +54,14 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -100,12 +97,13 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
 				const customText = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -144,13 +142,14 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -196,13 +195,14 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -256,13 +256,14 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -324,22 +325,17 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-					mockCreateShare(
-						{
-							node_id: node.id,
-							share_target_id: userAccount.id,
-							permission: SharePermission.ReadOnly,
-							custom_message: customText
-						},
-						share
-					)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					},
+					Mutation: {
+						createShare: mockCreateShare(share)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -415,32 +411,23 @@ describe('Displayer', () => {
 					.mockReturnValueOnce({
 						match: [populateGalContact(userAccount2.full_name, userAccount2.email)]
 					});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount1.email }, userAccount1),
-					mockGetAccountByEmail({ email: userAccount2.email }, userAccount2),
-					mockCreateShare(
-						{
-							node_id: node.id,
-							permission: SharePermission.ReadAndWrite,
-							share_target_id: userAccount1.id,
-							custom_message: customText
-						},
-						share1
-					),
-					mockCreateShareError(
-						{
-							node_id: node.id,
-							permission: SharePermission.ReadOnly,
-							share_target_id: userAccount2.id,
-							custom_message: customText
-						},
-						new ApolloError({ graphQLErrors: [generateError('create error')] })
-					)
-				];
+				const createShareResolver: MutationResolvers['createShare'] = (parent, args) => {
+					if (args.share_target_id === userAccount1.id) {
+						return share1;
+					}
+					throw generateError('create error');
+				};
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
+					},
+					Mutation: {
+						createShare: createShareResolver
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
