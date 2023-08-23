@@ -9,7 +9,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import { forEach, find, reduce } from 'lodash';
 
 import { AddSharing } from './AddSharing';
-import { soapFetch } from '../../../../network/network';
+import * as actualNetworkModule from '../../../../network/network';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
@@ -26,26 +26,26 @@ import {
 	AutocompleteResponse,
 	DerefMember,
 	GetContactsResponse,
-	Member,
-	RequestName
+	Member
 } from '../../../types/network';
 import { mockGetAccountsByEmail } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 
-const mockedSoapFetch = jest.fn<
-	unknown,
-	[request: RequestName, args: unknown, nameSpaceValue: string | undefined]
->();
+let mockedSoapFetch = jest.fn();
 
-jest.mock('../../../../network/network', () => ({
-	soapFetch: jest.fn(
-		(...args: Parameters<typeof soapFetch>): Promise<unknown> =>
-			new Promise((resolve, reject) => {
-				const result = mockedSoapFetch(...args);
-				result ? resolve(result) : reject(new Error('no result provided'));
-			})
-	)
+beforeEach(() => {
+	mockedSoapFetch = jest.fn();
+});
+
+jest.mock<typeof import('../../../../network/network')>('../../../../network/network', () => ({
+	soapFetch: <Req, Res>(
+		...args: Parameters<typeof actualNetworkModule.soapFetch<Req, Res>>
+	): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+		new Promise<Res>((resolve, reject) => {
+			const result = mockedSoapFetch(...args);
+			result ? resolve(result) : reject(new Error('no result provided'));
+		})
 }));
 
 describe('Add Sharing', () => {
@@ -96,16 +96,12 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const [, contactsNoGalAccounts, contactsGal] = reduce<
-				Member,
-				[string[], User[], DerefMember[]]
-			>(
+			const [contactsNoGalAccounts, contactsGal] = reduce<Member, [User[], DerefMember[]]>(
 				contactGroup.m,
 				(acc, member) => {
 					if (member.type !== 'G') {
 						const email = (member.cn && member.cn[0]._attrs?.email) || member.value;
-						acc[0].push(email);
-						acc[1].push(
+						acc[0].push(
 							populateUser(
 								(member.cn && member.cn[0]._attrs?.zimbraId) || undefined,
 								(member.cn && member.cn[0]._attrs?.fullName) || undefined,
@@ -113,11 +109,11 @@ describe('Add Sharing', () => {
 							)
 						);
 					} else {
-						acc[2].push(member as DerefMember);
+						acc[1].push(member as DerefMember);
 					}
 					return acc;
 				},
-				[[], [], []]
+				[[], []]
 			);
 
 			const mocks = {

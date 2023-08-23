@@ -10,6 +10,7 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import { forEach } from 'lodash';
 
 import { NodeSharing } from './NodeSharing';
+import * as actualNetworkModule from '../../../../network/network';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
@@ -42,15 +43,15 @@ import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 
 let mockedUserLogged: User;
-const mockedSoapFetch: jest.Mock = jest.fn();
+const mockedSoapFetch = jest.fn();
 
 beforeEach(() => {
 	mockedUserLogged = populateUser(global.mockedUserLogged.id, global.mockedUserLogged.name);
 });
 
-jest.mock('../../../../network/network', () => ({
-	soapFetch: (): Promise<unknown> =>
-		new Promise((resolve, reject) => {
+jest.mock<typeof import('../../../../network/network')>('../../../../network/network', () => ({
+	soapFetch: <Req, Res>(): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+		new Promise<Res>((resolve, reject) => {
 			const result = mockedSoapFetch();
 			result ? resolve(result) : reject(new Error('no result provided'));
 		})

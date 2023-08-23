@@ -19,22 +19,17 @@ import {
 	FindNodesQueryVariables
 } from '../carbonio-files-ui-common/types/graphql/types';
 import { setup } from '../carbonio-files-ui-common/utils/testUtils';
-import { CreateOptionsContent } from '../hooks/useCreateOptions';
 import server from '../mocks/server';
 
-jest.mock('../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../hooks/useCreateOptions')>('../hooks/useCreateOptions');
 
-const updateQueryMock = jest.fn();
+let updateQueryMock = jest.fn();
 
-const useQuery = jest.fn<
-	ReturnType<SearchViewProps['useQuery']>,
-	Parameters<SearchViewProps['useQuery']>
->(() => {
+beforeEach(() => {
+	updateQueryMock = jest.fn();
+});
+
+const useQuery: SearchViewProps['useQuery'] = () => {
 	const [query, setQuery] = useState<QueryChip[]>([]);
 	const updateQuery = useCallback((chips: QueryChip[]) => {
 		setQuery(chips);
@@ -42,7 +37,7 @@ const useQuery = jest.fn<
 	}, []);
 
 	return [query, updateQuery];
-});
+};
 
 describe('Search view', () => {
 	describe('Advanced search', () => {

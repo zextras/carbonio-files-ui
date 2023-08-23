@@ -14,7 +14,7 @@ import { Link, Route, Switch } from 'react-router-dom';
 import FilterView from './FilterView';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -25,30 +25,27 @@ import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types'
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { selectNodes, setup, triggerLoadMore } from '../utils/testUtils';
 
-let mockedRequestHandler: jest.Mock;
-let mockedCreateOptions: CreateOptionsContent['createOptions'];
+let mockedCreateOptions: CreateOption[];
 
 beforeEach(() => {
 	mockedCreateOptions = [];
-	mockedRequestHandler = jest.fn().mockImplementation(handleFindNodesRequest);
-	server.use(
-		graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
-	);
 });
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest
-			.fn()
-			.mockImplementation((...options: Parameters<CreateOptionsContent['setCreateOptions']>[0]) => {
-				mockedCreateOptions = options;
-			}),
-		removeCreateOptions: jest.fn()
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
+	useCreateOptions: (): CreateOptionsReturnType => ({
+		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+			mockedCreateOptions = options;
+		},
+		removeCreateOptions: () => undefined
 	})
 }));
 
 describe('Filter view', () => {
 	test('No url param render a "Missing filter" message', async () => {
+		const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+		server.use(
+			graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
+		);
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}/`]
 		});

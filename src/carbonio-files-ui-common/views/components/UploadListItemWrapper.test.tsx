@@ -9,7 +9,6 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { UploadListItemWrapper } from './UploadListItemWrapper';
-import { UseNavigationHook } from '../../../hooks/useNavigation';
 import { ICON_REGEXP } from '../../constants/test';
 import { UseUploadHook } from '../../hooks/useUpload';
 import {
@@ -32,18 +31,8 @@ const mockedUseUploadHook: ReturnType<UseUploadHook> = {
 	retryById: jest.fn()
 };
 
-const mockedUseNavigationHook: ReturnType<UseNavigationHook> = {
-	navigateTo: jest.fn(),
-	navigateToFolder: jest.fn(),
-	navigateBack: jest.fn
-};
-
-jest.mock('../../hooks/useUpload', () => ({
+jest.mock<typeof import('../../hooks/useUpload')>('../../hooks/useUpload', () => ({
 	useUpload: (): ReturnType<UseUploadHook> => mockedUseUploadHook
-}));
-
-jest.mock('../../../hooks/useNavigation', () => ({
-	useNavigation: (): ReturnType<UseNavigationHook> => mockedUseNavigationHook
 }));
 
 describe('Upload List Item Wrapper', () => {
