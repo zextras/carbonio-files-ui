@@ -12,7 +12,6 @@ import { EventEmitter } from 'events';
 import { graphql, rest } from 'msw';
 
 import UploadView from './UploadView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { REST_ENDPOINT, UPLOAD_PATH } from '../constants';
 import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -28,12 +27,13 @@ import {
 	populateNodePage,
 	populateNodes
 } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	CreateFolderMutation,
 	CreateFolderMutationVariables,
 	Folder
 } from '../types/graphql/types';
-import { mockGetBaseNode } from '../utils/mockUtils';
+import { mockGetNode } from '../utils/resolverMocks';
 import {
 	createUploadDataTransfer,
 	delayUntil,
@@ -43,12 +43,7 @@ import {
 } from '../utils/testUtils';
 import { UploadQueue } from '../utils/uploadUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload View', () => {
 	describe('Folder', () => {
@@ -77,7 +72,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -131,7 +130,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -188,7 +191,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<UploadView />, { mocks });
 
@@ -260,7 +267,7 @@ describe('Upload View', () => {
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
-						const result = createFolderResponses.pop();
+						const result = createFolderResponses.shift();
 						if (result) {
 							return res(
 								ctx.data({
@@ -296,7 +303,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -389,7 +400,7 @@ describe('Upload View', () => {
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
-						const result = createFolderResponses.pop();
+						const result = createFolderResponses.shift();
 						if (result) {
 							return res(
 								ctx.data({
@@ -425,7 +436,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -495,7 +510,7 @@ describe('Upload View', () => {
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
-						const result = createFolderResponses.pop();
+						const result = createFolderResponses.shift();
 						if (result) {
 							return res(
 								ctx.data({
@@ -531,7 +546,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -586,7 +605,11 @@ describe('Upload View', () => {
 
 			const dataTransferObj = createUploadDataTransfer([folder]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			server.use(
 				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
@@ -640,7 +663,11 @@ describe('Upload View', () => {
 
 			const dataTransferObj = createUploadDataTransfer([folder]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -684,7 +711,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -742,7 +773,11 @@ describe('Upload View', () => {
 					)
 				);
 
-				const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadView />, { mocks });
 
@@ -805,7 +840,11 @@ describe('Upload View', () => {
 					)
 				);
 
-				const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadView />, { mocks });
 
@@ -862,7 +901,11 @@ describe('Upload View', () => {
 					)
 				);
 
-				const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadView />, { mocks });
 

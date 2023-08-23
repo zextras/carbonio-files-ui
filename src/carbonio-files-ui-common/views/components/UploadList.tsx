@@ -181,7 +181,7 @@ export const UploadList: React.VFC = () => {
 				effect="copy"
 				types={[DRAG_TYPES.upload]}
 			>
-				{(): JSX.Element =>
+				{(): React.JSX.Element =>
 					items.length > 0 ? (
 						<ScrollContainer>{items}</ScrollContainer>
 					) : (

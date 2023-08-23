@@ -43,7 +43,7 @@ export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
 	confirmAction,
 	closeAction,
 	title
-}: UpdateNodeNameModalProps<T>): JSX.Element => {
+}: UpdateNodeNameModalProps<T>): React.JSX.Element => {
 	const [t] = useTranslation();
 	const [newName, setNewName] = useState(nodeName || '');
 	const [errorMsg, setErrorMsg] = useState<string>();

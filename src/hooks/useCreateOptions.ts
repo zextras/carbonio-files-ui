@@ -6,29 +6,16 @@
 
 import { useCallback } from 'react';
 
-import {
-	ACTION_TYPES,
-	ActionFactory,
-	registerActions,
-	removeActions
-} from '@zextras/carbonio-shell-ui';
+import { registerActions, removeActions } from '@zextras/carbonio-shell-ui';
 
-type CreateOption = {
-	id: string;
-	action: ActionFactory<unknown>;
-	type: typeof ACTION_TYPES.NEW;
-};
+export type CreateOption = Parameters<typeof registerActions>[number];
 
-export type CreateOptionsContent = {
-	createOptions?: Array<CreateOption>;
-	setCreateOptions: (appCreateOptions: Array<CreateOption>) => void;
-	removeCreateOptions: (ids: Array<string>) => void;
-};
-
-export const useCreateOptions = (): {
+export type CreateOptionsReturnType = {
 	setCreateOptions: (...options: Array<CreateOption>) => void;
 	removeCreateOptions: (...ids: Array<string>) => void;
-} => {
+};
+
+export const useCreateOptions = (): CreateOptionsReturnType => {
 	const setCreateOptionsCallback = useCallback((...options: Array<CreateOption>) => {
 		registerActions(...options);
 	}, []);

@@ -20,7 +20,6 @@ import { graphql } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { TIMERS } from '../constants';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -34,19 +33,14 @@ import {
 	populateUser
 } from '../mocks/mockUtils';
 import { Node } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
 	Folder,
 	GetChildQuery,
 	GetChildQueryVariables
 } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions,
-	mockMoveNodes
-} from '../utils/mockUtils';
+import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import {
 	setup,
 	selectNodes,
@@ -54,15 +48,10 @@ import {
 	createMoveDataTransfer
 } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -92,11 +81,12 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -156,11 +146,12 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -215,11 +206,12 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -274,11 +266,12 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -337,11 +330,12 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -398,18 +392,17 @@ describe('Drag and drop', () => {
 		folderWithoutPermission.parent = currentFolder;
 		currentFolder.children.nodes.push(folderWithoutPermission);
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockMoveNodes(
-				{
-					node_ids: map(nodesToDrag, (node) => node.id),
-					destination_id: destinationFolder.id
-				},
-				map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(
+					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+				)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransfer = createMoveDataTransfer();
 
@@ -486,11 +479,12 @@ describe('Drag and drop', () => {
 		folderWithoutPermission.parent = currentFolder;
 		currentFolder.children.nodes.push(folderWithoutPermission);
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransfer = createMoveDataTransfer();
 
@@ -552,18 +546,17 @@ describe('Drag and drop', () => {
 		destinationFolder.parent = currentFolder;
 		currentFolder.children.nodes.push(destinationFolder);
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockMoveNodes(
-				{
-					node_ids: map(nodesToDrag, (node) => node.id),
-					destination_id: destinationFolder.id
-				},
-				map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(
+					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+				)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransfer = createMoveDataTransfer();
 
@@ -628,18 +621,15 @@ describe('Drag and drop', () => {
 			mockedNode.owner = owner;
 		});
 
-		const mocks = [
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetPath({ node_id: currentFolder.id }, path),
-			mockMoveNodes(
-				{
-					node_ids: map(nodesToDrag, (node) => node.id),
-					destination_id: path[0].id
-				},
-				map(nodesToDrag, (node) => ({ ...node, parent: path[0] }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath(path),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(map(nodesToDrag, (node) => ({ ...node, parent: path[0] })))
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransfer = createMoveDataTransfer();
 
@@ -753,24 +743,28 @@ describe('Drag and drop', () => {
 		destinationFolder.parent = currentFolder;
 		currentFolder.children = populateNodePage([draggedNode, destinationFolder]);
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(destinationFolder.id), destinationFolder),
-			mockMoveNodes(
-				{
-					node_ids: map(nodesToDrag, (node) => node.id),
-					destination_id: destinationFolder.id
-				},
-				map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-			),
-			mockGetPath({ node_id: destinationFolder.id }, [currentFolder, destinationFolder]),
-			mockGetChildren(getChildrenVariables(destinationFolder.id), {
-				...destinationFolder,
-				children: populateNodePage(nodesToDrag)
-			} as Folder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder], [currentFolder, destinationFolder]),
+
+				getNode: mockGetNode({
+					getChildren: [
+						currentFolder,
+						destinationFolder,
+						{
+							...destinationFolder,
+							children: populateNodePage(nodesToDrag)
+						}
+					],
+					getPermissions: [currentFolder]
+				})
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(
+					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+				)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const dataTransfer = createMoveDataTransfer();
 

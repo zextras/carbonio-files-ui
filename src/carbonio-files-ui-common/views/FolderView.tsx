@@ -7,7 +7,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Container, Responsive } from '@zextras/carbonio-design-system';
-import { Action } from '@zextras/carbonio-shell-ui';
 import { map, filter, last } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -19,7 +18,7 @@ import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
-import { CreateOptionsContent, useCreateOptions } from '../../hooks/useCreateOptions';
+import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
 import { DISPLAYER_WIDTH, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
 import { ListContext, ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
@@ -247,18 +246,17 @@ const FolderView: React.VFC = () => {
 	);
 
 	useEffect(() => {
-		const createActions = map<
-			ContextualMenuProps['actions'][number],
-			NonNullable<CreateOptionsContent['createOptions']>[number]
-		>(actions, (action) => ({
-			type: ACTION_TYPES.NEW,
-			id: action.id,
-			action: () =>
-				({
+		const createActions = map<ContextualMenuProps['actions'][number], CreateOption>(
+			actions,
+			(action) => ({
+				type: ACTION_TYPES.NEW,
+				id: action.id,
+				action: () => ({
 					group: FILES_APP_ID,
 					...action
-				} as Action)
-		}));
+				})
+			})
+		);
 
 		setCreateOptions(
 			{

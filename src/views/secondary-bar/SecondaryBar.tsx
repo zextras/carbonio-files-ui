@@ -40,7 +40,7 @@ interface SecondaryBarProps {
 	expanded: boolean;
 }
 
-export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
+export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element => {
 	const { navigateTo } = useNavigation();
 	const [t] = useTranslation();
 	const { data } = useGetRootsListQuery();

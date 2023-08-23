@@ -277,7 +277,7 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 			effect={dropEffect}
 			types={dropTypes}
 		>
-			{(): JSX.Element => (
+			{(): React.JSX.Element => (
 				<NodeListItem
 					key={node.id}
 					id={node.id}

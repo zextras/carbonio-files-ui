@@ -10,8 +10,8 @@ import type { Theme as DSTheme } from '@zextras/carbonio-design-system';
 declare module 'styled-components' {
 	interface DefaultTheme extends DSTheme {
 		icons: DSTheme['icons'] & {
-			AnimatedLoader: (props: React.SVGAttributes<SVGSVGElement>) => JSX.Element;
-			AnimatedUpload: (props: React.ObjectHTMLAttributes<HTMLObjectElement>) => JSX.Element;
+			AnimatedLoader: (props: React.SVGAttributes<SVGSVGElement>) => React.JSX.Element;
+			AnimatedUpload: (props: React.ObjectHTMLAttributes<HTMLObjectElement>) => React.JSX.Element;
 		};
 		palette: DSTheme['palette'] & {
 			shared: DSTheme['palette'][keyof DSTheme['palette']];

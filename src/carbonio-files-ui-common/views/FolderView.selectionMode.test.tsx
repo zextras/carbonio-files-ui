@@ -11,29 +11,19 @@ import { forEach } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions
-} from '../utils/mockUtils';
+import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -43,11 +33,13 @@ jest.mock('./components/Displayer', () => ({
 describe('Folder View Selection mode', () => {
 	test('if there is no element selected, all actions are visible and disabled', async () => {
 		const currentFolder = populateFolder(10);
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
-		];
+
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
@@ -90,20 +82,26 @@ describe('Folder View Selection mode', () => {
 	});
 
 	test('if all loaded nodes are selected, unselect all action is visible', async () => {
-		const currentFolder = populateFolder(NODES_LOAD_LIMIT);
-		const secondPage = populateNodes(10) as Node[];
-		forEach(secondPage, (mockedNode) => {
-			mockedNode.parent = currentFolder;
+		const currentFolder = populateFolder();
+		const firstPage = populateNodes(NODES_LOAD_LIMIT);
+		const secondPage = populateNodes(10);
+		currentFolder.children = populateNodePage([...firstPage, ...secondPage]);
+		forEach(currentFolder.children.nodes, (node) => {
+			if (node) {
+				node.parent = currentFolder;
+			}
 		});
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(
-				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-				{ ...currentFolder, children: populateNodePage(secondPage) } as Folder
-			)
-		];
+
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				// use default children resolver to split children in pages
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
@@ -117,28 +115,24 @@ describe('Folder View Selection mode', () => {
 		expect(screen.getByText(/\bselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/\bselect all/i));
 		await screen.findByText(/deselect all/i);
-		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
-			currentFolder.children.nodes.length
-		);
+		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 		expect(screen.getByText(/deselect all/i)).toBeVisible();
 		expect(screen.queryByText(/\bselect all/i)).not.toBeInTheDocument();
 		await triggerLoadMore();
 		await screen.findByText(secondPage[0].name);
-		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
-			currentFolder.children.nodes.length
-		);
+		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 		expect(screen.queryByText(/deselect all/i)).not.toBeInTheDocument();
 		expect(screen.getByText(/\bselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/\bselect all/i));
 		await screen.findByText(/deselect all/i);
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(
-			currentFolder.children.nodes.length + secondPage.length
+			firstPage.length + secondPage.length
 		);
 		expect(screen.getByText(/deselect all/i)).toBeVisible();
 		await user.click(screen.getByText(/deselect all/i));
 		await screen.findByText(/\bselect all/i);
 		expect(screen.getAllByTestId(SELECTORS.uncheckedAvatar)).toHaveLength(
-			currentFolder.children.nodes.length + secondPage.length
+			firstPage.length + secondPage.length
 		);
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 	});

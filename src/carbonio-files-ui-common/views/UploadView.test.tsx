@@ -9,7 +9,6 @@ import { screen, waitFor } from '@testing-library/react';
 import { keyBy } from 'lodash';
 
 import UploadView from './UploadView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { uploadVar } from '../apollo/uploadVar';
 import { ICON_REGEXP } from '../constants/test';
 import {
@@ -21,15 +20,11 @@ import {
 } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
-import { mockGetBaseNode } from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockGetNode } from '../utils/resolverMocks';
 import { createUploadDataTransfer, setup, uploadWithDnD } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload view', () => {
 	test('Click on an item open the displayer', async () => {
@@ -39,7 +34,11 @@ describe('Upload view', () => {
 
 		const dataTransferObj = createUploadDataTransfer([node]);
 
-		const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getBaseNode: [localRoot] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user, getByRoleWithIcon } = setup(<UploadView />, { mocks });
 
@@ -72,7 +71,11 @@ describe('Upload view', () => {
 
 			const dataTransferObj = createUploadDataTransfer([folder, ...otherUploads]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { findByRoleWithIcon } = setup(<UploadView />, { mocks });
 
@@ -107,7 +110,11 @@ describe('Upload view', () => {
 
 			const dataTransferObj = createUploadDataTransfer([folder, ...otherUploads]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { queryByRoleWithIcon } = setup(<UploadView />, { mocks });
 
@@ -140,7 +147,11 @@ describe('Upload view', () => {
 
 			const dataTransferObj = createUploadDataTransfer([...otherUploads, folder]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { queryByRoleWithIcon } = setup(<UploadView />, { mocks });
 

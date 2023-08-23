@@ -5,12 +5,12 @@
  */
 import React from 'react';
 
-import { Row, Text } from '@zextras/carbonio-design-system';
+import { Row, RowProps, Text } from '@zextras/carbonio-design-system';
 
 import { Label } from './Label';
 import { ShimmerText } from './StyledComponents';
 
-interface TextRowProps extends React.ComponentPropsWithRef<typeof Row> {
+interface TextRowProps extends Omit<RowProps, 'content'> {
 	loading: boolean;
 	label: string;
 	content: string | number | null | undefined;
@@ -23,7 +23,7 @@ export const TextRowWithShim = ({
 	content,
 	shimmerWidth,
 	...rest
-}: TextRowProps): JSX.Element | null =>
+}: TextRowProps): React.JSX.Element | null =>
 	((loading || (content !== undefined && content !== null)) && (
 		<Row
 			orientation="vertical"

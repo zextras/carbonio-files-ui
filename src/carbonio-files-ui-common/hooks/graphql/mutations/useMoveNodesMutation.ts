@@ -97,7 +97,7 @@ export function useMoveNodesMutation(): { moveNodes: MoveNodesType; loading: boo
 					const nodesByParent: Record<string, string[]> = {};
 					forEach(result?.moveNodes, (movedNode) => {
 						const fromParent = find(nodes, ['id', movedNode.id])?.parent;
-						if (fromParent && movedNode.parent?.id !== fromParent.id) {
+						if (fromParent && isFolder(fromParent) && movedNode.parent?.id !== fromParent.id) {
 							if (fromParent.id in parents) {
 								nodesByParent[fromParent.id].push(movedNode.id);
 							} else {

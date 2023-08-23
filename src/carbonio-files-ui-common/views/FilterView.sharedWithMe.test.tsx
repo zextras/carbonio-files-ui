@@ -10,7 +10,6 @@ import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
 	FILTER_TYPE,
@@ -22,39 +21,26 @@ import {
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes, populateShare, populateUser } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
-	getFindNodesVariables,
-	getNodeVariables,
-	getSharesVariables,
 	mockDeleteShare,
 	mockFindNodes,
 	mockGetNode,
 	mockGetCollaborationLinks,
-	mockGetLinks,
-	mockGetShares
-} from '../utils/mockUtils';
+	mockGetLinks
+} from '../utils/resolverMocks';
 import { setup } from '../utils/testUtils';
 
-const mockedRequestHandler = jest.fn();
-
-beforeEach(() => {
-	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
-	server.use(
-		graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
-	);
-});
-
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter view', () => {
 	describe('Shared With Me filter', () => {
 		test('Shared with me filter has sharedWithMe=true and excludes trashed nodes', async () => {
+			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			server.use(
+				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
+			);
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}`]
 			});
@@ -88,22 +74,17 @@ describe('Filter view', () => {
 			);
 			node.shares = [populateShare({ ...node, shares: [] }, 'share-to-remove', mockedUserLogged)];
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({
-						folder_id: ROOTS.LOCAL_ROOT,
-						direct_share: true,
-						shared_with_me: true,
-						cascade: true
-					}),
-					currentFilter
-				),
-				mockGetNode(getNodeVariables(node.id), node),
-				mockGetShares(getSharesVariables(node.id), node),
-				mockGetCollaborationLinks({ node_id: node.id }),
-				mockGetLinks({ node_id: node.id }, node.links),
-				mockDeleteShare({ node_id: node.id, share_target_id: mockedUserLogged.id }, true)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter),
+					getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				},
+				Mutation: {
+					deleteShare: mockDeleteShare(true)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
 				<Route path={`/:view/:filter?`}>

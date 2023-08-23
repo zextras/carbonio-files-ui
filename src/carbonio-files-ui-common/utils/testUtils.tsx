@@ -6,8 +6,10 @@
 
 import React, { ReactElement, useMemo } from 'react';
 
-import { ApolloProvider } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { SchemaLink } from '@apollo/client/link/schema';
+import { addMocksToSchema } from '@graphql-tools/mock';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
 	act,
 	ByRoleMatcher,
@@ -29,16 +31,18 @@ import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
 import { EventEmitter } from 'events';
 import { GraphQLError } from 'graphql';
-import { forEach, map, filter, reduce } from 'lodash';
+import { forEach, map, filter, reduce, merge, noop } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
-import { Mock } from './mockUtils';
+import { resolvers } from './resolvers';
 import { isFile, isFolder } from './utils';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../types/graphql/types';
 
 export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
@@ -171,10 +175,6 @@ export const buildBreadCrumbRegExp = (...nodesNames: string[]): RegExp => {
 	return RegExp(regExp, 'g');
 };
 
-/**
- * Utility to generate an error for mocks that can be decoded with {@link decodeError}
- * @param message
- */
 export function generateError(message: string): GraphQLError {
 	return new GraphQLError(`Controlled error: ${message}`);
 }
@@ -182,21 +182,31 @@ export function generateError(message: string): GraphQLError {
 interface WrapperProps {
 	children?: React.ReactNode;
 	initialRouterEntries?: string[];
-	mocks?: Mock[];
+	mocks?: Partial<Resolvers>;
 }
+const ApolloProviderWrapper = ({
+	children,
+	mocks
+}: Pick<WrapperProps, 'children' | 'mocks'>): React.JSX.Element => {
+	const client = useMemo(() => {
+		if (mocks !== undefined) {
+			const schema = makeExecutableSchema({ typeDefs: GRAPHQL_SCHEMA });
+			const mockSchema = addMocksToSchema({
+				schema,
+				resolvers: merge({}, resolvers, mocks)
+			});
+			return new ApolloClient({
+				link: new SchemaLink({ schema: mockSchema }),
+				cache: global.apolloClient.cache
+			});
+		}
+		return global.apolloClient;
+	}, [mocks]);
 
-type ApolloProviderWrapperProps = Pick<WrapperProps, 'children' | 'mocks'>;
+	return <ApolloProvider client={client}>{children}</ApolloProvider>;
+};
 
-const ApolloProviderWrapper = ({ children, mocks }: ApolloProviderWrapperProps): JSX.Element =>
-	mocks ? (
-		<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
-			{children}
-		</MockedProvider>
-	) : (
-		<ApolloProvider client={global.apolloClient}>{children}</ApolloProvider>
-	);
-
-const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): JSX.Element => {
+const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): React.JSX.Element => {
 	const i18n = useMemo(() => {
 		const i18nFactory = new I18nFactory();
 		return i18nFactory.getAppI18n();
@@ -428,15 +438,15 @@ function createFileSystemEntry(
 			name: node.name,
 			root: new FileSystemDirectoryEntry()
 		},
-		getParent: jest.fn()
+		getParent: noop
 	};
 	if (isFolder(node)) {
 		const reader = createFileSystemDirectoryEntryReader(node);
 		const directoryEntry: FileSystemDirectoryEntry = {
 			...baseEntry,
 			createReader: () => reader,
-			getFile: jest.fn(),
-			getDirectory: jest.fn()
+			getFile: noop,
+			getDirectory: noop
 		};
 		return directoryEntry;
 	}

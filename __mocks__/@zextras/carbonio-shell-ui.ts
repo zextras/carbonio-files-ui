@@ -4,39 +4,48 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { Account, AccountSettings, AppRoute } from '@zextras/carbonio-shell-ui';
-import { createMemoryHistory, Location } from 'history';
+import { useCallback } from 'react';
+
+import * as shell from '@zextras/carbonio-shell-ui';
+import { noop } from 'lodash';
+import { useHistory } from 'react-router-dom';
 
 import { FILES_APP_ID, FILES_ROUTE } from '../../src/carbonio-files-ui-common/constants';
 import { LOGGED_USER, USER_SETTINGS } from '../../src/mocks/constants';
 
-const history = createMemoryHistory();
+export const useReplaceHistoryCallback: typeof shell.useReplaceHistoryCallback = () => {
+	const history = useHistory();
+	return useCallback(
+		(location) => {
+			if (typeof location === 'string') {
+				history.replace(location);
+			} else {
+				history.replace(location.path);
+			}
+		},
+		[history]
+	);
+};
 
-function replaceHistoryMock(location: string | Location): void {
-	if (typeof location === 'string') {
-		history.replace(location);
-	} else {
-		history.replace({ ...location, pathname: location.pathname });
-	}
-}
+export const usePushHistoryCallback: typeof shell.usePushHistoryCallback = () => {
+	const history = useHistory();
+	return useCallback(
+		(location) => {
+			if (typeof location === 'string') {
+				history.push(location);
+			} else {
+				history.push(location.path);
+			}
+		},
+		[history]
+	);
+};
 
-function pushHistoryMock(location: string | Location): void {
-	if (typeof location === 'string') {
-		history.push(location);
-	} else {
-		history.push({ ...location, pathname: location.pathname });
-	}
-}
+export const useGoBackHistoryCallback: typeof shell.useGoBackHistoryCallback = () =>
+	useHistory().goBack;
 
-function goBackHistoryMock(): void {
-	history.back();
-}
-
-function soapFetchMock(
-	req: Record<string, unknown>,
-	body: Record<string, unknown>
-): Promise<never> {
-	return Promise.reject(
+export const soapFetch: typeof shell.soapFetch = (req, body) =>
+	Promise.reject(
 		new Error(
 			`soap-fetch is not mocked. Mock it in the specific test to make it return wat you want.\n
 		Here the params of the request:\n
@@ -45,19 +54,16 @@ function soapFetchMock(
 		`
 		)
 	);
-}
 
-export const useUserAccount = (): Account => LOGGED_USER;
-export const getUserAccount = (): Account => LOGGED_USER;
-export const useUserSettings = (): AccountSettings => USER_SETTINGS;
-export const replaceHistory = jest.fn(replaceHistoryMock);
-export const pushHistory = jest.fn(pushHistoryMock);
-export const hoBackHistory = jest.fn(goBackHistoryMock);
-export const soapFetch = jest.fn(soapFetchMock);
-export const report = jest.fn();
-export const ACTION_TYPES = {
+export const useUserAccount: typeof shell.useUserAccount = () => LOGGED_USER;
+export const getUserAccount: typeof shell.getUserAccount = () => LOGGED_USER;
+export const useUserSettings: typeof shell.useUserSettings = () => USER_SETTINGS;
+export const report: typeof shell.report = noop;
+export const ACTION_TYPES: typeof shell.ACTION_TYPES = {
 	NEW: 'new'
 };
-export const getCurrentRoute = jest
-	.fn<AppRoute, never>()
-	.mockReturnValue({ route: FILES_ROUTE, id: FILES_APP_ID, app: 'carbonio-files-ui' });
+export const getCurrentRoute: typeof shell.getCurrentRoute = () => ({
+	route: FILES_ROUTE,
+	id: FILES_APP_ID,
+	app: 'carbonio-files-ui'
+});

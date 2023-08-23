@@ -5,7 +5,6 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { screen, waitFor, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
@@ -13,17 +12,15 @@ import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { SharePermission } from '../../types/graphql/types';
 import {
-	getNodeVariables,
-	getSharesVariables,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks,
-	mockGetShares,
 	mockUpdateShare,
-	mockUpdateShareError
-} from '../../utils/mockUtils';
+	mockErrorResolver
+} from '../../utils/resolverMocks';
 import { generateError, setup } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
@@ -38,12 +35,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -88,12 +86,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -145,12 +144,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -208,20 +208,16 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockUpdateShare(
-						{
-							node_id: node.id,
-							share_target_id: shareTarget.id,
-							permission: SharePermission.ReadAndWrite
-						},
-						{ ...share, permission: SharePermission.ReadAndWrite }
-					)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						updateShare: mockUpdateShare({ ...share, permission: SharePermission.ReadAndWrite })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -283,20 +279,16 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockUpdateShareError(
-						{
-							node_id: node.id,
-							share_target_id: shareTarget.id,
-							permission: SharePermission.ReadAndWrite
-						},
-						new ApolloError({ graphQLErrors: [generateError('update error')] })
-					)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						updateShare: mockErrorResolver(generateError('update error'))
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],

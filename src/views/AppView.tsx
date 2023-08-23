@@ -36,7 +36,7 @@ const LazyUploadView = lazy(
 	() => import(/* webpackChunkName: "uploadView" */ '../carbonio-files-ui-common/views/UploadView')
 );
 
-const View = (): JSX.Element | null => {
+const View = (): React.JSX.Element | null => {
 	const { path, params } = useRouteMatch<URLParams>();
 	return (
 		(`/${params.view}` === INTERNAL_PATH.ROOT && (

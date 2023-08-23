@@ -6,7 +6,6 @@
 
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { act, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { DropdownItem } from '@zextras/carbonio-design-system';
 import { find } from 'lodash';
@@ -14,40 +13,36 @@ import { find } from 'lodash';
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
-import { Folder } from '../types/graphql/types';
+import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import {
-	getChildrenVariables,
 	mockCreateFolder,
-	mockCreateFolderError,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions
-} from '../utils/mockUtils';
+	mockErrorResolver,
+	mockGetNode,
+	mockGetPath
+} from '../utils/resolverMocks';
 import { generateError, setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
-let mockedCreateOptions: CreateOptionsContent['createOptions'];
+let mockedCreateOptions: CreateOption[];
 
 beforeEach(() => {
 	mockedCreateOptions = [];
 });
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest
-			.fn()
-			.mockImplementation((...options: Parameters<CreateOptionsContent['setCreateOptions']>[0]) => {
-				mockedCreateOptions = options;
-			}),
-		removeCreateOptions: jest.fn()
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
+	useCreateOptions: (): CreateOptionsReturnType => ({
+		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+			mockedCreateOptions = options;
+		},
+		removeCreateOptions: () => undefined
 	})
 }));
 
-const MockDisplayer = (props: DisplayerProps): JSX.Element => (
+const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
 	<div>
 		{props.translationKey}:{props.icons}
 		<button
@@ -68,8 +63,8 @@ const MockDisplayer = (props: DisplayerProps): JSX.Element => (
 	</div>
 );
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => <MockDisplayer {...props} />
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
 describe('Create folder', () => {
@@ -93,18 +88,18 @@ describe('Create folder', () => {
 
 		const newName = node2.name;
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockCreateFolderError(
-				{
-					destination_id: currentFolder.id,
-					name: newName
-				},
-				new ApolloError({ graphQLErrors: [generateError('Error! Name already assigned')] })
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder]
+				})
+			},
+			Mutation: {
+				createFolder: mockErrorResolver(generateError('Error! Name already assigned'))
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -156,18 +151,18 @@ describe('Create folder', () => {
 		// add node 1 and 3 as children, node 2 is the new folder
 		currentFolder.children.nodes.push(node1, node3);
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockCreateFolder(
-				{
-					destination_id: currentFolder.id,
-					name: node2.name
-				},
-				node2
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder]
+				})
+			},
+			Mutation: {
+				createFolder: mockCreateFolder(node2)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -221,34 +216,25 @@ describe('Create folder', () => {
 		// 4) trigger loadMore and load node1, node2, node3 with this order
 		// --> list should be updated with the correct order
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockCreateFolder(
-				{
-					destination_id: currentFolder.id,
-					name: node2.name
-				},
-				node2
-			),
-			mockCreateFolder(
-				{
-					destination_id: currentFolder.id,
-					name: node1.name
-				},
-				node1
-			),
-			// fetchMore request, cursor is still last ordered node (last child of initial folder)
-			mockGetChildren(
-				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-				{
-					...currentFolder,
-					// second page contains the new created nodes and node3, not loaded before
-					children: populateNodePage([node1, node2, node3])
-				} as Folder
-			)
-		];
+		const childrenResolver: FolderResolvers['children'] = (parent, args) =>
+			args.page_token === 'page2'
+				? populateNodePage([node1, node2, node3])
+				: populateNodePage(currentFolder.children.nodes, NODES_LOAD_LIMIT, 'page2');
+		const mocks = {
+			Folder: {
+				children: childrenResolver
+			},
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder]
+				})
+			},
+			Mutation: {
+				createFolder: mockCreateFolder(node2, node1)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -326,18 +312,15 @@ describe('Create folder', () => {
 		let newPos = addNodeInSortedList(currentFolder.children.nodes, newNode, NODES_SORT_DEFAULT);
 		newPos = newPos > -1 ? newPos : currentFolder.children.nodes.length;
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockCreateFolder(
-				{
-					destination_id: currentFolder.id,
-					name: newNode.name
-				},
-				newNode
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			},
+			Mutation: {
+				createFolder: mockCreateFolder(newNode)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],

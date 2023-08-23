@@ -26,7 +26,7 @@ describe('Node Details User Row', () => {
 				tooltip={'Action tooltip'}
 				clickAction={clickActionMock}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText(node.owner.email)).toBeVisible();
 		await user.click(screen.getByText(node.owner.email));

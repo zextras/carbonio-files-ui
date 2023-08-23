@@ -9,9 +9,9 @@
 import React from 'react';
 
 import 'jest-styled-components';
-import { ApolloError, ReactiveVar } from '@apollo/client';
+import { ReactiveVar } from '@apollo/client';
 import { act, screen, waitFor, within } from '@testing-library/react';
-import { forEach, size } from 'lodash';
+import { forEach, noop, size } from 'lodash';
 import { find as findStyled } from 'styled-components/test-utils';
 
 import { NodesSelectionModalContent } from './NodesSelectionModalContent';
@@ -27,34 +27,30 @@ import {
 	populateNodes
 } from '../../mocks/mockUtils';
 import { Node, NodeWithMetadata } from '../../types/common';
-import { GetRootsListQuery, GetRootsListQueryVariables } from '../../types/graphql/types';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
-	getChildrenVariables,
-	getFindNodesVariables,
+	GetRootsListDocument,
+	GetRootsListQuery,
+	GetRootsListQueryVariables
+} from '../../types/graphql/types';
+import {
 	mockCreateFolder,
-	mockCreateFolderError,
+	mockErrorResolver,
 	mockFindNodes,
-	mockGetBaseNode,
-	mockGetChildren,
+	mockGetNode,
 	mockGetPath,
-	mockGetPermissions,
 	mockGetRootsList
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, generateError, setup } from '../../utils/testUtils';
 import { isFile, isFolder } from '../../utils/utils';
 
-const confirmAction = jest.fn();
-const closeAction = jest.fn();
-
-const resetToDefault = jest.fn<
-	void,
-	[
-		{
-			maxSelection: number | undefined;
-			canSelectOpenedFolder: boolean | undefined;
-		}
-	]
->(({ maxSelection, canSelectOpenedFolder }) => {
+const resetToDefault = ({
+	maxSelection,
+	canSelectOpenedFolder
+}: {
+	maxSelection: number | undefined;
+	canSelectOpenedFolder: boolean | undefined;
+}): void => {
 	// clone implementation of the function contained in the click callback of useNodesSelectionModalContent
 	const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>;
 	if (maxSelection === 1 || size(getDestinationVar().currentValue) === 0) {
@@ -64,18 +60,15 @@ const resetToDefault = jest.fn<
 			destinationVar({ currentValue: undefined, defaultValue: undefined });
 		}
 	}
-});
-
-beforeEach(() => {
-	confirmAction.mockClear();
-	closeAction.mockClear();
-	resetToDefault.mockClear();
-});
+};
 
 describe('Nodes Selection Modal Content', () => {
 	test('title and description are visible if set', async () => {
-		const mocks = [mockGetRootsList()];
-
+		const mocks = {
+			Query: {
+				getRootsList: mockGetRootsList()
+			}
+		} satisfies Partial<Resolvers>;
 		setup(
 			<div
 				onClick={(): void =>
@@ -83,10 +76,10 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			>
 				<NodesSelectionModalContent
-					confirmAction={confirmAction}
+					confirmAction={noop}
 					confirmLabel="Confirm label"
 					title="This is the title"
-					closeAction={closeAction}
+					closeAction={noop}
 					description="This is the description"
 				/>
 			</div>,
@@ -99,9 +92,9 @@ describe('Nodes Selection Modal Content', () => {
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
-				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-					mockGetRootsList().request
-				)?.getRootsList || null
+				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+					query: GetRootsListDocument
+				})?.getRootsList || null
 			).not.toBeNull()
 		);
 		expect(screen.getByText('This is the title')).toBeVisible();
@@ -117,15 +110,20 @@ describe('Nodes Selection Modal Content', () => {
 		folder.parent = localRoot;
 		file.parent = localRoot;
 
-		const mocks = [
-			mockGetRootsList(),
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-			mockGetPermissions({ node_id: localRoot.id }, localRoot),
-			mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-		];
+		const mocks = {
+			Query: {
+				getRootsList: mockGetRootsList(),
+				getPath: mockGetPath([localRoot]),
+				getNode: mockGetNode({
+					getChildren: [localRoot],
+					getPermissions: [localRoot],
+					getBaseNode: [localRoot]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		const isValidSelection = jest.fn().mockReturnValue(() => true);
+		const confirmAction = jest.fn();
 
 		const { findByTextWithMarkup, user } = setup(
 			<div
@@ -137,7 +135,7 @@ describe('Nodes Selection Modal Content', () => {
 					confirmAction={confirmAction}
 					confirmLabel="Select"
 					title="Select nodes"
-					closeAction={closeAction}
+					closeAction={noop}
 					canSelectOpenedFolder
 					maxSelection={undefined}
 					isValidSelection={isValidSelection}
@@ -151,9 +149,9 @@ describe('Nodes Selection Modal Content', () => {
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
-				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-					mockGetRootsList().request
-				)?.getRootsList || null
+				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+					query: GetRootsListDocument
+				})?.getRootsList || null
 			).not.toBeNull()
 		);
 		// confirm button is disabled
@@ -185,17 +183,22 @@ describe('Nodes Selection Modal Content', () => {
 		folder.parent = localRoot;
 		file.parent = localRoot;
 
-		const mocks = [
-			mockGetRootsList(),
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-			mockGetPermissions({ node_id: localRoot.id }, localRoot),
-			mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-		];
+		const mocks = {
+			Query: {
+				getRootsList: mockGetRootsList(),
+				getPath: mockGetPath([localRoot]),
+				getNode: mockGetNode({
+					getChildren: [localRoot],
+					getPermissions: [localRoot],
+					getBaseNode: [localRoot]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		const isValidSelection = jest
 			.fn()
 			.mockImplementation(({ id }: { id: string }) => id !== localRoot.id);
+		const confirmAction = jest.fn();
 
 		const { findByTextWithMarkup, user } = setup(
 			<div
@@ -207,7 +210,7 @@ describe('Nodes Selection Modal Content', () => {
 					confirmAction={confirmAction}
 					confirmLabel="Select"
 					title="Select nodes"
-					closeAction={closeAction}
+					closeAction={noop}
 					canSelectOpenedFolder
 					maxSelection={undefined}
 					isValidSelection={isValidSelection}
@@ -221,9 +224,9 @@ describe('Nodes Selection Modal Content', () => {
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
-				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-					mockGetRootsList().request
-				)?.getRootsList || null
+				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+					query: GetRootsListDocument
+				})?.getRootsList || null
 			).not.toBeNull()
 		);
 		// confirm button is disabled
@@ -254,15 +257,20 @@ describe('Nodes Selection Modal Content', () => {
 		folder.parent = localRoot;
 		file.parent = localRoot;
 
-		const mocks = [
-			mockGetRootsList(),
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-			mockGetPermissions({ node_id: localRoot.id }, localRoot),
-			mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-		];
+		const mocks = {
+			Query: {
+				getRootsList: mockGetRootsList(),
+				getPath: mockGetPath([localRoot]),
+				getNode: mockGetNode({
+					getChildren: [localRoot],
+					getPermissions: [localRoot],
+					getBaseNode: [localRoot]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		const isValidSelection = jest.fn().mockReturnValue(true);
+		const confirmAction = jest.fn();
 
 		const { findByTextWithMarkup, user } = setup(
 			<div
@@ -274,7 +282,7 @@ describe('Nodes Selection Modal Content', () => {
 					confirmAction={confirmAction}
 					confirmLabel="Select"
 					title="Select nodes"
-					closeAction={closeAction}
+					closeAction={noop}
 					canSelectOpenedFolder={false}
 					maxSelection={undefined}
 					isValidSelection={isValidSelection}
@@ -288,9 +296,9 @@ describe('Nodes Selection Modal Content', () => {
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
-				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-					mockGetRootsList().request
-				)?.getRootsList || null
+				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+					query: GetRootsListDocument
+				})?.getRootsList || null
 			).not.toBeNull()
 		);
 		// confirm button is disabled
@@ -308,13 +316,10 @@ describe('Nodes Selection Modal Content', () => {
 		expect(screen.getByText(folder.name)).toBeVisible();
 		expect(screen.getByText(file.name)).toBeVisible();
 		// wait a tick to allow getBaseNode query to complete
-		await waitFor(
-			() =>
-				new Promise((resolve) => {
-					setTimeout(resolve, 0);
-				})
-		);
-		// confirm button remains disabled because opened folder is not valid by validity check
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
+		// confirm button remains disabled because the opened folder is not valid by validity check
 		expect(confirmButton).toBeDisabled();
 		expect(isValidSelection).not.toHaveBeenCalledWith(
 			expect.objectContaining({ id: localRoot.id })
@@ -324,7 +329,11 @@ describe('Nodes Selection Modal Content', () => {
 	});
 
 	test('Non selectable nodes show a tooltip on hover if provided', async () => {
-		const mocks = [mockGetRootsList()];
+		const mocks = {
+			Query: {
+				getRootsList: mockGetRootsList()
+			}
+		} satisfies Partial<Resolvers>;
 
 		const isValidSelection = jest.fn().mockReturnValue(false);
 
@@ -335,10 +344,10 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			>
 				<NodesSelectionModalContent
-					confirmAction={confirmAction}
+					confirmAction={noop}
 					confirmLabel="Select"
 					title="Select nodes"
-					closeAction={closeAction}
+					closeAction={noop}
 					canSelectOpenedFolder={false}
 					maxSelection={undefined}
 					isValidSelection={isValidSelection}
@@ -353,9 +362,9 @@ describe('Nodes Selection Modal Content', () => {
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
-				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-					mockGetRootsList().request
-				)?.getRootsList || null
+				global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+					query: GetRootsListDocument
+				})?.getRootsList || null
 			).not.toBeNull()
 		);
 		expect(screen.getByText(/home/i)).toBeVisible();
@@ -366,6 +375,10 @@ describe('Nodes Selection Modal Content', () => {
 		expect(nodeAvatarIcons[0]).not.toHaveAttribute('disabled', '');
 		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(nodeAvatarIcons[1]).not.toHaveAttribute('disabled', '');
+		act(() => {
+			// run tooltip timer to register listeners
+			jest.runOnlyPendingTimers();
+		});
 		await user.hover(nodeAvatarIcons[0]);
 		const tooltipMsg = 'Node is not selectable';
 		await screen.findByText(tooltipMsg);
@@ -382,7 +395,12 @@ describe('Nodes Selection Modal Content', () => {
 	describe('Single selection', () => {
 		test('number of selected items is not visible', async () => {
 			const localRoot = populateLocalRoot();
-			const mocks = [mockGetRootsList(), mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
 				<div
@@ -391,10 +409,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Confirm"
 						title="This is the title"
-						closeAction={closeAction}
+						closeAction={noop}
 						description="This is the description"
 						maxSelection={1}
 					/>
@@ -408,9 +426,9 @@ describe('Nodes Selection Modal Content', () => {
 			// wait for root list query to be executed
 			await waitFor(() =>
 				expect(
-					global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-						mockGetRootsList().request
-					)?.getRootsList || null
+					global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+						query: GetRootsListDocument
+					})?.getRootsList || null
 				).not.toBeNull()
 			);
 			const confirmButton = screen.getByRole('button', { name: /confirm/i });
@@ -422,6 +440,13 @@ describe('Nodes Selection Modal Content', () => {
 
 		describe('without criteria to select nodes', () => {
 			test('show roots by default. confirm button is disabled', async () => {
+				const confirmAction = jest.fn();
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList()
+					}
+				} satisfies Partial<Resolvers>;
+
 				const { user } = setup(
 					<div
 						onClick={(): void =>
@@ -432,12 +457,12 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
 					{
-						mocks: [mockGetRootsList()]
+						mocks
 					}
 				);
 
@@ -446,9 +471,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				expect(screen.getByText('Home')).toBeVisible();
@@ -469,13 +494,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -487,7 +518,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -499,9 +530,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				await user.dblClick(screen.getByText(/home/i));
@@ -533,13 +564,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -551,7 +588,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -563,9 +600,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				await user.dblClick(screen.getByText(/home/i));
@@ -597,13 +634,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -613,7 +656,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder
 							maxSelection={1}
 						/>
@@ -626,9 +669,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				// confirm button is disabled
@@ -669,13 +712,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -685,7 +734,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={1}
 						/>
@@ -698,9 +747,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				// confirm button is disabled
@@ -733,7 +782,14 @@ describe('Nodes Selection Modal Content', () => {
 			test('local root item is valid, other roots are not valid', async () => {
 				const localRoot = populateFolder(2, ROOTS.LOCAL_ROOT);
 
-				const mocks = [mockGetRootsList(), mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -745,7 +801,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -758,9 +814,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				const breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
@@ -793,14 +849,18 @@ describe('Nodes Selection Modal Content', () => {
 				localRoot.children.nodes.push(folder);
 				folder.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPath({ node_id: folder.id }, [localRoot, folder]),
-					mockGetChildren(getChildrenVariables(folder.id), folder)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot], [localRoot, folder]),
+						getNode: mockGetNode({
+							getChildren: [localRoot, folder],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -810,7 +870,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder
 							maxSelection={1}
 						/>
@@ -824,9 +884,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				let breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
@@ -910,16 +970,19 @@ describe('Nodes Selection Modal Content', () => {
 				localRoot.children.nodes.push(folder);
 				folder.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: folder.id }, [localRoot, folder]),
-					mockGetChildren(getChildrenVariables(folder.id), folder),
-					mockGetPermissions({ node_id: folder.id }, folder)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot], [localRoot, folder]),
+						getNode: mockGetNode({
+							getChildren: [localRoot, folder],
+							getPermissions: [localRoot, folder],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -931,7 +994,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -944,9 +1007,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				let breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
@@ -1002,18 +1065,14 @@ describe('Nodes Selection Modal Content', () => {
 			test('shared with me root is navigable', async () => {
 				const sharedWithMeFilter = populateNodes(4);
 
-				const mocks = [
-					mockGetRootsList(),
-					mockFindNodes(
-						getFindNodesVariables({
-							shared_with_me: true,
-							cascade: true,
-							direct_share: true,
-							folder_id: ROOTS.LOCAL_ROOT
-						}),
-						sharedWithMeFilter
-					)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						findNodes: mockFindNodes(sharedWithMeFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, user } = setup(
 					<div
@@ -1025,7 +1084,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -1038,9 +1097,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				expect(screen.getByText(/shared with me/i)).toBeVisible();
@@ -1069,18 +1128,14 @@ describe('Nodes Selection Modal Content', () => {
 				const folder = populateFolder(3);
 				filter.push(folder);
 
-				const mocks = [
-					mockGetRootsList(),
-					mockFindNodes(
-						getFindNodesVariables({
-							shared_with_me: true,
-							cascade: true,
-							direct_share: true,
-							folder_id: ROOTS.LOCAL_ROOT
-						}),
-						filter
-					)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						findNodes: mockFindNodes(filter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
 					<div
@@ -1092,7 +1147,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -1104,9 +1159,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				await user.dblClick(screen.getByText(/shared with me/i));
@@ -1137,14 +1192,19 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, '__typename'>) => isFile(node));
+				const confirmAction = jest.fn();
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
 					<div
@@ -1154,7 +1214,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Only files"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={1}
 							canSelectOpenedFolder
@@ -1167,9 +1227,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 
@@ -1213,26 +1273,32 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, '__typename'>) => isFolder(node));
+				const confirmAction = jest.fn();
+				const resetToDefaultFn = jest.fn(resetToDefault);
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user, findByTextWithMarkup } = setup(
 					<div
 						onClick={(): void =>
-							resetToDefault({ maxSelection: 1, canSelectOpenedFolder: undefined })
+							resetToDefaultFn({ maxSelection: 1, canSelectOpenedFolder: undefined })
 						}
 					>
 						<NodesSelectionModalContent
 							title="Only folders"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={1}
 						/>
@@ -1244,9 +1310,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 
@@ -1266,14 +1332,14 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled because local root is not selectable by param
 				expect(confirmButton).toBeDisabled();
 				// reset calls
-				resetToDefault.mockClear();
+				resetToDefaultFn.mockClear();
 				// click on folder
 				await user.click(screen.getByText(folder.name));
 				// confirm button becomes enabled
 				expect(confirmButton).toBeEnabled();
 				// click on file
 				await user.click(screen.getByText(file.name));
-				expect(resetToDefault).toHaveBeenCalledTimes(1);
+				expect(resetToDefaultFn).toHaveBeenCalledTimes(1);
 				// confirm button becomes disabled
 				expect(confirmButton).toBeDisabled();
 				// click again on folder
@@ -1302,17 +1368,19 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, 'name'>) => node.name.startsWith('valid'));
+				const confirmAction = jest.fn();
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetChildren(getChildrenVariables(invalidFolder.id), invalidFolder),
-					mockGetPermissions({ node_id: invalidFolder.id }, invalidFolder),
-					mockGetPath({ node_id: invalidFolder.id }, [localRoot, invalidFolder])
-				];
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot], [localRoot, invalidFolder]),
+						getNode: mockGetNode({
+							getChildren: [localRoot, invalidFolder],
+							getPermissions: [localRoot, invalidFolder],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -1324,7 +1392,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Custom selector"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={1}
 						/>
@@ -1336,9 +1404,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 
@@ -1416,13 +1484,19 @@ describe('Nodes Selection Modal Content', () => {
 			file.parent = localRoot;
 			folder.parent = localRoot;
 
-			const mocks = [
-				mockGetRootsList(),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot)
-			];
+			const confirmAction = jest.fn();
+
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot]),
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { findByTextWithMarkup, user } = setup(
 				<div
@@ -1434,7 +1508,7 @@ describe('Nodes Selection Modal Content', () => {
 						confirmAction={confirmAction}
 						confirmLabel="Select"
 						title="Multiple selection"
-						closeAction={closeAction}
+						closeAction={noop}
 						maxSelection={undefined}
 					/>
 				</div>,
@@ -1447,9 +1521,9 @@ describe('Nodes Selection Modal Content', () => {
 			// wait for root list query to be executed
 			await waitFor(() =>
 				expect(
-					global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-						mockGetRootsList().request
-					)?.getRootsList || null
+					global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+						query: GetRootsListDocument
+					})?.getRootsList || null
 				).not.toBeNull()
 			);
 			await user.dblClick(screen.getByText(/home/i));
@@ -1483,13 +1557,19 @@ describe('Nodes Selection Modal Content', () => {
 				mockedNode.parent = localRoot;
 			});
 
-			const mocks = [
-				mockGetRootsList(),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot)
-			];
+			const confirmAction = jest.fn();
+
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot]),
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { findByTextWithMarkup, user } = setup(
 				<div
@@ -1501,7 +1581,7 @@ describe('Nodes Selection Modal Content', () => {
 						confirmAction={confirmAction}
 						confirmLabel="Select"
 						title="Multiple selection"
-						closeAction={closeAction}
+						closeAction={noop}
 						maxSelection={3}
 					/>
 				</div>,
@@ -1514,9 +1594,9 @@ describe('Nodes Selection Modal Content', () => {
 			// wait for root list query to be executed
 			await waitFor(() =>
 				expect(
-					global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-						mockGetRootsList().request
-					)?.getRootsList || null
+					global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+						query: GetRootsListDocument
+					})?.getRootsList || null
 				).not.toBeNull()
 			);
 			await user.dblClick(screen.getByText(/home/i));
@@ -1558,13 +1638,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -1576,7 +1662,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={undefined}
 						/>
 					</div>,
@@ -1617,13 +1703,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -1635,7 +1727,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={undefined}
 						/>
 					</div>,
@@ -1647,9 +1739,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				await user.dblClick(screen.getByText(/home/i));
@@ -1681,13 +1773,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -1699,7 +1797,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder
 							maxSelection={undefined}
 						/>
@@ -1712,9 +1810,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				// confirm button is disabled
@@ -1755,13 +1853,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -1773,7 +1877,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={undefined}
 						/>
@@ -1786,9 +1890,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				// confirm button is disabled
@@ -1827,13 +1931,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -1845,7 +1955,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={undefined}
 						/>
@@ -1858,9 +1968,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				// confirm button is disabled
@@ -1918,13 +2028,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -1936,7 +2052,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={undefined}
 						/>
@@ -1949,9 +2065,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				// confirm button is disabled
@@ -2008,13 +2124,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -2026,7 +2148,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={undefined}
 						/>
@@ -2039,9 +2161,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				// confirm button is disabled
@@ -2089,13 +2211,19 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-				];
+				const confirmAction = jest.fn();
+
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -2107,7 +2235,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder
 							maxSelection={undefined}
 						/>
@@ -2120,9 +2248,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 				// confirm button is disabled
@@ -2176,14 +2304,19 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, '__typename'>) => isFile(node));
+				const confirmAction = jest.fn();
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
 					<div
@@ -2195,7 +2328,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Only files"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={undefined}
 							canSelectOpenedFolder
@@ -2283,14 +2416,19 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, '__typename'>) => isFolder(node));
+				const confirmAction = jest.fn();
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot)
-				];
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot]),
+						getNode: mockGetNode({
+							getChildren: [localRoot],
+							getPermissions: [localRoot],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
 					<div
@@ -2302,7 +2440,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Only folders"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={undefined}
 							canSelectOpenedFolder
@@ -2315,9 +2453,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 
@@ -2407,17 +2545,19 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, 'name'>) => node.name.startsWith('valid'));
+				const confirmAction = jest.fn();
 
-				const mocks = [
-					mockGetRootsList(),
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetPath({ node_id: localRoot.id }, [localRoot]),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockGetPermissions({ node_id: localRoot.id }, localRoot),
-					mockGetChildren(getChildrenVariables(invalidFolder.id), invalidFolder),
-					mockGetPermissions({ node_id: invalidFolder.id }, invalidFolder),
-					mockGetPath({ node_id: invalidFolder.id }, [localRoot, invalidFolder])
-				];
+				const mocks = {
+					Query: {
+						getRootsList: mockGetRootsList(),
+						getPath: mockGetPath([localRoot], [localRoot, invalidFolder]),
+						getNode: mockGetNode({
+							getChildren: [localRoot, invalidFolder],
+							getPermissions: [localRoot, invalidFolder],
+							getBaseNode: [localRoot]
+						})
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<div
@@ -2429,7 +2569,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Custom selector"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={undefined}
 						/>
@@ -2441,9 +2581,9 @@ describe('Nodes Selection Modal Content', () => {
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
-						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>(
-							mockGetRootsList().request
-						)?.getRootsList || null
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
 					).not.toBeNull()
 				);
 
@@ -2561,13 +2701,17 @@ describe('Nodes Selection Modal Content', () => {
 			folder.parent = localRoot;
 			file.parent = localRoot;
 
-			const mocks = [
-				mockGetRootsList(),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot)
-			];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot]),
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
 
@@ -2578,10 +2722,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2614,13 +2758,17 @@ describe('Nodes Selection Modal Content', () => {
 			folder.parent = localRoot;
 			file.parent = localRoot;
 
-			const mocks = [
-				mockGetRootsList(),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot)
-			];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot]),
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
 
@@ -2631,10 +2779,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2670,22 +2818,18 @@ describe('Nodes Selection Modal Content', () => {
 
 			const nodes = [sharedFolder];
 
-			const mocks = [
-				mockGetRootsList(),
-				mockFindNodes(
-					getFindNodesVariables({
-						shared_with_me: true,
-						folder_id: ROOTS.LOCAL_ROOT,
-						cascade: true,
-						direct_share: true
-					}),
-					nodes
-				),
-				mockGetPath({ node_id: sharedFolder.id }, [sharedFolder]),
-				mockGetBaseNode({ node_id: sharedFolder.id }, sharedFolder),
-				mockGetChildren(getChildrenVariables(sharedFolder.id), sharedFolder),
-				mockGetPermissions({ node_id: sharedFolder.id }, sharedFolder)
-			];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					findNodes: mockFindNodes(nodes),
+					getPath: mockGetPath([sharedFolder]),
+					getNode: mockGetNode({
+						getChildren: [sharedFolder],
+						getPermissions: [sharedFolder],
+						getBaseNode: [sharedFolder]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
 
@@ -2696,10 +2840,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2740,22 +2884,18 @@ describe('Nodes Selection Modal Content', () => {
 
 			const nodes = [sharedFolder];
 
-			const mocks = [
-				mockGetRootsList(),
-				mockFindNodes(
-					getFindNodesVariables({
-						shared_with_me: true,
-						folder_id: ROOTS.LOCAL_ROOT,
-						cascade: true,
-						direct_share: true
-					}),
-					nodes
-				),
-				mockGetPath({ node_id: sharedFolder.id }, [sharedFolder]),
-				mockGetBaseNode({ node_id: sharedFolder.id }, sharedFolder),
-				mockGetChildren(getChildrenVariables(sharedFolder.id), sharedFolder),
-				mockGetPermissions({ node_id: sharedFolder.id }, sharedFolder)
-			];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					findNodes: mockFindNodes(nodes),
+					getPath: mockGetPath([sharedFolder]),
+					getNode: mockGetNode({
+						getChildren: [sharedFolder],
+						getPermissions: [sharedFolder],
+						getBaseNode: [sharedFolder]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
 
@@ -2766,10 +2906,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2800,6 +2940,10 @@ describe('Nodes Selection Modal Content', () => {
 			const createFolderButtonLabel = within(createFolderButton).getByText(/new folder/i);
 			expect(createFolderButton).toBeVisible();
 			expect(createFolderButton).toBeDisabled();
+			act(() => {
+				// run tooltip timer to register listeners
+				jest.runOnlyPendingTimers();
+			});
 			await user.hover(createFolderButtonLabel);
 			const tooltip = await screen.findByText(/you don't have the correct permissions/i);
 			expect(tooltip).toBeVisible();
@@ -2819,18 +2963,17 @@ describe('Nodes Selection Modal Content', () => {
 			folder.parent = localRoot;
 			folder.permissions.can_write_folder = true;
 			file.parent = localRoot;
-
-			const mocks = [
-				mockGetRootsList(),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot),
-				mockGetPath({ node_id: folder.id }, [localRoot, folder]),
-				mockGetBaseNode({ node_id: folder.id }, folder),
-				mockGetChildren(getChildrenVariables(folder.id), folder),
-				mockGetPermissions({ node_id: folder.id }, folder)
-			];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot], [localRoot, folder]),
+					getNode: mockGetNode({
+						getChildren: [localRoot, folder],
+						getPermissions: [localRoot, folder],
+						getBaseNode: [localRoot, folder]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
 
@@ -2843,10 +2986,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2904,14 +3047,17 @@ describe('Nodes Selection Modal Content', () => {
 			folder.permissions.can_write_folder = true;
 			file.parent = localRoot;
 
-			const mocks = [
-				mockGetRootsList(),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot),
-				mockGetBaseNode({ node_id: folder.id }, folder)
-			];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot]),
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot, folder]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
 
@@ -2924,10 +3070,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2985,17 +3131,23 @@ describe('Nodes Selection Modal Content', () => {
 
 			const newFolder = populateFolder();
 
-			const mocks = [
-				mockGetRootsList(),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot),
-				mockCreateFolder({ name: newFolder.name, destination_id: localRoot.id }, newFolder),
-				mockGetBaseNode({ node_id: newFolder.id }, newFolder)
-			];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot]),
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot, newFolder]
+					})
+				},
+				Mutation: {
+					createFolder: mockCreateFolder(newFolder)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
+			const confirmAction = jest.fn();
 
 			const { findByTextWithMarkup, user } = setup(
 				<div
@@ -3007,7 +3159,7 @@ describe('Nodes Selection Modal Content', () => {
 						confirmAction={confirmAction}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -3063,19 +3215,20 @@ describe('Nodes Selection Modal Content', () => {
 
 			const newFolder = populateFolder();
 
-			const mocks = [
-				mockGetRootsList(),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot),
-				mockCreateFolderError(
-					{ name: newFolder.name, destination_id: localRoot.id },
-					new ApolloError({
-						graphQLErrors: [generateError('A folder with same name already exists')]
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot]),
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
 					})
-				)
-			];
+				},
+				Mutation: {
+					createFolder: mockErrorResolver(generateError('A folder with same name already exists'))
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
 
@@ -3086,10 +3239,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -3142,24 +3295,24 @@ describe('Nodes Selection Modal Content', () => {
 			folder.parent = localRoot;
 			file.parent = localRoot;
 
-			const newFolder = populateFolder();
-
-			const mocks = [
-				mockGetRootsList(),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot),
-				mockCreateFolderError(
-					{ name: newFolder.name, destination_id: localRoot.id },
-					new ApolloError({
-						graphQLErrors: [generateError('A folder with same name already exists')]
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot]),
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getBaseNode: [localRoot]
 					})
-				)
-			];
+				},
+				Mutation: {
+					createFolder: mockErrorResolver(generateError('A folder with same name already exists'))
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
-
+			const confirmAction = jest.fn();
+			const closeAction = jest.fn();
 			const { user } = setup(
 				<div
 					onClick={(): void =>
@@ -3205,17 +3358,17 @@ describe('Nodes Selection Modal Content', () => {
 			folder.permissions.can_write_folder = true;
 			file.parent = localRoot;
 
-			const mocks = [
-				mockGetRootsList(),
-				mockGetPath({ node_id: localRoot.id }, [localRoot]),
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-				mockGetPermissions({ node_id: localRoot.id }, localRoot),
-				mockGetPath({ node_id: folder.id }, [localRoot, folder]),
-				mockGetBaseNode({ node_id: folder.id }, folder),
-				mockGetChildren(getChildrenVariables(folder.id), folder),
-				mockGetPermissions({ node_id: folder.id }, folder)
-			];
+			const mocks = {
+				Query: {
+					getRootsList: mockGetRootsList(),
+					getPath: mockGetPath([localRoot], [localRoot, folder]),
+					getNode: mockGetNode({
+						getChildren: [localRoot, folder],
+						getPermissions: [localRoot, folder],
+						getBaseNode: [localRoot, folder]
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
 
@@ -3228,10 +3381,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
