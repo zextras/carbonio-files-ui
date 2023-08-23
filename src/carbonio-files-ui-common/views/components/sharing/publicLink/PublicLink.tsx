@@ -35,7 +35,11 @@ interface AddPublicLinkProps {
 	canShare: boolean;
 }
 
-export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): JSX.Element => {
+export const PublicLink = ({
+	nodeId,
+	nodeName,
+	canShare
+}: AddPublicLinkProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { zimbraPrefTimeZoneId } = useUserInfo();
 	const createSnackbar = useSnackbar();
@@ -222,7 +226,7 @@ export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): 
 			}
 			return thereIsOpenRow ? PublicLinkRowStatus.DISABLED : PublicLinkRowStatus.CLOSED;
 		}
-		return reduce<NonNullableListItem<typeof links> | null | undefined, JSX.Element[]>(
+		return reduce<NonNullableListItem<typeof links> | null | undefined, React.JSX.Element[]>(
 			links,
 			(accumulator, link) => {
 				if (link) {

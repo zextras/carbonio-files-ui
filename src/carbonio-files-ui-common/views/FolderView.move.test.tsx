@@ -14,17 +14,21 @@ import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import {
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChildren,
+	mockGetNode,
 	mockGetPath,
-	mockGetPermissions,
 	mockMoveNodes
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import {
 	buildBreadCrumbRegExp,
 	moveNode,
@@ -41,7 +45,7 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 }));
 
 jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -64,24 +68,21 @@ describe('Move', () => {
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id),
 				data: {
 					getNode: destinationFolder
 				}
 			});
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockMoveNodes(
-					{
-						node_ids: [nodeToMove.id],
-						destination_id: destinationFolder.id
-					},
-					[{ ...nodeToMove, parent: destinationFolder }]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -94,7 +95,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -119,7 +120,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -145,24 +146,23 @@ describe('Move', () => {
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id),
 				data: {
 					getNode: destinationFolder
 				}
 			});
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockMoveNodes(
-					{
-						node_ids: map(nodesToMove, (nodeToMove) => nodeToMove.id),
-						destination_id: destinationFolder.id
-					},
-					map(nodesToMove, (nodeToMove) => ({ ...nodeToMove, parent: destinationFolder }))
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(
+						map(nodesToMove, (nodeToMove) => ({ ...nodeToMove, parent: destinationFolder }))
+					)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -175,7 +175,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -215,7 +215,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -246,27 +246,25 @@ describe('Move', () => {
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 			const nodesToMove = [...firstPage];
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(firstPage)
-				} as Folder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [commonParent, currentFolder]),
-				mockGetChildren(getChildrenVariables(commonParent.id), commonParent),
-				mockGetPath({ node_id: commonParent.id }, [commonParent]),
-				mockMoveNodes(
-					{
-						node_ids: map(nodesToMove, (node) => node?.id || ''),
-						destination_id: destinationFolder.id
-					},
-					map(nodesToMove, (node) => ({ ...node, parent: destinationFolder }))
-				),
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(secondPage)
-				} as Folder)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([commonParent], [commonParent, currentFolder]),
+					// use default children resolver to split chidlren in pages
+					getNode: mockGetNode({
+						getChildren: [
+							{ ...currentFolder, children: populateNodePage(firstPage) },
+							{ ...currentFolder, children: populateNodePage(secondPage) },
+							commonParent
+						],
+						getPermissions: [currentFolder]
+					})
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(
+						map(nodesToMove, (node) => ({ ...node, parent: destinationFolder }))
+					)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { findByTextWithMarkup, user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -331,25 +329,22 @@ describe('Move', () => {
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id),
 				data: {
 					getNode: destinationFolder
 				}
 			});
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockMoveNodes(
-					{
-						node_ids: [nodeToMove.id],
-						destination_id: destinationFolder.id
-					},
-					[{ ...nodeToMove, parent: destinationFolder }]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -362,7 +357,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -384,7 +379,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -407,25 +402,21 @@ describe('Move', () => {
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(firstPage)
-				} as Folder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockMoveNodes(
-					{
-						node_ids: [firstPage[NODES_LOAD_LIMIT - 1].id],
-						destination_id: destinationFolder.id
-					},
-					[{ ...firstPage[NODES_LOAD_LIMIT - 1], parent: destinationFolder }]
-				),
-				mockGetChildren(
-					getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-					{ ...currentFolder, children: populateNodePage(secondPage) } as Folder
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([
+						{ ...firstPage[NODES_LOAD_LIMIT - 1], parent: destinationFolder }
+					])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],

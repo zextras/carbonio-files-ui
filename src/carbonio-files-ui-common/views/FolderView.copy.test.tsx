@@ -14,17 +14,21 @@ import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { populateFile, populateFolder } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import {
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
 import {
 	getChildrenVariables,
 	mockCopyNodes,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions
-} from '../utils/mockUtils';
+	mockGetNode,
+	mockGetPath
+} from '../utils/resolverMocks';
 import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
@@ -35,7 +39,7 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 }));
 
 jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -54,11 +58,12 @@ describe('Copy', () => {
 			folder.parent = currentFolder;
 			currentFolder.children.nodes.push(file, folder);
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -85,24 +90,21 @@ describe('Copy', () => {
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id),
 				data: {
 					getNode: destinationFolder
 				}
 			});
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockCopyNodes(
-					{
-						node_ids: [nodeToCopy.id],
-						destination_id: destinationFolder.id
-					},
-					[{ ...nodeToCopy, parent: destinationFolder }]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					copyNodes: mockCopyNodes([{ ...nodeToCopy, parent: destinationFolder }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -115,7 +117,7 @@ describe('Copy', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -152,7 +154,7 @@ describe('Copy', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -173,18 +175,15 @@ describe('Copy', () => {
 				name: `${node.name}-copied`
 			}));
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockCopyNodes(
-					{
-						node_ids: map(nodesToCopy, (node) => node.id),
-						destination_id: currentFolder.id
-					},
-					copiedNodes
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					copyNodes: mockCopyNodes(copiedNodes)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -248,25 +247,22 @@ describe('Copy', () => {
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id),
 				data: {
 					getNode: destinationFolder
 				}
 			});
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockCopyNodes(
-					{
-						node_ids: [nodeToCopy.id],
-						destination_id: destinationFolder.id
-					},
-					[{ ...nodeToCopy, parent: destinationFolder }]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					copyNodes: mockCopyNodes([{ ...nodeToCopy, parent: destinationFolder }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -279,7 +275,7 @@ describe('Copy', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -311,7 +307,7 @@ describe('Copy', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 

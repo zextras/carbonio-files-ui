@@ -16,15 +16,9 @@ import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
+import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions,
-	mockTrashNodes,
-	mockUpdateNode
-} from '../utils/mockUtils';
+import { mockGetNode, mockGetPath, mockTrashNodes, mockUpdateNode } from '../utils/resolverMocks';
 import { renameNode, setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
@@ -35,7 +29,7 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 }));
 
 jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -67,21 +61,18 @@ describe('Rename', () => {
 
 			const newPos = currentFolder.children.nodes.length - 1;
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockUpdateNode(
-					{
-						node_id: element.id,
-						name: newName
-					},
-					{
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					updateNode: mockUpdateNode({
 						...element,
 						name: newName
-					}
-				)
-			];
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -136,21 +127,18 @@ describe('Rename', () => {
 				(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as Node).name
 			}-${timestamp}`;
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockUpdateNode(
-					{
-						node_id: element.id,
-						name: newName
-					},
-					{
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					updateNode: mockUpdateNode({
 						...element,
 						name: newName
-					}
-				)
-			];
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -220,53 +208,44 @@ describe('Rename', () => {
 
 			const thirdCursor = thirdPage[thirdPage.length - 1];
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))
-				} as Folder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockUpdateNode(
-					{
-						node_id: element.id,
-						name: newName
-					},
-					{
-						...element,
-						name: newName
-					}
-				),
-				// second page request
-				mockGetChildren(
-					getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-					{
-						...currentFolder,
-						children: populateNodePage(secondPage)
-					} as Folder
-				),
-				// third page request
-				mockGetChildren(
-					getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-					{
-						...currentFolder,
-						children: populateNodePage(thirdPage)
-					} as Folder
-				),
-				// last page request
-				mockGetChildren(
-					getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-					{
-						...currentFolder,
-						// remaining elements
-						children: populateNodePage(
+			const childrenResolver: FolderResolvers['children'] = (parent, args) => {
+				switch (args.page_token) {
+					case 'page2':
+						return populateNodePage(secondPage, NODES_LOAD_LIMIT, 'page3');
+					case 'page3':
+						return populateNodePage(thirdPage, NODES_LOAD_LIMIT, 'page4');
+					case 'page4':
+						return populateNodePage(
 							currentFolder.children.nodes.slice(
 								findIndex(currentFolder.children.nodes, thirdCursor) + 1
 							)
-						)
-					} as Folder
-				)
-			];
+						);
+					default:
+						return populateNodePage(
+							currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT),
+							NODES_LOAD_LIMIT,
+							'page2'
+						);
+				}
+			};
+			const mocks = {
+				Folder: {
+					children: childrenResolver
+				},
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({
+						getChildren: Array(4).fill(currentFolder),
+						getPermissions: [currentFolder]
+					})
+				},
+				Mutation: {
+					updateNode: mockUpdateNode({
+						...element,
+						name: newName
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -352,25 +331,22 @@ describe('Rename', () => {
 			const nodeToRename = firstPage[firstPage.length - 1];
 			const newName = `${(last(secondPage) as Node).name}-renamed`;
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(firstPage)
-				} as Folder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockUpdateNode(
-					{ node_id: nodeToRename.id, name: newName },
-					{ ...nodeToRename, name: newName }
-				),
-				mockGetChildren(
-					getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-					{
-						...currentFolder,
-						children: populateNodePage(secondPage)
-					} as Folder
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
+				},
+				Mutation: {
+					updateNode: mockUpdateNode({
+						...nodeToRename,
+						name: newName
+					})
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -420,26 +396,23 @@ describe('Rename', () => {
 
 			const nodesToTrash = map(firstPage.slice(0, firstPage.length - 1), (node) => node.id);
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(firstPage)
-				} as Folder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockUpdateNode(
-					{ node_id: nodeToRename.id, name: newName },
-					{ ...nodeToRename, name: newName }
-				),
-				mockTrashNodes({ node_ids: nodesToTrash }, nodesToTrash),
-				mockGetChildren(
-					getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-					{
-						...currentFolder,
-						children: populateNodePage(secondPage)
-					} as Folder
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
+				},
+				Mutation: {
+					updateNode: mockUpdateNode({
+						...nodeToRename,
+						name: newName
+					}),
+					trashNodes: mockTrashNodes(nodesToTrash)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],

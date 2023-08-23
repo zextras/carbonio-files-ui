@@ -9,6 +9,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { DefaultTheme } from 'styled-components';
+import 'jest-styled-components';
 
 import { NodeDetails } from './NodeDetails';
 import {
@@ -29,12 +30,12 @@ import {
 	populateShares,
 	populateUser
 } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder, NodeType, QueryGetPathArgs } from '../../types/graphql/types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
-import { mockGetPath } from '../../utils/mockUtils';
+import { mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../utils/testUtils';
 import { formatDate, formatTime, humanFileSize } from '../../utils/utils';
-import 'jest-styled-components';
 
 describe('Node Details', () => {
 	test('Show file info', () => {
@@ -63,7 +64,7 @@ describe('Node Details', () => {
 				downloads={downloads}
 				type={node.type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		expect(
@@ -118,7 +119,7 @@ describe('Node Details', () => {
 				nodes={children}
 				type={node.type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText('Collaborators')).toBeVisible();
 		expect(screen.getAllByText(node.owner.full_name)).toHaveLength(children.length + 1);
@@ -172,7 +173,7 @@ describe('Node Details', () => {
 				downloads={undefined}
 				type={node.type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		expect(
@@ -197,10 +198,11 @@ describe('Node Details', () => {
 
 		const path2 = [...newPath, { ...node, parent: newParent }];
 
-		const mocks = [
-			mockGetPath({ node_id: node.id }, path),
-			mockGetPath({ node_id: node.id }, path2)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath(path, path2)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const loadMore = jest.fn();
 		const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
@@ -280,7 +282,7 @@ describe('Node Details', () => {
 				downloads={undefined}
 				type={node.type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		expect(screen.getByText(/collaborators/i)).toBeVisible();
@@ -319,7 +321,7 @@ describe('Node Details', () => {
 				downloads={undefined}
 				type={node.type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		expect(screen.getByText(/owner/i)).toBeVisible();
@@ -357,7 +359,7 @@ describe('Node Details', () => {
 				version={node.version}
 				mimeType={node.mime_type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		await screen.findByRole('img');
 		expect(screen.getByRole('img')).toBeVisible();
@@ -389,7 +391,7 @@ describe('Node Details', () => {
 				version={node.version}
 				mimeType={node.mime_type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		await screen.findByRole('img');
 		expect(screen.getByRole('img')).toBeVisible();
@@ -425,7 +427,7 @@ describe('Node Details', () => {
 				version={node.version}
 				mimeType={node.mime_type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		await screen.findByRole('img');
 		expect(screen.getByRole('img')).toBeVisible();
@@ -457,7 +459,7 @@ describe('Node Details', () => {
 				version={node.version}
 				mimeType={node.mime_type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText(node.name)).toBeVisible();
 		expect(screen.queryByRole('img')).not.toBeInTheDocument();
@@ -489,7 +491,7 @@ describe('Node Details', () => {
 				version={node.version}
 				mimeType={node.mime_type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 		expect(screen.getByText(node.name)).toBeVisible();
 		expect(screen.queryByRole('img')).not.toBeInTheDocument();
@@ -525,7 +527,7 @@ describe('Node Details', () => {
 				nodes={nodes}
 				type={node.type}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		// wait the rendering of the first item

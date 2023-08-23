@@ -39,7 +39,7 @@ describe('PrimaryBarElement', () => {
 		// to remove the first '/files' which is added automatically by the shell.
 		// For this test we need to check that the PrimaryBarElement navigates to the last valid location of Files
 		// but the test environment works without the '/files' and does not add automatically
-		const TestComponent = (): JSX.Element => {
+		const TestComponent = (): React.JSX.Element => {
 			const location = useLocation();
 			return (
 				<>

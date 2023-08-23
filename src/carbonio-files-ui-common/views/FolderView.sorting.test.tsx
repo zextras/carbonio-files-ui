@@ -12,15 +12,10 @@ import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
-import { populateFile, populateFolder } from '../mocks/mockUtils';
-import { NodeSort } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions
-} from '../utils/mockUtils';
-import { setup, screen, within } from '../utils/testUtils';
+import { populateFile, populateFolder, populateNodePage } from '../mocks/mockUtils';
+import { FolderResolvers, NodeSort, Resolvers } from '../types/graphql/resolvers-types';
+import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
+import { screen, setup, within } from '../utils/testUtils';
 
 jest.mock('../../hooks/useCreateOptions', () => ({
 	useCreateOptions: (): CreateOptionsContent => ({
@@ -30,7 +25,7 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 }));
 
 jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -57,15 +52,24 @@ describe('Sorting', () => {
 		currentFolder2.children.nodes.push(file2);
 		currentFolder2.children.nodes.push(file1);
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(
-				getChildrenVariables(currentFolder2.id, undefined, NodeSort.NameDesc),
-				currentFolder2
-			)
-		];
+		const childrenResolver: FolderResolvers['children'] = (parent, args) => {
+			if (args.sort === NodeSort.NameDesc) {
+				return populateNodePage([file2, file1]);
+			}
+			return populateNodePage([file1, file2]);
+		};
+		const mocks = {
+			Folder: {
+				children: childrenResolver
+			},
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],

@@ -18,7 +18,8 @@ import {
 	populateUploadItem
 } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
-import { mockGetBaseNode } from '../../utils/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockGetNode } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
 
@@ -55,8 +56,11 @@ describe('Upload List Item Wrapper', () => {
 			parentNodeId: destinationFolder.id
 		});
 		const mockSelectId = jest.fn();
-
-		const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { findByTextWithMarkup } = setup(
 			<UploadListItemWrapper
@@ -91,7 +95,7 @@ describe('Upload List Item Wrapper', () => {
 				isSelectionModeActive={false}
 				selectId={mockSelectId}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		expect(screen.getByText(/queued/i)).toBeVisible();
@@ -110,7 +114,7 @@ describe('Upload List Item Wrapper', () => {
 				isSelectionModeActive={false}
 				selectId={selectFn}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		expect(screen.getByText(/45\s*%/)).toBeVisible();
@@ -132,7 +136,7 @@ describe('Upload List Item Wrapper', () => {
 				isSelectionModeActive={false}
 				selectId={selectFn}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		expect(screen.getByText(/3\/10/)).toBeVisible();

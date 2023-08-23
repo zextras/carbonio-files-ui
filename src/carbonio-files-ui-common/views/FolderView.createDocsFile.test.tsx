@@ -34,15 +34,8 @@ import {
 	populateNodes,
 	sortNodes
 } from '../mocks/mockUtils';
-import { Folder } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	getNodeVariables,
-	mockGetChildren,
-	mockGetPath,
-	mockGetNode,
-	mockGetPermissions
-} from '../utils/mockUtils';
+import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
+import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
 import { setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 
 let mockedCreateOptions: CreateOptionsContent['createOptions'];
@@ -62,7 +55,7 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 	})
 }));
 
-const MockDisplayer = (props: DisplayerProps): JSX.Element => (
+const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
 	<div>
 		{props.translationKey}:{props.icons}
 		<button
@@ -88,7 +81,7 @@ const MockDisplayer = (props: DisplayerProps): JSX.Element => (
 );
 
 jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => <MockDisplayer {...props} />
+	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
 describe('Create docs file', () => {
@@ -112,12 +105,16 @@ describe('Create docs file', () => {
 
 		const newName = node2.name;
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetNode(getNodeVariables(node2.id), node2)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node2]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		server.use(
 			rest.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, (req, res, ctx) =>
@@ -167,12 +164,16 @@ describe('Create docs file', () => {
 		// add node 1 and 3 as children, node 2 is the new file
 		currentFolder.children.nodes.push(node1, node3);
 
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetNode(getNodeVariables(node2.id), node2)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node2]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		server.use(
 			rest.post(DOCS_ENDPOINT + CREATE_FILE_PATH, (req, res, ctx) =>
@@ -240,23 +241,28 @@ describe('Create docs file', () => {
 		// --> node1 should be put before node2 in the unordered
 		// 4) trigger loadMore and load node1, node2, node3 with this order
 		// --> list should be updated with the correct order
-
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			// fetchMore request, cursor is still last ordered node (last child of initial folder)
-			mockGetChildren(
-				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-				{
-					...currentFolder,
-					// second page contains the new created nodes and node3, not loaded before
-					children: populateNodePage([node1, node2, node3])
-				} as Folder
-			),
-			mockGetNode(getNodeVariables(node1.id), node1),
-			mockGetNode(getNodeVariables(node2.id), node2)
-		];
+		const childrenResolver: FolderResolvers['children'] = (parent, args) => {
+			if (parent.id === currentFolder.id) {
+				if (args.page_token === 'page2') {
+					return populateNodePage([node1, node2, node3]);
+				}
+				return populateNodePage(currentFolder.children.nodes, NODES_LOAD_LIMIT, 'page2');
+			}
+			return parent.children;
+		};
+		const mocks = {
+			Folder: {
+				children: childrenResolver
+			},
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node1, node2]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		server.use(
 			rest.post<CreateDocsFileRequestBody, never, CreateDocsFileResponse>(

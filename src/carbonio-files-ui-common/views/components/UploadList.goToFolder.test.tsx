@@ -14,7 +14,8 @@ import { uploadVar } from '../../apollo/uploadVar';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateLocalRoot, populateUploadItems } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
-import { mockGetBaseNode } from '../../utils/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockGetNode } from '../../utils/resolverMocks';
 import { selectNodes, setup } from '../../utils/testUtils';
 
 describe('Upload List', () => {
@@ -33,7 +34,11 @@ describe('Upload List', () => {
 
 				uploadVar(uploadMap);
 
-				const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user, getByRoleWithIcon } = setup(<UploadList />, { mocks });
 
@@ -61,10 +66,11 @@ describe('Upload List', () => {
 
 				uploadVar(uploadMap);
 
-				const mocks = [
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-					mockGetBaseNode({ node_id: differentParent.id }, differentParent)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot, differentParent] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user, queryByRoleWithIcon } = setup(<UploadList />, { mocks });
 
@@ -89,9 +95,13 @@ describe('Upload List', () => {
 
 				uploadVar(uploadMap);
 
-				const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
-				const TestComponent = (): JSX.Element => {
+				const TestComponent = (): React.JSX.Element => {
 					const location = useLocation();
 					return (
 						<>

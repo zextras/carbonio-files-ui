@@ -18,7 +18,10 @@ interface InternalLinkShortcutProps {
 	type: Node['type'];
 }
 
-export const InternalLinkShortcut = ({ id, type }: InternalLinkShortcutProps): JSX.Element => {
+export const InternalLinkShortcut = ({
+	id,
+	type
+}: InternalLinkShortcutProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 

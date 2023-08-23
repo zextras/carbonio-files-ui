@@ -27,8 +27,9 @@ import {
 	populateParents,
 	populateUser
 } from '../../mocks/mockUtils';
-import { Node } from '../../types/graphql/types';
-import { mockGetPath, mockMoveNodes } from '../../utils/mockUtils';
+import { Node } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockGetPath, mockMoveNodes } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../utils/testUtils';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
@@ -55,7 +56,7 @@ describe('Header Breadcrumbs', () => {
 					<HeaderBreadcrumbs crumbs={crumbs} />
 					<div draggable>draggable element mock</div>
 				</>,
-				{ mocks: [] }
+				{ mocks: {} }
 			);
 			const destinationCrumbItem = screen.getByText('Filter');
 			expect(destinationCrumbItem).toBeVisible();
@@ -94,16 +95,14 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, path),
-				mockMoveNodes(
-					{
-						destination_id: path[0].id,
-						node_ids: map(movingNodes, (node) => node.id)
-					},
-					map(movingNodes, (node) => ({ ...node, parent: path[0] }))
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] })))
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
@@ -174,19 +173,18 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const moveMutationFn = jest.fn();
-
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, path),
-				mockMoveNodes(
-					{
-						destination_id: currentFolder.id,
-						node_ids: map(movingNodes, (node) => node.id)
-					},
-					map(movingNodes, (node) => ({ ...node, parent: currentFolder })),
-					moveMutationFn
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				},
+				Mutation: {
+					moveNodes: jest.fn(
+						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: currentFolder }))) as (
+							...args: unknown[]
+						) => Node[]
+					)
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
@@ -237,7 +235,7 @@ describe('Header Breadcrumbs', () => {
 						setTimeout(resolve, 1);
 					})
 			);
-			expect(moveMutationFn).not.toHaveBeenCalled();
+			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 
 		test('Long hover on a crumb while dragging trigger navigation', async () => {
@@ -260,7 +258,11 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, [parent, currentFolder])];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([parent, currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
@@ -319,7 +321,11 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, [parent, currentFolder])];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([parent, currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
@@ -378,19 +384,18 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const moveMutationFn = jest.fn();
-
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, path),
-				mockMoveNodes(
-					{
-						destination_id: path[0].id,
-						node_ids: map(movingNodes, (node) => node.id)
-					},
-					map(movingNodes, (node) => ({ ...node, parent: path[0] })),
-					moveMutationFn
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				},
+				Mutation: {
+					moveNodes: jest.fn(
+						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] }))) as (
+							...args: unknown[]
+						) => Node[]
+					)
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
@@ -438,7 +443,7 @@ describe('Header Breadcrumbs', () => {
 			});
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
 			// wait a tick to allow mutation to eventually be executed
-			expect(moveMutationFn).not.toHaveBeenCalled();
+			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 
 		test('Drag on cta load full path', async () => {
@@ -461,7 +466,11 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, path)];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup } = setup(
 				<>
@@ -513,7 +522,11 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [mockGetPath({ node_id: currentFolder.id }, path)];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
@@ -605,16 +618,14 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, path),
-				mockMoveNodes(
-					{
-						destination_id: path[0].id,
-						node_ids: map(movingNodes, (node) => node.id)
-					},
-					map(movingNodes, (node) => ({ ...node, parent: path[0] }))
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] })))
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
@@ -700,19 +711,18 @@ describe('Header Breadcrumbs', () => {
 				mockedNode.owner = owner;
 			});
 
-			const moveMutationFn = jest.fn();
-
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, path),
-				mockMoveNodes(
-					{
-						destination_id: path[0].id,
-						node_ids: map(movingNodes, (node) => node.id)
-					},
-					map(movingNodes, (node) => ({ ...node, parent: path[0] })),
-					moveMutationFn
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath(path)
+				},
+				Mutation: {
+					moveNodes: jest.fn(
+						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] }))) as (
+							...args: unknown[]
+						) => Node[]
+					)
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
 			const { getByTextWithMarkup, user } = setup(
 				<>
@@ -775,7 +785,7 @@ describe('Header Breadcrumbs', () => {
 				'background-color': COLORS.dropzone.disabled
 			});
 			// wait a tick to allow mutation to eventually be executed
-			expect(moveMutationFn).not.toHaveBeenCalled();
+			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 	});
 });

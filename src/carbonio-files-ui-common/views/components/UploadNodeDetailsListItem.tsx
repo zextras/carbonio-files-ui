@@ -28,7 +28,9 @@ interface UploadNodeDetailsListItemProps {
 	id: string;
 }
 
-export const UploadNodeDetailsListItem = ({ id }: UploadNodeDetailsListItemProps): JSX.Element => {
+export const UploadNodeDetailsListItem = ({
+	id
+}: UploadNodeDetailsListItemProps): React.JSX.Element => {
 	const { data } = useQuery(GetUploadItemDocument, { variables: { id } });
 
 	const item = useMemo<UploadItem | undefined>(() => data?.getUploadItem || undefined, [data]);

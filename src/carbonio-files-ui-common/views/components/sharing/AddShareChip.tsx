@@ -178,7 +178,7 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, Omit<ShareChip, 'la
 				}
 				ref={ref}
 			>
-				{(): JSX.Element => (
+				{(): React.JSX.Element => (
 					<NewShareChipPopoverContainer
 						activeRow={rowRoleToIdxMap[value.role]}
 						disabledRows={disabledRows}
