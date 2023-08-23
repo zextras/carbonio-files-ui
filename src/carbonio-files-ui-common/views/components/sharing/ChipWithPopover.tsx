@@ -29,7 +29,7 @@ export interface ChipWithPopoverProps extends ChipProps {
 	openPopoverOnClick?: boolean;
 	popoverOpen?: boolean;
 	onClick?: (event: React.SyntheticEvent) => void;
-	children: (closePopover: () => void) => JSX.Element;
+	children: (closePopover: () => void) => React.JSX.Element;
 	onValueChange?: (newState: boolean) => void;
 }
 

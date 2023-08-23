@@ -40,7 +40,7 @@ const LazySearchView = lazy(
 	() => import(/* webpackChunkName: "SearchView" */ './views/SearchView')
 );
 
-const AppView = (): JSX.Element => (
+const AppView = (): React.JSX.Element => (
 	<Suspense fallback={<Spinner />}>
 		<AppErrorCatcher>
 			<LazyAppView />
@@ -48,7 +48,7 @@ const AppView = (): JSX.Element => (
 	</Suspense>
 );
 
-const SidebarView = (props: SecondaryBarComponentProps): JSX.Element => (
+const SidebarView = (props: SecondaryBarComponentProps): React.JSX.Element => (
 	<Suspense fallback={<Spinner />}>
 		<AppErrorCatcher>
 			<LazySidebarView {...props} />
@@ -56,7 +56,7 @@ const SidebarView = (props: SecondaryBarComponentProps): JSX.Element => (
 	</Suspense>
 );
 
-const SearchView = (props: SearchViewProps): JSX.Element => (
+const SearchView = (props: SearchViewProps): React.JSX.Element => (
 	<Suspense fallback={<Spinner />}>
 		<AppErrorCatcher>
 			<LazySearchView {...props} />
@@ -64,7 +64,7 @@ const SearchView = (props: SearchViewProps): JSX.Element => (
 	</Suspense>
 );
 
-export default function App(): JSX.Element {
+export default function App(): React.JSX.Element {
 	const [t] = useTranslation();
 
 	const beforeunloadCallback = useCallback((e) => {

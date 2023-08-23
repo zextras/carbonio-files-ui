@@ -30,7 +30,7 @@ export const DropdownListItemContent = React.forwardRef<HTMLDivElement, ListItem
 			itemPaddingBetween = 'small'
 		},
 		ref
-	): JSX.Element {
+	): React.JSX.Element {
 		return (
 			<Container orientation="horizontal" mainAlignment="flex-start" ref={ref}>
 				{icon && (

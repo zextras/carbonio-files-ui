@@ -21,7 +21,7 @@ interface ShareChipLabelProps {
 export const ShareChipLabel = ({
 	contact,
 	showTooltip = true
-}: ShareChipLabelProps): JSX.Element => {
+}: ShareChipLabelProps): React.JSX.Element => {
 	const { me } = useUserInfo();
 	const [t] = useTranslation();
 

@@ -18,12 +18,12 @@ describe('Dropzone', () => {
 			<>
 				<div data-testid="dropzone1">
 					<Dropzone effect="move" types={['test']}>
-						{(): JSX.Element => <div>Dropzone 1</div>}
+						{(): React.JSX.Element => <div>Dropzone 1</div>}
 					</Dropzone>
 				</div>
 				<div data-testid="dropzone2">
 					<Dropzone effect="move" types={['test']}>
-						{(): JSX.Element => <div>Dropzone 2</div>}
+						{(): React.JSX.Element => <div>Dropzone 2</div>}
 					</Dropzone>
 				</div>
 			</>
@@ -53,17 +53,17 @@ describe('Dropzone', () => {
 		setup(
 			<div data-testid="dropzone1">
 				<Dropzone effect="move" types={['type1']}>
-					{(): JSX.Element => (
+					{(): React.JSX.Element => (
 						<div>
 							<div>Dropzone 1</div>
 							<div data-testid="dropzone2">
 								<Dropzone effect="move" types={['type1']}>
-									{(): JSX.Element => <div>Dropzone 2</div>}
+									{(): React.JSX.Element => <div>Dropzone 2</div>}
 								</Dropzone>
 							</div>
 							<div data-testid="dropzone3">
 								<Dropzone effect="move" types={['type2']}>
-									{(): JSX.Element => <div>Dropzone 3</div>}
+									{(): React.JSX.Element => <div>Dropzone 3</div>}
 								</Dropzone>
 							</div>
 						</div>
