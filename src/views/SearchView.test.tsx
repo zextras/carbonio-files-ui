@@ -42,7 +42,7 @@ const useQuery: SearchViewProps['useQuery'] = () => {
 describe('Search view', () => {
 	describe('Advanced search', () => {
 		test('When user select flagged, flagged param is set', async () => {
-			const ResultsHeader = (): JSX.Element => <p>Results header</p>;
+			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
 			const useDisableSearch = jest.fn();
 			const mockedFindNodes = jest.fn(handleFindNodesRequest);
 			server.use(
@@ -95,7 +95,7 @@ describe('Search view', () => {
 		});
 
 		test('When user select shared, shared_by_me param is set', async () => {
-			const ResultsHeader = (): JSX.Element => <p>Results header</p>;
+			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
 			const useDisableSearch = jest.fn();
 			const mockedFindNodes = jest.fn(handleFindNodesRequest);
 			server.use(
@@ -148,7 +148,7 @@ describe('Search view', () => {
 		});
 
 		test('When user choose a folder and the sub-folders param, folder_id and cascade are set', async () => {
-			const ResultsHeader = (): JSX.Element => <p>Results header</p>;
+			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
 			const useDisableSearch = jest.fn();
 			const mockedFindNodes = jest.fn(handleFindNodesRequest);
 			server.use(
@@ -216,7 +216,7 @@ describe('Search view', () => {
 		});
 
 		test('When user choose a folder but not the sub-folders param, folder_id is set with selected folder id and cascade is set to false', async () => {
-			const ResultsHeader = (): JSX.Element => <p>Results header</p>;
+			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
 			const useDisableSearch = jest.fn();
 			const mockedFindNodes = jest.fn(handleFindNodesRequest);
 			server.use(
@@ -283,7 +283,7 @@ describe('Search view', () => {
 		});
 
 		test('When user types some keyword, keywords param is set with new keywords', async () => {
-			const ResultsHeader = (): JSX.Element => <p>Results header</p>;
+			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
 			const useDisableSearch = jest.fn();
 			const mockedFindNodes = jest.fn(handleFindNodesRequest);
 			server.use(
@@ -346,7 +346,7 @@ describe('Search view', () => {
 		});
 
 		test('All advanced filters together', async () => {
-			const ResultsHeader = (): JSX.Element => <p>Results header</p>;
+			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
 			const useDisableSearch = jest.fn();
 			const mockedFindNodes = jest.fn(handleFindNodesRequest);
 			server.use(
@@ -453,7 +453,7 @@ describe('Search view', () => {
 		});
 
 		test('search action run a search and results are shown in the list', async () => {
-			const ResultsHeader = (): JSX.Element => <p>Results header</p>;
+			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
 			const useDisableSearch = jest.fn();
 			const nodes = populateNodes(10);
 			server.use(
@@ -494,7 +494,7 @@ describe('Search view', () => {
 		});
 
 		test('Close modal action does not run a search', async () => {
-			const ResultsHeader = (): JSX.Element => <p>Results header</p>;
+			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
 			const useDisableSearch = jest.fn();
 			const mockedFindNodes = jest.fn(handleFindNodesRequest);
 			server.use(

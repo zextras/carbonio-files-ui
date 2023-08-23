@@ -85,7 +85,7 @@ interface ListProps {
 	mainList: boolean;
 	emptyListMessage: string;
 	canUpload?: boolean;
-	fillerWithActions?: JSX.Element;
+	fillerWithActions?: React.JSX.Element;
 }
 
 export const List: React.VFC<ListProps> = ({
@@ -743,7 +743,7 @@ export const List: React.VFC<ListProps> = ({
 				message={dropzoneModal?.message}
 				icons={dropzoneModal?.icons}
 			>
-				{(): JSX.Element => (
+				{(): React.JSX.Element => (
 					<Container background={'gray6'} mainAlignment="flex-start">
 						{nodes.length > 0 && (
 							<NodeAvatarIconContext.Provider value={nodeAvatarIconContextValue}>

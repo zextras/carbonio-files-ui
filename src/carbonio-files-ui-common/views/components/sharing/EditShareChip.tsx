@@ -302,7 +302,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 				onValueChange={updatePermissionsPopover}
 				maxWidth={SHARE_CHIP_MAX_WIDTH}
 			>
-				{(closePopover: () => void): JSX.Element => (
+				{(closePopover: () => void): React.JSX.Element => (
 					<EditShareChipPopoverContainer
 						activeRow={activeRow}
 						disabledRows={disabledRows}

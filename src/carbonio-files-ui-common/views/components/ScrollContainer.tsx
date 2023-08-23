@@ -21,7 +21,7 @@ interface ScrollContainerProps {
 	hasMore?: boolean;
 	loading?: boolean;
 	children: React.ReactNode;
-	fillerWithActions?: JSX.Element;
+	fillerWithActions?: React.JSX.Element;
 }
 
 export const ScrollContainer = React.forwardRef<HTMLDivElement, ScrollContainerProps>(

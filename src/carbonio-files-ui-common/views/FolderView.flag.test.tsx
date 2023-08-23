@@ -21,7 +21,7 @@ import { setup, selectNodes, screen, within } from '../utils/testUtils';
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
 		</div>
