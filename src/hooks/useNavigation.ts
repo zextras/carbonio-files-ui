@@ -6,7 +6,11 @@
 
 import { useCallback } from 'react';
 
-import { goBackHistory, pushHistory, replaceHistory } from '@zextras/carbonio-shell-ui';
+import {
+	useGoBackHistoryCallback,
+	usePushHistoryCallback,
+	useReplaceHistoryCallback
+} from '@zextras/carbonio-shell-ui';
 
 import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
 
@@ -17,12 +21,19 @@ export type UseNavigationHook = () => {
 };
 
 export const useNavigation: UseNavigationHook = () => {
-	const navigateToFolder: (id: string) => void = useCallback((id) => {
-		pushHistory({
-			route: FILES_ROUTE,
-			path: `/?folder=${id}`
-		});
-	}, []);
+	const pushHistory = usePushHistoryCallback();
+	const replaceHistory = useReplaceHistoryCallback();
+	const goBackHistory = useGoBackHistoryCallback();
+
+	const navigateToFolder: (id: string) => void = useCallback(
+		(id) => {
+			pushHistory({
+				route: FILES_ROUTE,
+				path: `/?folder=${id}`
+			});
+		},
+		[pushHistory]
+	);
 
 	const navigateTo: (location: string, replace?: boolean) => void = useCallback(
 		(location, replace = false) => {
@@ -36,12 +47,12 @@ export const useNavigation: UseNavigationHook = () => {
 						path: location
 				  });
 		},
-		[]
+		[pushHistory, replaceHistory]
 	);
 
 	const navigateBack: () => void = useCallback(() => {
 		goBackHistory();
-	}, []);
+	}, [goBackHistory]);
 
 	return {
 		navigateToFolder,

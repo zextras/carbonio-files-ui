@@ -11,7 +11,7 @@ import React from 'react';
 import 'jest-styled-components';
 import { ReactiveVar } from '@apollo/client';
 import { act, screen, waitFor, within } from '@testing-library/react';
-import { forEach, size } from 'lodash';
+import { forEach, noop, size } from 'lodash';
 import { find as findStyled } from 'styled-components/test-utils';
 
 import { NodesSelectionModalContent } from './NodesSelectionModalContent';
@@ -44,18 +44,13 @@ import {
 import { buildBreadCrumbRegExp, generateError, setup } from '../../utils/testUtils';
 import { isFile, isFolder } from '../../utils/utils';
 
-const confirmAction = jest.fn();
-const closeAction = jest.fn();
-
-const resetToDefault = jest.fn<
-	void,
-	[
-		{
-			maxSelection: number | undefined;
-			canSelectOpenedFolder: boolean | undefined;
-		}
-	]
->(({ maxSelection, canSelectOpenedFolder }) => {
+const resetToDefault = ({
+	maxSelection,
+	canSelectOpenedFolder
+}: {
+	maxSelection: number | undefined;
+	canSelectOpenedFolder: boolean | undefined;
+}): void => {
 	// clone implementation of the function contained in the click callback of useNodesSelectionModalContent
 	const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>;
 	if (maxSelection === 1 || size(getDestinationVar().currentValue) === 0) {
@@ -65,13 +60,7 @@ const resetToDefault = jest.fn<
 			destinationVar({ currentValue: undefined, defaultValue: undefined });
 		}
 	}
-});
-
-beforeEach(() => {
-	confirmAction.mockClear();
-	closeAction.mockClear();
-	resetToDefault.mockClear();
-});
+};
 
 describe('Nodes Selection Modal Content', () => {
 	test('title and description are visible if set', async () => {
@@ -87,10 +76,10 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			>
 				<NodesSelectionModalContent
-					confirmAction={confirmAction}
+					confirmAction={noop}
 					confirmLabel="Confirm label"
 					title="This is the title"
-					closeAction={closeAction}
+					closeAction={noop}
 					description="This is the description"
 				/>
 			</div>,
@@ -134,6 +123,7 @@ describe('Nodes Selection Modal Content', () => {
 		} satisfies Partial<Resolvers>;
 
 		const isValidSelection = jest.fn().mockReturnValue(() => true);
+		const confirmAction = jest.fn();
 
 		const { findByTextWithMarkup, user } = setup(
 			<div
@@ -145,7 +135,7 @@ describe('Nodes Selection Modal Content', () => {
 					confirmAction={confirmAction}
 					confirmLabel="Select"
 					title="Select nodes"
-					closeAction={closeAction}
+					closeAction={noop}
 					canSelectOpenedFolder
 					maxSelection={undefined}
 					isValidSelection={isValidSelection}
@@ -208,6 +198,7 @@ describe('Nodes Selection Modal Content', () => {
 		const isValidSelection = jest
 			.fn()
 			.mockImplementation(({ id }: { id: string }) => id !== localRoot.id);
+		const confirmAction = jest.fn();
 
 		const { findByTextWithMarkup, user } = setup(
 			<div
@@ -219,7 +210,7 @@ describe('Nodes Selection Modal Content', () => {
 					confirmAction={confirmAction}
 					confirmLabel="Select"
 					title="Select nodes"
-					closeAction={closeAction}
+					closeAction={noop}
 					canSelectOpenedFolder
 					maxSelection={undefined}
 					isValidSelection={isValidSelection}
@@ -279,6 +270,7 @@ describe('Nodes Selection Modal Content', () => {
 		} satisfies Partial<Resolvers>;
 
 		const isValidSelection = jest.fn().mockReturnValue(true);
+		const confirmAction = jest.fn();
 
 		const { findByTextWithMarkup, user } = setup(
 			<div
@@ -290,7 +282,7 @@ describe('Nodes Selection Modal Content', () => {
 					confirmAction={confirmAction}
 					confirmLabel="Select"
 					title="Select nodes"
-					closeAction={closeAction}
+					closeAction={noop}
 					canSelectOpenedFolder={false}
 					maxSelection={undefined}
 					isValidSelection={isValidSelection}
@@ -352,10 +344,10 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			>
 				<NodesSelectionModalContent
-					confirmAction={confirmAction}
+					confirmAction={noop}
 					confirmLabel="Select"
 					title="Select nodes"
-					closeAction={closeAction}
+					closeAction={noop}
 					canSelectOpenedFolder={false}
 					maxSelection={undefined}
 					isValidSelection={isValidSelection}
@@ -417,10 +409,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Confirm"
 						title="This is the title"
-						closeAction={closeAction}
+						closeAction={noop}
 						description="This is the description"
 						maxSelection={1}
 					/>
@@ -448,6 +440,7 @@ describe('Nodes Selection Modal Content', () => {
 
 		describe('without criteria to select nodes', () => {
 			test('show roots by default. confirm button is disabled', async () => {
+				const confirmAction = jest.fn();
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList()
@@ -464,7 +457,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -501,6 +494,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -523,7 +518,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -569,6 +564,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -591,7 +588,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -637,6 +634,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -657,7 +656,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder
 							maxSelection={1}
 						/>
@@ -713,6 +712,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -733,7 +734,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={1}
 						/>
@@ -781,6 +782,8 @@ describe('Nodes Selection Modal Content', () => {
 			test('local root item is valid, other roots are not valid', async () => {
 				const localRoot = populateFolder(2, ROOTS.LOCAL_ROOT);
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -798,7 +801,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -846,6 +849,8 @@ describe('Nodes Selection Modal Content', () => {
 				localRoot.children.nodes.push(folder);
 				folder.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -865,7 +870,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder
 							maxSelection={1}
 						/>
@@ -965,6 +970,8 @@ describe('Nodes Selection Modal Content', () => {
 				localRoot.children.nodes.push(folder);
 				folder.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -987,7 +994,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -1058,6 +1065,8 @@ describe('Nodes Selection Modal Content', () => {
 			test('shared with me root is navigable', async () => {
 				const sharedWithMeFilter = populateNodes(4);
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -1075,7 +1084,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -1119,6 +1128,8 @@ describe('Nodes Selection Modal Content', () => {
 				const folder = populateFolder(3);
 				filter.push(folder);
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -1136,7 +1147,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={1}
 						/>
 					</div>,
@@ -1181,6 +1192,7 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, '__typename'>) => isFile(node));
+				const confirmAction = jest.fn();
 
 				const mocks = {
 					Query: {
@@ -1202,7 +1214,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Only files"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={1}
 							canSelectOpenedFolder
@@ -1261,6 +1273,8 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, '__typename'>) => isFolder(node));
+				const confirmAction = jest.fn();
+				const resetToDefaultFn = jest.fn(resetToDefault);
 
 				const mocks = {
 					Query: {
@@ -1277,14 +1291,14 @@ describe('Nodes Selection Modal Content', () => {
 				const { user, findByTextWithMarkup } = setup(
 					<div
 						onClick={(): void =>
-							resetToDefault({ maxSelection: 1, canSelectOpenedFolder: undefined })
+							resetToDefaultFn({ maxSelection: 1, canSelectOpenedFolder: undefined })
 						}
 					>
 						<NodesSelectionModalContent
 							title="Only folders"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={1}
 						/>
@@ -1318,14 +1332,14 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button is disabled because local root is not selectable by param
 				expect(confirmButton).toBeDisabled();
 				// reset calls
-				resetToDefault.mockClear();
+				resetToDefaultFn.mockClear();
 				// click on folder
 				await user.click(screen.getByText(folder.name));
 				// confirm button becomes enabled
 				expect(confirmButton).toBeEnabled();
 				// click on file
 				await user.click(screen.getByText(file.name));
-				expect(resetToDefault).toHaveBeenCalledTimes(1);
+				expect(resetToDefaultFn).toHaveBeenCalledTimes(1);
 				// confirm button becomes disabled
 				expect(confirmButton).toBeDisabled();
 				// click again on folder
@@ -1354,6 +1368,7 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, 'name'>) => node.name.startsWith('valid'));
+				const confirmAction = jest.fn();
 
 				const mocks = {
 					Query: {
@@ -1377,7 +1392,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Custom selector"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={1}
 						/>
@@ -1469,6 +1484,8 @@ describe('Nodes Selection Modal Content', () => {
 			file.parent = localRoot;
 			folder.parent = localRoot;
 
+			const confirmAction = jest.fn();
+
 			const mocks = {
 				Query: {
 					getRootsList: mockGetRootsList(),
@@ -1491,7 +1508,7 @@ describe('Nodes Selection Modal Content', () => {
 						confirmAction={confirmAction}
 						confirmLabel="Select"
 						title="Multiple selection"
-						closeAction={closeAction}
+						closeAction={noop}
 						maxSelection={undefined}
 					/>
 				</div>,
@@ -1540,6 +1557,8 @@ describe('Nodes Selection Modal Content', () => {
 				mockedNode.parent = localRoot;
 			});
 
+			const confirmAction = jest.fn();
+
 			const mocks = {
 				Query: {
 					getRootsList: mockGetRootsList(),
@@ -1562,7 +1581,7 @@ describe('Nodes Selection Modal Content', () => {
 						confirmAction={confirmAction}
 						confirmLabel="Select"
 						title="Multiple selection"
-						closeAction={closeAction}
+						closeAction={noop}
 						maxSelection={3}
 					/>
 				</div>,
@@ -1619,6 +1638,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -1641,7 +1662,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={undefined}
 						/>
 					</div>,
@@ -1682,6 +1703,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -1704,7 +1727,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							maxSelection={undefined}
 						/>
 					</div>,
@@ -1750,6 +1773,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -1772,7 +1797,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder
 							maxSelection={undefined}
 						/>
@@ -1828,6 +1853,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -1850,7 +1877,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={undefined}
 						/>
@@ -1904,6 +1931,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -1926,7 +1955,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={undefined}
 						/>
@@ -1999,6 +2028,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -2021,7 +2052,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={undefined}
 						/>
@@ -2093,6 +2124,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -2115,7 +2148,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder={false}
 							maxSelection={undefined}
 						/>
@@ -2178,6 +2211,8 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
+				const confirmAction = jest.fn();
+
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList(),
@@ -2200,7 +2235,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={closeAction}
+							closeAction={noop}
 							canSelectOpenedFolder
 							maxSelection={undefined}
 						/>
@@ -2269,6 +2304,7 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, '__typename'>) => isFile(node));
+				const confirmAction = jest.fn();
 
 				const mocks = {
 					Query: {
@@ -2292,7 +2328,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Only files"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={undefined}
 							canSelectOpenedFolder
@@ -2380,6 +2416,7 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, '__typename'>) => isFolder(node));
+				const confirmAction = jest.fn();
 
 				const mocks = {
 					Query: {
@@ -2403,7 +2440,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Only folders"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={undefined}
 							canSelectOpenedFolder
@@ -2508,6 +2545,7 @@ describe('Nodes Selection Modal Content', () => {
 				const isValidSelection = jest
 					.fn()
 					.mockImplementation((node: Pick<Node, 'name'>) => node.name.startsWith('valid'));
+				const confirmAction = jest.fn();
 
 				const mocks = {
 					Query: {
@@ -2531,7 +2569,7 @@ describe('Nodes Selection Modal Content', () => {
 							title="Custom selector"
 							confirmAction={confirmAction}
 							confirmLabel="Confirm"
-							closeAction={closeAction}
+							closeAction={noop}
 							isValidSelection={isValidSelection}
 							maxSelection={undefined}
 						/>
@@ -2684,10 +2722,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2741,10 +2779,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2802,10 +2840,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2868,10 +2906,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -2948,10 +2986,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -3032,10 +3070,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -3109,6 +3147,7 @@ describe('Nodes Selection Modal Content', () => {
 			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
+			const confirmAction = jest.fn();
 
 			const { findByTextWithMarkup, user } = setup(
 				<div
@@ -3120,7 +3159,7 @@ describe('Nodes Selection Modal Content', () => {
 						confirmAction={confirmAction}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -3200,10 +3239,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}
@@ -3272,7 +3311,8 @@ describe('Nodes Selection Modal Content', () => {
 			} satisfies Partial<Resolvers>;
 
 			const isValidSelection = jest.fn().mockReturnValue(true);
-
+			const confirmAction = jest.fn();
+			const closeAction = jest.fn();
 			const { user } = setup(
 				<div
 					onClick={(): void =>
@@ -3341,10 +3381,10 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				>
 					<NodesSelectionModalContent
-						confirmAction={confirmAction}
+						confirmAction={noop}
 						confirmLabel="Select"
 						title="Select nodes"
-						closeAction={closeAction}
+						closeAction={noop}
 						canSelectOpenedFolder={false}
 						maxSelection={undefined}
 						isValidSelection={isValidSelection}

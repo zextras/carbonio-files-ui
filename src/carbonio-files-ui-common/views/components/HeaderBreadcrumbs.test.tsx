@@ -34,7 +34,7 @@ import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../util
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
 
-jest.mock('../../../hooks/useNavigation', () => ({
+jest.mock<typeof import('../../../hooks/useNavigation')>('../../../hooks/useNavigation', () => ({
 	useNavigation: (): ReturnType<UseNavigationHook> => mockedUseNavigationHook
 }));
 

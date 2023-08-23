@@ -11,7 +11,7 @@ import { map } from 'lodash';
 
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode, populateParents } from '../mocks/mockUtils';
 import { Node } from '../types/common';
@@ -19,20 +19,18 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
-let mockedCreateOptions: CreateOptionsContent['createOptions'];
+let mockedCreateOptions: CreateOption[];
 
 beforeEach(() => {
 	mockedCreateOptions = [];
 });
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest
-			.fn()
-			.mockImplementation((...options: Parameters<CreateOptionsContent['setCreateOptions']>[0]) => {
-				mockedCreateOptions = options;
-			}),
-		removeCreateOptions: jest.fn()
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
+	useCreateOptions: (): CreateOptionsReturnType => ({
+		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+			mockedCreateOptions = options;
+		},
+		removeCreateOptions: () => undefined
 	})
 }));
 
