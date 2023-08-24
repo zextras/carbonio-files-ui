@@ -291,13 +291,13 @@
                 "popover": {
                     "role": {
                         "editor": "Editor",
-                        "editorDescription": "It will be able to view and edit the item or folder",
+                        "editorDescription": "It will be able to view and edit the item",
                         "viewer": "Viewer",
-                        "viewerDescription": "It will only be able to view or download the item or folder"
+                        "viewerDescription": "It will only be able to view or download the item"
                     },
                     "save": "Save",
                     "sharingAllowed": "Sharing allowed",
-                    "sharingAllowedDescription": "It will be able to manage shares of the item or folder"
+                    "sharingAllowedDescription": "It will be able to manage shares of the item"
                 },
                 "tooltip": {
                     "edit": {

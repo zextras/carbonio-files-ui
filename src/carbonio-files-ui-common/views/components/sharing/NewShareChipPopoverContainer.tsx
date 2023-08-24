@@ -82,7 +82,7 @@ export const NewShareChipPopoverContainer: React.FC<NewShareChipPopoverContainer
 					<Text color="secondary" overflow="break-word" size="small">
 						{t(
 							'displayer.share.chip.popover.role.viewerDescription',
-							'It will only be able to view or download the item or folder'
+							'It will only be able to view or download the item'
 						)}
 					</Text>
 				</Container>
@@ -115,7 +115,7 @@ export const NewShareChipPopoverContainer: React.FC<NewShareChipPopoverContainer
 					<Text color="secondary" overflow="break-word" size="small">
 						{t(
 							'displayer.share.chip.popover.role.editorDescription',
-							'It will be able to view and edit the item or folder'
+							'It will be able to view and edit the item'
 						)}
 					</Text>
 				</Container>
@@ -148,7 +148,7 @@ export const NewShareChipPopoverContainer: React.FC<NewShareChipPopoverContainer
 					<Text color="secondary" overflow="break-word" size="small">
 						{t(
 							'displayer.share.chip.popover.sharingAllowedDescription',
-							'It will be able to manage shares of the item or folder'
+							'It will be able to manage shares of the item'
 						)}
 					</Text>
 				</Container>

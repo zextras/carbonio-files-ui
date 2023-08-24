@@ -152,15 +152,11 @@ describe('Add Share Chip', () => {
 		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 
 		expect(screen.getByText('Viewer')).toBeVisible();
-		expect(
-			screen.getByText('It will only be able to view or download the item or folder')
-		).toBeVisible();
+		expect(screen.getByText('It will only be able to view or download the item')).toBeVisible();
 		expect(screen.getByText('Editor')).toBeVisible();
-		expect(screen.getByText('It will be able to view and edit the item or folder')).toBeVisible();
+		expect(screen.getByText('It will be able to view and edit the item')).toBeVisible();
 		expect(screen.getByText('Sharing allowed')).toBeVisible();
-		expect(
-			screen.getByText('It will be able to manage shares of the item or folder')
-		).toBeVisible();
+		expect(screen.getByText('It will be able to manage shares of the item')).toBeVisible();
 	});
 
 	describe('Within popover', () => {
