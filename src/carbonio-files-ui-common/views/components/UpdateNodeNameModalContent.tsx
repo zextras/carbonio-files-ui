@@ -13,7 +13,8 @@ import {
 	Input,
 	ModalBody,
 	ModalFooter,
-	ModalHeader
+	ModalHeader,
+	Text
 } from '@zextras/carbonio-design-system';
 import { trim } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +27,7 @@ import { decodeError } from '../../utils/utils';
 type UpdateNameMutation = UpdateNodeMutation | CreateFolderMutation | CreateDocsFile;
 
 interface UpdateNodeNameModalProps<T extends UpdateNameMutation> {
+	ext?: string;
 	nodeId: string;
 	nodeName: string;
 	inputLabel: string;
@@ -36,6 +38,7 @@ interface UpdateNodeNameModalProps<T extends UpdateNameMutation> {
 }
 
 export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
+	ext,
 	nodeId,
 	nodeName,
 	inputLabel,
@@ -114,6 +117,7 @@ export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
 					onKeyUp={keyUpHandler}
 					hasError={!!errorMsg}
 					description={errorMsg || undefined}
+					CustomIcon={(): JSX.Element => <Text>.{ext}</Text>}
 				/>
 			</ModalBody>
 			<Divider />

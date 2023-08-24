@@ -21,6 +21,7 @@ export function useCreateModal(
 		parentId: string,
 		newName: string
 	) => Promise<FetchResult<CreateFolderMutation | CreateDocsFile>>,
+	ext?: string,
 	createActionCallback?: () => void
 ): {
 	openCreateModal: (parentFolderId: string) => void;
@@ -51,6 +52,7 @@ export function useCreateModal(
 						},
 						children: (
 							<UpdateNodeNameModalContent
+								ext={ext}
 								inputLabel={inputLabel}
 								nodeName=""
 								confirmAction={confirmAction}
@@ -70,7 +72,7 @@ export function useCreateModal(
 				modalOpenRef.current = true;
 			}
 		},
-		[confirmAction, createActionCallback, createModal, inputLabel, t, title]
+		[confirmAction, createActionCallback, createModal, inputLabel, t, title, ext]
 	);
 
 	return { openCreateModal };
