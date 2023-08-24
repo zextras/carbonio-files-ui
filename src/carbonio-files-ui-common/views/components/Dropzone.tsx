@@ -24,7 +24,7 @@ interface DropzoneProps {
 	title?: string;
 	icons?: string[];
 	effect: 'link' | 'none' | 'copy' | 'move';
-	children: (dragging: boolean) => JSX.Element;
+	children: (dragging: boolean) => React.JSX.Element;
 	types: string[];
 }
 

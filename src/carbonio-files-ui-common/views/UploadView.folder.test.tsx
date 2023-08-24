@@ -12,7 +12,6 @@ import { EventEmitter } from 'events';
 import { graphql, rest } from 'msw';
 
 import UploadView from './UploadView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { REST_ENDPOINT, UPLOAD_PATH } from '../constants';
 import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -44,12 +43,7 @@ import {
 } from '../utils/testUtils';
 import { UploadQueue } from '../utils/uploadUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload View', () => {
 	describe('Folder', () => {

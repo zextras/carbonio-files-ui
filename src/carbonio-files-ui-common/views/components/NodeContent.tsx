@@ -13,7 +13,7 @@ import { ScrollContainer } from './ScrollContainer';
 import { DisplayerContentContainer, ShimmerText } from './StyledComponents';
 import { LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
 
-const ShimmerNodeDetailsItem = (): JSX.Element => (
+const ShimmerNodeDetailsItem = (): React.JSX.Element => (
 	<Container
 		orientation="horizontal"
 		mainAlignment="flex-start"
@@ -47,7 +47,7 @@ export const NodeContent = ({
 	loadMore,
 	loading,
 	children
-}: NodeContentProps): JSX.Element => {
+}: NodeContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	return (

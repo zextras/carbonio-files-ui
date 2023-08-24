@@ -5,8 +5,11 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
+import { type ApolloClient } from '@apollo/client';
 import { act, configure } from '@testing-library/react';
+import { Account } from '@zextras/carbonio-shell-ui';
 import failOnConsole from 'jest-fail-on-console';
+import { noop } from 'lodash';
 
 import buildClient from './carbonio-files-ui-common/apollo';
 import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar';
@@ -16,12 +19,19 @@ import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
 import { selectionModeVar } from './carbonio-files-ui-common/apollo/selectionVar';
 import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
-import { LOGGED_USER, USER_SETTINGS } from './mocks/constants';
+import { LOGGED_USER } from './mocks/constants';
 import server from './mocks/server';
 
 type FileSystemDirectoryEntryMock = Omit<FileSystemDirectoryEntry, 'filesystem'> & {
 	filesystem: Partial<FileSystemDirectoryEntry['filesystem']>;
 };
+
+declare global {
+	// eslint-disable-next-line no-var,vars-on-top
+	var apolloClient: ApolloClient<object>;
+	// eslint-disable-next-line no-var,vars-on-top
+	var mockedUserLogged: Account;
+}
 
 configure({
 	asyncUtilTimeout: 2000
@@ -58,6 +68,26 @@ beforeEach(() => {
 	nodeSortVar(NODES_SORT_DEFAULT);
 	draggedItemsVar(null);
 	destinationVar({ defaultValue: undefined, currentValue: undefined });
+
+	Object.defineProperty(window, 'IntersectionObserver', {
+		writable: true,
+		value: jest.fn(function intersectionObserverMock(
+			callback: IntersectionObserverCallback,
+			options: IntersectionObserverInit
+		) {
+			return {
+				thresholds: options.threshold,
+				root: options.root,
+				rootMargin: options.rootMargin,
+				observe: noop,
+				unobserve: noop,
+				disconnect: noop
+			};
+		})
+	});
+
+	// cleanup local storage
+	window.localStorage.clear();
 });
 
 beforeAll(() => {
@@ -72,56 +102,24 @@ beforeAll(() => {
 	// https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 	Object.defineProperty(window, 'matchMedia', {
 		writable: true,
-		value: jest.fn().mockImplementation((query) => ({
+		value: (query: string): MediaQueryList => ({
 			matches: false,
 			media: query,
 			onchange: null,
-			addListener: jest.fn(), // Deprecated
-			removeListener: jest.fn(), // Deprecated
-			addEventListener: jest.fn(),
-			removeEventListener: jest.fn(),
-			dispatchEvent: jest.fn()
-		}))
-	});
-
-	// mock a simplified Intersection Observer
-	Object.defineProperty(window, 'IntersectionObserver', {
-		writable: true,
-		value: jest.fn().mockImplementation((callback, options) => ({
-			thresholds: options.threshold,
-			root: options.root,
-			rootMargin: options.rootMargin,
-			observe: jest.fn(),
-			unobserve: jest.fn(),
-			disconnect: jest.fn()
-		}))
+			addListener: noop, // Deprecated
+			removeListener: noop, // Deprecated
+			addEventListener: noop,
+			removeEventListener: noop,
+			dispatchEvent: () => true
+		})
 	});
 
 	Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', {
 		writable: true,
-		value: jest.fn()
+		value: noop
 	});
 
 	global.mockedUserLogged = LOGGED_USER;
-
-	global.userSettings = USER_SETTINGS;
-
-	let mockedStore: Record<string, unknown> = {};
-	Object.defineProperty(window, 'localStorage', {
-		writable: true,
-		value: {
-			getItem: jest.fn().mockImplementation((key) => mockedStore[key] || null),
-			setItem: jest.fn().mockImplementation((key, value) => {
-				mockedStore[key] = value.toString();
-			}),
-			removeItem: jest.fn().mockImplementation((key) => {
-				delete mockedStore[key];
-			}),
-			clear() {
-				mockedStore = {};
-			}
-		}
-	});
 
 	window.resizeTo = function resizeTo(width, height): void {
 		Object.assign(this, {
@@ -132,18 +130,18 @@ beforeAll(() => {
 		}).dispatchEvent(new this.Event('resize'));
 	};
 
-	Element.prototype.scrollTo = jest.fn();
+	Element.prototype.scrollTo = noop;
 
 	Object.defineProperty(window, 'FileSystemDirectoryEntry', {
 		writable: true,
 		// define it as a standard function and not arrow function because arrow functions can't be called with new
 		value: function FileSystemDirectoryEntryMock(): FileSystemDirectoryEntryMock {
 			return {
-				createReader: jest.fn(),
+				createReader: () => new FileSystemDirectoryReader(),
 				fullPath: '',
-				getDirectory: jest.fn(),
-				getFile: jest.fn,
-				getParent: jest.fn,
+				getDirectory: noop,
+				getFile: noop,
+				getParent: noop,
 				isDirectory: true,
 				isFile: false,
 				name: '',

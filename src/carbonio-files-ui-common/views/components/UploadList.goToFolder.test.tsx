@@ -101,7 +101,7 @@ describe('Upload List', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const TestComponent = (): JSX.Element => {
+				const TestComponent = (): React.JSX.Element => {
 					const location = useLocation();
 					return (
 						<>

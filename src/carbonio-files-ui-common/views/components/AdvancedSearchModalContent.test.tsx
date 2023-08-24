@@ -8,6 +8,7 @@ import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
 
 import { AdvancedSearchModalContent } from './AdvancedSearchModalContent';
+import * as actualNetworkModule from '../../../network/network';
 import { ROOTS } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder } from '../../mocks/mockUtils';
@@ -18,16 +19,14 @@ import { ContactInfo } from '../../types/network';
 import { mockGetPath } from '../../utils/resolverMocks';
 import { setup } from '../../utils/testUtils';
 
-const mockedSoapFetch: jest.Mock = jest.fn();
+const mockedSoapFetch = jest.fn();
 
-jest.mock('../../../network/network', () => ({
-	soapFetch: jest.fn(
-		(): Promise<unknown> =>
-			new Promise((resolve, reject) => {
-				const result = mockedSoapFetch();
-				result ? resolve(result) : reject(new Error('no result provided'));
-			})
-	)
+jest.mock<typeof import('../../../network/network')>('../../../network/network', () => ({
+	soapFetch: <Req, Res>(): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+		new Promise<Res>((resolve, reject) => {
+			const result = mockedSoapFetch();
+			result ? resolve(result) : reject(new Error('no result provided'));
+		})
 }));
 describe('Advanced search modal content', () => {
 	test('Render all the advanced params empty if no previous filter was set', () => {

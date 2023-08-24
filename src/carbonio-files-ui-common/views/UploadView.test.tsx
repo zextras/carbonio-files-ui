@@ -9,7 +9,6 @@ import { screen, waitFor } from '@testing-library/react';
 import { keyBy } from 'lodash';
 
 import UploadView from './UploadView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { uploadVar } from '../apollo/uploadVar';
 import { ICON_REGEXP } from '../constants/test';
 import {
@@ -25,12 +24,7 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode } from '../utils/resolverMocks';
 import { createUploadDataTransfer, setup, uploadWithDnD } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload view', () => {
 	test('Click on an item open the displayer', async () => {

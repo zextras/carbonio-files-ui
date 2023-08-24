@@ -8,7 +8,7 @@ import React, { HTMLAttributes } from 'react';
 
 import animatedUpload from '../../../assets/images/animated-upload.svg';
 
-export const AnimatedUpload = (props: HTMLAttributes<HTMLObjectElement>): JSX.Element => (
+export const AnimatedUpload = (props: HTMLAttributes<HTMLObjectElement>): React.JSX.Element => (
 	<object type="image/svg+xml" data={animatedUpload} {...props} style={{ pointerEvents: 'none' }}>
 		animated-loader
 	</object>

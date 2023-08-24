@@ -98,7 +98,7 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 					}
 					return accumulator;
 				},
-				[] as JSX.Element[]
+				[] as React.JSX.Element[]
 			),
 		[data?.getNode?.shares, node.permissions, me, deleteShare]
 	);

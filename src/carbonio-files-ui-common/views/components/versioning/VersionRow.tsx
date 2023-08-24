@@ -45,7 +45,7 @@ const DropdownItemComponent = ({
 	disabled,
 	selected,
 	tooltipLabel
-}: DropdownItemComponentProps): JSX.Element => (
+}: DropdownItemComponentProps): React.JSX.Element => (
 	<Tooltip
 		disabled={!disabled || !tooltipLabel}
 		label={tooltipLabel}

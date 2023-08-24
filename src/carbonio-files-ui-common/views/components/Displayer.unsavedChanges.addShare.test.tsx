@@ -10,6 +10,7 @@ import { screen, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
+import * as actualNetworkModule from '../../../network/network';
 import { DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
@@ -29,11 +30,11 @@ import {
 } from '../../utils/resolverMocks';
 import { generateError, setup } from '../../utils/testUtils';
 
-const mockedSoapFetch: jest.Mock = jest.fn();
+const mockedSoapFetch = jest.fn();
 
-jest.mock('../../../network/network', () => ({
-	soapFetch: (): Promise<unknown> =>
-		new Promise((resolve, reject) => {
+jest.mock<typeof import('../../../network/network')>('../../../network/network', () => ({
+	soapFetch: <Req, Res>(): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+		new Promise<Res>((resolve, reject) => {
 			const result = mockedSoapFetch();
 			result ? resolve(result) : reject(new Error('no result provided'));
 		})

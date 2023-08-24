@@ -10,7 +10,6 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import { map, find } from 'lodash';
 
 import { SearchView } from './SearchView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { searchParamsVar } from '../apollo/searchVar';
 import { INTERNAL_PATH, ROOTS } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -40,12 +39,7 @@ import {
 import { buildBreadCrumbRegExp, buildChipsFromKeywords, moveNode, setup } from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Search view', () => {
 	describe('Shared by me param', () => {

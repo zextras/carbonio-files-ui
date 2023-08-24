@@ -7,36 +7,18 @@ import React from 'react';
 
 import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { map } from 'lodash';
-import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
 import { SELECTORS } from '../constants/test';
-import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateFolder, populateNodes, populateParents } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { FindNodesQuery, FindNodesQueryVariables, Folder } from '../types/graphql/types';
+import { Folder } from '../types/graphql/types';
 import { mockFindNodes, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
-const mockedRequestHandler = jest.fn();
-
-beforeEach(() => {
-	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
-	server.use(
-		graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
-	);
-});
-
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Displayer', () => {

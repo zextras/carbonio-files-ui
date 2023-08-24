@@ -60,7 +60,7 @@ interface ListContentProps {
 	draggable?: boolean;
 	customCheckers?: ActionsFactoryCheckerMap;
 	selectionContextualMenuActionsItems?: DSAction[];
-	fillerWithActions?: JSX.Element;
+	fillerWithActions?: React.JSX.Element;
 }
 
 export const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
@@ -97,7 +97,7 @@ export const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
 
 		const { me } = useUserInfo();
 
-		const [dragImage, setDragImage] = useState<JSX.Element[]>([]);
+		const [dragImage, setDragImage] = useState<React.JSX.Element[]>([]);
 
 		const dragStartHandler = useCallback<
 			(node: NodeListItemType) => React.DragEventHandler<HTMLElement>
@@ -111,7 +111,7 @@ export const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
 					} else {
 						nodesToDrag.push(node);
 					}
-					const draggedItemsTmp: JSX.Element[] = [];
+					const draggedItemsTmp: React.JSX.Element[] = [];
 					const permittedActions = getPermittedActions(
 						nodesToDrag,
 						[Action.Move, Action.MoveToTrash],

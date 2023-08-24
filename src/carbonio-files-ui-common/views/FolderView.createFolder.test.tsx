@@ -13,7 +13,7 @@ import { find } from 'lodash';
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
@@ -27,24 +27,22 @@ import {
 import { generateError, setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
-let mockedCreateOptions: CreateOptionsContent['createOptions'];
+let mockedCreateOptions: CreateOption[];
 
 beforeEach(() => {
 	mockedCreateOptions = [];
 });
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest
-			.fn()
-			.mockImplementation((...options: Parameters<CreateOptionsContent['setCreateOptions']>[0]) => {
-				mockedCreateOptions = options;
-			}),
-		removeCreateOptions: jest.fn()
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
+	useCreateOptions: (): CreateOptionsReturnType => ({
+		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+			mockedCreateOptions = options;
+		},
+		removeCreateOptions: () => undefined
 	})
 }));
 
-const MockDisplayer = (props: DisplayerProps): JSX.Element => (
+const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
 	<div>
 		{props.translationKey}:{props.icons}
 		<button
@@ -65,8 +63,8 @@ const MockDisplayer = (props: DisplayerProps): JSX.Element => (
 	</div>
 );
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => <MockDisplayer {...props} />
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
 describe('Create folder', () => {

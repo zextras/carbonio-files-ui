@@ -10,22 +10,16 @@ import { waitFor } from '@testing-library/react';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodePage } from '../mocks/mockUtils';
 import { FolderResolvers, NodeSort, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { screen, setup, within } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
 		</div>
