@@ -224,7 +224,9 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				id: 'Preview',
 				icon: 'MaximizeOutline',
 				label: t('actions.preview', 'Preview'),
-				onClick: openNode
+				onClick: (): void => {
+					openPreview(id);
+				}
 			},
 			[Action.SendViaMail]: {
 				id: 'SendViaMail',
@@ -331,7 +333,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		}),
 		[
 			t,
-			openNode,
+			openPreview,
 			sendViaMailCallback,
 			manageSharesCallback,
 			toggleFlagTrue,

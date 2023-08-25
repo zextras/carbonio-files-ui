@@ -410,9 +410,6 @@ export function canPreview(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean 
 		size($nodes) === 1 &&
 		isFile($nodes[0]) &&
 		$nodes[0].rootId !== ROOTS.TRASH &&
-		!(
-			$nodes[0].permissions.can_write_file && includes(docsHandledMimeTypes, $nodes[0].mime_type)
-		) &&
 		(isSupportedByPreview($nodes[0].mime_type, 'preview')[0] ||
 			includes(docsHandledMimeTypes, $nodes[0].mime_type))
 	);

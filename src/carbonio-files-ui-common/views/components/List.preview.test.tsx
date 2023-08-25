@@ -11,8 +11,8 @@ import { fireEvent, screen } from '@testing-library/react';
 import { List } from './List';
 import { PREVIEW_MAX_SIZE } from '../../constants';
 import { ACTION_REGEXP } from '../../constants/test';
-import { populateFile } from '../../mocks/mockUtils';
-import { NodeType } from '../../types/graphql/types';
+import { populateFile, populateNodes } from '../../mocks/mockUtils';
+import { File, NodeType } from '../../types/graphql/types';
 import { setup } from '../../utils/testUtils';
 
 describe('Preview action', () => {
@@ -69,5 +69,31 @@ describe('Preview action', () => {
 		await screen.findByText(/failed to load document preview/i);
 		expect(screen.queryByText(/This item cannot be displayed/i)).not.toBeInTheDocument();
 		expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
+	});
+
+	test('check if the context preview action is supported by mime type', async () => {
+		const files = populateNodes(4, 'File') as File[];
+		// create video file
+		files[0].mime_type = 'video/quicktime';
+		// create ODT file
+		files[1].mime_type = 'application/vnd.oasis.opendocument.text';
+		// create PPT
+		files[2].mime_type =
+			'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+		// create XLSX file
+		files[3].mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+		setup(<List nodes={files} mainList emptyListMessage="empty list" />);
+
+		await screen.findByText(files[0].name);
+		await screen.findByText(files[1].name);
+		fireEvent.contextMenu(screen.getByText(files[0].name));
+		expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
+		fireEvent.contextMenu(screen.getByText(files[1].name));
+		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
+		fireEvent.contextMenu(screen.getByText(files[2].name));
+		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
+		fireEvent.contextMenu(screen.getByText(files[3].name));
+		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 	});
 });
