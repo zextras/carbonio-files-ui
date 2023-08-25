@@ -632,16 +632,19 @@ export const List: React.VFC<ListProps> = ({
 		setDropzoneModal(
 			canMove
 				? {
-						title: t('dropzone.move.title.enabled', 'Drag&Drop Mode'),
+						title: t('dropzone.move.title.enabled', 'Drag&Drop Mode.'),
 						message: t(
 							'dropzone.move.message.enabled',
-							'Drop here your items \n to quickly move them to this folder'
+							'Drop here your items \n to quickly move them to this folder.'
 						),
 						icons: ['ImageOutline', 'FileAddOutline', 'FilmOutline']
 				  }
 				: {
-						title: t('dropzone.move.title.disabled', 'Drag&Drop Mode'),
-						message: t('dropzone.move.message.disabled', 'You cannot drop your items in this area'),
+						title: t('dropzone.move.title.disabled', 'Drag&Drop Mode.'),
+						message: t(
+							'dropzone.move.message.disabled',
+							'You cannot drop your items in this area.'
+						),
 						icons: ['AlertTriangleOutline']
 				  }
 		);

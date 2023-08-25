@@ -42,7 +42,7 @@ export function useDecreaseYourOwnSharePermissionModal(
 					<Text overflow="break-word" size="small">
 						{t(
 							'modal.decreaseYourOwnSharePermissions.body',
-							"Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored"
+							"Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored."
 						)}
 					</Text>
 				</Container>

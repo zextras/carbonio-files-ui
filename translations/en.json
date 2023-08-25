@@ -241,8 +241,8 @@
             }
         ],
         "generic": {
-            "message": "Click an item to select it",
-            "title": "View files and folders, share them with your contacts"
+            "message": "Click an item to select it.",
+            "title": "View files and folders, share them with your contacts."
         },
         "list": {
             "you": "You"
@@ -382,12 +382,12 @@
     "dropzone": {
         "move": {
             "message": {
-                "disabled": "You cannot drop your items in this area",
-                "enabled": "Drop here your items \n to quickly move them to this folder"
+                "disabled": "You cannot drop your items in this area.",
+                "enabled": "Drop here your items \n to quickly move them to this folder."
             },
             "title": {
-                "disabled": "Drag&Drop Mode",
-                "enabled": "Drag&Drop Mode"
+                "disabled": "Drag&Drop Mode.",
+                "enabled": "Drag&Drop Mode."
             }
         }
     },
@@ -401,12 +401,12 @@
             "trash": "The trash is empty."
         },
         "folder": {
-            "displayerContent": "This folder has no content",
+            "displayerContent": "This folder has no content.",
             "hint": "It seems that this folder is empty.",
             "state": "Drag a file or create a new one clicking \"NEW\"."
         },
         "search": {
-            "hint": "Your search didn't match any files or folders",
+            "hint": "Your search didn't match any files or folders.",
             "noResults": [
                 "No results. Keep searching!",
                 "None of your items matches your search."
@@ -456,7 +456,7 @@
             "tooltip": "Close"
         },
         "decreaseYourOwnSharePermissions": {
-            "body": "Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored",
+            "body": "Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored.",
             "button": {
                 "confirm": "Confirm"
             },
@@ -509,7 +509,7 @@
             "header": "Purge all versions"
         },
         "removeLink": {
-            "body": "This link has expired, therefore it can't be used anymore to access the element. You can remove the link from the list or you can update its expiration date and other information in order to keep using it",
+            "body": "This link has expired, therefore it can't be used anymore to access the element. You can remove the link from the list or you can update its expiration date and other information in order to keep using it.",
             "button": {
                 "confirm": "Remove"
             },
@@ -523,7 +523,7 @@
             "header": "Revoke {{nodeName}} collaboration link"
         },
         "revokeLink": {
-            "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file",
+            "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file.",
             "button": {
                 "confirm": "Revoke"
             },
