@@ -42,7 +42,7 @@ export function useDeletePermanentlyModal(
 					<Text overflow="break-word" size="small">
 						{t(
 							'modal.deletePermanently.body',
-							'You will delete permanently this item/these items. You will not be able to recover this file/these files anymore. This action is irreversible.'
+							'You will delete permanently this item/these items. You will not be able to recover this item/these items anymore. This action is irreversible.'
 						)}
 					</Text>
 				</Container>

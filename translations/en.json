@@ -112,7 +112,7 @@
             "recents_empty": [
                 {
                     "message": "You will see the most recents here.",
-                    "title": "Open, read, edit your documents."
+                    "title": "Open, read, edit your items."
                 }
             ],
             "recents_full": [
@@ -159,7 +159,7 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "message": "Click the \"NEW\" button to create a new document and share it with your contacts.",
+                    "message": "Click the \"NEW\" button to create a new item and share it with your contacts.",
                     "title": "There are no items shared with you yet."
                 },
                 {
@@ -170,7 +170,7 @@
             "sharedWithMe_full": [
                 {
                     "message": "Click an item to select it.",
-                    "title": "Start editing and sharing your files."
+                    "title": "Start editing and sharing your items."
                 },
                 {
                     "message": "Click an item to select it.",
@@ -223,7 +223,7 @@
         "folder_full": [
             {
                 "message": "Click an item to select it.",
-                "title": "Start editing and sharing your files."
+                "title": "Start editing and sharing your items."
             },
             {
                 "message": "Click an item to select it.",
@@ -420,11 +420,11 @@
         "code_FILE_VERSION_NOT_FOUND": "We're sorry, but this version of the file cannot be found",
         "code_Generic": "Something went wrong",
         "code_LINK_NOT_FOUND": "Action failed. This link no longer exists",
-        "code_MISSING_FIELD": "An internal error occurred, not all information of this object has been recovered",
+        "code_MISSING_FIELD": "An internal error occurred, not all information of this item has been recovered",
         "code_NODE_COPY_ERROR": "Sorry, copy of the item failed. Try again",
-        "code_NODE_DUPLICATED": "There is a file with the same name in this folder",
-        "code_NODE_NOT_FOUND": "It seems that this object doesn't exist, or you do not have permission to access it",
-        "code_NODE_WRITE_ERROR": "It seems that this object cannot be edited or that you do not have permission to edit it",
+        "code_NODE_DUPLICATED": "There is an item with the same name in this folder",
+        "code_NODE_NOT_FOUND": "It seems that this item doesn't exist, or you do not have permission to access it",
+        "code_NODE_WRITE_ERROR": "It seems that this item cannot be edited or that you do not have permission to edit it",
         "code_SHARE_CREATION_ERROR": "We are sorry, but it is not possible to share the item with this user",
         "code_SHARE_NOT_FOUND": "We're sorry, but this share cannot be found",
         "code_VERSIONS_LIMIT_REACHED": "The operation cannot be completed. You have reached the maximum limit."
@@ -456,14 +456,14 @@
             "tooltip": "Close"
         },
         "decreaseYourOwnSharePermissions": {
-            "body": "Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored.",
+            "body": "Are you sure to decrease your rights on this item? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored.",
             "button": {
                 "confirm": "Confirm"
             },
             "header": "Decrease your current rights"
         },
         "deletePermanently": {
-            "body": "You will delete permanently this item/these items. You will not be able to recover this file/these files anymore. This action is irreversible.",
+            "body": "You will delete permanently this item/these items. You will not be able to recover this item/these items anymore. This action is irreversible.",
             "button": {
                 "confirm": "Delete permanently"
             },
@@ -509,7 +509,7 @@
             "header": "Purge all versions"
         },
         "removeLink": {
-            "body": "This link has expired, therefore it can't be used anymore to access the element. You can remove the link from the list or you can update its expiration date and other information in order to keep using it.",
+            "body": "This link has expired, therefore it can't be used anymore to access the item. You can remove the link from the list or you can update its expiration date and other information in order to keep using it.",
             "button": {
                 "confirm": "Remove"
             },
@@ -523,7 +523,7 @@
             "header": "Revoke {{nodeName}} collaboration link"
         },
         "revokeLink": {
-            "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file.",
+            "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the item.",
             "button": {
                 "confirm": "Revoke"
             },
@@ -556,7 +556,7 @@
     },
     "node": {
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Files sent via Team",
+            "name_LOCAL_CHAT_ROOT": "Files sent via Chats",
             "name_LOCAL_ROOT": "Home",
             "name_SHARED_WITH_ME_ROOT": "Shared with me",
             "name_TRASH_ROOT": "Trash"
@@ -576,7 +576,7 @@
         "move": {
             "error": {
                 "not": {
-                    "allowed": "You cannot move multiple nodes from a filter or a search"
+                    "allowed": "You cannot move multiple items from a filter or a search"
                 }
             },
             "modal": {
@@ -760,7 +760,7 @@
             "sharedWithMe": "Shared with me",
             "trash": "Trash"
         },
-        "team": "Files sent via Team",
+        "team": "Files sent via Chats",
         "uploads": "Uploads"
     },
     "selectionMode": {

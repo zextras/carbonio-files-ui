@@ -158,14 +158,14 @@ export const PublicLink = ({
 							{isRevoke
 								? t(
 										'modal.revokeLink.body',
-										'By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file.',
+										'By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the item.',
 										{
 											replace: { nodeName }
 										}
 								  )
 								: t(
 										'modal.removeLink.body',
-										"This link has expired, therefore it can't be used anymore to access the element. You can remove the link from the list or you can update its expiration date and other information in order to keep using it."
+										"This link has expired, therefore it can't be used anymore to access the item. You can remove the link from the list or you can update its expiration date and other information in order to keep using it."
 								  )}
 						</Text>
 					</Container>
