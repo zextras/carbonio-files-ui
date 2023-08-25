@@ -63,7 +63,7 @@ jest.mock('../../hooks/useCreateOptions', () => ({
 }));
 
 const MockDisplayer = (props: DisplayerProps): JSX.Element => {
-	const createFn = (ev: React.MouseEvent<HTMLButtonElement>, actionIds: string): void => {
+	const createDoc = (ev: React.MouseEvent<HTMLButtonElement>, actionIds: string): void => {
 		if (mockedCreateOptions) {
 			const createDocsDocument = mockedCreateOptions.find(
 				(element) => element.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
@@ -81,10 +81,10 @@ const MockDisplayer = (props: DisplayerProps): JSX.Element => {
 	return (
 		<div>
 			{props.translationKey}:{props.icons}
-			<button onClick={(ev): void => createFn(ev, 'create-docs-document-libre')}>
+			<button onClick={(ev): void => createDoc(ev, 'create-docs-document-libre')}>
 				create docs document
 			</button>
-			<button onClick={(ev): void => createFn(ev, 'create-docs-document-ms')}>
+			<button onClick={(ev): void => createDoc(ev, 'create-docs-document-ms')}>
 				create ms document
 			</button>
 		</div>
