@@ -6,7 +6,7 @@
         "edit": "Edit",
         "flag": "Flag",
         "goToFolder": "Go to destination folder",
-        "manageShares": "Manage Shares",
+        "manageShares": "Manage shares",
         "markForDeletion": "Mark for deletion",
         "move": "Move",
         "moveToTrash": "Delete",
@@ -34,7 +34,7 @@
         "link": {
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copy collaboration link"
+                    "copy": "Copy Collaboration link"
                 }
             }
         },
@@ -252,7 +252,7 @@
         },
         "search_empty": [
             {
-                "message": "Or select “Advanced Filters” to refine your search.",
+                "message": "Or select “Advanced filters” to refine your search.",
                 "title": "Start another search."
             },
             {
@@ -372,9 +372,9 @@
                     }
                 },
                 "title": {
-                    "document": "Create New Document",
-                    "presentation": "Create New Presentation",
-                    "spreadsheet": "Create New Spreadsheet"
+                    "document": "Create new document",
+                    "presentation": "Create new presentation",
+                    "spreadsheet": "Create new spreadsheet"
                 }
             }
         }
@@ -440,7 +440,7 @@
                         "name": "Folder name"
                     }
                 },
-                "title": "Create New folder"
+                "title": "Create new folder"
             }
         }
     },
@@ -643,7 +643,7 @@
             "description": "The link expires at the end of the chosen day"
         },
         "dateTimePicker": {
-            "label": "Expiration Date"
+            "label": "Expiration date"
         },
         "input": {
             "description": {
@@ -664,7 +664,7 @@
             "undo": "Undo",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copy public link",
+                    "copy": "Copy Public link",
                     "expired": "This link has expired"
                 }
             }
@@ -718,7 +718,7 @@
                     "description": "Filter the results by items that contain at least one collaborator besides you",
                     "label": "Shared"
                 },
-                "title": "Advanced Filters"
+                "title": "Advanced filters"
             }
         },
         "clear": {
@@ -789,11 +789,11 @@
         },
         "collaborationLink": {
             "actionLabel": {
-                "copyLink": "Copy Link"
+                "copyLink": "Copy link"
             },
             "copyCollaborationLink": "Collaboration link copied",
             "newCollaborationLinkGenerated": {
-                "label": "New Collaboration Link generated"
+                "label": "New Collaboration link generated"
             }
         },
         "copyNodes": {
@@ -831,10 +831,10 @@
             },
             "copyLink": "Public link copied",
             "linkUpdated": {
-                "label": "Public Link updated"
+                "label": "Public link updated"
             },
             "newPublicLinkGenerated": {
-                "label": "New public Link generated"
+                "label": "New Public link generated"
             }
         },
         "restore": {
@@ -859,8 +859,8 @@
         }
     },
     "sortingDropdown": {
-        "ascendingOrder": "Ascending Order",
-        "descendingOrder": "Descending Order",
+        "ascendingOrder": "Ascending order",
+        "descendingOrder": "Descending order",
         "icon": {
             "tooltip": {
                 "OrderLastUpdateAscending": "Ascending order by last update",
@@ -871,7 +871,7 @@
                 "OrderSizeDescending": "Descending order by size"
             }
         },
-        "lastUpdate": "Last Update",
+        "lastUpdate": "Last update",
         "name": "Name",
         "size": "Size"
     },
@@ -897,8 +897,8 @@
                 }
             },
             "title": {
-                "disabled": "Drag&Drop Mode",
-                "enabled": "Drag&Drop Mode"
+                "disabled": "Drag&Drop mode",
+                "enabled": "Drag&Drop mode"
             }
         },
         "error": {

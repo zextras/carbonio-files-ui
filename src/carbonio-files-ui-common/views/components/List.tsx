@@ -655,7 +655,7 @@ export const List: React.VFC<ListProps> = ({
 		setDropzoneModal(
 			canUpload
 				? {
-						title: t('uploads.dropzone.title.enabled', 'Drag&Drop Mode'),
+						title: t('uploads.dropzone.title.enabled', 'Drag&Drop mode'),
 						message:
 							(folderId &&
 								t(
@@ -669,7 +669,7 @@ export const List: React.VFC<ListProps> = ({
 						icons: ['ImageOutline', 'FileAddOutline', 'FilmOutline']
 				  }
 				: {
-						title: t('uploads.dropzone.title.disabled', 'Drag&Drop Mode'),
+						title: t('uploads.dropzone.title.disabled', 'Drag&Drop mode'),
 						message: t(
 							'uploads.dropzone.message.disabled',
 							'You cannot drop an attachment in this area'

@@ -91,7 +91,7 @@ export const PublicLink = ({
 							type: 'info',
 							label: t(
 								'snackbar.publicLink.newPublicLinkGenerated.label',
-								'New public Link generated'
+								'New Public link generated'
 							),
 							replace: true,
 							onActionClick: () => {
@@ -193,7 +193,7 @@ export const PublicLink = ({
 						createSnackbar({
 							key: new Date().toLocaleString(),
 							type: 'info',
-							label: t('snackbar.publicLink.linkUpdated.label', 'Public Link updated'),
+							label: t('snackbar.publicLink.linkUpdated.label', 'Public link updated'),
 							replace: true,
 							onActionClick: () => {
 								copyToClipboard(data.updateLink?.url as string).then(() => {

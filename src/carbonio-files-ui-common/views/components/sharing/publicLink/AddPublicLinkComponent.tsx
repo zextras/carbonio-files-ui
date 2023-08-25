@@ -191,7 +191,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 					<Padding vertical="small" />
 					<DateTimePicker
 						width="fill"
-						label={t('publicLink.dateTimePicker.label', 'Expiration Date')}
+						label={t('publicLink.dateTimePicker.label', 'Expiration date')}
 						includeTime={false}
 						enableChips
 						dateFormat="dd/MM/yyyy"

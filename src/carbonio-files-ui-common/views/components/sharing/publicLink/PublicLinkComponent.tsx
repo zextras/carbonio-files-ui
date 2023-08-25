@@ -190,7 +190,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 							label={
 								isExpired
 									? t('publicLink.link.urlChip.tooltip.expired', 'This link has expired')
-									: t('publicLink.link.urlChip.tooltip.copy', 'Copy public link')
+									: t('publicLink.link.urlChip.tooltip.copy', 'Copy Public link')
 							}
 							maxWidth="unset"
 							placement="top"
@@ -282,7 +282,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 					<Padding vertical="small" />
 					<DateTimePicker
 						width="fill"
-						label={t('publicLink.dateTimePicker.label', 'Expiration Date')}
+						label={t('publicLink.dateTimePicker.label', 'Expiration date')}
 						includeTime={false}
 						enableChips
 						dateFormat="dd/MM/yyyy"

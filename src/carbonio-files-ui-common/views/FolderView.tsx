@@ -105,7 +105,7 @@ const FolderView: React.VFC = () => {
 	}, []);
 
 	const { openCreateModal: openCreateFolderModal } = useCreateModal(
-		t('folder.create.modal.title', 'Create New folder'),
+		t('folder.create.modal.title', 'Create new folder'),
 		t('folder.create.modal.input.label.name', 'Folder name'),
 		createFolderCallback,
 		resetNewFolder
@@ -149,7 +149,7 @@ const FolderView: React.VFC = () => {
 	const { openCreateModal: openCreateFileModal } = useCreateModal(
 		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
 		/* i18next-extract-disable-next-line */
-		t(`docs.create.modal.title.${documentGenericType}`, `Create New ${documentGenericType}`),
+		t(`docs.create.modal.title.${documentGenericType}`, `Create new ${documentGenericType}`),
 		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
 		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),

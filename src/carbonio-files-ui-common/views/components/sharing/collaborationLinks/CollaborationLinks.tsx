@@ -94,13 +94,13 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 					type: 'info',
 					label: t(
 						'snackbar.collaborationLink.newCollaborationLinkGenerated.label',
-						'New Collaboration Link generated'
+						'New Collaboration link generated'
 					),
 					replace: true,
 					onActionClick: () => {
 						copyLinkToClipboard(data.createCollaborationLink.url);
 					},
-					actionLabel: t('snackbar.collaborationLink.actionLabel.copyLink', 'Copy Link')
+					actionLabel: t('snackbar.collaborationLink.actionLabel.copyLink', 'Copy link')
 				});
 			}
 		},
@@ -223,7 +223,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 								<Tooltip
 									label={t(
 										'collaborationLinks.link.urlChip.tooltip.copy',
-										'Copy collaboration link'
+										'Copy Collaboration link'
 									)}
 									maxWidth="unset"
 									placement="top"
@@ -295,7 +295,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 									<Tooltip
 										label={t(
 											'collaborationLinks.link.urlChip.tooltip.copy',
-											'Copy collaboration link'
+											'Copy Collaboration link'
 										)}
 										maxWidth="unset"
 										placement="top"

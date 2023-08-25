@@ -110,8 +110,8 @@ export const SortingComponent: React.VFC = () => {
 			id: 'activity-1',
 			label:
 				ascendingOrDescending === OrderTrend.Descending
-					? t('sortingDropdown.ascendingOrder', 'Ascending Order')
-					: t('sortingDropdown.descendingOrder', 'Descending Order'),
+					? t('sortingDropdown.ascendingOrder', 'Ascending order')
+					: t('sortingDropdown.descendingOrder', 'Descending order'),
 			onClick: switchAscendingOrDescendingOrder,
 			icon: ascendingOrDescending === OrderTrend.Descending ? 'ZaListOutline' : 'AzListOutline'
 		},
@@ -124,7 +124,7 @@ export const SortingComponent: React.VFC = () => {
 		},
 		{
 			id: 'activity-3',
-			label: t('sortingDropdown.lastUpdate', 'Last Update'),
+			label: t('sortingDropdown.lastUpdate', 'Last update'),
 			selected: orderType === OrderType.UpdatedAt,
 			onClick: selectUpdatedAtOrderType,
 			icon: orderType === OrderType.UpdatedAt ? 'RadioButtonOn' : 'RadioButtonOff'

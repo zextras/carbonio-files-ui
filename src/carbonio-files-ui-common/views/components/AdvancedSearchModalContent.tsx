@@ -247,7 +247,7 @@ export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentPro
 	return (
 		<>
 			<ModalHeader
-				title={t('search.advancedSearch.modal.title', 'Advanced Filters')}
+				title={t('search.advancedSearch.modal.title', 'Advanced filters')}
 				onClose={closeHandler}
 				showCloseIcon
 				closeIconTooltip={t('modal.close.tooltip', 'Close')}
