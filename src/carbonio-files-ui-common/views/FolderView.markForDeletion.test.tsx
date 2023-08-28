@@ -11,30 +11,19 @@ import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodePage, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { Folder, NodeSort } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions,
-	mockTrashNodes
-} from '../utils/mockUtils';
+import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
+import { NodeSort } from '../types/graphql/types';
+import { mockGetNode, mockGetPath, mockTrashNodes } from '../utils/resolverMocks';
 import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -59,17 +48,15 @@ describe('Mark for deletion - trash', () => {
 			folder.parent = populateFolder(0, currentFolder.id, currentFolder.name);
 			currentFolder.children.nodes.push(folder);
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockTrashNodes(
-					{
-						node_ids: [folderId1]
-					},
-					[folderId1]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes([folderId1])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -125,19 +112,29 @@ describe('Mark for deletion - trash', () => {
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT);
 			const nodesToTrash = map(firstPage, (node) => node?.id || '');
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(firstPage)
-				} as Folder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockTrashNodes({ node_ids: nodesToTrash }, nodesToTrash),
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(secondPage)
-				} as Folder)
+			const getChildrenResponses = [
+				{ ...currentFolder, children: populateNodePage(firstPage) },
+				{ ...currentFolder, children: populateNodePage(secondPage) }
 			];
+			const getNodeResolver: QueryResolvers['getNode'] = (parent, args, context, info) => {
+				if (info.operation.name?.value === 'getChildren') {
+					const response = getChildrenResponses.shift();
+					if (response) {
+						return response;
+					}
+					throw new Error('no more getChildren responses provided to getNode resolver');
+				}
+				return currentFolder;
+			};
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: getNodeResolver
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes(nodesToTrash)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -188,17 +185,15 @@ describe('Mark for deletion - trash', () => {
 
 			const element = currentFolder.children.nodes[0] as Node;
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockTrashNodes(
-					{
-						node_ids: [element.id]
-					},
-					[element.id]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes([element.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -208,7 +203,7 @@ describe('Mark for deletion - trash', () => {
 			// wait for the load to be completed
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
-			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(5);
+			expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(5);
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
@@ -241,17 +236,15 @@ describe('Mark for deletion - trash', () => {
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockTrashNodes(
-					{
-						node_ids: [element0.id, element1.id]
-					},
-					[element0.id, element1.id]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes([element0.id, element1.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -294,21 +287,19 @@ describe('Mark for deletion - trash', () => {
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(firstPage)
-				} as Folder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockTrashNodes({ node_ids: [firstPage[NODES_LOAD_LIMIT - 1].id] }, [
-					firstPage[NODES_LOAD_LIMIT - 1].id
-				]),
-				mockGetChildren(
-					getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-					{ ...currentFolder, children: populateNodePage(secondPage) } as Folder
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes([firstPage[NODES_LOAD_LIMIT - 1].id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],

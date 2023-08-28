@@ -5,25 +5,20 @@
  */
 import React from 'react';
 
-import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
+import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { getFindNodesVariables, mockFindNodes, mockTrashNodes } from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockFindNodes, mockTrashNodes } from '../utils/resolverMocks';
 import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Mark for deletion', () => {
@@ -39,18 +34,14 @@ describe('Filter View', () => {
 
 				const nodesIdsToMFD = [currentFilter[0].id];
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockTrashNodes(
-						{
-							node_ids: nodesIdsToMFD
-						},
-						nodesIdsToMFD
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					},
+					Mutation: {
+						trashNodes: mockTrashNodes(nodesIdsToMFD)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -96,12 +87,11 @@ describe('Filter View', () => {
 
 				const nodesIdsToMFD = [currentFilter[0].id, currentFilter[1].id];
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -130,12 +120,11 @@ describe('Filter View', () => {
 				node.permissions.can_write_file = true;
 				node.rootId = ROOTS.TRASH;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						[node]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes([node])
+					}
+				} satisfies Partial<Resolvers>;
 
 				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -168,17 +157,14 @@ describe('Filter View', () => {
 			});
 			const nodesToTrash = map(firstPage, (node) => node.id);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					firstPage
-				),
-				mockTrashNodes({ node_ids: nodesToTrash }, nodesToTrash),
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					secondPage
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage, secondPage)
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes(nodesToTrash)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				mocks,
@@ -201,7 +187,7 @@ describe('Filter View', () => {
 			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(trashAction);
-			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
+			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/item moved to trash/i);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();

@@ -38,19 +38,16 @@ import {
 } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { UploadItem, UploadStatus } from '../../types/graphql/client-types';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
 	Folder,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	Maybe
 } from '../../types/graphql/types';
-import {
-	getChildrenVariables,
-	mockCreateFolder,
-	mockGetBaseNode,
-	mockGetChildren
-} from '../../utils/mockUtils';
+import { getChildrenVariables, mockCreateFolder, mockGetNode } from '../../utils/resolverMocks';
 import {
 	buildBreadCrumbRegExp,
 	createMoveDataTransfer,
@@ -78,9 +75,9 @@ describe('Upload list', () => {
 			});
 
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
@@ -88,7 +85,11 @@ describe('Upload list', () => {
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -108,7 +109,10 @@ describe('Upload list', () => {
 			const localRootCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(getChildrenMockedQuery.request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id)
+			});
 
 			expect(
 				(localRootCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
@@ -145,7 +149,11 @@ describe('Upload list', () => {
 
 			const dataTransfer = createMoveDataTransfer();
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -169,9 +177,9 @@ describe('Upload list', () => {
 			uploadedFiles[1].parent = localRoot;
 
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
@@ -179,13 +187,14 @@ describe('Upload list', () => {
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockCreateFolder(
-					{ name: uploadedFiles[0].name, destination_id: uploadedFiles[0].parent.id },
-					uploadedFiles[0]
-				)
-			];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				},
+				Mutation: {
+					createFolder: mockCreateFolder(uploadedFiles[0])
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -201,7 +210,10 @@ describe('Upload list', () => {
 				const localRootCachedData = global.apolloClient.readQuery<
 					GetChildrenQuery,
 					GetChildrenQueryVariables
-				>(getChildrenMockedQuery.request);
+				>({
+					query: GetChildrenDocument,
+					variables: getChildrenVariables(localRoot.id)
+				});
 				return expect(
 					(localRootCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 				).toHaveLength(uploadedFiles.length);
@@ -226,9 +238,9 @@ describe('Upload list', () => {
 			const emitter = new EventEmitter();
 
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
@@ -250,7 +262,11 @@ describe('Upload list', () => {
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -296,7 +312,10 @@ describe('Upload list', () => {
 			const localRootCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(getChildrenMockedQuery.request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id)
+			});
 			expect(
 				(localRootCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 			).toHaveLength(uploadedFiles.length);
@@ -329,7 +348,11 @@ describe('Upload list', () => {
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -385,7 +408,11 @@ describe('Upload list', () => {
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<UploadList />, { mocks });
 
@@ -452,7 +479,11 @@ describe('Upload list', () => {
 
 			const dataTransferObj2 = createUploadDataTransfer(uploadedFiles.slice(4));
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -548,7 +579,11 @@ describe('Upload list', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -576,14 +611,14 @@ describe('Upload list', () => {
 		test('should render the badge with the number of selected items', async () => {
 			const uploadItems = populateUploadItems(10);
 			uploadVar(keyBy(uploadItems, (item) => item.id));
-			const { user } = setup(<UploadList />, { mocks: [] });
+			const { user } = setup(<UploadList />, { mocks: {} });
 			await selectNodes([uploadItems[0].id], user);
 			expect(screen.getByText(1)).toBeInTheDocument();
 		});
 		test('if the user clicks SELECT ALL, the badge renders the length of all nodes', async () => {
 			const uploadItems = populateUploadItems(10);
 			uploadVar(keyBy(uploadItems, (item) => item.id));
-			const { user } = setup(<UploadList />, { mocks: [] });
+			const { user } = setup(<UploadList />, { mocks: {} });
 			await selectNodes([uploadItems[0].id], user);
 			expect(screen.getByText(1)).toBeInTheDocument();
 			await user.click(screen.getByText(/SELECT ALL/i));

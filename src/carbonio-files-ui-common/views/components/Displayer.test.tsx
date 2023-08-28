@@ -15,6 +15,8 @@ import {
 	populateNodePage,
 	populateShares
 } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File,
 	Folder,
@@ -24,16 +26,12 @@ import {
 } from '../../types/graphql/types';
 import {
 	getChildrenVariables,
-	getNodeVariables,
-	getSharesVariables,
 	mockCopyNodes,
-	mockGetChildren,
 	mockGetNode,
 	mockGetPath,
-	mockGetShares,
 	mockMoveNodes,
 	mockUpdateNode
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
@@ -50,18 +48,25 @@ describe('Displayer', () => {
 			id: 'copied-id',
 			name: `${node.name}(1)`
 		};
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetPath({ node_id: parent.id }, [parent]),
-			mockGetChildren(getChildrenVariables(parent.id), parent),
-			mockCopyNodes({ node_ids: [node.id], destination_id: parent.id }, [copyNode]),
-			mockGetChildren(getChildrenVariables(parent.id), {
-				...parent,
-				children: populateNodePage([...parent.children.nodes, copyNode])
-			} as Folder),
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetNode(getNodeVariables(node.id), node)
-		];
+
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({
+					getNode: [node],
+					getChildren: [
+						parent,
+						{
+							...parent,
+							children: populateNodePage([...parent.children.nodes, copyNode])
+						} as Folder
+					]
+				}),
+				getPath: mockGetPath([parent])
+			},
+			Mutation: {
+				copyNodes: mockCopyNodes([copyNode])
+			}
+		} satisfies Partial<Resolvers>;
 		const { findByTextWithMarkup, user } = setup(<Displayer translationKey="No.node" />, {
 			initialRouterEntries: [`/?node=${node.id}`],
 			mocks
@@ -118,17 +123,23 @@ describe('Displayer', () => {
 		parent.permissions.can_write_file = true;
 		parent.children.nodes.push(destinationFolder);
 		node.parent = parent;
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetChildren(getChildrenVariables(parent.id), {
-				...parent,
-				children: populateNodePage([...parent.children.nodes, node])
-			} as Folder),
-			mockGetPath({ node_id: parent.id }, [parent]),
-			mockMoveNodes({ node_ids: [node.id], destination_id: destinationFolder.id }, [
-				{ ...node, parent: destinationFolder }
-			])
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({
+					getNode: [node],
+					getChildren: [
+						{
+							...parent,
+							children: populateNodePage([...parent.children.nodes, node])
+						} as Folder
+					]
+				}),
+				getPath: mockGetPath([parent])
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes([{ ...node, parent: destinationFolder }])
+			}
+		} satisfies Partial<Resolvers>;
 		const { findByTextWithMarkup, user } = setup(<Displayer translationKey="No.node" />, {
 			initialRouterEntries: [`/?node=${node.id}`],
 			mocks
@@ -172,11 +183,15 @@ describe('Displayer', () => {
 		parent.children.nodes.push(node);
 		node.parent = parent;
 		const newName = 'new name';
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetChildren(getChildrenVariables(parent.id), parent),
-			mockUpdateNode({ node_id: node.id, name: newName }, { ...node, name: newName })
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getNode: [node], getChildren: [parent] }),
+				getPath: mockGetPath([parent])
+			},
+			Mutation: {
+				updateNode: mockUpdateNode({ ...node, name: newName })
+			}
+		} satisfies Partial<Resolvers>;
 		const { getByTextWithMarkup, user } = setup(<Displayer translationKey="No.node" />, {
 			initialRouterEntries: [`/?node=${node.id}`],
 			mocks
@@ -196,10 +211,11 @@ describe('Displayer', () => {
 		const node = populateNode();
 		node.shares = populateShares(node, 10);
 		node.permissions.can_share = false;
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetShares(getSharesVariables(node.id), node)
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getNode: [node], getShares: [node] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const collaborator0Name = getChipLabel(node.shares[0]?.share_target ?? { name: '' });
 		const collaborator5Name = getChipLabel(node.shares[5]?.share_target ?? { name: '' });
@@ -225,10 +241,13 @@ describe('Displayer', () => {
 		const node = populateNode();
 		node.shares = populateShares(node, 100);
 		node.permissions.can_share = false;
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), { ...node, shares: node.shares.slice(0, 6) }),
-			mockGetShares(getSharesVariables(node.id), node)
-		];
+		const mocks = {
+			Query: {
+				getNode: jest.fn(
+					mockGetNode({ getNode: [node], getShares: [node] }) as (...args: unknown[]) => Node
+				)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const collaborator0Name = getChipLabel(node.shares[0]?.share_target ?? { name: '' });
 		const collaborator99Name = getChipLabel(node.shares[99]?.share_target ?? { name: '' });
@@ -246,5 +265,6 @@ describe('Displayer', () => {
 		// tab is changed and all collaborators are loaded
 		expect(screen.getByText(collaborator0Name)).toBeVisible();
 		expect(screen.getByText(collaborator99Name)).toBeVisible();
+		expect(mocks.Query.getNode).toHaveBeenCalledTimes(2);
 	});
 });

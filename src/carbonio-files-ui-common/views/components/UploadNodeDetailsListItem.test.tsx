@@ -24,7 +24,7 @@ describe('Upload Node Details List Item', () => {
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByText(`${uploadItem.progress}%`)).toBeVisible();
@@ -38,7 +38,7 @@ describe('Upload Node Details List Item', () => {
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByText(`${uploadItem.progress}%`)).toBeVisible();
@@ -52,7 +52,7 @@ describe('Upload Node Details List Item', () => {
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByText(`${uploadItem.progress}%`)).toBeVisible();
@@ -68,7 +68,7 @@ describe('Upload Node Details List Item', () => {
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByText(`${uploadItem.progress}/${uploadItem.contentCount}`)).toBeVisible();
@@ -81,7 +81,7 @@ describe('Upload Node Details List Item', () => {
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
@@ -96,7 +96,7 @@ describe('Upload Node Details List Item', () => {
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
@@ -111,7 +111,7 @@ describe('Upload Node Details List Item', () => {
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByTestId(ICON_REGEXP.uploadCompleted)).toBeVisible();
@@ -127,7 +127,7 @@ describe('Upload Node Details List Item', () => {
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByText(/queued/i)).toBeVisible();
@@ -141,7 +141,7 @@ describe('Upload Node Details List Item', () => {
 		const uploadItem = populateUploadItem();
 
 		uploadVar({ [uploadItem.id]: uploadItem });
-		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: [] });
+		setup(<UploadNodeDetailsListItem id={uploadItem.id} />, { mocks: {} });
 
 		await screen.findByText(uploadItem.name);
 		expect(screen.getByText(uploadItem.name)).toBeVisible();
@@ -153,7 +153,7 @@ describe('Upload Node Details List Item', () => {
 
 		uploadVar({ [uploadItem.id]: uploadItem });
 		const { getByTextWithMarkup } = setup(<UploadNodeDetailsListItem id={uploadItem.id} />, {
-			mocks: []
+			mocks: {}
 		});
 
 		await screen.findByText(uploadItem.name);

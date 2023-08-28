@@ -11,7 +11,7 @@ interface LabelProps {
 	children: TextProps['children'];
 }
 
-export const Label = ({ children }: LabelProps): JSX.Element => (
+export const Label = ({ children }: LabelProps): React.JSX.Element => (
 	<Padding bottom="small">
 		<Text color="secondary" size="small">
 			{children}

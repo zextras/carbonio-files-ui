@@ -7,7 +7,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Container, Responsive } from '@zextras/carbonio-design-system';
-import { Action } from '@zextras/carbonio-shell-ui';
 import { map, filter, last } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -249,18 +248,17 @@ const FolderView: React.VFC = () => {
 	);
 
 	useEffect(() => {
-		const createActions = map<
-			ContextualMenuProps['actions'][number],
-			NonNullable<CreateOptionsContent['createOptions']>[number]
-		>(actions, (action) => ({
-			type: ACTION_TYPES.NEW,
-			id: action.id,
-			action: () =>
-				({
+		const createActions = map<ContextualMenuProps['actions'][number], CreateOption>(
+			actions,
+			(action) => ({
+				type: ACTION_TYPES.NEW,
+				id: action.id,
+				action: () => ({
 					group: FILES_APP_ID,
 					...action
-				} as Action)
-		}));
+				})
+			})
+		);
 
 		setCreateOptions(
 			{

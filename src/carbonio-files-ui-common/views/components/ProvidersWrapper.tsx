@@ -17,7 +17,7 @@ export const GlobalProvidersWrapper = ({
 	children
 }: {
 	children?: React.ReactNode;
-}): JSX.Element => {
+}): React.JSX.Element => {
 	const apolloClient = useMemo(() => buildClient(), []);
 	return (
 		<StyledWrapper>
@@ -29,7 +29,11 @@ export const GlobalProvidersWrapper = ({
 };
 
 // these providers need to be placed inside the routes, because they might need access to the current location info
-export const ViewProvidersWrapper = ({ children }: { children?: React.ReactNode }): JSX.Element => (
+export const ViewProvidersWrapper = ({
+	children
+}: {
+	children?: React.ReactNode;
+}): React.JSX.Element => (
 	<SnackbarManager>
 		<ModalManager>{children}</ModalManager>
 	</SnackbarManager>

@@ -7,31 +7,27 @@ import React from 'react';
 
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { forEach, map } from 'lodash';
-import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS, TIMERS } from '../constants';
 import { SELECTORS } from '../constants/test';
 import { populateFolder, populateNodes } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
 	Folder,
-	GetChildQuery,
-	GetChildQueryVariables,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	Maybe
 } from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	getFindNodesVariables,
 	mockFindNodes,
-	mockGetChildren,
+	mockGetNode,
 	mockMoveNodes
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import {
 	setup,
 	selectNodes,
@@ -39,12 +35,7 @@ import {
 	createMoveDataTransfer
 } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Drag and drop', () => {
@@ -55,40 +46,21 @@ describe('Filter View', () => {
 			forEach(uploadedFiles, (file) => {
 				file.parent = localRoot;
 			});
-			let reqIndex = 0;
-
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
 			});
 
-			server.use(
-				graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-					const { node_id: id } = req.variables;
-					const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
-					if (result) {
-						result.id = id;
-						reqIndex += 1;
-					}
-					return res(ctx.data({ getNode: result }));
-				})
-			);
-
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({
-						shared_with_me: true,
-						folder_id: ROOTS.LOCAL_ROOT,
-						cascade: true,
-						direct_share: true
-					}),
-					currentFilter
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter),
+					getNode: mockGetNode({ getChild: uploadedFiles })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -123,7 +95,10 @@ describe('Filter View', () => {
 				const localRootCachedData = global.apolloClient.readQuery<
 					GetChildrenQuery,
 					GetChildrenQueryVariables
-				>(getChildrenMockedQuery.request);
+				>({
+					query: GetChildrenDocument,
+					variables: getChildrenVariables(localRoot.id)
+				});
 				return expect(
 					(localRootCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 				).toHaveLength(uploadedFiles.length);
@@ -137,34 +112,22 @@ describe('Filter View', () => {
 			forEach(uploadedFiles, (file) => {
 				file.parent = localRoot;
 			});
-			let reqIndex = 0;
 
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
 			});
 
-			server.use(
-				graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-					const { node_id: id } = req.variables;
-					const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
-					if (result) {
-						result.id = id;
-						reqIndex += 1;
-					}
-					return res(ctx.data({ getNode: result }));
-				})
-			);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ shared_with_me: false, folder_id: ROOTS.TRASH, cascade: false }),
-					currentFilter
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter),
+					getNode: mockGetNode({ getChild: uploadedFiles })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -193,11 +156,13 @@ describe('Filter View', () => {
 				screen.queryByText(/You cannot drop an attachment in this area/m)
 			).not.toBeInTheDocument();
 
-			expect(reqIndex).toBe(0);
 			const localRootCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(getChildrenMockedQuery.request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id)
+			});
 			expect(localRootCachedData?.getNode || null).not.toBeNull();
 			expect((localRootCachedData?.getNode as Folder).children.nodes).toHaveLength(0);
 		});
@@ -211,31 +176,12 @@ describe('Filter View', () => {
 			forEach(uploadedFiles, (file) => {
 				file.parent = destinationFolder;
 			});
-			let reqIndex = 0;
-
-			server.use(
-				graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-					const { node_id: id } = req.variables;
-					const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
-					if (result) {
-						result.id = id;
-						reqIndex += 1;
-					}
-					return res(ctx.data({ getNode: result || null }));
-				})
-			);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({
-						shared_with_me: true,
-						folder_id: ROOTS.LOCAL_ROOT,
-						cascade: true,
-						direct_share: true
-					}),
-					currentFilter
-				)
-			];
-
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter),
+					getNode: mockGetNode({ getChild: uploadedFiles })
+				}
+			} satisfies Partial<Resolvers>;
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
@@ -271,25 +217,12 @@ describe('Filter View', () => {
 			forEach(uploadedFiles, (file) => {
 				file.parent = destinationFolder;
 			});
-			let reqIndex = 0;
-
-			server.use(
-				graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-					const { node_id: id } = req.variables;
-					const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
-					if (result) {
-						result.id = id;
-						reqIndex += 1;
-					}
-					return res(ctx.data({ getNode: result }));
-				})
-			);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, cascade: true, folder_id: ROOTS.LOCAL_ROOT }),
-					currentFilter
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter),
+					getNode: mockGetNode({ getChild: uploadedFiles })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -315,7 +248,6 @@ describe('Filter View', () => {
 
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(screen.queryByText(/upload occurred/i)).not.toBeInTheDocument();
-			expect(reqIndex).toBe(0);
 		});
 
 		test('Drag of files in a folder node with right permissions inside a trash filter shows disabled upload dropzone of the trash filter', async () => {
@@ -327,25 +259,12 @@ describe('Filter View', () => {
 			forEach(uploadedFiles, (file) => {
 				file.parent = destinationFolder;
 			});
-			let reqIndex = 0;
-
-			server.use(
-				graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-					const { node_id: id } = req.variables;
-					const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
-					if (result) {
-						result.id = id;
-						reqIndex += 1;
-					}
-					return res(ctx.data({ getNode: result }));
-				})
-			);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
-					currentFilter
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter),
+					getNode: mockGetNode({ getChild: uploadedFiles })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
@@ -370,7 +289,6 @@ describe('Filter View', () => {
 			expect(
 				screen.queryByText(/You cannot drop an attachment in this area/m)
 			).not.toBeInTheDocument();
-			expect(reqIndex).toBe(0);
 		});
 
 		test('Drag of a node marked for deletion is not permitted. Dropzone is not shown', async () => {
@@ -389,12 +307,11 @@ describe('Filter View', () => {
 			destinationFolder.permissions.can_write_file = true;
 			currentFilter.push(destinationFolder);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ shared_with_me: false, folder_id: ROOTS.TRASH, cascade: false }),
-					currentFilter
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransfer = createMoveDataTransfer();
 
@@ -443,19 +360,16 @@ describe('Filter View', () => {
 			folderWithoutPermission.permissions.can_write_file = false;
 			currentFilter.push(folderWithoutPermission);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					currentFilter
-				),
-				mockMoveNodes(
-					{
-						node_ids: map(nodesToDrag, (node) => node.id),
-						destination_id: destinationFolder.id
-					},
-					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter)
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(
+						map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+					)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransfer = createMoveDataTransfer();
 
@@ -534,12 +448,11 @@ describe('Filter View', () => {
 			folderWithoutPermission.permissions.can_write_file = false;
 			currentFilter.push(folderWithoutPermission);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					currentFilter
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransfer = createMoveDataTransfer();
 
@@ -603,19 +516,16 @@ describe('Filter View', () => {
 			destinationFolder.parent = parent;
 			currentFilter.push(destinationFolder);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					currentFilter
-				),
-				mockMoveNodes(
-					{
-						node_ids: map(nodesToDrag, (node) => node.id),
-						destination_id: destinationFolder.id
-					},
-					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter)
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(
+						map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+					)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransfer = createMoveDataTransfer();
 
@@ -664,13 +574,11 @@ describe('Filter View', () => {
 				mockedNode.parent.permissions.can_write_folder = true;
 				mockedNode.parent.permissions.can_write_file = true;
 			});
-
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					currentFilter
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentFilter)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const dataTransfer = createMoveDataTransfer();
 

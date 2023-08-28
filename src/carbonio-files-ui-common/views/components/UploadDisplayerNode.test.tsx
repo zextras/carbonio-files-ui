@@ -19,7 +19,8 @@ import {
 	populateUploadItems
 } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
-import { mockGetBaseNode } from '../../utils/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockGetNode } from '../../utils/resolverMocks';
 import { setup } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
 
@@ -33,7 +34,11 @@ describe('Upload Displayer Node', () => {
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
 
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
@@ -51,7 +56,11 @@ describe('Upload Displayer Node', () => {
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
 
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
@@ -69,7 +78,11 @@ describe('Upload Displayer Node', () => {
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
 
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
@@ -86,7 +99,11 @@ describe('Upload Displayer Node', () => {
 				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
@@ -103,7 +120,11 @@ describe('Upload Displayer Node', () => {
 				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
@@ -120,7 +141,11 @@ describe('Upload Displayer Node', () => {
 				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
@@ -139,7 +164,11 @@ describe('Upload Displayer Node', () => {
 				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
@@ -158,7 +187,11 @@ describe('Upload Displayer Node', () => {
 				parentNodeId: parentFolder.id
 			});
 			uploadVar({ [uploadItem.id]: uploadItem });
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
@@ -186,7 +219,11 @@ describe('Upload Displayer Node', () => {
 			});
 
 			uploadVar({ [uploadItem.id]: uploadItem, ...childrenMap });
-			const mocks = [mockGetBaseNode({ node_id: parentFolder.id }, parentFolder)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [parentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
 			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
@@ -201,7 +238,7 @@ describe('Upload Displayer Node', () => {
 		uploadVar({ [uploadItem.id]: uploadItem });
 
 		setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-			mocks: []
+			mocks: {}
 		});
 
 		await screen.findAllByText(uploadItem.name);
@@ -214,7 +251,7 @@ describe('Upload Displayer Node', () => {
 		uploadVar({ [uploadItem.id]: uploadItem });
 
 		setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-			mocks: []
+			mocks: {}
 		});
 
 		await screen.findAllByText(uploadItem.name);
@@ -227,7 +264,7 @@ describe('Upload Displayer Node', () => {
 		uploadVar({ [uploadItem.id]: uploadItem });
 
 		setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-			mocks: []
+			mocks: {}
 		});
 
 		await screen.findAllByText(uploadItem.name);
@@ -242,7 +279,7 @@ describe('Upload Displayer Node', () => {
 		uploadVar({ [uploadItem.id]: uploadItem, ...childrenMap });
 
 		setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-			mocks: []
+			mocks: {}
 		});
 
 		await screen.findAllByText(uploadItem.name);
@@ -256,7 +293,7 @@ describe('Upload Displayer Node', () => {
 		uploadVar({ [uploadItem.id]: uploadItem });
 
 		setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-			mocks: []
+			mocks: {}
 		});
 
 		await screen.findByText(uploadItem.name);
@@ -269,7 +306,7 @@ describe('Upload Displayer Node', () => {
 		uploadVar({ [uploadItem.id]: uploadItem });
 
 		setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
-			mocks: []
+			mocks: {}
 		});
 
 		await screen.findByText(uploadItem.name);

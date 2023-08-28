@@ -6,7 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ReactiveVar, useReactiveVar } from '@apollo/client';
+import { ReactiveVar, useApolloClient, useReactiveVar } from '@apollo/client';
 import {
 	Checkbox,
 	Divider,
@@ -28,7 +28,7 @@ import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQ
 import { useGetPathQuery } from '../../hooks/graphql/queries/useGetPathQuery';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
 import { NodeListItemType, RootListItemType } from '../../types/common';
-import { Folder } from '../../types/graphql/types';
+import { BaseNodeFragment, BaseNodeFragmentDoc, Folder } from '../../types/graphql/types';
 import { isFile, isFolder } from '../../utils/utils';
 
 interface FolderSelectionModalContentProps {
@@ -47,8 +47,7 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 	closeAction
 }) => {
 	const [t] = useTranslation();
-	const { setCurrent: setCurrentDestinationVar, setDefault } =
-		useDestinationVarManager<SelectedNode>();
+	const { setCurrent, setDefault } = useDestinationVarManager<SelectedNode>();
 	const { currentValue } = useReactiveVar<DestinationVar<SelectedNode>>(
 		destinationVar as ReactiveVar<DestinationVar<SelectedNode>>
 	);
@@ -61,24 +60,9 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 	const { data: currentFolder, loading, hasMore, loadMore } = useGetChildrenQuery(openedFolderId);
 	const mainContainerRef = useRef<HTMLDivElement>(null);
 
-	const setCurrent = useCallback<typeof setCurrentDestinationVar>(
-		(value) => {
-			setSelectedFolder(value);
-			setCurrentDestinationVar(value);
-		},
-		[setCurrentDestinationVar]
-	);
-
 	useEffect(() => {
 		setSelectedFolder(currentValue);
 	}, [currentValue]);
-
-	useEffect(() => {
-		if (currentFolder?.getNode?.id === openedFolderId) {
-			setCurrent(currentFolder.getNode);
-			setDefault(currentFolder.getNode);
-		}
-	}, [currentFolder?.getNode, openedFolderId, setCurrent, setDefault]);
 
 	useEffect(() => {
 		if (currentFilterPathData?.getPath) {
@@ -99,7 +83,7 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 		} else {
 			setCurrent(undefined);
 		}
-	}, [currentFilterPathData?.getPath, folderId, setCurrent, setDefault, t]);
+	}, [currentFilterPathData, folderId, setCurrent, setDefault, t]);
 
 	const checkSelectable = useCallback(
 		(node: NodeListItemType | RootListItemType) => !isFile(node),
@@ -147,13 +131,25 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 		}
 	}, [selectedFolder, confirmAction, cascade, closeHandler]);
 
+	const apolloClient = useApolloClient();
+
 	const navigateTo = useCallback(
 		(id: string) => {
 			setOpenedFolderId(id);
-			setCurrent(null);
-			setDefault(null);
+			const node = id
+				? apolloClient.cache.readFragment<BaseNodeFragment>({
+						fragment: BaseNodeFragmentDoc,
+						fragmentName: 'BaseNode',
+						// assuming it's a folder, not the best solution
+						id: apolloClient.cache.identify({ __typename: 'Folder', id }),
+						returnPartialData: true
+				  })
+				: null;
+			const nodeToSet = node?.id !== undefined ? node : null;
+			setCurrent(nodeToSet);
+			setDefault(nodeToSet);
 		},
-		[setCurrent, setDefault]
+		[apolloClient, setCurrent, setDefault]
 	);
 
 	const setDestinationFolderHandler = useCallback(

@@ -11,28 +11,17 @@ import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import {
-	getChildrenVariables,
-	mockFlagNodes,
-	mockGetChildren,
-	mockGetPath,
-	mockGetPermissions
-} from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -56,25 +45,15 @@ describe('Flag', () => {
 
 			const nodesIdsToUnflag = nodesIdsToFlag.slice(0, nodesIdsToFlag.length / 2);
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockFlagNodes(
-					{
-						node_ids: nodesIdsToFlag,
-						flag: true
-					},
-					nodesIdsToFlag
-				),
-				mockFlagNodes(
-					{
-						node_ids: nodesIdsToUnflag,
-						flag: false
-					},
-					nodesIdsToUnflag
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes(nodesIdsToFlag, nodesIdsToUnflag)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -126,25 +105,15 @@ describe('Flag', () => {
 			node.flagged = false;
 			currentFolder.children.nodes.push(node);
 
-			const mocks = [
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockFlagNodes(
-					{
-						node_ids: [node.id],
-						flag: true
-					},
-					[node.id]
-				),
-				mockFlagNodes(
-					{
-						node_ids: [node.id],
-						flag: false
-					},
-					[node.id]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes([node.id], [node.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],

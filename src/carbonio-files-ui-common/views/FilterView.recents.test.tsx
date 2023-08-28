@@ -10,10 +10,8 @@ import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
-	FILTER_PARAMS,
 	FILTER_TYPE,
 	INTERNAL_PATH,
 	NODES_LOAD_LIMIT,
@@ -23,29 +21,20 @@ import {
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
-import { getFindNodesVariables, mockFindNodes } from '../utils/mockUtils';
+import { mockFindNodes } from '../utils/resolverMocks';
 import { setup } from '../utils/testUtils';
 
-const mockedRequestHandler = jest.fn();
-
-beforeEach(() => {
-	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
-	server.use(
-		graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
-	);
-});
-
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Recents filter', () => {
 		test('Recents filter is sort by updated_at_desc and excludes trashed nodes', async () => {
+			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			server.use(
+				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
+			);
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`]
 			});
@@ -69,23 +58,11 @@ describe('Filter View', () => {
 
 		test('Sorting component is hidden', async () => {
 			const nodes = populateNodes(10);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({
-						...FILTER_PARAMS.recents,
-						sort: NodeSort.UpdatedAtDesc
-					}),
-					nodes
-				),
-				mockFindNodes(
-					getFindNodesVariables({
-						folder_id: ROOTS.LOCAL_ROOT,
-						cascade: true,
-						sort: NodeSort.UpdatedAtDesc
-					}),
-					nodes
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`],

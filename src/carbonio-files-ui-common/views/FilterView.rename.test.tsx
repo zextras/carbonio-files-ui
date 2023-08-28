@@ -5,7 +5,6 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import {
 	act,
 	fireEvent,
@@ -18,37 +17,28 @@ import { forEach, map, find } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import {
-	FILTER_TYPE,
-	INTERNAL_PATH,
-	NODES_LOAD_LIMIT,
-	NODES_SORT_DEFAULT,
-	ROOTS
-} from '../constants';
+import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { populateFile, populateFolder, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import {
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	getFindNodesVariables,
-	getNodeVariables,
+	mockErrorResolver,
 	mockFindNodes,
 	mockGetNode,
-	mockUpdateNode,
-	mockUpdateNodeError
-} from '../utils/mockUtils';
+	mockUpdateNode
+} from '../utils/resolverMocks';
 import { generateError, renameNode, setup, selectNodes } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Rename', () => {
@@ -62,12 +52,11 @@ describe('Filter View', () => {
 					nodes.push(node);
 				}
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -103,12 +92,11 @@ describe('Filter View', () => {
 				const node = populateFile();
 				node.permissions.can_write_file = false;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						[node]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes([node])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -146,19 +134,14 @@ describe('Filter View', () => {
 				const element = nodes[0];
 				const newName = nodes[1].name;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					),
-					mockUpdateNodeError(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						new ApolloError({ graphQLErrors: [generateError('Error! Name already assigned')] })
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes)
+					},
+					Mutation: {
+						updateNode: mockErrorResolver(generateError('Error! Name already assigned'))
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -204,24 +187,17 @@ describe('Filter View', () => {
 				const element = nodes[0];
 				const lastElementName = nodes[nodes.length - 1].name;
 				const newName = lastElementName.substring(0, lastElementName.length - 1);
+				const nodeWithNewName = { ...element, name: newName };
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					),
-					mockUpdateNode(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						{
-							...element,
-							name: newName
-						}
-					),
-					mockGetNode(getNodeVariables(element.id), { ...element, name: newName })
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes),
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
+					},
+					Mutation: {
+						updateNode: mockUpdateNode(nodeWithNewName)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -261,13 +237,11 @@ describe('Filter View', () => {
 				// set the second node flagged so that we can findNodes by unflag action in the contextual menu of second node
 				nodes[1].flagged = true;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					)
-				];
-
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes)
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
@@ -308,12 +282,11 @@ describe('Filter View', () => {
 				const node = populateFile();
 				node.permissions.can_write_file = false;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						[node]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes([node])
+					}
+				} satisfies Partial<Resolvers>;
 
 				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -344,24 +317,17 @@ describe('Filter View', () => {
 				const element = nodes[1];
 				const lastElementName = nodes[nodes.length - 1].name;
 				const newName = lastElementName.substring(0, lastElementName.length - 1);
+				const nodeWithNewName = { ...element, name: newName } satisfies Node;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					),
-					mockUpdateNode(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						{
-							...element,
-							name: newName
-						}
-					),
-					mockGetNode(getNodeVariables(element.id), { ...element, name: newName })
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes),
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
+					},
+					Mutation: {
+						updateNode: mockUpdateNode(nodeWithNewName)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -408,42 +374,29 @@ describe('Filter View', () => {
 
 				// prepare the cache with the parent folder as if already loaded
 				global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id),
 					data: {
 						getNode: parentFolder
 					}
 				});
 
+				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies Node;
 				const newPosition = addNodeInSortedList(
 					parentFolder.children.nodes,
-					{ ...element, name: newName },
+					nodeWithNewName,
 					NODES_SORT_DEFAULT
 				);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockUpdateNode(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						{
-							...element,
-							name: newName,
-							// update mutation return also the parent
-							parent: parentFolder
-						}
-					),
-					mockGetNode(getNodeVariables(element.id), {
-						...element,
-						name: newName,
-						parent: parentFolder
-					})
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
+					},
+					Mutation: {
+						updateNode: mockUpdateNode(nodeWithNewName)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -459,7 +412,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id, NODES_LOAD_LIMIT * 2)
 				});
 				expect(parentFolderData?.getNode).toBeDefined();
@@ -485,7 +438,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id, NODES_LOAD_LIMIT * 2)
 				});
 				expect((parentFolderData?.getNode as Folder).children.nodes).toHaveLength(
@@ -523,36 +476,23 @@ describe('Filter View', () => {
 
 				// prepare the cache with the parent folder as if already loaded
 				global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id),
 					data: {
 						getNode: parentFolder
 					}
 				});
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockUpdateNode(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						{
-							...element,
-							name: newName,
-							// update mutation return also the parent
-							parent: parentFolder
-						}
-					),
-					mockGetNode(getNodeVariables(element.id), {
-						...element,
-						name: newName,
-						parent: parentFolder
-					})
-				];
+				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies Node;
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
+					},
+					Mutation: {
+						updateNode: mockUpdateNode(nodeWithNewName)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -568,7 +508,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id, NODES_LOAD_LIMIT * 2)
 				});
 				expect(parentFolderData?.getNode).toBeDefined();
@@ -598,7 +538,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id, NODES_LOAD_LIMIT * 2)
 				});
 				// cached folder has 1 element more than the initial children.nodes list
