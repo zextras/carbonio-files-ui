@@ -10,7 +10,7 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { List } from './List';
 import { PREVIEW_MAX_SIZE } from '../../constants';
-import { ACTION_REGEXP } from '../../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP } from '../../constants/test';
 import { populateFile, populateNodes } from '../../mocks/mockUtils';
 import { File, NodeType } from '../../types/graphql/types';
 import { setup } from '../../utils/testUtils';
@@ -71,8 +71,8 @@ describe('Preview action', () => {
 		expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
 	});
 
-	test('check if the context preview action is supported by mime type', async () => {
-		const files = populateNodes(4, 'File') as File[];
+	test('check if the context preview action is supported by mime type, and check that only docs has edit action in preview', async () => {
+		const files = populateNodes(5, 'File') as File[];
 		// create video file
 		files[0].mime_type = 'video/quicktime';
 		// create ODT file
@@ -82,6 +82,8 @@ describe('Preview action', () => {
 			'application/vnd.openxmlformats-officedocument.presentationml.presentation';
 		// create XLSX file
 		files[3].mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+		// create PDF file
+		files[4].mime_type = 'application/pdf';
 
 		const { user } = setup(<List nodes={files} mainList emptyListMessage="empty list" />);
 
@@ -89,16 +91,28 @@ describe('Preview action', () => {
 		await screen.findByText(files[1].name);
 		fireEvent.contextMenu(screen.getByText(files[0].name));
 		expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
+
 		fireEvent.contextMenu(screen.getByText(files[1].name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
+		await user.click(screen.getByText(ACTION_REGEXP.preview));
+		// check if there is edit icon in ODT preview
+		expect(screen.getByTestId(ICON_REGEXP.rename)).toBeVisible();
+
 		fireEvent.contextMenu(screen.getByText(files[2].name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
+		await user.click(screen.getByText(ACTION_REGEXP.preview));
+		// check if there is edit icon in XLSX preview
+		expect(screen.getByTestId(ICON_REGEXP.rename)).toBeVisible();
+
 		fireEvent.contextMenu(screen.getByText(files[3].name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
-		// fallback is not shown
-		await screen.findByText(/failed to load document preview/i);
-		expect(screen.queryByText(/This item cannot be displayed/i)).not.toBeInTheDocument();
-		expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
+		// check if there is edit icon in PPT preview
+		expect(screen.getByTestId(ICON_REGEXP.rename)).toBeVisible();
+
+		fireEvent.contextMenu(screen.getByText(files[4].name));
+		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
+		await user.click(screen.getByText(ACTION_REGEXP.preview));
+		expect(screen.queryByTestId(ICON_REGEXP.rename)).not.toBeInTheDocument();
 	});
 });

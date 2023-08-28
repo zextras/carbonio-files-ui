@@ -368,6 +368,13 @@ export const List: React.VFC<ListProps> = ({
 									onClick: (): void => downloadNode(node.id)
 								}
 							];
+							documentType === PREVIEW_TYPE.DOCUMENT &&
+								actions.unshift({
+									icon: 'Edit2Outline',
+									id: 'Edit',
+									onClick: (): void => openNodeWithDocs(node.id),
+									tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
+								});
 							const closeAction = {
 								id: 'close-action',
 								icon: 'ArrowBackOutline',
