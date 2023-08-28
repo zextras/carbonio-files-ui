@@ -83,7 +83,7 @@ describe('Preview action', () => {
 		// create XLSX file
 		files[3].mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-		setup(<List nodes={files} mainList emptyListMessage="empty list" />);
+		const { user } = setup(<List nodes={files} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(files[0].name);
 		await screen.findByText(files[1].name);
@@ -95,5 +95,10 @@ describe('Preview action', () => {
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 		fireEvent.contextMenu(screen.getByText(files[3].name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
+		await user.click(screen.getByText(ACTION_REGEXP.preview));
+		// fallback is not shown
+		await screen.findByText(/failed to load document preview/i);
+		expect(screen.queryByText(/This item cannot be displayed/i)).not.toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
 	});
 });
