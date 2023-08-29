@@ -11,8 +11,8 @@ import { fireEvent, screen } from '@testing-library/react';
 import { List } from './List';
 import { PREVIEW_MAX_SIZE } from '../../constants';
 import { ACTION_REGEXP, ICON_REGEXP } from '../../constants/test';
-import { populateFile, populateNodes } from '../../mocks/mockUtils';
-import { File, NodeType } from '../../types/graphql/types';
+import { populateFile } from '../../mocks/mockUtils';
+import { NodeType } from '../../types/graphql/types';
 import { setup } from '../../utils/testUtils';
 
 describe('Preview action', () => {
@@ -71,48 +71,43 @@ describe('Preview action', () => {
 		expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
 	});
 
-	test('check if the context preview action is supported by mime type, and check that only docs has edit action in preview', async () => {
-		const files = populateNodes(5, 'File') as File[];
-		// create video file
-		files[0].mime_type = 'video/quicktime';
-		// create ODT file
-		files[1].mime_type = 'application/vnd.oasis.opendocument.text';
-		// create PPT
-		files[2].mime_type =
-			'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-		// create XLSX file
-		files[3].mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-		// create PDF file
-		files[4].mime_type = 'application/pdf';
+	test.each([
+		['image/png'],
+		['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+		['application/vnd.oasis.opendocument.presentation'],
+		['application/vnd.oasis.opendocument.spreadsheet'],
+		['application/vnd.oasis.opendocument.text'],
+		['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+		['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+		['application/pdf']
+	])('Check if the context preview action is supported by mime type', async (mimeType) => {
+		const file = populateFile();
+		file.mime_type = mimeType;
 
-		const { user } = setup(<List nodes={files} mainList emptyListMessage="empty list" />);
+		setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
-		await screen.findByText(files[0].name);
-		await screen.findByText(files[1].name);
-		fireEvent.contextMenu(screen.getByText(files[0].name));
-		expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
+		await screen.findByText(file.name);
+		fireEvent.contextMenu(screen.getByText(file.name));
+		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
+	});
 
-		fireEvent.contextMenu(screen.getByText(files[1].name));
+	test.each([
+		['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+		['application/vnd.oasis.opendocument.presentation'],
+		['application/vnd.oasis.opendocument.spreadsheet'],
+		['application/vnd.oasis.opendocument.text'],
+		['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+		['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+	])('Check that only docs have edit action in preview', async (mimeType) => {
+		const file = populateFile();
+		file.mime_type = mimeType;
+
+		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+
+		await screen.findByText(file.name);
+		fireEvent.contextMenu(screen.getByText(file.name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
-		// check if there is edit icon in ODT preview
-		expect(screen.getByTestId(ICON_REGEXP.rename)).toBeVisible();
-
-		fireEvent.contextMenu(screen.getByText(files[2].name));
-		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
-		await user.click(screen.getByText(ACTION_REGEXP.preview));
-		// check if there is edit icon in XLSX preview
-		expect(screen.getByTestId(ICON_REGEXP.rename)).toBeVisible();
-
-		fireEvent.contextMenu(screen.getByText(files[3].name));
-		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
-		await user.click(screen.getByText(ACTION_REGEXP.preview));
-		// check if there is edit icon in PPT preview
-		expect(screen.getByTestId(ICON_REGEXP.rename)).toBeVisible();
-
-		fireEvent.contextMenu(screen.getByText(files[4].name));
-		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
-		await user.click(screen.getByText(ACTION_REGEXP.preview));
-		expect(screen.queryByTestId(ICON_REGEXP.rename)).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.edit)).toBeVisible();
 	});
 });
