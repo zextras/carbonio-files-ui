@@ -14,7 +14,7 @@ import { useLocation } from 'react-router-dom';
 
 import { useActiveNode } from '../../../../hooks/useActiveNode';
 import useUserInfo from '../../../../hooks/useUserInfo';
-import { findNodeReference, recursiveShareEvict } from '../../../apollo/cacheUtils';
+import { recursiveShareEvict } from '../../../apollo/cacheUtils';
 import PARENT_ID from '../../../graphql/fragments/parentId.graphql';
 import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
 import DELETE_SHARE from '../../../graphql/mutations/deleteShare.graphql';
@@ -82,15 +82,7 @@ export function useDeleteShareMutation(): (
 						cache.modify({
 							id: cache.identify(node),
 							fields: {
-								shares(
-									existingShares: SharesCachedObject,
-									{ canRead, toReference }
-								): SharesCachedObject {
-									const nodeRef = findNodeReference(node.id, { canRead, toReference });
-									if (nodeRef) {
-										recursiveShareEvict(cache, nodeRef);
-									}
-
+								shares(existingShares: SharesCachedObject): SharesCachedObject {
 									const updatedShares = filter(existingShares.shares, (existingShareRef) => {
 										const sharedTarget: User | DistributionList | null | undefined =
 											existingShareRef.share_target &&
@@ -111,6 +103,7 @@ export function useDeleteShareMutation(): (
 								}
 							}
 						});
+						recursiveShareEvict(cache, node);
 						// always remove node when user remove self share
 						if (shareTargetId === me) {
 							removeNodesFromFilter([node.id], () => true);
