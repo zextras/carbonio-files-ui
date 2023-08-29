@@ -6,8 +6,9 @@
 
 import { useCallback } from 'react';
 
-import { ApolloError, FetchResult, gql, useMutation } from '@apollo/client';
+import { ApolloError, FetchResult, useMutation } from '@apollo/client';
 
+import { findNodeReference, recursiveShareEvict } from '../../../apollo/cacheUtils';
 import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
 import CREATE_SHARE from '../../../graphql/mutations/createShare.graphql';
 import { ShareCachedObject, SharesCachedObject } from '../../../types/apollo';
@@ -53,16 +54,15 @@ export function useCreateShareMutation(): [
 						cache.modify({
 							id: cache.identify(node),
 							fields: {
-								shares(existingShareRefs: SharesCachedObject): SharesCachedObject {
-									// TODO: move fragment to graphql file and add type
-									const nodeRef = cache.writeFragment({
-										data: data.createShare.node,
-										fragment: gql`
-											fragment NewNode on Node {
-												id
-											}
-										`
-									});
+								shares(
+									existingShareRefs: SharesCachedObject,
+									{ canRead, toReference }
+								): SharesCachedObject {
+									const nodeRef = findNodeReference(node.id, { canRead, toReference });
+									if (nodeRef) {
+										recursiveShareEvict(cache, nodeRef);
+									}
+
 									let targetRef;
 									if (data.createShare.share_target) {
 										targetRef = cache.writeFragment<ShareTargetFragment>({

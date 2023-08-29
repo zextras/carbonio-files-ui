@@ -3,13 +3,13 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { ApolloCache, FieldFunctionOptions } from '@apollo/client';
-import { filter, find, findIndex, size } from 'lodash';
+import { ApolloCache, FieldFunctionOptions, Reference } from '@apollo/client';
+import { filter, find, findIndex, forEach, map, size } from 'lodash';
 
 import { nodeSortVar } from './nodeSortVar';
 import { NodesPageCachedObject } from '../types/apollo';
 import introspection from '../types/graphql/possible-types';
-import { ChildFragment, ChildWithParentFragmentDoc } from '../types/graphql/types';
+import { ChildFragment, ChildWithParentFragmentDoc, NodeType } from '../types/graphql/types';
 
 export const removeNodesFromFolder = (
 	cache: ApolloCache<object>,
@@ -148,6 +148,30 @@ export const addNodeInCachedChildren = (
 		}
 	});
 
+export const recursiveShareEvict = (cache: ApolloCache<unknown>, reference: Reference): boolean =>
+	cache.modify({
+		id: cache.identify(reference),
+		fields: {
+			children(existingChildrenRefs: NodesPageCachedObject, { readField }): void {
+				forEach(existingChildrenRefs.nodes?.ordered, (ref) => {
+					cache.evict({ id: ref.__ref, fieldName: 'shares' });
+					const type = readField<NodeType>('type', ref);
+					if (type === 'FOLDER') {
+						recursiveShareEvict(cache, ref);
+					}
+				});
+				forEach(existingChildrenRefs.nodes?.unOrdered, (ref) => {
+					cache.evict({ id: ref.__ref, fieldName: 'shares' });
+					const type = readField<NodeType>('type', ref);
+					if (type === 'FOLDER') {
+						recursiveShareEvict(cache, ref);
+					}
+				});
+				cache.gc();
+			}
+		}
+	});
+
 export function findNodeTypeName(
 	nodeId: string,
 	{ canRead, toReference }: Pick<FieldFunctionOptions, 'toReference' | 'canRead'>
@@ -159,4 +183,17 @@ export function findNodeTypeName(
 		});
 		return canRead(nodeRef);
 	});
+}
+
+export function findNodeReference(
+	nodeId: string,
+	{ canRead, toReference }: Pick<FieldFunctionOptions, 'toReference' | 'canRead'>
+): Reference | undefined {
+	const validRefCandidates = map(introspection.possibleTypes.Node, (nodePossibleType) =>
+		toReference({
+			__typename: nodePossibleType,
+			id: nodeId
+		})
+	);
+	return find(validRefCandidates, (candidate) => canRead(candidate));
 }

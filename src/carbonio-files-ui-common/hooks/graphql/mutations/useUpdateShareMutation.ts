@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import { ApolloError, FetchResult, useMutation } from '@apollo/client';
 import { reduce } from 'lodash';
 
+import { findNodeReference, recursiveShareEvict } from '../../../apollo/cacheUtils';
 import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
 import UPDATE_SHARE from '../../../graphql/mutations/updateShare.graphql';
 import { ShareCachedObject, SharesCachedObject } from '../../../types/apollo';
@@ -51,7 +52,14 @@ export function useUpdateShareMutation(): [
 					cache.modify({
 						id: cache.identify(node),
 						fields: {
-							shares(existingShares: SharesCachedObject): SharesCachedObject {
+							shares(
+								existingShares: SharesCachedObject,
+								{ canRead, toReference }
+							): SharesCachedObject {
+								const nodeRef = findNodeReference(node.id, { canRead, toReference });
+								if (nodeRef) {
+									recursiveShareEvict(cache, nodeRef);
+								}
 								const updatedShares = reduce<ShareCachedObject, ShareCachedObject[]>(
 									existingShares.shares,
 									(accumulator, existingShareRef) => {
