@@ -157,19 +157,22 @@ export const recursiveShareEvict = (
 		id: cache.identify(node),
 		fields: {
 			children(existingChildrenRefs: NodesPageCachedObject, { readField }): void {
-				forEach(existingChildrenRefs.nodes?.ordered, (ref) => {
-					cache.evict({ id: ref.__ref, fieldName: 'shares' });
-					if (readField<NodeType>('type', ref) === 'FOLDER') {
-						recursiveShareEvict(cache, node);
-					}
-				});
-				forEach(existingChildrenRefs.nodes?.unOrdered, (ref) => {
-					cache.evict({ id: ref.__ref, fieldName: 'shares' });
-					if (readField<NodeType>('type', ref) === 'FOLDER') {
-						recursiveShareEvict(cache, node);
-					}
-				});
-				cache.gc();
+				if (existingChildrenRefs.nodes) {
+					forEach(
+						[...existingChildrenRefs.nodes.ordered, ...existingChildrenRefs.nodes.unOrdered],
+						(ref) => {
+							cache.evict({ id: ref.__ref, fieldName: 'shares' });
+							if (readField<NodeType>('type', ref) === 'FOLDER') {
+								const id = readField<string>('id', ref);
+								const __typename = readField<Node['__typename']>('__typename', ref);
+								if (id && __typename) {
+									recursiveShareEvict(cache, { id, __typename });
+								}
+							}
+						}
+					);
+					cache.gc();
+				}
 			}
 		}
 	});
