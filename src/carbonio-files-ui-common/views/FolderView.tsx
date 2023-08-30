@@ -6,7 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Container, Responsive } from '@zextras/carbonio-design-system';
+import { Container, Responsive, Text } from '@zextras/carbonio-design-system';
 import { map, filter, last } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -19,7 +19,7 @@ import { SortingComponent } from './components/SortingComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
-import { DISPLAYER_WIDTH, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
+import { DISPLAYER_WIDTH, DOCS_EXTENSIONS, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
 import { ListContext, ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
 import { useGetChildrenQuery } from '../hooks/graphql/queries/useGetChildrenQuery';
@@ -108,6 +108,7 @@ const FolderView: React.VFC = () => {
 		t('folder.create.modal.title', 'Create new folder'),
 		t('folder.create.modal.input.label.name', 'Folder name'),
 		createFolderCallback,
+		undefined,
 		resetNewFolder
 	);
 
@@ -154,6 +155,7 @@ const FolderView: React.VFC = () => {
 		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
 		createDocsFileAction,
+		newFile ? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[newFile]}`}</Text> : undefined,
 		resetNewFile
 	);
 
