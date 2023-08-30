@@ -10,7 +10,6 @@ import { getCollaborationLinksFieldPolicy } from './fieldPolicies/getCollaborati
 import { getLinksFieldPolicy } from './fieldPolicies/getLinks';
 import { getNodeFieldPolicy } from './fieldPolicies/getNode';
 import { getUploadItemFieldPolicy } from './fieldPolicies/getUploadItem';
-import { getUploadItemsFieldPolicy } from './fieldPolicies/getUploadItems';
 import { getVersionsFieldPolicy } from './fieldPolicies/getVersions';
 
 export const queryTypePolicies: TypePolicy = {
@@ -18,7 +17,6 @@ export const queryTypePolicies: TypePolicy = {
 		findNodes: findNodesFieldPolicy,
 		getVersions: getVersionsFieldPolicy,
 		getNode: getNodeFieldPolicy,
-		getUploadItems: getUploadItemsFieldPolicy,
 		getUploadItem: getUploadItemFieldPolicy,
 		getCollaborationLinks: getCollaborationLinksFieldPolicy,
 		getLinks: getLinksFieldPolicy
