@@ -7,7 +7,7 @@
 import React, { useCallback, useRef } from 'react';
 
 import { FetchResult } from '@apollo/client';
-import { useModal } from '@zextras/carbonio-design-system';
+import { InputProps, useModal } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { CreateDocsFile } from '../../types/common';
@@ -21,7 +21,7 @@ export function useCreateModal(
 		parentId: string,
 		newName: string
 	) => Promise<FetchResult<CreateFolderMutation | CreateDocsFile>>,
-	ext?: string,
+	inputCustomIcon?: InputProps['CustomIcon'],
 	createActionCallback?: () => void
 ): {
 	openCreateModal: (parentFolderId: string) => void;
@@ -52,7 +52,6 @@ export function useCreateModal(
 						},
 						children: (
 							<UpdateNodeNameModalContent
-								ext={ext}
 								inputLabel={inputLabel}
 								nodeName=""
 								confirmAction={confirmAction}
@@ -64,6 +63,7 @@ export function useCreateModal(
 									modalOpenRef.current = false;
 								}}
 								title={title}
+								inputCustomIcon={inputCustomIcon}
 							/>
 						)
 					},
@@ -72,7 +72,7 @@ export function useCreateModal(
 				modalOpenRef.current = true;
 			}
 		},
-		[confirmAction, createActionCallback, createModal, inputLabel, t, title, ext]
+		[confirmAction, createActionCallback, createModal, inputCustomIcon, inputLabel, t, title]
 	);
 
 	return { openCreateModal };

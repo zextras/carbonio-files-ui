@@ -5,16 +5,16 @@
  */
 
 /* eslint-disable jsx-a11y/no-autofocus */
-import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { FetchResult } from '@apollo/client';
 import {
 	Divider,
 	Input,
+	InputProps,
 	ModalBody,
 	ModalFooter,
-	ModalHeader,
-	Text
+	ModalHeader
 } from '@zextras/carbonio-design-system';
 import { trim } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,7 @@ import { decodeError } from '../../utils/utils';
 type UpdateNameMutation = UpdateNodeMutation | CreateFolderMutation | CreateDocsFile;
 
 interface UpdateNodeNameModalProps<T extends UpdateNameMutation> {
-	ext?: string;
+	inputCustomIcon?: InputProps['CustomIcon'];
 	nodeId: string;
 	nodeName: string;
 	inputLabel: string;
@@ -38,7 +38,7 @@ interface UpdateNodeNameModalProps<T extends UpdateNameMutation> {
 }
 
 export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
-	ext,
+	inputCustomIcon,
 	nodeId,
 	nodeName,
 	inputLabel,
@@ -117,7 +117,7 @@ export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
 					onKeyUp={keyUpHandler}
 					hasError={!!errorMsg}
 					description={errorMsg || undefined}
-					CustomIcon={(): JSX.Element => <Text>{ext}</Text>}
+					CustomIcon={inputCustomIcon}
 				/>
 			</ModalBody>
 			<Divider />

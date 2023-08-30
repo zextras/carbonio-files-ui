@@ -6,7 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Container, Responsive } from '@zextras/carbonio-design-system';
+import { Container, Responsive, Text } from '@zextras/carbonio-design-system';
 import { map, filter, last } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -155,7 +155,7 @@ const FolderView: React.VFC = () => {
 		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
 		createDocsFileAction,
-		newFile && `.${DOCS_EXTENSIONS[newFile]}`,
+		newFile ? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[newFile]}`}</Text> : undefined,
 		resetNewFile
 	);
 
