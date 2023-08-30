@@ -18,7 +18,7 @@ import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
-import { CreateOptionsContent, useCreateOptions } from '../../hooks/useCreateOptions';
+import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
 import { DISPLAYER_WIDTH, DOCS_EXTENSIONS, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
 import { ListContext, ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
@@ -155,7 +155,7 @@ const FolderView: React.VFC = () => {
 		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
 		createDocsFileAction,
-		newFile && DOCS_EXTENSIONS[newFile],
+		newFile && `.${DOCS_EXTENSIONS[newFile]}`,
 		resetNewFile
 	);
 

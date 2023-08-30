@@ -5,7 +5,7 @@
  */
 
 /* eslint-disable jsx-a11y/no-autofocus */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
 
 import { FetchResult } from '@apollo/client';
 import {
@@ -117,7 +117,7 @@ export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
 					onKeyUp={keyUpHandler}
 					hasError={!!errorMsg}
 					description={errorMsg || undefined}
-					CustomIcon={(): JSX.Element => <Text>.{ext}</Text>}
+					CustomIcon={(): JSX.Element => <Text>{ext}</Text>}
 				/>
 			</ModalBody>
 			<Divider />
