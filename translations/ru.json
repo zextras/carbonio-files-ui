@@ -171,7 +171,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Файлы отправленные в Team",
             "name_LOCAL_ROOT": "Главная",
             "name_TRASH_ROOT": "Корзина",
             "name_SHARED_WITH_ME_ROOT": "Поделились со мной"
@@ -212,7 +211,6 @@
             "sharedElements": "Общие элементы",
             "recents": "Недавние"
         },
-        "team": "Файлы отправленные в Team",
         "uploads": "Загрузки",
         "filesHome": "Главная"
     },

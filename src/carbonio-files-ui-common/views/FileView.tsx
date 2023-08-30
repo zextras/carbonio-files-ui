@@ -75,7 +75,7 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_FOLDER,
 					group: FILES_APP_ID,
-					label: t('create.options.new.folder', 'New Folder'),
+					label: t('create.options.new.folder', 'New folder'),
 					icon: 'FolderOutline',
 					onClick: noop,
 					disabled: true
@@ -87,7 +87,7 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 					group: FILES_APP_ID,
-					label: t('create.options.new.document', 'New Document'),
+					label: t('create.options.new.document', 'New document'),
 					icon: 'FileTextOutline',
 					onClick: noop,
 					disabled: true,
@@ -139,7 +139,7 @@ const FileView: React.VFC = () => {
 				action: () => ({
 					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 					group: FILES_APP_ID,
-					label: t('create.options.new.presentation', 'New Presentation'),
+					label: t('create.options.new.presentation', 'New presentation'),
 					icon: 'FilePresentationOutline',
 					onClick: noop,
 					disabled: true,

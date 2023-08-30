@@ -188,7 +188,6 @@
         },
         "alias": {
             "name_LOCAL_ROOT": "Home",
-            "name_LOCAL_CHAT_ROOT": "Über Team gesendete Dateien",
             "name_TRASH_ROOT": "Papierkorb",
             "name_SHARED_WITH_ME_ROOT": "Mit mir geteilt"
         },
@@ -228,7 +227,6 @@
             "sharedElements": "Geteilte Elemente",
             "recents": "Kürzliche"
         },
-        "team": "Über Team gesendete Dateien",
         "uploads": "Uploads",
         "filesHome": "Home"
     },

@@ -54,7 +54,7 @@ describe('Collaboration Link', () => {
 		);
 		await waitFor(() => expect(readAndShareGenerateButton).toBeEnabled());
 		const collaborationLinkContainer = screen.getByTestId(SELECTORS.collaborationLinkContainer);
-		expect(within(collaborationLinkContainer).getByText('Collaboration Links')).toBeVisible();
+		expect(within(collaborationLinkContainer).getByText('Collaboration links')).toBeVisible();
 		expect(
 			within(collaborationLinkContainer).getByText(
 				'Internal users will receive the permissions by opening the link. You can always modify granted permissions.'
@@ -68,7 +68,7 @@ describe('Collaboration Link', () => {
 		).toBeVisible();
 		expect(
 			within(readAndShareCollaborationLinkContainer).getByText(
-				'Create a link in order to share the node'
+				'Create a link in order to share the item'
 			)
 		).toBeVisible();
 		expect(readAndShareGenerateButton).toBeVisible();
@@ -91,7 +91,7 @@ describe('Collaboration Link', () => {
 		).toBeVisible();
 		expect(
 			within(readWriteAndShareCollaborationLinkContainer).getByText(
-				'Create a link in order to share the node'
+				'Create a link in order to share the item'
 			)
 		).toBeVisible();
 		const readWriteAndShareGenerateButton = within(
@@ -245,7 +245,7 @@ describe('Collaboration Link', () => {
 		expect(modalTitle).toBeInTheDocument();
 
 		const modalContent = await screen.findByText(
-			`By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the node.`
+			`By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.`
 		);
 		act(() => {
 			// run timers of modal
@@ -309,7 +309,7 @@ describe('Collaboration Link', () => {
 		expect(modalTitle).toBeInTheDocument();
 
 		const modalContent = await screen.findByText(
-			`By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the node.`
+			`By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.`
 		);
 		expect(modalContent).toBeInTheDocument();
 		act(() => {

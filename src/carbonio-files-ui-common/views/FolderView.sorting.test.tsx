@@ -82,7 +82,7 @@ describe('Sorting', () => {
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
 		await user.click(sortIcon);
-		const descendingOrderOption = await screen.findByText('Descending Order');
+		const descendingOrderOption = await screen.findByText('Descending order');
 		await screen.findByText(/ascending order by name/i);
 		await user.click(descendingOrderOption);
 		await waitFor(() =>

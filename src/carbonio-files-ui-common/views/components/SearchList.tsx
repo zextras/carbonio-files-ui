@@ -72,7 +72,7 @@ export const SearchList: React.VFC = () => {
 		const translations: OneOrMany<string> = queryCalled
 			? t('empty.search.noResults', {
 					returnObjects: true,
-					defaultValue: t('empty.search.hint', "Your search didn't match any files or folders")
+					defaultValue: t('empty.search.hint', "Your search didn't match any files or folders.")
 			  })
 			: t('empty.search.notRun', {
 					returnObjects: true,

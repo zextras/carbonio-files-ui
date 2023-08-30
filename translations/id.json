@@ -152,7 +152,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "File dikirim melalui Team",
             "name_LOCAL_ROOT": "Home",
             "name_SHARED_WITH_ME_ROOT": "Dibagikan dengan saya",
             "name_TRASH_ROOT": "Tempat Sampah"
@@ -205,7 +204,6 @@
             "sharedElements": "Elemen Bersama",
             "recents": "Terbaru"
         },
-        "team": "File dikirim melalui Team",
         "uploads": "Unggahan",
         "filesHome": "Beranda"
     },

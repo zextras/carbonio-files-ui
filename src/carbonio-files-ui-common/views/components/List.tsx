@@ -358,7 +358,7 @@ export const List: React.VFC<ListProps> = ({
 								{
 									icon: 'ShareOutline',
 									id: 'ShareOutline',
-									tooltipLabel: t('preview.actions.tooltip.manageShares', 'Manage Shares'),
+									tooltipLabel: t('preview.actions.tooltip.manageShares', 'Manage shares'),
 									onClick: (): void => setActiveNode(node.id, DISPLAYER_TABS.sharing)
 								},
 								{
@@ -477,7 +477,7 @@ export const List: React.VFC<ListProps> = ({
 			[Action.ManageShares]: {
 				id: 'ManageShares',
 				icon: 'ShareOutline',
-				label: t('actions.manageShares', 'Manage Shares'),
+				label: t('actions.manageShares', 'Manage shares'),
 				onClick: manageSharesSelection
 			},
 			[Action.Flag]: {
@@ -535,7 +535,7 @@ export const List: React.VFC<ListProps> = ({
 			[Action.DeletePermanently]: {
 				id: 'DeletePermanently',
 				icon: 'DeletePermanentlyOutline',
-				label: t('actions.deletePermanently', 'Delete Permanently'),
+				label: t('actions.deletePermanently', 'Delete permanently'),
 				onClick: openDeletePermanentlyModal
 			}
 		}),
@@ -632,16 +632,19 @@ export const List: React.VFC<ListProps> = ({
 		setDropzoneModal(
 			canMove
 				? {
-						title: t('dropzone.move.title.enabled', 'Drag&Drop Mode'),
+						title: t('dropzone.move.title.enabled', 'Drag&Drop mode.'),
 						message: t(
 							'dropzone.move.message.enabled',
-							'Drop here your items \n to quickly move them to this folder'
+							'Drop here your items \n to quickly move them to this folder.'
 						),
 						icons: ['ImageOutline', 'FileAddOutline', 'FilmOutline']
 				  }
 				: {
-						title: t('dropzone.move.title.disabled', 'Drag&Drop Mode'),
-						message: t('dropzone.move.message.disabled', 'You cannot drop your items in this area'),
+						title: t('dropzone.move.title.disabled', 'Drag&Drop mode.'),
+						message: t(
+							'dropzone.move.message.disabled',
+							'You cannot drop your items in this area.'
+						),
 						icons: ['AlertTriangleOutline']
 				  }
 		);
@@ -652,7 +655,7 @@ export const List: React.VFC<ListProps> = ({
 		setDropzoneModal(
 			canUpload
 				? {
-						title: t('uploads.dropzone.title.enabled', 'Drag&Drop Mode'),
+						title: t('uploads.dropzone.title.enabled', 'Drag&Drop mode.'),
 						message:
 							(folderId &&
 								t(
@@ -666,7 +669,7 @@ export const List: React.VFC<ListProps> = ({
 						icons: ['ImageOutline', 'FileAddOutline', 'FilmOutline']
 				  }
 				: {
-						title: t('uploads.dropzone.title.disabled', 'Drag&Drop Mode'),
+						title: t('uploads.dropzone.title.disabled', 'Drag&Drop mode.'),
 						message: t(
 							'uploads.dropzone.message.disabled',
 							'You cannot drop an attachment in this area'
