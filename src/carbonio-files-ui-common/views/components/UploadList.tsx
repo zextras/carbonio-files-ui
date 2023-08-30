@@ -129,7 +129,7 @@ export const UploadList: React.VFC = () => {
 
 	const dropzoneModal = useMemo(
 		() => ({
-			title: t('uploads.dropzone.title.enabled', 'Drag&Drop mode'),
+			title: t('uploads.dropzone.title.enabled', 'Drag&Drop mode.'),
 			message: t(
 				'uploads.dropzone.message.otherView.enabled',
 				'Drop here your attachments \n to quick-add them to your Home'

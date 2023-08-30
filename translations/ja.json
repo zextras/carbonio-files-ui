@@ -137,7 +137,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "チーム経由で送信されたファイル",
             "name_LOCAL_ROOT": "ホーム",
             "name_SHARED_WITH_ME_ROOT": "共有されたファイル",
             "name_TRASH_ROOT": "ゴミ箱"
@@ -180,7 +179,6 @@
         }
     },
     "secondaryBar": {
-        "team": "チーム経由で送信されたファイル",
         "filters": "フィルター",
         "filtersList": {
             "flagged": "フラグを付けました",

@@ -632,7 +632,7 @@ export const List: React.VFC<ListProps> = ({
 		setDropzoneModal(
 			canMove
 				? {
-						title: t('dropzone.move.title.enabled', 'Drag&Drop Mode.'),
+						title: t('dropzone.move.title.enabled', 'Drag&Drop mode.'),
 						message: t(
 							'dropzone.move.message.enabled',
 							'Drop here your items \n to quickly move them to this folder.'
@@ -640,7 +640,7 @@ export const List: React.VFC<ListProps> = ({
 						icons: ['ImageOutline', 'FileAddOutline', 'FilmOutline']
 				  }
 				: {
-						title: t('dropzone.move.title.disabled', 'Drag&Drop Mode.'),
+						title: t('dropzone.move.title.disabled', 'Drag&Drop mode.'),
 						message: t(
 							'dropzone.move.message.disabled',
 							'You cannot drop your items in this area.'
@@ -655,7 +655,7 @@ export const List: React.VFC<ListProps> = ({
 		setDropzoneModal(
 			canUpload
 				? {
-						title: t('uploads.dropzone.title.enabled', 'Drag&Drop mode'),
+						title: t('uploads.dropzone.title.enabled', 'Drag&Drop mode.'),
 						message:
 							(folderId &&
 								t(
@@ -669,7 +669,7 @@ export const List: React.VFC<ListProps> = ({
 						icons: ['ImageOutline', 'FileAddOutline', 'FilmOutline']
 				  }
 				: {
-						title: t('uploads.dropzone.title.disabled', 'Drag&Drop mode'),
+						title: t('uploads.dropzone.title.disabled', 'Drag&Drop mode.'),
 						message: t(
 							'uploads.dropzone.message.disabled',
 							'You cannot drop an attachment in this area'

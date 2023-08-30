@@ -628,7 +628,6 @@
             "recents": "Ostatnie"
         },
         "filesHome": "Start",
-        "team": "Pliki wysłane przez Team",
         "uploads": "Przesłane"
     },
     "selectionMode": {
@@ -744,7 +743,6 @@
     "node": {
         "alias": {
             "name_TRASH_ROOT": "Kosz",
-            "name_LOCAL_CHAT_ROOT": "Pliki wysłane przez Team",
             "name_LOCAL_ROOT": "Start",
             "name_SHARED_WITH_ME_ROOT": "Udostępnione dla mnie"
         },

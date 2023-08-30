@@ -71,7 +71,7 @@
             "copyShortcut": "copy item's shortcut",
             "createdBy": "Created by",
             "description": "Description",
-            "downloads": "Download via public link",
+            "downloads": "Download via Public link",
             "editDescription": {
                 "closeIconTooltip": "Close without saving",
                 "editIconTooltip": "Edit description",
@@ -386,8 +386,8 @@
                 "enabled": "Drop here your items \n to quickly move them to this folder."
             },
             "title": {
-                "disabled": "Drag&Drop Mode.",
-                "enabled": "Drag&Drop Mode."
+                "disabled": "Drag&Drop mode.",
+                "enabled": "Drag&Drop mode."
             }
         }
     },
@@ -417,7 +417,7 @@
     "errorCode": {
         "code": "Something went wrong",
         "code_ACCOUNT_NOT_FOUND": "It seems that this email is not associated to a user",
-        "code_FILE_VERSION_NOT_FOUND": "We're sorry, but this version of the file cannot be found",
+        "code_FILE_VERSION_NOT_FOUND": "We're sorry, but this version of the item cannot be found",
         "code_Generic": "Something went wrong",
         "code_LINK_NOT_FOUND": "Action failed. This link no longer exists",
         "code_MISSING_FIELD": "An internal error occurred, not all information of this item has been recovered",
@@ -513,7 +513,7 @@
             "button": {
                 "confirm": "Remove"
             },
-            "header": "Remove {{nodeName}} public link"
+            "header": "Remove {{nodeName}} Public link"
         },
         "revokeCollaborationLink": {
             "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.",
@@ -527,7 +527,7 @@
             "button": {
                 "confirm": "Revoke"
             },
-            "header": "Revoke {{nodeName}} public link"
+            "header": "Revoke {{nodeName}} Public link"
         },
         "roots": {
             "filesHome": "Home",
@@ -556,7 +556,6 @@
     },
     "node": {
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Files sent via Chats",
             "name_LOCAL_ROOT": "Home",
             "name_SHARED_WITH_ME_ROOT": "Shared with me",
             "name_TRASH_ROOT": "Trash"
@@ -760,7 +759,6 @@
             "sharedWithMe": "Shared with me",
             "trash": "Trash"
         },
-        "team": "Files sent via Chats",
         "uploads": "Uploads"
     },
     "selectionMode": {
@@ -897,8 +895,8 @@
                 }
             },
             "title": {
-                "disabled": "Drag&Drop mode",
-                "enabled": "Drag&Drop mode"
+                "disabled": "Drag&Drop mode.",
+                "enabled": "Drag&Drop mode."
             }
         },
         "error": {

@@ -80,7 +80,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "फाइल Team के माध्यम से भेजी गई",
             "name_LOCAL_ROOT": "होम",
             "name_SHARED_WITH_ME_ROOT": "मेरे साथ शेयर",
             "name_TRASH_ROOT": "रद्दी"
@@ -121,7 +120,6 @@
             "sharedElements": "शेयर किए गए एलीमेंट",
             "recents": "हाल के"
         },
-        "team": "फाइल Team के माध्यम से भेजी गई",
         "uploads": "अपलोड",
         "filesHome": "होम"
     },
