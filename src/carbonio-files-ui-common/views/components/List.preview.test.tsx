@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 
 import { List } from './List';
 import { PREVIEW_MAX_SIZE } from '../../constants';
@@ -80,7 +80,7 @@ describe('Preview action', () => {
 		['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
 		['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
 		['application/pdf']
-	])('Check if the context preview action is supported by mime type', async (mimeType) => {
+	])('context preview action is supported by mime type %s', async (mimeType) => {
 		const file = populateFile();
 		file.mime_type = mimeType;
 
@@ -90,6 +90,23 @@ describe('Preview action', () => {
 		fireEvent.contextMenu(screen.getByText(file.name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 	});
+
+	test.each([['video/quicktime'], ['text/html'], ['image/svg+xml'], ['text/plain']])(
+		'mime types %s does not support preview action',
+		async (mimeType) => {
+			const file = populateFile();
+			file.mime_type = mimeType;
+
+			setup(<List nodes={[file]} mainList={false} emptyListMessage="empty list" />);
+
+			await screen.findByText(file.name);
+			fireEvent.contextMenu(screen.getByText(file.name));
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
+			expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
+		}
+	);
 
 	test.each([
 		['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
