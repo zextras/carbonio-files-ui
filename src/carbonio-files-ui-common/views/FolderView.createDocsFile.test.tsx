@@ -53,30 +53,34 @@ jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateO
 	})
 }));
 
-const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
-	<div>
-		{props.translationKey}:{props.icons}
-		<button
-			onClick={(ev: React.MouseEvent<HTMLButtonElement>): void => {
-				if (mockedCreateOptions) {
-					const createDocsDocument = mockedCreateOptions.find(
-						(element) => element.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
-					);
-					if (createDocsDocument) {
-						const createLibreDocsDocument = (
-							createDocsDocument.action('target').items as DropdownItem[]
-						).find((item) => item.id === 'create-docs-document-libre');
-						if (createLibreDocsDocument?.onClick) {
-							createLibreDocsDocument.onClick(ev);
-						}
-					}
+const MockDisplayer = (props: DisplayerProps): JSX.Element => {
+	const createDoc = (ev: React.MouseEvent<HTMLButtonElement>, actionIds: string): void => {
+		if (mockedCreateOptions) {
+			const createDocsDocument = mockedCreateOptions.find(
+				(element) => element.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
+			);
+			if (createDocsDocument) {
+				const createLibreDocsDocument = (
+					createDocsDocument.action('target').items as DropdownItem[]
+				).find((item) => item.id === actionIds);
+				if (createLibreDocsDocument?.onClick) {
+					createLibreDocsDocument.onClick(ev);
 				}
-			}}
-		>
-			create docs document
-		</button>
-	</div>
-);
+			}
+		}
+	};
+	return (
+		<div>
+			{props.translationKey}:{props.icons}
+			<button onClick={(ev): void => createDoc(ev, 'create-docs-document-libre')}>
+				create docs document
+			</button>
+			<button onClick={(ev): void => createDoc(ev, 'create-docs-document-ms')}>
+				create ms document
+			</button>
+		</div>
+	);
+};
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
@@ -321,7 +325,6 @@ describe('Create docs file', () => {
 			name: /create docs document/i
 		});
 		await user.click(createDocsDocumentElement);
-
 		// create action
 		await createNode(node1, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node1.id));
@@ -347,5 +350,33 @@ describe('Create docs file', () => {
 		expect(screen.getByTestId(SELECTORS.nodeItem(node1.id))).toBe(nodes[nodes.length - 3]);
 		expect(screen.getByTestId(SELECTORS.nodeItem(node2.id))).toBe(nodes[nodes.length - 2]);
 		expect(screen.getByTestId(SELECTORS.nodeItem(node3.id))).toBe(nodes[nodes.length - 1]);
+	});
+
+	describe('Extension new item', () => {
+		test('should render .ods extension when click createLibreDocument button', async () => {
+			const { user } = setup(<FolderView />);
+			const createDocsDocument = find(
+				mockedCreateOptions,
+				(option) => option.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
+			);
+			expect(createDocsDocument).toBeDefined();
+			const createLibreDocumentElement = screen.getByRole('button', {
+				name: /create docs document/i
+			});
+			await user.click(createLibreDocumentElement);
+			await screen.findByText(/.odt/i);
+		});
+
+		test('should render .docx extension when click createMsDocument button', async () => {
+			const { user } = setup(<FolderView />);
+			const createDocsDocument = find(
+				mockedCreateOptions,
+				(option) => option.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
+			);
+			expect(createDocsDocument).toBeDefined();
+			const createMsDocumentElement = screen.getByRole('button', { name: /create ms document/i });
+			await user.click(createMsDocumentElement);
+			await screen.findByText(/.docx/i);
+		});
 	});
 });
