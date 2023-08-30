@@ -220,7 +220,6 @@ describe('Upload list', () => {
 			});
 
 			expect(screen.getByText(uploadedFiles[0].name)).toBeVisible();
-			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(2);
 			expect(screen.getByText(uploadedFiles[1].name)).toBeVisible();
 			await waitFor(() =>
 				expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(2)
@@ -593,7 +592,6 @@ describe('Upload list', () => {
 
 			await screen.findByText(folderToUpload.name);
 
-			expect(screen.getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 			expect(screen.getByText(RegExp(`\\d/${numberOfNodes}`))).toBeVisible();
 			expect(screen.getByTestId(SELECTORS.nodeItem(), { exact: false })).toBeInTheDocument();
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();

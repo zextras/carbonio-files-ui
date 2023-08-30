@@ -5,6 +5,5 @@
 scalar UploadItem
 
 extend type Query {
-    getUploadItems(parentId: ID): [UploadItem!]!
     getUploadItem(id: ID!): UploadItem
 }
