@@ -80,6 +80,11 @@ export const MIME_TYPE_PREVIEW_SUPPORT: Record<
 		thumbnail: true,
 		thumbnail_detail: true,
 		preview: true
+	},
+	'text/plain': {
+		thumbnail: false,
+		thumbnail_detail: false,
+		preview: false
 	}
 } as const;
 
