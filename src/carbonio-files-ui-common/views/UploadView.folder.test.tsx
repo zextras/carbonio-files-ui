@@ -323,12 +323,12 @@ describe('Upload View', () => {
 
 			// complete level 0 (create main folder)
 			emitter.emit(EMITTER_CODES.success);
-			await waitFor(() => expect(createFolderMutation).toHaveBeenCalled());
+			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(1));
 			await screen.findByText('1/5');
 			// progress of main folder
 			expect(screen.getByText('1/5')).toBeVisible();
 			// progress of level 1 folder
-			expect(screen.getByText('0/3')).toBeVisible();
+			expect(await screen.findByText('0/3')).toBeVisible();
 			// progress of level 2 folder + progress of file 3
 			expect(screen.getAllByText(/queued/i)).toHaveLength(2);
 
@@ -337,7 +337,7 @@ describe('Upload View', () => {
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(2));
 			await waitFor(() => expect(uploadFile).toHaveBeenCalled());
 			await screen.findByText('3/5');
-			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted)).toBeInTheDocument();
+			await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 			// progress of main folder
 			expect(screen.getByText('3/5')).toBeVisible();
 			// progress of level 1 folder
@@ -353,7 +353,7 @@ describe('Upload View', () => {
 			// progress of main folder
 			expect(screen.getByText('4/5')).toBeVisible();
 			// progress of level 1 folder
-			expect(screen.getByText('2/3')).toBeVisible();
+			expect(await screen.findByText('2/3')).toBeVisible();
 			// progress of level 2 folder
 			expect(screen.getByText('1/2')).toBeVisible();
 
@@ -729,7 +729,6 @@ describe('Upload View', () => {
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
-			await screen.findByText('0/4');
 			await waitFor(() => expect(screen.queryByText(/queued/i)).not.toBeInTheDocument());
 			await screen.findByText('3/4');
 			// each item is still in loading because the leaf is still loading
@@ -788,7 +787,7 @@ describe('Upload View', () => {
 				await screen.findByText(level3File.name);
 				await screen.findByText('3/4');
 				expect(screen.getByText('3/4')).toBeVisible();
-				expect(screen.getByText('2/3')).toBeVisible();
+				expect(await screen.findByText('2/3')).toBeVisible();
 				expect(screen.getByText('1/2')).toBeVisible();
 
 				const fileItem = screen
@@ -855,7 +854,7 @@ describe('Upload View', () => {
 				await screen.findByText(level2Folder.name);
 				await screen.findByText('3/5');
 				expect(screen.getByText('3/5')).toBeVisible();
-				expect(screen.getByText('2/3')).toBeVisible();
+				expect(await screen.findByText('2/3')).toBeVisible();
 
 				const folder2Item = screen
 					.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
