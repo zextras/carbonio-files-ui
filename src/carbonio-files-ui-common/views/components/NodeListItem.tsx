@@ -253,7 +253,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			[Action.ManageShares]: {
 				id: 'ManageShares',
 				icon: 'ShareOutline',
-				label: t('actions.manageShares', 'Manage Shares'),
+				label: t('actions.manageShares', 'Manage shares'),
 				onClick: (): void => {
 					manageSharesCallback && manageSharesCallback();
 				}
@@ -325,7 +325,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			[Action.DeletePermanently]: {
 				id: 'DeletePermanently',
 				icon: 'DeletePermanentlyOutline',
-				label: t('actions.deletePermanently', 'Delete Permanently'),
+				label: t('actions.deletePermanently', 'Delete permanently'),
 				onClick: (): void => {
 					deletePermanentlyCallback && deletePermanentlyCallback();
 				}

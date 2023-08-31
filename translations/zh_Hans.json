@@ -551,7 +551,6 @@
     },
     "node": {
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "文件已通过Team发送",
             "name_LOCAL_ROOT": "主页",
             "name_SHARED_WITH_ME_ROOT": "同我分享的",
             "name_TRASH_ROOT": "回收站"
@@ -694,7 +693,6 @@
             "sharedElements": "共享元素",
             "recents": "最近"
         },
-        "team": "文件已通过Team发送",
         "filters": "过滤",
         "uploads": "上传",
         "filesHome": "主页"

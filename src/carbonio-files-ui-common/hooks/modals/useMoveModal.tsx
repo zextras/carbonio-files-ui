@@ -43,7 +43,7 @@ export function useMoveModal(moveNodesActionCallback?: () => void): {
 					key: Date.now().toLocaleString(),
 					label: t(
 						'node.move.error.not.allowed',
-						'You cannot move multiple nodes from a filter or a search'
+						'You cannot move multiple items from a filter or a search'
 					),
 					replace: true,
 					type: 'error',

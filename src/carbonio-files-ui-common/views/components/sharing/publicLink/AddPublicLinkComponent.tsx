@@ -106,7 +106,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
 				</Text>
 				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost')}
+					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
 				</Text>
 			</RouteLeavingGuard>
 			<Container orientation="horizontal" mainAlignment="space-between">
@@ -118,12 +118,12 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 					width="fit"
 				>
 					<TextWithLineHeight size="medium">
-						{t('publicLink.addLink.title', 'Public Links')}
+						{t('publicLink.addLink.title', 'Public links')}
 					</TextWithLineHeight>
 					<TextWithLineHeight size="extrasmall" color="secondary" overflow="break-word">
 						{t(
 							'publicLink.addLink.description',
-							'Anyone on the internet with the link can view or download the file'
+							'Anyone on the internet with the link can view or download the item.'
 						)}
 					</TextWithLineHeight>
 				</Container>
@@ -191,7 +191,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 					<Padding vertical="small" />
 					<DateTimePicker
 						width="fill"
-						label={t('publicLink.dateTimePicker.label', 'Expiration Date')}
+						label={t('publicLink.dateTimePicker.label', 'Expiration date')}
 						includeTime={false}
 						enableChips
 						dateFormat="dd/MM/yyyy"

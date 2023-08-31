@@ -50,9 +50,9 @@ export const EmptyDisplayer: React.VFC<EmptyDisplayerProps> = ({ icons, translat
 					{
 						title: t(
 							'displayer.generic.title',
-							'View files and folders, share them with your contacts'
+							'View files and folders, share them with your contacts.'
 						),
-						message: t('displayer.generic.message', 'Click an item to select it')
+						message: t('displayer.generic.message', 'Click an item to select it.')
 					}
 				]
 			}),

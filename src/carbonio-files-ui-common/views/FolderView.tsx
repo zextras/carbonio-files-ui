@@ -105,8 +105,8 @@ const FolderView: React.VFC = () => {
 	}, []);
 
 	const { openCreateModal: openCreateFolderModal } = useCreateModal(
-		t('folder.create.modal.title', 'Create New folder'),
-		t('folder.create.modal.input.label.name', 'Folder Name'),
+		t('folder.create.modal.title', 'Create new folder'),
+		t('folder.create.modal.input.label.name', 'Folder name'),
 		createFolderCallback,
 		undefined,
 		resetNewFolder
@@ -150,7 +150,7 @@ const FolderView: React.VFC = () => {
 	const { openCreateModal: openCreateFileModal } = useCreateModal(
 		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
 		/* i18next-extract-disable-next-line */
-		t(`docs.create.modal.title.${documentGenericType}`, `Create New ${documentGenericType}`),
+		t(`docs.create.modal.title.${documentGenericType}`, `Create new ${documentGenericType}`),
 		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
 		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
@@ -178,14 +178,14 @@ const FolderView: React.VFC = () => {
 		(): ContextualMenuProps['actions'] => [
 			{
 				id: ACTION_IDS.CREATE_FOLDER,
-				label: t('create.options.new.folder', 'New Folder'),
+				label: t('create.options.new.folder', 'New folder'),
 				icon: 'FolderOutline',
 				onClick: createFolderAction,
 				disabled: !isCanCreateFolder
 			},
 			{
 				id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-				label: t('create.options.new.document', 'New Document'),
+				label: t('create.options.new.document', 'New document'),
 				icon: 'FileTextOutline',
 				disabled: !isCanCreateFile,
 				items: [
@@ -205,7 +205,7 @@ const FolderView: React.VFC = () => {
 			},
 			{
 				id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-				label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
+				label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 				icon: 'FileCalcOutline',
 				disabled: !isCanCreateFile,
 				items: [
@@ -225,7 +225,7 @@ const FolderView: React.VFC = () => {
 			},
 			{
 				id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-				label: t('create.options.new.presentation', 'New Presentation'),
+				label: t('create.options.new.presentation', 'New presentation'),
 				icon: 'FilePresentationOutline',
 				disabled: !isCanCreateFile,
 				items: [

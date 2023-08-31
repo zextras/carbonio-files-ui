@@ -323,7 +323,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 					<Text style={{ lineHeight: 1.5 }} weight="light" overflow="break-word" size="small">
 						{t(
 							'displayer.version.mainHint',
-							'Files saves the last {{maxVersions}} versions of your files. You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.',
+							'Files saves the last {{maxVersions}} versions of your items. You can manually delete any item version or restore one as the current version. Select one or more versions that you want to keep forever.',
 							{ replace: { maxVersions: configs[CONFIGS.MAX_VERSIONS] } }
 						)}
 					</Text>

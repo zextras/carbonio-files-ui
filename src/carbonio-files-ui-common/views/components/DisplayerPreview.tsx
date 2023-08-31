@@ -154,7 +154,7 @@ export const DisplayerPreview: React.VFC<DisplayerPreviewProps> = ({
 				<Container orientation="vertical" gap="0.5rem">
 					<Icon icon="AnimatedLoader" size="large" />
 					<Text size="extrasmall" overflow="break-word">
-						{t('preview.loading.file', 'Loading file preview, please wait...')}
+						{t('preview.loading.file', 'Loading item preview, please wait...')}
 					</Text>
 				</Container>
 			)}
