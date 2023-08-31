@@ -11,6 +11,7 @@ import { FetchResult } from '@apollo/client';
 import {
 	Divider,
 	Input,
+	InputProps,
 	ModalBody,
 	ModalFooter,
 	ModalHeader
@@ -26,6 +27,7 @@ import { decodeError } from '../../utils/utils';
 type UpdateNameMutation = UpdateNodeMutation | CreateFolderMutation | CreateDocsFile;
 
 interface UpdateNodeNameModalProps<T extends UpdateNameMutation> {
+	inputCustomIcon?: InputProps['CustomIcon'];
 	nodeId: string;
 	nodeName: string;
 	inputLabel: string;
@@ -36,6 +38,7 @@ interface UpdateNodeNameModalProps<T extends UpdateNameMutation> {
 }
 
 export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
+	inputCustomIcon,
 	nodeId,
 	nodeName,
 	inputLabel,
@@ -114,6 +117,7 @@ export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
 					onKeyUp={keyUpHandler}
 					hasError={!!errorMsg}
 					description={errorMsg || undefined}
+					CustomIcon={inputCustomIcon}
 				/>
 			</ModalBody>
 			<Divider />

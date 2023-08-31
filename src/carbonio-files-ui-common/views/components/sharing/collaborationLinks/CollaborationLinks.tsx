@@ -94,13 +94,13 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 					type: 'info',
 					label: t(
 						'snackbar.collaborationLink.newCollaborationLinkGenerated.label',
-						'New Collaboration Link generated'
+						'New Collaboration link generated'
 					),
 					replace: true,
 					onActionClick: () => {
 						copyLinkToClipboard(data.createCollaborationLink.url);
 					},
-					actionLabel: t('snackbar.collaborationLink.actionLabel.copyLink', 'Copy Link')
+					actionLabel: t('snackbar.collaborationLink.actionLabel.copyLink', 'Copy link')
 				});
 			}
 		},
@@ -146,7 +146,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 						<Text overflow="break-word" size="small">
 							{t(
 								'modal.revokeCollaborationLink.body',
-								'By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the node.',
+								'By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.',
 								{
 									replace: { nodeName }
 								}
@@ -187,7 +187,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 				background={'gray6'}
 			>
 				<TextWithLineHeight size="medium">
-					{t('collaborationLinks.title', 'Collaboration Links')}
+					{t('collaborationLinks.title', 'Collaboration links')}
 				</TextWithLineHeight>
 				<TextWithLineHeight size="extrasmall" color="secondary" overflow="break-word">
 					{t(
@@ -223,7 +223,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 								<Tooltip
 									label={t(
 										'collaborationLinks.link.urlChip.tooltip.copy',
-										'Copy collaboration link'
+										'Copy Collaboration link'
 									)}
 									maxWidth="unset"
 									placement="top"
@@ -242,7 +242,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 						/>
 					) : (
 						<TextWithLineHeight size="extrasmall" color="secondary">
-							{t('collaborationLinks.row.placeholder', 'Create a link in order to share the node')}
+							{t('collaborationLinks.row.placeholder', 'Create a link in order to share the item')}
 						</TextWithLineHeight>
 					)}
 				</Container>
@@ -295,7 +295,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 									<Tooltip
 										label={t(
 											'collaborationLinks.link.urlChip.tooltip.copy',
-											'Copy collaboration link'
+											'Copy Collaboration link'
 										)}
 										maxWidth="unset"
 										placement="top"
@@ -316,7 +316,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 							<TextWithLineHeight size="extrasmall" color="secondary">
 								{t(
 									'collaborationLinks.row.placeholder',
-									'Create a link in order to share the node'
+									'Create a link in order to share the item'
 								)}
 							</TextWithLineHeight>
 						)}

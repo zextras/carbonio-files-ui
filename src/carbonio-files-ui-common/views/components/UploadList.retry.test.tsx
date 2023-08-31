@@ -298,7 +298,6 @@ describe('Upload List', () => {
 				expect(screen.getByText(/4\/6/)).toBeVisible();
 				uploadHandler.mockClear();
 				await user.click(screen.getByTestId(ICON_REGEXP.retryUpload));
-				await screen.findByTestId(ICON_REGEXP.uploadLoading);
 				await screen.findByTestId(ICON_REGEXP.uploadFailed);
 				expect(createFolderMutation).toHaveBeenCalledTimes(1);
 				expect(uploadHandler).toHaveBeenCalledTimes(2);
@@ -383,7 +382,6 @@ describe('Upload List', () => {
 				await user.hover(screen.getByText(folder.name));
 				expect(screen.getByTestId(ICON_REGEXP.retryUpload)).toBeInTheDocument();
 				await user.click(screen.getByTestId(ICON_REGEXP.retryUpload));
-				await screen.findByTestId(ICON_REGEXP.uploadLoading);
 				await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 				// upload has been called for all files (main folder children and sub-folder children)
 				expect(uploadHandler).toHaveBeenCalledTimes(5);
@@ -449,7 +447,6 @@ describe('Upload List', () => {
 				expect(uploadHandler).toHaveBeenCalledTimes(children.length + subFolderChildren.length - 1);
 				uploadHandler.mockReset();
 				await user.click(screen.getByTestId(ICON_REGEXP.retryUpload));
-				await screen.findByTestId(ICON_REGEXP.uploadLoading);
 				await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 				expect(uploadHandler).toHaveBeenCalledTimes(1);
 				expect(screen.getByText(/10\/10/)).toBeVisible();

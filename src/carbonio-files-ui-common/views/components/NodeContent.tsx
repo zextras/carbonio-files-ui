@@ -72,7 +72,7 @@ export const NodeContent = ({
 			)}
 			{!loading && (!children || children.length === 0) && (
 				<EmptyFolder
-					message={t('empty.folder.displayerContent', 'This folder has no content')}
+					message={t('empty.folder.displayerContent', 'This folder has no content.')}
 					size="extrasmall"
 					weight="regular"
 				/>

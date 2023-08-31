@@ -354,7 +354,6 @@ export type Query = {
 	getRootsList: Array<Maybe<Root>>;
 	getShare?: Maybe<Share>;
 	getUploadItem?: Maybe<Scalars['UploadItem']>;
-	getUploadItems: Array<Scalars['UploadItem']>;
 	getUserById?: Maybe<User>;
 	getVersions: Array<Maybe<File>>;
 };
@@ -406,10 +405,6 @@ export type QueryGetShareArgs = {
 
 export type QueryGetUploadItemArgs = {
 	id: Scalars['ID'];
-};
-
-export type QueryGetUploadItemsArgs = {
-	parentId?: InputMaybe<Scalars['ID']>;
 };
 
 export type QueryGetUserByIdArgs = {
@@ -1198,14 +1193,6 @@ export type GetUploadItemQueryVariables = Exact<{
 }>;
 
 export type GetUploadItemQuery = { getUploadItem?: ClientTypes.UploadItem | null } & {
-	__typename?: 'Query';
-};
-
-export type GetUploadItemsQueryVariables = Exact<{
-	parentId?: InputMaybe<Scalars['ID']>;
-}>;
-
-export type GetUploadItemsQuery = { getUploadItems: Array<ClientTypes.UploadItem> } & {
 	__typename?: 'Query';
 };
 
@@ -4684,39 +4671,6 @@ export const GetUploadItemDocument = {
 		}
 	]
 } as unknown as DocumentNode<GetUploadItemQuery, GetUploadItemQueryVariables>;
-export const GetUploadItemsDocument = {
-	kind: 'Document',
-	definitions: [
-		{
-			kind: 'OperationDefinition',
-			operation: 'query',
-			name: { kind: 'Name', value: 'getUploadItems' },
-			variableDefinitions: [
-				{
-					kind: 'VariableDefinition',
-					variable: { kind: 'Variable', name: { kind: 'Name', value: 'parentId' } },
-					type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
-				}
-			],
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'getUploadItems' },
-						arguments: [
-							{
-								kind: 'Argument',
-								name: { kind: 'Name', value: 'parentId' },
-								value: { kind: 'Variable', name: { kind: 'Name', value: 'parentId' } }
-							}
-						]
-					}
-				]
-			}
-		}
-	]
-} as unknown as DocumentNode<GetUploadItemsQuery, GetUploadItemsQueryVariables>;
 export const FindNodesDocument = {
 	kind: 'Document',
 	definitions: [

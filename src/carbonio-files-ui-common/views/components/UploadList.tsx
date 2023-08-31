@@ -6,7 +6,7 @@
 
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
-import { useQuery } from '@apollo/client';
+import { useReactiveVar } from '@apollo/client';
 import { Button, Container, useSnackbar } from '@zextras/carbonio-design-system';
 import { map, filter, includes, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +17,7 @@ import { ScrollContainer } from './ScrollContainer';
 import { UploadListItemWrapper } from './UploadListItemWrapper';
 import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { uploadVar } from '../../apollo/uploadVar';
 import { DRAG_TYPES, ROOTS } from '../../constants';
 import { ListContext, ListHeaderActionContext } from '../../contexts';
 import { usePrevious } from '../../hooks/usePrevious';
@@ -25,18 +26,19 @@ import { useUpload } from '../../hooks/useUpload';
 import { useUploadActions } from '../../hooks/useUploadActions';
 import { Action } from '../../types/common';
 import { UploadItem } from '../../types/graphql/client-types';
-import { GetUploadItemsDocument } from '../../types/graphql/types';
 import { getUploadAddType, isUploadFolderItem } from '../../utils/uploadUtils';
 
 export const UploadList: React.VFC = () => {
 	const [t] = useTranslation();
 
 	const { add, removeAllCompleted } = useUpload();
-	const { data } = useQuery(GetUploadItemsDocument, {
-		variables: { parentId: null }
-	});
 
-	const uploadItems = useMemo<UploadItem[]>(() => data?.getUploadItems || [], [data]);
+	const uploadVarData = useReactiveVar(uploadVar);
+
+	const uploadItems = useMemo(
+		() => filter(uploadVarData, (upload) => upload.parentId === null),
+		[uploadVarData]
+	);
 
 	const uploadStatusSizeIsZero = useMemo(() => uploadItems.length === 0, [uploadItems]);
 
@@ -129,7 +131,7 @@ export const UploadList: React.VFC = () => {
 
 	const dropzoneModal = useMemo(
 		() => ({
-			title: t('uploads.dropzone.title.enabled', 'Drag&Drop Mode'),
+			title: t('uploads.dropzone.title.enabled', 'Drag&Drop mode.'),
 			message: t(
 				'uploads.dropzone.message.otherView.enabled',
 				'Drop here your attachments \n to quick-add them to your Home'

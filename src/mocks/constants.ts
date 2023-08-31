@@ -8,7 +8,13 @@ import type { Account, AccountSettings } from '@zextras/carbonio-shell-ui';
 export const LOGGED_USER: Account = {
 	displayName: '',
 	identities: {
-		identity: [{ id: 'logged-user-identity-default', name: 'DEFAULT' }]
+		identity: [
+			{
+				id: 'logged-user-identity-default',
+				name: 'DEFAULT',
+				_attrs: { zimbraPrefFromAddressType: 'sendAs' }
+			}
+		]
 	},
 	rights: {
 		targets: []

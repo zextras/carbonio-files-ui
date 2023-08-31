@@ -91,7 +91,6 @@
         }
     },
     "secondaryBar": {
-        "team": "File inviati via Team",
         "filtersList": {
             "flagged": "Contrassegnato",
             "sharedByMe": "Condivisi da me",
@@ -120,7 +119,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "File inviati via Team",
             "name_LOCAL_ROOT": "Home",
             "name_SHARED_WITH_ME_ROOT": "Condivisi con me",
             "name_TRASH_ROOT": "Cestino"

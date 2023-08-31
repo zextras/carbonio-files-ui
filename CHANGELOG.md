@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/zextras/carbonio-files-ui/compare/v2.2.1...v2.3.0) (2023-08-31)
+
+
+### Features
+
+* add extension of new file inside input element ([73944c3](https://github.com/zextras/carbonio-files-ui/commit/73944c3656bc7d0dbef87ac09abd40b4970a2cfc)), closes [#255](https://github.com/zextras/carbonio-files-ui/issues/255)
+* add preview action on right click on docs ([0d37249](https://github.com/zextras/carbonio-files-ui/commit/0d37249722f00174dd774704daef276c48946697)), closes [#256](https://github.com/zextras/carbonio-files-ui/issues/256)
+
+
+### Bug Fixes
+
+* align icons and prepare update of configs ([2beebe3](https://github.com/zextras/carbonio-files-ui/commit/2beebe3bed2c2ee6508f36de32780450c0b18d38)), closes [#239](https://github.com/zextras/carbonio-files-ui/issues/239) [#240](https://github.com/zextras/carbonio-files-ui/issues/240) [#241](https://github.com/zextras/carbonio-files-ui/issues/241) [#242](https://github.com/zextras/carbonio-files-ui/issues/242) [#243](https://github.com/zextras/carbonio-files-ui/issues/243) [#246](https://github.com/zextras/carbonio-files-ui/issues/246)
+* avoid refetch after delete and update lint configs ([46ae623](https://github.com/zextras/carbonio-files-ui/commit/46ae62322837e103c3c4d0c30f1f8ee6739c8f4d)), closes [#247](https://github.com/zextras/carbonio-files-ui/issues/247)
+* check if child is null beforw writing data in cache ([b2e6374](https://github.com/zextras/carbonio-files-ui/commit/b2e637455e4d58d4d96c9d11f459ebfffe89906a)), closes [#244](https://github.com/zextras/carbonio-files-ui/issues/244)
+* fix animated upload icon not clickable during upload ([bcc7159](https://github.com/zextras/carbonio-files-ui/commit/bcc7159d4077d427f8ba7a5ef2000c5fa9332948)), closes [#250](https://github.com/zextras/carbonio-files-ui/issues/250)
+* remove getParent query in favor of getPath ([2591d5c](https://github.com/zextras/carbonio-files-ui/commit/2591d5cfb89c2e622d5563c0534f35a156737a8f)), closes [#236](https://github.com/zextras/carbonio-files-ui/issues/236)
+* update strings to improve coherence ([c5359c9](https://github.com/zextras/carbonio-files-ui/commit/c5359c96f7e7410cfa558cc59672e1aa5ebf05f0)), closes [#254](https://github.com/zextras/carbonio-files-ui/issues/254)
+* update tests to use resolvers and revert current folder logic on folder selection modal ([f5c435f](https://github.com/zextras/carbonio-files-ui/commit/f5c435fe427f9675e0c3e9482286e2a62b49f9c8)), closes [#245](https://github.com/zextras/carbonio-files-ui/issues/245)
+* upload from different module is not shown in list ([2f406de](https://github.com/zextras/carbonio-files-ui/commit/2f406de92da47e8a6d211d335c27d52d3a8f23bf))
+
 ### [2.2.1](https://github.com/zextras/carbonio-files-ui/compare/v2.2.0...v2.2.1) (2023-07-17)
 
 ## [2.2.0](https://github.com/zextras/carbonio-files-ui/compare/v2.1.1...v2.2.0) (2023-07-06)

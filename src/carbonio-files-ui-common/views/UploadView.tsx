@@ -80,7 +80,7 @@ const UploadView: React.VFC = () => {
 				action: () => ({
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_FOLDER,
-					label: t('create.options.new.folder', 'New Folder'),
+					label: t('create.options.new.folder', 'New folder'),
 					icon: 'FolderOutline',
 					disabled: true,
 					onClick: noop
@@ -92,7 +92,7 @@ const UploadView: React.VFC = () => {
 				action: () => ({
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-					label: t('create.options.new.document', 'New Document'),
+					label: t('create.options.new.document', 'New document'),
 					icon: 'FileTextOutline',
 					disabled: true,
 					onClick: noop,
@@ -118,7 +118,7 @@ const UploadView: React.VFC = () => {
 				action: () => ({
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-					label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
+					label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 					icon: 'FileCalcOutline',
 					disabled: true,
 					onClick: noop,
@@ -144,7 +144,7 @@ const UploadView: React.VFC = () => {
 				action: () => ({
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-					label: t('create.options.new.presentation', 'New Presentation'),
+					label: t('create.options.new.presentation', 'New presentation'),
 					icon: 'FilePresentationOutline',
 					disabled: true,
 					onClick: noop,

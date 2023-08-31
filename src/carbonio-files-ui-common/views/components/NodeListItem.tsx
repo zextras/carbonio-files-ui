@@ -224,7 +224,9 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				id: 'Preview',
 				icon: 'MaximizeOutline',
 				label: t('actions.preview', 'Preview'),
-				onClick: openNode
+				onClick: (): void => {
+					openPreview(id);
+				}
 			},
 			[Action.SendViaMail]: {
 				id: 'SendViaMail',
@@ -251,7 +253,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			[Action.ManageShares]: {
 				id: 'ManageShares',
 				icon: 'ShareOutline',
-				label: t('actions.manageShares', 'Manage Shares'),
+				label: t('actions.manageShares', 'Manage shares'),
 				onClick: (): void => {
 					manageSharesCallback && manageSharesCallback();
 				}
@@ -323,7 +325,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			[Action.DeletePermanently]: {
 				id: 'DeletePermanently',
 				icon: 'DeletePermanentlyOutline',
-				label: t('actions.deletePermanently', 'Delete Permanently'),
+				label: t('actions.deletePermanently', 'Delete permanently'),
 				onClick: (): void => {
 					deletePermanentlyCallback && deletePermanentlyCallback();
 				}
@@ -331,7 +333,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		}),
 		[
 			t,
-			openNode,
+			openPreview,
 			sendViaMailCallback,
 			manageSharesCallback,
 			toggleFlagTrue,

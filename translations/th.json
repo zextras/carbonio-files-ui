@@ -175,7 +175,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "ไฟล์ที่ส่งผ่าน Team",
             "name_LOCAL_ROOT": "หน้าแรก",
             "name_SHARED_WITH_ME_ROOT": "แชร์กับฉัน",
             "name_TRASH_ROOT": "ถังขยะ"
@@ -228,7 +227,6 @@
             "sharedElements": "องค์ประกอบที่ใช้ร่วมกัน",
             "recents": "ล่าสุด"
         },
-        "team": "ไฟล์ที่ส่งผ่าน Team",
         "uploads": "อัปโหลด",
         "filesHome": "หน้าแรก"
     },

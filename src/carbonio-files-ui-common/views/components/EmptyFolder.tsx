@@ -44,7 +44,7 @@ export const EmptyFolder = React.forwardRef<HTMLDivElement, EmptyFolderProps>(
 					{mainList && (
 						<Padding horizontal="small" vertical="extrasmall">
 							<CenteredText size={size} color="gray1" overflow="break-word">
-								{t('empty.folder.state', 'Drag a file or create a new one clicking "NEW"')}
+								{t('empty.folder.state', 'Drag a file or create a new one clicking "NEW".')}
 							</CenteredText>
 						</Padding>
 					)}

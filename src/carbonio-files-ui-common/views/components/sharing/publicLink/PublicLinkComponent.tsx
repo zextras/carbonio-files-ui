@@ -179,7 +179,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
 				</Text>
 				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost')}
+					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
 				</Text>
 			</RouteLeavingGuard>
 			<Padding vertical="small" />
@@ -190,7 +190,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 							label={
 								isExpired
 									? t('publicLink.link.urlChip.tooltip.expired', 'This link has expired')
-									: t('publicLink.link.urlChip.tooltip.copy', 'Copy public link')
+									: t('publicLink.link.urlChip.tooltip.copy', 'Copy Public link')
 							}
 							maxWidth="unset"
 							placement="top"
@@ -282,7 +282,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 					<Padding vertical="small" />
 					<DateTimePicker
 						width="fill"
-						label={t('publicLink.dateTimePicker.label', 'Expiration Date')}
+						label={t('publicLink.dateTimePicker.label', 'Expiration date')}
 						includeTime={false}
 						enableChips
 						dateFormat="dd/MM/yyyy"
