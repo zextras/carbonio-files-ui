@@ -59,6 +59,8 @@ import {
 	ActionsFactoryCheckerMap,
 	buildActionItems,
 	canBeMoveDestination,
+	canEdit,
+	canOpenWithDocs,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
 import {
@@ -400,7 +402,14 @@ export const List: React.VFC<ListProps> = ({
 										(documentType === PREVIEW_TYPE.DOCUMENT &&
 											getDocumentPreviewSrc(node.id, node.version)))) ||
 								'';
-							if (includes(permittedSelectionModeActions, Action.OpenWithDocs)) {
+							if (canEdit([node])) {
+								actions.unshift({
+									icon: 'Edit2Outline',
+									id: 'Edit',
+									onClick: (): void => openNodeWithDocs(node.id),
+									tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
+								});
+							} else if (canOpenWithDocs([node])) {
 								actions.unshift({
 									id: 'OpenWithDocs',
 									icon: 'BookOpenOutline',
@@ -428,7 +437,7 @@ export const List: React.VFC<ListProps> = ({
 				},
 				[]
 			),
-		[nodes, permittedSelectionModeActions, setActiveNode, t]
+		[nodes, setActiveNode, t]
 	);
 
 	useEffect(() => {

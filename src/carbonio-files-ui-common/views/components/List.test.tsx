@@ -5,15 +5,13 @@
  */
 import React from 'react';
 
-import { screen } from '@testing-library/react';
-
 import { List } from './List';
 import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateNodes } from '../../mocks/mockUtils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
-import { selectNodes, setup } from '../../utils/testUtils';
+import { selectNodes, setup, screen } from '../../utils/testUtils';
 import * as utils from '../../utils/utils';
 
 describe('List', () => {
@@ -107,17 +105,18 @@ describe('List', () => {
 			node.type = NodeType.Text;
 			node.extension = 'odt';
 
-			const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(
-				<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
-			);
+			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
 			await user.dblClick(screen.getByText(node.name));
 			await screen.findByTestId(SELECTORS.pdfPreview);
 			expect(openWithDocsFn).not.toHaveBeenCalled();
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })).toBeVisible();
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
 			expect(
-				queryByRoleWithIcon('button', { icon: ICON_REGEXP.openDocument })
+				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })
+			).toBeVisible();
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.openDocument })).toBeVisible();
+			expect(
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.edit })
 			).not.toBeInTheDocument();
 		});
 

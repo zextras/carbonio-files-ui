@@ -614,6 +614,7 @@
         "actions": {
             "tooltip": {
                 "download": "Download",
+                "edit": "Edit",
                 "manageShares": "Manage shares"
             }
         },
