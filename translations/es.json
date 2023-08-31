@@ -341,7 +341,7 @@
                         "viewer": "Visualizador",
                         "viewerDescription": "Podrá solamente ver o descargar el archivo o carpeta"
                     },
-                    "sharingAllowed": "Permitido compartir",
+                    "sharingAllowed": "Compartir",
                     "sharingAllowedDescription": "Podrá administrar el uso compartido del archivo o carpeta"
                 },
                 "owner": "Propietario",

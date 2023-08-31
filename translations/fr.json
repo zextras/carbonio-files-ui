@@ -154,7 +154,7 @@
         },
         "revokeCollaborationLink": {
             "button": {
-                "confirm": "Retirer"
+                "confirm": "Révoquer"
             },
             "header": "Révoquer le lien de collaboration {{nodeName}}",
             "body": "En révoquant ce lien, vous interdisez la possibilité de créer de nouveaux partages. Les personnes ayant déjà utilisé ce lien de collaboration garderont l'accès à ce nœud."
@@ -876,7 +876,7 @@
     },
     "collaborationLinks": {
         "button": {
-            "revoke": "Retirer",
+            "revoke": "Révoquer",
             "generateLink": "Générer un lien"
         },
         "title": "Liens de collaboration",
