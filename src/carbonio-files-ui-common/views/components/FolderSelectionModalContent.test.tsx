@@ -17,6 +17,7 @@ import { FolderSelectionModalContent } from './FolderSelectionModalContent';
 import { HoverContainer } from './StyledComponents';
 import { destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
+import { COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -25,28 +26,23 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
-import { Node } from '../../types/graphql/types';
-import {
-	getChildrenVariables,
-	getFindNodesVariables,
-	mockFindNodes,
-	mockGetChildren,
-	mockGetPath
-} from '../../utils/mockUtils';
+import { Node } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
-const confirmAction = jest.fn(() => {
-	// clone implementation of the function contained in the close callback of useCopyContent
-	destinationVar({ defaultValue: undefined, currentValue: undefined });
-});
-const resetToDefault = jest.fn(() => {
-	// clone implementation of the function contained in the click callback of useCopyContent
-	destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
-});
+let confirmAction = jest.fn();
+let resetToDefault = jest.fn();
 
 beforeEach(() => {
-	confirmAction.mockClear();
-	resetToDefault.mockClear();
+	confirmAction = jest.fn(() => {
+		// clone implementation of the function contained in the close callback of useCopyContent
+		destinationVar({ defaultValue: undefined, currentValue: undefined });
+	});
+	resetToDefault = jest.fn(() => {
+		// clone implementation of the function contained in the click callback of useCopyContent
+		destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
+	});
 });
 
 describe('Folder Selection Modal Content', () => {
@@ -56,7 +52,7 @@ describe('Folder Selection Modal Content', () => {
 				<FolderSelectionModalContent confirmAction={confirmAction} />
 			</div>,
 			{
-				mocks: []
+				mocks: {}
 			}
 		);
 
@@ -66,7 +62,7 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText('Trash')).toBeVisible();
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
-		expect(chooseButton).toHaveAttribute('disabled');
+		expect(chooseButton).toBeDisabled();
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
 	});
@@ -82,13 +78,12 @@ describe('Folder Selection Modal Content', () => {
 		folder2.parent = parent;
 		file.parent = parent;
 
-		const mocks = [
-			// request to find out parent
-			mockGetPath({ node_id: folder.id }, [...path, folder]),
-			// request to create breadcrumb
-			mockGetPath({ node_id: parent.id }, path),
-			mockGetChildren(getChildrenVariables(parent.id), parent)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([...path, folder], path),
+				getNode: mockGetNode({ getChildren: [parent] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -107,21 +102,24 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText(folder2.name)).toBeVisible();
 		expect(screen.getByText(file.name)).toBeVisible();
 		// file nodes are disabled
-		// expect(screen.getByTestId(`node-item-${file.id}`)).toHaveAttribute('disabled', '');
-		// expect(screen.getByTestId(`node-item-${folder.id}`)).not.toHaveAttribute('disabled', '');
-		// expect(screen.getByTestId(`node-item-${folder2.id}`)).not.toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByText(file.name)).toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByText(folder.name)).not.toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByText(folder2.name)).not.toHaveAttribute('disabled', '');
 		// choose button is disabled because active folder is same as set one
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
 		// click on disabled choose button should leave the button disabled
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		// click on disabled node set opened folder as active
 		await user.click(screen.getByText(file.name));
 		// choose button becomes active. Opened folder is a valid selection
-		await waitFor(() => expect(chooseButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
@@ -132,11 +130,11 @@ describe('Folder Selection Modal Content', () => {
 			true
 		);
 		// confirm reset active folder in the modal
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		// click on other folder
 		await user.click(screen.getByText(folder2.name));
 		// choose button becomes active. Other folder is a valid selection
-		await waitFor(() => expect(chooseButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
@@ -147,25 +145,26 @@ describe('Folder Selection Modal Content', () => {
 			true
 		);
 		// confirm reset active folder in the modal
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		// click on other folder
 		await user.click(screen.getByText(folder2.name));
 		// choose button becomes active. Other folder is a valid selection
-		await waitFor(() => expect(chooseButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(chooseButton).toBeEnabled());
 		// click on set folder
 		await user.click(screen.getByText(folder.name));
 		// choose button becomes disabled. Folder already set in advanced params is not a valid selection
-		await waitFor(() => expect(chooseButton).toHaveAttribute('disabled'));
+		await waitFor(() => expect(chooseButton).toBeDisabled());
 	});
 
 	test('root items are valid, roots entry point is not valid', async () => {
 		const localRoot = populateFolder(2, ROOTS.LOCAL_ROOT);
 
-		const mocks = [
-			// request to find out parent
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([localRoot]),
+				getNode: mockGetNode({ getChildren: [localRoot] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -181,29 +180,29 @@ describe('Folder Selection Modal Content', () => {
 		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
-		expect(findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)).toHaveStyle(
-			'background-color: #d5e3f6'
-		);
+		expect(
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		expect(screen.getByText(/trash/i)).toBeVisible();
 		// choose button is disabled because active folder is same as set one
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		// click on other root
 		await user.click(screen.getByText(/shared with me/i));
-		await waitFor(() => expect(chooseButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(chooseButton).toBeEnabled());
 		// active root is become the clicked root
 		expect(
-			findStyled(screen.getByTestId(`node-item-${ROOTS.SHARED_WITH_ME}`), HoverContainer)
-		).toHaveStyle('background-color: #d5e3f6');
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(ROOTS.SHARED_WITH_ME)), HoverContainer)
+		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		expect(
-			findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
-		).not.toHaveStyle('background-color: #d5e3f6');
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+		).not.toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		// click on subtitle to reset active folder
 		await user.click(screen.getByText(/searched only inside the selected folder/i));
-		// choose button becomes disabled because roots list entry point is not a valid selection
-		await waitFor(() => expect(chooseButton).toHaveAttribute('disabled'));
+		// choose button becomes disabled because the root list entry point is not a valid selection
+		await waitFor(() => expect(chooseButton).toBeDisabled());
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
 	});
@@ -214,14 +213,12 @@ describe('Folder Selection Modal Content', () => {
 		localRoot.children.nodes.push(folder);
 		folder.parent = localRoot;
 
-		const mocks = [
-			// request to find out parent
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-			// request to create breadcrumb
-			mockGetPath({ node_id: folder.id }, [localRoot, folder]),
-			mockGetChildren(getChildrenVariables(folder.id), folder)
-		];
+		const mocks = {
+			Query: {
+				getPath: jest.fn(mockGetPath([localRoot]) as (...args: unknown[]) => Node[]),
+				getNode: mockGetNode({ getChildren: [localRoot] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -233,13 +230,14 @@ describe('Folder Selection Modal Content', () => {
 		);
 
 		await screen.findByText(/home/i);
+		await waitFor(() => expect(mocks.Query.getPath).toHaveBeenCalled());
 		let breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
 		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
-		expect(findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)).toHaveStyle(
-			'background-color: #d5e3f6'
-		);
+		expect(
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+		).toHaveStyle({ 'background-color': COLORS.highlight.regular });
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
 		expect(screen.getByText(folder.name)).toBeVisible();
@@ -249,21 +247,18 @@ describe('Folder Selection Modal Content', () => {
 		// choose button is disabled because active folder (opened folder) is same as set one
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		// navigate back to the roots list through breadcrumb
 		await user.click(screen.getByText('Files'));
 		// wait roots list to be rendered
-		await screen.findByText(/home/i);
+		await screen.findByText(/shared with me/i);
 		expect(screen.queryByText(folder.name)).not.toBeInTheDocument();
-		expect(screen.getByText(/home/i)).toBeVisible();
-		expect(screen.getByText(/shared with me/i)).toBeVisible();
-		expect(screen.getByText(/trash/i)).toBeVisible();
 		// choose button is disabled because is now referring the entry point, which is not valid
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		// local root item is not visibly active
 		expect(
-			findStyled(screen.getByTestId(`node-item-${localRoot.id}`), HoverContainer)
-		).not.toHaveStyle('background-color: #d5e3f6');
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+		).not.toHaveStyle(expect.objectContaining({ 'background-color': COLORS.highlight.regular }));
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
 		// navigate again inside local root
@@ -275,13 +270,13 @@ describe('Folder Selection Modal Content', () => {
 		expect(breadcrumbItem).toBeVisible();
 		// choose button is disabled because active folder (opened folder) is same as set one
 		expect(chooseButton).toBeVisible();
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
 		// select a valid folder
 		await user.click(screen.getByText(folder.name));
 		// choose button is active because folder is a valid selection
-		await waitFor(() => expect(chooseButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
@@ -295,7 +290,11 @@ describe('Folder Selection Modal Content', () => {
 
 	test('search in sub-folders is checked if cascade is true', async () => {
 		const localRoot = populateLocalRoot();
-		const mocks = [mockGetPath({ node_id: localRoot.id }, [localRoot])];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([localRoot])
+			}
+		} satisfies Partial<Resolvers>;
 		setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent
@@ -312,17 +311,21 @@ describe('Folder Selection Modal Content', () => {
 		await screen.findByText(/home/i);
 		const checkboxLabel = screen.getByText('search also in contained folders');
 		expect(checkboxLabel).toBeVisible();
-		const checkboxChecked = screen.getByTestId('icon: CheckmarkSquare');
+		const checkboxChecked = screen.getByTestId(ICON_REGEXP.checkboxChecked);
 		expect(checkboxChecked).toBeVisible();
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
 		// choose button is disabled because active folder and cascade have same value as current filter
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 	});
 
 	test('search in sub-folders check set cascade param', async () => {
 		const localRoot = populateLocalRoot();
-		const mocks = [mockGetPath({ node_id: localRoot.id }, [localRoot])];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([localRoot])
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent folderId={localRoot.id} confirmAction={confirmAction} />
@@ -341,25 +344,25 @@ describe('Folder Selection Modal Content', () => {
 		);
 		await screen.findByText(/home/i);
 		const checkboxLabel = screen.getByText('search also in contained folders');
-		let checkboxChecked = screen.getByTestId('icon: CheckmarkSquare');
+		let checkboxChecked = screen.getByTestId(ICON_REGEXP.checkboxChecked);
 		expect(checkboxLabel).toBeVisible();
 		expect(checkboxChecked).toBeVisible();
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
 		// choose button is disabled because active folder and cascade have same value as current filter
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		await user.click(checkboxLabel);
-		const checkboxUnchecked = await screen.findByTestId('icon: Square');
+		const checkboxUnchecked = await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 		expect(checkboxUnchecked).toBeVisible();
 		// choose button is active because cascade has changed its value
-		expect(chooseButton).not.toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeEnabled();
 		await user.click(checkboxUnchecked);
-		checkboxChecked = await screen.findByTestId('icon: CheckmarkSquare');
+		checkboxChecked = await screen.findByTestId(ICON_REGEXP.checkboxChecked);
 		expect(checkboxChecked).toBeVisible();
 		// choose button is disabled because active folder and cascade have same value as current filter
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		await user.click(checkboxChecked);
-		await screen.findByTestId('icon: Square');
+		await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
@@ -373,17 +376,11 @@ describe('Folder Selection Modal Content', () => {
 
 	test('shared with me roots is navigable. trash is not navigable. both are selectable', async () => {
 		const sharedWithMeFilter = populateNodes(4);
-		const mocks = [
-			mockFindNodes(
-				getFindNodesVariables({
-					shared_with_me: true,
-					cascade: true,
-					direct_share: true,
-					folder_id: ROOTS.LOCAL_ROOT
-				}),
-				sharedWithMeFilter
-			)
-		];
+		const mocks = {
+			Query: {
+				findNodes: mockFindNodes(sharedWithMeFilter)
+			}
+		} satisfies Partial<Resolvers>;
 		const { getByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent confirmAction={confirmAction} />
@@ -398,10 +395,10 @@ describe('Folder Selection Modal Content', () => {
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
 		// choose button is disabled because entry point is not a valid selection
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		await user.click(screen.getByText(/shared with me/i));
 		// shared with me item is a valid selection
-		await waitFor(() => expect(chooseButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
@@ -409,11 +406,11 @@ describe('Folder Selection Modal Content', () => {
 			true
 		);
 		// choose button is now disabled because of reset
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		expect(screen.getByText(/trash/i)).toBeVisible();
 		await user.click(screen.getByText(/trash/i));
 		// trash item is a valid selection
-		await waitFor(() => expect(chooseButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalledTimes(2);
 		expect(confirmAction).toHaveBeenLastCalledWith(
@@ -421,23 +418,25 @@ describe('Folder Selection Modal Content', () => {
 			true
 		);
 		// choose button is now disabled because of reset
-		expect(chooseButton).toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeDisabled();
 		await user.dblClick(screen.getByText(/trash/i));
 		// double-click on trash does not trigger navigation
 		expect(screen.getByText(/trash/i)).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		// choose button is now active because trash is the active item
-		expect(chooseButton).not.toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeEnabled();
 		// ugly but it's the only way to check the item is visibly active
-		expect(findStyled(screen.getByTestId(`node-item-${ROOTS.TRASH}`), HoverContainer)).toHaveStyle(
-			'background-color: #d5e3f6'
-		);
+		expect(
+			findStyled(screen.getByTestId(SELECTORS.nodeItem(ROOTS.TRASH)), HoverContainer)
+		).toHaveStyle({
+			'background-color': COLORS.highlight.regular
+		});
 		await user.dblClick(screen.getByText(/shared with me/i));
 		await screen.findByText(sharedWithMeFilter[0].name);
 		expect(screen.getByText(sharedWithMeFilter[0].name)).toBeVisible();
 		expect(getByTextWithMarkup(buildBreadCrumbRegExp('Files', 'Shared with me'))).toBeVisible();
-		expect(chooseButton).not.toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeEnabled();
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalledTimes(3);
 		expect(confirmAction).toHaveBeenLastCalledWith(
@@ -451,12 +450,12 @@ describe('Folder Selection Modal Content', () => {
 		const folder = populateFolder(3);
 		folder.parent = localRoot;
 		localRoot.children.nodes.push(folder);
-		const mocks = [
-			mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-			mockGetPath({ node_id: localRoot.id }, [localRoot]),
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetPath({ node_id: folder.id }, [localRoot, folder])
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([localRoot], [localRoot, folder]),
+				getNode: mockGetNode({ getChildren: [localRoot, folder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(
 			<div onClick={resetToDefault}>
@@ -474,7 +473,7 @@ describe('Folder Selection Modal Content', () => {
 		await user.dblClick(screen.getByText(folder.name));
 		await screen.findByText((folder.children.nodes[0] as Node).name);
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
-		expect(chooseButton).not.toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeEnabled();
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenLastCalledWith(
@@ -487,19 +486,13 @@ describe('Folder Selection Modal Content', () => {
 		const filter = populateNodes(2);
 		const folder = populateFolder(3);
 		filter.push(folder);
-		const mocks = [
-			mockFindNodes(
-				getFindNodesVariables({
-					shared_with_me: true,
-					cascade: true,
-					direct_share: true,
-					folder_id: ROOTS.LOCAL_ROOT
-				}),
-				filter
-			),
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetPath({ node_id: folder.id }, [folder])
-		];
+		const mocks = {
+			Query: {
+				findNodes: mockFindNodes(filter),
+				getPath: mockGetPath([folder]),
+				getNode: mockGetNode({ getChildren: [folder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(
 			<div onClick={resetToDefault}>
@@ -517,7 +510,7 @@ describe('Folder Selection Modal Content', () => {
 		await user.dblClick(screen.getByText(folder.name));
 		await screen.findByText((folder.children.nodes[0] as Node).name);
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
-		expect(chooseButton).not.toHaveAttribute('disabled', '');
+		expect(chooseButton).toBeEnabled();
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenLastCalledWith(

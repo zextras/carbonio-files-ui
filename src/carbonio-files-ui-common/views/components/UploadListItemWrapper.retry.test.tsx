@@ -11,7 +11,8 @@ import { UploadListItemWrapper } from './UploadListItemWrapper';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateUploadItem } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
-import { mockGetBaseNode } from '../../utils/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockGetNode } from '../../utils/resolverMocks';
 import { setup } from '../../utils/testUtils';
 
 describe('Upload List Item Wrapper', () => {
@@ -24,8 +25,11 @@ describe('Upload List Item Wrapper', () => {
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<UploadListItemWrapper
 						node={file}
@@ -50,8 +54,11 @@ describe('Upload List Item Wrapper', () => {
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<UploadListItemWrapper
 						node={file}
@@ -76,9 +83,11 @@ describe('Upload List Item Wrapper', () => {
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
-
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<UploadListItemWrapper
 						node={file}
@@ -103,8 +112,11 @@ describe('Upload List Item Wrapper', () => {
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				setup(
 					<UploadListItemWrapper
 						node={file}
@@ -131,8 +143,11 @@ describe('Upload List Item Wrapper', () => {
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
@@ -156,8 +171,11 @@ describe('Upload List Item Wrapper', () => {
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
@@ -181,9 +199,11 @@ describe('Upload List Item Wrapper', () => {
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
-
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
@@ -207,8 +227,11 @@ describe('Upload List Item Wrapper', () => {
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectId = jest.fn();
-
-				const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}

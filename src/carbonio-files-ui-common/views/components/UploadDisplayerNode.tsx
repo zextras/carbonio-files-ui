@@ -32,7 +32,7 @@ interface UploadDisplayerNodeProps {
 	uploadItem: UploadItem;
 }
 
-function UploadDisplayerNodeContent({ id }: { id: string }): JSX.Element {
+function UploadDisplayerNodeContent({ id }: { id: string }): React.JSX.Element {
 	// reload children ids each time otherwise remove of sub-items is not detected
 	const ids = drop(flatUploadItemChildrenIds(id));
 	// then memoized with a deep equality the ids to check if they are changed or not
@@ -53,7 +53,9 @@ function UploadDisplayerNodeContent({ id }: { id: string }): JSX.Element {
 	);
 }
 
-export const UploadDisplayerNode = ({ uploadItem }: UploadDisplayerNodeProps): JSX.Element => {
+export const UploadDisplayerNode = ({
+	uploadItem
+}: UploadDisplayerNodeProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { removeActiveNode } = useActiveNode();
 

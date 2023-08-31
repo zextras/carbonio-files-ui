@@ -5,15 +5,13 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import {
 	populateFile,
 	populateFolder,
@@ -21,23 +19,23 @@ import {
 	populateNodes,
 	populateParents
 } from '../mocks/mockUtils';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import {
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	getFindNodesVariables,
 	mockCopyNodes,
 	mockFindNodes,
-	mockGetChildren,
+	mockGetNode,
 	mockGetPath
-} from '../utils/mockUtils';
-import { buildBreadCrumbRegExp, selectNodes, setup } from '../utils/testUtils';
+} from '../utils/resolverMocks';
+import { buildBreadCrumbRegExp, selectNodes, setup, screen, within } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Copy', () => {
@@ -50,12 +48,11 @@ describe('Filter View', () => {
 				folder.parent = populateFolder();
 				currentFilter.push(file, folder);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -68,9 +65,9 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 
-				const copyAction = await screen.findByTestId(ICON_REGEXP.copy);
+				const copyAction = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 				expect(copyAction).toBeVisible();
-				expect(copyAction).not.toHaveAttribute('disabled', '');
+				expect(copyAction).toBeEnabled();
 			});
 
 			test('Copy open modal showing parent folder content. Confirm action close the modal and clear cached data for destination folder', async () => {
@@ -85,27 +82,23 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetPath({ node_id: parentFolder.id }, path.slice(0, path.length - 1)),
-					mockGetChildren(getChildrenVariables(parentFolder.id), parentFolder),
-					mockCopyNodes(
-						{
-							node_ids: [nodeToCopy.id],
-							destination_id: destinationFolder.id
-						},
-						[{ ...nodeToCopy, parent: destinationFolder }]
-					)
-				];
+
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode({ getChildren: [parentFolder] }),
+						getPath: mockGetPath(path.slice(0, path.length - 1))
+					},
+					Mutation: {
+						copyNodes: mockCopyNodes([{ ...nodeToCopy, parent: destinationFolder }])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -118,7 +111,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -139,29 +132,30 @@ describe('Filter View', () => {
 				expect(copyAction).toBeVisible();
 				await user.click(copyAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					'Files',
 					...map(path.slice(0, path.length - 1), (node) => node.name)
 				);
-				await findByTextWithMarkup(buildBreadCrumbRegExp(path[0].name));
+				await findByTextWithMarkup(breadcrumbRegexp);
+				act(() => {
+					// run modal timers
+					jest.runOnlyPendingTimers();
+				});
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
-				expect(screen.queryByTestId('modal-list', { exact: false })).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.modalList)).not.toBeInTheDocument();
 				await screen.findByText(/item copied/i);
 
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -169,7 +163,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -191,28 +185,25 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetPath({ node_id: parentFolder.id }, [parentFolder]),
-					mockGetChildren(getChildrenVariables(parentFolder.id), parentFolder),
-					mockCopyNodes(
-						{
-							node_ids: map(nodesToCopy, (node) => node.id),
-							destination_id: destinationFolder.id
-						},
-						map(nodesToCopy, (node) => ({ ...node, parent: destinationFolder }))
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode({ getChildren: [parentFolder] }),
+						getPath: mockGetPath([parentFolder])
+					},
+					Mutation: {
+						copyNodes: mockCopyNodes(
+							map(nodesToCopy, (node) => ({ ...node, parent: destinationFolder }))
+						)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -225,7 +216,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -243,26 +234,27 @@ describe('Filter View', () => {
 				expect(copyAction).toBeVisible();
 				await user.click(copyAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(parentFolder.name);
 				const breadcrumb = await findByTextWithMarkup(breadcrumbRegexp);
+				act(() => {
+					// run modal timers
+					jest.runOnlyPendingTimers();
+				});
 				expect(breadcrumb).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
-				expect(screen.queryByTestId('modal-list', { exact: false })).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.modalList)).not.toBeInTheDocument();
 				await screen.findByText(/item copied/i);
 
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -270,7 +262,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -291,28 +283,25 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetChildren(getChildrenVariables(localRoot.id), localRoot),
-					mockCopyNodes(
-						{
-							node_ids: map(nodesToCopy, (node) => node.id),
-							destination_id: destinationFolder.id
-						},
-						map(nodesToCopy, (node) => ({ ...node, parent: destinationFolder }))
-					),
-					mockGetPath({ node_id: localRoot.id }, [localRoot])
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode({ getChildren: [localRoot] }),
+						getPath: mockGetPath([localRoot])
+					},
+					Mutation: {
+						copyNodes: mockCopyNodes(
+							map(nodesToCopy, (node) => ({ ...node, parent: destinationFolder }))
+						)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -325,7 +314,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -348,35 +337,29 @@ describe('Filter View', () => {
 				await user.click(copyAction);
 
 				// open modal with roots
-				let modalList = await screen.findByTestId('modal-list-roots');
+				let modalList = await screen.findByTestId(SELECTORS.modalList);
 				expect(within(modalList).getByText('Shared with me')).toBeInTheDocument();
 				expect(within(modalList).getByText(localRoot.name)).toBeInTheDocument();
 				expect(within(modalList).queryByText('Trash')).not.toBeInTheDocument();
 				expect(getByTextWithMarkup(buildBreadCrumbRegExp('Files'))).toBeInTheDocument();
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
 
 				await user.dblClick(within(modalList).getByText(localRoot.name));
 
-				modalList = await screen.findByTestId(`modal-list-${localRoot.id}`);
+				modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
-				expect(screen.queryByTestId('modal-list', { exact: false })).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.modalList)).not.toBeInTheDocument();
 				await screen.findByText(/item copied/i);
 
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -384,7 +367,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -405,27 +388,23 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetPath({ node_id: parentFolder.id }, path.slice(0, path.length - 1)),
-					mockGetChildren(getChildrenVariables(parentFolder.id), parentFolder),
-					mockCopyNodes(
-						{
-							node_ids: [nodeToCopy.id],
-							destination_id: destinationFolder.id
-						},
-						[{ ...nodeToCopy, parent: destinationFolder }]
-					)
-				];
+
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode({ getChildren: [parentFolder] }),
+						getPath: mockGetPath(path.slice(0, path.length - 1))
+					},
+					Mutation: {
+						copyNodes: mockCopyNodes([{ ...nodeToCopy, parent: destinationFolder }])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -438,43 +417,44 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
 				expect(destinationFolderCachedData?.getNode || null).not.toBeNull();
 				expect((destinationFolderCachedData?.getNode as Folder).id).toBe(destinationFolder.id);
 
-				// right click to open contextual menu on folder
+				// right click to open the contextual menu on folder
 				const nodeToCopyItem = await screen.findByText(nodeToCopy.name);
 				fireEvent.contextMenu(nodeToCopyItem);
 				const copyAction = await screen.findByText(ACTION_REGEXP.copy);
 				expect(copyAction).toBeVisible();
 				await user.click(copyAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					'Files',
 					...map(path.slice(0, path.length - 1), (node) => node.name)
 				);
 				await findByTextWithMarkup(breadcrumbRegexp);
+				act(() => {
+					// run modal timers
+					jest.runOnlyPendingTimers();
+				});
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
-				expect(screen.queryByTestId('modal-list', { exact: false })).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.modalList)).not.toBeInTheDocument();
 				await screen.findByText(/item copied/i);
 
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 				// context menu is closed
 				expect(screen.queryByText(ACTION_REGEXP.copy)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -482,7 +462,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 

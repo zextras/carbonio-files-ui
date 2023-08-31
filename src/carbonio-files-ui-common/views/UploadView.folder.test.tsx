@@ -12,10 +12,9 @@ import { EventEmitter } from 'events';
 import { graphql, rest } from 'msw';
 
 import UploadView from './UploadView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { REST_ENDPOINT, UPLOAD_PATH } from '../constants';
-import { EMITTER_CODES, ICON_REGEXP } from '../constants/test';
+import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -28,14 +27,15 @@ import {
 	populateNodePage,
 	populateNodes
 } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	CreateFolderMutation,
 	CreateFolderMutationVariables,
 	Folder
 } from '../types/graphql/types';
-import { mockGetBaseNode } from '../utils/mockUtils';
+import { mockGetNode } from '../utils/resolverMocks';
 import {
-	createDataTransfer,
+	createUploadDataTransfer,
 	delayUntil,
 	generateError,
 	setup,
@@ -43,12 +43,7 @@ import {
 } from '../utils/testUtils';
 import { UploadQueue } from '../utils/uploadUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload View', () => {
 	describe('Folder', () => {
@@ -63,7 +58,7 @@ describe('Upload View', () => {
 			});
 			folder.children = populateNodePage(children);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -77,7 +72,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -87,10 +86,10 @@ describe('Upload View', () => {
 			await screen.findByText(subFolder.name);
 			await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			const subFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(subFolder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(subFolderItem).toBeDefined();
@@ -112,7 +111,7 @@ describe('Upload View', () => {
 			});
 			folder.children = populateNodePage(children);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -131,7 +130,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -140,7 +143,7 @@ describe('Upload View', () => {
 			await uploadWithDnD(dropzone, dataTransferObj);
 			await screen.findByText(/content/i);
 			await screen.findByTestId(ICON_REGEXP.uploadCompleted);
-			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted));
+			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted)).toBeVisible();
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(2);
 			expect(screen.getByText('2/3')).toBeVisible();
 
@@ -160,7 +163,7 @@ describe('Upload View', () => {
 			folder.children = populateNodePage(children);
 			const externalFiles = populateNodes(UploadQueue.LIMIT, 'File');
 
-			const dataTransferObj = createDataTransfer([folder, ...externalFiles]);
+			const dataTransferObj = createUploadDataTransfer([folder, ...externalFiles]);
 
 			const emitter = new EventEmitter();
 
@@ -188,7 +191,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<UploadView />, { mocks });
 
@@ -209,7 +216,7 @@ describe('Upload View', () => {
 			expect(screen.queryByText(/queued/i)).not.toBeInTheDocument();
 			// now retry the upload of the failed item
 			const failedItem = screen
-				.getAllByTestId('details-node-item-', { exact: false })
+				.getAllByTestId(SELECTORS.detailsNodeItem(), { exact: false })
 				.find((item) => within(item).queryByTestId(ICON_REGEXP.uploadFailed) !== null);
 			expect(failedItem).toBeDefined();
 			await user.hover(failedItem as HTMLElement);
@@ -246,7 +253,7 @@ describe('Upload View', () => {
 			level3File.parent = level2Folder;
 			level2Folder.children = populateNodePage([level3File]);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -260,7 +267,7 @@ describe('Upload View', () => {
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
-						const result = createFolderResponses.pop();
+						const result = createFolderResponses.shift();
 						if (result) {
 							return res(
 								ctx.data({
@@ -296,7 +303,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -312,12 +323,12 @@ describe('Upload View', () => {
 
 			// complete level 0 (create main folder)
 			emitter.emit(EMITTER_CODES.success);
-			await waitFor(() => expect(createFolderMutation).toHaveBeenCalled());
+			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(1));
 			await screen.findByText('1/5');
 			// progress of main folder
 			expect(screen.getByText('1/5')).toBeVisible();
 			// progress of level 1 folder
-			expect(screen.getByText('0/3')).toBeVisible();
+			expect(await screen.findByText('0/3')).toBeVisible();
 			// progress of level 2 folder + progress of file 3
 			expect(screen.getAllByText(/queued/i)).toHaveLength(2);
 
@@ -326,7 +337,7 @@ describe('Upload View', () => {
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(2));
 			await waitFor(() => expect(uploadFile).toHaveBeenCalled());
 			await screen.findByText('3/5');
-			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted)).toBeInTheDocument();
+			await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 			// progress of main folder
 			expect(screen.getByText('3/5')).toBeVisible();
 			// progress of level 1 folder
@@ -342,7 +353,7 @@ describe('Upload View', () => {
 			// progress of main folder
 			expect(screen.getByText('4/5')).toBeVisible();
 			// progress of level 1 folder
-			expect(screen.getByText('2/3')).toBeVisible();
+			expect(await screen.findByText('2/3')).toBeVisible();
 			// progress of level 2 folder
 			expect(screen.getByText('1/2')).toBeVisible();
 
@@ -375,7 +386,7 @@ describe('Upload View', () => {
 			level3File.parent = level2Folder;
 			level2Folder.children = populateNodePage([level3File]);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -389,7 +400,7 @@ describe('Upload View', () => {
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
-						const result = createFolderResponses.pop();
+						const result = createFolderResponses.shift();
 						if (result) {
 							return res(
 								ctx.data({
@@ -425,7 +436,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -435,7 +450,7 @@ describe('Upload View', () => {
 			await screen.findByText(/content/i);
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
@@ -481,7 +496,7 @@ describe('Upload View', () => {
 			level3File.parent = level2Folder;
 			level2Folder.children = populateNodePage([level3File]);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -495,7 +510,7 @@ describe('Upload View', () => {
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
-						const result = createFolderResponses.pop();
+						const result = createFolderResponses.shift();
 						if (result) {
 							return res(
 								ctx.data({
@@ -531,7 +546,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -541,7 +560,7 @@ describe('Upload View', () => {
 			await screen.findByText(/content/i);
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
@@ -584,9 +603,13 @@ describe('Upload View', () => {
 			});
 			folder.children = populateNodePage(children);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			server.use(
 				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
@@ -614,7 +637,7 @@ describe('Upload View', () => {
 			await screen.findAllByTestId(ICON_REGEXP.uploadFailed);
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadFailed)).toHaveLength(2);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
@@ -638,9 +661,13 @@ describe('Upload View', () => {
 				subSubFolder.children.nodes.length +
 				1;
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -668,7 +695,7 @@ describe('Upload View', () => {
 			level3File.parent = level2Folder;
 			level2Folder.children = populateNodePage([level3File]);
 
-			const dataTransferObj = createDataTransfer([folder]);
+			const dataTransferObj = createUploadDataTransfer([folder]);
 
 			const emitter = new EventEmitter();
 
@@ -684,7 +711,11 @@ describe('Upload View', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadView />, { mocks });
 
@@ -694,11 +725,10 @@ describe('Upload View', () => {
 			await screen.findByText(/content/i);
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
-				.getAllByTestId('node-item', { exact: false })
+				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 				.find((item) => within(item).queryByText(folder.name) !== null) as HTMLElement;
 			expect(mainFolderItem).toBeDefined();
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
-			await screen.findByText('0/4');
 			await waitFor(() => expect(screen.queryByText(/queued/i)).not.toBeInTheDocument());
 			await screen.findByText('3/4');
 			// each item is still in loading because the leaf is still loading
@@ -726,7 +756,7 @@ describe('Upload View', () => {
 				level3File.parent = level2Folder;
 				level2Folder.children = populateNodePage([level3File]);
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const emitter = new EventEmitter();
 
@@ -742,7 +772,11 @@ describe('Upload View', () => {
 					)
 				);
 
-				const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadView />, { mocks });
 
@@ -753,11 +787,11 @@ describe('Upload View', () => {
 				await screen.findByText(level3File.name);
 				await screen.findByText('3/4');
 				expect(screen.getByText('3/4')).toBeVisible();
-				expect(screen.getByText('2/3')).toBeVisible();
+				expect(await screen.findByText('2/3')).toBeVisible();
 				expect(screen.getByText('1/2')).toBeVisible();
 
 				const fileItem = screen
-					.getAllByTestId('node-item', { exact: false })
+					.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 					.find((item) => within(item).queryByText(level3File.name) !== null) as HTMLElement;
 				expect(fileItem).toBeDefined();
 
@@ -789,7 +823,7 @@ describe('Upload View', () => {
 				level3File.parent = level2Folder;
 				level2Folder.children = populateNodePage([level3File]);
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const emitter = new EventEmitter();
 
@@ -805,7 +839,11 @@ describe('Upload View', () => {
 					)
 				);
 
-				const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadView />, { mocks });
 
@@ -816,17 +854,17 @@ describe('Upload View', () => {
 				await screen.findByText(level2Folder.name);
 				await screen.findByText('3/5');
 				expect(screen.getByText('3/5')).toBeVisible();
-				expect(screen.getByText('2/3')).toBeVisible();
+				expect(await screen.findByText('2/3')).toBeVisible();
 
 				const folder2Item = screen
-					.getAllByTestId('node-item', { exact: false })
+					.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 					.find((item) => within(item).queryByText(level2Folder.name) !== null) as HTMLElement;
 				expect(folder2Item).toBeDefined();
 
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(5);
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(5);
 				await user.click(within(folder2Item).getByTestId(ICON_REGEXP.removeUpload));
 				await waitFor(() =>
-					expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(3)
+					expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(3)
 				);
 
 				expect(screen.getByText('2/3')).toBeVisible();
@@ -853,7 +891,7 @@ describe('Upload View', () => {
 				level3File.parent = level2Folder;
 				level2Folder.children = populateNodePage([level3File]);
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				server.use(
 					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
@@ -862,7 +900,11 @@ describe('Upload View', () => {
 					)
 				);
 
-				const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadView />, { mocks });
 
@@ -879,16 +921,16 @@ describe('Upload View', () => {
 				expect(screen.getByText('1/2')).toBeVisible();
 
 				const file3Item = screen
-					.getAllByTestId('node-item', { exact: false })
+					.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
 					.find((item) => within(item).queryByText(level3File.name) !== null) as HTMLElement;
 				expect(file3Item).toBeDefined();
 
 				expect(within(file3Item).getByTestId(ICON_REGEXP.removeUpload)).toBeInTheDocument();
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(5);
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(5);
 				await user.click(within(file3Item).getByTestId(ICON_REGEXP.removeUpload));
 				await screen.findByText('3/4');
 				await waitFor(() =>
-					expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(4)
+					expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(4)
 				);
 
 				expect(screen.getByText('3/4')).toBeVisible();

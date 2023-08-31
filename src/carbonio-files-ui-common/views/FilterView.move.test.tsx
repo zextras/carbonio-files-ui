@@ -5,15 +5,13 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
+import { act, fireEvent, screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../constants';
+import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import {
 	populateFile,
 	populateFolder,
@@ -22,23 +20,23 @@ import {
 	populateNodes,
 	populateParents
 } from '../mocks/mockUtils';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import {
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	getFindNodesVariables,
 	mockFindNodes,
-	mockGetChildren,
+	mockGetNode,
 	mockGetPath,
 	mockMoveNodes
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, selectNodes } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Move', () => {
@@ -61,12 +59,11 @@ describe('Filter View', () => {
 				node.parent.permissions.can_write_file = true;
 				currentFilter.push(file, folder, node);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -78,22 +75,22 @@ describe('Filter View', () => {
 				await selectNodes([file.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				await screen.findByText(ACTION_REGEXP.copy);
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 				// activate selection mode by selecting items
 				await selectNodes([file.id, folder.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(ICON_REGEXP.move)).not.toBeInTheDocument();
 				// activate selection mode by selecting items
 				await selectNodes([folder.id, node.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				expect(await screen.findByText(ACTION_REGEXP.move)).toBeInTheDocument();
 			});
 
@@ -108,12 +105,11 @@ describe('Filter View', () => {
 				folder.parent = parent;
 				currentFilter.push(file, folder);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user, queryByRoleWithIcon } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -152,12 +148,11 @@ describe('Filter View', () => {
 				node.parent = null;
 				currentFilter.push(file, folder, node);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -169,8 +164,8 @@ describe('Filter View', () => {
 				await selectNodes([file.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 				await screen.findByText(ACTION_REGEXP.copy);
 
@@ -180,8 +175,8 @@ describe('Filter View', () => {
 				await selectNodes([file.id, folder.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 				await screen.findByText(ACTION_REGEXP.moveToTrash);
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
@@ -191,8 +186,8 @@ describe('Filter View', () => {
 				await selectNodes([folder.id, node.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				await screen.findByText(ACTION_REGEXP.moveToTrash);
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(ICON_REGEXP.move)).not.toBeInTheDocument();
@@ -217,27 +212,22 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetPath({ node_id: parentFolder.id }, path.slice(0, path.length - 1)),
-					mockGetChildren(getChildrenVariables(parentFolder.id), parentFolder),
-					mockMoveNodes(
-						{
-							node_ids: [nodeToMove.id],
-							destination_id: destinationFolder.id
-						},
-						[{ ...nodeToMove, parent: destinationFolder }]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getPath: mockGetPath(path.slice(0, path.length - 1)),
+						getNode: mockGetNode({ getChildren: [parentFolder] })
+					},
+					Mutation: {
+						moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -250,7 +240,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -261,25 +251,26 @@ describe('Filter View', () => {
 				await selectNodes([nodeToMove.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				const moveAction = await screen.findByText(ACTION_REGEXP.move);
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					...map(path.slice(0, path.length - 1), (node) => node.name)
 				);
 				await findByTextWithMarkup(breadcrumbRegexp);
+				act(() => {
+					// run modal timers
+					jest.runOnlyPendingTimers();
+				});
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.move }));
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 				await screen.findByText(/item moved/i);
@@ -287,7 +278,7 @@ describe('Filter View', () => {
 				// exit selection mode
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -295,7 +286,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -322,12 +313,11 @@ describe('Filter View', () => {
 				node.parent.permissions.can_write_file = true;
 				currentFilter.push(file, folder, node);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 
 				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -349,11 +339,12 @@ describe('Filter View', () => {
 
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 
-				// right click to open contextual menu on node with permission
+				// right click to open the contextual menu on node with permission
 				const nodeItem = await screen.findByText(node.name);
 				fireEvent.contextMenu(nodeItem);
 				const moveAction = await screen.findByText(ACTION_REGEXP.move);
 				expect(moveAction).toBeVisible();
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(moveAction).not.toHaveAttribute('disabled', '');
 			});
 
@@ -375,27 +366,23 @@ describe('Filter View', () => {
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id),
 					data: {
 						getNode: destinationFolder
 					}
 				});
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockGetPath({ node_id: parentFolder.id }, path.slice(0, path.length - 1)),
-					mockGetChildren(getChildrenVariables(parentFolder.id), parentFolder),
-					mockMoveNodes(
-						{
-							node_ids: [nodeToMove.id],
-							destination_id: destinationFolder.id
-						},
-						[{ ...nodeToMove, parent: destinationFolder }]
-					)
-				];
+
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getPath: mockGetPath(path.slice(0, path.length - 1)),
+						getNode: mockGetNode({ getChildren: [parentFolder] })
+					},
+					Mutation: {
+						moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
 					<Route path={`/:view/:filter?`} component={FilterView} />,
@@ -408,7 +395,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 
@@ -422,19 +409,20 @@ describe('Filter View', () => {
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);
 
-				const modalList = await screen.findByTestId(`modal-list-${parentFolder.id}`);
+				const modalList = await screen.findByTestId(SELECTORS.modalList);
 				const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 				const breadcrumbRegexp = buildBreadCrumbRegExp(
 					...map(path.slice(0, path.length - 1), (node) => node.name)
 				);
 				await findByTextWithMarkup(breadcrumbRegexp);
+				act(() => {
+					// run modal timers
+					jest.runOnlyPendingTimers();
+				});
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
 				await user.click(destinationFolderItem);
-				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).not.toHaveAttribute(
-					'disabled',
-					''
-				);
+				expect(screen.getByRole('button', { name: ACTION_REGEXP.move })).toBeEnabled();
 				await user.click(screen.getByRole('button', { name: ACTION_REGEXP.move }));
 				expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 				await screen.findByText(/item moved/i);
@@ -442,7 +430,7 @@ describe('Filter View', () => {
 				// context menu is closed
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 
-				expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					currentFilter.length
 				);
 
@@ -450,7 +438,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(destinationFolder.id)
 				});
 

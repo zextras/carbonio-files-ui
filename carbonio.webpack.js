@@ -15,9 +15,4 @@ module.exports = (wpConf, pkg, options, mode) => {
 		loader: 'graphql-tag/loader'
 	});
 	return wpConf;
-	// wpConf.plugins.push(
-	// 	new DefinePlugin({
-	// 		IS_SERVER: JSON.stringify(!!options.server)
-	// 	})
-	// );
 };

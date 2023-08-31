@@ -45,7 +45,7 @@ const DropdownItemComponent = ({
 	disabled,
 	selected,
 	tooltipLabel
-}: DropdownItemComponentProps): JSX.Element => (
+}: DropdownItemComponentProps): React.JSX.Element => (
 	<Tooltip
 		disabled={!disabled || !tooltipLabel}
 		label={tooltipLabel}
@@ -330,7 +330,7 @@ export const VersionRow: React.VFC<{
 					</Tooltip>
 				)}
 				<Dropdown placement="bottom-end" items={items}>
-					<IconButton size="small" icon="MoreVerticalOutline" onClick={(): void => undefined} />
+					<IconButton size="small" icon="MoreVertical" onClick={(): void => undefined} />
 				</Dropdown>
 			</GridItem>
 		</>

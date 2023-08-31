@@ -9,7 +9,6 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { UploadListItemWrapper } from './UploadListItemWrapper';
-import { UseNavigationHook } from '../../../hooks/useNavigation';
 import { ICON_REGEXP } from '../../constants/test';
 import { UseUploadHook } from '../../hooks/useUpload';
 import {
@@ -18,7 +17,8 @@ import {
 	populateUploadItem
 } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
-import { mockGetBaseNode } from '../../utils/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
+import { mockGetNode } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
 
@@ -31,18 +31,8 @@ const mockedUseUploadHook: ReturnType<UseUploadHook> = {
 	retryById: jest.fn()
 };
 
-const mockedUseNavigationHook: ReturnType<UseNavigationHook> = {
-	navigateTo: jest.fn(),
-	navigateToFolder: jest.fn(),
-	navigateBack: jest.fn
-};
-
-jest.mock('../../hooks/useUpload', () => ({
+jest.mock<typeof import('../../hooks/useUpload')>('../../hooks/useUpload', () => ({
 	useUpload: (): ReturnType<UseUploadHook> => mockedUseUploadHook
-}));
-
-jest.mock('../../../hooks/useNavigation', () => ({
-	useNavigation: (): ReturnType<UseNavigationHook> => mockedUseNavigationHook
 }));
 
 describe('Upload List Item Wrapper', () => {
@@ -55,8 +45,11 @@ describe('Upload List Item Wrapper', () => {
 			parentNodeId: destinationFolder.id
 		});
 		const mockSelectId = jest.fn();
-
-		const mocks = [mockGetBaseNode({ node_id: destinationFolder.id }, destinationFolder)];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getBaseNode: [destinationFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { findByTextWithMarkup } = setup(
 			<UploadListItemWrapper
@@ -91,12 +84,12 @@ describe('Upload List Item Wrapper', () => {
 				isSelectionModeActive={false}
 				selectId={mockSelectId}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		expect(screen.getByText(/queued/i)).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
-		expect(screen.queryByText(/\d+\s*%/)).not.toBeInTheDocument();
+		expect(screen.queryByText(/\d{1,3}%/)).not.toBeInTheDocument();
 	});
 
 	test('Progress for files is shown with the percentage', async () => {
@@ -110,7 +103,7 @@ describe('Upload List Item Wrapper', () => {
 				isSelectionModeActive={false}
 				selectId={selectFn}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		expect(screen.getByText(/45\s*%/)).toBeVisible();
@@ -132,7 +125,7 @@ describe('Upload List Item Wrapper', () => {
 				isSelectionModeActive={false}
 				selectId={selectFn}
 			/>,
-			{ mocks: [] }
+			{ mocks: {} }
 		);
 
 		expect(screen.getByText(/3\/10/)).toBeVisible();

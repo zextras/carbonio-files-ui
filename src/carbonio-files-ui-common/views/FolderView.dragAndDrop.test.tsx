@@ -20,10 +20,9 @@ import { graphql } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { TIMERS } from '../constants';
-import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -34,31 +33,25 @@ import {
 	populateUser
 } from '../mocks/mockUtils';
 import { Node } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
 	Folder,
 	GetChildQuery,
 	GetChildQueryVariables
 } from '../types/graphql/types';
+import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 import {
-	getChildrenVariables,
-	mockGetChildren,
-	mockGetParent,
-	mockGetPath,
-	mockGetPermissions,
-	mockMoveNodes
-} from '../utils/mockUtils';
-import { setup, selectNodes, createDataTransfer } from '../utils/testUtils';
+	setup,
+	selectNodes,
+	createUploadDataTransfer,
+	createMoveDataTransfer
+} from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -88,13 +81,14 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -107,7 +101,7 @@ describe('Drag and drop', () => {
 			dataTransfer: dataTransferObj
 		});
 
-		await screen.findByTestId('dropzone-overlay');
+		await screen.findByTestId(SELECTORS.dropzone);
 		expect(
 			screen.getByText(/Drop here your attachments to quick-add them to this folder/m)
 		).toBeVisible();
@@ -121,7 +115,7 @@ describe('Drag and drop', () => {
 		await screen.findByText(uploadedFiles[1].name);
 		expect(screen.getByText(uploadedFiles[0].name)).toBeVisible();
 		expect(screen.getByText(uploadedFiles[1].name)).toBeVisible();
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length + uploadedFiles.length
 		);
 		expect(
@@ -152,13 +146,14 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -171,7 +166,7 @@ describe('Drag and drop', () => {
 			dataTransfer: dataTransferObj
 		});
 
-		await screen.findByTestId('dropzone-overlay');
+		await screen.findByTestId(SELECTORS.dropzone);
 		expect(screen.getByText(/You cannot drop an attachment in this area/m)).toBeVisible();
 
 		fireEvent.drop(screen.getByText(/nothing here/i), {
@@ -180,7 +175,7 @@ describe('Drag and drop', () => {
 
 		expect(screen.queryByText(uploadedFiles[0].name)).not.toBeInTheDocument();
 		expect(screen.queryByText(uploadedFiles[1].name)).not.toBeInTheDocument();
-		expect(screen.queryByTestId('node-item', { exact: false })).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.nodeItem(), { exact: false })).not.toBeInTheDocument();
 		expect(
 			screen.queryByText(/You cannot drop an attachment in this area/m)
 		).not.toBeInTheDocument();
@@ -211,13 +206,14 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -230,7 +226,7 @@ describe('Drag and drop', () => {
 			dataTransfer: dataTransferObj
 		});
 
-		await screen.findByTestId('dropzone-overlay');
+		await screen.findByTestId(SELECTORS.dropzone);
 		expect(
 			screen.queryByText(/Drop here your attachments to quick-add them to this folder/m)
 		).not.toBeInTheDocument();
@@ -240,10 +236,10 @@ describe('Drag and drop', () => {
 		});
 
 		await screen.findByText(new RegExp(`Upload occurred in ${destinationFolder.name}`, 'i'));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 	});
 
 	test('Drag of files in a folder node without right permissions inside a list shows upload dropzone of the list item. Drop does nothing', async () => {
@@ -270,13 +266,14 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -289,7 +286,7 @@ describe('Drag and drop', () => {
 			dataTransfer: dataTransferObj
 		});
 
-		await screen.findByTestId('dropzone-overlay');
+		await screen.findByTestId(SELECTORS.dropzone);
 		expect(
 			screen.queryByText(/Drop here your attachments to quick-add them to this folder/m)
 		).not.toBeInTheDocument();
@@ -298,9 +295,9 @@ describe('Drag and drop', () => {
 			dataTransfer: dataTransferObj
 		});
 
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		expect(screen.queryByText(/Upload occurred/i)).not.toBeInTheDocument();
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 		expect(reqIndex).toBe(0);
@@ -333,13 +330,14 @@ describe('Drag and drop', () => {
 				return res(ctx.data({ getNode: result }));
 			})
 		);
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
-		const dataTransferObj = createDataTransfer(uploadedFiles);
+		const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -352,7 +350,7 @@ describe('Drag and drop', () => {
 			dataTransfer: dataTransferObj
 		});
 
-		await screen.findByTestId('dropzone-overlay');
+		await screen.findByTestId(SELECTORS.dropzone);
 		expect(
 			screen.queryByText(/Drop here your attachments to quick-add them to this folder/m)
 		).toBeVisible();
@@ -366,7 +364,7 @@ describe('Drag and drop', () => {
 		await screen.findByText(uploadedFiles[1].name);
 		expect(screen.getByText(uploadedFiles[0].name)).toBeVisible();
 		expect(screen.getByText(uploadedFiles[1].name)).toBeVisible();
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length + uploadedFiles.length
 		);
 		expect(
@@ -394,34 +392,19 @@ describe('Drag and drop', () => {
 		folderWithoutPermission.parent = currentFolder;
 		currentFolder.children.nodes.push(folderWithoutPermission);
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockMoveNodes(
-				{
-					node_ids: map(nodesToDrag, (node) => node.id),
-					destination_id: destinationFolder.id
-				},
-				map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(
+					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+				)
+			}
+		} satisfies Partial<Resolvers>;
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -431,14 +414,16 @@ describe('Drag and drop', () => {
 		const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 		fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnter(itemToDrag, { dataTransfer: dataTransfer() });
-		await screen.findByTestId('dropzone-overlay');
+		await screen.findByTestId(SELECTORS.dropzone);
 		// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 		const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 		expect(draggedNodeItems).toHaveLength(2);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
 		// dropzone of the folder is shown
-		expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 		expect(screen.getByText(/drag&drop mode/i)).toBeVisible();
 		expect(
 			screen.getByText(/drop here your items to quickly move them to this folder/i)
@@ -448,26 +433,27 @@ describe('Drag and drop', () => {
 		// drag and drop on folder without permissions
 		const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 		fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
-		await screen.findByTestId('dropzone-overlay');
-		expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+		await screen.findByTestId(SELECTORS.dropzone);
+		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 		expect(screen.queryByText(/Drag&Drop Mode/i)).not.toBeInTheDocument();
 		fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		jest.advanceTimersByTime(TIMERS.HIDE_DROPZONE);
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		expect(itemToDrag).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 		// drag and drop on folder with permissions
 		const destinationItem = screen.getByText(destinationFolder.name);
 		fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-		await screen.findByTestId('dropzone-overlay');
-		expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+		await screen.findByTestId(SELECTORS.dropzone);
+		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 		expect(screen.queryByText('Drag&Drop Mode')).not.toBeInTheDocument();
 		fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		await waitForElementToBeRemoved(itemToDrag);
 		expect(screen.queryByText(nodesToDrag[0].name)).not.toBeInTheDocument();
 		await screen.findByText(/Item moved/i);
@@ -493,27 +479,14 @@ describe('Drag and drop', () => {
 		folderWithoutPermission.parent = currentFolder;
 		currentFolder.children.nodes.push(folderWithoutPermission);
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -527,19 +500,22 @@ describe('Drag and drop', () => {
 		// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 		const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 		expect(draggedNodeItems).toHaveLength(2);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
 
 		// drag and drop on folder without permissions. Overlay is not shown.
 		const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 		fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 		// drag and drop on folder with permissions. Overlay is not shown.
@@ -547,10 +523,11 @@ describe('Drag and drop', () => {
 		fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 		jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 	});
 
@@ -569,34 +546,19 @@ describe('Drag and drop', () => {
 		destinationFolder.parent = currentFolder;
 		currentFolder.children.nodes.push(destinationFolder);
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockMoveNodes(
-				{
-					node_ids: map(nodesToDrag, (node) => node.id),
-					destination_id: destinationFolder.id
-				},
-				map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(
+					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+				)
+			}
+		} satisfies Partial<Resolvers>;
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -615,18 +577,20 @@ describe('Drag and drop', () => {
 		forEach(nodesToDrag, (node) => {
 			const draggedImage = screen.getAllByText(node.name);
 			expect(draggedImage).toHaveLength(2);
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedImage[0]).toHaveAttribute('disabled', '');
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedImage[1]).not.toHaveAttribute('disabled', '');
 		});
 
 		const destinationItem = screen.getByText(destinationFolder.name);
 		fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-		await screen.findByTestId('dropzone-overlay');
-		expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+		await screen.findByTestId(SELECTORS.dropzone);
+		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 		expect(screen.queryByText('Drag&Drop Mode')).not.toBeInTheDocument();
 		fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		await screen.findByText(/Item moved/i);
 		forEach(nodesToDrag, (node) => {
 			const draggedImage = screen.queryByText(node.name);
@@ -657,35 +621,17 @@ describe('Drag and drop', () => {
 			mockedNode.owner = owner;
 		});
 
-		const mocks = [
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetPath({ node_id: currentFolder.id }, path),
-			mockMoveNodes(
-				{
-					node_ids: map(nodesToDrag, (node) => node.id),
-					destination_id: path[0].id
-				},
-				map(nodesToDrag, (node) => ({ ...node, parent: path[0] }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath(path),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(map(nodesToDrag, (node) => ({ ...node, parent: path[0] })))
+			}
+		} satisfies Partial<Resolvers>;
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+		const dataTransfer = createMoveDataTransfer();
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -694,9 +640,9 @@ describe('Drag and drop', () => {
 
 		const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 
-		// load full path
+		// load the full path
 		await screen.findByText((currentFolder.parent as Folder).name);
-		await user.click(screen.getByTestId('icon: ChevronRight'));
+		await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand));
 		await screen.findByText(path[0].name);
 		// TODO: move fragment to graphql file and add type
 		// add missing data in cache
@@ -740,17 +686,18 @@ describe('Drag and drop', () => {
 		const folderWithoutPermissionsItem = screen.getByText(path[1].name);
 		fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragOver(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
-		const breadcrumbCrumbs = screen.getAllByTestId('drop-crumb');
+		const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
 		const folderWithoutPermissionsCrumb = find(
 			breadcrumbCrumbs,
 			(crumb) => within(crumb).queryByText(path[1].name) !== null
 		);
 		expect(folderWithoutPermissionsCrumb).toHaveStyle({
-			'background-color': 'rgba(130, 130, 130, 0.4)'
+			'background-color': COLORS.dropzone.disabled
 		});
 		fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 		expect(folderWithoutPermissionsCrumb).toHaveStyle({
@@ -767,7 +714,7 @@ describe('Drag and drop', () => {
 		fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragOver(destinationItem, { dataTransfer: dataTransfer() });
 		expect(destinationCrumb).toHaveStyle({
-			'background-color': 'rgba(43, 115, 210, 0.4)'
+			'background-color': COLORS.dropzone.enabled
 		});
 		fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
@@ -796,40 +743,30 @@ describe('Drag and drop', () => {
 		destinationFolder.parent = currentFolder;
 		currentFolder.children = populateNodePage([draggedNode, destinationFolder]);
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(destinationFolder.id), destinationFolder),
-			mockMoveNodes(
-				{
-					node_ids: map(nodesToDrag, (node) => node.id),
-					destination_id: destinationFolder.id
-				},
-				map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
-			),
-			mockGetParent({ node_id: destinationFolder.id }, destinationFolder),
-			mockGetChildren(getChildrenVariables(destinationFolder.id), {
-				...destinationFolder,
-				children: populateNodePage(nodesToDrag)
-			} as Folder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder], [currentFolder, destinationFolder]),
 
-		let dataTransferData: Record<string, string> = {};
-		let dataTransferTypes: string[] = [];
-		const dataTransfer = (): Partial<DataTransfer> => ({
-			setDragImage: jest.fn(),
-			setData: jest.fn().mockImplementation((type, data) => {
-				dataTransferData[type] = data;
-				dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-			}),
-			getData: jest.fn().mockImplementation((type) => dataTransferData[type]),
-			types: dataTransferTypes,
-			clearData: jest.fn().mockImplementation(() => {
-				dataTransferTypes = [];
-				dataTransferData = {};
-			})
-		});
+				getNode: mockGetNode({
+					getChildren: [
+						currentFolder,
+						destinationFolder,
+						{
+							...destinationFolder,
+							children: populateNodePage(nodesToDrag)
+						}
+					],
+					getPermissions: [currentFolder]
+				})
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(
+					map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+				)
+			}
+		} satisfies Partial<Resolvers>;
+
+		const dataTransfer = createMoveDataTransfer();
 
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -844,7 +781,7 @@ describe('Drag and drop', () => {
 			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 		});
 		// dropzone of the node item is shown
-		expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 		expect(screen.queryByText(/drag&drop mode/i)).not.toBeInTheDocument();
 
 		// wait for navigation timer to be executed
@@ -853,13 +790,13 @@ describe('Drag and drop', () => {
 		});
 
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		fireEvent.dragEnter(screen.getByText(/nothing here/i), { dataTransfer: dataTransfer() });
 		act(() => {
 			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 		});
 		// dropzone of the folder list is shown
-		expect(screen.getByTestId('dropzone-overlay')).toBeVisible();
+		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 		expect(screen.getByText(/drag&drop mode/i)).toBeVisible();
 		expect(
 			screen.getByText(/drop here your items to quickly move them to this folder/i)

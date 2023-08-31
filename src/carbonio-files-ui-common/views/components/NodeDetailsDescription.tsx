@@ -26,7 +26,7 @@ interface NodeDetailsDescriptionProps {
 	description: string | undefined;
 	canUpsertDescription: boolean;
 	id: string;
-	loading?: boolean | undefined;
+	loading?: boolean;
 }
 
 const Label: React.FC = ({ children }) => (
@@ -115,7 +115,7 @@ export const NodeDetailsDescription: React.VFC<NodeDetailsDescriptionProps> = ({
 					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
 				</Text>
 				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost')}
+					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
 				</Text>
 			</RouteLeavingGuard>
 			{editingDescription && (

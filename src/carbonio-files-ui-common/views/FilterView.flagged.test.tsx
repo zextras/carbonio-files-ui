@@ -10,7 +10,6 @@ import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
 	FILTER_TYPE,
@@ -19,13 +18,16 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
+import { SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
-import { getFindNodesVariables, mockFindNodes } from '../utils/mockUtils';
+import { mockFindNodes } from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup } from '../utils/testUtils';
 
-const mockedRequestHandler = jest.fn();
+type FindNodesHandler = typeof handleFindNodesRequest;
+const mockedRequestHandler = jest.fn<ReturnType<FindNodesHandler>, Parameters<FindNodesHandler>>();
 
 beforeEach(() => {
 	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
@@ -34,12 +36,7 @@ beforeEach(() => {
 	);
 });
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter view', () => {
 	describe('Flagged filter', () => {
@@ -64,17 +61,16 @@ describe('Filter view', () => {
 				expect.anything(),
 				expect.anything()
 			);
-			expect(screen.queryByTestId('missing-filter')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 
 		test('breadcrumb show Flagged', async () => {
 			const nodes = populateNodes(1);
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					nodes
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup } = setup(
 				<Route path={`/:view/:filter?`} component={FilterView} />,

@@ -6,8 +6,10 @@
 
 import React, { ReactElement, useMemo } from 'react';
 
-import { ApolloProvider } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { SchemaLink } from '@apollo/client/link/schema';
+import { addMocksToSchema } from '@graphql-tools/mock';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
 	act,
 	ByRoleMatcher,
@@ -19,9 +21,9 @@ import {
 	render,
 	RenderOptions,
 	RenderResult,
-	screen,
+	screen as rtlScreen,
 	waitFor,
-	within
+	within as rtlWithin
 } from '@testing-library/react';
 import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
@@ -29,16 +31,18 @@ import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
 import { EventEmitter } from 'events';
 import { GraphQLError } from 'graphql';
-import { forEach, map, filter, reduce } from 'lodash';
+import { forEach, map, filter, reduce, merge, noop } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
-import { Mock } from './mockUtils';
+import { resolvers } from './resolvers';
 import { isFile, isFolder } from './utils';
-import I18nFactory from '../../i18n/i18n-test-factory';
+import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../types/graphql/types';
 
 export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
@@ -47,7 +51,7 @@ export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
  * Matcher function to search a string in more html elements and not just in a single element.
  */
 const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) =>
-	screen.queryAllByText((_content, element) => {
+	rtlScreen.queryAllByText((_content, element) => {
 		if (element && element instanceof HTMLElement) {
 			const hasText = (singleNode: Element): boolean => {
 				const regExp = RegExp(text);
@@ -80,8 +84,8 @@ const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> =
 	{ icon, ...options }
 ) =>
 	filter(
-		screen.queryAllByRole('button', options),
-		(element) => within(element).queryByTestId(icon) !== null
+		rtlScreen.queryAllByRole('button', options),
+		(element) => rtlWithin(element).queryByTestId(icon) !== null
 	);
 const getByRoleWithIconMultipleError = (
 	container: Element | null,
@@ -133,6 +137,16 @@ const customQueries = {
 	findByRoleWithIcon
 };
 
+const queriesExtended = { ...queries, ...customQueries };
+
+export function within(
+	element: Parameters<typeof rtlWithin<typeof queriesExtended>>[0]
+): ReturnType<typeof rtlWithin<typeof queriesExtended>> {
+	return rtlWithin(element, queriesExtended);
+}
+
+export const screen = within(document.body);
+
 function escapeRegExp(string: string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -161,37 +175,45 @@ export const buildBreadCrumbRegExp = (...nodesNames: string[]): RegExp => {
 	return RegExp(regExp, 'g');
 };
 
-/**
- * Utility to generate an error for mocks that can be decoded with {@link decodeError}
- * @param message
- */
 export function generateError(message: string): GraphQLError {
 	return new GraphQLError(`Controlled error: ${message}`);
 }
 
 interface WrapperProps {
-	children?: React.ReactNode | undefined;
+	children?: React.ReactNode;
 	initialRouterEntries?: string[];
-	mocks?: Mock[];
+	mocks?: Partial<Resolvers>;
 }
+const ApolloProviderWrapper = ({
+	children,
+	mocks
+}: Pick<WrapperProps, 'children' | 'mocks'>): React.JSX.Element => {
+	const client = useMemo(() => {
+		if (mocks !== undefined) {
+			const schema = makeExecutableSchema({ typeDefs: GRAPHQL_SCHEMA });
+			const mockSchema = addMocksToSchema({
+				schema,
+				resolvers: merge({}, resolvers, mocks)
+			});
+			return new ApolloClient({
+				link: new SchemaLink({ schema: mockSchema }),
+				cache: global.apolloClient.cache
+			});
+		}
+		return global.apolloClient;
+	}, [mocks]);
 
-const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): JSX.Element => {
+	return <ApolloProvider client={client}>{children}</ApolloProvider>;
+};
+
+const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): React.JSX.Element => {
 	const i18n = useMemo(() => {
 		const i18nFactory = new I18nFactory();
 		return i18nFactory.getAppI18n();
 	}, []);
 
-	const ApolloProviderWrapper: React.FC = ({ children: apolloChildren }) =>
-		mocks ? (
-			<MockedProvider mocks={mocks} cache={global.apolloClient.cache}>
-				{apolloChildren}
-			</MockedProvider>
-		) : (
-			<ApolloProvider client={global.apolloClient}>{apolloChildren}</ApolloProvider>
-		);
-
 	return (
-		<ApolloProviderWrapper>
+		<ApolloProviderWrapper mocks={mocks}>
 			<MemoryRouter
 				initialEntries={initialRouterEntries}
 				initialIndex={(initialRouterEntries?.length || 1) - 1}
@@ -219,7 +241,7 @@ function customRender(
 	}: WrapperProps & {
 		options?: Omit<RenderOptions, 'queries' | 'wrapper'>;
 	} = {}
-): RenderResult<typeof queries & typeof customQueries> {
+): RenderResult<typeof queriesExtended> {
 	return render(ui, {
 		wrapper: ({ children }: Pick<WrapperProps, 'children'>) => (
 			<Wrapper initialRouterEntries={initialRouterEntries} mocks={mocks}>
@@ -285,8 +307,8 @@ export async function triggerLoadMore(): Promise<void> {
 export async function selectNodes(nodesToSelect: string[], user: UserEvent): Promise<void> {
 	for (let i = 0; i < nodesToSelect.length; i += 1) {
 		const id = nodesToSelect[i];
-		const node = within(screen.getByTestId(`node-item-${id}`));
-		let clickableItem = node.queryByTestId('file-icon-preview');
+		const node = within(screen.getByTestId(SELECTORS.nodeItem(id)));
+		let clickableItem = node.queryByTestId(SELECTORS.nodeAvatar);
 		if (clickableItem == null) {
 			clickableItem = node.queryByTestId(SELECTORS.uncheckedAvatar);
 		}
@@ -305,12 +327,11 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 	await screen.findByText(/\brename\b/i);
 	await user.click(screen.getByText(/\brename\b/i));
 	// fill new name in modal input field
-	const inputFieldDiv = await screen.findByTestId('input-name');
+	const inputField = await screen.findByRole('textbox');
 	act(() => {
 		// run timers of modal
 		jest.advanceTimersToNextTimer();
 	});
-	const inputField = within(inputFieldDiv).getByRole('textbox');
 	await user.clear(inputField);
 	await user.type(inputField, newName);
 	expect(inputField).toHaveValue(newName);
@@ -323,16 +344,14 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	const moveAction = await screen.findByText('Move');
 	expect(moveAction).toBeVisible();
 	await user.click(moveAction);
-	const modalList = await screen.findByTestId('modal-list-', { exact: false });
+	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
 		// run timers of modal
 		jest.runOnlyPendingTimers();
 	});
 	const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 	await user.click(destinationFolderItem);
-	await waitFor(() =>
-		expect(screen.getByRole('button', { name: /move/i })).not.toHaveAttribute('disabled', '')
-	);
+	await waitFor(() => expect(screen.getByRole('button', { name: /move/i })).toBeEnabled());
 	await user.click(screen.getByRole('button', { name: /move/i }));
 	await waitFor(() =>
 		expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument()
@@ -375,8 +394,7 @@ function createFileSystemDirectoryEntryReader(
 	// clone array to mutate with the splice in order to simulate the readEntries called until it returns an empty array (or undefined)
 	const children = [...node.children.nodes];
 	const readEntries = (
-		successCallback: FileSystemEntriesCallback,
-		_errorCallback?: ErrorCallback
+		successCallback: FileSystemEntriesCallback
 	): ReturnType<FileSystemDirectoryReader['readEntries']> => {
 		const childrenEntries = reduce<(typeof node.children.nodes)[number], FileSystemEntry[]>(
 			children.splice(0, Math.min(children.length, 10)),
@@ -420,15 +438,15 @@ function createFileSystemEntry(
 			name: node.name,
 			root: new FileSystemDirectoryEntry()
 		},
-		getParent: jest.fn()
+		getParent: noop
 	};
 	if (isFolder(node)) {
 		const reader = createFileSystemDirectoryEntryReader(node);
 		const directoryEntry: FileSystemDirectoryEntry = {
 			...baseEntry,
 			createReader: () => reader,
-			getFile: jest.fn(),
-			getDirectory: jest.fn()
+			getFile: noop,
+			getDirectory: noop
 		};
 		return directoryEntry;
 	}
@@ -445,7 +463,7 @@ function createFileSystemEntry(
 	return fileEntry;
 }
 
-export function createDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
+export function createUploadDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
 	const fileBlobs: File[] = [];
 	const items = map<Node, { webkitGetAsEntry: () => Partial<FileSystemEntry> }>(nodes, (node) => {
 		const fileBlob = new File(['(⌐□_□)😂😂😂😂'], node.name, {
@@ -465,6 +483,32 @@ export function createDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
 	};
 }
 
+type DataTransferMoveStub = Pick<
+	DataTransfer,
+	'setDragImage' | 'setData' | 'getData' | 'types' | 'clearData'
+>;
+export function createMoveDataTransfer(): () => DataTransferMoveStub {
+	const dataTransferData = new Map<string, string>();
+	const dataTransferTypes: string[] = [];
+	return (): DataTransferMoveStub => ({
+		setDragImage(): void {
+			// do nothing
+		},
+		setData(type, data): void {
+			dataTransferData.set(type, data);
+			dataTransferTypes.includes(type) || dataTransferTypes.push(type);
+		},
+		getData(key): string {
+			return dataTransferData.get(key) || '';
+		},
+		types: dataTransferTypes,
+		clearData(): void {
+			dataTransferTypes.splice(0, dataTransferTypes.length);
+			dataTransferData.clear();
+		}
+	});
+}
+
 export async function uploadWithDnD(
 	dropzoneElement: HTMLElement,
 	dataTransferObj: DataTransferUploadStub
@@ -473,7 +517,7 @@ export async function uploadWithDnD(
 		dataTransfer: dataTransferObj
 	});
 
-	await screen.findByTestId('dropzone-overlay');
+	await screen.findByTestId(SELECTORS.dropzone);
 	expect(
 		screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 	).toBeVisible();
@@ -484,12 +528,7 @@ export async function uploadWithDnD(
 
 	if (dataTransferObj.files.length > 0) {
 		// use find all to make this work also when there is the displayer open
-		await screen.findAllByText(dataTransferObj.files[0].name, undefined, {
-			onTimeout: (err) => {
-				screen.logTestingPlaygroundURL();
-				return err;
-			}
-		});
+		await screen.findAllByText(dataTransferObj.files[0].name);
 	}
 	expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 }

@@ -9,17 +9,17 @@ import { map, find, filter, some } from 'lodash';
 
 import { LOGGED_USER } from '../../mocks/constants';
 import { CONFIGS, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, ROOTS } from '../constants';
-import { SortableNode, UploadFolderItem } from '../types/common';
+import { Node, SortableNode, UploadFolderItem } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
 import {
 	Config,
 	DistributionList,
+	Node as GQLNode,
 	File as FilesFile,
 	Folder,
 	CollaborationLink,
 	Link,
 	Maybe,
-	Node,
 	NodePage,
 	NodeSort,
 	NodeType,
@@ -53,12 +53,13 @@ export function sortNodes(
 
 export function populateNodePage(
 	nodes: Maybe<Node>[],
-	pageSize: number = NODES_LOAD_LIMIT
+	pageSize: number = NODES_LOAD_LIMIT,
+	pageToken = 'next_page_token'
 ): NodePage {
 	return {
 		__typename: 'NodePage',
 		nodes,
-		page_token: nodes.length === pageSize ? 'next_page_token' : null
+		page_token: nodes.length === pageSize ? pageToken : null
 	};
 }
 
@@ -84,18 +85,18 @@ export function populateDistributionList(limit = 10, id = '', name = ''): Distri
 	};
 }
 
-export function populatePermissions(grantAll = false): Permissions {
+export function populatePermissions(grantAll?: boolean): Permissions {
 	return {
 		can_read: true,
-		can_write_file: grantAll || faker.datatype.boolean(),
-		can_write_folder: grantAll || faker.datatype.boolean(),
-		can_delete: grantAll || faker.datatype.boolean(),
-		can_add_version: grantAll || faker.datatype.boolean(),
-		can_read_link: grantAll || faker.datatype.boolean(),
-		can_change_link: grantAll || faker.datatype.boolean(),
-		can_share: grantAll || faker.datatype.boolean(),
-		can_read_share: grantAll || faker.datatype.boolean(),
-		can_change_share: grantAll || faker.datatype.boolean(),
+		can_write_file: grantAll ?? faker.datatype.boolean(),
+		can_write_folder: grantAll ?? faker.datatype.boolean(),
+		can_delete: grantAll ?? faker.datatype.boolean(),
+		can_add_version: grantAll ?? faker.datatype.boolean(),
+		can_read_link: grantAll ?? faker.datatype.boolean(),
+		can_change_link: grantAll ?? faker.datatype.boolean(),
+		can_share: grantAll ?? faker.datatype.boolean(),
+		can_read_share: grantAll ?? faker.datatype.boolean(),
+		can_change_share: grantAll ?? faker.datatype.boolean(),
 		__typename: 'Permissions'
 	};
 }
@@ -141,7 +142,7 @@ function populateNodeFields(
 	type?: NodeType,
 	id?: string,
 	name?: string
-): MakeRequiredNonNull<Node, 'owner'> {
+): MakeRequiredNonNull<GQLNode, 'owner'> {
 	const types = filter(Object.values(NodeType), (t) => t !== NodeType.Root);
 	const nodeType = type || faker.helpers.arrayElement(types);
 	return {
@@ -189,16 +190,8 @@ export function populateUnknownNode(
 	};
 }
 
-export function getRandomNodeType(): NodeTypename {
-	const types: Array<NodeTypename> = ['File', 'Folder'];
-	return types[Math.floor(Math.random() * types.length)];
-}
-
 export function populateNode(type?: NodeTypename, id?: string, name?: string): FilesFile | Folder {
-	let __typename = type;
-	if (!__typename) {
-		__typename = getRandomNodeType();
-	}
+	const __typename = type ?? faker.helpers.arrayElement<NodeTypename>(['File', 'Folder']);
 
 	switch (__typename) {
 		case 'File':
@@ -258,7 +251,9 @@ export function populateFolder(
 }
 
 export function populateLocalRoot(childrenLimit = 0): Folder {
-	return populateFolder(childrenLimit, ROOTS.LOCAL_ROOT, 'ROOT');
+	const localRoot = populateFolder(childrenLimit, ROOTS.LOCAL_ROOT, 'ROOT');
+	localRoot.permissions = populatePermissions(true);
+	return localRoot;
 }
 
 export function populateParents(
@@ -271,14 +266,16 @@ export function populateParents(
 	const parentsLimit = withRoot ? limit - 1 : limit;
 	if (node.id !== ROOTS.LOCAL_ROOT) {
 		for (let i = 0; i < parentsLimit; i += 1) {
-			currentNode.parent = populateFolder(0, undefined, `parent${i}`);
-			path.unshift(currentNode.parent);
-			currentNode = currentNode.parent;
+			const parent = populateFolder(0, undefined, `parent${i}`);
+			currentNode.parent = parent;
+			path.unshift(parent);
+			currentNode = parent;
 		}
 	}
 	if (withRoot) {
-		currentNode.parent = populateLocalRoot();
-		path.unshift(currentNode.parent);
+		const parent = populateLocalRoot();
+		currentNode.parent = parent;
+		path.unshift(parent);
 	}
 	return {
 		node,

@@ -9,7 +9,7 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 
 import { List } from './List';
-import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { setup, selectNodes } from '../../utils/testUtils';
@@ -38,7 +38,7 @@ describe('Mark for deletion - trash', () => {
 
 			// activate selection mode by selecting items
 			await selectNodes(
-				map(currentFolder.children.nodes, (node) => (node as Node).id),
+				map(currentFolder.children.nodes, (node) => node?.id || ''),
 				user
 			);
 			// check that all wanted items are selected
@@ -46,20 +46,18 @@ describe('Mark for deletion - trash', () => {
 				currentFolder.children.nodes.length
 			);
 
-			const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
-			const trashIcon = within(selectionModeActiveListHeader).getByTestId('icon: Trash2Outline');
+			const trashIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.moveToTrash);
 
 			expect(trashIcon).toBeVisible();
 			expect(trashIcon.parentElement).not.toHaveAttribute('disable');
 
 			await selectNodes(
-				map(currentFolder.children.nodes, (node) => (node as Node).id),
+				map(currentFolder.children.nodes, (node) => node?.id || ''),
 				user
 			);
-
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			expect.assertions(4);
 		});
 
 		test('Mark for deletion is visible but disabled in selection when one file do not have permission', async () => {
@@ -86,7 +84,7 @@ describe('Mark for deletion - trash', () => {
 
 			// activate selection mode by selecting items
 			await selectNodes(
-				map(currentFolder.children.nodes, (node) => (node as Node).id),
+				map(currentFolder.children.nodes, (node) => node?.id || ''),
 				user
 			);
 			// check that all wanted items are selected
@@ -94,19 +92,19 @@ describe('Mark for deletion - trash', () => {
 				currentFolder.children.nodes.length
 			);
 
-			const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
-			const trashIcon = within(selectionModeActiveListHeader).queryByTestId('icon: Trash2Outline');
+			const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
+				ICON_REGEXP.moveToTrash
+			);
 
 			expect(trashIcon).not.toBeInTheDocument();
 
 			await selectNodes(
-				map(currentFolder.children.nodes, (node) => (node as Node).id),
+				map(currentFolder.children.nodes, (node) => node?.id || ''),
 				user
 			);
-
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			expect.assertions(3);
 		});
 	});
 
@@ -127,11 +125,10 @@ describe('Mark for deletion - trash', () => {
 			);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
-			expect.assertions(1);
 		});
 	});
 });

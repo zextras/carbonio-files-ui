@@ -122,7 +122,6 @@
         }
     },
     "secondaryBar": {
-        "team": "Bestanden verstuurd via Team",
         "filters": "Filters",
         "filtersList": {
             "flagged": "Gevlagd",
@@ -299,7 +298,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Bestanden verstuurd via Team",
             "name_LOCAL_ROOT": "Startpagina",
             "name_TRASH_ROOT": "Prullenbak",
             "name_SHARED_WITH_ME_ROOT": "Gedeeld met mij"

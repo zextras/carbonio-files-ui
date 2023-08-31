@@ -13,17 +13,28 @@ import { PreviewManager } from '@zextras/carbonio-ui-preview';
 import StyledWrapper from '../../../StyledWrapper';
 import buildClient from '../../apollo';
 
-export const ProvidersWrapper: React.FC = ({ children }) => {
+export const GlobalProvidersWrapper = ({
+	children
+}: {
+	children?: React.ReactNode;
+}): React.JSX.Element => {
 	const apolloClient = useMemo(() => buildClient(), []);
 	return (
 		<StyledWrapper>
 			<ApolloProvider client={apolloClient}>
-				<SnackbarManager>
-					<ModalManager>
-						<PreviewManager>{children}</PreviewManager>
-					</ModalManager>
-				</SnackbarManager>
+				<PreviewManager>{children}</PreviewManager>
 			</ApolloProvider>
 		</StyledWrapper>
 	);
 };
+
+// these providers need to be placed inside the routes, because they might need access to the current location info
+export const ViewProvidersWrapper = ({
+	children
+}: {
+	children?: React.ReactNode;
+}): React.JSX.Element => (
+	<SnackbarManager>
+		<ModalManager>{children}</ModalManager>
+	</SnackbarManager>
+);

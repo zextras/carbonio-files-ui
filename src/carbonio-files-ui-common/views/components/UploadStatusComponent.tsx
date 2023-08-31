@@ -22,7 +22,7 @@ export const UploadStatusComponent = ({
 	progress,
 	contentCount,
 	gap
-}: UploadStatusProps): JSX.Element => {
+}: UploadStatusProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const icon =

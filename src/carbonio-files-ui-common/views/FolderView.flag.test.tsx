@@ -6,33 +6,22 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import {
-	getChildrenVariables,
-	mockFlagNodes,
-	mockGetChildren,
-	mockGetParent,
-	mockGetPermissions
-} from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -44,7 +33,9 @@ describe('Flag', () => {
 		test('Flag/Unflag action marks all and only selected items as flagged/unflagged', async () => {
 			const currentFolder = populateFolder(4);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).flagged = false;
+				if (mockedNode) {
+					mockedNode.flagged = false;
+				}
 			});
 
 			const nodesIdsToFlag = map(
@@ -54,25 +45,15 @@ describe('Flag', () => {
 
 			const nodesIdsToUnflag = nodesIdsToFlag.slice(0, nodesIdsToFlag.length / 2);
 
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockFlagNodes(
-					{
-						node_ids: nodesIdsToFlag,
-						flag: true
-					},
-					nodesIdsToFlag
-				),
-				mockFlagNodes(
-					{
-						node_ids: nodesIdsToUnflag,
-						flag: false
-					},
-					nodesIdsToUnflag
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes(nodesIdsToFlag, nodesIdsToUnflag)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -81,7 +62,7 @@ describe('Flag', () => {
 
 			// wait for the load to be completed
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-			expect(screen.queryByTestId('icon: Flag')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 
 			// activate selection mode by selecting items
 			await selectNodes(nodesIdsToFlag, user);
@@ -89,12 +70,12 @@ describe('Flag', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesIdsToFlag.length);
 
-			const flagIcon = await screen.findByTestId(ICON_REGEXP.flag);
+			const flagIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.flag });
 			// click on flag action on header bar
 			await user.click(flagIcon);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			await screen.findAllByTestId('icon: Flag');
-			expect(screen.getAllByTestId('icon: Flag')).toHaveLength(nodesIdsToFlag.length);
+			await screen.findAllByTestId(ICON_REGEXP.flagged);
+			expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(nodesIdsToFlag.length);
 
 			// activate selection mode by selecting items
 			await selectNodes(nodesIdsToUnflag, user);
@@ -109,8 +90,8 @@ describe('Flag', () => {
 			const unflagIcon = await screen.findByTestId(ICON_REGEXP.unflag);
 			await user.click(unflagIcon);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			await screen.findAllByTestId('icon: Flag');
-			expect(screen.getAllByTestId('icon: Flag')).toHaveLength(
+			await screen.findAllByTestId(ICON_REGEXP.flagged);
+			expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(
 				nodesIdsToFlag.length - nodesIdsToUnflag.length
 			);
 		});
@@ -124,25 +105,15 @@ describe('Flag', () => {
 			node.flagged = false;
 			currentFolder.children.nodes.push(node);
 
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockFlagNodes(
-					{
-						node_ids: [node.id],
-						flag: true
-					},
-					[node.id]
-				),
-				mockFlagNodes(
-					{
-						node_ids: [node.id],
-						flag: false
-					},
-					[node.id]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes([node.id], [node.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -153,22 +124,22 @@ describe('Flag', () => {
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			// open context menu and click on flag action
 			fireEvent.contextMenu(nodeItem);
 			const flagAction = await screen.findByText(ACTION_REGEXP.flag);
 			expect(flagAction).toBeVisible();
 			await user.click(flagAction);
-			await within(nodeItem).findByTestId('icon: Flag');
+			await within(nodeItem).findByTestId(ICON_REGEXP.flagged);
 			expect(flagAction).not.toBeInTheDocument();
-			expect(within(nodeItem).getByTestId('icon: Flag')).toBeVisible();
+			expect(within(nodeItem).getByTestId(ICON_REGEXP.flagged)).toBeVisible();
 			// open context menu and click on unflag action
 			fireEvent.contextMenu(nodeItem);
 			const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
 			expect(unflagAction).toBeVisible();
 			await user.click(unflagAction);
 			expect(unflagAction).not.toBeInTheDocument();
-			expect(within(nodeItem).queryByTestId('icon: Flag')).not.toBeInTheDocument();
+			expect(within(nodeItem).queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 		});
 	});
 });

@@ -23,7 +23,7 @@ import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
-import { EMITTER_CODES, ICON_REGEXP } from '../../constants/test';
+import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import handleUploadFileRequest, {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -38,22 +38,20 @@ import {
 } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { UploadItem, UploadStatus } from '../../types/graphql/client-types';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
 	Folder,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	Maybe
 } from '../../types/graphql/types';
-import {
-	getChildrenVariables,
-	mockCreateFolder,
-	mockGetBaseNode,
-	mockGetChildren
-} from '../../utils/mockUtils';
+import { getChildrenVariables, mockCreateFolder, mockGetNode } from '../../utils/resolverMocks';
 import {
 	buildBreadCrumbRegExp,
-	createDataTransfer,
+	createMoveDataTransfer,
+	createUploadDataTransfer,
 	delayUntil,
 	selectNodes,
 	setup,
@@ -77,17 +75,21 @@ describe('Upload list', () => {
 			});
 
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
 			});
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -95,7 +97,7 @@ describe('Upload list', () => {
 
 			await uploadWithDnD(dropzone, dataTransferObj);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -107,7 +109,10 @@ describe('Upload list', () => {
 			const localRootCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(getChildrenMockedQuery.request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id)
+			});
 
 			expect(
 				(localRootCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
@@ -142,24 +147,13 @@ describe('Upload list', () => {
 
 			const nodesToDrag = [uploadedFiles[0]];
 
-			let dataTransferData: Record<string, string> = {};
-			let dataTransferTypes: string[] = [];
-			const dataTransfer = (): unknown => ({
-				setDragImage: jest.fn(),
-				items: dataTransferData,
-				setData: jest.fn().mockImplementation((type: string, data: string) => {
-					dataTransferData[type] = data;
-					dataTransferTypes.includes(type) || dataTransferTypes.push(type);
-				}),
-				getData: jest.fn().mockImplementation((type: string) => dataTransferData[type]),
-				types: dataTransferTypes,
-				clearData: jest.fn().mockImplementation(() => {
-					dataTransferTypes = [];
-					dataTransferData = {};
-				})
-			});
+			const dataTransfer = createMoveDataTransfer();
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -169,8 +163,9 @@ describe('Upload list', () => {
 			// drag image item is not shown
 			const draggedNodeItem = screen.getByText(nodesToDrag[0].name);
 			expect(draggedNodeItem).toBeInTheDocument();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(draggedNodeItem).not.toHaveAttribute('disabled', '');
-			expect(screen.queryByTestId('dropzone-overlay')).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		});
 
 		test('Drop of mixed files and folder in the upload list create folder and upload file', async () => {
@@ -182,30 +177,31 @@ describe('Upload list', () => {
 			uploadedFiles[1].parent = localRoot;
 
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
 			});
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [
-				mockGetBaseNode({ node_id: localRoot.id }, localRoot),
-				mockCreateFolder(
-					{ name: uploadedFiles[0].name, destination_id: uploadedFiles[0].parent.id },
-					uploadedFiles[0]
-				)
-			];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				},
+				Mutation: {
+					createFolder: mockCreateFolder(uploadedFiles[0])
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 
 			await uploadWithDnD(dropzone, dataTransferObj);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -214,14 +210,16 @@ describe('Upload list', () => {
 				const localRootCachedData = global.apolloClient.readQuery<
 					GetChildrenQuery,
 					GetChildrenQueryVariables
-				>(getChildrenMockedQuery.request);
+				>({
+					query: GetChildrenDocument,
+					variables: getChildrenVariables(localRoot.id)
+				});
 				return expect(
 					(localRootCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 				).toHaveLength(uploadedFiles.length);
 			});
 
 			expect(screen.getByText(uploadedFiles[0].name)).toBeVisible();
-			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(2);
 			expect(screen.getByText(uploadedFiles[1].name)).toBeVisible();
 			await waitFor(() =>
 				expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(2)
@@ -239,9 +237,9 @@ describe('Upload list', () => {
 			const emitter = new EventEmitter();
 
 			// write local root data in cache as if it was already loaded
-			const getChildrenMockedQuery = mockGetChildren(getChildrenVariables(localRoot.id), localRoot);
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				...getChildrenMockedQuery.request,
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
 				data: {
 					getNode: localRoot
 				}
@@ -261,9 +259,13 @@ describe('Upload list', () => {
 				)
 			);
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -274,13 +276,13 @@ describe('Upload list', () => {
 			const loadingIcons = await screen.findAllByTestId(ICON_REGEXP.uploadLoading);
 			expect(loadingIcons).toHaveLength(4);
 
-			await screen.findAllByText(/\d+%/);
+			await screen.findAllByText(/\d{1,3}%/);
 
 			expect(screen.getByText(/queued/i)).toBeInTheDocument();
-			expect(screen.getAllByText(/\d+%/i)).toHaveLength(3);
+			expect(screen.getAllByText(/\d{1,3}%/i)).toHaveLength(3);
 
 			const queuedItem = find(
-				screen.getAllByTestId('node-item', { exact: false }),
+				screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false }),
 				(item) => within(item).queryByText(/queued/i) !== null
 			) as HTMLElement;
 			expect(queuedItem).toBeDefined();
@@ -291,7 +293,7 @@ describe('Upload list', () => {
 			const loadingItems = await screen.findAllByText('0%');
 			expect(loadingItems).toHaveLength(3);
 
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -309,7 +311,10 @@ describe('Upload list', () => {
 			const localRootCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(getChildrenMockedQuery.request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id)
+			});
 			expect(
 				(localRootCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 			).toHaveLength(uploadedFiles.length);
@@ -340,9 +345,13 @@ describe('Upload list', () => {
 				)
 			);
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -350,7 +359,7 @@ describe('Upload list', () => {
 
 			await uploadWithDnD(dropzone, dataTransferObj);
 
-			expect(screen.getAllByTestId('node-item-', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(uploadedFiles.length);
@@ -396,9 +405,13 @@ describe('Upload list', () => {
 				)
 			);
 
-			const dataTransferObj = createDataTransfer(uploadedFiles);
+			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<UploadList />, { mocks });
 
@@ -406,13 +419,13 @@ describe('Upload list', () => {
 
 			await uploadWithDnD(dropzone, dataTransferObj);
 
-			await screen.findAllByTestId('node-item-', { exact: false });
-			expect(screen.getAllByTestId('node-item-', { exact: false })).toHaveLength(
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(uploadedFiles.length);
 			expect(screen.getByText(/queued/i)).toBeVisible();
-			const firstFileItem = screen.getAllByTestId('node-item-', { exact: false })[0];
+			const firstFileItem = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })[0];
 			expect(screen.getByText(uploadedFiles[0].name)).toBeVisible();
 			const cancelAction = within(firstFileItem).getByTestId(ICON_REGEXP.removeUpload);
 			await user.click(cancelAction);
@@ -424,7 +437,7 @@ describe('Upload list', () => {
 			emitter.emit(EMITTER_CODES.success);
 			await waitForElementToBeRemoved(screen.queryAllByTestId(ICON_REGEXP.uploadLoading));
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(3);
-			expect(screen.getAllByTestId('node-item-', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length - 1
 			);
 			expect(screen.queryByText(uploadedFiles[0].name)).not.toBeInTheDocument();
@@ -461,11 +474,15 @@ describe('Upload list', () => {
 				)
 			);
 
-			const dataTransferObj1 = createDataTransfer(uploadedFiles.slice(0, 4));
+			const dataTransferObj1 = createUploadDataTransfer(uploadedFiles.slice(0, 4));
 
-			const dataTransferObj2 = createDataTransfer(uploadedFiles.slice(4));
+			const dataTransferObj2 = createUploadDataTransfer(uploadedFiles.slice(4));
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -475,20 +492,20 @@ describe('Upload list', () => {
 			// immediately drag and drop the last two files
 			const dropzone2 = screen.getByText(uploadedFiles[0].name);
 			await uploadWithDnD(dropzone2, dataTransferObj2);
-			expect(screen.getAllByTestId('node-item-', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length
 			);
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(uploadedFiles.length);
 			// last files are queued
 			expect(screen.getAllByText(/queued/i)).toHaveLength(uploadedFiles.length - UploadQueue.LIMIT);
-			const nodeItems = screen.getAllByTestId('node-item-', { exact: false });
+			const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			forEach(nodeItems, (nodeItem, index) => {
 				if (index < UploadQueue.LIMIT) {
-					expect(within(nodeItem).getByText(/\d+%/)).toBeVisible();
+					expect(within(nodeItem).getByText(/\d{1,3}%/)).toBeVisible();
 					expect(within(nodeItem).queryByText(/queued/i)).not.toBeInTheDocument();
 				} else {
 					expect(within(nodeItem).getByText(/queued/i)).toBeVisible();
-					expect(within(nodeItem).queryByText(/\d+%/)).not.toBeInTheDocument();
+					expect(within(nodeItem).queryByText(/\d{1,3}%/)).not.toBeInTheDocument();
 				}
 			});
 			emitter.emit(EMITTER_CODES.success);
@@ -502,7 +519,7 @@ describe('Upload list', () => {
 				within(nodeItems[UploadQueue.LIMIT - 1]).getByTestId(ICON_REGEXP.uploadCompleted)
 			).toBeVisible();
 			expect(within(nodeItems[UploadQueue.LIMIT]).queryByText(/queued/i)).not.toBeInTheDocument();
-			expect(within(nodeItems[UploadQueue.LIMIT]).getByText(/\d+%/i)).toBeVisible();
+			expect(within(nodeItems[UploadQueue.LIMIT]).getByText(/\d{1,3}%/i)).toBeVisible();
 			expect(within(nodeItems[UploadQueue.LIMIT * 2]).getByText(/queued/i)).toBeVisible();
 			expect(within(nodeItems[uploadedFiles.length - 1]).getByText(/queued/i)).toBeVisible();
 			emitter.emit(EMITTER_CODES.success);
@@ -511,14 +528,14 @@ describe('Upload list', () => {
 					UploadQueue.LIMIT * 2
 				)
 			);
-			expect(within(nodeItems[UploadQueue.LIMIT * 2]).getByText(/\d+%/i)).toBeVisible();
+			expect(within(nodeItems[UploadQueue.LIMIT * 2]).getByText(/\d{1,3}%/i)).toBeVisible();
 			expect(
 				within(nodeItems[UploadQueue.LIMIT * 2]).queryByText(/queued/i)
 			).not.toBeInTheDocument();
 			expect(
 				within(nodeItems[uploadedFiles.length - 1]).queryByText(/queued/i)
 			).not.toBeInTheDocument();
-			expect(within(nodeItems[uploadedFiles.length - 1]).getByText(/\d+%/)).toBeVisible();
+			expect(within(nodeItems[uploadedFiles.length - 1]).getByText(/\d{1,3}%/)).toBeVisible();
 			emitter.emit(EMITTER_CODES.success);
 			await waitFor(() =>
 				expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(
@@ -550,7 +567,7 @@ describe('Upload list', () => {
 			const numberOfFolders = 3;
 			const numberOfNodes = numberOfFiles + numberOfFolders;
 
-			const dataTransferObj = createDataTransfer([folderToUpload]);
+			const dataTransferObj = createUploadDataTransfer([folderToUpload]);
 
 			const uploadFileHandler = jest.fn(handleUploadFileRequest);
 
@@ -561,7 +578,11 @@ describe('Upload list', () => {
 				)
 			);
 
-			const mocks = [mockGetBaseNode({ node_id: localRoot.id }, localRoot)];
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			setup(<UploadList />, { mocks });
 
@@ -571,9 +592,8 @@ describe('Upload list', () => {
 
 			await screen.findByText(folderToUpload.name);
 
-			expect(screen.getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 			expect(screen.getByText(RegExp(`\\d/${numberOfNodes}`))).toBeVisible();
-			expect(screen.getByTestId('node-item', { exact: false })).toBeInTheDocument();
+			expect(screen.getByTestId(SELECTORS.nodeItem(), { exact: false })).toBeInTheDocument();
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 
 			await waitFor(() => expect(uploadFileHandler).toHaveBeenCalledTimes(numberOfFiles));
@@ -589,14 +609,14 @@ describe('Upload list', () => {
 		test('should render the badge with the number of selected items', async () => {
 			const uploadItems = populateUploadItems(10);
 			uploadVar(keyBy(uploadItems, (item) => item.id));
-			const { user } = setup(<UploadList />, { mocks: [] });
+			const { user } = setup(<UploadList />, { mocks: {} });
 			await selectNodes([uploadItems[0].id], user);
 			expect(screen.getByText(1)).toBeInTheDocument();
 		});
 		test('if the user clicks SELECT ALL, the badge renders the length of all nodes', async () => {
 			const uploadItems = populateUploadItems(10);
 			uploadVar(keyBy(uploadItems, (item) => item.id));
-			const { user } = setup(<UploadList />, { mocks: [] });
+			const { user } = setup(<UploadList />, { mocks: {} });
 			await selectNodes([uploadItems[0].id], user);
 			expect(screen.getByText(1)).toBeInTheDocument();
 			await user.click(screen.getByText(/SELECT ALL/i));

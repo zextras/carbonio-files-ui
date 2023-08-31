@@ -10,8 +10,15 @@ import { screen } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeListItem } from './NodeListItem';
-import { INTERNAL_PATH, PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT, ROOTS } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import {
+	DATE_FORMAT_SHORT,
+	INTERNAL_PATH,
+	PREVIEW_PATH,
+	PREVIEW_TYPE,
+	REST_ENDPOINT,
+	ROOTS
+} from '../../constants';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode, populateUser } from '../../mocks/mockUtils';
 import { NodeType, User } from '../../types/graphql/types';
 import { getPermittedHoverBarActions } from '../../utils/ActionsFactory';
@@ -45,11 +52,11 @@ describe('Node List Item', () => {
 			/>
 		);
 
-		expect(screen.getByTestId(`node-item-${node.id}`)).toBeInTheDocument();
-		expect(screen.getByTestId(`node-item-${node.id}`)).toBeVisible();
-		expect(screen.getByTestId(`node-item-${node.id}`)).not.toBeEmptyDOMElement();
+		expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toBeInTheDocument();
+		expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toBeVisible();
+		expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).not.toBeEmptyDOMElement();
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(formatDate(node.updated_at, undefined, 'UTC'))).toBeVisible();
+		expect(screen.getByText(formatDate(node.updated_at, DATE_FORMAT_SHORT, 'UTC'))).toBeVisible();
 		expect(screen.queryByText(mockedUserLogged.full_name)).not.toBeInTheDocument();
 	});
 
@@ -71,17 +78,17 @@ describe('Node List Item', () => {
 	test('ArrowCircleRight icon is visible if node is shared by me', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} outgoingShare />);
-		expect(screen.getByTestId('icon: ArrowCircleRight')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: ArrowCircleRight')).toBeVisible();
-		expect(screen.queryByTestId('icon: ArrowCircleLeft')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.sharedWithMe)).not.toBeInTheDocument();
 	});
 
 	test('ArrowCircleLeft icon is visible if node is shared with me', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} incomingShare />);
-		expect(screen.getByTestId('icon: ArrowCircleLeft')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: ArrowCircleLeft')).toBeVisible();
-		expect(screen.queryByTestId('icon: ArrowCircleRight')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
 	});
 
 	test('incoming and outgoing share icons are not visible if node is not shared', () => {
@@ -95,34 +102,34 @@ describe('Node List Item', () => {
 				outgoingShare={false}
 			/>
 		);
-		expect(screen.queryByTestId('icon: ArrowCircleLeft')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: ArrowCircleRight')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.sharedWithMe)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
 	});
 
 	test('link icon is visible if node is linked', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} linkActive />);
-		expect(screen.getByTestId('icon: Link2')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Link2')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.link)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.link)).toBeVisible();
 	});
 
 	test('link icon is not visible if node is not linked', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} linkActive={false} />);
-		expect(screen.queryByTestId('icon: Link2')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.link)).not.toBeInTheDocument();
 	});
 
 	test('flag icon is visible if node is flagged', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} flagActive />);
-		expect(screen.getByTestId('icon: Flag')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Flag')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeVisible();
 	});
 
 	test('flag icon is not visible if node is not flagged', () => {
 		const node = populateNode();
 		setup(<NodeListItem id={node.id} name={node.name} type={node.type} flagActive={false} />);
-		expect(screen.queryByTestId('icon: Flag')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 	});
 
 	test('unflag action on hover is visible if node is flagged', () => {
@@ -138,8 +145,8 @@ describe('Node List Item', () => {
 				permittedHoverBarActions={getPermittedHoverBarActions(node)}
 			/>
 		);
-		expect(screen.getByTestId('icon: UnflagOutline')).toBeInTheDocument();
-		expect(screen.queryByTestId('icon: FlagOutline')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.unflag)).toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 	});
 
 	test('flag action on hover is visible if node is not flagged ', async () => {
@@ -154,8 +161,8 @@ describe('Node List Item', () => {
 				permittedHoverBarActions={getPermittedHoverBarActions(node)}
 			/>
 		);
-		expect(screen.getByTestId('icon: FlagOutline')).toBeInTheDocument();
-		expect(screen.queryByTestId('icon: UnflagOutline')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.flag)).toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.unflag)).not.toBeInTheDocument();
 	});
 
 	test('click on hover flag action changes flag icon visibility', async () => {
@@ -174,8 +181,8 @@ describe('Node List Item', () => {
 				permittedHoverBarActions={getPermittedHoverBarActions(node)}
 			/>
 		);
-		expect(screen.queryByTestId('icon: Flag')).not.toBeInTheDocument();
-		await user.click(screen.getByTestId('icon: FlagOutline'));
+		expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
+		await user.click(screen.getByTestId(ICON_REGEXP.flag));
 		expect(toggleFlagTrueFunction).toHaveBeenCalledTimes(1);
 	});
 
@@ -195,9 +202,9 @@ describe('Node List Item', () => {
 				permittedHoverBarActions={getPermittedHoverBarActions(node)}
 			/>
 		);
-		expect(screen.getByTestId('icon: Flag')).toBeInTheDocument();
-		expect(screen.getByTestId('icon: Flag')).toBeVisible();
-		await user.click(screen.getByTestId('icon: UnflagOutline'));
+		expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeVisible();
+		await user.click(screen.getByTestId(ICON_REGEXP.unflag));
 		expect(toggleFlagFalseFunction).toHaveBeenCalledTimes(1);
 	});
 
@@ -251,7 +258,7 @@ describe('Node List Item', () => {
 				navigateTo={mockedNavigation}
 			/>
 		);
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
+		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 		expect(mockedNavigation).toHaveBeenCalledTimes(1);
 		expect(mockedHistory).toContain(node.id);
 		expect(mockedHistory[mockedHistory.length - 1]).toBe(node.id);
@@ -270,7 +277,7 @@ describe('Node List Item', () => {
 				navigateTo={mockedNavigation}
 			/>
 		);
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
+		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 		expect(mockedNavigation).not.toHaveBeenCalled();
 	});
 
@@ -286,7 +293,7 @@ describe('Node List Item', () => {
 				trashed
 			/>
 		);
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
+		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 		expect(mockedNavigation).not.toHaveBeenCalled();
 	});
 
@@ -302,7 +309,7 @@ describe('Node List Item', () => {
 				disabled
 			/>
 		);
-		await user.dblClick(screen.getByTestId(`node-item-${node.id}`));
+		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 		expect(mockedNavigation).not.toHaveBeenCalled();
 	});
 
@@ -364,7 +371,7 @@ describe('Node List Item', () => {
 				version={1}
 			/>
 		);
-		expect(screen.getByTestId('file-icon-preview')).toHaveStyle({
+		expect(screen.getByTestId(SELECTORS.nodeAvatar)).toHaveStyle({
 			background: expect.stringContaining(
 				`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/id/1/80x80/thumbnail/?shape=rectangular&quality=high&output_format=gif`
 			)

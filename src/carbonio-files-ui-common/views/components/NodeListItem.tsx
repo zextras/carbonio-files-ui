@@ -28,6 +28,7 @@ import { HoverContainer, ListItemContainer } from './StyledComponents';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import useUserInfo from '../../../hooks/useUserInfo';
 import {
+	DATE_FORMAT_SHORT,
 	DOUBLE_CLICK_DELAY,
 	LIST_ITEM_AVATAR_HEIGHT,
 	LIST_ITEM_HEIGHT,
@@ -223,7 +224,9 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				id: 'Preview',
 				icon: 'MaximizeOutline',
 				label: t('actions.preview', 'Preview'),
-				onClick: openNode
+				onClick: (): void => {
+					openPreview(id);
+				}
 			},
 			[Action.SendViaMail]: {
 				id: 'SendViaMail',
@@ -250,7 +253,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			[Action.ManageShares]: {
 				id: 'ManageShares',
 				icon: 'ShareOutline',
-				label: t('actions.manageShares', 'Manage Shares'),
+				label: t('actions.manageShares', 'Manage shares'),
 				onClick: (): void => {
 					manageSharesCallback && manageSharesCallback();
 				}
@@ -322,7 +325,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			[Action.DeletePermanently]: {
 				id: 'DeletePermanently',
 				icon: 'DeletePermanentlyOutline',
-				label: t('actions.deletePermanently', 'Delete Permanently'),
+				label: t('actions.deletePermanently', 'Delete permanently'),
 				onClick: (): void => {
 					deletePermanentlyCallback && deletePermanentlyCallback();
 				}
@@ -330,7 +333,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		}),
 		[
 			t,
-			openNode,
+			openPreview,
 			sendViaMailCallback,
 			manageSharesCallback,
 			toggleFlagTrue,
@@ -496,7 +499,8 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										)}
 										<Padding left="extrasmall">
 											<Text size="extrasmall" color="gray1" disabled={disabled}>
-												{formatDate(updatedAt, undefined, userInfo.zimbraPrefTimeZoneId)}
+												{/* eslint-disable-next-line max-len */}
+												{formatDate(updatedAt, DATE_FORMAT_SHORT, userInfo.zimbraPrefTimeZoneId)}
 											</Text>
 										</Padding>
 									</Container>

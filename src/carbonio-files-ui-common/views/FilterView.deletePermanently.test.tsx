@@ -5,25 +5,20 @@
  */
 import React from 'react';
 
-import { act, fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { getFindNodesVariables, mockDeletePermanently, mockFindNodes } from '../utils/mockUtils';
-import { setup, selectNodes } from '../utils/testUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockDeletePermanently, mockFindNodes } from '../utils/resolverMocks';
+import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Delete Permanently', () => {
@@ -40,22 +35,14 @@ describe('Filter View', () => {
 
 				const nodesIdsToDeletePermanently = [currentFilter[0].id];
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({
-							folder_id: ROOTS.TRASH,
-							cascade: false,
-							shared_with_me: false
-						}),
-						currentFilter
-					),
-					mockDeletePermanently(
-						{
-							node_ids: nodesIdsToDeletePermanently
-						},
-						nodesIdsToDeletePermanently
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					},
+					Mutation: {
+						deleteNodes: mockDeletePermanently(nodesIdsToDeletePermanently)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -71,14 +58,14 @@ describe('Filter View', () => {
 
 				const element = await screen.findByText(currentFilter[0].name);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
-				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByTestId(
-					'icon: DeletePermanentlyOutline'
+				const deletePermanentlyIcon = within(selectionModeActiveListHeader).getByRoleWithIcon(
+					'button',
+					{ icon: ICON_REGEXP.deletePermanently }
 				);
-				expect(deletePermanentlyIcon).toBeInTheDocument();
 				expect(deletePermanentlyIcon).toBeVisible();
-				expect(deletePermanentlyIcon).not.toHaveAttribute('disabled', '');
+				expect(deletePermanentlyIcon).toBeEnabled();
 
 				await user.click(deletePermanentlyIcon);
 
@@ -92,10 +79,8 @@ describe('Filter View', () => {
 				expect(confirmButton).not.toBeInTheDocument();
 
 				expect(element).not.toBeInTheDocument();
-				expect(screen.queryByTestId('file-icon-selecting')).not.toBeInTheDocument();
-				expect(screen.getAllByTestId(`file-icon-preview`)).toHaveLength(2);
-
-				expect.assertions(8);
+				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
+				expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(2);
 			});
 
 			test('Delete Permanently is hidden if not all nodes are trashed', async () => {
@@ -114,13 +99,11 @@ describe('Filter View', () => {
 
 				const nodesIdsToDeletePermanently = [currentFilter[0].id, currentFilter[1].id];
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					)
-				];
-
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
@@ -133,27 +116,25 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 
-				const selectionModeActiveListHeader = screen.getByTestId('list-header-selectionModeActive');
+				const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
 				const restoreIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: RestoreOutline'
+					ICON_REGEXP.restore
 				);
 				expect(restoreIcon).not.toBeInTheDocument();
 
-				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: Trash2Outline'
-				);
+				const trashIcon = within(selectionModeActiveListHeader).queryByTestId(ICON_REGEXP.trash);
 				expect(trashIcon).not.toBeInTheDocument();
 
 				const deletePermanentlyIcon = within(selectionModeActiveListHeader).queryByTestId(
-					'icon: DeletePermanentlyOutline'
+					ICON_REGEXP.deletePermanently
 				);
 				expect(deletePermanentlyIcon).not.toBeInTheDocument();
 
-				const moreIcon = within(selectionModeActiveListHeader).queryByTestId('icon: MoreVertical');
+				const moreIcon = within(selectionModeActiveListHeader).queryByTestId(
+					ICON_REGEXP.moreVertical
+				);
 				expect(moreIcon).not.toBeInTheDocument();
-
-				expect.assertions(5);
 			});
 		});
 
@@ -163,12 +144,11 @@ describe('Filter View', () => {
 				node.permissions.can_write_file = true;
 				node.rootId = ROOTS.LOCAL_ROOT;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						[node]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes([node])
+					}
+				} satisfies Partial<Resolvers>;
 
 				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -179,7 +159,7 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 				fireEvent.contextMenu(nodeItem);
 				const renameAction = await screen.findByText(ACTION_REGEXP.rename);
 				expect(renameAction).toBeVisible();
@@ -203,17 +183,14 @@ describe('Filter View', () => {
 			});
 			const nodesToDelete = map(firstPage, (node) => node.id);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
-					firstPage
-				),
-				mockDeletePermanently({ node_ids: nodesToDelete }, nodesToDelete),
-				mockFindNodes(
-					getFindNodesVariables({ folder_id: ROOTS.TRASH, cascade: false, shared_with_me: false }),
-					secondPage
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage, secondPage)
+				},
+				Mutation: {
+					deleteNodes: mockDeletePermanently(nodesToDelete)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				mocks,
@@ -230,15 +207,17 @@ describe('Filter View', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 
-			const deletePermanentlyAction = await screen.findByTestId('icon: DeletePermanentlyOutline');
+			const deletePermanentlyAction = await screen.findByRoleWithIcon('button', {
+				icon: ICON_REGEXP.deletePermanently
+			});
 			expect(deletePermanentlyAction).toBeVisible();
-			expect(deletePermanentlyAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(deletePermanentlyAction).toBeEnabled();
 			await user.click(deletePermanentlyAction);
 			const confirmDeleteButton = await screen.findByRole('button', {
 				name: ACTION_REGEXP.deletePermanently
 			});
 			await user.click(confirmDeleteButton);
-			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
+			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/^success$/i);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();

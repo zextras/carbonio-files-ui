@@ -8,52 +8,46 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { MoveNodesModalContent } from './MoveNodesModalContent';
 import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
-import {
-	populateFile,
-	populateFolder,
-	populateNode,
-	populateNodePage,
-	populateParents
-} from '../../mocks/mockUtils';
+import { populateFile, populateFolder, populateNode, populateParents } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File,
 	Folder,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	Maybe
 } from '../../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChildren,
+	mockGetNode,
 	mockGetPath,
 	mockMoveNodes
-} from '../../utils/mockUtils';
+} from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
 
-const resetToDefault = jest.fn(() => {
-	// clone implementation of the function contained in the click callback of useCopyContent
-	destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
-});
-
-beforeEach(() => {
-	resetToDefault.mockClear();
-});
-
 describe('Move Nodes Modal', () => {
+	function resetToDefault(): void {
+		// clone implementation of the function contained in the click callback of useCopyContent
+		destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
+	}
 	test('if a folder id is provided, list shows content of the folder', async () => {
 		const currentFolder = populateFolder(5);
 		const nodesToMove = [currentFolder.children.nodes[0] as File | Folder];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		setup(
 			<div onClick={resetToDefault}>
@@ -64,98 +58,127 @@ describe('Move Nodes Modal', () => {
 			}
 		);
 		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 	});
 
-	test('folders without permission, files and moving nodes are disabled in the list and not navigable', async () => {
-		const currentFolder = populateFolder();
-		const folderWithWriteFile = populateFolder(1);
-		folderWithWriteFile.permissions.can_write_file = true;
-		folderWithWriteFile.permissions.can_write_folder = false;
-		currentFolder.children.nodes.push(folderWithWriteFile);
-		const folderWithWriteFolder = populateFolder(1);
-		folderWithWriteFolder.permissions.can_write_file = false;
-		folderWithWriteFolder.permissions.can_write_folder = true;
-		currentFolder.children.nodes.push(folderWithWriteFolder);
-		const file = populateFile();
-		file.permissions.can_write_file = true;
-		currentFolder.children.nodes.push(file);
-		const folder = populateFolder();
-		folder.permissions.can_write_folder = true;
-		folder.permissions.can_write_file = true;
-		currentFolder.children.nodes.push(folder);
+	describe.each<NonNullable<Node['__typename']>>(['File', 'Folder'])(
+		'when moving a %s',
+		(typename) => {
+			const nodeToMove = populateNode(typename);
+			nodeToMove.permissions.can_write_file = true;
+			nodeToMove.permissions.can_write_folder = true;
 
-		// first move file -> folderWithWriteFolder is disabled
-		let nodesToMove: Array<File | Folder> = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPath({ node_id: folderWithWriteFile.id }, [currentFolder, folderWithWriteFile]),
-			mockGetChildren(getChildrenVariables(folderWithWriteFile.id), folderWithWriteFile),
-			mockGetPath({ node_id: folderWithWriteFolder.id }, [currentFolder, folderWithWriteFolder]),
-			mockGetChildren(getChildrenVariables(folderWithWriteFolder.id), folderWithWriteFolder)
-		];
-		const { rerender, user } = setup(
-			<div onClick={resetToDefault}>
-				<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={nodesToMove} />
-			</div>,
-			{ mocks }
-		);
-		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		let folderWithWriteFolderItem = screen.getByText(folderWithWriteFolder.name);
-		let folderWithWriteFileItem = screen.getByText(folderWithWriteFile.name);
-		let fileItem = screen.getByText(file.name);
-		let folderItem = screen.getByText(folder.name);
-		// folder without write file permission is disabled and not navigable
-		expect(folderWithWriteFolderItem).toHaveAttribute('disabled', '');
-		// double-click on a disabled folder does nothing
-		await user.dblClick(folderWithWriteFolderItem);
-		expect(folderWithWriteFolderItem).toBeVisible();
-		expect(folderWithWriteFolderItem).toHaveAttribute('disabled', '');
-		// folder is active
-		expect(folderItem).not.toHaveAttribute('disabled', '');
-		// file is disabled
-		expect(fileItem).toHaveAttribute('disabled', '');
-		// folder with write file permission is active and navigable
-		expect(folderWithWriteFileItem).toBeVisible();
-		expect(folderWithWriteFileItem).not.toHaveAttribute('disabled', '');
-		await user.dblClick(folderWithWriteFileItem);
-		// navigate to sub-folder
-		await screen.findByText((folderWithWriteFile.children.nodes[0] as File | Folder).name);
-		expect(folderWithWriteFileItem).not.toBeInTheDocument();
+			test('files are disabled in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToMove);
+				const file = populateFile();
+				file.permissions.can_write_file = true;
+				currentFolder.children.nodes.push(file);
 
-		// then move folder
-		nodesToMove = [folder];
-		rerender(
-			<div onClick={resetToDefault}>
-				<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={nodesToMove} />
-			</div>
-		);
-		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		folderWithWriteFolderItem = screen.getByText(folderWithWriteFolder.name);
-		folderWithWriteFileItem = screen.getByText(folderWithWriteFile.name);
-		fileItem = screen.getByText(file.name);
-		folderItem = screen.getByText(folder.name);
-		// folder without write folder permission is disabled and not navigable
-		expect(folderWithWriteFileItem).toHaveAttribute('disabled', '');
-		// double-click on a disabled folder does nothing
-		await user.dblClick(folderWithWriteFileItem);
-		expect(folderWithWriteFileItem).toBeVisible();
-		expect(folderWithWriteFileItem).toHaveAttribute('disabled', '');
-		// moving folder is disabled
-		expect(folderItem).toHaveAttribute('disabled', '');
-		// file is disabled
-		expect(fileItem).toHaveAttribute('disabled', '');
-		// folder with write folder permission is active and navigable
-		expect(folderWithWriteFolderItem).toBeVisible();
-		expect(folderWithWriteFolderItem).not.toHaveAttribute('disabled', '');
-		await user.dblClick(folderWithWriteFolderItem);
-		// navigate to sub-folder
-		await screen.findByText((folderWithWriteFolder.children.nodes[0] as File | Folder).name);
-		expect(folderWithWriteFolderItem).not.toBeInTheDocument();
-	});
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder]),
+						getNode: mockGetNode({ getChildren: [currentFolder] })
+					}
+				} satisfies Partial<Resolvers>;
+				setup(
+					<div onClick={resetToDefault}>
+						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(file.name);
+				const nodeItem = screen.getByText(file.name);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(nodeItem).toHaveAttribute('disabled', '');
+			});
+
+			test(`folders without can_write_${typename.toLowerCase()} permissions are disabled in the list`, async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToMove);
+				const folder = populateFolder();
+				// enable both permissions, and then disable the specific one
+				folder.permissions.can_write_folder = true;
+				folder.permissions.can_write_file = true;
+				folder.permissions[
+					`can_write_${typename.toLowerCase() as Lowercase<NonNullable<Node['__typename']>>}`
+				] = false;
+				currentFolder.children.nodes.push(folder);
+
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder]),
+						getNode: mockGetNode({ getChildren: [currentFolder] })
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(
+					<div onClick={resetToDefault}>
+						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(folder.name);
+				const nodeItem = screen.getByText(folder.name);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(nodeItem).toHaveAttribute('disabled', '');
+				await user.dblClick(nodeItem);
+				expect(nodeItem).toBeVisible();
+			});
+
+			test('folders with can_write permission are enabled and navigable in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToMove);
+				const folder = populateFolder();
+				folder.permissions.can_write_file = true;
+				folder.permissions.can_write_folder = true;
+				currentFolder.children.nodes.push(folder);
+
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder], [currentFolder, folder]),
+						getNode: mockGetNode({ getChildren: [currentFolder, folder] })
+					}
+				} satisfies Partial<Resolvers>;
+
+				const { user } = setup(
+					<div onClick={resetToDefault}>
+						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(folder.name);
+				const nodeItem = screen.getByText(folder.name);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(nodeItem).not.toHaveAttribute('disabled', '');
+				await user.dblClick(nodeItem);
+				await screen.findByText(/it looks like there's nothing here/i);
+			});
+
+			test('moving node is disabled in the list', async () => {
+				const currentFolder = populateFolder();
+				currentFolder.children.nodes.push(nodeToMove);
+
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder]),
+						getNode: mockGetNode({ getChildren: [currentFolder] })
+					}
+				} satisfies Partial<Resolvers>;
+				setup(
+					<div onClick={resetToDefault}>
+						<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={[nodeToMove]} />
+					</div>,
+					{ mocks }
+				);
+				await screen.findByText(nodeToMove.name);
+				const nodeItem = screen.getByText(nodeToMove.name);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+				expect(nodeItem).toHaveAttribute('disabled', '');
+			});
+		}
+	);
 
 	test('node actions are not shown', async () => {
 		const currentFolder = populateFolder();
@@ -166,10 +189,12 @@ describe('Move Nodes Modal', () => {
 		currentFolder.children.nodes.push(file, folder);
 
 		const nodesToMove = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={nodesToMove} />
@@ -181,25 +206,17 @@ describe('Move Nodes Modal', () => {
 		const folderItem = await screen.findByText(folder.name);
 		// context menu
 		fireEvent.contextMenu(folderItem);
-		// wait a tick to be sure eventual context menu has time to open
-		await waitFor(
-			() =>
-				new Promise((resolve) => {
-					setTimeout(resolve, 0);
-				})
-		);
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		expect(screen.queryByText(ACTION_REGEXP.flag)).not.toBeInTheDocument();
 		// hover bar
-		expect(screen.queryByTestId('icon: FlagOutline')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 		// selection mode
 		await selectNodes([folder.id], user);
-		// wait a tick to be sure eventual selection icon is shown
-		await waitFor(
-			() =>
-				new Promise((resolve) => {
-					setTimeout(resolve, 0);
-				})
-		);
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 	});
 
@@ -216,16 +233,15 @@ describe('Move Nodes Modal', () => {
 		currentFolder.children.nodes.push(folder);
 
 		const nodesToMove: Array<File | Folder> = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPath({ node_id: folder.id }, [currentFolder, folder]),
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockMoveNodes(
-				{ node_ids: map(nodesToMove, (node) => node.id), destination_id: folder.id },
-				map(nodesToMove, (node) => ({ ...node, parent: folder }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder], [currentFolder, folder]),
+				getNode: mockGetNode({ getChildren: [currentFolder, folder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(map(nodesToMove, (node) => ({ ...node, parent: folder })))
+			}
+		} satisfies Partial<Resolvers>;
 
 		const closeAction = jest.fn();
 
@@ -242,7 +258,7 @@ describe('Move Nodes Modal', () => {
 
 		const folderItem = await screen.findByText(folder.name);
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.move });
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		const confirmButtonLabel = within(confirmButton).getByText(ACTION_REGEXP.move);
 		await user.hover(confirmButtonLabel);
 		await screen.findByText(/you can't perform this action here/i);
@@ -250,18 +266,21 @@ describe('Move Nodes Modal', () => {
 		await user.unhover(confirmButtonLabel);
 		expect(screen.queryByText(/you can't perform this action here/i)).not.toBeInTheDocument();
 		await user.click(folderItem);
-		expect(confirmButtonLabel).not.toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeEnabled();
 		await user.dblClick(folderItem);
 		await screen.findByText(/It looks like there's nothing here./i);
-		expect(confirmButtonLabel).not.toHaveAttribute('disabled', '');
-		await user.click(confirmButtonLabel);
+		expect(confirmButton).toBeEnabled();
+		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item moved/i);
 		await waitFor(() => {
 			const currentFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder).request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(currentFolder.id)
+			});
 			expect(
 				(currentFolderCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 			).toHaveLength(currentFolder.children.nodes.length - nodesToMove.length);
@@ -281,14 +300,15 @@ describe('Move Nodes Modal', () => {
 		currentFolder.children.nodes.push(folder);
 
 		const nodesToMove = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockMoveNodes(
-				{ node_ids: map(nodesToMove, (node) => node.id), destination_id: folder.id },
-				map(nodesToMove, (node) => ({ ...node, parent: folder }))
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder] })
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes(map(nodesToMove, (node) => ({ ...node, parent: folder })))
+			}
+		} satisfies Partial<Resolvers>;
 
 		const closeAction = jest.fn();
 
@@ -305,9 +325,9 @@ describe('Move Nodes Modal', () => {
 
 		const folderItem = await screen.findByText(folder.name);
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.move });
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		await user.click(folderItem);
-		expect(confirmButton).not.toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeEnabled();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item moved/i);
@@ -315,7 +335,10 @@ describe('Move Nodes Modal', () => {
 			const currentFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
-			>(mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder).request);
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(currentFolder.id)
+			});
 			expect(
 				(currentFolderCachedData?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
 			).toHaveLength(currentFolder.children.nodes.length - nodesToMove.length);
@@ -323,7 +346,10 @@ describe('Move Nodes Modal', () => {
 		const folderCachedData = global.apolloClient.readQuery<
 			GetChildrenQuery,
 			GetChildrenQueryVariables
-		>(mockGetChildren(getChildrenVariables(folder.id), folder).request);
+		>({
+			query: GetChildrenDocument,
+			variables: getChildrenVariables(folder.id)
+		});
 		expect(folderCachedData).toBeNull();
 	});
 
@@ -338,10 +364,12 @@ describe('Move Nodes Modal', () => {
 		currentFolder.children.nodes.push(folder);
 
 		const nodesToMove = [file];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const closeAction = jest.fn();
 
@@ -359,18 +387,18 @@ describe('Move Nodes Modal', () => {
 		const folderItem = await screen.findByText(folder.name);
 		const fileItem = screen.getByText(file.name);
 		const confirmButton = screen.getByRole('button', { name: ACTION_REGEXP.move });
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		// click on valid destination folder
 		await user.click(folderItem);
 		// confirm button becomes active
-		await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(confirmButton).toBeEnabled());
 		// click on disabled node
 		await user.click(fileItem);
-		expect(confirmButton).toHaveAttribute('disabled', '');
+		expect(confirmButton).toBeDisabled();
 		// click again on valid destination folder
 		await user.click(folderItem);
 		// confirm button becomes active
-		await waitFor(() => expect(confirmButton).not.toHaveAttribute('disabled', ''));
+		await waitFor(() => expect(confirmButton).toBeEnabled());
 		// click on modal title
 		await user.click(screen.getByText(/move items/i));
 	});
@@ -391,14 +419,12 @@ describe('Move Nodes Modal', () => {
 		const ancestorIndex = 1;
 		const ancestor = path[ancestorIndex] as Folder;
 		ancestor.children.nodes = [path[ancestorIndex + 1]];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, path),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPath({ node_id: folder.id }, path.concat(folder)),
-			mockGetChildren(getChildrenVariables(folder.id), folder),
-			mockGetPath({ node_id: ancestor.id }, path.slice(0, ancestorIndex + 1)),
-			mockGetChildren(getChildrenVariables(ancestor.id), ancestor)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath(path, path.concat(folder), path.slice(0, ancestorIndex + 1)),
+				getNode: mockGetNode({ getChildren: [currentFolder, folder, ancestor] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -426,7 +452,6 @@ describe('Move Nodes Modal', () => {
 		await findByTextWithMarkup(breadcrumbRegexp);
 		expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 		expect(screen.queryByText(currentFolder.name)).not.toBeInTheDocument();
-		expect.assertions(4);
 	});
 
 	test('breadcrumb of a shared node shows only parents that have write permissions', async () => {
@@ -473,10 +498,12 @@ describe('Move Nodes Modal', () => {
 			sharedFolder
 		];
 
-		const mocks = [
-			mockGetPath({ node_id: sharedFolder.id }, path),
-			mockGetChildren(getChildrenVariables(sharedFolder.id), sharedFolder)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath(path),
+				getNode: mockGetNode({ getChildren: [sharedFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { getByTextWithMarkup } = setup(
 			<div onClick={resetToDefault}>
@@ -506,20 +533,13 @@ describe('Move Nodes Modal', () => {
 	test('scroll trigger pagination', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2 - 1);
 		const nodesToMove = [currentFolder.children.nodes[0] as File | Folder];
-		const mocks = [
-			mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-			mockGetChildren(getChildrenVariables(currentFolder.id), {
-				...currentFolder,
-				children: populateNodePage(currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT))
-			} as Folder),
-			mockGetChildren(
-				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-				{
-					...currentFolder,
-					children: populateNodePage(currentFolder.children.nodes.slice(NODES_LOAD_LIMIT))
-				} as Folder
-			)
-		];
+
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder, currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		setup(
 			<div onClick={resetToDefault}>
@@ -530,14 +550,16 @@ describe('Move Nodes Modal', () => {
 			}
 		);
 		await screen.findByText((currentFolder.children.nodes[0] as File | Folder).name);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(NODES_LOAD_LIMIT);
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+			NODES_LOAD_LIMIT
+		);
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeInTheDocument();
 		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 		await triggerLoadMore();
 		await screen.findByText(
 			(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as File | Folder).name
 		);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();

@@ -17,7 +17,7 @@ import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
-import { EMITTER_CODES, ICON_REGEXP } from '../../constants/test';
+import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import handleUploadFileRequest, {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -31,16 +31,15 @@ import {
 	populateUploadItems
 } from '../../mocks/mockUtils';
 import { UploadStatus } from '../../types/graphql/client-types';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	CreateFolderMutation,
 	CreateFolderMutationVariables,
-	Folder,
-	GetChildQuery,
-	GetChildQueryVariables
+	Folder
 } from '../../types/graphql/types';
-import { mockGetBaseNode } from '../../utils/mockUtils';
+import { mockGetNode } from '../../utils/resolverMocks';
 import {
-	createDataTransfer,
+	createUploadDataTransfer,
 	delayUntil,
 	generateError,
 	selectNodes,
@@ -60,8 +59,13 @@ describe('Upload List', () => {
 				const uploadMap = keyBy(uploadItems, 'id');
 
 				uploadVar(uploadMap);
+				const localRoot = populateLocalRoot();
 
-				const mocks = [mockGetBaseNode({ node_id: ROOTS.LOCAL_ROOT }, populateLocalRoot())];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, {
 					mocks
 				});
@@ -86,8 +90,13 @@ describe('Upload List', () => {
 				const uploadMap = keyBy(uploadItems, 'id');
 
 				uploadVar(uploadMap);
+				const localRoot = populateLocalRoot();
 
-				const mocks = [mockGetBaseNode({ node_id: ROOTS.LOCAL_ROOT }, populateLocalRoot())];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, { mocks });
 
 				expect(screen.getByText(uploadItems[0].name)).toBeVisible();
@@ -116,18 +125,7 @@ describe('Upload List', () => {
 				const uploadSuccessHandler = jest.fn();
 				const emitter = new EventEmitter();
 
-				let reqIndex = 0;
-
 				server.use(
-					graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-						const { node_id: id } = req.variables;
-						const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
-						if (result) {
-							result.id = id;
-						}
-						reqIndex += 1;
-						return res(ctx.data({ getNode: result }));
-					}),
 					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
 						(req, res, ctx) =>
@@ -148,9 +146,13 @@ describe('Upload List', () => {
 					)
 				);
 
-				const mocks = [mockGetBaseNode({ node_id: ROOTS.LOCAL_ROOT }, localRoot)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot, ...uploadedFiles] })
+					}
+				} satisfies Partial<Resolvers>;
 
-				const dataTransferObj = createDataTransfer(uploadedFiles);
+				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, {
 					mocks
@@ -160,7 +162,7 @@ describe('Upload List', () => {
 
 				await uploadWithDnD(dropzoneArea, dataTransferObj);
 
-				expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+				expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 					uploadedFiles.length
 				);
 				expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
@@ -201,7 +203,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn(handleUploadFileRequest);
 
@@ -216,15 +218,11 @@ describe('Upload List', () => {
 					rest.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, uploadHandler)
 				);
 
-				const mocks = [
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-					// TODO: investigate on why these mocks are not called and the msw handlers are called instead
-					// mockCreateFolderError(
-					// 	{ name: folder.name, destination_id: localRoot.id },
-					// 	new ApolloError({ graphQLErrors: [generateError('Create folder error')] })
-					// ),
-					// mockCreateFolder({ name: folder.name, destination_id: localRoot.id }, folder)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadList />, { mocks });
 
@@ -251,7 +249,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn();
 				const createFolderMutation = jest.fn();
@@ -280,15 +278,11 @@ describe('Upload List', () => {
 					)
 				);
 
-				const mocks = [
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-					// TODO: investigate on why these mocks are not called and the msw handlers are called instead
-					// mockCreateFolderError(
-					// 	{ name: folder.name, destination_id: localRoot.id },
-					// 	new ApolloError({ graphQLErrors: [generateError('Create folder error')] })
-					// ),
-					// mockCreateFolder({ name: folder.name, destination_id: localRoot.id }, folder)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadList />, { mocks });
 
@@ -304,7 +298,6 @@ describe('Upload List', () => {
 				expect(screen.getByText(/4\/6/)).toBeVisible();
 				uploadHandler.mockClear();
 				await user.click(screen.getByTestId(ICON_REGEXP.retryUpload));
-				await screen.findByTestId(ICON_REGEXP.uploadLoading);
 				await screen.findByTestId(ICON_REGEXP.uploadFailed);
 				expect(createFolderMutation).toHaveBeenCalledTimes(1);
 				expect(uploadHandler).toHaveBeenCalledTimes(2);
@@ -329,7 +322,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn(handleUploadFileRequest);
 
@@ -370,15 +363,11 @@ describe('Upload List', () => {
 					)
 				);
 
-				const mocks = [
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-					// TODO: investigate on why these mocks are not called and the msw handlers are called instead
-					// mockCreateFolderError(
-					// 	{ name: folder.name, destination_id: localRoot.id },
-					// 	new ApolloError({ graphQLErrors: [generateError('Create folder error')] })
-					// ),
-					// mockCreateFolder({ name: folder.name, destination_id: localRoot.id }, folder)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadList />, { mocks });
 
@@ -393,7 +382,6 @@ describe('Upload List', () => {
 				await user.hover(screen.getByText(folder.name));
 				expect(screen.getByTestId(ICON_REGEXP.retryUpload)).toBeInTheDocument();
 				await user.click(screen.getByTestId(ICON_REGEXP.retryUpload));
-				await screen.findByTestId(ICON_REGEXP.uploadLoading);
 				await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 				// upload has been called for all files (main folder children and sub-folder children)
 				expect(uploadHandler).toHaveBeenCalledTimes(5);
@@ -419,7 +407,7 @@ describe('Upload List', () => {
 					child.parent = folder;
 				});
 
-				const dataTransferObj = createDataTransfer([folder]);
+				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				const uploadHandler = jest.fn();
 				let uploadFailedCalled = false;
@@ -440,15 +428,11 @@ describe('Upload List', () => {
 					)
 				);
 
-				const mocks = [
-					mockGetBaseNode({ node_id: localRoot.id }, localRoot)
-					// TODO: investigate on why these mocks are not called and the msw handlers are called instead
-					// mockCreateFolderError(
-					// 	{ name: folder.name, destination_id: localRoot.id },
-					// 	new ApolloError({ graphQLErrors: [generateError('Create folder error')] })
-					// ),
-					// mockCreateFolder({ name: folder.name, destination_id: localRoot.id }, folder)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getBaseNode: [localRoot] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<UploadList />, { mocks });
 
@@ -457,13 +441,12 @@ describe('Upload List', () => {
 				await screen.findByText(folder.name);
 				expect(screen.getByText(folder.name)).toBeVisible();
 				await screen.findByTestId(ICON_REGEXP.uploadFailed);
-				expect(screen.getByText(/9\/10/));
+				expect(screen.getByText(/9\/10/)).toBeVisible();
 				await user.hover(screen.getByText(folder.name));
 				expect(screen.getByTestId(ICON_REGEXP.retryUpload)).toBeInTheDocument();
 				expect(uploadHandler).toHaveBeenCalledTimes(children.length + subFolderChildren.length - 1);
 				uploadHandler.mockReset();
 				await user.click(screen.getByTestId(ICON_REGEXP.retryUpload));
-				await screen.findByTestId(ICON_REGEXP.uploadLoading);
 				await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 				expect(uploadHandler).toHaveBeenCalledTimes(1);
 				expect(screen.getByText(/10\/10/)).toBeVisible();

@@ -13,7 +13,8 @@ import { rest } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { ACTION_IDS } from '../../constants';
+import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
 	CREATE_FILE_PATH,
@@ -21,7 +22,7 @@ import {
 	NODES_LOAD_LIMIT,
 	NODES_SORT_DEFAULT
 } from '../constants';
-import { ICON_REGEXP } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	CreateDocsFileRequestBody,
 	CreateDocsFileResponse
@@ -33,68 +34,66 @@ import {
 	populateNodes,
 	sortNodes
 } from '../mocks/mockUtils';
-import { Folder } from '../types/graphql/types';
-import {
-	getChildrenVariables,
-	getNodeVariables,
-	mockGetChildren,
-	mockGetNode,
-	mockGetParent,
-	mockGetPermissions
-} from '../utils/mockUtils';
+import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
+import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
 import { setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 
-let mockedCreateOptions: CreateOptionsContent['createOptions'];
+let mockedCreateOptions: CreateOption[];
 
 beforeEach(() => {
 	mockedCreateOptions = [];
 });
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest
-			.fn()
-			.mockImplementation((...options: Parameters<CreateOptionsContent['setCreateOptions']>[0]) => {
-				mockedCreateOptions = options;
-			}),
-		removeCreateOptions: jest.fn()
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
+	useCreateOptions: (): CreateOptionsReturnType => ({
+		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+			mockedCreateOptions = options;
+		},
+		removeCreateOptions: () => undefined
 	})
 }));
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
-		<button
-			data-testid="create-docs-document-test-id"
-			onClick={(ev: React.MouseEvent<HTMLButtonElement>): void => {
-				if (mockedCreateOptions) {
-					const createDocsDocument = mockedCreateOptions.find(
-						(element) => element.id === 'create-docs-document'
-					);
-					if (createDocsDocument) {
-						const createLibreDocsDocument = (
-							createDocsDocument.action('target').items as DropdownItem[]
-						).find((item) => item.id === 'create-docs-document-libre');
-						if (createLibreDocsDocument?.onClick) {
-							createLibreDocsDocument.onClick(ev);
-						}
-					}
+const MockDisplayer = (props: DisplayerProps): JSX.Element => {
+	const createDoc = (ev: React.MouseEvent<HTMLButtonElement>, actionIds: string): void => {
+		if (mockedCreateOptions) {
+			const createDocsDocument = mockedCreateOptions.find(
+				(element) => element.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
+			);
+			if (createDocsDocument) {
+				const createLibreDocsDocument = (
+					createDocsDocument.action('target').items as DropdownItem[]
+				).find((item) => item.id === actionIds);
+				if (createLibreDocsDocument?.onClick) {
+					createLibreDocsDocument.onClick(ev);
 				}
-			}}
-		>
+			}
+		}
+	};
+	return (
+		<div>
 			{props.translationKey}:{props.icons}
-		</button>
-	)
+			<button onClick={(ev): void => createDoc(ev, 'create-docs-document-libre')}>
+				create docs document
+			</button>
+			<button onClick={(ev): void => createDoc(ev, 'create-docs-document-ms')}>
+				create ms document
+			</button>
+		</div>
+	);
+};
+
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
 describe('Create docs file', () => {
 	async function createNode(newNode: { name: string }, user: UserEvent): Promise<void> {
 		// wait for the creation modal to be opened
-		const inputFieldDiv = await screen.findByTestId('input-name');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		expect(inputField).toHaveValue('');
 		await user.type(inputField, newNode.name);
 		expect(inputField).toHaveValue(newNode.name);
-		const button = screen.getByRole('button', { name: /create/i });
+		const button = screen.getByRole('button', { name: /^create$/i });
 		await user.click(button);
 	}
 
@@ -108,12 +107,16 @@ describe('Create docs file', () => {
 
 		const newName = node2.name;
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetNode(getNodeVariables(node2.id), node2)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node2]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		server.use(
 			rest.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, (req, res, ctx) =>
@@ -128,28 +131,27 @@ describe('Create docs file', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 
 		const createDocsDocument = find(
 			mockedCreateOptions,
-			(option) => option.id === 'create-docs-document'
+			(option) => option.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
 		);
 		expect(createDocsDocument).toBeDefined();
-		const createDocsDocumentElement = screen.getByTestId('create-docs-document-test-id');
+		const createDocsDocumentElement = screen.getByRole('button', { name: /create docs document/i });
 		await user.click(createDocsDocumentElement);
 
 		await createNode(node2, user);
-		const error = await within(screen.getByTestId('modal')).findByText(
+		const error = await within(screen.getByTestId(SELECTORS.modal)).findByText(
 			/Error! Name already assigned/
 		);
 		expect(error).toBeInTheDocument();
-		const inputFieldDiv = screen.getByTestId('input-name');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		expect(inputField).toBeInTheDocument();
 		expect(inputField).toHaveValue(newName);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 	});
@@ -164,12 +166,16 @@ describe('Create docs file', () => {
 		// add node 1 and 3 as children, node 2 is the new file
 		currentFolder.children.nodes.push(node1, node3);
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockGetNode(getNodeVariables(node2.id), node2)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node2]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		server.use(
 			rest.post(DOCS_ENDPOINT + CREATE_FILE_PATH, (req, res, ctx) =>
@@ -188,17 +194,19 @@ describe('Create docs file', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 
 		const createDocsDocument = find(
 			mockedCreateOptions,
-			(option) => option.id === 'create-docs-document'
+			(option) => option.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
 		);
 		expect(createDocsDocument).toBeDefined();
 		if (createDocsDocument) {
-			const createDocsDocumentElement = screen.getByTestId('create-docs-document-test-id');
+			const createDocsDocumentElement = screen.getByRole('button', {
+				name: /create docs document/i
+			});
 			await user.click(createDocsDocumentElement);
 		} else {
 			fail();
@@ -206,13 +214,13 @@ describe('Create docs file', () => {
 
 		// create action
 		await createNode(node2, user);
-		await screen.findByTestId(`node-item-${node2.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
 
-		const nodeItem = await screen.findByTestId(`node-item-${node2.id}`);
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+		const nodeItem = await screen.findByTestId(SELECTORS.nodeItem(node2.id));
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
 		expect(within(nodeItem).getByText(node2.name)).toBeVisible();
-		const nodes = screen.getAllByTestId('node-item', { exact: false });
+		const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 1);
 		expect(nodes[1]).toBe(nodeItem);
 	});
@@ -235,23 +243,28 @@ describe('Create docs file', () => {
 		// --> node1 should be put before node2 in the unordered
 		// 4) trigger loadMore and load node1, node2, node3 with this order
 		// --> list should be updated with the correct order
-
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			// fetchMore request, cursor is still last ordered node (last child of initial folder)
-			mockGetChildren(
-				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-				{
-					...currentFolder,
-					// second page contains the new created nodes and node3, not loaded before
-					children: populateNodePage([node1, node2, node3])
-				} as Folder
-			),
-			mockGetNode(getNodeVariables(node1.id), node1),
-			mockGetNode(getNodeVariables(node2.id), node2)
-		];
+		const childrenResolver: FolderResolvers['children'] = (parent, args) => {
+			if (parent.id === currentFolder.id) {
+				if (args.page_token === 'page2') {
+					return populateNodePage([node1, node2, node3]);
+				}
+				return populateNodePage(currentFolder.children.nodes, NODES_LOAD_LIMIT, 'page2');
+			}
+			return parent.children;
+		};
+		const mocks = {
+			Folder: {
+				children: childrenResolver
+			},
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [node1, node2]
+				})
+			}
+		} satisfies Partial<Resolvers>;
 
 		server.use(
 			rest.post<CreateDocsFileRequestBody, never, CreateDocsFileResponse>(
@@ -277,16 +290,18 @@ describe('Create docs file', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		let nodes = screen.getAllByTestId('node-item', { exact: false });
+		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 
 		const createDocsDocument = find(
 			mockedCreateOptions,
-			(option) => option.id === 'create-docs-document'
+			(option) => option.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
 		);
 		expect(createDocsDocument).toBeDefined();
 		if (createDocsDocument) {
-			const createDocsDocumentElement = screen.getByTestId('create-docs-document-test-id');
+			const createDocsDocumentElement = screen.getByRole('button', {
+				name: /create docs document/i
+			});
 			await user.click(createDocsDocumentElement);
 		} else {
 			fail();
@@ -294,45 +309,74 @@ describe('Create docs file', () => {
 
 		// create action
 		await createNode(node2, user);
-		await screen.findByTestId(`node-item-${node2.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
 		expect(screen.getByText(node2.name)).toBeVisible();
 
-		const node2Item = screen.getByTestId(`node-item-${node2.id}`);
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+		const node2Item = screen.getByTestId(SELECTORS.nodeItem(node2.id));
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(node2Item).toBeVisible();
 		expect(within(node2Item).getByText(node2.name)).toBeVisible();
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 1);
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(node2Item);
 
-		const createDocsDocumentElement = screen.getByTestId('create-docs-document-test-id');
+		const createDocsDocumentElement = screen.getByRole('button', {
+			name: /create docs document/i
+		});
 		await user.click(createDocsDocumentElement);
-
 		// create action
 		await createNode(node1, user);
-		await screen.findByTestId(`node-item-${node1.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node1.id));
 		expect(screen.getByText(node1.name)).toBeVisible();
 
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
-		const node1Item = screen.getByTestId(`node-item-${node1.id}`);
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
 		expect(node1Item).toBeVisible();
 		expect(within(node1Item).getByText(node1.name)).toBeVisible();
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 2);
 		// node1 is before node2 of the list
 		expect(nodes[nodes.length - 2]).toBe(node1Item);
 		// node2 is last element of the list
-		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(`node-item-${node2.id}`));
+		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(SELECTORS.nodeItem(node2.id)));
 		// trigger load more
 		await triggerLoadMore();
 		// wait for the load to be completed (node3 is now loaded)
-		await screen.findByTestId(`node-item-${node3.id}`);
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		await screen.findByTestId(SELECTORS.nodeItem(node3.id));
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 3);
 		// node1, node2 and node3 should have the correct order
-		expect(screen.getByTestId(`node-item-${node1.id}`)).toBe(nodes[nodes.length - 3]);
-		expect(screen.getByTestId(`node-item-${node2.id}`)).toBe(nodes[nodes.length - 2]);
-		expect(screen.getByTestId(`node-item-${node3.id}`)).toBe(nodes[nodes.length - 1]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node1.id))).toBe(nodes[nodes.length - 3]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node2.id))).toBe(nodes[nodes.length - 2]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node3.id))).toBe(nodes[nodes.length - 1]);
+	});
+
+	describe('Extension new item', () => {
+		test('should render .ods extension when click createLibreDocument button', async () => {
+			const { user } = setup(<FolderView />);
+			const createDocsDocument = find(
+				mockedCreateOptions,
+				(option) => option.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
+			);
+			expect(createDocsDocument).toBeDefined();
+			const createLibreDocumentElement = screen.getByRole('button', {
+				name: /create docs document/i
+			});
+			await user.click(createLibreDocumentElement);
+			await screen.findByText(/.odt/i);
+		});
+
+		test('should render .docx extension when click createMsDocument button', async () => {
+			const { user } = setup(<FolderView />);
+			const createDocsDocument = find(
+				mockedCreateOptions,
+				(option) => option.id === ACTION_IDS.CREATE_DOCS_DOCUMENT
+			);
+			expect(createDocsDocument).toBeDefined();
+			const createMsDocumentElement = screen.getByRole('button', { name: /create ms document/i });
+			await user.click(createMsDocumentElement);
+			await screen.findByText(/.docx/i);
+		});
 	});
 });

@@ -92,6 +92,14 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 	const lastWeekVersions = partitions[0];
 	const olderVersions = partitions[1];
 
+	const disabledByPermissionLabel = useMemo(
+		() =>
+			t(
+				'displayer.version.actions.tooltip.disabledByPermission',
+				"You don't have the correct permissions"
+			),
+		[t]
+	);
 	const canCloneVersion = useMemo(
 		() =>
 			node.permissions.can_write_file &&
@@ -102,10 +110,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 
 	const cloneVersionDisabledTooltip = useMemo(() => {
 		if (!node.permissions.can_write_file) {
-			return t(
-				'displayer.version.actions.tooltip.disabledByPermission',
-				"You don't have the correct permissions"
-			);
+			return disabledByPermissionLabel;
 		}
 		if (versions.length >= Number(configs[CONFIGS.MAX_VERSIONS])) {
 			return t(
@@ -114,7 +119,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 			);
 		}
 		return undefined;
-	}, [configs, node.permissions.can_write_file, t, versions.length]);
+	}, [configs, disabledByPermissionLabel, node.permissions.can_write_file, t, versions.length]);
 
 	const numberOfVersionsWithKeep = useMemo(
 		() => filter(versions, (version) => version && version.keep_forever).length,
@@ -133,10 +138,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 
 	const keepVersionDisabledTooltip = useMemo(() => {
 		if (!node.permissions.can_write_file) {
-			return t(
-				'displayer.version.actions.tooltip.disabledByPermission',
-				"You don't have the correct permissions"
-			);
+			return disabledByPermissionLabel;
 		}
 		if (numberOfVersionsWithKeep >= Number(configs[CONFIGS.MAX_KEEP_VERSIONS])) {
 			return t(
@@ -145,7 +147,13 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 			);
 		}
 		return undefined;
-	}, [configs, node.permissions.can_write_file, numberOfVersionsWithKeep, t]);
+	}, [
+		configs,
+		disabledByPermissionLabel,
+		node.permissions.can_write_file,
+		numberOfVersionsWithKeep,
+		t
+	]);
 
 	const canDeleteVersion = useCallback<(version: Version) => boolean>(
 		(version) => !version.keep_forever && node.permissions.can_write_file,
@@ -155,10 +163,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 	const deleteDisabledTooltip = useMemo(
 		() => (version: Version) => {
 			if (!node.permissions.can_write_file) {
-				return t(
-					'displayer.version.actions.tooltip.disabledByPermission',
-					"You don't have the correct permissions"
-				);
+				return disabledByPermissionLabel;
 			}
 			if (version.keep_forever) {
 				return t(
@@ -175,7 +180,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 
 			return undefined;
 		},
-		[lastVersion, node.permissions.can_write_file, t]
+		[disabledByPermissionLabel, lastVersion, node.permissions.can_write_file, t]
 	);
 
 	const $canOpenVersionWithDocs = useMemo(() => canOpenVersionWithDocs([node]), [node]);
@@ -318,7 +323,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 					<Text style={{ lineHeight: 1.5 }} weight="light" overflow="break-word" size="small">
 						{t(
 							'displayer.version.mainHint',
-							'Files saves the last {{maxVersions}} versions of your files. You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.',
+							'Files saves the last {{maxVersions}} versions of your items. You can manually delete any item version or restore one as the current version. Select one or more versions that you want to keep forever.',
 							{ replace: { maxVersions: configs[CONFIGS.MAX_VERSIONS] } }
 						)}
 					</Text>

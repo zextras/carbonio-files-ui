@@ -11,6 +11,8 @@ import { screen } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeDetailsListItem } from './NodeDetailsListItem';
+import { DATE_FORMAT } from '../../constants';
+import { SELECTORS } from '../../constants/test';
 import { populateNode, populateUser } from '../../mocks/mockUtils';
 import { NodeType, User } from '../../types/graphql/types';
 import { setup } from '../../utils/testUtils';
@@ -40,12 +42,12 @@ describe('Node List Item', () => {
 			/>
 		);
 
-		const nodeItem = screen.getByTestId(`details-node-item-${node.id}`);
+		const nodeItem = screen.getByTestId(SELECTORS.detailsNodeItem(node.id));
 		expect(nodeItem).toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
 		expect(nodeItem).not.toBeEmptyDOMElement();
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(formatDate(node.updated_at, 'DD/MM/YYYY', 'UTC'))).toBeVisible();
+		expect(screen.getByText(formatDate(node.updated_at, DATE_FORMAT, 'UTC'))).toBeVisible();
 		expect(screen.queryByText(mockedUserLogged.full_name)).not.toBeInTheDocument();
 		expect(screen.getByText(/you/i)).toBeVisible();
 	});

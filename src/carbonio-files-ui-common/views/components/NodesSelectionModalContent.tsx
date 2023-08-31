@@ -429,6 +429,14 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 		[currentFolderNode, currentFolderPermissions?.getNode]
 	);
 
+	const nodeAvatarContextValue = useMemo<React.ContextType<typeof NodeAvatarIconContext>>(
+		() => ({
+			tooltipLabel: disabledTooltip,
+			tooltipDisabled: ({ selectable }): boolean => selectable
+		}),
+		[disabledTooltip]
+	);
+
 	return (
 		<>
 			<ModalHeader
@@ -442,12 +450,7 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 				<Text overflow="break-word" size="small">
 					{description}
 				</Text>
-				<NodeAvatarIconContext.Provider
-					value={{
-						tooltipLabel: disabledTooltip,
-						tooltipDisabled: ({ selectable }): boolean => selectable
-					}}
-				>
+				<NodeAvatarIconContext.Provider value={nodeAvatarContextValue}>
 					{currentFolderNode ? (
 						<ModalList
 							folderId={currentFolderNode.id}
@@ -545,7 +548,6 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 										value={newFolderName}
 										onChange={onNewFolderInputChange}
 										label={`${t('modal.nodeSelection.input.newFolder', "New folder's name")}*`}
-										data-testid="input-name"
 										onEnter={createFolderHandler}
 										hasError={createFolderError !== undefined}
 										description={

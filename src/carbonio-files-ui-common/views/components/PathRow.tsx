@@ -13,10 +13,14 @@ import { useParams } from 'react-router-dom';
 import { Label } from './Label';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { ROOTS } from '../../constants';
-import GET_PATH from '../../graphql/queries/getPath.graphql';
 import useQueryParam from '../../hooks/useQueryParam';
-import { Crumb, Node, URLParams } from '../../types/common';
-import { GetPathQuery, GetPathQueryVariables, NodeType } from '../../types/graphql/types';
+import { Crumb, CrumbNode, Node, URLParams } from '../../types/common';
+import {
+	GetPathDocument,
+	GetPathQuery,
+	GetPathQueryVariables,
+	NodeType
+} from '../../types/graphql/types';
 import { buildCrumbs } from '../../utils/utils';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
 
@@ -27,7 +31,7 @@ export interface PathRowProps {
 	rootId?: Node['rootId'];
 }
 
-export const PathRow = ({ id, name, type, rootId }: PathRowProps): JSX.Element => {
+export const PathRow = ({ id, name, type, rootId }: PathRowProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const activeFolderId = useQueryParam('folder');
@@ -47,11 +51,8 @@ export const PathRow = ({ id, name, type, rootId }: PathRowProps): JSX.Element =
 	);
 
 	const [crumbs, setCrumbs] = useState<Crumb[]>(
-		buildCrumbs(
-			[{ name, id, type }],
-			navigateToFolder,
-			t,
-			(node: Pick<Node, 'id' | 'name' | 'type'>) => isCrumbNavigable(node)
+		buildCrumbs([{ name, id, type }], navigateToFolder, t, (node: CrumbNode) =>
+			isCrumbNavigable(node)
 		)
 	);
 
@@ -59,7 +60,7 @@ export const PathRow = ({ id, name, type, rootId }: PathRowProps): JSX.Element =
 
 	// use a lazy query to load full path only when requested
 	const [getPathQuery, { data: getPathData }] = useLazyQuery<GetPathQuery, GetPathQueryVariables>(
-		GET_PATH,
+		GetPathDocument,
 		{
 			notifyOnNetworkStatusChange: true
 		}

@@ -5,24 +5,22 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { screen, waitFor, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { SharePermission } from '../../types/graphql/types';
 import {
-	getNodeVariables,
-	getSharesVariables,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks,
-	mockGetShares,
 	mockUpdateShare,
-	mockUpdateShareError
-} from '../../utils/mockUtils';
+	mockErrorResolver
+} from '../../utils/resolverMocks';
 import { generateError, setup } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
@@ -37,12 +35,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -50,9 +49,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -61,9 +60,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -89,12 +86,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -102,9 +100,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -113,9 +111,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -137,7 +133,7 @@ describe('Displayer', () => {
 					// run timers of popover
 					jest.runOnlyPendingTimers();
 				});
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
 			});
 
 			test.skip('leave anyway continue with navigation and does not save the permissions', async () => {
@@ -148,12 +144,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -161,9 +158,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -172,9 +169,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -194,14 +189,14 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByText(getChipLabel(share.share_target));
 				// chip permissions are not changed
-				const editShareItem2 = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem2 = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem2).toBeVisible();
 				await user.click(editShareItem2);
 				await screen.findByText(/viewer/i);
 				// save button is disabled because permissions are reset
-				expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave continue with navigation and save the new permissions', async () => {
@@ -213,20 +208,16 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockUpdateShare(
-						{
-							node_id: node.id,
-							share_target_id: shareTarget.id,
-							permission: SharePermission.ReadAndWrite
-						},
-						{ ...share, permission: SharePermission.ReadAndWrite }
-					)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						updateShare: mockUpdateShare({ ...share, permission: SharePermission.ReadAndWrite })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -234,9 +225,9 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const editShareItem = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: EyeOutline'
-				);
+				const editShareItem = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -245,9 +236,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -267,9 +256,9 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByText(getChipLabel(share.share_target));
 				// chip permissions are changed
-				const editShareItem2 = within(screen.getByTestId('node-sharing-collaborators')).getByTestId(
-					'icon: Edit2Outline'
-				);
+				const editShareItem2 = within(
+					screen.getByTestId(SELECTORS.sharingTabCollaborators)
+				).getByTestId(ICON_REGEXP.shareCanWrite);
 				expect(editShareItem2).toBeVisible();
 				await user.click(editShareItem2);
 				await screen.findByText(/viewer/i);
@@ -278,7 +267,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				// save button is disabled because permissions are updated and saved
-				expect(screen.getByRole('button', { name: /save/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave with error keeps navigation on sharing tab', async () => {
@@ -290,20 +279,16 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockUpdateShareError(
-						{
-							node_id: node.id,
-							share_target_id: shareTarget.id,
-							permission: SharePermission.ReadAndWrite
-						},
-						new ApolloError({ graphQLErrors: [generateError('update error')] })
-					)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						updateShare: mockErrorResolver(generateError('update error'))
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -311,8 +296,8 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(getChipLabel(share.share_target));
-				const nodeSharingArea = screen.getByTestId('node-sharing-collaborators');
-				const editShareItem = within(nodeSharingArea).getByTestId('icon: EyeOutline');
+				const nodeSharingArea = screen.getByTestId(SELECTORS.sharingTabCollaborators);
+				const editShareItem = within(nodeSharingArea).getByTestId(ICON_REGEXP.shareCanRead);
 				expect(editShareItem).toBeVisible();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
@@ -321,9 +306,7 @@ describe('Displayer', () => {
 					jest.runOnlyPendingTimers();
 				});
 				await user.click(screen.getByText(/editor/i));
-				await waitFor(() =>
-					expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '')
-				);
+				await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -343,10 +326,12 @@ describe('Displayer', () => {
 				expect(screen.queryByText(/description/i)).not.toBeInTheDocument();
 				expect(screen.getByText(getChipLabel(share.share_target))).toBeVisible();
 				expect(editShareItem).toBeVisible();
-				expect(within(nodeSharingArea).queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
+				expect(
+					within(nodeSharingArea).queryByTestId(ICON_REGEXP.shareCanWrite)
+				).not.toBeInTheDocument();
 				await user.click(editShareItem);
 				await screen.findByText(/viewer/i);
-				expect(screen.getByRole('button', { name: /save/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
 			});
 		});
 	});

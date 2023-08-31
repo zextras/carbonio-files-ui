@@ -5,38 +5,36 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
+import * as actualNetworkModule from '../../../network/network';
 import { DISPLAYER_TABS } from '../../constants';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateGalContact,
 	populateNode,
 	populateShare,
 	populateUser
 } from '../../mocks/mockUtils';
+import { MutationResolvers, Resolvers } from '../../types/graphql/resolvers-types';
 import { SharePermission } from '../../types/graphql/types';
 import {
-	getNodeVariables,
-	getSharesVariables,
 	mockCreateShare,
-	mockCreateShareError,
 	mockGetAccountByEmail,
 	mockGetNode,
 	mockGetCollaborationLinks,
-	mockGetLinks,
-	mockGetShares
-} from '../../utils/mockUtils';
+	mockGetLinks
+} from '../../utils/resolverMocks';
 import { generateError, setup } from '../../utils/testUtils';
 
-const mockedSoapFetch: jest.Mock = jest.fn();
+const mockedSoapFetch = jest.fn();
 
-jest.mock('../../../network/network', () => ({
-	soapFetch: (): Promise<unknown> =>
-		new Promise((resolve, reject) => {
+jest.mock<typeof import('../../../network/network')>('../../../network/network', () => ({
+	soapFetch: <Req, Res>(): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+		new Promise<Res>((resolve, reject) => {
 			const result = mockedSoapFetch();
 			result ? resolve(result) : reject(new Error('no result provided'));
 		})
@@ -57,13 +55,14 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -74,8 +73,8 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.click(screen.getByText(/details/i));
@@ -99,12 +98,13 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
 				const customText = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -143,13 +143,14 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -160,8 +161,8 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.type(
@@ -195,13 +196,14 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -212,8 +214,8 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.type(
@@ -232,12 +234,14 @@ describe('Displayer', () => {
 				expect(actionButton).not.toBeInTheDocument();
 				expect(screen.getByText(userAccount.full_name)).toBeVisible();
 				expect(
-					within(screen.getByTestId('add-shares-input-container')).getByTestId('icon: EyeOutline')
+					within(screen.getByTestId(SELECTORS.addShareInputContainer)).getByTestId(
+						ICON_REGEXP.shareCanRead
+					)
 				).toBeVisible();
 				expect(
 					screen.getByRole('textbox', { name: /add a custom message to this notification/i })
 				).toHaveDisplayValue(customText);
-				expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 			});
 
 			test.skip('leave anyway action reset fields and continue navigation', async () => {
@@ -253,13 +257,14 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -270,8 +275,8 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.type(
@@ -296,14 +301,14 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByRole('button', { name: /share/i });
 				expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
-				const sharesInputContainer = screen.getByTestId('add-shares-input-container');
+				const sharesInputContainer = screen.getByTestId(SELECTORS.addShareInputContainer);
 				expect(
-					within(sharesInputContainer).queryByTestId('icon: EyeOutline')
+					within(sharesInputContainer).queryByTestId(ICON_REGEXP.shareCanRead)
 				).not.toBeInTheDocument();
 				expect(
 					screen.queryByRole('textbox', { name: /add a custom message to this notification/i })
 				).not.toHaveDisplayValue(customText);
-				expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave action create shares and continue navigation', async () => {
@@ -321,22 +326,17 @@ describe('Displayer', () => {
 				mockedSoapFetch.mockReturnValue({
 					match: [populateGalContact(userAccount.full_name, userAccount.email)]
 				});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-					mockCreateShare(
-						{
-							node_id: node.id,
-							share_target_id: userAccount.id,
-							permission: SharePermission.ReadOnly,
-							custom_message: customText
-						},
-						share
-					)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount)
+					},
+					Mutation: {
+						createShare: mockCreateShare(share)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -347,8 +347,8 @@ describe('Displayer', () => {
 				await user.type(chipInput, userAccount.full_name[0]);
 				await screen.findByText(userAccount.email);
 				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 				await user.type(
@@ -373,20 +373,22 @@ describe('Displayer', () => {
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByRole('button', { name: /share/i });
 				expect(screen.getByText(userAccount.full_name)).toBeVisible();
-				const addSharesContainer = screen.getByTestId('add-shares-input-container');
+				const addSharesContainer = screen.getByTestId(SELECTORS.addShareInputContainer);
 				expect(
-					within(screen.getByTestId('node-sharing-collaborators')).getByTestId('icon: EyeOutline')
+					within(screen.getByTestId(SELECTORS.sharingTabCollaborators)).getByTestId(
+						ICON_REGEXP.shareCanRead
+					)
 				).toBeVisible();
 				expect(
 					within(addSharesContainer).queryByText(userAccount.full_name)
 				).not.toBeInTheDocument();
 				expect(
-					within(addSharesContainer).queryByTestId('icon: EyeOutline')
+					within(addSharesContainer).queryByTestId(ICON_REGEXP.shareCanRead)
 				).not.toBeInTheDocument();
 				expect(
 					screen.queryByRole('textbox', { name: /add a custom message to this notification/i })
 				).not.toHaveDisplayValue(customText);
-				expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 			});
 
 			test.skip('save and leave action with errors leaves fields valued with only shares that went in error and navigation is kept on sharing tab', async () => {
@@ -410,32 +412,23 @@ describe('Displayer', () => {
 					.mockReturnValueOnce({
 						match: [populateGalContact(userAccount2.full_name, userAccount2.email)]
 					});
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockGetAccountByEmail({ email: userAccount1.email }, userAccount1),
-					mockGetAccountByEmail({ email: userAccount2.email }, userAccount2),
-					mockCreateShare(
-						{
-							node_id: node.id,
-							permission: SharePermission.ReadAndWrite,
-							share_target_id: userAccount1.id,
-							custom_message: customText
-						},
-						share1
-					),
-					mockCreateShareError(
-						{
-							node_id: node.id,
-							permission: SharePermission.ReadOnly,
-							share_target_id: userAccount2.id,
-							custom_message: customText
-						},
-						new ApolloError({ graphQLErrors: [generateError('create error')] })
-					)
-				];
+				const createShareResolver: MutationResolvers['createShare'] = (parent, args) => {
+					if (args.share_target_id === userAccount1.id) {
+						return share1;
+					}
+					throw generateError('create error');
+				};
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([]),
+						getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
+					},
+					Mutation: {
+						createShare: createShareResolver
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -448,8 +441,8 @@ describe('Displayer', () => {
 				await screen.findByText(userAccount1.email);
 				await user.click(screen.getByText(userAccount1.email));
 				const editShareItem = await within(
-					screen.getByTestId('add-shares-input-container')
-				).findByTestId('icon: EyeOutline');
+					screen.getByTestId(SELECTORS.addShareInputContainer)
+				).findByTestId(ICON_REGEXP.shareCanRead);
 				expect(screen.queryByText(userAccount1.email)).not.toBeInTheDocument();
 				// change to edit permission to be fully distinguishable
 				await user.click(editShareItem);
@@ -458,18 +451,18 @@ describe('Displayer', () => {
 					// run timers of popover
 					jest.runOnlyPendingTimers();
 				});
-				const nodeSharingArea = screen.getByTestId('node-sharing-collaborators');
+				const nodeSharingArea = screen.getByTestId(SELECTORS.sharingTabCollaborators);
 				await user.click(screen.getByText(/editor/i));
-				await within(nodeSharingArea).findByTestId('icon: Edit2Outline');
+				await within(nodeSharingArea).findByTestId(ICON_REGEXP.shareCanWrite);
 				// close popover by clicking on the chip label
 				await user.click(screen.getByText(userAccount1.full_name));
-				expect(screen.queryByTestId('icon: Eye2Outline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
 				// add second share
 				await user.type(chipInput, userAccount2.full_name[0]);
 				await screen.findByText(userAccount2.email);
 				await user.click(screen.getByText(userAccount2.email));
-				await within(screen.getByTestId('add-shares-input-container')).findByTestId(
-					'icon: EyeOutline'
+				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
+					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount2.email)).not.toBeInTheDocument();
 				await user.type(
@@ -491,27 +484,29 @@ describe('Displayer', () => {
 				expect(actionButton).not.toBeInTheDocument();
 				// navigation is kept on sharing tab
 				expect(screen.getByRole('button', { name: /share/i })).toBeVisible();
-				const addSharesContainer = screen.getByTestId('add-shares-input-container');
+				const addSharesContainer = screen.getByTestId(SELECTORS.addShareInputContainer);
 				// share 1 has been created
 				expect(screen.getByText(userAccount1.full_name)).toBeVisible();
 				expect(
-					within(screen.getByTestId('node-sharing-collaborators')).getByTestId('icon: Edit2Outline')
+					within(screen.getByTestId(SELECTORS.sharingTabCollaborators)).getByTestId(
+						ICON_REGEXP.shareCanWrite
+					)
 				).toBeVisible();
 				expect(
 					within(addSharesContainer).queryByText(userAccount1.full_name)
 				).not.toBeInTheDocument();
 				expect(
-					within(addSharesContainer).queryByTestId('icon: Edit2Outline')
+					within(addSharesContainer).queryByTestId(ICON_REGEXP.shareCanWrite)
 				).not.toBeInTheDocument();
 				// share 2 is still inside add share chip input
 				expect(within(addSharesContainer).getByText(userAccount2.full_name)).toBeVisible();
-				expect(within(addSharesContainer).getByTestId('icon: EyeOutline')).toBeVisible();
+				expect(within(addSharesContainer).getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
 				// custom message input field is valued with the custom text
 				expect(
 					screen.getByRole('textbox', { name: /add a custom message to this notification/i })
 				).toHaveDisplayValue(customText);
 				// share button is enabled
-				expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled', '');
+				expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 			});
 		});
 	});

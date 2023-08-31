@@ -6,8 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Container, Responsive } from '@zextras/carbonio-design-system';
-import { Action } from '@zextras/carbonio-shell-ui';
+import { Container, Responsive, Text } from '@zextras/carbonio-design-system';
 import { map, filter, last } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -19,8 +18,8 @@ import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
-import { CreateOptionsContent, useCreateOptions } from '../../hooks/useCreateOptions';
-import { DISPLAYER_WIDTH, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
+import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
+import { DISPLAYER_WIDTH, DOCS_EXTENSIONS, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
 import { ListContext, ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
 import { useGetChildrenQuery } from '../hooks/graphql/queries/useGetChildrenQuery';
@@ -106,9 +105,10 @@ const FolderView: React.VFC = () => {
 	}, []);
 
 	const { openCreateModal: openCreateFolderModal } = useCreateModal(
-		t('folder.create.modal.title', 'Create New folder'),
-		t('folder.create.modal.input.label.name', 'Folder Name'),
+		t('folder.create.modal.title', 'Create new folder'),
+		t('folder.create.modal.input.label.name', 'Folder name'),
 		createFolderCallback,
+		undefined,
 		resetNewFolder
 	);
 
@@ -150,11 +150,12 @@ const FolderView: React.VFC = () => {
 	const { openCreateModal: openCreateFileModal } = useCreateModal(
 		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
 		/* i18next-extract-disable-next-line */
-		t(`docs.create.modal.title.${documentGenericType}`, `Create New ${documentGenericType}`),
+		t(`docs.create.modal.title.${documentGenericType}`, `Create new ${documentGenericType}`),
 		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
 		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
 		createDocsFileAction,
+		newFile ? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[newFile]}`}</Text> : undefined,
 		resetNewFile
 	);
 
@@ -177,14 +178,14 @@ const FolderView: React.VFC = () => {
 		(): ContextualMenuProps['actions'] => [
 			{
 				id: ACTION_IDS.CREATE_FOLDER,
-				label: t('create.options.new.folder', 'New Folder'),
+				label: t('create.options.new.folder', 'New folder'),
 				icon: 'FolderOutline',
 				onClick: createFolderAction,
 				disabled: !isCanCreateFolder
 			},
 			{
 				id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-				label: t('create.options.new.document', 'New Document'),
+				label: t('create.options.new.document', 'New document'),
 				icon: 'FileTextOutline',
 				disabled: !isCanCreateFile,
 				items: [
@@ -204,7 +205,7 @@ const FolderView: React.VFC = () => {
 			},
 			{
 				id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-				label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
+				label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 				icon: 'FileCalcOutline',
 				disabled: !isCanCreateFile,
 				items: [
@@ -224,7 +225,7 @@ const FolderView: React.VFC = () => {
 			},
 			{
 				id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-				label: t('create.options.new.presentation', 'New Presentation'),
+				label: t('create.options.new.presentation', 'New presentation'),
 				icon: 'FilePresentationOutline',
 				disabled: !isCanCreateFile,
 				items: [
@@ -247,18 +248,17 @@ const FolderView: React.VFC = () => {
 	);
 
 	useEffect(() => {
-		const createActions = map<
-			ContextualMenuProps['actions'][number],
-			NonNullable<CreateOptionsContent['createOptions']>[number]
-		>(actions, (action) => ({
-			type: ACTION_TYPES.NEW,
-			id: action.id,
-			action: () =>
-				({
+		const createActions = map<ContextualMenuProps['actions'][number], CreateOption>(
+			actions,
+			(action) => ({
+				type: ACTION_TYPES.NEW,
+				id: action.id,
+				action: () => ({
 					group: FILES_APP_ID,
 					...action
-				} as Action)
-		}));
+				})
+			})
+		);
 
 		setCreateOptions(
 			{
@@ -312,9 +312,14 @@ const FolderView: React.VFC = () => {
 		return [];
 	}, [currentFolder]);
 
+	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
+		() => <SortingComponent />,
+		[]
+	);
+
 	const ListComponent = useMemo(
 		() => (
-			<ListHeaderActionContext.Provider value={<SortingComponent />}>
+			<ListHeaderActionContext.Provider value={listHeaderActionValue}>
 				<List
 					nodes={nodes}
 					folderId={currentFolderId}
@@ -328,11 +333,23 @@ const FolderView: React.VFC = () => {
 				/>
 			</ListHeaderActionContext.Provider>
 		),
-		[actions, currentFolderId, hasMore, isCanUploadFile, loadMore, loading, nodes, t]
+		[
+			actions,
+			currentFolderId,
+			hasMore,
+			isCanUploadFile,
+			listHeaderActionValue,
+			loadMore,
+			loading,
+			nodes,
+			t
+		]
 	);
 
+	const listContextValue = useMemo(() => ({ isEmpty, setIsEmpty }), [isEmpty]);
+
 	return (
-		<ListContext.Provider value={{ isEmpty, setIsEmpty }}>
+		<ListContext.Provider value={listContextValue}>
 			<Container
 				orientation="row"
 				crossAlignment="flex-start"

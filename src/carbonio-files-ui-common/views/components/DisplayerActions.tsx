@@ -154,7 +154,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 			[Action.ManageShares]: {
 				id: 'ManageShares',
 				icon: 'ShareOutline',
-				label: t('actions.manageShares', 'Manage Shares'),
+				label: t('actions.manageShares', 'Manage shares'),
 				onClick: manageShares
 			},
 			[Action.Flag]: {
@@ -199,7 +199,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 			},
 			[Action.Rename]: {
 				id: 'Rename',
-				icon: 'EditOutline',
+				icon: 'Edit2Outline',
 				label: t('actions.rename', 'Rename'),
 				onClick: (): void => {
 					openRenameModal(node);
@@ -220,7 +220,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 			[Action.DeletePermanently]: {
 				id: 'DeletePermanently',
 				icon: 'DeletePermanentlyOutline',
-				label: t('actions.deletePermanently', 'Delete Permanently'),
+				label: t('actions.deletePermanently', 'Delete permanently'),
 				onClick: openDeletePermanentlyModal
 			}
 		}),

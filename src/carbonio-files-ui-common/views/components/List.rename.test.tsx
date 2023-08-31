@@ -5,7 +5,6 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { fireEvent, screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
@@ -13,8 +12,9 @@ import { List } from './List';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode, sortNodes } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeSort } from '../../types/graphql/types';
-import { mockUpdateNodeError } from '../../utils/mockUtils';
+import { mockErrorResolver } from '../../utils/resolverMocks';
 import { generateError, renameNode, setup, selectNodes } from '../../utils/testUtils';
 
 describe('Rename', () => {
@@ -33,7 +33,7 @@ describe('Rename', () => {
 
 			// activate selection mode by selecting items
 			await selectNodes(
-				map(children, (node) => (node as Node).id),
+				map(children, (node) => node?.id || ''),
 				user
 			);
 			// check that all wanted items are selected
@@ -74,8 +74,10 @@ describe('Rename', () => {
 			const currentFolder = populateFolder(2);
 			// enable permission to rename
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+				}
 			});
 			const sort = NodeSort.NameAsc; // sort only by name
 			sortNodes(currentFolder.children.nodes, sort);
@@ -84,15 +86,11 @@ describe('Rename', () => {
 			const element = currentFolder.children.nodes[0] as Node;
 			const newName = (currentFolder.children.nodes[1] as Node).name;
 
-			const mocks = [
-				mockUpdateNodeError(
-					{
-						node_id: element.id,
-						name: newName
-					},
-					new ApolloError({ graphQLErrors: [generateError('Error! Name already assigned')] })
-				)
-			];
+			const mocks = {
+				Mutation: {
+					updateNode: mockErrorResolver(generateError('Error! Name already assigned'))
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
 				<List
@@ -107,15 +105,14 @@ describe('Rename', () => {
 			await selectNodes([element.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			// check that the rename action becomes visible
 			await renameNode(newName, user);
-			const error = await within(screen.getByTestId('modal')).findByText(
+			const error = await within(screen.getByTestId(SELECTORS.modal)).findByText(
 				/Error! Name already assigned/i
 			);
-			const inputFieldDiv = screen.getByTestId('input-name');
-			const inputField = within(inputFieldDiv).getByRole('textbox');
+			const inputField = screen.getByRole('textbox');
 			expect(error).toBeVisible();
 			expect(inputField).toBeVisible();
 			expect(inputField).toHaveValue(newName);
@@ -139,7 +136,7 @@ describe('Rename', () => {
 			);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeItem);
 			await screen.findByText(ACTION_REGEXP.manageShares);
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
@@ -149,9 +146,11 @@ describe('Rename', () => {
 			const currentFolder = populateFolder(5);
 			// enable permission to Mfd
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = populateFolder(0, currentFolder.id, currentFolder.name);
+				}
 			});
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;
@@ -167,7 +166,7 @@ describe('Rename', () => {
 			await selectNodes([element0.id, element1.id], user);
 
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(`node-item-${element0.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			fireEvent.contextMenu(nodeItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			let renameAction = screen.queryByText(ACTION_REGEXP.rename);
@@ -176,6 +175,7 @@ describe('Rename', () => {
 			fireEvent.contextMenu(nodeItem);
 			renameAction = await screen.findByText(ACTION_REGEXP.rename);
 			expect(renameAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(renameAction).not.toHaveAttribute('disabled', '');
 		});
 	});

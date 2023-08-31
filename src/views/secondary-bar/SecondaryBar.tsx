@@ -27,7 +27,7 @@ import { useNavigation } from '../../hooks/useNavigation';
 
 type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
-	completeTotalBadgeCounter?: string | undefined;
+	completeTotalBadgeCounter?: string;
 	isUploadFailed?: boolean;
 };
 
@@ -40,7 +40,7 @@ interface SecondaryBarProps {
 	expanded: boolean;
 }
 
-export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
+export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element => {
 	const { navigateTo } = useNavigation();
 	const [t] = useTranslation();
 	const { data } = useGetRootsListQuery();
@@ -150,7 +150,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 		const trashItems: AccordionItemWithPriority[] = [
 			{
 				id: ROOTS.TRASH_MY_ELEMENTS,
-				label: t('secondaryBar.filtersList.myElements', 'My elements'),
+				label: t('secondaryBar.filtersList.myElements', 'My items'),
 				icon: 'HardDriveOutline',
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
@@ -161,7 +161,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): JSX.Element => {
 			},
 			{
 				id: ROOTS.TRASH_SHARED_ELEMENTS,
-				label: t('secondaryBar.filtersList.sharedElements', 'Shared elements'),
+				label: t('secondaryBar.filtersList.sharedElements', 'Shared items'),
 				icon: 'ShareOutline',
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();

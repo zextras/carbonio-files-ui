@@ -511,7 +511,6 @@
     },
     "node": {
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Gửi tệp qua đội",
             "name_LOCAL_ROOT": "Trang chủ",
             "name_SHARED_WITH_ME_ROOT": "Chia sẻ với tôi",
             "name_TRASH_ROOT": "Thùng rác"
@@ -700,7 +699,6 @@
             "trash": "Thùng rác",
             "recents": "Hiện tại"
         },
-        "team": "Gửi tệp qua",
         "uploads": "Tải lên"
     },
     "selectionMode": {

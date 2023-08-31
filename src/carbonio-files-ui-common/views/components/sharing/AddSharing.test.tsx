@@ -6,35 +6,41 @@
 
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { AddSharing } from './AddSharing';
+import * as actualNetworkModule from '../../../../network/network';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
 	populateNode,
 	populateShare,
 	populateUser
 } from '../../../mocks/mockUtils';
-import { GetNodeQuery, GetNodeQueryVariables, SharePermission } from '../../../types/graphql/types';
+import { Resolvers } from '../../../types/graphql/resolvers-types';
+import {
+	GetNodeDocument,
+	GetNodeQuery,
+	GetNodeQueryVariables,
+	Share,
+	SharePermission
+} from '../../../types/graphql/types';
 import {
 	getNodeVariables,
 	mockCreateShare,
-	mockGetAccountByEmail,
-	mockGetNode
-} from '../../../utils/mockUtils';
+	mockErrorResolver,
+	mockGetAccountByEmail
+} from '../../../utils/resolverMocks';
 import { generateError, setup } from '../../../utils/testUtils';
 
-const mockedSoapFetch: jest.Mock = jest.fn();
+const mockedSoapFetch = jest.fn();
 
-jest.mock('../../../../network/network', () => ({
-	soapFetch: jest.fn(
-		(): Promise<unknown> =>
-			new Promise((resolve, reject) => {
-				const result = mockedSoapFetch();
-				result ? resolve(result) : reject(new Error('no result provided'));
-			})
-	)
+jest.mock<typeof import('../../../../network/network')>('../../../../network/network', () => ({
+	soapFetch: <Req, Res>(): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+		new Promise<Res>((resolve, reject) => {
+			const result = mockedSoapFetch();
+			result ? resolve(result) : reject(new Error('no result provided'));
+		})
 }));
 
 describe('Add Sharing', () => {
@@ -44,7 +50,11 @@ describe('Add Sharing', () => {
 		const userAccount = populateUser();
 		// set email to lowercase to be compatible with the contacts regexp
 		userAccount.email = userAccount.email.toLowerCase();
-		const mocks = [mockGetAccountByEmail({ email: userAccount.email }, userAccount)];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -86,7 +96,11 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'existing-share-1', userAccount);
 		node.shares = [share];
-		const mocks = [mockGetAccountByEmail({ email: userAccount.email }, userAccount)];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -129,7 +143,7 @@ describe('Add Sharing', () => {
 			]
 		});
 
-		const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
@@ -159,7 +173,7 @@ describe('Add Sharing', () => {
 			]
 		});
 
-		const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		await user.type(chipInput, 'c');
@@ -186,7 +200,7 @@ describe('Add Sharing', () => {
 			]
 		});
 
-		const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		await user.type(chipInput, 'c');
@@ -210,19 +224,14 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadOnly;
-		const createShareMutationFn = jest.fn();
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadOnly
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -249,13 +258,13 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 	});
 
 	test('when user click on a new share permissions icon button of the chip the popover is shown', async () => {
@@ -264,7 +273,11 @@ describe('Add Sharing', () => {
 		const userAccount = populateUser();
 		// set email to lowercase to be compatible with the contacts regexp
 		userAccount.email = userAccount.email.toLowerCase();
-		const mocks = [mockGetAccountByEmail({ email: userAccount.email }, userAccount)];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		const contact = populateGalContact(userAccount.full_name, userAccount.email);
 		mockedSoapFetch.mockReturnValue({
@@ -282,8 +295,6 @@ describe('Add Sharing', () => {
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
 		expect(chipInput).toHaveValue(userAccount.full_name[0]);
-		// wait for the single character to be typed
-		// await screen.findByText(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
 		await screen.findByText(userAccount.email);
 		expect(screen.getByText(userAccount.full_name)).toBeVisible();
@@ -295,7 +306,7 @@ describe('Add Sharing', () => {
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 		await screen.findByText(userAccount.full_name);
 		// click on the chip to open the popover
-		await user.click(screen.getByTestId('icon: EyeOutline'));
+		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
@@ -319,19 +330,14 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadWriteAndShare;
-		const createShareMutationFn = jest.fn();
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadWriteAndShare
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -341,9 +347,9 @@ describe('Add Sharing', () => {
 			]
 		});
 		// write getNode in cache since it is used to establish permissions
-		const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			...mockedGetNodeQuery.request,
+			query: GetNodeDocument,
+			variables: getNodeVariables(node.id),
 			data: {
 				getNode: node
 			}
@@ -369,50 +375,52 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// click on chip to open popover
-		await user.click(screen.getByTestId('icon: EyeOutline'));
+		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		expect(screen.getByText(/editor/i)).toBeVisible();
 		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-		expect(screen.getByTestId('icon: Square')).toBeVisible();
-		expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
-		expect(screen.getByTestId('icon: Square')).not.toHaveAttribute('disabled');
+		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute('disabled');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one
 		// there are 2 editor icons because one is inside the popover
-		await waitFor(() => expect(screen.getAllByTestId('icon: Edit2Outline')).toHaveLength(2));
+		await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2));
 		// just 1 viewer icon is shown, the one inside the popover
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
 		// share permission is not selected yet
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// double check that the popover is kept open
 		expect(screen.getByText(/viewer/i)).toBeVisible();
 		// now select the share permission
-		await user.click(screen.getByTestId('icon: Square'));
-		await screen.findByTestId('icon: Share');
+		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
+		await screen.findByTestId(ICON_REGEXP.shareCanShare);
 		// popover is still open so there are 2 editor icons (chip and popover), 1 viewer (popover) and 1 share (chip)
-		expect(screen.getAllByTestId('icon: Edit2Outline')).toHaveLength(2);
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
+		expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2);
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 		expect(screen.getByText(/viewer/i)).toBeVisible();
 		// and sharing allowed is now checked inside the popover
-		expect(screen.queryByTestId('icon: Square')).not.toBeInTheDocument();
-		expect(screen.getByTestId('icon: CheckmarkSquare')).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.checkboxUnchecked)).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 		// close popover
 		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
 		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 		// now only the chip is shown, so we have 1 editor icon, 1 share and no viewer
-		expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
-		expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
 		// confirm add with share button
 		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 	});
 
 	test('without write permissions editor role cannot be selected', async () => {
@@ -425,19 +433,14 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadAndShare;
-		const createShareMutationFn = jest.fn();
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadAndShare
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -447,9 +450,9 @@ describe('Add Sharing', () => {
 			]
 		});
 		// write getNode in cache since it is used to establish permissions
-		const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			...mockedGetNodeQuery.request,
+			query: GetNodeDocument,
+			variables: getNodeVariables(node.id),
 			data: {
 				getNode: node
 			}
@@ -475,35 +478,36 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// click on chip to open popover
-		await user.click(screen.getByTestId('icon: EyeOutline'));
+		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		expect(screen.getByText(/editor/i)).toBeVisible();
 		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-		expect(screen.getByTestId('icon: Square')).toBeVisible();
-		expect(screen.getByTestId('icon: Square')).not.toHaveAttribute('disabled');
+		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		// click on editor shouldn't do anything
 		await user.click(screen.getByText(/editor/i));
 		// click on share should set share permissions
-		await user.click(screen.getByTestId('icon: Square'));
+		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 		// chip is updated
-		await screen.findByTestId('icon: Share');
+		await screen.findByTestId(ICON_REGEXP.shareCanShare);
 		// close popover
 		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
 		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 		// chip has read and share permissions since click on editor did nothing
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 	});
 
-	test('when user click on share button shares are created, chip input and custom message textarea are cleared and shared button is disabled', async () => {
+	test('when user click on share button shares are created, chip input is cleared and shared button is disabled', async () => {
 		const node = populateNode();
 		node.permissions.can_share = true;
 		const userAccount = populateUser();
@@ -511,20 +515,14 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadOnly;
-		const createShareMutationFn = jest.fn();
-		// const customMessage = 'this is a custom message';
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadOnly
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -551,24 +549,17 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
-		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
-		// write a custom message
-		// const customMessageInputField = screen.getByRole('textbox', {
-		// 	name: /add a custom message to this notification/i
-		// });
-		// await user.type(customMessageInputField, customMessage);
-		// expect(customMessageInputField).toHaveValue(customMessage);
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
-		// expect(customMessageInputField).toHaveValue('');
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 		expect(screen.queryByText(userAccount.full_name[0])).not.toBeInTheDocument();
 		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: EyeOutline')).not.toBeInTheDocument();
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 	});
 
 	test('share button is enabled only when a valid new share chip is created', async () => {
@@ -579,20 +570,14 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const share = populateShare(node, 'new-share', userAccount);
 		share.permission = SharePermission.ReadOnly;
-		const createShareMutationFn = jest.fn();
-		// const customMessage = 'this is a custom message';
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount.email }, userAccount),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount.id,
-					permission: SharePermission.ReadOnly
-				},
-				share,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount)
+			},
+			Mutation: {
+				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -606,15 +591,9 @@ describe('Add Sharing', () => {
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		// share button is disabled
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
-		// write a custom message
-		// const customMessageInputField = screen.getByRole('textbox', {
-		// 	name: /add a custom message to this notification/i
-		// });
-		// await user.type(customMessageInputField, customMessage);
-		// expect(customMessageInputField).toHaveValue(customMessage);
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// share button is still disabled
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
@@ -629,13 +608,12 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount.full_name);
 		// share button is now active
-		expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled');
-
+		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 		// share button returns to be disabled after creation success
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 	});
 
 	test('if no valid account is found chip is not added and share button remains disabled', async () => {
@@ -646,13 +624,11 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		// force error
 		const error = generateError('account not found');
-		const mocks = [
-			mockGetAccountByEmail(
-				{ email: userAccount.email },
-				null,
-				new ApolloError({ graphQLErrors: [error] })
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockErrorResolver(error)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
 			match: [
@@ -666,7 +642,7 @@ describe('Add Sharing', () => {
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 		expect(chipInput).toBeVisible();
 		// share button is disabled
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
@@ -682,7 +658,7 @@ describe('Add Sharing', () => {
 		// dropdown is closed
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 		// share button returns to be disabled after creation success
-		expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 	});
 
 	test('multiple shares are creatable at once. Popover changes permissions of the active share only', async () => {
@@ -699,29 +675,14 @@ describe('Add Sharing', () => {
 		userAccount2.email = userAccount2.email.toLowerCase();
 		const share2 = populateShare(node, 'new-share-2', userAccount2);
 		share2.permission = SharePermission.ReadAndShare;
-		const createShareMutationFn = jest.fn();
-		const mocks = [
-			mockGetAccountByEmail({ email: userAccount1.email }, userAccount1),
-			mockGetAccountByEmail({ email: userAccount2.email }, userAccount2),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount1.id,
-					permission: SharePermission.ReadAndWrite
-				},
-				share1,
-				createShareMutationFn
-			),
-			mockCreateShare(
-				{
-					node_id: node.id,
-					share_target_id: userAccount2.id,
-					permission: SharePermission.ReadAndShare
-				},
-				share2,
-				createShareMutationFn
-			)
-		];
+		const mocks = {
+			Query: {
+				getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
+			},
+			Mutation: {
+				createShare: jest.fn(mockCreateShare(share1, share2) as (...args: unknown[]) => Share)
+			}
+		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation for both the calls
 		mockedSoapFetch
 			.mockReturnValueOnce({
@@ -739,9 +700,9 @@ describe('Add Sharing', () => {
 				]
 			});
 		// write getNode in cache since it is used to establish permissions
-		const mockedGetNodeQuery = mockGetNode(getNodeVariables(node.id), node);
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			...mockedGetNodeQuery.request,
+			query: GetNodeDocument,
+			variables: getNodeVariables(node.id),
 			data: {
 				getNode: node
 			}
@@ -767,9 +728,9 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount1.full_name);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// create second chip
 		await user.type(chipInput, userAccount2.full_name[0]);
 		await waitFor(() => expect(chipInput).toHaveValue(userAccount2.full_name[0]));
@@ -781,51 +742,52 @@ describe('Add Sharing', () => {
 		// chip is created
 		await screen.findByText(userAccount2.full_name);
 		// chip is created with read-only permissions, so now we have 2 chips in read-only
-		expect(screen.getAllByTestId('icon: EyeOutline')).toHaveLength(2);
-		expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
-		expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
-		expect(screen.queryByTestId('icon: Share')).not.toBeInTheDocument();
+		expect(screen.getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(2);
+		expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 
 		// edit first share to be an editor
 		// click on chip to open popover
-		await user.click(screen.getAllByTestId('icon: EyeOutline')[0]);
+		await user.click(screen.getAllByTestId(ICON_REGEXP.shareCanRead)[0]);
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		expect(screen.getByText(/editor/i)).toBeVisible();
-		expect(screen.getByTestId('exclusive-selection-editor')).not.toHaveAttribute('disabled');
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
+		expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one
 		// there are 2 editor icons because one is inside the popover
-		await waitFor(() => expect(screen.getAllByTestId('icon: Edit2Outline')).toHaveLength(2));
+		await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2));
 		// click on chip to close popover
 		await user.click(screen.getByText(userAccount1.full_name));
-		expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
 
 		// edit second share to allow re-share
-		await user.click(screen.getByTestId('icon: EyeOutline'));
+		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		// previous popover is closed and the one related to second share is opened
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
 		// select the share permission
-		await user.click(screen.getByTestId('icon: Square'));
+		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 		// chip is updated, only this chip has the share icon
-		await screen.findByTestId('icon: Share');
+		await screen.findByTestId(ICON_REGEXP.shareCanShare);
 		// close popover
 		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
 		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 
 		// now we have 2 chips, one with editor role and one with viewer with sharing role
-		expect(screen.getAllByTestId('icon: Close')).toHaveLength(2);
-		expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
-		expect(screen.getByTestId('icon: EyeOutline')).toBeVisible();
-		expect(screen.getByTestId('icon: Share')).toBeVisible();
+		expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
+		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 
 		// confirm add with share button
 		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(createShareMutationFn).toHaveBeenCalled());
+		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 		// mutation is called 2 times, one for each new collaborator
-		expect(createShareMutationFn).toHaveBeenCalledTimes(2);
+		expect(mocks.Mutation.createShare).toHaveBeenCalledTimes(2);
 	});
 });

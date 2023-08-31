@@ -5,24 +5,22 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
-import { DISPLAYER_TABS } from '../../constants';
+import { DATE_FORMAT, DISPLAYER_TABS } from '../../constants';
+import { ICON_REGEXP } from '../../constants/test';
 import { populateFile, populateLink } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
-	getNodeVariables,
-	getSharesVariables,
 	mockCreateLink,
-	mockCreateLinkError,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks,
-	mockGetShares
-} from '../../utils/mockUtils';
+	mockErrorResolver
+} from '../../utils/resolverMocks';
 import { generateError, getFirstOfNextMonth, setup } from '../../utils/testUtils';
 import { formatDate, initExpirationDate } from '../../utils/utils';
 
@@ -35,12 +33,13 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
 				const description = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -72,12 +71,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -86,14 +86,14 @@ describe('Displayer', () => {
 
 				await screen.findByText(/public link/i);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
 				const chosenDate = getFirstOfNextMonth();
 				// always click on first 1 visible on the date picker
 				await user.click(screen.getAllByText('1')[0]);
-				await screen.findByText(formatDate(chosenDate, 'DD/MM/YYYY'));
+				await screen.findByText(formatDate(chosenDate, DATE_FORMAT));
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -114,12 +114,13 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
 				const description = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -132,11 +133,11 @@ describe('Displayer', () => {
 					name: /link's description/i
 				});
 				await user.type(descriptionInput, description);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(getFirstOfNextMonth(), 'DD/MM/YYYY');
+				const chosenDate = formatDate(getFirstOfNextMonth(), DATE_FORMAT);
 				// always click on first 1 visible on the date picker
 				await user.click(screen.getAllByText('1')[0]);
 				await screen.findByText(chosenDate);
@@ -162,12 +163,13 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
 				const description = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -180,11 +182,11 @@ describe('Displayer', () => {
 					name: /link's description/i
 				});
 				await user.type(descriptionInput, description);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(getFirstOfNextMonth(), 'DD/MM/YYYY');
+				const chosenDate = formatDate(getFirstOfNextMonth(), DATE_FORMAT);
 				// always click on first 1 visible on the date picker
 				await user.click(screen.getAllByText('1')[0]);
 				await screen.findByText(chosenDate);
@@ -228,16 +230,16 @@ describe('Displayer', () => {
 				const link = populateLink(node);
 				link.description = description;
 				link.expires_at = expiresAt?.getTime();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockCreateLink(
-						{ node_id: node.id, description: link.description, expires_at: link.expires_at },
-						link
-					)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						createLink: mockCreateLink(link)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -250,11 +252,11 @@ describe('Displayer', () => {
 					name: /link's description/i
 				});
 				await user.type(descriptionInput, description);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(firstOfNextMonth, 'DD/MM/YYYY');
+				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
 				// always click on first 1 visible on the date picker
 				await user.click(screen.getAllByText('1')[0]);
 				await screen.findByText(chosenDate);
@@ -312,20 +314,16 @@ describe('Displayer', () => {
 				const link = populateLink(node);
 				link.description = description;
 				link.expires_at = expiresAt?.getTime();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id }),
-					mockCreateLinkError(
-						{
-							node_id: node.id,
-							description: link.description,
-							expires_at: link.expires_at
-						},
-						new ApolloError({ graphQLErrors: [generateError('create link error')] })
-					)
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						createLink: mockErrorResolver(generateError('create link error'))
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
@@ -338,11 +336,11 @@ describe('Displayer', () => {
 					name: /link's description/i
 				});
 				await user.type(descriptionInput, description);
-				await user.click(screen.getByTestId('icon: CalendarOutline'));
+				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
 				await user.click(nextMonthButton);
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(firstOfNextMonth, 'DD/MM/YYYY');
+				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
 				// always click on first 1 visible on the date picker
 				await user.click(screen.getAllByText('1')[0]);
 				await screen.findByText(chosenDate);

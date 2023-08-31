@@ -154,7 +154,7 @@
         },
         "revokeCollaborationLink": {
             "button": {
-                "confirm": "Retirer"
+                "confirm": "Révoquer"
             },
             "header": "Révoquer le lien de collaboration {{nodeName}}",
             "body": "En révoquant ce lien, vous interdisez la possibilité de créer de nouveaux partages. Les personnes ayant déjà utilisé ce lien de collaboration garderont l'accès à ce nœud."
@@ -187,7 +187,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Fichiers envoyés via Team",
             "name_LOCAL_ROOT": "Accueil",
             "name_SHARED_WITH_ME_ROOT": "Partagé avec moi",
             "name_TRASH_ROOT": "Corbeille"
@@ -228,7 +227,6 @@
             "sharedElements": "Eléments partagés",
             "recents": "Récents"
         },
-        "team": "Fichiers envoyés via Team",
         "uploads": "Chargements",
         "filesHome": "Accueil"
     },
@@ -878,7 +876,7 @@
     },
     "collaborationLinks": {
         "button": {
-            "revoke": "Retirer",
+            "revoke": "Révoquer",
             "generateLink": "Générer un lien"
         },
         "title": "Liens de collaboration",

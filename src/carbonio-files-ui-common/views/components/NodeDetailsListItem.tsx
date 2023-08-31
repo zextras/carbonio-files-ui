@@ -12,7 +12,7 @@ import { useTheme } from 'styled-components';
 
 import { NodeAvatarIcon } from './NodeAvatarIcon';
 import useUserInfo from '../../../hooks/useUserInfo';
-import { LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
+import { DATE_FORMAT, LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { formatDate, getIconByFileType, getIconColorByFileType } from '../../utils/utils';
 
@@ -84,7 +84,7 @@ export const NodeDetailsListItem: React.VFC<NodeDetailsListItemProps> = ({
 					{displayName && <Text>&middot;</Text>}
 					<Padding left="extrasmall">
 						<Text color="gray1" size="extrasmall">
-							{formatDate(updatedAt, 'DD/MM/YYYY', userInfo.zimbraPrefTimeZoneId)}
+							{formatDate(updatedAt, DATE_FORMAT, userInfo.zimbraPrefTimeZoneId)}
 						</Text>
 					</Padding>
 				</>

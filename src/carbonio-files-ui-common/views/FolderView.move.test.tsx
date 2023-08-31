@@ -6,32 +6,28 @@
 
 import React from 'react';
 
-import {
-	fireEvent,
-	screen,
-	waitFor,
-	waitForElementToBeRemoved,
-	within
-} from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import {
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	mockGetChildren,
-	mockGetParent,
+	mockGetNode,
 	mockGetPath,
-	mockGetPermissions,
 	mockMoveNodes
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import {
 	buildBreadCrumbRegExp,
 	moveNode,
@@ -40,15 +36,10 @@ import {
 	triggerLoadMore
 } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
 		</div>
@@ -71,25 +62,21 @@ describe('Move', () => {
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id),
 				data: {
 					getNode: destinationFolder
 				}
 			});
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockMoveNodes(
-					{
-						node_ids: [nodeToMove.id],
-						destination_id: destinationFolder.id
-					},
-					[{ ...nodeToMove, parent: destinationFolder }]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -102,7 +89,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -113,13 +100,13 @@ describe('Move', () => {
 			await selectNodes([nodeToMove.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-			expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - 1
 			);
 
@@ -127,7 +114,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -147,31 +134,29 @@ describe('Move', () => {
 				currentFolder.children.nodes[1]
 			] as Node[];
 			forEach(nodesToMove, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).permissions.can_write_file = true;
+				mockedNode.permissions.can_write_folder = true;
+				mockedNode.permissions.can_write_file = true;
 			});
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id),
 				data: {
 					getNode: destinationFolder
 				}
 			});
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockMoveNodes(
-					{
-						node_ids: map(nodesToMove, (nodeToMove) => nodeToMove.id),
-						destination_id: destinationFolder.id
-					},
-					map(nodesToMove, (nodeToMove) => ({ ...nodeToMove, parent: destinationFolder }))
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(
+						map(nodesToMove, (nodeToMove) => ({ ...nodeToMove, parent: destinationFolder }))
+					)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -184,7 +169,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -200,26 +185,23 @@ describe('Move', () => {
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesToMove.length);
 			let moveAction = screen.queryByTestId(ICON_REGEXP.move);
 			if (!moveAction) {
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				moveAction = await screen.findByText('Move');
 			}
 			expect(moveAction).toBeVisible();
 			await user.click(moveAction);
-			const modalList = await screen.findByTestId('modal-list-', { exact: false });
+			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 			await user.click(destinationFolderItem);
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /move/i })).not.toHaveAttribute('disabled', '')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /move/i })).toBeEnabled());
 			await user.click(screen.getByRole('button', { name: /move/i }));
-			await waitForElementToBeRemoved(screen.queryByRole('button', { name: /move/i }));
 			expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument();
 			expect(screen.queryByText('Move')).not.toBeInTheDocument();
 			await screen.findByText(/Item moved/i);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 
-			expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - nodesToMove.length
 			);
 
@@ -227,7 +209,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -248,36 +230,35 @@ describe('Move', () => {
 			destinationFolder.permissions.can_write_file = true;
 			commonParent.children.nodes.push(currentFolder, destinationFolder);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 			const nodesToMove = [...firstPage];
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(firstPage)
-				} as Folder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [commonParent, currentFolder]),
-				mockGetChildren(getChildrenVariables(commonParent.id), commonParent),
-				mockGetPath({ node_id: commonParent.id }, [commonParent]),
-				mockMoveNodes(
-					{
-						node_ids: map(nodesToMove, (node) => (node as Node).id),
-						destination_id: destinationFolder.id
-					},
-					map(nodesToMove, (node) => ({ ...node, parent: destinationFolder }))
-				),
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(secondPage)
-				} as Folder)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([commonParent], [commonParent, currentFolder]),
+					// use default children resolver to split chidlren in pages
+					getNode: mockGetNode({
+						getChildren: [
+							{ ...currentFolder, children: populateNodePage(firstPage) },
+							{ ...currentFolder, children: populateNodePage(secondPage) },
+							commonParent
+						],
+						getPermissions: [currentFolder]
+					})
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes(
+						map(nodesToMove, (node) => ({ ...node, parent: destinationFolder }))
+					)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { findByTextWithMarkup, user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -294,24 +275,29 @@ describe('Move', () => {
 			);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
-			expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-			await user.click(screen.getByTestId('icon: MoreVertical'));
+			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const moveAction = await screen.findByText(ACTION_REGEXP.move);
 			expect(moveAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(moveAction).not.toHaveAttribute('disabled', '');
 			await user.click(moveAction);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name, currentFolder.name));
-			const modalList = screen.getByTestId('modal-list-', { exact: false });
+			const modalList = screen.getByTestId(SELECTORS.modalList);
 			await within(modalList).findByText((currentFolder.children.nodes[0] as Node).name);
 			const moveModalButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });
-			expect(moveModalButton).toHaveAttribute('disabled', '');
+			expect(moveModalButton).toBeDisabled();
 			await user.click(screen.getByText(commonParent.name));
 			await findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name));
 			await screen.findByText(destinationFolder.name);
+			act(() => {
+				// run modal timers
+				jest.runOnlyPendingTimers();
+			});
 			expect(screen.getByText(destinationFolder.name)).toBeVisible();
 			expect(screen.getByText(currentFolder.name)).toBeVisible();
 			await user.click(screen.getByText(destinationFolder.name));
-			await waitFor(() => expect(moveModalButton).not.toHaveAttribute('disabled', ''));
+			await waitFor(() => expect(moveModalButton).toBeEnabled());
 			await user.click(moveModalButton);
 			await screen.findByText(/Item moved/i);
 			await screen.findByText(secondPage[0].name);
@@ -337,26 +323,22 @@ describe('Move', () => {
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id),
 				data: {
 					getNode: destinationFolder
 				}
 			});
 
-			const mocks = [
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockMoveNodes(
-					{
-						node_ids: [nodeToMove.id],
-						destination_id: destinationFolder.id
-					},
-					[{ ...nodeToMove, parent: destinationFolder }]
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([{ ...nodeToMove, parent: destinationFolder }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -369,7 +351,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -383,7 +365,7 @@ describe('Move', () => {
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
 
-			expect(screen.queryAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - 1
 			);
 
@@ -391,7 +373,7 @@ describe('Move', () => {
 				GetChildrenQuery,
 				GetChildrenQueryVariables
 			>({
-				query: GET_CHILDREN,
+				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
 
@@ -405,33 +387,30 @@ describe('Move', () => {
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;
 			forEach(currentFolder.children.nodes, (mockedNode) => {
-				(mockedNode as Node).permissions.can_write_file = true;
-				(mockedNode as Node).permissions.can_write_folder = true;
-				(mockedNode as Node).parent = currentFolder;
+				if (mockedNode) {
+					mockedNode.permissions.can_write_file = true;
+					mockedNode.permissions.can_write_folder = true;
+					mockedNode.parent = currentFolder;
+				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 
-			const mocks = [
-				mockGetChildren(getChildrenVariables(currentFolder.id), {
-					...currentFolder,
-					children: populateNodePage(firstPage)
-				} as Folder),
-				mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-				mockGetParent({ node_id: currentFolder.id }, currentFolder),
-				mockGetPath({ node_id: currentFolder.id }, [currentFolder]),
-				mockMoveNodes(
-					{
-						node_ids: [firstPage[NODES_LOAD_LIMIT - 1].id],
-						destination_id: destinationFolder.id
-					},
-					[{ ...firstPage[NODES_LOAD_LIMIT - 1], parent: destinationFolder }]
-				),
-				mockGetChildren(
-					getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-					{ ...currentFolder, children: populateNodePage(secondPage) } as Folder
-				)
-			];
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					// use default children resolver to split children in pages
+					getNode: mockGetNode({
+						getChildren: [currentFolder, currentFolder],
+						getPermissions: [currentFolder]
+					})
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([
+						{ ...firstPage[NODES_LOAD_LIMIT - 1], parent: destinationFolder }
+					])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -448,7 +427,7 @@ describe('Move', () => {
 			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1].name)).not.toBeInTheDocument();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				firstPage.length - 1
 			);
 			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();

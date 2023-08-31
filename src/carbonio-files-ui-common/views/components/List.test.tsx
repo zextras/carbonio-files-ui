@@ -5,24 +5,20 @@
  */
 import React from 'react';
 
-import { screen } from '@testing-library/react';
-
 import { List } from './List';
 import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateNodes } from '../../mocks/mockUtils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
-import { selectNodes, setup } from '../../utils/testUtils';
+import { selectNodes, setup, screen } from '../../utils/testUtils';
 import * as utils from '../../utils/utils';
 
 describe('List', () => {
 	describe('Badge', () => {
 		test('should render the list header with the badge with the number of selected items', async () => {
 			const nodes = populateNodes(10);
-			const { user } = setup(<List nodes={nodes} mainList emptyListMessage={'hint'} />, {
-				mocks: []
-			});
+			const { user } = setup(<List nodes={nodes} mainList emptyListMessage={'hint'} />);
 			const nodesSelected = [nodes[0].id, nodes[1].id];
 			// the user selected the first 2 nodes
 			await selectNodes(nodesSelected, user);
@@ -33,9 +29,7 @@ describe('List', () => {
 		});
 		test('if the user clicks SELECT ALL, the badge renders with the length of all nodes, and vice versa', async () => {
 			const nodes = populateNodes(10);
-			const { user } = setup(<List nodes={nodes} mainList emptyListMessage={'hint'} />, {
-				mocks: []
-			});
+			const { user } = setup(<List nodes={nodes} mainList emptyListMessage={'hint'} />);
 			// the user selects 1 node
 			await selectNodes([nodes[0].id], user);
 			expect(screen.getByText(/SELECT ALL/i)).toBeVisible();
@@ -111,17 +105,18 @@ describe('List', () => {
 			node.type = NodeType.Text;
 			node.extension = 'odt';
 
-			const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(
-				<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
-			);
+			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
 			await user.dblClick(screen.getByText(node.name));
 			await screen.findByTestId(SELECTORS.pdfPreview);
 			expect(openWithDocsFn).not.toHaveBeenCalled();
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })).toBeVisible();
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
 			expect(
-				queryByRoleWithIcon('button', { icon: ICON_REGEXP.openDocument })
+				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })
+			).toBeVisible();
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.openDocument })).toBeVisible();
+			expect(
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.edit })
 			).not.toBeInTheDocument();
 		});
 

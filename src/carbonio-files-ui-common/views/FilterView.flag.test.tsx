@@ -5,25 +5,20 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
+import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { getFindNodesVariables, mockFindNodes, mockFlagNodes } from '../utils/mockUtils';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { mockFindNodes, mockFlagNodes } from '../utils/resolverMocks';
 import { setup, selectNodes } from '../utils/testUtils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Flag', () => {
@@ -39,19 +34,14 @@ describe('Filter View', () => {
 					(item) => item.id
 				);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockFlagNodes(
-						{
-							node_ids: nodesIdsToUnflag,
-							flag: false
-						},
-						nodesIdsToUnflag
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter)
+					},
+					Mutation: {
+						flagNodes: mockFlagNodes(nodesIdsToUnflag)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -60,7 +50,7 @@ describe('Filter View', () => {
 
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-				expect(screen.queryAllByTestId('icon: Flag')).toHaveLength(currentFilter.length);
+				expect(screen.queryAllByTestId(ICON_REGEXP.flagged)).toHaveLength(currentFilter.length);
 
 				// activate selection mode by selecting items
 				await selectNodes(nodesIdsToUnflag, user);
@@ -75,12 +65,12 @@ describe('Filter View', () => {
 				await user.click(unflagIcon);
 				// wait the snackbar with successful state to appear
 				await screen.findByText(/Item unflagged successfully/i);
-				expect(screen.getAllByTestId('icon: Flag')).toHaveLength(
+				expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(
 					currentFilter.length - nodesIdsToUnflag.length
 				);
 				// unflagged elements are not in the list anymore
 				forEach(nodesIdsToUnflag, (nodeId) => {
-					expect(screen.queryByTestId(`node-item-${nodeId}`)).not.toBeInTheDocument();
+					expect(screen.queryByTestId(SELECTORS.nodeItem(nodeId))).not.toBeInTheDocument();
 				});
 			});
 		});
@@ -92,19 +82,14 @@ describe('Filter View', () => {
 					mockedNode.flagged = true;
 				});
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					),
-					mockFlagNodes(
-						{
-							node_ids: [nodes[0].id],
-							flag: false
-						},
-						[nodes[0].id]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes)
+					},
+					Mutation: {
+						flagNodes: mockFlagNodes([nodes[0].id])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -113,10 +98,10 @@ describe('Filter View', () => {
 
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-				expect(screen.queryAllByTestId('icon: Flag')).toHaveLength(nodes.length);
+				expect(screen.queryAllByTestId(ICON_REGEXP.flagged)).toHaveLength(nodes.length);
 
 				// right click to open contextual menu on first node
-				const nodeItem = screen.getByTestId(`node-item-${nodes[0].id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodes[0].id));
 				// open context menu and click on unflag action
 				fireEvent.contextMenu(nodeItem);
 				const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
@@ -125,9 +110,9 @@ describe('Filter View', () => {
 				// wait the snackbar with successful state to appear
 				expect(unflagAction).not.toBeInTheDocument();
 				await screen.findByText(/Item unflagged successfully/i);
-				expect(screen.getAllByTestId('icon: Flag')).toHaveLength(nodes.length - 1);
+				expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(nodes.length - 1);
 				// unflagged element is not in the list anymore
-				expect(screen.queryByTestId(`node-item-${nodes[0].id}`)).not.toBeInTheDocument();
+				expect(screen.queryByTestId(SELECTORS.nodeItem(nodes[0].id))).not.toBeInTheDocument();
 			});
 		});
 
@@ -142,17 +127,14 @@ describe('Filter View', () => {
 			});
 			const nodesToUnflag = map(firstPage, (node) => node.id);
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					firstPage
-				),
-				mockFlagNodes({ node_ids: nodesToUnflag, flag: false }, nodesToUnflag),
-				mockFindNodes(
-					getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-					secondPage
-				)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(firstPage, secondPage)
+				},
+				Mutation: {
+					flagNodes: mockFlagNodes(nodesToUnflag)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				mocks,
@@ -171,7 +153,7 @@ describe('Filter View', () => {
 
 			const unflagAction = await screen.findByTestId(ICON_REGEXP.unflag);
 			await user.click(unflagAction);
-			await waitForElementToBeRemoved(screen.queryByText(firstPage[0].name));
+			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/item unflagged successfully/i);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();

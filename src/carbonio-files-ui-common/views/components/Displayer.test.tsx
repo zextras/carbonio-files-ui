@@ -6,10 +6,8 @@
 
 import React from 'react';
 
-import { screen, within } from '@testing-library/react';
-
 import { Displayer } from './Displayer';
-import { ACTION_REGEXP, ICON_REGEXP } from '../../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
 	populateFolder,
@@ -17,6 +15,8 @@ import {
 	populateNodePage,
 	populateShares
 } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File,
 	Folder,
@@ -26,17 +26,13 @@ import {
 } from '../../types/graphql/types';
 import {
 	getChildrenVariables,
-	getNodeVariables,
-	getSharesVariables,
 	mockCopyNodes,
-	mockGetChildren,
 	mockGetNode,
 	mockGetPath,
-	mockGetShares,
 	mockMoveNodes,
 	mockUpdateNode
-} from '../../utils/mockUtils';
-import { buildBreadCrumbRegExp, renameNode, setup } from '../../utils/testUtils';
+} from '../../utils/resolverMocks';
+import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
 describe('Displayer', () => {
@@ -52,35 +48,43 @@ describe('Displayer', () => {
 			id: 'copied-id',
 			name: `${node.name}(1)`
 		};
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetPath({ node_id: parent.id }, [parent]),
-			mockGetChildren(getChildrenVariables(parent.id), parent),
-			mockCopyNodes({ node_ids: [node.id], destination_id: parent.id }, [copyNode]),
-			mockGetChildren(getChildrenVariables(parent.id), {
-				...parent,
-				children: populateNodePage([...parent.children.nodes, copyNode])
-			} as Folder),
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetNode(getNodeVariables(node.id), node)
-		];
+
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({
+					getNode: [node],
+					getChildren: [
+						parent,
+						{
+							...parent,
+							children: populateNodePage([...parent.children.nodes, copyNode])
+						} as Folder
+					]
+				}),
+				getPath: mockGetPath([parent])
+			},
+			Mutation: {
+				copyNodes: mockCopyNodes([copyNode])
+			}
+		} satisfies Partial<Resolvers>;
 		const { findByTextWithMarkup, user } = setup(<Displayer translationKey="No.node" />, {
 			initialRouterEntries: [`/?node=${node.id}`],
 			mocks
 		});
 		await screen.findAllByText(node.name);
 
-		const copyIcon = within(screen.getByTestId('displayer-actions-header')).queryByTestId(
-			ICON_REGEXP.copy
-		);
+		const copyIcon = within(
+			screen.getByTestId(SELECTORS.displayerActionsHeader)
+		).queryByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 		if (copyIcon) {
-			expect(copyIcon.parentNode).not.toHaveAttribute('disabled');
+			expect(copyIcon).toBeEnabled();
 			await user.click(copyIcon);
 		} else {
-			const moreVertical = await screen.findByTestId('icon: MoreVertical');
+			const moreVertical = await screen.findByTestId(ICON_REGEXP.moreVertical);
 			if (moreVertical) {
 				await user.click(moreVertical);
 				const copyAction = await screen.findByText(ACTION_REGEXP.copy);
+				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(copyAction.parentNode).not.toHaveAttribute('disabled');
 				await user.click(copyAction);
 			} else {
@@ -93,7 +97,7 @@ describe('Displayer', () => {
 		await findByTextWithMarkup(buildBreadCrumbRegExp(parent.name));
 		// folder loading
 		await screen.findByText((parent.children.nodes[0] as File | Folder).name);
-		expect(copyButton).not.toHaveAttribute('disabled');
+		expect(copyButton).toBeEnabled();
 		await user.click(copyButton);
 		expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 		await screen.findByText(/item copied/i);
@@ -119,29 +123,33 @@ describe('Displayer', () => {
 		parent.permissions.can_write_file = true;
 		parent.children.nodes.push(destinationFolder);
 		node.parent = parent;
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetChildren(getChildrenVariables(parent.id), {
-				...parent,
-				children: populateNodePage([...parent.children.nodes, node])
-			} as Folder),
-			mockGetPath({ node_id: parent.id }, [parent]),
-			mockMoveNodes({ node_ids: [node.id], destination_id: destinationFolder.id }, [
-				{ ...node, parent: destinationFolder }
-			]),
-			mockGetChildren(getChildrenVariables(parent.id), parent),
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetNode(getNodeVariables(node.id), node)
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({
+					getNode: [node],
+					getChildren: [
+						{
+							...parent,
+							children: populateNodePage([...parent.children.nodes, node])
+						} as Folder
+					]
+				}),
+				getPath: mockGetPath([parent])
+			},
+			Mutation: {
+				moveNodes: mockMoveNodes([{ ...node, parent: destinationFolder }])
+			}
+		} satisfies Partial<Resolvers>;
 		const { findByTextWithMarkup, user } = setup(<Displayer translationKey="No.node" />, {
 			initialRouterEntries: [`/?node=${node.id}`],
 			mocks
 		});
 		await screen.findAllByText(node.name);
-		const moreVertical = screen.getByTestId('icon: MoreVertical');
+		const moreVertical = screen.getByTestId(ICON_REGEXP.moreVertical);
 		expect(moreVertical).toBeVisible();
 		await user.click(moreVertical);
 		const moveAction = await screen.findByText(ACTION_REGEXP.move);
+		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 		expect(moveAction.parentNode).not.toHaveAttribute('disabled');
 		await user.click(moveAction);
 		// modal opening
@@ -152,14 +160,12 @@ describe('Displayer', () => {
 		);
 		// breadcrumb loading
 		await findByTextWithMarkup(buildBreadCrumbRegExp(parent.name));
-		expect(moveButton).toHaveAttribute('disabled');
+		expect(moveButton).toBeDisabled();
 		await user.click(destinationFolderItem);
-		expect(moveButton).not.toHaveAttribute('disabled');
+		expect(moveButton).toBeEnabled();
 		await user.click(moveButton);
 		expect(screen.queryByRole('button', { name: ACTION_REGEXP.move })).not.toBeInTheDocument();
 		await screen.findByText(/item moved/i);
-
-		await screen.findByText(/view files and folders/i);
 		const queryResult = global.apolloClient.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 			query: GET_CHILDREN,
 			variables: getChildrenVariables(parent.id)
@@ -177,17 +183,21 @@ describe('Displayer', () => {
 		parent.children.nodes.push(node);
 		node.parent = parent;
 		const newName = 'new name';
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetChildren(getChildrenVariables(parent.id), parent),
-			mockUpdateNode({ node_id: node.id, name: newName }, { ...node, name: newName })
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getNode: [node], getChildren: [parent] }),
+				getPath: mockGetPath([parent])
+			},
+			Mutation: {
+				updateNode: mockUpdateNode({ ...node, name: newName })
+			}
+		} satisfies Partial<Resolvers>;
 		const { getByTextWithMarkup, user } = setup(<Displayer translationKey="No.node" />, {
 			initialRouterEntries: [`/?node=${node.id}`],
 			mocks
 		});
 		await screen.findAllByText(node.name);
-		const moreVertical = screen.getByTestId('icon: MoreVertical');
+		const moreVertical = screen.getByTestId(ICON_REGEXP.moreVertical);
 		expect(moreVertical).toBeVisible();
 		await user.click(moreVertical);
 		await renameNode(newName, user);
@@ -201,10 +211,11 @@ describe('Displayer', () => {
 		const node = populateNode();
 		node.shares = populateShares(node, 10);
 		node.permissions.can_share = false;
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), node),
-			mockGetShares(getSharesVariables(node.id), node)
-		];
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getNode: [node], getShares: [node] })
+			}
+		} satisfies Partial<Resolvers>;
 
 		const collaborator0Name = getChipLabel(node.shares[0]?.share_target ?? { name: '' });
 		const collaborator5Name = getChipLabel(node.shares[5]?.share_target ?? { name: '' });
@@ -213,11 +224,11 @@ describe('Displayer', () => {
 			mocks
 		});
 		await screen.findAllByText(node.name);
-		await screen.findByTestId('icon: MoreHorizontalOutline');
+		await screen.findByTestId(ICON_REGEXP.moreHorizontal);
 		expect(screen.queryByText(collaborator0Name)).not.toBeInTheDocument();
 		expect(screen.queryByText(collaborator5Name)).not.toBeInTheDocument();
-		expect(screen.getByTestId('icon: MoreHorizontalOutline')).toBeVisible();
-		await user.click(screen.getByTestId('icon: MoreHorizontalOutline'));
+		expect(screen.getByTestId(ICON_REGEXP.moreHorizontal)).toBeVisible();
+		await user.click(screen.getByTestId(ICON_REGEXP.moreHorizontal));
 		await screen.findByText(collaborator0Name);
 		await screen.findByText(collaborator5Name);
 		await screen.findAllByTestId(/icon: (EyeOutline|Edit2Outline)/);
@@ -230,10 +241,13 @@ describe('Displayer', () => {
 		const node = populateNode();
 		node.shares = populateShares(node, 100);
 		node.permissions.can_share = false;
-		const mocks = [
-			mockGetNode(getNodeVariables(node.id), { ...node, shares: node.shares.slice(0, 6) }),
-			mockGetShares(getSharesVariables(node.id), node)
-		];
+		const mocks = {
+			Query: {
+				getNode: jest.fn(
+					mockGetNode({ getNode: [node], getShares: [node] }) as (...args: unknown[]) => Node
+				)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const collaborator0Name = getChipLabel(node.shares[0]?.share_target ?? { name: '' });
 		const collaborator99Name = getChipLabel(node.shares[99]?.share_target ?? { name: '' });
@@ -242,14 +256,15 @@ describe('Displayer', () => {
 			mocks
 		});
 		await screen.findAllByText(node.name);
-		await screen.findByTestId('icon: MoreHorizontalOutline');
-		expect(screen.getAllByTestId('avatar')).toHaveLength(6);
-		expect(screen.getByTestId('icon: MoreHorizontalOutline')).toBeVisible();
-		await user.click(screen.getByTestId('icon: MoreHorizontalOutline'));
+		await screen.findByTestId(ICON_REGEXP.moreHorizontal);
+		expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(6);
+		expect(screen.getByTestId(ICON_REGEXP.moreHorizontal)).toBeVisible();
+		await user.click(screen.getByTestId(ICON_REGEXP.moreHorizontal));
 		await screen.findByText(collaborator0Name);
 		await screen.findByText(collaborator99Name);
 		// tab is changed and all collaborators are loaded
 		expect(screen.getByText(collaborator0Name)).toBeVisible();
 		expect(screen.getByText(collaborator99Name)).toBeVisible();
+		expect(mocks.Query.getNode).toHaveBeenCalledTimes(2);
 	});
 });

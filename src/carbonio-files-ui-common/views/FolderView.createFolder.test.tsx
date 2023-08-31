@@ -6,54 +6,50 @@
 
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { act, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { DropdownItem } from '@zextras/carbonio-design-system';
 import { find } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
+import { ACTION_IDS } from '../../constants';
+import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
-import { ICON_REGEXP } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
-import { Folder } from '../types/graphql/types';
+import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import {
-	getChildrenVariables,
 	mockCreateFolder,
-	mockCreateFolderError,
-	mockGetChildren,
-	mockGetParent,
-	mockGetPermissions
-} from '../utils/mockUtils';
+	mockErrorResolver,
+	mockGetNode,
+	mockGetPath
+} from '../utils/resolverMocks';
 import { generateError, setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
-let mockedCreateOptions: CreateOptionsContent['createOptions'];
+let mockedCreateOptions: CreateOption[];
 
 beforeEach(() => {
 	mockedCreateOptions = [];
 });
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest
-			.fn()
-			.mockImplementation((...options: Parameters<CreateOptionsContent['setCreateOptions']>[0]) => {
-				mockedCreateOptions = options;
-			}),
-		removeCreateOptions: jest.fn()
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
+	useCreateOptions: (): CreateOptionsReturnType => ({
+		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+			mockedCreateOptions = options;
+		},
+		removeCreateOptions: () => undefined
 	})
 }));
 
-jest.mock('./components/Displayer', () => ({
-	Displayer: (props: DisplayerProps): JSX.Element => (
+const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
+	<div>
+		{props.translationKey}:{props.icons}
 		<button
-			data-testid="create-folder-test-id"
 			onClick={(ev: React.MouseEvent<HTMLButtonElement>): void => {
 				if (mockedCreateOptions) {
 					const createFolder = mockedCreateOptions.find(
-						(element) => element.id === 'create-folder'
+						(element) => element.id === ACTION_IDS.CREATE_FOLDER
 					);
 					if (createFolder) {
 						const clickFn = (createFolder.action('target') as DropdownItem).onClick;
@@ -62,20 +58,23 @@ jest.mock('./components/Displayer', () => ({
 				}
 			}}
 		>
-			{props.translationKey}:{props.icons}
+			create folder
 		</button>
-	)
+	</div>
+);
+
+jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
 describe('Create folder', () => {
 	async function createNode(newNode: { name: string }, user: UserEvent): Promise<void> {
 		// wait for the creation modal to be opened
-		const inputFieldDiv = await screen.findByTestId('input-name');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		expect(inputField).toHaveValue('');
 		await user.type(inputField, newNode.name);
 		expect(inputField).toHaveValue(newNode.name);
-		const button = screen.getByRole('button', { name: /create/i });
+		const button = screen.getByRole('button', { name: /^create$/i });
 		await user.click(button);
 	}
 
@@ -89,18 +88,18 @@ describe('Create folder', () => {
 
 		const newName = node2.name;
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockCreateFolderError(
-				{
-					destination_id: currentFolder.id,
-					name: newName
-				},
-				new ApolloError({ graphQLErrors: [generateError('Error! Name already assigned')] })
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder]
+				})
+			},
+			Mutation: {
+				createFolder: mockErrorResolver(generateError('Error! Name already assigned'))
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -109,32 +108,36 @@ describe('Create folder', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 
-		const createFolder = find(mockedCreateOptions, (option) => option.id === 'create-folder');
+		const createFolder = find(
+			mockedCreateOptions,
+			(option) => option.id === ACTION_IDS.CREATE_FOLDER
+		);
 		expect(createFolder).toBeDefined();
 		if (createFolder) {
-			const createFolderElement = screen.getByTestId('create-folder-test-id');
+			const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 			await user.click(createFolderElement);
 		} else {
 			fail();
 		}
 
 		await createNode(node2, user);
-		await within(screen.getByTestId('modal')).findByText(/Error! Name already assigned/i);
-		const error = within(screen.getByTestId('modal')).getByText(/Error! Name already assigned/i);
+		await within(screen.getByTestId(SELECTORS.modal)).findByText(/Error! Name already assigned/i);
+		const error = within(screen.getByTestId(SELECTORS.modal)).getByText(
+			/Error! Name already assigned/i
+		);
 		expect(error).toBeInTheDocument();
 		act(() => {
 			// run timers of modal
 			jest.runOnlyPendingTimers();
 		});
-		const inputFieldDiv = screen.getByTestId('input-name');
-		const inputField = within(inputFieldDiv).getByRole('textbox');
+		const inputField = screen.getByRole('textbox');
 		expect(inputField).toBeVisible();
 		expect(inputField).toHaveValue(newName);
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 	});
@@ -148,18 +151,18 @@ describe('Create folder', () => {
 		// add node 1 and 3 as children, node 2 is the new folder
 		currentFolder.children.nodes.push(node1, node3);
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockCreateFolder(
-				{
-					destination_id: currentFolder.id,
-					name: node2.name
-				},
-				node2
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder]
+				})
+			},
+			Mutation: {
+				createFolder: mockCreateFolder(node2)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -168,14 +171,17 @@ describe('Create folder', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 
-		const createFolder = find(mockedCreateOptions, (option) => option.id === 'create-folder');
+		const createFolder = find(
+			mockedCreateOptions,
+			(option) => option.id === ACTION_IDS.CREATE_FOLDER
+		);
 		expect(createFolder).toBeDefined();
 		if (createFolder) {
-			const createFolderElement = screen.getByTestId('create-folder-test-id');
+			const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 			await user.click(createFolderElement);
 		} else {
 			fail();
@@ -183,13 +189,13 @@ describe('Create folder', () => {
 
 		// create action
 		await createNode(node2, user);
-		await screen.findByTestId(`node-item-${node2.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
 
-		const nodeItem = await screen.findByTestId(`node-item-${node2.id}`);
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+		const nodeItem = await screen.findByTestId(SELECTORS.nodeItem(node2.id));
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
 		expect(within(nodeItem).getByText(node2.name)).toBeVisible();
-		const nodes = screen.getAllByTestId('node-item', { exact: false });
+		const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 1);
 		expect(nodes[1]).toBe(nodeItem);
 	});
@@ -210,34 +216,25 @@ describe('Create folder', () => {
 		// 4) trigger loadMore and load node1, node2, node3 with this order
 		// --> list should be updated with the correct order
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockCreateFolder(
-				{
-					destination_id: currentFolder.id,
-					name: node2.name
-				},
-				node2
-			),
-			mockCreateFolder(
-				{
-					destination_id: currentFolder.id,
-					name: node1.name
-				},
-				node1
-			),
-			// fetchMore request, cursor is still last ordered node (last child of initial folder)
-			mockGetChildren(
-				getChildrenVariables(currentFolder.id, undefined, undefined, undefined, true),
-				{
-					...currentFolder,
-					// second page contains the new created nodes and node3, not loaded before
-					children: populateNodePage([node1, node2, node3])
-				} as Folder
-			)
-		];
+		const childrenResolver: FolderResolvers['children'] = (parent, args) =>
+			args.page_token === 'page2'
+				? populateNodePage([node1, node2, node3])
+				: populateNodePage(currentFolder.children.nodes, NODES_LOAD_LIMIT, 'page2');
+		const mocks = {
+			Folder: {
+				children: childrenResolver
+			},
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder, currentFolder],
+					getPermissions: [currentFolder]
+				})
+			},
+			Mutation: {
+				createFolder: mockCreateFolder(node2, node1)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -246,13 +243,16 @@ describe('Create folder', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		let nodes = screen.getAllByTestId('node-item', { exact: false });
+		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 
-		const createFolder = find(mockedCreateOptions, (option) => option.id === 'create-folder');
+		const createFolder = find(
+			mockedCreateOptions,
+			(option) => option.id === ACTION_IDS.CREATE_FOLDER
+		);
 		expect(createFolder).toBeDefined();
 		if (createFolder) {
-			const createFolderElement = screen.getByTestId('create-folder-test-id');
+			const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 			await user.click(createFolderElement);
 		} else {
 			fail();
@@ -260,46 +260,47 @@ describe('Create folder', () => {
 
 		// create action
 		await createNode(node2, user);
-		await screen.findByTestId(`node-item-${node2.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
 		expect(screen.getByText(node2.name)).toBeVisible();
 
-		const node2Item = screen.getByTestId(`node-item-${node2.id}`);
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+		const node2Item = screen.getByTestId(SELECTORS.nodeItem(node2.id));
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
 		expect(node2Item).toBeVisible();
 		expect(within(node2Item).getByText(node2.name)).toBeVisible();
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 1);
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(node2Item);
 
-		const createFolderElement = screen.getByTestId('create-folder-test-id');
+		const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 		await user.click(createFolderElement);
 
 		// create action
 		await createNode(node1, user);
-		await screen.findByTestId(`node-item-${node1.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(node1.id));
 		expect(screen.getByText(node1.name)).toBeVisible();
 
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
-		const node1Item = screen.getByTestId(`node-item-${node1.id}`);
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
 		expect(node1Item).toBeVisible();
 		expect(within(node1Item).getByText(node1.name)).toBeVisible();
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 2);
 		// node1 is before node2 of the list
 		expect(nodes[nodes.length - 2]).toBe(node1Item);
 		// node2 is last element of the list
-		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(`node-item-${node2.id}`));
+		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(SELECTORS.nodeItem(node2.id)));
 		// trigger load more
 		await triggerLoadMore();
 		// wait for the load to be completed (node3 is now loaded)
-		await screen.findByTestId(`node-item-${node3.id}`);
-		nodes = screen.getAllByTestId('node-item', { exact: false });
+		await screen.findByTestId(SELECTORS.nodeItem(node3.id));
+		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 3);
 		// node1, node2 and node3 should have the correct order
-		expect(screen.getByTestId(`node-item-${node1.id}`)).toBe(nodes[nodes.length - 3]);
-		expect(screen.getByTestId(`node-item-${node2.id}`)).toBe(nodes[nodes.length - 2]);
-		expect(screen.getByTestId(`node-item-${node3.id}`)).toBe(nodes[nodes.length - 1]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node1.id))).toBe(nodes[nodes.length - 3]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node2.id))).toBe(nodes[nodes.length - 2]);
+		expect(screen.getByTestId(SELECTORS.nodeItem(node3.id))).toBe(nodes[nodes.length - 1]);
 	});
 
 	test('Create folder that fill a page size does not trigger new page request', async () => {
@@ -311,18 +312,15 @@ describe('Create folder', () => {
 		let newPos = addNodeInSortedList(currentFolder.children.nodes, newNode, NODES_SORT_DEFAULT);
 		newPos = newPos > -1 ? newPos : currentFolder.children.nodes.length;
 
-		const mocks = [
-			mockGetParent({ node_id: currentFolder.id }, currentFolder),
-			mockGetChildren(getChildrenVariables(currentFolder.id), currentFolder),
-			mockGetPermissions({ node_id: currentFolder.id }, currentFolder),
-			mockCreateFolder(
-				{
-					destination_id: currentFolder.id,
-					name: newNode.name
-				},
-				newNode
-			)
-		];
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			},
+			Mutation: {
+				createFolder: mockCreateFolder(newNode)
+			}
+		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -331,14 +329,17 @@ describe('Create folder', () => {
 
 		// wait for the load to be completed
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-		expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(
+		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
 
-		const createFolder = find(mockedCreateOptions, (option) => option.id === 'create-folder');
+		const createFolder = find(
+			mockedCreateOptions,
+			(option) => option.id === ACTION_IDS.CREATE_FOLDER
+		);
 		expect(createFolder).toBeDefined();
 		if (createFolder) {
-			const createFolderElement = screen.getByTestId('create-folder-test-id');
+			const createFolderElement = screen.getByRole('button', { name: /create folder/i });
 			await user.click(createFolderElement);
 		} else {
 			fail();
@@ -346,13 +347,13 @@ describe('Create folder', () => {
 
 		// create action
 		await createNode(newNode, user);
-		await screen.findByTestId(`node-item-${newNode.id}`);
+		await screen.findByTestId(SELECTORS.nodeItem(newNode.id));
 		expect(screen.getByText(newNode.name)).toBeVisible();
-		const nodeItem = await screen.findByTestId(`node-item-${newNode.id}`);
-		expect(screen.queryByTestId('input-name')).not.toBeInTheDocument();
+		const nodeItem = await screen.findByTestId(SELECTORS.nodeItem(newNode.id));
+		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
 		expect(within(nodeItem).getByText(newNode.name)).toBeVisible();
-		const nodes = screen.getAllByTestId('node-item', { exact: false });
+		const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(NODES_LOAD_LIMIT);
 		expect(nodes[newPos]).toBe(nodeItem);
 		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();

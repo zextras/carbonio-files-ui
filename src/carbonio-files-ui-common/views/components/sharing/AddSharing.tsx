@@ -54,7 +54,7 @@ import { RouteLeavingGuard } from '../RouteLeavingGuard';
 import { Hint, Loader } from '../StyledComponents';
 
 const emailRegex =
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars, max-len, no-control-regex
+	// eslint-disable-next-line max-len, no-control-regex
 	/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
 interface AddSharingProps {
@@ -77,11 +77,7 @@ function matchToContact(match: Match): Contact {
 	};
 }
 
-// function derefContactInfoToContact({ _attrs: derefAttrs }: DerefContactInformation): Contact {
-// 	return derefAttrs;
-// }
-
-const removeDL: (autocompleteResponse: AutocompleteResponse) => Match[] = ({ match }) =>
+const removeDL = ({ match }: AutocompleteResponse): Match[] =>
 	filter(match, (m) => {
 		const isDL = isDistributionList(m);
 		return !isDL;
@@ -104,7 +100,7 @@ const extractCleanMailIfNotAGroup: (match: Match[]) => Match[] = (match) =>
 		[]
 	);
 
-function cleanEmails<T extends { email?: string | undefined }>(
+function cleanEmails<T extends { email?: string }>(
 	emails: T[],
 	chips: ShareChip[],
 	node: AddSharingProps['node']
@@ -127,7 +123,6 @@ function cleanEmails<T extends { email?: string | undefined }>(
 				return acc;
 			}
 			// exclude emails already added as collaborators
-			// TODO: handle distribution lists
 			const alreadyInCollaborators =
 				findIndex(
 					node.shares,
@@ -270,7 +265,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 					} else if (
 						member.type === 'G' &&
 						isDerefMember(member) &&
-						// TODO: handle distribution lists. For now, exclude them from members
+						// exclude distribution lists from members
 						member.cn[0]._attrs.type !== 'group'
 					) {
 						galMembers.push({
@@ -455,7 +450,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
 				</Text>
 				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost')}
+					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
 				</Text>
 			</RouteLeavingGuard>
 			<Container data-testid="add-shares-input-container">
@@ -483,7 +478,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 					label={t('displayer.share.addShare.button', 'Share')}
 					color="primary"
 					onClick={createShareCallback}
-					disabled={!(size(chips) > 0) || thereAreInvalidChips}
+					disabled={size(chips) <= 0 || thereAreInvalidChips}
 				/>
 			</Container>
 		</Container>

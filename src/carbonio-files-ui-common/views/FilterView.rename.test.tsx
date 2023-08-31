@@ -5,7 +5,6 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import {
 	act,
 	fireEvent,
@@ -18,37 +17,28 @@ import { forEach, map, find } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
-import {
-	FILTER_TYPE,
-	INTERNAL_PATH,
-	NODES_LOAD_LIMIT,
-	NODES_SORT_DEFAULT,
-	ROOTS
-} from '../constants';
+import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import { populateFile, populateFolder, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { Folder, GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import {
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../types/graphql/types';
 import {
 	getChildrenVariables,
-	getFindNodesVariables,
-	getNodeVariables,
+	mockErrorResolver,
 	mockFindNodes,
 	mockGetNode,
-	mockUpdateNode,
-	mockUpdateNodeError
-} from '../utils/mockUtils';
+	mockUpdateNode
+} from '../utils/resolverMocks';
 import { generateError, renameNode, setup, selectNodes } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Rename', () => {
@@ -62,12 +52,11 @@ describe('Filter View', () => {
 					nodes.push(node);
 				}
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -85,13 +74,14 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodes.length);
 
-				expect(screen.queryByTestId('icon: EditOutline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.rename)).not.toBeInTheDocument();
 
-				const moreIconButton = screen.queryByTestId('icon: MoreVertical');
+				const moreIconButton = screen.queryByTestId(ICON_REGEXP.moreVertical);
 				if (moreIconButton) {
 					await user.click(moreIconButton);
 					// wait for trash action to check that popper is open
 					const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
+					// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 					expect(trashAction).not.toHaveAttribute('disabled');
 					expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 				}
@@ -102,12 +92,11 @@ describe('Filter View', () => {
 				const node = populateFile();
 				node.permissions.can_write_file = false;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						[node]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes([node])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -122,9 +111,9 @@ describe('Filter View', () => {
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 
-				expect(screen.queryByTestId('icon: EditOutline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.rename)).not.toBeInTheDocument();
 
-				const moreIconButton = screen.queryByTestId('icon: MoreVertical');
+				const moreIconButton = screen.queryByTestId(ICON_REGEXP.moreVertical);
 				if (moreIconButton) {
 					await user.click(moreIconButton);
 					await screen.findByTestId(SELECTORS.dropdownList);
@@ -145,19 +134,14 @@ describe('Filter View', () => {
 				const element = nodes[0];
 				const newName = nodes[1].name;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					),
-					mockUpdateNodeError(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						new ApolloError({ graphQLErrors: [generateError('Error! Name already assigned')] })
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes)
+					},
+					Mutation: {
+						updateNode: mockErrorResolver(generateError('Error! Name already assigned'))
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -171,8 +155,8 @@ describe('Filter View', () => {
 				await selectNodes([element.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				await renameNode(newName, user);
 				// following text is in the modal and in snackbar
 				await waitFor(() =>
@@ -185,8 +169,7 @@ describe('Filter View', () => {
 				});
 				// when find only 1 occurrence means that snackbar is hidden
 				expect(screen.getByText(/Error! Name already assigned/)).toBeVisible();
-				const inputFieldDiv = screen.getByTestId('input-name');
-				const inputField = within(inputFieldDiv).getByRole('textbox');
+				const inputField = screen.getByRole('textbox');
 				expect(inputField).toBeVisible();
 				expect(inputField).toHaveValue(newName);
 			});
@@ -204,24 +187,17 @@ describe('Filter View', () => {
 				const element = nodes[0];
 				const lastElementName = nodes[nodes.length - 1].name;
 				const newName = lastElementName.substring(0, lastElementName.length - 1);
+				const nodeWithNewName = { ...element, name: newName };
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					),
-					mockUpdateNode(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						{
-							...element,
-							name: newName
-						}
-					),
-					mockGetNode(getNodeVariables(element.id), { ...element, name: newName })
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes),
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
+					},
+					Mutation: {
+						updateNode: mockUpdateNode(nodeWithNewName)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -235,21 +211,21 @@ describe('Filter View', () => {
 				await selectNodes([element.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.getByTestId('icon: MoreVertical')).toBeVisible();
-				await user.click(screen.getByTestId('icon: MoreVertical'));
-				screen.getByTestId(`node-item-${element.id}`);
+				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
+				screen.getByTestId(SELECTORS.nodeItem(element.id));
 				await renameNode(newName, user);
 				// check the node. It should have the new name and be at same position
-				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(nodeItem).toBeVisible();
 				expect(within(nodeItem).getByText(newName)).toBeVisible();
-				const nodeItems = screen.getAllByTestId('node-item', { exact: false });
+				const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 				expect(nodeItems).toHaveLength(nodes.length);
 				expect(nodeItems[0]).toBe(nodeItem);
 				// selection mode is de-activate
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-				const list = screen.getByTestId('list-');
-				expect(within(list).queryByTestId('icon: MoreVertical')).not.toBeInTheDocument();
+				const list = screen.getByTestId(SELECTORS.list());
+				expect(within(list).queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			});
 		});
 
@@ -261,13 +237,11 @@ describe('Filter View', () => {
 				// set the second node flagged so that we can findNodes by unflag action in the contextual menu of second node
 				nodes[1].flagged = true;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					)
-				];
-
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes)
+					}
+				} satisfies Partial<Resolvers>;
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
@@ -277,8 +251,8 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const node1Item = screen.getByTestId(`node-item-${nodes[0].id}`);
-				const node2Item = screen.getByTestId(`node-item-${nodes[1].id}`);
+				const node1Item = screen.getByTestId(SELECTORS.nodeItem(nodes[0].id));
+				const node2Item = screen.getByTestId(SELECTORS.nodeItem(nodes[1].id));
 				fireEvent.contextMenu(node1Item);
 				// check that the flag action becomes visible (contextual menu of first node)
 				const flagAction1 = await screen.findByText(ACTION_REGEXP.flag);
@@ -308,12 +282,11 @@ describe('Filter View', () => {
 				const node = populateFile();
 				node.permissions.can_write_file = false;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						[node]
-					)
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes([node])
+					}
+				} satisfies Partial<Resolvers>;
 
 				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -324,7 +297,7 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${node.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 				fireEvent.contextMenu(nodeItem);
 				// wait for copy action to check that popper is open
 				await screen.findByText(ACTION_REGEXP.copy);
@@ -344,24 +317,17 @@ describe('Filter View', () => {
 				const element = nodes[1];
 				const lastElementName = nodes[nodes.length - 1].name;
 				const newName = lastElementName.substring(0, lastElementName.length - 1);
+				const nodeWithNewName = { ...element, name: newName } satisfies Node;
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						nodes
-					),
-					mockUpdateNode(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						{
-							...element,
-							name: newName
-						}
-					),
-					mockGetNode(getNodeVariables(element.id), { ...element, name: newName })
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(nodes),
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
+					},
+					Mutation: {
+						updateNode: mockUpdateNode(nodeWithNewName)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -372,15 +338,15 @@ describe('Filter View', () => {
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
 				fireEvent.contextMenu(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name, and it's located at same position
-				const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(updatedNodeItem).toBeVisible();
 				expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
-				const nodeItems = screen.getAllByTestId('node-item', { exact: false });
+				const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 				expect(nodeItems).toHaveLength(nodes.length);
 				// element should be the second last in the list
 				expect(nodeItems[1]).toBe(updatedNodeItem);
@@ -408,42 +374,29 @@ describe('Filter View', () => {
 
 				// prepare the cache with the parent folder as if already loaded
 				global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id),
 					data: {
 						getNode: parentFolder
 					}
 				});
 
+				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies Node;
 				const newPosition = addNodeInSortedList(
 					parentFolder.children.nodes,
-					{ ...element, name: newName },
+					nodeWithNewName,
 					NODES_SORT_DEFAULT
 				);
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockUpdateNode(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						{
-							...element,
-							name: newName,
-							// update mutation return also the parent
-							parent: parentFolder
-						}
-					),
-					mockGetNode(getNodeVariables(element.id), {
-						...element,
-						name: newName,
-						parent: parentFolder
-					})
-				];
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
+					},
+					Mutation: {
+						updateNode: mockUpdateNode(nodeWithNewName)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -459,7 +412,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id, NODES_LOAD_LIMIT * 2)
 				});
 				expect(parentFolderData?.getNode).toBeDefined();
@@ -469,15 +422,15 @@ describe('Filter View', () => {
 					element.id
 				);
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
 				fireEvent.contextMenu(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name, and it is at same position in the filter list
-				const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(updatedNodeItem).toBeVisible();
 				expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
-				const nodes = screen.getAllByTestId('node-item', { exact: false });
+				const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 				expect(nodes).toHaveLength(currentFilter.length);
 				expect(nodes[0]).toBe(updatedNodeItem);
 				// check that in the parent folder the node has changed its position to last position
@@ -485,7 +438,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id, NODES_LOAD_LIMIT * 2)
 				});
 				expect((parentFolderData?.getNode as Folder).children.nodes).toHaveLength(
@@ -523,36 +476,23 @@ describe('Filter View', () => {
 
 				// prepare the cache with the parent folder as if already loaded
 				global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id),
 					data: {
 						getNode: parentFolder
 					}
 				});
 
-				const mocks = [
-					mockFindNodes(
-						getFindNodesVariables({ flagged: true, folder_id: ROOTS.LOCAL_ROOT, cascade: true }),
-						currentFilter
-					),
-					mockUpdateNode(
-						{
-							node_id: element.id,
-							name: newName
-						},
-						{
-							...element,
-							name: newName,
-							// update mutation return also the parent
-							parent: parentFolder
-						}
-					),
-					mockGetNode(getNodeVariables(element.id), {
-						...element,
-						name: newName,
-						parent: parentFolder
-					})
-				];
+				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies Node;
+				const mocks = {
+					Query: {
+						findNodes: mockFindNodes(currentFilter),
+						getNode: mockGetNode({ getNode: [nodeWithNewName] })
+					},
+					Mutation: {
+						updateNode: mockUpdateNode(nodeWithNewName)
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
@@ -568,7 +508,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id, NODES_LOAD_LIMIT * 2)
 				});
 				expect(parentFolderData?.getNode).toBeDefined();
@@ -582,15 +522,15 @@ describe('Filter View', () => {
 					)
 				).toBe(undefined);
 				// right click to open contextual menu
-				const nodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
 				fireEvent.contextMenu(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name and its located at same position
-				const updatedNodeItem = screen.getByTestId(`node-item-${element.id}`);
+				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(updatedNodeItem).toBeVisible();
 				expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
-				const nodes = screen.getAllByTestId('node-item', { exact: false });
+				const nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 				expect(nodes).toHaveLength(currentFilter.length);
 				expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 				// check that in the parent folder the node has changed its position to first position
@@ -598,7 +538,7 @@ describe('Filter View', () => {
 					GetChildrenQuery,
 					GetChildrenQueryVariables
 				>({
-					query: GET_CHILDREN,
+					query: GetChildrenDocument,
 					variables: getChildrenVariables(parentFolder.id, NODES_LOAD_LIMIT * 2)
 				});
 				// cached folder has 1 element more than the initial children.nodes list

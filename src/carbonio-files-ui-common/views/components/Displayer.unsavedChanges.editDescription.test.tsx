@@ -5,25 +5,23 @@
  */
 import React from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
-import { screen, waitFor, within } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
+import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeType } from '../../types/graphql/types';
 import {
-	getNodeVariables,
-	getSharesVariables,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks,
-	mockGetShares,
-	mockUpdateNodeDescription,
-	mockUpdateNodeDescriptionError
-} from '../../utils/mockUtils';
-import { generateError, setup } from '../../utils/testUtils';
+	mockUpdateNode,
+	mockErrorResolver
+} from '../../utils/resolverMocks';
+import { generateError, setup, screen, within } from '../../utils/testUtils';
 
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {
@@ -34,7 +32,11 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_share = false;
 				const newDescription = faker.lorem.words();
-				const mocks = [mockGetNode(getNodeVariables(node.id), node)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
@@ -43,9 +45,11 @@ describe('Displayer', () => {
 				await screen.findByText(node.description);
 				expect(screen.getByText(/details/i)).toBeVisible();
 				expect(screen.getByText(/sharing/i)).toBeVisible();
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
-					'icon: Edit2Outline'
-				);
+				const editDescriptionItem = within(
+					screen.getByTestId(SELECTORS.nodeDetails)
+				).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.edit
+				});
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
 				const input = await screen.findByRole('textbox', {
@@ -54,8 +58,9 @@ describe('Displayer', () => {
 				await user.clear(input);
 				await user.type(input, newDescription);
 				await waitFor(() => expect(input).toHaveDisplayValue(newDescription));
-				expect(screen.getByTestId('icon: SaveOutline')).toBeVisible();
-				expect(screen.getByTestId('icon: SaveOutline')).not.toHaveAttribute('disabled', '');
+				const saveButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.save });
+				expect(saveButton).toBeVisible();
+				expect(saveButton).toBeEnabled();
 				await user.click(screen.getByText(/sharing/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -76,16 +81,20 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_share = false;
 				const newDescription = faker.lorem.words();
-				const mocks = [mockGetNode(getNodeVariables(node.id), node)];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node] })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
 					mocks
 				});
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
-					'icon: Edit2Outline'
-				);
+				const editDescriptionItem = within(
+					screen.getByTestId(SELECTORS.nodeDetails)
+				).getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
 				const input = await screen.findByRole('textbox', {
@@ -104,9 +113,10 @@ describe('Displayer', () => {
 				expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
 				expect(input).toBeVisible();
 				expect(input).toHaveDisplayValue(newDescription);
-				expect(screen.getByTestId('icon: SaveOutline')).toBeVisible();
-				expect(screen.getByTestId('icon: SaveOutline')).not.toHaveAttribute('disabled', '');
-				expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
+				const saveButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.save });
+				expect(saveButton).toBeVisible();
+				expect(saveButton).toBeEnabled();
+				expect(screen.queryByTestId(ICON_REGEXP.edit)).not.toBeInTheDocument();
 			});
 
 			test.skip('leave anyway closes description input field, continue with navigation and does not save the description', async () => {
@@ -119,12 +129,13 @@ describe('Displayer', () => {
 				node.permissions.can_share = true;
 				node.description = faker.lorem.words();
 				const newDescription = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
@@ -132,8 +143,8 @@ describe('Displayer', () => {
 				});
 
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
-					'icon: Edit2Outline'
+				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
+					ICON_REGEXP.edit
 				);
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
@@ -166,8 +177,8 @@ describe('Displayer', () => {
 				expect(
 					screen.queryByRole('textbox', { name: /maximum length allowed is 4096 characters/i })
 				).not.toBeInTheDocument();
-				expect(screen.queryByTestId('icon: SaveOutline')).not.toBeInTheDocument();
-				expect(screen.getByTestId('icon: Edit2Outline')).toBeVisible();
+				expect(screen.queryByTestId(ICON_REGEXP.save)).not.toBeInTheDocument();
+				expect(screen.getByTestId(ICON_REGEXP.edit)).toBeVisible();
 				expect(screen.getByText(node.description)).toBeVisible();
 				expect(screen.queryByText(newDescription)).not.toBeInTheDocument();
 				expect(screen.queryByText(/you have unsaved changes/i)).not.toBeInTheDocument();
@@ -179,24 +190,24 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_share = true;
 				const newDescription = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockUpdateNodeDescription(
-						{ node_id: node.id, description: newDescription },
-						{ ...node, description: newDescription }
-					),
-					mockGetShares(getSharesVariables(node.id), node),
-					mockGetLinks({ node_id: node.id }, node.links),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+						getLinks: mockGetLinks(node.links),
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						updateNode: mockUpdateNode({ ...node, description: newDescription })
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
 					mocks
 				});
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
-					'icon: Edit2Outline'
+				const editDescriptionItem = within(screen.getByTestId(SELECTORS.nodeDetails)).getByTestId(
+					ICON_REGEXP.edit
 				);
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
@@ -224,9 +235,9 @@ describe('Displayer', () => {
 				expect(
 					screen.queryByRole('textbox', { name: /maximum length allowed is 4096 characters/i })
 				).not.toBeInTheDocument();
-				expect(screen.queryByTestId('icon: SaveOutline')).not.toBeInTheDocument();
+				expect(screen.queryByTestId(ICON_REGEXP.save)).not.toBeInTheDocument();
 				expect(
-					within(screen.getByTestId('displayer-content')).getByTestId('icon: Edit2Outline')
+					within(screen.getByTestId('displayer-content')).getByTestId(ICON_REGEXP.edit)
 				).toBeVisible();
 				expect(screen.getByText(newDescription)).toBeVisible();
 				expect(screen.queryByText(node.description)).not.toBeInTheDocument();
@@ -239,23 +250,23 @@ describe('Displayer', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_share = true;
 				const newDescription = faker.lorem.words();
-				const mocks = [
-					mockGetNode(getNodeVariables(node.id), node),
-					mockUpdateNodeDescriptionError(
-						{ node_id: node.id, description: newDescription },
-						new ApolloError({ graphQLErrors: [generateError('update error')] })
-					),
-					mockGetCollaborationLinks({ node_id: node.id })
-				];
+				const mocks = {
+					Query: {
+						getNode: mockGetNode({ getNode: [node] })
+					},
+					Mutation: {
+						updateNode: mockErrorResolver(generateError('update error'))
+					}
+				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(<Displayer translationKey="No.node" />, {
 					initialRouterEntries: [`/?node=${node.id}`],
 					mocks
 				});
 				await screen.findByText(node.description);
-				const editDescriptionItem = within(screen.getByTestId('node-details')).getByTestId(
-					'icon: Edit2Outline'
-				);
+				const editDescriptionItem = within(
+					screen.getByTestId(SELECTORS.nodeDetails)
+				).getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
 				expect(editDescriptionItem).toBeVisible();
 				await user.click(editDescriptionItem);
 				const input = await screen.findByRole('textbox', {
@@ -269,7 +280,7 @@ describe('Displayer', () => {
 				await user.click(screen.getByRole('button', { name: /save and leave/i }));
 				// snackbar of the error is shown
 				await screen.findByText(/update error/i);
-				// navigation is kept on details tab, with description input field open and valued with new description
+				// navigation is kept on the details tab, with description input field open and valued with new description
 				expect(screen.queryByRole('button', { name: /share/i })).not.toBeInTheDocument();
 				expect(screen.getByText(/description/i)).toBeVisible();
 				// description input is closed and description has not been updated
@@ -284,9 +295,10 @@ describe('Displayer', () => {
 					})
 				).toHaveDisplayValue(newDescription);
 				expect(screen.queryByText(node.description)).not.toBeInTheDocument();
-				expect(screen.getByTestId('icon: SaveOutline')).toBeVisible();
-				expect(screen.getByTestId('icon: SaveOutline')).not.toHaveAttribute('disabled', '');
-				expect(screen.queryByTestId('icon: Edit2Outline')).not.toBeInTheDocument();
+				const saveButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.save });
+				expect(saveButton).toBeVisible();
+				expect(saveButton).toBeEnabled();
+				expect(screen.queryByTestId(ICON_REGEXP.edit)).not.toBeInTheDocument();
 				// modal of unsaved changes is closed
 				expect(screen.queryByText(/you have unsaved changes/i)).not.toBeInTheDocument();
 			});

@@ -288,7 +288,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
 				</Text>
 				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost')}
+					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
 				</Text>
 			</RouteLeavingGuard>
 			<ChipWithPopover
@@ -302,7 +302,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 				onValueChange={updatePermissionsPopover}
 				maxWidth={SHARE_CHIP_MAX_WIDTH}
 			>
-				{(closePopover: () => void): JSX.Element => (
+				{(closePopover: () => void): React.JSX.Element => (
 					<EditShareChipPopoverContainer
 						activeRow={activeRow}
 						disabledRows={disabledRows}

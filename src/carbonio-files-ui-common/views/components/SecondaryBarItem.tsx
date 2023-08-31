@@ -47,7 +47,7 @@ const CustomAccordionItem = styled(AccordionItem)<{ $dragging: boolean }>`
 
 interface SecondaryBarItemProps {
 	item: AccordionItemType & {
-		completeTotalBadgeCounter?: string | undefined;
+		completeTotalBadgeCounter?: string;
 		isUploadFailed?: boolean;
 	};
 	expanded: boolean;
@@ -182,7 +182,7 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 			effect={dropAction}
 			types={[DRAG_TYPES.upload, DRAG_TYPES.move, DRAG_TYPES.markForDeletion]}
 		>
-			{(dragging): JSX.Element =>
+			{(dragging): React.JSX.Element =>
 				expanded ? (
 					<CustomAccordionItem item={item} ref={accordionItemRef} $dragging={dragging}>
 						<Row gap="0.25rem">

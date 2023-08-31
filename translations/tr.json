@@ -187,7 +187,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Team ile gönderilmiş dosyalar",
             "name_LOCAL_ROOT": "Giriş",
             "name_SHARED_WITH_ME_ROOT": "Benimle paylaşıldı",
             "name_TRASH_ROOT": "Çöp Kutusu"
@@ -228,7 +227,6 @@
             "sharedElements": "Paylaşılan Öğeler",
             "recents": "En son öğeler"
         },
-        "team": "Team ile gönderilmiş dosyalar",
         "uploads": "Yüklemeler",
         "filesHome": "Giriş"
     },

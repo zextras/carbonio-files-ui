@@ -10,11 +10,10 @@ import { fireEvent, screen, within } from '@testing-library/react';
 import { map, find } from 'lodash';
 
 import { SearchView } from './SearchView';
-import { CreateOptionsContent } from '../../hooks/useCreateOptions';
 import { searchParamsVar } from '../apollo/searchVar';
 import { INTERNAL_PATH, ROOTS } from '../constants';
-import { ACTION_REGEXP } from '../constants/test';
-import BASE_NODE from '../graphql/fragments/baseNode.graphql';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import BaseNodeFragmentDoc from '../graphql/fragments/baseNode.graphql';
 import {
 	populateFolder,
 	populateNode,
@@ -23,34 +22,24 @@ import {
 	populatePermissions,
 	populateShares
 } from '../mocks/mockUtils';
-import { AdvancedFilters, Node } from '../types/common';
-import { BaseNodeFragment, Folder, NodeType, SharedTarget } from '../types/graphql/types';
+import { AdvancedFilters } from '../types/common';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { BaseNodeFragment, Folder, NodeType } from '../types/graphql/types';
 import {
-	getChildrenVariables,
-	getFindNodesVariables,
-	getNodeVariables,
-	getSharesVariables,
 	mockDeleteShare,
 	mockFindNodes,
-	mockGetChildren,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks,
 	mockGetPath,
-	mockGetShares,
 	mockMoveNodes,
 	mockRestoreNodes,
 	mockTrashNodes
-} from '../utils/mockUtils';
+} from '../utils/resolverMocks';
 import { buildBreadCrumbRegExp, buildChipsFromKeywords, moveNode, setup } from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
 
-jest.mock('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsContent => ({
-		setCreateOptions: jest.fn(),
-		removeCreateOptions: jest.fn()
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Search view', () => {
 	describe('Shared by me param', () => {
@@ -63,28 +52,17 @@ describe('Search view', () => {
 			nodeWithShares.shares = shares;
 			nodeWithShares.permissions.can_share = true;
 			nodes.push(nodeWithShares);
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ shared_by_me: true, keywords: [] }), nodes),
-				mockGetNode(getNodeVariables(nodeWithShares.id), nodeWithShares),
-				mockGetShares(getSharesVariables(nodeWithShares.id), nodeWithShares),
-				mockGetLinks({ node_id: nodeWithShares.id }, nodeWithShares.links),
-				mockGetCollaborationLinks({ node_id: nodeWithShares.id }),
-				mockDeleteShare(
-					{
-						node_id: nodeWithShares.id,
-						share_target_id: (shares[0].share_target as SharedTarget).id
-					},
-					true
-				),
-				mockDeleteShare(
-					{
-						node_id: nodeWithShares.id,
-						share_target_id: (shares[1].share_target as SharedTarget).id
-					},
-					true
-				),
-				mockFindNodes(getFindNodesVariables({ shared_by_me: true, keywords: [] }), nodes)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode({ getNode: [nodeWithShares], getShares: [nodeWithShares] }),
+					getLinks: mockGetLinks(nodeWithShares.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				},
+				Mutation: {
+					deleteShare: mockDeleteShare(true, true)
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [`${INTERNAL_PATH.SEARCH}/?node=${nodeWithShares.id}&tab=sharing`],
@@ -99,7 +77,7 @@ describe('Search view', () => {
 			// render of the collaborators
 			await screen.findByText(getChipLabel(shares[0].share_target));
 			// there should be 2 chips for collaborators
-			const chipItems = screen.getAllByTestId('chip-with-popover');
+			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
 			expect(chipItems).toHaveLength(2);
 			const share1Item = find(
 				chipItems,
@@ -109,16 +87,16 @@ describe('Search view', () => {
 				chipItems,
 				(chipItem) => within(chipItem).queryByText(getChipLabel(shares[1].share_target)) !== null
 			);
-			const nodeItem = screen.getByTestId(`node-item-${nodeWithShares.id}`);
+			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodeWithShares.id));
 			expect(nodeItem).toBeVisible();
-			expect(within(nodeItem).getByTestId('icon: ArrowCircleRight')).toBeVisible();
+			expect(within(nodeItem).getByTestId(ICON_REGEXP.sharedByMe)).toBeVisible();
 			expect(share1Item).toBeDefined();
 			expect(share2Item).toBeDefined();
 			expect(share1Item).toBeVisible();
 			expect(share2Item).toBeVisible();
-			const list = screen.getByTestId('list-');
+			const list = screen.getByTestId(SELECTORS.list());
 			// delete first share
-			await user.click(within(share1Item as HTMLElement).getByTestId('icon: Close'));
+			await user.click(within(share1Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			expect(screen.queryByText(getChipLabel(shares[0].share_target))).not.toBeInTheDocument();
@@ -126,16 +104,18 @@ describe('Search view', () => {
 			expect(share2Item).toBeVisible();
 			expect(within(list).getByText(nodeWithShares.name)).toBeVisible();
 			// delete second share
-			await user.click(within(share2Item as HTMLElement).getByTestId('icon: Close'));
+			await user.click(within(share2Item as HTMLElement).getByTestId(ICON_REGEXP.close));
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			expect(screen.queryByText(getChipLabel(shares[1].share_target))).not.toBeInTheDocument();
 			await screen.findByText(/success/i);
 			// node is kept in main list but share icon is removed
 			expect(nodeItem).toBeVisible();
-			expect(within(nodeItem).queryByTestId('icon: ArrowCircleRight')).not.toBeInTheDocument();
+			expect(within(nodeItem).queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
 			// displayer remains open
-			expect(within(screen.getByTestId('displayer')).getByText(nodeWithShares.name)).toBeVisible();
+			expect(
+				within(screen.getByTestId(SELECTORS.displayer)).getByText(nodeWithShares.name)
+			).toBeVisible();
 			expect(screen.getByText(/sharing/i)).toBeVisible();
 			expect(screen.getByText(/collaborators/i)).toBeVisible();
 		});
@@ -147,12 +127,12 @@ describe('Search view', () => {
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
 			searchParamsVar(searchParams);
 			const currentSearch = populateNodes(2);
-			// prepare cache so that apollo client read data from the cache
-
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), currentSearch),
-				mockGetNode(getNodeVariables(currentSearch[0].id), currentSearch[0] as Node)
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(currentSearch),
+					getNode: mockGetNode({ getNode: [currentSearch[0]] })
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup, user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -161,21 +141,20 @@ describe('Search view', () => {
 			expect(screen.queryByText('Previous view')).not.toBeInTheDocument();
 			const nodeItem = await screen.findByText(currentSearch[0].name);
 			expect(nodeItem).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(within(displayer).getAllByText(currentSearch[0].name)).toHaveLength(2);
 			expect(getByTextWithMarkup(buildBreadCrumbRegExp(currentSearch[0].name))).toBeVisible();
-			const closeDisplayerAction = within(screen.getByTestId('DisplayerHeader')).getByTestId(
-				'icon: Close'
-			);
+			const closeDisplayerAction = within(
+				screen.getByTestId(SELECTORS.displayerHeader)
+			).getByTestId(ICON_REGEXP.close);
 			expect(closeDisplayerAction).toBeVisible();
 			await user.click(closeDisplayerAction);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
 			expect(screen.getByText(currentSearch[0].name)).toBeVisible();
 			await screen.findByText(/view files and folders/i);
-			expect.assertions(8);
 		});
 
 		test('Move action does not close the displayer if node is not removed from the main list', async () => {
@@ -200,18 +179,19 @@ describe('Search view', () => {
 			const pathUpdated = [...parentPath, destinationFolder, node];
 			const pathResponse = [path, pathUpdated];
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockGetNode(getNodeVariables(destinationFolder.id), destinationFolder),
-				mockGetPath({ node_id: node.id }, pathResponse[0]),
-				mockGetPath({ node_id: node.id }, pathResponse[1]),
-				mockGetPath({ node_id: node.parent.id }, parentPath),
-				mockGetPath({ node_id: destinationFolder.id }, [...parentPath, destinationFolder]),
-				mockGetChildren(getChildrenVariables(node.parent.id), node.parent),
-				mockMoveNodes({ node_ids: [node.id], destination_id: destinationFolder.id }, [node])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode({
+						getNode: [node, node.parent, destinationFolder],
+						getChildren: [node.parent]
+					}),
+					getPath: mockGetPath(...pathResponse, parentPath, [...parentPath, destinationFolder])
+				},
+				Mutation: {
+					moveNodes: mockMoveNodes([node])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
 				<SearchView />,
@@ -222,7 +202,7 @@ describe('Search view', () => {
 			);
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -231,7 +211,7 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			expect(getByTextWithMarkup(buildBreadCrumbRegExp(node.name))).toBeVisible();
 			const showPathButton = screen.getByRole('button', { name: /show path/i });
@@ -242,7 +222,7 @@ describe('Search view', () => {
 			);
 			expect(fullPathOrig).toBeVisible();
 			// right click to open contextual menu
-			const nodeToMoveItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToMoveItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			jest.advanceTimersToNextTimer();
@@ -256,8 +236,10 @@ describe('Search view', () => {
 			).not.toBeInTheDocument();
 			// updated breadcrumb is visible instead
 			expect(fullPath).toBeVisible();
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 		});
 
@@ -280,15 +262,15 @@ describe('Search view', () => {
 			node.permissions.can_write_file = true;
 			node.permissions.can_delete = true;
 
-			const mocks = [
-				mockFindNodes(
-					getFindNodesVariables({ keywords, folder_id: folder.id, cascade: true }),
-					nodes
-				),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockTrashNodes({ node_ids: [node.id] }, [node.id])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode({ getNode: [node, node.parent] })
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes([node.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -296,7 +278,7 @@ describe('Search view', () => {
 			});
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -305,20 +287,22 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToTrashItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToTrashItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToTrashItem);
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(moveToTrashAction).toBeVisible();
 			await user.click(moveToTrashAction);
 			// await snackbar to be shown
 			await screen.findByText(/item moved to trash/i);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
-			const trashedNodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const trashedNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(trashedNodeItem).toBeVisible();
 			fireEvent.contextMenu(trashedNodeItem);
 			await screen.findByText(ACTION_REGEXP.restore);
@@ -341,12 +325,15 @@ describe('Search view', () => {
 			node.permissions.can_write_file = true;
 			node.permissions.can_delete = true;
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockTrashNodes({ node_ids: [node.id] }, [node.id])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode({ getNode: [node, node.parent] })
+				},
+				Mutation: {
+					trashNodes: mockTrashNodes([node.id])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -354,7 +341,7 @@ describe('Search view', () => {
 			});
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -363,20 +350,22 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToTrashItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToTrashItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToTrashItem);
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(moveToTrashAction).toBeVisible();
 			await user.click(moveToTrashAction);
 			// await snackbar to be shown
 			await screen.findByText(/item moved to trash/i);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
-			const trashedNodeItem = screen.getByTestId(`node-item-${node.id}`);
+			const trashedNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(trashedNodeItem).toBeVisible();
 			fireEvent.contextMenu(trashedNodeItem);
 			await screen.findByText(ACTION_REGEXP.restore);
@@ -403,7 +392,7 @@ describe('Search view', () => {
 			node.rootId = ROOTS.TRASH;
 
 			global.apolloClient.writeFragment<BaseNodeFragment>({
-				fragment: BASE_NODE,
+				fragment: BaseNodeFragmentDoc,
 				fragmentName: 'BaseNode',
 				data: {
 					__typename: 'Folder',
@@ -416,12 +405,15 @@ describe('Search view', () => {
 				}
 			});
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords, folder_id: ROOTS.TRASH }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockRestoreNodes({ node_ids: [node.id] }, [{ ...node, rootId: ROOTS.LOCAL_ROOT }])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode({ getNode: [node, node.parent] })
+				},
+				Mutation: {
+					restoreNodes: mockRestoreNodes([{ ...node, rootId: ROOTS.LOCAL_ROOT }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -429,7 +421,7 @@ describe('Search view', () => {
 			});
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -438,21 +430,26 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToRestoreItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToRestoreItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToRestoreItem);
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(restoreAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(restoreAction);
 			// await snackbar to be shown
 			await screen.findByText(/^success$/i);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
-			expect(within(screen.getByTestId('displayer')).getAllByText(node.name)).toHaveLength(2);
-			const restoredNodeItem = screen.getByTestId(`node-item-${node.id}`);
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
+			expect(within(screen.getByTestId(SELECTORS.displayer)).getAllByText(node.name)).toHaveLength(
+				2
+			);
+			const restoredNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(restoredNodeItem).toBeVisible();
 			fireEvent.contextMenu(restoredNodeItem);
 			await screen.findByText(ACTION_REGEXP.moveToTrash);
@@ -476,7 +473,7 @@ describe('Search view', () => {
 			node.rootId = ROOTS.TRASH;
 
 			global.apolloClient.writeFragment<BaseNodeFragment>({
-				fragment: BASE_NODE,
+				fragment: BaseNodeFragmentDoc,
 				fragmentName: 'BaseNode',
 				data: {
 					__typename: 'Folder',
@@ -489,12 +486,15 @@ describe('Search view', () => {
 				}
 			});
 
-			const mocks = [
-				mockFindNodes(getFindNodesVariables({ keywords }), nodes),
-				mockGetNode(getNodeVariables(node.id), node as Node),
-				mockGetNode(getNodeVariables(node.parent.id), node.parent as Folder),
-				mockRestoreNodes({ node_ids: [node.id] }, [{ ...node, rootId: ROOTS.LOCAL_ROOT }])
-			];
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes),
+					getNode: mockGetNode({ getNode: [node, node.parent] })
+				},
+				Mutation: {
+					restoreNodes: mockRestoreNodes([{ ...node, rootId: ROOTS.LOCAL_ROOT }])
+				}
+			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
 				initialRouterEntries: [INTERNAL_PATH.SEARCH],
@@ -502,7 +502,7 @@ describe('Search view', () => {
 			});
 
 			// wait the content to be rendered
-			await screen.findAllByTestId('node-item', { exact: false });
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);
 			const nodeItem = screen.getByText(node.name);
@@ -511,21 +511,26 @@ describe('Search view', () => {
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
-			const displayer = screen.getByTestId('displayer');
+			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
-			const nodeToRestoreItem = screen.getByTestId(`node-item-${node.id}`);
+			const nodeToRestoreItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			fireEvent.contextMenu(nodeToRestoreItem);
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
+			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(restoreAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(restoreAction);
 			// await snackbar to be shown
 			await screen.findByText(/^success$/i);
-			expect(screen.getAllByTestId('node-item', { exact: false })).toHaveLength(nodes.length);
-			expect(within(screen.getByTestId('list-')).getByText(node.name)).toBeVisible();
-			expect(within(screen.getByTestId('displayer')).getAllByText(node.name)).toHaveLength(2);
-			const restoredNodeItem = screen.getByTestId(`node-item-${node.id}`);
+			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
+				nodes.length
+			);
+			expect(within(screen.getByTestId(SELECTORS.list())).getByText(node.name)).toBeVisible();
+			expect(within(screen.getByTestId(SELECTORS.displayer)).getAllByText(node.name)).toHaveLength(
+				2
+			);
+			const restoredNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(restoredNodeItem).toBeVisible();
 			fireEvent.contextMenu(restoredNodeItem);
 			await screen.findByText(ACTION_REGEXP.moveToTrash);

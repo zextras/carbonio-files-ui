@@ -6,10 +6,11 @@
 import React from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
-import { forEach, map, find, reduce } from 'lodash';
+import { forEach, find, reduce } from 'lodash';
 
 import { AddSharing } from './AddSharing';
-import { soapFetch } from '../../../../network/network';
+import * as actualNetworkModule from '../../../../network/network';
+import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
 	populateContactGroupMatch,
@@ -19,31 +20,32 @@ import {
 	populateMembers,
 	populateShare
 } from '../../../mocks/mockUtils';
+import { Resolvers } from '../../../types/graphql/resolvers-types';
 import { User } from '../../../types/graphql/types';
 import {
 	AutocompleteResponse,
 	DerefMember,
 	GetContactsResponse,
-	Member,
-	RequestName
+	Member
 } from '../../../types/network';
-import { mockGetAccountsByEmail } from '../../../utils/mockUtils';
+import { mockGetAccountsByEmail } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 
-const mockedSoapFetch = jest.fn<
-	unknown,
-	[request: RequestName, args: unknown, nameSpaceValue: string | undefined]
->();
+let mockedSoapFetch = jest.fn();
 
-jest.mock('../../../../network/network', () => ({
-	soapFetch: jest.fn(
-		(...args: Parameters<typeof soapFetch>): Promise<unknown> =>
-			new Promise((resolve, reject) => {
-				const result = mockedSoapFetch(...args);
-				result ? resolve(result) : reject(new Error('no result provided'));
-			})
-	)
+beforeEach(() => {
+	mockedSoapFetch = jest.fn();
+});
+
+jest.mock<typeof import('../../../../network/network')>('../../../../network/network', () => ({
+	soapFetch: <Req, Res>(
+		...args: Parameters<typeof actualNetworkModule.soapFetch<Req, Res>>
+	): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+		new Promise<Res>((resolve, reject) => {
+			const result = mockedSoapFetch(...args);
+			result ? resolve(result) : reject(new Error('no result provided'));
+		})
 }));
 
 describe('Add Sharing', () => {
@@ -60,7 +62,7 @@ describe('Add Sharing', () => {
 				]
 			});
 
-			const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+			const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
 			await user.type(chipInput, 'c');
@@ -94,16 +96,12 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const [contactsNoGalEmails, contactsNoGalAccounts, contactsGal] = reduce<
-				Member,
-				[string[], User[], DerefMember[]]
-			>(
+			const [contactsNoGalAccounts, contactsGal] = reduce<Member, [User[], DerefMember[]]>(
 				contactGroup.m,
 				(acc, member) => {
 					if (member.type !== 'G') {
 						const email = (member.cn && member.cn[0]._attrs?.email) || member.value;
-						acc[0].push(email);
-						acc[1].push(
+						acc[0].push(
 							populateUser(
 								(member.cn && member.cn[0]._attrs?.zimbraId) || undefined,
 								(member.cn && member.cn[0]._attrs?.fullName) || undefined,
@@ -111,16 +109,18 @@ describe('Add Sharing', () => {
 							)
 						);
 					} else {
-						acc[2].push(member as DerefMember);
+						acc[1].push(member as DerefMember);
 					}
 					return acc;
 				},
-				[[], [], []]
+				[[], []]
 			);
 
-			const mocks = [
-				mockGetAccountsByEmail({ emails: contactsNoGalEmails }, contactsNoGalAccounts)
-			];
+			const mocks = {
+				Query: {
+					getAccountsByEmail: mockGetAccountsByEmail(contactsNoGalAccounts)
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<AddSharing node={node} />, { mocks });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
@@ -128,13 +128,13 @@ describe('Add Sharing', () => {
 			// wait for the dropdown to be shown
 			await screen.findByText(/contact-group-1/i);
 			await user.click(screen.getByText(/contact-group-1/i));
-			await screen.findAllByTestId('chip-with-popover');
+			await screen.findAllByTestId(SELECTORS.chipWithPopover);
 			await waitFor(() =>
-				expect(screen.getAllByTestId('chip-with-popover')).toHaveLength(contactGroup.m?.length || 0)
+				expect(screen.getAllByTestId(SELECTORS.chipWithPopover)).toHaveLength(
+					contactGroup.m?.length || 0
+				)
 			);
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /share/i })).not.toHaveAttribute('disabled', '')
-			);
+			await waitFor(() => expect(screen.getByRole('button', { name: /share/i })).toBeEnabled());
 			// dropdown is closed
 			expect(screen.queryByText(/contact-group-1/i)).not.toBeInTheDocument();
 			// contact group members are exploded in different chips
@@ -171,13 +171,14 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const mocks = [
-				mockGetAccountsByEmail(
-					{ emails: map(invalidMembers, (invalidMember) => invalidMember.value) },
-					// return array of null to indicate emails are not associated to any account
-					new Array(invalidMembers.length).fill(null)
-				)
-			];
+			const mocks = {
+				Query: {
+					getAccountsByEmail: mockGetAccountsByEmail(
+						// return array of null to indicate emails are not associated to any account
+						new Array(invalidMembers.length).fill(null)
+					)
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(<AddSharing node={node} />, { mocks });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
@@ -187,9 +188,9 @@ describe('Add Sharing', () => {
 			expect(screen.getByText(/contact-group-1/i)).toBeVisible();
 			const contactGroupDropdownItem = screen.getByText(/contact-group-1/i);
 			await user.click(contactGroupDropdownItem);
-			await screen.findAllByTestId('chip-with-popover');
+			await screen.findAllByTestId(SELECTORS.chipWithPopover);
 			await waitFor(() =>
-				expect(screen.getAllByTestId('chip-with-popover')).toHaveLength(
+				expect(screen.getAllByTestId(SELECTORS.chipWithPopover)).toHaveLength(
 					invalidMembers.length + validMembers.length
 				)
 			);
@@ -205,7 +206,7 @@ describe('Add Sharing', () => {
 				expect(screen.getByText(contact.cn[0]._attrs.email)).toBeVisible();
 			});
 			// share button is disabled
-			expect(screen.getByRole('button', { name: /share/i })).toHaveAttribute('disabled', '');
+			expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		});
 
 		test('When a member is already set as collaborator, chip is not created', async () => {
@@ -238,7 +239,7 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+			const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
 			await user.type(chipInput, 'c');
@@ -278,7 +279,7 @@ describe('Add Sharing', () => {
 				return undefined;
 			});
 
-			const { user } = setup(<AddSharing node={node} />, { mocks: [] });
+			const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 			const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
 			expect(chipInput).toBeVisible();
 			await user.type(chipInput, 'c');
@@ -293,13 +294,13 @@ describe('Add Sharing', () => {
 			expect(screen.getByText(members[0].cn[0]._attrs.email)).toBeVisible();
 			expect(screen.getByText(members[1].cn[0]._attrs.email)).toBeVisible();
 			// delete chip of one of the members
-			const chipItems = screen.getAllByTestId('chip-with-popover');
+			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
 			const member0Chip = find(
 				chipItems,
 				(chipItem) => within(chipItem).queryByText(members[0].cn[0]._attrs.email) !== null
 			);
 			expect(member0Chip).toBeDefined();
-			const removeShareMember0 = within(member0Chip as HTMLElement).getByTestId('icon: Close');
+			const removeShareMember0 = within(member0Chip as HTMLElement).getByTestId(ICON_REGEXP.close);
 			await user.click(removeShareMember0);
 			expect(screen.queryByText(members[0].cn[0]._attrs.email)).not.toBeInTheDocument();
 			expect(screen.getByText(members[1].cn[0]._attrs.email)).toBeVisible();

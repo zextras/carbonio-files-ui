@@ -21,7 +21,7 @@ interface ScrollContainerProps {
 	hasMore?: boolean;
 	loading?: boolean;
 	children: React.ReactNode;
-	fillerWithActions?: JSX.Element;
+	fillerWithActions?: React.JSX.Element;
 }
 
 export const ScrollContainer = React.forwardRef<HTMLDivElement, ScrollContainerProps>(
@@ -55,10 +55,8 @@ export const ScrollContainer = React.forwardRef<HTMLDivElement, ScrollContainerP
 
 		useEffect(() => {
 			// attach the observer to the element that is going to trigger the action
-			if (hasMore && !loading) {
-				if (loadMoreRef.current && loadMoreObserverRef.current) {
-					loadMoreObserverRef.current.observe(loadMoreRef.current);
-				}
+			if (hasMore && !loading && loadMoreRef.current && loadMoreObserverRef.current) {
+				loadMoreObserverRef.current.observe(loadMoreRef.current);
 			}
 
 			return (): void => {

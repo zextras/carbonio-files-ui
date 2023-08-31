@@ -2,14 +2,13 @@
     "secondaryBar": {
         "filtersList": {
             "flagged": "Sinalizado",
-            "sharedByMe": "Compartilhado por mim",
-            "sharedWithMe": "Compartilhado comigo",
+            "sharedByMe": "Partilhado por mim",
+            "sharedWithMe": "Partilhado comigo",
             "trash": "Lixeira",
             "myElements": "Meus documentos",
-            "sharedElements": "Documentos compartilhados",
+            "sharedElements": "Documentos partilhados",
             "recents": "Recentes"
         },
-        "team": "Arquivos enviados no Team",
         "filters": "Filtros",
         "uploads": "Carregamentos",
         "filesHome": "Início"
@@ -41,7 +40,7 @@
             "sharedByMe": "Você ainda não compartilhou nenhum item.",
             "trash": "A lixeira está vazia.",
             "flagged": "Não existem itens sinalizados.",
-            "sharedWithMe": "Ainda não há itens compartilhados com você.",
+            "sharedWithMe": "Ainda não há itens partilhados consigo.",
             "recents": "Parece que ainda não existem itens recentes."
         },
         "search": {
@@ -82,11 +81,11 @@
         },
         "roots": {
             "rootsList": "Files",
-            "sharedWitMe": "Compartilhado comigo",
+            "sharedWitMe": "Partilhado comigo",
             "trash": {
                 "trash": "Lixeira",
                 "myElements": "Meus documentos",
-                "sharedWitMe": "Itens compartilhados"
+                "sharedWitMe": "Itens partilhados"
             },
             "filesHome": "Início"
         },
@@ -122,7 +121,7 @@
                 "confirm": "Confirmar"
             },
             "header": "Rebaixar as permissões atuais",
-            "body": "Tem certeza de querer rebaixar as permissões que lhe foram outorgados para acessar este item? A ação é permanente e você não poderá restaurar sozinho os direitos do compartilhamento. Você sempre pode entrar em contato com o proprietário do item compartilhado caso precise que a permissão anterior seja restaurada"
+            "body": "Tem a certeza que pretende reduzir as permissões que lhe foram atribuidas para aceder a este item? Esta ação é permanente e não poderá restaurar sozinho os direitos da partilha. Entre em contato com o proprietário do item partilhado caso precise que as permissões anteriores sejam restauradas"
         },
         "close": {
             "tooltip": "Fechar"
@@ -202,10 +201,9 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Arquivos enviados via Team",
             "name_LOCAL_ROOT": "Início",
             "name_TRASH_ROOT": "Lixeira",
-            "name_SHARED_WITH_ME_ROOT": "Compartilhado comigo"
+            "name_SHARED_WITH_ME_ROOT": "Partilhado comigo"
         },
         "move": {
             "modal": {
@@ -378,7 +376,7 @@
                     "label": "Palavras-chave"
                 },
                 "shared": {
-                    "label": "Compartilhado",
+                    "label": "Partilhado",
                     "description": "Filtre os resultados por itens que contenham ao menos um colaborador além de você"
                 },
                 "title": "Filtros avançados",
@@ -456,7 +454,7 @@
                     },
                     "remove": {
                         "collaborator": "Remover compartilhamento",
-                        "yourself": "Remover meu acesso ao ítem compartilhado"
+                        "yourself": "Remover o meu acesso do item partilhado"
                     }
                 }
             },
@@ -468,7 +466,7 @@
                     "label": "Adicionar mensagem personalizada a esta notificação",
                     "placeholder": "Adicionar novas pessoas ou grupos"
                 },
-                "noteDescription": "A mensagem padrão exibe seu nome, o nome do item compartilhado, as permissões concedidas aos destinatários e as informações de acesso.",
+                "noteDescription": "A mensagem padrão mostra o seu nome, o nome do item partilhado, as permissões concedidas aos destinatários e as informações de acesso.",
                 "note": "Nota:",
                 "button": "Partilhar"
             },
@@ -594,7 +592,7 @@
             "sharedWithMe_empty": [
                 {
                     "message": "Clique no botão \"NOVO\" para criar um documento e compartilhe com seus contatos.",
-                    "title": "Ainda não há itens compartilhados com você."
+                    "title": "Ainda não há itens partilhados consigo."
                 },
                 {
                     "title": "Clique no botão \"NOVO\" e crie um novo e-mail.",

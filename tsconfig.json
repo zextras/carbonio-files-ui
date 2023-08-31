@@ -9,5 +9,8 @@
   ],
   "compilerOptions": {
     "skipLibCheck": true
+  },
+  "ts-node": {
+    "transpileOnly": true
   }
 }

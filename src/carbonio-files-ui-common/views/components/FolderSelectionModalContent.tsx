@@ -24,17 +24,16 @@ import { ModalRootsList } from './ModalRootsList';
 import { CustomModalBody } from './StyledComponents';
 import { destinationVar, DestinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
-import BASE_NODE from '../../graphql/fragments/baseNode.graphql';
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';
 import { useGetPathQuery } from '../../hooks/graphql/queries/useGetPathQuery';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
 import { NodeListItemType, RootListItemType } from '../../types/common';
-import { BaseNodeFragment, Folder } from '../../types/graphql/types';
+import { BaseNodeFragment, BaseNodeFragmentDoc, Folder } from '../../types/graphql/types';
 import { isFile, isFolder } from '../../utils/utils';
 
 interface FolderSelectionModalContentProps {
 	folderId?: string;
-	cascadeDefault?: boolean | undefined;
+	cascadeDefault?: boolean;
 	confirmAction: (folder: Pick<Folder, 'id' | 'name'>, cascade: boolean) => void;
 	closeAction?: () => void;
 }
@@ -57,8 +56,8 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 	);
 	const [selectedFolder, setSelectedFolder] = useState<SelectedNode | undefined>();
 	const [cascade, setCascade] = useState(cascadeDefault);
-	const [openedFolder, setOpenedFolder] = useState<string>('');
-	const { data: currentFolder, loading, hasMore, loadMore } = useGetChildrenQuery(openedFolder);
+	const [openedFolderId, setOpenedFolderId] = useState<string>('');
+	const { data: currentFolder, loading, hasMore, loadMore } = useGetChildrenQuery(openedFolderId);
 	const mainContainerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -71,7 +70,7 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 			if (length > 0) {
 				setCurrent(currentFilterPathData.getPath[length - 1] || undefined);
 				if (length > 1) {
-					setOpenedFolder(currentFilterPathData.getPath[length - 2]?.id || '');
+					setOpenedFolderId(currentFilterPathData.getPath[length - 2]?.id || '');
 					setDefault(currentFilterPathData.getPath[length - 2]);
 				}
 			}
@@ -136,15 +135,19 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 
 	const navigateTo = useCallback(
 		(id: string) => {
-			setOpenedFolder(id);
-			const node = apolloClient.readFragment<BaseNodeFragment>({
-				fragment: BASE_NODE,
-				fragmentName: 'BaseNode',
-				// assuming it's a folder, not the best solution
-				id: apolloClient.cache.identify({ __typename: 'Folder', id })
-			});
-			setCurrent(node);
-			setDefault(node);
+			setOpenedFolderId(id);
+			const node = id
+				? apolloClient.cache.readFragment<BaseNodeFragment>({
+						fragment: BaseNodeFragmentDoc,
+						fragmentName: 'BaseNode',
+						// assuming it's a folder, not the best solution
+						id: apolloClient.cache.identify({ __typename: 'Folder', id }),
+						returnPartialData: true
+				  })
+				: null;
+			const nodeToSet = node?.id !== undefined ? node : null;
+			setCurrent(nodeToSet);
+			setDefault(nodeToSet);
 		},
 		[apolloClient, setCurrent, setDefault]
 	);
@@ -156,12 +159,12 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 		) => {
 			const destination =
 				(node && !node.disabled && node) ||
-				(openedFolder === currentFolder?.getNode?.id && currentFolder.getNode) ||
+				(openedFolderId === currentFolder?.getNode?.id && currentFolder.getNode) ||
 				undefined;
 			setCurrent(destination);
 			event.stopPropagation();
 		},
-		[currentFolder?.getNode, openedFolder, setCurrent]
+		[currentFolder?.getNode, openedFolderId, setCurrent]
 	);
 
 	const toggleCascade = useCallback((event: React.SyntheticEvent | Event) => {

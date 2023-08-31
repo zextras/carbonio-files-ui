@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system';
 import { noop } from 'lodash';
@@ -90,7 +90,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				action: () => ({
 					id: ACTION_IDS.CREATE_FOLDER,
 					group: FILES_APP_ID,
-					label: t('create.options.new.folder', 'New Folder'),
+					label: t('create.options.new.folder', 'New folder'),
 					icon: 'FolderOutline',
 					disabled: true,
 					onClick: noop
@@ -102,7 +102,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				action: () => ({
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-					label: t('create.options.new.document', 'New Document'),
+					label: t('create.options.new.document', 'New document'),
 					icon: 'FileTextOutline',
 					disabled: true,
 					onClick: noop,
@@ -128,7 +128,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				action: () => ({
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-					label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
+					label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 					icon: 'FileCalcOutline',
 					disabled: true,
 					onClick: noop,
@@ -154,7 +154,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				action: () => ({
 					group: FILES_APP_ID,
 					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-					label: t('create.options.new.presentation', 'New Presentation'),
+					label: t('create.options.new.presentation', 'New presentation'),
 					icon: 'FilePresentationOutline',
 					disabled: true,
 					onClick: noop,
@@ -185,15 +185,18 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 		};
 	}, [inputElementOnchange, navigateToFolder, removeCreateOptions, setCreateOptions, t]);
 
+	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
+		() => ({
+			isEmpty,
+			setIsEmpty,
+			queryCalled: searchExecuted,
+			setQueryCalled: setSearchExecuted
+		}),
+		[isEmpty, searchExecuted]
+	);
+
 	return (
-		<ListContext.Provider
-			value={{
-				isEmpty,
-				setIsEmpty,
-				queryCalled: searchExecuted,
-				setQueryCalled: setSearchExecuted
-			}}
-		>
+		<ListContext.Provider value={listContextValue}>
 			<Container minHeight={0} maxHeight="100%" mainAlignment="flex-start">
 				{resultsHeader}
 				<Container

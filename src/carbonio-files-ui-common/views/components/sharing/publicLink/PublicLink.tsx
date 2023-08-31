@@ -35,7 +35,11 @@ interface AddPublicLinkProps {
 	canShare: boolean;
 }
 
-export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): JSX.Element => {
+export const PublicLink = ({
+	nodeId,
+	nodeName,
+	canShare
+}: AddPublicLinkProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { zimbraPrefTimeZoneId } = useUserInfo();
 	const createSnackbar = useSnackbar();
@@ -87,7 +91,7 @@ export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): 
 							type: 'info',
 							label: t(
 								'snackbar.publicLink.newPublicLinkGenerated.label',
-								'New public Link generated'
+								'New Public link generated'
 							),
 							replace: true,
 							onActionClick: () => {
@@ -154,14 +158,14 @@ export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): 
 							{isRevoke
 								? t(
 										'modal.revokeLink.body',
-										'By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file',
+										'By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the item.',
 										{
 											replace: { nodeName }
 										}
 								  )
 								: t(
 										'modal.removeLink.body',
-										"This link has expired, therefore it can't be used anymore to access the element. You can remove the link from the list or you can update its expiration date and other information in order to keep using it"
+										"This link has expired, therefore it can't be used anymore to access the item. You can remove the link from the list or you can update its expiration date and other information in order to keep using it."
 								  )}
 						</Text>
 					</Container>
@@ -189,7 +193,7 @@ export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): 
 						createSnackbar({
 							key: new Date().toLocaleString(),
 							type: 'info',
-							label: t('snackbar.publicLink.linkUpdated.label', 'Public Link updated'),
+							label: t('snackbar.publicLink.linkUpdated.label', 'Public link updated'),
 							replace: true,
 							onActionClick: () => {
 								copyToClipboard(data.updateLink?.url as string).then(() => {
@@ -222,7 +226,7 @@ export const PublicLink = ({ nodeId, nodeName, canShare }: AddPublicLinkProps): 
 			}
 			return thereIsOpenRow ? PublicLinkRowStatus.DISABLED : PublicLinkRowStatus.CLOSED;
 		}
-		return reduce<NonNullableListItem<typeof links> | null | undefined, JSX.Element[]>(
+		return reduce<NonNullableListItem<typeof links> | null | undefined, React.JSX.Element[]>(
 			links,
 			(accumulator, link) => {
 				if (link) {

@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { Text, TextProps } from '@zextras/carbonio-design-system';
-import { TOptions } from 'i18next';
+import type { TOptions } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 
 interface TransTextProps extends TextProps {

@@ -136,7 +136,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Archivos enviados desde Team",
             "name_LOCAL_ROOT": "Inicio",
             "name_SHARED_WITH_ME_ROOT": "Compartido conmigo",
             "name_TRASH_ROOT": "Papelera"
@@ -189,7 +188,6 @@
             "sharedElements": "Documentos compartidos",
             "recents": "Recientes"
         },
-        "team": "Enviados en Team",
         "uploads": "Cargas de archivos",
         "filesHome": "Inicio"
     },
@@ -343,7 +341,7 @@
                         "viewer": "Visualizador",
                         "viewerDescription": "Podrá solamente ver o descargar el archivo o carpeta"
                     },
-                    "sharingAllowed": "Permitido compartir",
+                    "sharingAllowed": "Compartir",
                     "sharingAllowedDescription": "Podrá administrar el uso compartido del archivo o carpeta"
                 },
                 "owner": "Propietario",
