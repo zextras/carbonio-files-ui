@@ -1,0 +1,38 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: carbonio-tasks-ui
+Upstream-Contact:  <>
+Source:
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
+
+Files: *.json
+Copyright: 2023 Zextras <https://www.zextras.com>
+License: AGPL-3.0-only
+
+Files: THIRDPARTIES
+Copyright: 2023 Zextras <https://www.zextras.com>
+License: CC0-1.0
+
+Files: .nvmrc
+Copyright: 2023 Zextras <https://www.zextras.com>
+License: CC0-1.0
+
+Files: .husky/*
+Copyright: 2023 Zextras <https://www.zextras.com>
+License: CC0-1.0
+
+Files: .github/*
+Copyright: 2023 Zextras <https://www.zextras.com>
+License: CC0-1.0
+
+Files: CHANGELOG.md
+Copyright: 2023 Zextras <https://www.zextras.com>
+License: CC0-1.0
+
+Files: translations/*
+Copyright: 2023 Zextras <https://www.zextras.com>
+License: AGPL-3.0-only
