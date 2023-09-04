@@ -19,6 +19,18 @@ module.exports = {
 			}
 		},
 		{
+			files: ['src/**/types/graphql/resolvers-types.ts'],
+			rules: {
+				'@typescript-eslint/no-unused-vars': [
+					'warn',
+					{
+						varsIgnorePattern: 'RefType'
+					}
+				],
+				'unused-imports/no-unused-vars': ['warn', { varsIgnorePattern: 'RefType' }]
+			}
+		},
+		{
 			// disable check for license header on graphql files
 			files: ['*.graphql'],
 			rules: {
