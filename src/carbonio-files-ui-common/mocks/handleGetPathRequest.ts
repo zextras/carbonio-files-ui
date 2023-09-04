@@ -18,7 +18,7 @@ const handleGetPathRequest: ResponseResolver<
 > = (req, res, ctx) => {
 	const { node_id: id } = req.variables;
 
-	const { path } = populateParents(populateFolder(0, id), faker.datatype.number(15));
+	const { path } = populateParents(populateFolder(0, id), faker.number.int(15));
 	if (id !== ROOTS.LOCAL_ROOT) {
 		path.unshift(populateLocalRoot());
 	}

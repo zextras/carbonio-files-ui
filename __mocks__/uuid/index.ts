@@ -6,5 +6,5 @@
 import { faker } from '@faker-js/faker';
 
 export function v4(): string {
-	return faker.datatype.uuid();
+	return faker.string.uuid();
 }
