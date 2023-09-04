@@ -2,10 +2,10 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 fragment ShareTarget on SharedTarget {
-    ... on DistributionList {
-        id
-    }
-    ... on User {
-        id
-    }
+	... on DistributionList {
+		id
+	}
+	... on User {
+		id
+	}
 }

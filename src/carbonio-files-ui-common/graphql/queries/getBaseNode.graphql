@@ -5,7 +5,7 @@
 #import "../fragments/baseNode.graphql"
 
 query getBaseNode($node_id: ID!) {
-    getNode(node_id: $node_id) {
-        ...BaseNode
-    }
+	getNode(node_id: $node_id) {
+		...BaseNode
+	}
 }

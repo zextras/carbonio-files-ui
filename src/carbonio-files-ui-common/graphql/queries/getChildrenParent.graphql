@@ -4,10 +4,8 @@
 
 #import "../fragments/parent.graphql"
 
-query getChildrenParent(
-    $node_id: ID!,
-) {
-    getNode(node_id: $node_id) {
-        ...Parent
-    }
+query getChildrenParent($node_id: ID!) {
+	getNode(node_id: $node_id) {
+		...Parent
+	}
 }

@@ -6,6 +6,6 @@
 #import "./nodeParent.graphql"
 
 fragment ChildWithParent on Node {
-    ...Child
-    ...NodeParent
+	...Child
+	...NodeParent
 }

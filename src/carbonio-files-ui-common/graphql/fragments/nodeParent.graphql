@@ -5,7 +5,7 @@
 #import "./parent.graphql"
 
 fragment NodeParent on Node {
-    parent {
-        ...Parent
-    }
+	parent {
+		...Parent
+	}
 }

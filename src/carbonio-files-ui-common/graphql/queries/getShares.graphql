@@ -4,7 +4,12 @@
 
 #import "../fragments/share.graphql"
 
-query getShares($node_id: ID!, $shares_limit: Int!, $shares_cursor: String, $shares_sorts: [ShareSort!]) {
+query getShares(
+	$node_id: ID!
+	$shares_limit: Int!
+	$shares_cursor: String
+	$shares_sorts: [ShareSort!]
+) {
 	getNode(node_id: $node_id) {
 		# require all fields specified inside share.node @client directive, so that the cache can add those field
 		# at runtime without the need to ask them from the network
