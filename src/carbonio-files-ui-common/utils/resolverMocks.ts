@@ -204,19 +204,19 @@ export function mockGetAccountByEmail(
 }
 
 export function mockGetAccountsByEmail(
-	accounts: GQLTypes.Account[]
+	...accounts: GQLTypes.Account[][]
 ): Mock<GQLTypes.GetAccountsByEmailQuery> {
-	return () => accounts;
+	return () => shiftData(accounts);
 }
 
-export function mockGetLinks(links: Maybe<GQLTypes.Link>[]): Mock<GQLTypes.GetLinksQuery> {
-	return () => links;
+export function mockGetLinks(...links: Maybe<GQLTypes.Link>[][]): Mock<GQLTypes.GetLinksQuery> {
+	return () => shiftData(links);
 }
 
 export function mockGetCollaborationLinks(
-	collaborationLinks: Array<Maybe<GQLTypes.CollaborationLink>>
+	...collaborationLinks: Array<Maybe<GQLTypes.CollaborationLink>>[]
 ): Mock<GQLTypes.GetCollaborationLinksQuery> {
-	return () => collaborationLinks;
+	return () => shiftData(collaborationLinks);
 }
 
 export function mockCreateCollaborationLink(
@@ -226,9 +226,9 @@ export function mockCreateCollaborationLink(
 }
 
 export function mockDeleteCollaborationLinks(
-	deleteCollaborationLinks: Array<string>
+	...deleteCollaborationLinks: Array<string>[]
 ): Mock<GQLTypes.DeleteCollaborationLinksMutation> {
-	return () => deleteCollaborationLinks;
+	return () => shiftData(deleteCollaborationLinks);
 }
 
 export function mockGetVersions(

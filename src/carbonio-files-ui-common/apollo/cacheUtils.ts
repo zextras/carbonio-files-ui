@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { ApolloCache, FieldFunctionOptions } from '@apollo/client';
-import { filter, find, findIndex, size } from 'lodash';
+import { filter, find, findIndex, forEach, size } from 'lodash';
 
 import { nodeSortVar } from './nodeSortVar';
 import { NodesPageCachedObject } from '../types/apollo';
+import { Node } from '../types/common';
 import introspection from '../types/graphql/possible-types';
-import { ChildFragment, ChildWithParentFragmentDoc } from '../types/graphql/types';
+import { ChildFragment, ChildWithParentFragmentDoc, NodeType } from '../types/graphql/types';
 
 export const removeNodesFromFolder = (
 	cache: ApolloCache<object>,
@@ -144,6 +145,34 @@ export const addNodeInCachedChildren = (
 						unOrdered: newUnOrdered
 					}
 				};
+			}
+		}
+	});
+
+export const recursiveShareEvict = (
+	cache: ApolloCache<unknown>,
+	node: Pick<Node, 'id' | '__typename'>
+): boolean =>
+	cache.modify({
+		id: cache.identify(node),
+		fields: {
+			children(existingChildrenRefs: NodesPageCachedObject, { readField }): void {
+				if (existingChildrenRefs.nodes) {
+					forEach(
+						[...existingChildrenRefs.nodes.ordered, ...existingChildrenRefs.nodes.unOrdered],
+						(ref) => {
+							cache.evict({ id: ref.__ref, fieldName: 'shares' });
+							if (readField<NodeType>('type', ref) === 'FOLDER') {
+								const id = readField<string>('id', ref);
+								const __typename = readField<Node['__typename']>('__typename', ref);
+								if (id && __typename) {
+									recursiveShareEvict(cache, { id, __typename });
+								}
+							}
+						}
+					);
+					cache.gc();
+				}
 			}
 		}
 	});

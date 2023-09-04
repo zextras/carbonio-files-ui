@@ -23,7 +23,8 @@ import {
 	RenderResult,
 	screen as rtlScreen,
 	waitFor,
-	within as rtlWithin
+	within as rtlWithin,
+	type Screen
 } from '@testing-library/react';
 import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
@@ -84,7 +85,7 @@ const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> =
 	{ icon, ...options }
 ) =>
 	filter(
-		rtlScreen.queryAllByRole('button', options),
+		rtlWithin(container).queryAllByRole(role, options),
 		(element) => rtlWithin(element).queryByTestId(icon) !== null
 	);
 const getByRoleWithIconMultipleError = (
@@ -145,7 +146,7 @@ export function within(
 	return rtlWithin(element, queriesExtended);
 }
 
-export const screen = within(document.body);
+export const screen: Screen<typeof queriesExtended> = { ...rtlScreen, ...within(document.body) };
 
 function escapeRegExp(string: string): string {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
