@@ -9,7 +9,6 @@
             "sharedElements": "Documentos partilhados",
             "recents": "Recentes"
         },
-        "team": "Arquivos enviados no Team",
         "filters": "Filtros",
         "uploads": "Carregamentos",
         "filesHome": "Início"
@@ -202,7 +201,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Arquivos enviados via Team",
             "name_LOCAL_ROOT": "Início",
             "name_TRASH_ROOT": "Lixeira",
             "name_SHARED_WITH_ME_ROOT": "Partilhado comigo"

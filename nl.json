@@ -97,7 +97,7 @@
                 "leave_anyway": "Toch vertrekken"
             },
             "body": {
-                "line2": "Al uw niet opgeslagen wijzigingen zullen verloren gaan",
+                "line2": "Al uw niet opgeslagen wijzigingen zullen verloren gaan.",
                 "line1": "Weet u zeker dat u deze pagina wilt verlaten zonder op te slaan?"
             }
         },
@@ -122,7 +122,6 @@
         }
     },
     "secondaryBar": {
-        "team": "Bestanden verstuurd via Team",
         "filters": "Filters",
         "filtersList": {
             "flagged": "Gevlagd",
@@ -187,7 +186,7 @@
                 "label": "Publieke link bijgewerkt"
             },
             "newPublicLinkGenerated": {
-                "label": "Nieuwe publieke Link gegenereerd"
+                "label": "Nieuwe publieke link gegenereerd"
             }
         },
         "clipboard": {
@@ -215,10 +214,10 @@
     "create": {
         "options": {
             "new": {
-                "folder": "Nieuwe Map",
+                "folder": "Nieuwe map",
                 "upload": "Uploaden",
-                "document": "Nieuw Document",
-                "presentation": "Nieuwe Presentatie",
+                "document": "Nieuw document",
+                "presentation": "Nieuwe presentatie",
                 "spreadsheet": "Nieuwe Spreadsheet",
                 "msDocument_xlsx": "Microsoft Excel {{ext}}",
                 "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
@@ -230,9 +229,9 @@
     },
     "empty": {
         "folder": {
-            "hint": "Het lijkt erop dat de map leeg is",
-            "state": "Sleep een bestand of creëer een nieuw bestand door op \"NIEUW\" te klikken",
-            "displayerContent": "Deze map heeft geen inhoud"
+            "hint": "Het lijkt erop dat de map leeg is.",
+            "state": "Sleep een bestand of creëer een nieuw bestand door op \"NIEUW\" te klikken.",
+            "displayerContent": "Deze map heeft geen inhoud."
         },
         "filter": {
             "hint": "Het lijkt erop dat er hier niets is.",
@@ -243,7 +242,7 @@
             "recents": "Het lijkt erop dat er nog geen items zijn."
         },
         "search": {
-            "hint": "Uw zoekopdracht kwam niet overeen met bestanden of mappen",
+            "hint": "Uw zoekopdracht kwam niet overeen met bestanden of mappen.",
             "noResults": [
                 "Geen van uw items komt overeen met uw zoekopdracht!",
                 "Geen van uw items komt overeen met uw zoekopdracht."
@@ -299,7 +298,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Bestanden verstuurd via Team",
             "name_LOCAL_ROOT": "Startpagina",
             "name_TRASH_ROOT": "Prullenbak",
             "name_SHARED_WITH_ME_ROOT": "Gedeeld met mij"
@@ -316,7 +314,7 @@
         "rename": "Naam veranderen",
         "copy": "Kopieren",
         "restore": "Herstellen",
-        "deletePermanently": "Permanent Verwijderen",
+        "deletePermanently": "Permanent verwijderen",
         "flag": "Vlaggen",
         "goToFolder": "Naar de bestemmingsmap gaan",
         "moveToTrash": "Verwijderen",
@@ -407,8 +405,8 @@
             "title": "Suggesties uploaden"
         },
         "generic": {
-            "message": "Klik op een item om het te selecteren",
-            "title": "Bestanden en mappen bekijken, ze delen met uw contacten"
+            "message": "Klik op een item om het te selecteren.",
+            "title": "Bestanden en mappen bekijken, ze delen met uw contacten."
         },
         "search_empty": [
             {
@@ -614,7 +612,7 @@
             },
             {
                 "title": "Geef uw contactpersonen bewerkingsrechten om hen een item te laten bewerken.",
-                "message": "Selecteer het item en ga dan naar het tabblad \"Gedeelde items\""
+                "message": "Selecteer het item en ga dan naar het tabblad \"Gedeelde items\"."
             },
             {
                 "title": "Selecteer een item om te delen of verplaats het naar een andere map."
@@ -682,7 +680,7 @@
                     "label": "Gedeeld",
                     "description": "Filter de resultaten op items die ten minste één andere medewerker bevatten dan u"
                 },
-                "title": "Geavanceerde Filters",
+                "title": "Geavanceerde filters",
                 "owner": {
                     "label": "Besitzer"
                 },
@@ -741,8 +739,8 @@
                 }
             },
             "title": {
-                "disabled": "Drag&Drop-modus",
-                "enabled": "Drag&Drop-modus"
+                "disabled": "Drag&Drop-modus.",
+                "enabled": "Drag&Drop-modus."
             }
         },
         "error": {
@@ -798,7 +796,7 @@
             "generateLink": "Link genereren",
             "undo": "Ongedaan maken",
             "addLink": "Link toevoegen",
-            "title": "Öffentlicher Link",
+            "title": "Öffentlicher link",
             "limitReached": "Het maximum aantal publieke links is bereikt",
             "description": "Interne en externe gebruikers die toegang hebben tot de link kunnen het bestand downloaden."
         },
@@ -867,12 +865,12 @@
     "dropzone": {
         "move": {
             "title": {
-                "enabled": "Drag&Drop-modus",
-                "disabled": "Drag&Drop-modus"
+                "enabled": "Drag&Drop-modus.",
+                "disabled": "Drag&Drop-modus."
             },
             "message": {
-                "enabled": "Drop hier uw items \n om ze snel naar deze map te verplaatsen",
-                "disabled": "U kunt uw items niet in dit gebied droppen"
+                "enabled": "Drop hier uw items \n om ze snel naar deze map te verplaatsen.",
+                "disabled": "U kunt uw items niet in dit gebied droppen."
             }
         }
     },
@@ -902,7 +900,7 @@
         "chip": {
             "tooltip": {
                 "error": {
-                    "contactNotFound": "U kunt items alleen delen met gebruikers waarvoor deze functie is ingeschakeld en niet met distributielijsten.  Het lijkt erop dat de opgegeven e-mail niet is gekoppeld aan een ingeschakelde gebruiker. Controleer nogmaals en voeg een geldig adres in."
+                    "contactNotFound": "U kunt items alleen delen met gebruikers waarvoor deze functie is ingeschakeld en niet met distributielijsten. Het lijkt erop dat de opgegeven e-mail niet is gekoppeld aan een ingeschakelde gebruiker. Controleer nogmaals en voeg een geldig adres in."
                 }
             }
         }

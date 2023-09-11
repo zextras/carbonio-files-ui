@@ -1,12 +1,12 @@
 {
     "actions": {
         "copy": "Copy",
-        "deletePermanently": "Delete Permanently",
+        "deletePermanently": "Delete permanently",
         "download": "Download",
         "edit": "Edit",
         "flag": "Flag",
         "goToFolder": "Go to destination folder",
-        "manageShares": "Manage Shares",
+        "manageShares": "Manage shares",
         "markForDeletion": "Mark for deletion",
         "move": "Move",
         "moveToTrash": "Delete",
@@ -34,31 +34,31 @@
         "link": {
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copy collaboration link"
+                    "copy": "Copy Collaboration link"
                 }
             }
         },
         "row": {
-            "placeholder": "Create a link in order to share the node",
+            "placeholder": "Create a link in order to share the item",
             "title": {
                 "ReadAndShare": "Read and Share",
                 "writeAndShare": "Write and Share"
             }
         },
-        "title": "Collaboration Links"
+        "title": "Collaboration links"
     },
     "create": {
         "options": {
             "new": {
-                "document": "New Document",
-                "folder": "New Folder",
+                "document": "New document",
+                "folder": "New folder",
                 "libreDocument": "OpenDocument {{ext}}",
                 "msDocument": "Microsoft {{ext}}",
                 "msDocument_docx": "Microsoft Word {{ext}}",
                 "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
                 "msDocument_xlsx": "Microsoft Excel {{ext}}",
-                "presentation": "New Presentation",
-                "spreadsheet": "New Spreadsheet",
+                "presentation": "New presentation",
+                "spreadsheet": "New spreadsheet",
                 "upload": "Upload"
             }
         }
@@ -71,7 +71,7 @@
             "copyShortcut": "copy item's shortcut",
             "createdBy": "Created by",
             "description": "Description",
-            "downloads": "Download via public link",
+            "downloads": "Download via Public link",
             "editDescription": {
                 "closeIconTooltip": "Close without saving",
                 "editIconTooltip": "Edit description",
@@ -112,7 +112,7 @@
             "recents_empty": [
                 {
                     "message": "You will see the most recents here.",
-                    "title": "Open, read, edit your documents."
+                    "title": "Open, read, edit your items."
                 }
             ],
             "recents_full": [
@@ -159,7 +159,7 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "message": "Click the \"NEW\" button to create a new document and share it with your contacts.",
+                    "message": "Click the \"NEW\" button to create a new item and share it with your contacts.",
                     "title": "There are no items shared with you yet."
                 },
                 {
@@ -170,7 +170,7 @@
             "sharedWithMe_full": [
                 {
                     "message": "Click an item to select it.",
-                    "title": "Start editing and sharing your files."
+                    "title": "Start editing and sharing your items."
                 },
                 {
                     "message": "Click an item to select it.",
@@ -195,7 +195,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Select and restore your documents that are now in the trash."
+                    "title": "Select and restore your items that are now in the trash."
                 },
                 {
                     "message": "Select an item to restore it or delete it permanently.",
@@ -212,7 +212,7 @@
                 "title": "Click the \"NEW\" button to create a new item and share it with your contacts."
             },
             {
-                "message": "Create a file by clicking the \"NEW\" button",
+                "message": "Create an item by clicking the \"NEW\" button.",
                 "title": "Start editing and sharing your works."
             },
             {
@@ -223,7 +223,7 @@
         "folder_full": [
             {
                 "message": "Click an item to select it.",
-                "title": "Start editing and sharing your files."
+                "title": "Start editing and sharing your items."
             },
             {
                 "message": "Click an item to select it.",
@@ -233,7 +233,7 @@
                 "title": "Select a folder to edit or rename it."
             },
             {
-                "message": "Select the item and then go to the \"Shares\" tab",
+                "message": "Select the item and then go to the \"Shares\" tab.",
                 "title": "Provide your contacts with editing rights to let them edit an item."
             },
             {
@@ -241,8 +241,8 @@
             }
         ],
         "generic": {
-            "message": "Click an item to select it",
-            "title": "View files and folders, share them with your contacts"
+            "message": "Click an item to select it.",
+            "title": "View files and folders, share them with your contacts."
         },
         "list": {
             "you": "You"
@@ -252,7 +252,7 @@
         },
         "search_empty": [
             {
-                "message": "Or select “Advanced Filters” to refine your search.",
+                "message": "Or select “Advanced filters” to refine your search.",
                 "title": "Start another search."
             },
             {
@@ -291,13 +291,13 @@
                 "popover": {
                     "role": {
                         "editor": "Editor",
-                        "editorDescription": "It will be able to view and edit the file or folder",
+                        "editorDescription": "It will be able to view and edit the item",
                         "viewer": "Viewer",
-                        "viewerDescription": "It will only be able to view or download the file or folder"
+                        "viewerDescription": "It will only be able to view or download the item"
                     },
                     "save": "Save",
                     "sharingAllowed": "Sharing allowed",
-                    "sharingAllowedDescription": "It will be able to manage shares of the file or folder"
+                    "sharingAllowedDescription": "It will be able to manage shares of the item"
                 },
                 "tooltip": {
                     "edit": {
@@ -320,7 +320,7 @@
             "versioning": "Versioning"
         },
         "uploads": {
-            "message": "Here you can find all the items that are currently uploading, you can manage them from here",
+            "message": "Here you can find all the items that are currently uploading, you can manage them from here.",
             "title": "Upload suggestions"
         },
         "version": {
@@ -344,7 +344,7 @@
                 "purgeAllVersions": "Purge all versions",
                 "upload": "Upload version"
             },
-            "mainHint": "Files saves the last {{maxVersions}} versions of your files. You can manually delete any file version or restore one as the current version. Select one or more versions that you want to keep forever.",
+            "mainHint": "Files saves the last {{maxVersions}} versions of your items. You can manually delete any item version or restore one as the current version. Select one or more versions that you want to keep forever.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Cloned from version {{versionNumber}} ({{cloneDate}})",
@@ -372,9 +372,9 @@
                     }
                 },
                 "title": {
-                    "document": "Create New Document",
-                    "presentation": "Create New Presentation",
-                    "spreadsheet": "Create New Spreadsheet"
+                    "document": "Create new document",
+                    "presentation": "Create new presentation",
+                    "spreadsheet": "Create new spreadsheet"
                 }
             }
         }
@@ -382,12 +382,12 @@
     "dropzone": {
         "move": {
             "message": {
-                "disabled": "You cannot drop your items in this area",
-                "enabled": "Drop here your items \n to quickly move them to this folder"
+                "disabled": "You cannot drop your items in this area.",
+                "enabled": "Drop here your items \n to quickly move them to this folder."
             },
             "title": {
-                "disabled": "Drag&Drop Mode",
-                "enabled": "Drag&Drop Mode"
+                "disabled": "Drag&Drop mode.",
+                "enabled": "Drag&Drop mode."
             }
         }
     },
@@ -401,12 +401,12 @@
             "trash": "The trash is empty."
         },
         "folder": {
-            "displayerContent": "This folder has no content",
-            "hint": "It seems that this folder is empty",
-            "state": "Drag a file or create a new one clicking \"NEW\""
+            "displayerContent": "This folder has no content.",
+            "hint": "It seems that this folder is empty.",
+            "state": "Drag a file or create a new one clicking \"NEW\"."
         },
         "search": {
-            "hint": "Your search didn't match any files or folders",
+            "hint": "Your search didn't match any files or folders.",
             "noResults": [
                 "No results. Keep searching!",
                 "None of your items matches your search."
@@ -417,14 +417,14 @@
     "errorCode": {
         "code": "Something went wrong",
         "code_ACCOUNT_NOT_FOUND": "It seems that this email is not associated to a user",
-        "code_FILE_VERSION_NOT_FOUND": "We're sorry, but this version of the file cannot be found",
+        "code_FILE_VERSION_NOT_FOUND": "We're sorry, but this version of the item cannot be found",
         "code_Generic": "Something went wrong",
         "code_LINK_NOT_FOUND": "Action failed. This link no longer exists",
-        "code_MISSING_FIELD": "An internal error occurred, not all information of this object has been recovered",
+        "code_MISSING_FIELD": "An internal error occurred, not all information of this item has been recovered",
         "code_NODE_COPY_ERROR": "Sorry, copy of the item failed. Try again",
-        "code_NODE_DUPLICATED": "There is a file with the same name in this folder",
-        "code_NODE_NOT_FOUND": "It seems that this object doesn't exist, or you do not have permission to access it",
-        "code_NODE_WRITE_ERROR": "It seems that this object cannot be edited or that you do not have permission to edit it",
+        "code_NODE_DUPLICATED": "There is an item with the same name in this folder",
+        "code_NODE_NOT_FOUND": "It seems that this item doesn't exist, or you do not have permission to access it",
+        "code_NODE_WRITE_ERROR": "It seems that this item cannot be edited or that you do not have permission to edit it",
         "code_SHARE_CREATION_ERROR": "We are sorry, but it is not possible to share the item with this user",
         "code_SHARE_NOT_FOUND": "We're sorry, but this share cannot be found",
         "code_VERSIONS_LIMIT_REACHED": "The operation cannot be completed. You have reached the maximum limit."
@@ -437,10 +437,10 @@
                 },
                 "input": {
                     "label": {
-                        "name": "Folder Name"
+                        "name": "Folder name"
                     }
                 },
-                "title": "Create New folder"
+                "title": "Create new folder"
             }
         }
     },
@@ -456,14 +456,14 @@
             "tooltip": "Close"
         },
         "decreaseYourOwnSharePermissions": {
-            "body": "Are you sure to decrease your rights on this node? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored",
+            "body": "Are you sure to decrease your rights on this item? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored.",
             "button": {
                 "confirm": "Confirm"
             },
             "header": "Decrease your current rights"
         },
         "deletePermanently": {
-            "body": "You will delete permanently this item/these items. You will not be able to recover this file/these files anymore. This action is irreversible.",
+            "body": "You will delete permanently this item/these items. You will not be able to recover this item/these items anymore. This action is irreversible.",
             "button": {
                 "confirm": "Delete permanently"
             },
@@ -509,25 +509,25 @@
             "header": "Purge all versions"
         },
         "removeLink": {
-            "body": "This link has expired, therefore it can't be used anymore to access the element. You can remove the link from the list or you can update its expiration date and other information in order to keep using it",
+            "body": "This link has expired, therefore it can't be used anymore to access the item. You can remove the link from the list or you can update its expiration date and other information in order to keep using it.",
             "button": {
                 "confirm": "Remove"
             },
-            "header": "Remove {{nodeName}} public link"
+            "header": "Remove {{nodeName}} Public link"
         },
         "revokeCollaborationLink": {
-            "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the node.",
+            "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.",
             "button": {
                 "confirm": "Revoke"
             },
             "header": "Revoke {{nodeName}} collaboration link"
         },
         "revokeLink": {
-            "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the file",
+            "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the item.",
             "button": {
                 "confirm": "Revoke"
             },
-            "header": "Revoke {{nodeName}} public link"
+            "header": "Revoke {{nodeName}} Public link"
         },
         "roots": {
             "filesHome": "Home",
@@ -542,7 +542,7 @@
         "unsaved_changes": {
             "body": {
                 "line1": "Are you sure you want to leave this page without saving?",
-                "line2": "All your unsaved changes will be lost"
+                "line2": "All your unsaved changes will be lost."
             },
             "button": {
                 "leave_anyway": "Leave anyway",
@@ -556,7 +556,6 @@
     },
     "node": {
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Files sent via Team",
             "name_LOCAL_ROOT": "Home",
             "name_SHARED_WITH_ME_ROOT": "Shared with me",
             "name_TRASH_ROOT": "Trash"
@@ -576,7 +575,7 @@
         "move": {
             "error": {
                 "not": {
-                    "allowed": "You cannot move multiple nodes from a filter or a search"
+                    "allowed": "You cannot move multiple items from a filter or a search"
                 }
             },
             "modal": {
@@ -601,7 +600,7 @@
                 },
                 "input": {
                     "label": {
-                        "name": "Item Name"
+                        "name": "Item name"
                     }
                 },
                 "title": "Rename item"
@@ -615,7 +614,8 @@
         "actions": {
             "tooltip": {
                 "download": "Download",
-                "manageShares": "Manage Shares"
+                "edit": "Edit",
+                "manageShares": "Manage shares"
             }
         },
         "button": {
@@ -626,24 +626,24 @@
         },
         "loading": {
             "error": "An error occurred while loading the preview. Try again.",
-            "file": "Loading file preview, please wait…",
+            "file": "Loading item preview, please wait…",
             "retrying": "Trying to load the preview…"
         }
     },
     "publicLink": {
         "addLink": {
             "addLink": "Add Link",
-            "description": "Internal and external users that have access to the link can download the file.",
+            "description": "Internal and external users that have access to the link can download the item.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
-            "title": "Public Links",
+            "title": "Public links",
             "undo": "Undo"
         },
         "datePickerInput": {
             "description": "The link expires at the end of the chosen day"
         },
         "dateTimePicker": {
-            "label": "Expiration Date"
+            "label": "Expiration date"
         },
         "input": {
             "description": {
@@ -664,7 +664,7 @@
             "undo": "Undo",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copy public link",
+                    "copy": "Copy Public link",
                     "expired": "This link has expired"
                 }
             }
@@ -718,7 +718,7 @@
                     "description": "Filter the results by items that contain at least one collaborator besides you",
                     "label": "Shared"
                 },
-                "title": "Advanced Filters"
+                "title": "Advanced filters"
             }
         },
         "clear": {
@@ -753,14 +753,13 @@
         "filters": "Filters",
         "filtersList": {
             "flagged": "Flagged",
-            "myElements": "My elements",
+            "myElements": "My items",
             "recents": "Recents",
             "sharedByMe": "Shared by me",
-            "sharedElements": "Shared Elements",
+            "sharedElements": "Shared items",
             "sharedWithMe": "Shared with me",
             "trash": "Trash"
         },
-        "team": "Files sent via Team",
         "uploads": "Uploads"
     },
     "selectionMode": {
@@ -789,11 +788,11 @@
         },
         "collaborationLink": {
             "actionLabel": {
-                "copyLink": "Copy Link"
+                "copyLink": "Copy link"
             },
             "copyCollaborationLink": "Collaboration link copied",
             "newCollaborationLinkGenerated": {
-                "label": "New Collaboration Link generated"
+                "label": "New Collaboration link generated"
             }
         },
         "copyNodes": {
@@ -831,10 +830,10 @@
             },
             "copyLink": "Public link copied",
             "linkUpdated": {
-                "label": "Public Link updated"
+                "label": "Public link updated"
             },
             "newPublicLinkGenerated": {
-                "label": "New public Link generated"
+                "label": "New Public link generated"
             }
         },
         "restore": {
@@ -859,8 +858,8 @@
         }
     },
     "sortingDropdown": {
-        "ascendingOrder": "Ascending Order",
-        "descendingOrder": "Descending Order",
+        "ascendingOrder": "Ascending order",
+        "descendingOrder": "Descending order",
         "icon": {
             "tooltip": {
                 "OrderLastUpdateAscending": "Ascending order by last update",
@@ -871,7 +870,7 @@
                 "OrderSizeDescending": "Descending order by size"
             }
         },
-        "lastUpdate": "Last Update",
+        "lastUpdate": "Last update",
         "name": "Name",
         "size": "Size"
     },
@@ -897,8 +896,8 @@
                 }
             },
             "title": {
-                "disabled": "Drag&Drop Mode",
-                "enabled": "Drag&Drop Mode"
+                "disabled": "Drag&Drop mode.",
+                "enabled": "Drag&Drop mode."
             }
         },
         "error": {

@@ -2,11 +2,11 @@
     "create": {
         "options": {
             "new": {
-                "folder": "Neuer Ordner",
+                "folder": "Neuer ordner",
                 "upload": "Upload",
-                "document": "Neues Dokument",
-                "presentation": "Neue Präsentation",
-                "spreadsheet": "Neues Tabellenblatt",
+                "document": "Neues dokument",
+                "presentation": "Neue präsentation",
+                "spreadsheet": "Neues tabellenblatt",
                 "msDocument_xlsx": "Microsoft Excel {{ext}}",
                 "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
                 "msDocument_docx": "Microsoft Word {{ext}}",
@@ -17,9 +17,9 @@
     },
     "empty": {
         "folder": {
-            "hint": "Es scheint, dass dieser Ordner leer ist",
-            "state": "Eine Datei ziehen oder eine neue erstellen, indem Sie auf \"NEU\" klicken",
-            "displayerContent": "Dieser Ordner hat keinen Inhalt"
+            "hint": "Es scheint, dass dieser Ordner leer ist.",
+            "state": "Eine Datei ziehen oder eine neue erstellen, indem Sie auf \"NEU\" klicken.",
+            "displayerContent": "Dieser Ordner hat keinen Inhalt."
         },
         "filter": {
             "hint": "Hier gibt es scheinbar nichts.",
@@ -30,7 +30,7 @@
             "recents": "Es sieht so aus, als gäbe es noch keine kürzlich verwendete Elemente."
         },
         "search": {
-            "hint": "Ihre Suche ergab keine Treffer für Dateien oder Ordner",
+            "hint": "Ihre Suche ergab keine Treffer für Dateien oder Ordner.",
             "noResults": [
                 "Keine Ergebnisse. Suchen Sie weiter!",
                 "Keiner Ihrer Artikel entspricht Ihrer Suche."
@@ -44,7 +44,7 @@
                 "button": {
                     "confirm": "Erstellen"
                 },
-                "title": "Neuen Ordner erstellen",
+                "title": "Neuen ordner erstellen",
                 "input": {
                     "label": {
                         "name": "Ordnernname"
@@ -62,7 +62,7 @@
             "button": {
                 "confirm": "Endgültig löschen"
             },
-            "body": "Sie werden dieses Element/ diese Elemente endgültig löschen. Sie werden diese Datei/ Dateien nicht mehr wiederherstellen können. Die Aktion ist unwiderruflich.",
+            "body": "Sie werden dieses Element/ diese Elemente endgültig löschen. Sie werden diesen /diese Artikel nicht mehr wiederherstellen können. Die Aktion ist unwiderruflich.",
             "header": "Diese Aktion ist unwiderruflich"
         },
         "roots": {
@@ -92,15 +92,15 @@
             "button": {
                 "confirm": "Entfernen"
             },
-            "body": "Dieser Link ist abgelaufen und kann daher nicht mehr für den Zugriff auf das Element verwendet werden. Sie können den Link aus der Liste entfernen oder sein Ablaufdatum und andere Informationen aktualisieren, um ihn weiter zu verwenden",
-            "header": "Öffentlichen Link {{nodeName}} entfernen"
+            "body": "Dieser Link ist abgelaufen und kann daher nicht mehr für den Zugriff auf diesen Artikel verwendet werden. Sie können den Link aus der Liste entfernen oder sein Ablaufdatum und andere Informationen aktualisieren, um ihn weiter zu verwenden.",
+            "header": "Öffentlichen link {{nodeName}} entfernen"
         },
         "revokeLink": {
             "button": {
                 "confirm": "Widerrufen"
             },
-            "body": "Indem Sie diesen Link widerrufen, blockieren Sie den Zugriff auf {{NodeName}} für jeden, der versucht, den Link zu benutzen, um auf die Datei zuzugreifen",
-            "header": "{{NodeName}} öffentlicher Link widerrufen"
+            "body": "Indem Sie diesen Link widerrufen, blockieren Sie den Zugriff auf {{NodeName}} für jeden, der versucht, den Link zu benutzen, um auf den Artikel zuzugreifen.",
+            "header": "{{NodeName}} öffentlicher link widerrufen"
         },
         "close": {
             "tooltip": "Schließen"
@@ -109,7 +109,7 @@
             "button": {
                 "confirm": "Bestätigen"
             },
-            "body": "Sind Sie sicher, dass Sie Ihre Rechte an diesem Knoten verringern wollen? Die Aktion ist dauerhaft und Sie können die Rechte der vorherigen Freigabe nicht mehr selbst wiederherstellen. Sie können sich jederzeit an den Eigentümer des freigegebenen Objekts wenden, wenn Sie die vorherigen Rechte wiederherstellen möchten",
+            "body": "Sind Sie sicher, dass Sie Ihre Rechte an diesem Artikel verringern wollen? Die Aktion ist dauerhaft und Sie können die Rechte der vorherigen Freigabe nicht mehr selbst wiederherstellen. Sie können sich jederzeit an den Eigentümer des freigegebenen Objekts wenden, wenn Sie die vorherigen Rechte wiederherstellen möchten.",
             "header": "Ihre derzeitigen Rechte vermindern"
         },
         "moreInfo": {
@@ -136,7 +136,7 @@
                 "leave_anyway": "Trotzdem gehen"
             },
             "body": {
-                "line2": "Alle nicht gespeicherten Änderungen gehen verloren",
+                "line2": "Alle nicht gespeicherten Änderungen gehen verloren.",
                 "line1": "Sind Sie sicher, dass Sie diese Seite verlassen wollen, ohne zu speichern?"
             }
         },
@@ -157,7 +157,7 @@
                 "confirm": "Entziehen"
             },
             "header": "{{nodeName}} Mitarbeits-Link widerrufen",
-            "body": "Wenn Sie diesen Link widerrufen, sperren Sie die Möglichkeit, neue Shares damit zu erstellen. Jeder, der diesen Mitarbeits-Link bereits genutzt hat, wird den Zugriff auf diesen Knotenpunkt beibehalten."
+            "body": "Indem Sie diesen Link widerrufen, blockieren Sie die Möglichkeit, damit neue Freigaben zu erstellen. Jeder, der den Kollaborationslink bereits verwendet hat, behält den Zugriff auf den Artikel."
         }
     },
     "node": {
@@ -188,7 +188,6 @@
         },
         "alias": {
             "name_LOCAL_ROOT": "Home",
-            "name_LOCAL_CHAT_ROOT": "Über Team gesendete Dateien",
             "name_TRASH_ROOT": "Papierkorb",
             "name_SHARED_WITH_ME_ROOT": "Mit mir geteilt"
         },
@@ -209,7 +208,7 @@
             },
             "error": {
                 "not": {
-                    "allowed": "Sie können nicht mehrere Knotenpunkte von einem Filter oder einer Suche verschieben"
+                    "allowed": "Sie können nicht mehrere Artikel von einem Filter oder einer Suche verschieben"
                 }
             }
         },
@@ -224,11 +223,10 @@
             "sharedByMe": "Von mir geteilt",
             "sharedWithMe": "Mit mir geteilt",
             "trash": "Papierkorb",
-            "myElements": "Meine Elemente",
-            "sharedElements": "Geteilte Elemente",
+            "myElements": "Meine Artikel",
+            "sharedElements": "Geteilte Artikel",
             "recents": "Kürzliche"
         },
-        "team": "Über Team gesendete Dateien",
         "uploads": "Uploads",
         "filesHome": "Home"
     },
@@ -279,10 +277,10 @@
                 "copyLink": "Link kopieren"
             },
             "linkUpdated": {
-                "label": "Öffentlicher Link aktualisiert"
+                "label": "Öffentlicher link aktualisiert"
             },
             "newPublicLinkGenerated": {
-                "label": "Neuer öffentlicher Link generiert"
+                "label": "Neuer öffentlicher link generiert"
             },
             "copyLink": "Öffentlicher Link kopiert"
         },
@@ -303,7 +301,7 @@
                 "copyLink": "Link kopieren"
             },
             "newCollaborationLinkGenerated": {
-                "label": "Neuer Link zur Mitarbeit erstellt"
+                "label": "Neuer link zur Mitarbeit erstellt"
             },
             "copyCollaborationLink": "Mitarbeits-Link kopiert"
         }
@@ -336,7 +334,7 @@
             "position": "Position",
             "collaborators": "Mitarbeiter",
             "content": "Inhalt",
-            "downloads": "Über öffentlichen Link herunterladen",
+            "downloads": "Über öffentlichen link herunterladen",
             "lastEdit": "Letzte Bearbeitung",
             "showPath": "Pfad anzeigen",
             "editDescription": {
@@ -362,12 +360,12 @@
                     "save": "Speichern",
                     "role": {
                         "editor": "Editor",
-                        "editorDescription": "Es wird in der Lage sein, die Datei oder den Ordner zu sehen und zu bearbeiten",
+                        "editorDescription": "Der Artikel kann angezeigt und bearbeitet werden",
                         "viewer": "Zuschauer",
-                        "viewerDescription": "Es wird nur in der Lage sein, die Datei oder den Ordner zu sehen oder herunterzuladen"
+                        "viewerDescription": "Der Artikel kann nur angezeigt oder heruntergeladen werden"
                     },
                     "sharingAllowed": "Teilen erlaubt",
-                    "sharingAllowedDescription": "Es kann Freigaben für die Datei oder den Ordner verwalten"
+                    "sharingAllowedDescription": "Es kann Freigaben für den Artikel verwalten"
                 },
                 "you": "Sie",
                 "owner": "Besitzer",
@@ -403,16 +401,16 @@
             "versioning": "Versionierung"
         },
         "uploads": {
-            "message": "Here können Sie alle Elemente finden, die sie gerade hochladen, sie können diese hier verwalten",
+            "message": "Here können Sie alle Elemente finden, die sie gerade hochladen, sie können diese hier verwalten.",
             "title": "Upload Vorschläge"
         },
         "generic": {
-            "message": "Klicken Sie auf ein Element, um es auszuwählen",
-            "title": "Ansicht von Dateien und Ordnern, gemeinsame Nutzung mit Ihren Kontakten"
+            "message": "Klicken Sie auf ein Element, um es auszuwählen.",
+            "title": "Ansicht von Dateien und Ordnern, gemeinsame Nutzung mit Ihren Kontakten."
         },
         "search_empty": [
             {
-                "message": "Oder wählen Sie \"Erweiterte Filter\", um Ihre Suche zu verfeinern.",
+                "message": "Oder wählen Sie \"Erweiterte filter\", um Ihre Suche zu verfeinern.",
                 "title": "Starten Sie eine weitere Suche."
             },
             {
@@ -454,7 +452,7 @@
                 "lastWeek": "In den letzten 7 Tagen",
                 "olderVersions": "Ältere Versionen"
             },
-            "mainHint": "Files speichert die letzten {{maxVersions}} Versionen Ihrer Dateien. Sie können jede beliebige Dateiversion manuell löschen oder eine Version als aktuelle Version wiederherstellen. Wählen Sie eine oder mehrere Versionen aus, die Sie für immer behalten möchten.",
+            "mainHint": "Files speichert die letzten {{maxVersions}} Versionen Ihres Artikels. Sie können jede beliebige Artikelversion manuell löschen oder eine Version als aktuelle Version wiederherstellen. Wählen Sie eine oder mehrere Versionen aus, die Sie für immer behalten möchten.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Geklont von Version {{Versionsnummer}} ({{cloneDate}})",
@@ -515,7 +513,7 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "message": "Klicken Sie auf die Schaltfläche \"NEU\", um ein neues Dokument zu erstellen und es mit Ihren Kontakten zu teilen.",
+                    "message": "Klicken Sie auf die Schaltfläche „NEU“, um ein neues Element zu erstellen und es mit Ihren Kontakten zu teilen.",
                     "title": "Es sind noch keine Artikel für Sie freigegeben."
                 },
                 {
@@ -525,7 +523,7 @@
             ],
             "sharedWithMe_full": [
                 {
-                    "title": "Beginnen Sie mit der Bearbeitung und Freigabe Ihrer Dateien.",
+                    "title": "Beginnen Sie mit dem Bearbeiten und Teilen Ihrer Artikel.",
                     "message": "Klicken Sie auf ein Element, um es auszuwählen."
                 },
                 {
@@ -551,7 +549,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Wählen Sie die Dokumente aus, die sich jetzt im Papierkorb befinden, und stellen Sie sie wieder her."
+                    "title": "Wählen Sie die Artikel aus, die sich jetzt im Papierkorb befinden, und stellen Sie sie wieder her."
                 },
                 {
                     "message": "Wählen Sie ein Element aus, um es wiederherzustellen oder es endgültig zu löschen.",
@@ -582,7 +580,7 @@
             ],
             "recents_empty": [
                 {
-                    "title": "Ihre Dokumente öffnen, lesen und bearbeiten.",
+                    "title": "Öffnen, lesen und bearbeiten Sie Ihre Artikel.",
                     "message": "Hier werden Sie die neusten sehen."
                 }
             ]
@@ -592,7 +590,7 @@
                 "title": "Klicken Sie auf die Schaltfläche \"NEU\", um ein neues Element zu erstellen und es mit Ihren Kontakten zu teilen."
             },
             {
-                "message": "Erstellen Sie eine Datei, indem Sie auf die Schaltfläche \"NEU\" klicken",
+                "message": "Erstellen Sie einen Artikel, indem Sie auf die Schaltfläche \"NEU\" klicken.",
                 "title": "Beginnen Sie mit der Bearbeitung und Weitergabe Ihrer Werke."
             },
             {
@@ -603,7 +601,7 @@
         "folder_full": [
             {
                 "message": "Klicken Sie auf ein Element, um es auszuwählen.",
-                "title": "Beginnen Sie mit der Bearbeitung und Freigabe Ihrer Dateien."
+                "title": "Beginnen Sie mit der Bearbeitung und Freigabe Ihrer Artikel."
             },
             {
                 "message": "Klicken Sie auf ein Element, um es auszuwählen.",
@@ -613,7 +611,7 @@
                 "title": "Wählen Sie einen Ordner aus, um ihn zu bearbeiten oder umzubenennen."
             },
             {
-                "message": "Wählen Sie den Artikel aus und gehen Sie dann auf die Registerkarte \" Freigaben \"",
+                "message": "Wählen Sie den Artikel aus und gehen Sie dann auf die Registerkarte \" Freigaben \".",
                 "title": "Geben Sie Ihren Kontakten Bearbeitungsrechte, damit sie einen Artikel bearbeiten können."
             },
             {
@@ -675,7 +673,7 @@
                     "label": "Geteilt",
                     "description": "Filtern Sie die Ergebnisse nach Elementen, die außer Ihnen noch mindestens einen weiteren Mitarbeiter enthalten"
                 },
-                "title": "Fortgeschrittene Filter",
+                "title": "Fortgeschrittene filter",
                 "flagged": {
                     "label": "Markiert",
                     "description": "Filtern Sie die Ergebnisse nach von Ihnen markierten Elementen"
@@ -715,9 +713,9 @@
                     }
                 },
                 "title": {
-                    "document": "Neues Dokument erstellen",
-                    "presentation": "Neue Präsentation erstellen",
-                    "spreadsheet": "Neues Tabellenblatt erstellen"
+                    "document": "Neues dokument erstellen",
+                    "presentation": "Neue präsentation erstellen",
+                    "spreadsheet": "Neues tabellenblatt erstellen"
                 }
             }
         }
@@ -735,8 +733,8 @@
                 }
             },
             "title": {
-                "disabled": "Drag&Drop Modus",
-                "enabled": "Drag&Drop Modus"
+                "disabled": "Drag&Drop modus.",
+                "enabled": "Drag&Drop modus."
             }
         },
         "clean": {
@@ -764,8 +762,8 @@
     "sortingDropdown": {
         "name": "Name",
         "size": "Größe",
-        "ascendingOrder": "Aufsteigende Reihenfolge",
-        "descendingOrder": "Absteigende Reihenfolge",
+        "ascendingOrder": "Aufsteigende reihenfolge",
+        "descendingOrder": "Absteigende reihenfolge",
         "icon": {
             "tooltip": {
                 "OrderNameDescending": "Absteigende Reihenfolge nach Name",
@@ -776,20 +774,20 @@
                 "OrderSizeAscending": "Aufsteigende Reihenfolge nach Größe"
             }
         },
-        "lastUpdate": "Letzte Aktualisierung"
+        "lastUpdate": "Letzte aktualisierung"
     },
     "errorCode": {
         "code": "Etwas ist schiefgegangen",
         "code_Generic": "Etwas ist schiefgegangen",
         "code_ACCOUNT_NOT_FOUND": "Es scheint, dass diese E-Mail nicht mit einem Benutzer verknüpft ist",
         "code_LINK_NOT_FOUND": "Aktion fehlgeschlagen. Dieser Link existiert nicht mehr",
-        "code_MISSING_FIELD": "Ein interner Fehler ist aufgetreten, nicht alle Informationen dieses Objekts wurden wiederhergestellt",
-        "code_NODE_WRITE_ERROR": "Es scheint, dass dieses Objekt nicht bearbeitet werden kann oder dass Sie keine Berechtigung haben, es zu bearbeiten",
-        "code_FILE_VERSION_NOT_FOUND": "Es tut uns leid, aber diese Version der Datei kann nicht gefunden werden",
-        "code_NODE_NOT_FOUND": "Es scheint, dass dieses Objekt nicht existiert, oder Sie haben keine Zugriffsberechtigung dafür",
+        "code_MISSING_FIELD": "Ein interner Fehler ist aufgetreten, nicht alle Informationen dieses Artikels wurden wiederhergestellt",
+        "code_NODE_WRITE_ERROR": "Es scheint, dass dieser Artikel nicht bearbeitet werden kann oder dass Sie keine Berechtigung haben, ihn zu bearbeiten",
+        "code_FILE_VERSION_NOT_FOUND": "Es tut uns leid, aber diese Version des Artikels kann nicht gefunden werden",
+        "code_NODE_NOT_FOUND": "Es scheint, dass dieser Artikel nicht existiert, oder Sie haben keine Zugriffsberechtigung dafür",
         "code_SHARE_CREATION_ERROR": "Es tut uns leid, aber es ist nicht möglich, den Artikel mit diesem Benutzer zu teilen",
         "code_SHARE_NOT_FOUND": "Es tut uns leid, aber diese Aktie kann nicht gefunden werden",
-        "code_NODE_DUPLICATED": "Es gibt eine Datei mit demselben Namen in diesem Ordner",
+        "code_NODE_DUPLICATED": "Es gibt einen Artikel mit demselben Namen in diesem Ordner",
         "code_VERSIONS_LIMIT_REACHED": "Der Vorgang kann nicht ausgeführt werden. Sie haben die Maximalgrenze erreicht.",
         "code_NODE_COPY_ERROR": "Entschuldigung, die Kopie des Elementes ist fehlgeschlagen. Versuchen Sie es erneut"
     },
@@ -800,7 +798,7 @@
             "addLink": "Link hinzufügen",
             "limitReached": "Die maximale Anzahl der öffentlichen Links ist erreicht",
             "title": "Publieke links",
-            "description": "Interne und externe Benutzer, die Zugriff auf den Link haben, können die Datei herunterladen."
+            "description": "Interne und externe Benutzer, die Zugriff auf den Link haben, können den Artikel herunterladen."
         },
         "link": {
             "edit": "Bearbeiten",
@@ -813,7 +811,7 @@
             "noExpirationDate": "Hat kein Verfallsdatum",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Öffentlichen Link kopieren",
+                    "copy": "Öffentlichen link kopieren",
                     "expired": "Dieser Link ist abgelaufen"
                 }
             }
@@ -843,7 +841,8 @@
         "actions": {
             "tooltip": {
                 "download": "Download",
-                "manageShares": "Teile verwalten"
+                "manageShares": "Teile verwalten",
+                "edit": "Bearbeiten"
             }
         },
         "close": {
@@ -851,7 +850,7 @@
         },
         "loading": {
             "retrying": "Versuche die Vorschau zu laden…",
-            "file": "Laden der Dateivorschau, bitte warten...…",
+            "file": "Artikelvorschau wird geladen, bitte warten…",
             "error": "Ein Fehler ist beim Ladevorgang aufgetreten. Versuchen Sie es erneut."
         },
         "button": {
@@ -867,12 +866,12 @@
     "dropzone": {
         "move": {
             "title": {
-                "enabled": "Drag&Drop Modus",
-                "disabled": "Drag&Drop Modus"
+                "enabled": "Drag&Drop modus.",
+                "disabled": "Drag&Drop modus."
             },
             "message": {
-                "enabled": "Legen Sie hier Ihre Elemente ab\n, um Sie schnell in diesen Ordner zu verschieben",
-                "disabled": "Sie können Ihre Elemente in diesem Bereich ablegen"
+                "enabled": "Legen Sie hier Ihre Elemente ab\n, um Sie schnell in diesen Ordner zu verschieben.",
+                "disabled": "Sie können Ihre Elemente in diesem Bereich ablegen."
             }
         }
     },
@@ -887,7 +886,7 @@
                 "writeAndShare": "Schreiben und teilen",
                 "ReadAndShare": "Lesen und teilen"
             },
-            "placeholder": "Einen Link erstellen, um den Knotenpunkt zu teilen"
+            "placeholder": "Erstellen Sie einen Link, um den Artikel zu teilen"
         },
         "link": {
             "urlChip": {

@@ -73,7 +73,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Team",
             "name_LOCAL_ROOT": "Acasa",
             "name_SHARED_WITH_ME_ROOT": "Partajate cu mine",
             "name_TRASH_ROOT": "Cos gunoi"
@@ -104,7 +103,6 @@
             "sharedWithMe": "Partajate cu mine",
             "trash": "Cos gunoi"
         },
-        "team": "Team",
         "filesHome": "Acasa"
     },
     "snackbar": {

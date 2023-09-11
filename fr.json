@@ -6,7 +6,7 @@
                 "upload": "Upload",
                 "document": "Nouveau document",
                 "presentation": "Nouvelle présentation",
-                "spreadsheet": "Nouveau tableau",
+                "spreadsheet": "Nouveau tableur",
                 "msDocument_xlsx": "Microsoft Excel {{ext}}",
                 "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
                 "msDocument_docx": "Microsoft Word {{ext}}",
@@ -17,9 +17,9 @@
     },
     "empty": {
         "folder": {
-            "hint": "Il semble que ce dossier soit vide",
-            "state": "Déposez un fichier ou créez-en un nouveau en cliquant sur \"NOUVEAU\"",
-            "displayerContent": "Ce dossier est vide"
+            "hint": "Il semble que ce dossier soit vide.",
+            "state": "Déposez un fichier ou créez-en un nouveau en cliquant sur \"NOUVEAU\".",
+            "displayerContent": "Ce dossier est vide."
         },
         "filter": {
             "hint": "Il semble qu'il n'y ait rien ici.",
@@ -30,7 +30,7 @@
             "recents": "Il semblerai qu'il n'y ai encore aucun élément récents."
         },
         "search": {
-            "hint": "Votre recherche ne correspond à aucun fichier ou dossier",
+            "hint": "Votre recherche ne correspond à aucun fichier ou dossier.",
             "noResults": [
                 "Aucun de vos éléments ne correspond à votre recherche. Continuez à chercher !",
                 "Aucun de vos éléments ne correspond à votre recherche."
@@ -44,10 +44,10 @@
                 "button": {
                     "confirm": "Créer"
                 },
-                "title": "Créer un Nouveau Dossier",
+                "title": "Créer un nouveau dossier",
                 "input": {
                     "label": {
-                        "name": "Nom du Dossier"
+                        "name": "Nom du dossier"
                     }
                 }
             }
@@ -62,7 +62,7 @@
             "button": {
                 "confirm": "Effacer définitivement"
             },
-            "body": "Vous allez supprimer définitivement cet élément/ces éléments. Vous ne pourrez plus récupérer ce(s) fichier(s). Cette action est irréversible.",
+            "body": "Vous allez supprimer définitivement cet élément/ces éléments. Vous ne pourrez plus récupérer ce(s) élément(s). Cette action est irréversible.",
             "header": "Cette action est irréversible"
         },
         "roots": {
@@ -92,15 +92,15 @@
             "button": {
                 "confirm": "Supprimer"
             },
-            "header": "Supprimer le lien publique {{nodeName}}",
-            "body": "Ce lien a expiré, il ne peut donc plus être utilisé pour accéder à l'élément. Vous pouvez supprimer le lien de la liste ou mettre à jour sa date d'expiration et d'autres informations afin de continuer à l'utiliser"
+            "header": "Supprimer le lien Publique {{nodeName}}",
+            "body": "Ce lien a expiré, il ne peut donc plus être utilisé pour accéder à l'élément. Vous pouvez supprimer le lien de la liste ou mettre à jour sa date d'expiration et d'autres informations afin de continuer à l'utiliser."
         },
         "revokeLink": {
-            "body": "En révoquant ce lien, vous bloquez l'accès à {{nodeName}} pour toute personne qui tente d'utiliser le lien pour accéder au fichier",
+            "body": "En révoquant ce lien, vous bloquez l'accès à {{nodeName}} pour toute personne qui tente d'utiliser le lien pour accéder à l'élément.",
             "button": {
                 "confirm": "Révoquer"
             },
-            "header": "Révoquer le lien publique {{nodeName}}"
+            "header": "Révoquer le lien Publique {{nodeName}}"
         },
         "close": {
             "tooltip": "Fermer"
@@ -109,7 +109,7 @@
             "button": {
                 "confirm": "Confirmer"
             },
-            "body": "Êtes-vous sûr de souhaiter diminuer vos droits sur ce noeud ? L'action sera permanente et vous ne serez plus en mesure de restaurer vos précédents droits de partage vous-même. Il vous sera toutefois possible de contacter le propriétaire de l'élément partagé si vous avez besoin de restaurer vos précédentes permissions",
+            "body": "Êtes-vous sûr de souhaiter diminuer vos droits sur ce élément ? L'action sera permanente et vous ne serez plus en mesure de restaurer vos précédents droits de partage vous-même. Il vous sera toutefois possible de contacter le propriétaire de l'élément partagé si vous avez besoin de restaurer vos précédentes permissions.",
             "header": "Diminuez vos droits actuels"
         },
         "nodesSelection": {
@@ -136,7 +136,7 @@
                 "leave_anyway": "Quitter malgré tout"
             },
             "body": {
-                "line2": "Tous vos changements non sauvegardés seront perdus",
+                "line2": "Tous vos changements non sauvegardés seront perdus.",
                 "line1": "Êtes-vous sûr de vouloir quitter cette page sans sauvegarder ?"
             }
         },
@@ -157,7 +157,7 @@
                 "confirm": "Révoquer"
             },
             "header": "Révoquer le lien de collaboration {{nodeName}}",
-            "body": "En révoquant ce lien, vous interdisez la possibilité de créer de nouveaux partages. Les personnes ayant déjà utilisé ce lien de collaboration garderont l'accès à ce nœud."
+            "body": "En révoquant ce lien, vous interdisez la possibilité de créer de nouveaux partages. Les personnes ayant déjà utilisé ce lien de collaboration garderont l'accès à cet élément."
         }
     },
     "node": {
@@ -187,7 +187,6 @@
             }
         },
         "alias": {
-            "name_LOCAL_CHAT_ROOT": "Fichiers envoyés via Team",
             "name_LOCAL_ROOT": "Accueil",
             "name_SHARED_WITH_ME_ROOT": "Partagé avec moi",
             "name_TRASH_ROOT": "Corbeille"
@@ -209,7 +208,7 @@
             },
             "error": {
                 "not": {
-                    "allowed": "Vous ne pouvez pas déplacer plusieurs nœuds d'un filtre ou d'une recherche"
+                    "allowed": "Vous ne pouvez pas déplacer plusieurs éléments d'un filtre ou d'une recherche"
                 }
             }
         },
@@ -225,10 +224,9 @@
             "sharedWithMe": "Éléments partagés avec moi",
             "trash": "Corbeille",
             "myElements": "Mes éléments",
-            "sharedElements": "Eléments partagés",
+            "sharedElements": "Éléments partagés",
             "recents": "Récents"
         },
-        "team": "Fichiers envoyés via Team",
         "uploads": "Chargements",
         "filesHome": "Accueil"
     },
@@ -287,7 +285,7 @@
                 "label": "Lien publique mis à jour"
             },
             "newPublicLinkGenerated": {
-                "label": "Nouveau lien publique généré"
+                "label": "Nouveau lien Publique généré"
             }
         },
         "decreaseYourOwnShare": {
@@ -440,12 +438,12 @@
                     "save": "Sauvegarder",
                     "role": {
                         "editor": "Editeur",
-                        "editorDescription": "Il pourra visualiser et modifier le fichier ou le dossier",
+                        "editorDescription": "Il pourra visualiser et modifier l'élément",
                         "viewer": "Visionneuse",
-                        "viewerDescription": "Il ne pourra que visualiser ou télécharger le fichier ou le dossier"
+                        "viewerDescription": "Il ne pourra que visualiser ou télécharger l'élément"
                     },
                     "sharingAllowed": "Partage autorisé",
-                    "sharingAllowedDescription": "Il sera en mesure de gérer les partages du fichier ou du dossier"
+                    "sharingAllowedDescription": "Il sera en mesure de gérer les partages de l'élément"
                 },
                 "you": "Vous",
                 "owner": "Propriétaire",
@@ -481,12 +479,12 @@
             "versioning": "Version"
         },
         "uploads": {
-            "message": "Vous trouverez ici tous les éléments en cours de téléchargement, vous pouvez les gérer à partir d'ici",
+            "message": "Vous trouverez ici tous les éléments en cours de téléchargement, vous pouvez les gérer à partir d'ici.",
             "title": "Suggestions de téléchargement"
         },
         "generic": {
-            "message": "Cliquer sur un élément pour le sélectionner",
-            "title": "Visualiser les fichiers et les dossiers et les partager avec vos contacts"
+            "message": "Cliquer sur un élément pour le sélectionner.",
+            "title": "Visualiser les fichiers et les dossiers et les partager avec vos contacts."
         },
         "search_empty": [
             {
@@ -532,7 +530,7 @@
                 "lastWeek": "Les 7 derniers jours",
                 "olderVersions": "Versions plus anciennes"
             },
-            "mainHint": "Files enregistre les {{maxVersions}} dernières version de vos fichiers. Vous pouvez supprimer manuellement les versions du fichier ou en restaurer une comme version en cours. Sélectionnez une ou plusieurs versions que vous souhaitez garder pour toujours.",
+            "mainHint": "Files enregistre les {{maxVersions}} dernières version de vos éléments. Vous pouvez supprimer manuellement les versions de l'élément ou en restaurer une comme version en cours. Sélectionnez une ou plusieurs versions que vous souhaitez garder pour toujours.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Cloné de la version {{versionNumber}} ({{cloneDate}})",
@@ -579,7 +577,7 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "message": "Cliquez sur le bouton \"NOUVEAU\" pour créer un nouveau document et partager-le avec vos contacts.",
+                    "message": "Cliquez sur le bouton \"NOUVEAU\" pour créer un nouvel élément et partager-le avec vos contacts.",
                     "title": "Il n'y a pas encore d'éléments partagés avec vous."
                 },
                 {
@@ -589,7 +587,7 @@
             ],
             "sharedWithMe_full": [
                 {
-                    "title": "Commencez à éditer et partager vos fichiers.",
+                    "title": "Commencez à éditer et partager vos éléments.",
                     "message": "Cliquez sur un élément pour le sélectionner."
                 },
                 {
@@ -615,7 +613,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Sélectionnez et restaurez vos documents qui sont actuellement dans la corbeille."
+                    "title": "Sélectionnez et restaurez vos éléments qui sont actuellement dans la corbeille."
                 },
                 {
                     "message": "Sélectionnez un élément pour le restaurer ou le supprimer définitivement.",
@@ -660,7 +658,7 @@
             ],
             "recents_empty": [
                 {
-                    "title": "Ouvrir, lire et modifier vos documents.",
+                    "title": "Ouvrir, lire et modifier vos éléments.",
                     "message": "Vous pourrez voir les plus récents ici."
                 }
             ]
@@ -670,7 +668,7 @@
                 "title": "Cliquez sur le bouton \"NOUVEAU\" pour créer un nouvel élément et partagez-le avec vos contacts."
             },
             {
-                "message": "Créez un fichier en cliquant sur le bouton \"NOUVEAU\"",
+                "message": "Créez un élément en cliquant sur le bouton \"NOUVEAU\"",
                 "title": "Commencez à éditer et partager votre travail."
             },
             {
@@ -681,7 +679,7 @@
         "folder_full": [
             {
                 "message": "Cliquez sur un élément pour le sélectionner.",
-                "title": "Commencez à éditer et partager vos fichiers."
+                "title": "Commencez à éditer et partager vos éléments."
             },
             {
                 "message": "Cliquez sur un élément pour le sélectionner.",
@@ -741,8 +739,8 @@
                 }
             },
             "title": {
-                "disabled": "Mode glisser-déposer",
-                "enabled": "Mode glisser-déposer"
+                "disabled": "Mode glisser-déposer.",
+                "enabled": "Mode glisser-déposer."
             }
         },
         "error": {
@@ -789,13 +787,13 @@
         "code_ACCOUNT_NOT_FOUND": "Il semble que cet email ne soit pas associé à un utilisateur",
         "code_Generic": "Quelque chose s'est mal passé",
         "code_LINK_NOT_FOUND": "L'action a échoué. Ce lien n'existe plus",
-        "code_MISSING_FIELD": "Une erreur interne s'est produite, toutes les informations de cet objet n'ont pas été récupérées",
-        "code_NODE_WRITE_ERROR": "Il semble que cet objet ne puisse pas être modifié ou que vous n'ayez pas la permission de le modifier",
+        "code_MISSING_FIELD": "Une erreur interne s'est produite, toutes les informations de cet élément n'ont pas été récupérées",
+        "code_NODE_WRITE_ERROR": "Il semble que cet élément ne puisse pas être modifié ou que vous n'ayez pas la permission de le modifier",
         "code_SHARE_CREATION_ERROR": "Nous sommes désolés, mais il n'est pas possible de partager l'élément avec cet utilisateur",
         "code_SHARE_NOT_FOUND": "Nous sommes désolés, mais ce partage est introuvable",
-        "code_FILE_VERSION_NOT_FOUND": "Nous sommes désolés, mais cette version du fichier est introuvable",
-        "code_NODE_NOT_FOUND": "Il semble que cet objet n'existe pas ou que vous n'avez pas la permission d'y accéder",
-        "code_NODE_DUPLICATED": "Il y a déjà un fichier portant le même nom dans ce dossier",
+        "code_FILE_VERSION_NOT_FOUND": "Nous sommes désolés, mais cette version de l'élément est introuvable",
+        "code_NODE_NOT_FOUND": "Il semble que cet élément n'existe pas ou que vous n'avez pas la permission d'y accéder",
+        "code_NODE_DUPLICATED": "Il y a déjà un élément portant le même nom dans ce dossier",
         "code_VERSIONS_LIMIT_REACHED": "L'opération ne peut être terminée. Vous avez atteint la limite maximum.",
         "code_NODE_COPY_ERROR": "Désolé, la copie de l'élément a échoué. Merci de réessayer"
     },
@@ -806,7 +804,7 @@
             "limitReached": "Le nombre maximum de lien publique a été atteint",
             "title": "Liens publiques",
             "undo": "Retour arrière",
-            "description": "Les utilisateurs internes ou externes en possession du lien peuvent télécharger ce fichier."
+            "description": "Les utilisateurs internes ou externes en possession du lien peuvent télécharger cet élément."
         },
         "datePickerInput": {
             "description": "Le lien expire a la fin du jour sélectionné"
@@ -833,7 +831,7 @@
             "undo": "Revenir en arrière",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copier le lien pulique",
+                    "copy": "Copier le lien Publique",
                     "expired": "Ce lien a expiré"
                 }
             }
@@ -843,7 +841,8 @@
         "actions": {
             "tooltip": {
                 "download": "Téléchargement",
-                "manageShares": "Gestion des partages"
+                "manageShares": "Gestion des partages",
+                "edit": "Édition"
             }
         },
         "close": {
@@ -851,7 +850,7 @@
         },
         "loading": {
             "retrying": "Tentative de chargement de l'aperçu…",
-            "file": "Chargement de l'aperçu du fichier, veuillez patienter…",
+            "file": "Chargement de l'aperçu de l'élément, veuillez patienter…",
             "error": "Une erreur est survenue lors du chargement de l'aperçu. Veuillez réessayer."
         },
         "button": {
@@ -867,12 +866,12 @@
     "dropzone": {
         "move": {
             "title": {
-                "enabled": "Mode glisser déposer",
-                "disabled": "Mode glisser déposer"
+                "enabled": "Mode glisser déposer.",
+                "disabled": "Mode glisser déposer."
             },
             "message": {
-                "enabled": "Déposer vos éléments ici \npour les déplacer rapidement dans ce dossier",
-                "disabled": "Vous ne pouvez pas déposer vos éléments dans cette zone"
+                "enabled": "Déposer vos éléments ici \npour les déplacer rapidement dans ce dossier.",
+                "disabled": "Vous ne pouvez pas déposer vos éléments dans cette zone."
             }
         }
     },
@@ -887,7 +886,7 @@
                 "ReadAndShare": "Visualiser et Partager",
                 "writeAndShare": "Modifier et Partager"
             },
-            "placeholder": "Créer un lien pour pouvoir partager le noeud"
+            "placeholder": "Créer un lien pour pouvoir partager l'élément"
         },
         "link": {
             "urlChip": {
