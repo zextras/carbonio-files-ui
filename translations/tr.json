@@ -8,7 +8,7 @@
                 "title": "Yeni klasör oluştur",
                 "input": {
                     "label": {
-                        "name": "Klasör Adı"
+                        "name": "Klasör adı"
                     }
                 }
             }
@@ -23,7 +23,7 @@
             "button": {
                 "confirm": "Kalıcı olarak sil"
             },
-            "body": "Bu öğeyi / öğeleri kalıcı olarak sileceksiniz. Bu dosya / dosyaları sonra geri getiremeyeceksiniz. Bu işlemin geri dönüşü yoktur.",
+            "body": "Bu öğeyi / öğeleri kalıcı olarak sileceksiniz. Bu öğe/ öğeleri sonra geri getiremeyeceksiniz. Bu işlemin geri dönüşü yoktur.",
             "header": "Bu işlemin geri dönüşü yoktur"
         },
         "roots": {
@@ -50,18 +50,18 @@
             }
         },
         "removeLink": {
-            "body": "Bu bağlantı iptal olduğundan artık öğeye erişim için kullanılamaz. Bağlantıyı listeden kaldırabilir veya kullanmaya devam etmek için son kullanma tarihini ve diğer bilgileri güncelleyebilirsiniz",
+            "body": "Bu bağlantı iptal olduğundan artık öğeye erişim için kullanılamaz. Bağlantıyı listeden kaldırabilir veya kullanmaya devam etmek için son kullanma tarihini ve diğer bilgileri güncelleyebilirsiniz.",
             "button": {
                 "confirm": "Kaldır"
             },
-            "header": "{{nodeName}} genel erişim bağlantısını kaldır"
+            "header": "{{nodeName}} Genel erişim bağlantısını kaldır"
         },
         "revokeLink": {
             "body": "Bu bağlantıyı iptal ederek, dosyaya erişim için bağlantıyı kullanan herkesin {{nodeName}} öğesine erişimini bloke edeceksiniz",
             "button": {
                 "confirm": "İptal et"
             },
-            "header": "{{nodeName}} genel erişim bağlantısını iptal et"
+            "header": "{{nodeName}} Genel erişim bağlantısını iptal et"
         },
         "close": {
             "tooltip": "Kapat"
@@ -70,7 +70,7 @@
             "button": {
                 "confirm": "Onayla"
             },
-            "body": "Bu nod için izinlerinizi azaltmak istediğinizden emin misiniz? Bu işlem kalıcıdır ve daha önceki paylaşım izinlerini kendiniz geri alamazsınız. Daha önceki paylaşım izinlerini geri yüklemek isterseniz paylaşılan öğenin sahibi ile görüşmeniz gerekir",
+            "body": "Bu öğe için izinlerinizi azaltmak istediğinizden emin misiniz? Bu işlem kalıcıdır ve daha önceki paylaşım izinlerini kendiniz geri alamazsınız. Daha önceki paylaşım izinlerini geri yüklemek isterseniz paylaşılan öğenin sahibi ile görüşmeniz gerekir.",
             "header": "Geçerli izinlerinizi azaltın"
         },
         "nodesSelection": {
@@ -97,7 +97,7 @@
                 "leave_anyway": "Evet çıkmak istiyorum"
             },
             "body": {
-                "line2": "Değişiklikleriniz kaydedilmeden çıkılacak",
+                "line2": "Değişiklikleriniz kaydedilmeden çıkılacak.",
                 "line1": "Kaydetmeden bu sayfadan çıkmak istediğinize emin misiniz?"
             }
         },
@@ -124,11 +124,11 @@
     "create": {
         "options": {
             "new": {
-                "folder": "Yeni Klasör",
+                "folder": "Yeni klasör",
                 "upload": "Yükle",
-                "document": "Yeni Doküman",
-                "presentation": "Yeni Sunum",
-                "spreadsheet": "Yeni Tablo",
+                "document": "Yeni doküman",
+                "presentation": "Yeni sunum",
+                "spreadsheet": "Yeni tablo",
                 "msDocument_xlsx": "Microsoft Excel {{ext}}",
                 "msDocument_pptx": "Microsoft PowerPoint {{ext}}",
                 "msDocument_docx": "Microsoft Word {{ext}}",
@@ -139,9 +139,9 @@
     },
     "empty": {
         "folder": {
-            "hint": "Bu klasör boş",
-            "state": "Bir dosya sürükleyin veya \"YENİ\" tuşuna tıklayıp yeni bir tane oluşturun",
-            "displayerContent": "Bu klasör boş"
+            "hint": "Bu klasör boş görünüyor.",
+            "state": "Bir dosya sürükleyin veya \"YENİ\" tuşuna tıklayıp yeni bir tane oluşturun.",
+            "displayerContent": "Bu klasör boş."
         },
         "filter": {
             "hint": "Burada hiçbir şey yok.",
@@ -152,7 +152,7 @@
             "recents": "Yakında güncellenmiş öğe bulunmuyor."
         },
         "search": {
-            "hint": "Aramanız ile eşleşen hiçbir dosya veya klasör bulunamadı",
+            "hint": "Aramanız ile eşleşen hiçbir dosya veya klasör bulunamadı.",
             "noResults": [
                 "Sonuç bulunamadı. Aramaya devam edin!",
                 "Aramanız ile uyumlu öğe bulunamadı."
@@ -168,7 +168,7 @@
                 },
                 "input": {
                     "label": {
-                        "name": "Öğe Adı"
+                        "name": "Öğe adı"
                     }
                 },
                 "title": "Öğeyi yeniden adlandır"
@@ -208,7 +208,7 @@
             },
             "error": {
                 "not": {
-                    "allowed": "Bir filtre veya aramadan birden fazla nod taşıyamazsınız"
+                    "allowed": "Bir filtre veya aramadan birden fazla öğe taşıyamazsınız"
                 }
             }
         },
@@ -224,7 +224,7 @@
             "sharedWithMe": "Benimle paylaşıldı",
             "trash": "Çöp Kutusu",
             "myElements": "Öğelerim",
-            "sharedElements": "Paylaşılan Öğeler",
+            "sharedElements": "Paylaşılan öğeler",
             "recents": "En son öğeler"
         },
         "uploads": "Yüklemeler",
@@ -282,7 +282,7 @@
                 "label": "Genel bağlantı güncellendi"
             },
             "newPublicLinkGenerated": {
-                "label": "Yeni genel bağlantı oluşturuldu"
+                "label": "Yeni Genel bağlantı oluşturuldu"
             },
             "actionLabel": {
                 "copyLink": "Bağlantıyı kopyala"
@@ -322,7 +322,7 @@
         "retryUpload": "Yüklemeyi tekrar dene",
         "unflag": "Bayrağı kaldır",
         "sendViaMail": "E-posta ile gönder",
-        "manageShares": "Paylaşımları Yönet",
+        "manageShares": "Paylaşımları yönet",
         "edit": "Düzenle",
         "preview": "Önizleme"
     },
@@ -360,12 +360,12 @@
                     "save": "Kaydet",
                     "role": {
                         "editor": "Düzenleyici",
-                        "editorDescription": "Dosya veya klasörü görüntüleyip düzenleyebilecek",
+                        "editorDescription": "Öğeyi görüntüleyip düzenleyebilecek",
                         "viewer": "Görüntüleyici",
-                        "viewerDescription": "Dosya veya klasörü sadece görüntüleyecek veya indirebilecek"
+                        "viewerDescription": "Öğeyi sadece görüntüleyecek veya indirebilecek"
                     },
                     "sharingAllowed": "Paylaşıma izin verildi",
-                    "sharingAllowedDescription": "Dosya veya klasör paylaşımlarını yönet"
+                    "sharingAllowedDescription": "Öğe paylaşımlarını yönetebilecek"
                 },
                 "you": "Siz",
                 "owner": "Sahibi",
@@ -401,12 +401,12 @@
             "versioning": "Versiyonlama"
         },
         "uploads": {
-            "message": "Yüklenmesi devam eden her öğeyi burada görebilirsiniz, buradan yönetebilirsiniz",
+            "message": "Yüklenmesi devam eden her öğeyi burada görebilirsiniz, buradan yönetebilirsiniz.",
             "title": "Yükleme önerileri"
         },
         "generic": {
-            "message": "Seçmek için öğeye tıklayın",
-            "title": "Dosya ve klasörleri görün ve kişiler ile paylaşın"
+            "message": "Seçmek için öğeye tıklayın.",
+            "title": "Dosya ve klasörleri görün ve kişiler ile paylaşın."
         },
         "version": {
             "actions": {
@@ -434,7 +434,7 @@
                 "lastWeek": "Son 7 gün",
                 "olderVersions": "Eski versiyonlar"
             },
-            "mainHint": "Dosyalar uygulaması dosyalarınızın {{maxVersions}} versiyonunu kaydeder. Herhangi bir dosya versiyonunu manuel olarak silebilir veya güncel versiyon olarak geri alabilirsiniz. Her zaman saklamak istediğiniz bir veya daha fazla versiyonu seçin.",
+            "mainHint": "Dosyalar uygulaması öğelerinizin {{maxVersions}} versiyonunu kaydeder. Herhangi bir öğe versiyonunu manuel olarak silebilir veya güncel versiyon olarak geri alabilirsiniz. Her zaman saklamak istediğiniz bir veya daha fazla versiyonu seçin.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Kopyalanan versiyon {{versionNumber}} ({{cloneDate}})",
@@ -445,7 +445,7 @@
         },
         "search_empty": [
             {
-                "message": "Veya aramanızı detaylandırmak için “Gelişmiş Filtreler”i seçin.",
+                "message": "Veya aramanızı detaylandırmak için “Gelişmiş filtreler”i seçin.",
                 "title": "Farklı arama başlat."
             },
             {
@@ -513,7 +513,7 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "message": "Yeni bir doküman oluşturmak ve kişiler ile paylaşmak için \"YENİ\" tuşuna tıklayın.",
+                    "message": "Yeni bir öğe oluşturmak ve kişiler ile paylaşmak için \"YENİ\" tuşuna tıklayın.",
                     "title": "Henüz sizinle paylaşılan bir öğe yok."
                 },
                 {
@@ -523,7 +523,7 @@
             ],
             "sharedWithMe_full": [
                 {
-                    "title": "Dosyalarınızı düzenlemeye ve paylaşmaya başlayın.",
+                    "title": "Öğelerinizi düzenlemeye ve paylaşmaya başlayın.",
                     "message": "Seçmek için öğeye tıklayın."
                 },
                 {
@@ -549,7 +549,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Çöp kutusunda olan dokümanlarınızı seçin ve geri yükleyin."
+                    "title": "Çöp kutusunda olan öğelerinizi seçin ve geri yükleyin."
                 },
                 {
                     "message": "Geri yüklemek veya tamamen silmek için bir öğe seçin.",
@@ -580,7 +580,7 @@
             ],
             "recents_empty": [
                 {
-                    "title": "Dokümanlarınızı açın, görüntüleyin ve düzenleyin.",
+                    "title": "Öğelerinizi açın, okuyun, düzenleyin.",
                     "message": "En son yapılanları burada görebilirsiniz."
                 }
             ]
@@ -590,7 +590,7 @@
                 "title": "Yeni bir öğe oluşturmak ve kişiler ile paylaşmak için \"YENİ\" tuşuna tıklayın."
             },
             {
-                "message": "\"YENİ\" tuşuna tıklayıp yeni bir dosya oluşturun",
+                "message": "\"YENİ\" tuşuna tıklayıp yeni bir öğe oluşturun",
                 "title": "Çalışmalarınızı düzenlemeye ve paylaşmaya başlayın."
             },
             {
@@ -601,7 +601,7 @@
         "folder_full": [
             {
                 "message": "Seçmek için öğeye tıklayın.",
-                "title": "Dosyalarınızı düzenlemeye ve paylaşmaya başlayın."
+                "title": "Öğelerinizi düzenlemeye ve paylaşmaya başlayın."
             },
             {
                 "message": "Seçmek için öğeye tıklayın.",
@@ -611,7 +611,7 @@
                 "title": "Düzenlemek veya yeniden adlandırmak için bir klasör seçin."
             },
             {
-                "message": "Bir öğe seçin ve \"Paylaşımlar\" sekmesine gidin",
+                "message": "Bir öğe seçin ve \"Paylaşımlar\" sekmesine gidin.",
                 "title": "Bir öğeyi düzenlemesi için kişilere düzenleme yetkileri tanımlayın."
             },
             {
@@ -680,7 +680,7 @@
                     "label": "Paylaşıldı",
                     "description": "Sonuçları sizden başka en az bir katılımcı daha olan öğlere göre filtrele"
                 },
-                "title": "Gelişmiş Filtreler",
+                "title": "Gelişmiş filtreler",
                 "owner": {
                     "label": "Sahibi"
                 },
@@ -713,9 +713,9 @@
                     }
                 },
                 "title": {
-                    "document": "Yeni Doküman oluştur",
-                    "presentation": "Yeni Sunum oluştur",
-                    "spreadsheet": "Yeni Tablo oluştur"
+                    "document": "Yeni doküman oluştur",
+                    "presentation": "Yeni sunum oluştur",
+                    "spreadsheet": "Yeni tablo oluştur"
                 }
             }
         }
@@ -739,8 +739,8 @@
                 }
             },
             "title": {
-                "disabled": "Sürükle ve Bırak Modu",
-                "enabled": "Sürükle ve Bırak Modu"
+                "disabled": "Sürükle ve Bırak modu",
+                "enabled": "Sürükle ve Bırak modu"
             }
         },
         "error": {
@@ -766,8 +766,8 @@
         }
     },
     "sortingDropdown": {
-        "ascendingOrder": "Artan Sıralı",
-        "descendingOrder": "Azalan Sıralı",
+        "ascendingOrder": "Artan sıralı",
+        "descendingOrder": "Azalan sıralı",
         "icon": {
             "tooltip": {
                 "OrderLastUpdateAscending": "Son güncellemeye göre artan sıralı",
@@ -778,7 +778,7 @@
                 "OrderSizeDescending": "Boyuta göre azalan sıralı"
             }
         },
-        "lastUpdate": "Son Güncelleme",
+        "lastUpdate": "Son güncelleme",
         "name": "Ad",
         "size": "Boyut"
     },
@@ -792,8 +792,8 @@
         "code_SHARE_CREATION_ERROR": "Üzgünüz, bu öğeyi bu kullanıcı ile paylaşamazsınız",
         "code_SHARE_NOT_FOUND": "Üzgünüz, bu paylaşım bulunamadı",
         "code_ACCOUNT_NOT_FOUND": "Bu e-posta adresi ile bağlantılı kullanıcı yok",
-        "code_FILE_VERSION_NOT_FOUND": "Üzgünüz, dosyanın bu versiyonu bulunamadı",
-        "code_NODE_DUPLICATED": "Bu klasörde aynı isimde bir dosya var",
+        "code_FILE_VERSION_NOT_FOUND": "Üzgünüz, öğenin bu versiyonu bulunamadı",
+        "code_NODE_DUPLICATED": "Bu klasörde aynı isimde bir öğe var",
         "code_VERSIONS_LIMIT_REACHED": "İşlem tamamlanamadı. Maksimum limite ulaştınız.",
         "code_NODE_COPY_ERROR": "Öğe kopyalanamadı. Lütfen tekrar deneyin"
     },
@@ -801,13 +801,13 @@
         "addLink": {
             "addLink": "Bağlantı ekle",
             "limitReached": "Genel kullanım bağlantısı için maksimum değere ulaşıldı",
-            "title": "Genel Bağlantılar",
+            "title": "Genel bağlantılar",
             "undo": "Geri al",
             "generateLink": "Bağlantı oluştur",
-            "description": "Bu bağlantıya erişimi olan iç ve dış kullanıcılar dosyayı indirebilirler."
+            "description": "Bu bağlantıya erişimi olan iç ve dış kullanıcılar öğeyi indirebilirler."
         },
         "dateTimePicker": {
-            "label": "İptal Tarihi"
+            "label": "İptal tarihi"
         },
         "input": {
             "description": {
@@ -841,7 +841,8 @@
         "actions": {
             "tooltip": {
                 "download": "İndir",
-                "manageShares": "Paylaşımları Yönet"
+                "manageShares": "Paylaşımları yönet",
+                "edit": "Düzenle"
             }
         },
         "close": {
@@ -849,7 +850,7 @@
         },
         "loading": {
             "retrying": "Ön izleme yükleniyor…",
-            "file": "Dosya ön izleme yükleniyor, lütfen bekleyin…",
+            "file": "Öğe ön izleme yükleniyor, lütfen bekleyin…",
             "error": "Ön izleme yüklenirken hata oluştu. Yeniden deneyin."
         },
         "button": {
@@ -874,17 +875,17 @@
     "dropzone": {
         "move": {
             "message": {
-                "enabled": "Öğeleri sürükle bırak özelliğiyle \n bu klasöre kolayca taşıyabilirsiniz",
-                "disabled": "Bu alana sürükle bırak işlemi yapamazsınız"
+                "enabled": "Öğeleri sürükle bırak özelliğiyle \n bu klasöre kolayca taşıyabilirsiniz.",
+                "disabled": "Bu alana sürükle bırak işlemi yapamazsınız."
             },
             "title": {
-                "enabled": "Sürükle ve Bırak Modu",
-                "disabled": "Sürükle ve Bırak Modu"
+                "enabled": "Sürükle ve Bırak modu",
+                "disabled": "Sürükle ve Bırak modu"
             }
         }
     },
     "collaborationLinks": {
-        "title": "Birlikte Çalışma Bağlantıları",
+        "title": "Birlikte çalışma bağlantıları",
         "row": {
             "title": {
                 "writeAndShare": "Yaz ve Paylaş",
