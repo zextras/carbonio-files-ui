@@ -3,5 +3,5 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 mutation deleteNodes($node_ids: [ID!]) {
-    deleteNodes(node_ids: $node_ids)
+	deleteNodes(node_ids: $node_ids)
 }

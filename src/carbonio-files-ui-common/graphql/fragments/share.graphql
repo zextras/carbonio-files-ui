@@ -2,17 +2,17 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 fragment Share on Share {
-    permission
-    share_target {
-        ... on User {
-            email
-            full_name
-            id
-        }
-        ... on DistributionList {
-            id
-            name
-        }
-    }
-    created_at
+	permission
+	share_target {
+		... on User {
+			email
+			full_name
+			id
+		}
+		... on DistributionList {
+			id
+			name
+		}
+	}
+	created_at
 }

@@ -19,24 +19,49 @@ module.exports = {
 			}
 		},
 		{
-			// disable check for license header on graphql files
+			files: ['*.[jt]s?(x)'],
+			processor: '@graphql-eslint/graphql'
+		},
+		{
 			files: ['*.graphql'],
 			rules: {
-				'notice/notice': 'off'
+				'prettier/prettier': 'error',
+				'notice/notice': [
+					'error',
+					{
+						templateFile: './notice.template.graphql'
+					}
+				],
+				'spaced-comment': ['off']
 			}
 		},
 		{
-			files: ['**/graphql/*/*.graphql'],
+			files: ['**/graphql/*/**/*.graphql'],
 			extends: ['plugin:@graphql-eslint/operations-recommended'],
 			rules: {
-				'@graphql-eslint/known-type-names': 'error'
+				'@graphql-eslint/naming-convention': [
+					'error',
+					{
+						VariableDefinition: 'snake_case'
+					}
+				],
+				'@graphql-eslint/no-unused-fragments': 'off',
+				'@graphql-eslint/known-directives': ['error', { ignoreClientDirectives: ['client'] }]
 			}
 		},
 		{
 			files: ['*schema.graphql'],
 			extends: ['plugin:@graphql-eslint/schema-recommended'],
 			rules: {
-				'@graphql-eslint/known-type-names': 'error'
+				'@graphql-eslint/naming-convention': [
+					'error',
+					{
+						'FieldDefinition[parent.name.value=Query]': {
+							forbiddenPrefixes: ['query']
+						}
+					}
+				],
+				'@graphql-eslint/known-directives': ['error', { ignoreClientDirectives: ['client'] }]
 			}
 		},
 		{
@@ -101,5 +126,5 @@ module.exports = {
 		'sonarjs/cognitive-complexity': 'warn',
 		'sonarjs/no-duplicate-string': 'off'
 	},
-	ignorePatterns: ['notice.template.js']
+	ignorePatterns: ['notice.template.*']
 };

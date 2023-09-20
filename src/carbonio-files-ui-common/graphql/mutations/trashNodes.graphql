@@ -3,5 +3,5 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 mutation trashNodes($node_ids: [ID!]) {
-    trashNodes(node_ids: $node_ids)
+	trashNodes(node_ids: $node_ids)
 }
