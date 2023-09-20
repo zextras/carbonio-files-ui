@@ -21,6 +21,10 @@ Files: .nvmrc
 Copyright: 2023 Zextras <https://www.zextras.com>
 License: CC0-1.0
 
+Files: .npmrc
+Copyright: 2023 Zextras <https://www.zextras.com>
+License: CC0-1.0
+
 Files: .husky/*
 Copyright: 2023 Zextras <https://www.zextras.com>
 License: CC0-1.0

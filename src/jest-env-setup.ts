@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
 import { type ApolloClient } from '@apollo/client';
 import { act, configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
