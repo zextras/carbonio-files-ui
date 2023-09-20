@@ -53,7 +53,7 @@ jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateO
 	})
 }));
 
-const MockDisplayer = (props: DisplayerProps): JSX.Element => {
+const MockDisplayer = (props: DisplayerProps): React.JSX.Element => {
 	const createDoc = (ev: React.MouseEvent<HTMLButtonElement>, actionIds: string): void => {
 		if (mockedCreateOptions) {
 			const createDocsDocument = mockedCreateOptions.find(

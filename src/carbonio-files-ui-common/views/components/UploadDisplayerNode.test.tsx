@@ -211,7 +211,7 @@ describe('Upload Displayer Node', () => {
 			const uploadItem = populateUploadFolderItem({
 				children: Object.keys(childrenMap),
 				status: UploadStatus.FAILED,
-				nodeId: faker.datatype.uuid(),
+				nodeId: faker.string.uuid(),
 				parentNodeId: parentFolder.id
 			});
 			children.forEach((child) => {

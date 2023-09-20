@@ -24,18 +24,18 @@ const handleGetChildrenRequest: ResponseResolver<
 		shares_limit: sharesLimit
 	} = req.variables;
 
-	let parentNodeName = faker.random.words();
+	let parentNodeName = faker.word.words();
 	if (parentNode.trim() === ROOTS.LOCAL_ROOT) {
 		parentNodeName = 'ROOT';
 	}
 
-	const childrenNum = faker.datatype.number({ min: 0, max: childrenLimit });
+	const childrenNum = faker.number.int({ min: 0, max: childrenLimit });
 
 	const folder = populateFolder(childrenNum, parentNode, parentNodeName);
 
 	forEach(folder.children.nodes, (mockedNode) => {
 		if (mockedNode) {
-			const sharesNum = faker.datatype.number({ min: 0, max: sharesLimit || 1 });
+			const sharesNum = faker.number.int({ min: 0, max: sharesLimit || 1 });
 			mockedNode.shares = take(mockedNode.shares, sharesNum);
 		}
 	});

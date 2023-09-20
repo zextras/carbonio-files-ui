@@ -30,17 +30,17 @@ const handleGetNodeRequest: ResponseResolver<
 		shares_limit: sharesLimit
 	} = req.variables;
 
-	let nodeName = faker.random.words();
+	let nodeName = faker.word.words();
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
 		nodeName = 'ROOT';
 	}
 	const node = populateNode(undefined, id, nodeName);
 
-	const sharesNum = faker.datatype.number({ min: 0, max: sharesLimit || 1 });
+	const sharesNum = faker.number.int({ min: 0, max: sharesLimit || 1 });
 	node.shares = take(node.shares, sharesNum);
 
 	if (node.__typename === 'Folder') {
-		const childrenNum = faker.datatype.number({ min: 0, max: childrenLimit });
+		const childrenNum = faker.number.int({ min: 0, max: childrenLimit });
 		node.children = populateNodePage(populateNodes(childrenNum));
 		forEach(node.children.nodes, (mockedNode) => {
 			if (mockedNode) {
@@ -53,7 +53,7 @@ const handleGetNodeRequest: ResponseResolver<
 		}
 	}
 
-	const linksLimit = faker.datatype.number({ min: 0, max: 50 });
+	const linksLimit = faker.number.int({ min: 0, max: 50 });
 	node.links = populateLinks(node, linksLimit);
 
 	return res(

@@ -67,7 +67,7 @@ describe('Upload View', () => {
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.never);
-						return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+						return res(ctx.json({ nodeId: faker.string.uuid() }));
 					}
 				)
 			);
@@ -125,7 +125,7 @@ describe('Upload View', () => {
 							await delayUntil(emitter, EMITTER_CODES.never);
 						}
 						uploadRequestCount += 1;
-						return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+						return res(ctx.json({ nodeId: faker.string.uuid() }));
 					}
 				)
 			);
@@ -180,13 +180,13 @@ describe('Upload View', () => {
 							req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
 						const childIndex = children.findIndex((child) => child.name === fileName);
 						if (childIndex >= 0 && childIndex < UploadQueue.LIMIT) {
-							return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+							return res(ctx.json({ nodeId: faker.string.uuid() }));
 						}
 						if (childIndex === UploadQueue.LIMIT) {
 							return res(ctx.status(500));
 						}
 						await delayUntil(emitter, EMITTER_CODES.never);
-						return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+						return res(ctx.json({ nodeId: faker.string.uuid() }));
 					}
 				)
 			);
@@ -298,7 +298,7 @@ describe('Upload View', () => {
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						uploadFile();
-						return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+						return res(ctx.json({ nodeId: faker.string.uuid() }));
 					}
 				)
 			);
@@ -431,7 +431,7 @@ describe('Upload View', () => {
 					async (req, res, ctx) => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						uploadFile();
-						return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+						return res(ctx.json({ nodeId: faker.string.uuid() }));
 					}
 				)
 			);
@@ -620,7 +620,7 @@ describe('Upload View', () => {
 						if (fileName === children[children.length - 1].name) {
 							return res(ctx.status(500));
 						}
-						return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+						return res(ctx.json({ nodeId: faker.string.uuid() }));
 					}
 				)
 			);
