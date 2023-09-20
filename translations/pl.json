@@ -12,20 +12,20 @@
                 "confirm": "Potwierdź"
             },
             "header": "Obniż swoje aktualne uprawnienia",
-            "body": "Czy na pewno chcesz obniżyć swoje uprawnienia do tego węzła? Tej czynności nie da się odwrócić, nie będziesz w stanie samemu przywrócić poprzednich uprawnień. Możesz zawsze skontaktować się z właścicielem elementu jeśli będziesz jednak potrzebował to zrobić"
+            "body": "Czy na pewno chcesz obniżyć swoje uprawnienia do tego elementu? Tej czynności nie da się odwrócić, nie będziesz w stanie samemu przywrócić poprzednich uprawnień. Możesz zawsze skontaktować się z właścicielem elementu jeśli będziesz jednak potrzebował to zrobić."
         },
         "removeLink": {
             "button": {
                 "confirm": "Usuń"
             },
             "header": "Usuń publiczny link {{nodeName}}",
-            "body": "Ten link wygasł, więc nie może być już używany, aby dostać sie do tego elementu. Możesz usunąć link z listy lub zaktualizować jego datę wygaśnięcia i inne informacje, aby dalej z niego korzystać"
+            "body": "Ten link wygasł, więc nie może być już używany, aby dostać sie do tego elementu. Możesz usunąć link z listy lub zaktualizować jego datę wygaśnięcia i inne informacje, aby dalej z niego korzystać."
         },
         "revokeLink": {
             "button": {
                 "confirm": "Deaktywuj"
             },
-            "body": "Deaktywując ten link, uniemożliwisz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do pliku",
+            "body": "Deaktywując ten link, uniemożliwisz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do elementu.",
             "header": "Deaktywuj publiczny link {{nodeName}}"
         },
         "deletePermanently": {
@@ -82,7 +82,7 @@
                 "leave_anyway": "Opuść mimo to"
             },
             "body": {
-                "line2": "Wszystkie niezapisane zmiany zostaną utracone",
+                "line2": "Wszystkie niezapisane zmiany zostaną utracone.",
                 "line1": "Czy na pewno chcesz opuścić tą stronę bez zapisywania?"
             }
         },
@@ -103,7 +103,7 @@
                 "confirm": "Deaktywuj"
             },
             "header": "Deaktywuj link do elementu {{nodeName}}",
-            "body": "Po deaktywacji tego linka, tworzenie nowych udostępnień stanie się niemożliwe. Każdy, kto już użył tego linka do elementu, dalej będzie miał do niego dostep."
+            "body": "Po deaktywacji tego linka, tworzenie nowych udostępnień za jego pomocą stanie się niemożliwe. Każdy, kto już użył tego linka, dalej będzie miał dostęp do elementu."
         }
     },
     "search": {
@@ -287,11 +287,11 @@
                     "save": "Zapisz",
                     "role": {
                         "editor": "Edytor",
-                        "editorDescription": "Będzie w stanie wyświetlać oraz edytować ten plik lub folder",
-                        "viewerDescription": "Będzie w stanie jedynie wyświetlać lub pobierać ten plik lub folder",
+                        "editorDescription": "Będzie w stanie wyświetlać oraz edytować ten element",
+                        "viewerDescription": "Będzie w stanie jedynie wyświetlać lub pobierać ten element",
                         "viewer": "Wyświetlający"
                     },
-                    "sharingAllowedDescription": "Będzie w stanie zarządzać udostępnieniami tego pliku lub folderu",
+                    "sharingAllowedDescription": "Będzie w stanie zarządzać udostępnieniami tego elementu",
                     "sharingAllowed": "Udostępnianie dozwolone"
                 },
                 "owner": "Właściciel",
@@ -420,7 +420,7 @@
             "sharedWithMe_empty": [
                 {
                     "title": "Nie ma jeszcze żadnych elementów udostępnionych Tobie.",
-                    "message": "Jedyne co pozostaje to czekać, aż ktoś Ci coś udostępni."
+                    "message": "Kliknij w przycisk \"NOWY\", aby stworzyć nowy element i udostępnić go swoim kontaktom."
                 },
                 {
                     "message": "Daj znać innnym użytkownikom, że możesz z nimi współpracować.",
@@ -430,7 +430,7 @@
             "sharedWithMe_full": [
                 {
                     "message": "Kliknij w element, aby go wybrać.",
-                    "title": "Zacznij edytować i udostępniać swoje pliki."
+                    "title": "Zacznij edytować i udostępniać swoje elementy."
                 },
                 {
                     "message": "Kliknij w element, aby go edytować.",
@@ -455,7 +455,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Wybierz i przywróć swoje dokumenty znajdujące się aktualnie w koszu."
+                    "title": "Wybierz i przywróć swoje elementy znajdujące się aktualnie w koszu."
                 },
                 {
                     "message": "Wybierz element, aby go przywrócić lub trwale usunąć.",
@@ -486,17 +486,17 @@
             ],
             "recents_empty": [
                 {
-                    "title": "Otwieraj, przeglądaj i edytuj swoje dokumenty.",
+                    "title": "Otwieraj, przeglądaj i edytuj swoje elementy.",
                     "message": "Tutaj zobaczysz najnowsze."
                 }
             ]
         },
         "folder_empty": [
             {
-                "title": "Kliknij w przycisk \"NOWY\", aby stworzyć nowy element i udostępnić go ze swoimi kontaktami."
+                "title": "Kliknij w przycisk \"NOWY\", aby stworzyć nowy element i udostępnić go swoim kontaktom."
             },
             {
-                "message": "Stwórz plik klikając przycisk \"NOWY\"",
+                "message": "Stwórz element klikając przycisk \"NOWY\".",
                 "title": "Zacznij edytować oraz udostępniać swoje prace."
             },
             {
@@ -507,7 +507,7 @@
         "folder_full": [
             {
                 "message": "Kliknij w element, aby go wybrać.",
-                "title": "Zacznij edytować i udostępniać swoje pliki."
+                "title": "Zacznij edytować i udostępniać swoje elementy."
             },
             {
                 "message": "Kliknij w element, aby go wybrać.",
@@ -517,7 +517,7 @@
                 "title": "Wybierz folder, aby go edytować lub zmienić jego nazwę."
             },
             {
-                "message": "Wybierz element a następnie przejdź do zakładki \"Udostępnienia\"",
+                "message": "Wybierz element a następnie przejdź do zakładki \"Udostępnienia\".",
                 "title": "Nadaj swoim kontaktom odpowiednie uprawnienia, aby pozwolić im edytować element."
             },
             {
@@ -530,7 +530,7 @@
             }
         ],
         "uploads": {
-            "message": "Tutaj znajdziesz wszystkie elementy, które aktualnie przesyłasz. Możesz stąd nimi zarządzać",
+            "message": "Tutaj znajdziesz wszystkie elementy, które aktualnie przesyłasz. Możesz stąd nimi zarządzać.",
             "title": "Prześlij pliki"
         },
         "version": {
@@ -566,11 +566,11 @@
                 "lastWeek": "Ostatnie 7 dni",
                 "olderVersions": "Starsze wersje"
             },
-            "mainHint": "Carbonio Pliki zapisuje ostatnie {{maxVersions}} wersji Twoich plików. Możesz ręcznie usunąć lub przywrócić którąkolwiek wersję pliku. Wybierz jedną lub więcej wersji, które chcesz zachować na zawsze."
+            "mainHint": "Carbonio Pliki zapisuje ostatnie {{maxVersions}} wersji Twoich elementów. Możesz ręcznie usunąć lub przywrócić którąkolwiek wersję elementu. Wybierz jedną lub więcej wersji, które chcesz zachować na zawsze."
         },
         "generic": {
-            "message": "Kliknij w element, aby go wybrać",
-            "title": "Oglądaj pliki i foldery, udostępniaj je swoim kontaktom"
+            "message": "Kliknij w element, aby go wybrać.",
+            "title": "Oglądaj pliki i foldery, udostępniaj je swoim kontaktom."
         },
         "search": {
             "title": "Wpisz słowa kluczowe, aby rozpocząć wyszukiwanie."
@@ -599,7 +599,7 @@
             "limitReached": "Osiągnięto max. liczbę publicznych linków",
             "title": "Publiczne linki",
             "addLink": "Dodaj Link",
-            "description": "Użytkownicy z i spoza tej domeny, którzy mają dostęp do linka, mogą pobrać ten plik."
+            "description": "Użytkownicy z i spoza tej domeny, którzy mają dostęp do linka, mogą pobrać ten element."
         },
         "dateTimePicker": {
             "label": "Data wygaśnięcia"
@@ -676,8 +676,8 @@
     "uploads": {
         "dropzone": {
             "title": {
-                "disabled": "Tryb przeciągnij i upuść",
-                "enabled": "Tryb przeciągnij i upuść"
+                "disabled": "Tryb przeciągnij i upuść.",
+                "enabled": "Tryb przeciągnij i upuść."
             },
             "message": {
                 "folderView": {
@@ -708,7 +708,7 @@
                 "Brak wyników. Nie poddawaj się!",
                 "Żaden z elementów nie pasuje do kryteriów wyszukiwania."
             ],
-            "hint": "Twoje wyszukiwanie nie pasuje do żadnych plików ani folderów",
+            "hint": "Twoje wyszukiwanie nie pasuje do żadnych plików ani folderów.",
             "notRun": "Nie przeprowadzono jeszcze żadnego wyszukiwania."
         },
         "filter": {
@@ -720,9 +720,9 @@
             "recents": "Wygląda na to, że nie masz jeszcze żadnych ostatnio edytowanych plików."
         },
         "folder": {
-            "displayerContent": "Ten folder nie ma żadnej zawartości",
-            "hint": "Wygląda na to, że ten folder jest pusty",
-            "state": "Przeciągnij plik lub stwórz nowy klikając \"NOWY\""
+            "displayerContent": "Ten folder nie ma żadnej zawartości.",
+            "hint": "Wygląda na to, że ten folder jest pusty.",
+            "state": "Przeciągnij plik lub stwórz nowy klikając \"NOWY\"."
         }
     },
     "folder": {
@@ -736,7 +736,7 @@
                         "name": "Nazwa folderu"
                     }
                 },
-                "title": "Stwórz Nowy folder"
+                "title": "Stwórz nowy folder"
             }
         }
     },
@@ -763,7 +763,7 @@
             },
             "error": {
                 "not": {
-                    "allowed": "Nie możesz przenosić więcej niż jednego węzła z filtrów lub wyszukiwania"
+                    "allowed": "Nie możesz przenosić więcej niż jednego elementu z filtrów lub wyszukiwania"
                 }
             }
         },
@@ -819,15 +819,15 @@
     "errorCode": {
         "code": "Coś poszło nie tak",
         "code_ACCOUNT_NOT_FOUND": "Wygląda na to, że ten adres e-mail nie jest przypisany do żadnego użytkownika",
-        "code_FILE_VERSION_NOT_FOUND": "Przepraszamy, nie udało się znaleźć tej wersji pliku",
+        "code_FILE_VERSION_NOT_FOUND": "Przepraszamy, nie udało się znaleźć tej wersji elementu",
         "code_Generic": "Coś poszło nie tak",
         "code_LINK_NOT_FOUND": "Czynność nie powiodła się. Ten link już nie istnieje",
-        "code_NODE_DUPLICATED": "W tym folderze znajduje się już plik o tej samej nazwie",
-        "code_NODE_NOT_FOUND": "Wygląda na to, że ten obiekt nie istnieje lub nie masz odpowiednich uprawnień",
-        "code_NODE_WRITE_ERROR": "Wygląda na to, że ten obiekt nie może być edytowany lub nie masz do tego uprawnień",
+        "code_NODE_DUPLICATED": "W tym folderze znajduje się już element o tej samej nazwie",
+        "code_NODE_NOT_FOUND": "Wygląda na to, że ten element nie istnieje lub nie masz uprawnień dających do niego dostęp",
+        "code_NODE_WRITE_ERROR": "Wygląda na to, że ten element nie może być edytowany lub nie masz do tego uprawnień",
         "code_SHARE_CREATION_ERROR": "Przepraszamy, niestety nie da się udostępnić wskazanego elementu temu użytkownikowi",
         "code_SHARE_NOT_FOUND": "Przepraszamy, nie udało się znaleźc tego udostępnienia",
-        "code_MISSING_FIELD": "Nastąpił błąd wewnętrzny, nie udało się odzyskać wszystkich informacji o tym obiekcie",
+        "code_MISSING_FIELD": "Nastąpił błąd wewnętrzny, nie udało się odzyskać wszystkich informacji o tym elemencie",
         "code_VERSIONS_LIMIT_REACHED": "Ta operacja nie może zostać ukończona. Osignięto max. limit.",
         "code_NODE_COPY_ERROR": "Kopiowanie elementu się nie powiodło. Spróbuj ponownie"
     },
@@ -844,7 +844,8 @@
         "actions": {
             "tooltip": {
                 "download": "Pobierz",
-                "manageShares": "Zarządzaj udostępnieniami"
+                "manageShares": "Zarządzaj udostępnieniami",
+                "edit": "Edytuj"
             }
         },
         "close": {
@@ -852,7 +853,7 @@
         },
         "loading": {
             "retrying": "Ładowanie podglądu…",
-            "file": "Ładowanie podglądu pliku, proszę czekać…",
+            "file": "Ładowanie podglądu elementu, proszę czekać…",
             "error": "Wystąpił błąd przy ładowaniu podglądu. Spróbuj ponownie."
         },
         "button": {
@@ -865,12 +866,12 @@
     "dropzone": {
         "move": {
             "title": {
-                "enabled": "Tryb przeciągnij i upuść",
-                "disabled": "Tryb przeciągnij i upuść"
+                "enabled": "Tryb przeciągnij i upuść.",
+                "disabled": "Tryb przeciągnij i upuść."
             },
             "message": {
-                "enabled": "Tutaj upuść swoje elementy,\n aby szybko je przenieść do tego folderu",
-                "disabled": "Nie można upuszczać elementów w tym polu"
+                "enabled": "Tutaj upuść swoje elementy,\n aby szybko je przenieść do tego folderu.",
+                "disabled": "Nie można upuszczać elementów w tym polu."
             }
         }
     },

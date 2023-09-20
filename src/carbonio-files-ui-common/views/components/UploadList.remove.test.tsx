@@ -392,7 +392,7 @@ describe('Upload List', () => {
 							`${REST_ENDPOINT}${UPLOAD_PATH}`,
 							async (req, res, ctx) => {
 								uploadHandler();
-								return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+								return res(ctx.json({ nodeId: faker.string.uuid() }));
 							}
 						)
 					);
@@ -456,7 +456,7 @@ describe('Upload List', () => {
 							`${REST_ENDPOINT}${UPLOAD_PATH}`,
 							async (req, res, ctx) => {
 								uploadHandler();
-								return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+								return res(ctx.json({ nodeId: faker.string.uuid() }));
 							}
 						)
 					);

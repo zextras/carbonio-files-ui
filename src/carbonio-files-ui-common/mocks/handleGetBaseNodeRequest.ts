@@ -18,7 +18,7 @@ const handleGetBaseNodeRequest: ResponseResolver<
 > = (req, res, ctx) => {
 	const { node_id: id } = req.variables;
 
-	let nodeName = faker.random.words();
+	let nodeName = faker.word.words();
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
 		nodeName = 'ROOT';
 	}

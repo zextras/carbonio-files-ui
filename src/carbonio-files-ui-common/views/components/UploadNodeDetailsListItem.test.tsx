@@ -20,7 +20,7 @@ describe('Upload Node Details List Item', () => {
 		const uploadItem = populateUploadItem({
 			status: UploadStatus.LOADING,
 			progress: 34,
-			parentNodeId: faker.datatype.uuid()
+			parentNodeId: faker.string.uuid()
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
@@ -34,7 +34,7 @@ describe('Upload Node Details List Item', () => {
 		const uploadItem = populateUploadItem({
 			status: UploadStatus.COMPLETED,
 			progress: 34,
-			parentNodeId: faker.datatype.uuid()
+			parentNodeId: faker.string.uuid()
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
@@ -48,7 +48,7 @@ describe('Upload Node Details List Item', () => {
 		const uploadItem = populateUploadItem({
 			status: UploadStatus.FAILED,
 			progress: 34,
-			parentNodeId: faker.datatype.uuid()
+			parentNodeId: faker.string.uuid()
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });
@@ -64,7 +64,7 @@ describe('Upload Node Details List Item', () => {
 			progress: 7,
 			contentCount: 20,
 			failedCount: 3,
-			parentNodeId: faker.datatype.uuid()
+			parentNodeId: faker.string.uuid()
 		});
 
 		uploadVar({ [uploadItem.id]: uploadItem });

@@ -110,7 +110,7 @@ describe('Upload List Item Wrapper', () => {
 				const destinationFolder = populateFolder();
 				const file = populateUploadItem({
 					status: UploadStatus.COMPLETED,
-					nodeId: faker.datatype.uuid(),
+					nodeId: faker.string.uuid(),
 					parentNodeId: destinationFolder.id
 				});
 				const mockSelectedId = jest.fn();
