@@ -60,6 +60,22 @@ module.exports = {
 			rules: {
 				'import/no-extraneous-dependencies': 'off'
 			}
+		},
+		{
+			files: 'src/carbonio-files-ui-common/**/*.[jt]s?(x)',
+			rules: {
+				'no-restricted-imports': [
+					'error',
+					{
+						paths: [
+							{
+								name: '@zextras/carbonio-shell-ui',
+								message: 'Do not import shell in common files'
+							}
+						]
+					}
+				]
+			}
 		}
 	],
 	parserOptions: {
