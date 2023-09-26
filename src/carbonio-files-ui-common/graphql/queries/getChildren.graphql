@@ -7,10 +7,10 @@
 #import "../fragments/parent.graphql"
 
 query getChildren(
-	$node_id: ID!,
-	$children_limit: Int!,
-	$page_token: String,
-	$sort: NodeSort!,
+	$node_id: ID!
+	$children_limit: Int!
+	$page_token: String
+	$sort: NodeSort!
 	$shares_limit: Int = 1
 ) {
 	getNode(node_id: $node_id) {
@@ -19,6 +19,7 @@ query getChildren(
 			children(limit: $children_limit, page_token: $page_token, sort: $sort) {
 				nodes {
 					...Child
+					# eslint-disable @graphql-eslint/known-directives
 					...NodeParent @client
 				}
 				page_token

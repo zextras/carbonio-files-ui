@@ -23,7 +23,7 @@ const handleGetPreviewRequest: ResponseResolver<
 > = async (req, res, ctx) => {
 	const { type, id, thumbnail } = req.params;
 	if (thumbnail || type === PREVIEW_TYPE.IMAGE) {
-		const image = await fetch(faker.image.business()).then((response) => response.arrayBuffer());
+		const image = await fetch(faker.image.url()).then((response) => response.arrayBuffer());
 		return res(
 			ctx.set('Content-Length', image.byteLength.toString()),
 			ctx.set('Content-Type', 'image/png'),

@@ -18,13 +18,13 @@ const handleGetLinksRequest: ResponseResolver<
 > = (req, res, ctx) => {
 	const { node_id: id } = req.variables;
 
-	let nodeName = faker.random.words();
+	let nodeName = faker.word.words();
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
 		nodeName = 'ROOT';
 	}
 	const node = populateNode(undefined, id, nodeName);
 
-	const linksLimit = faker.datatype.number({ min: 0, max: 50 });
+	const linksLimit = faker.number.int({ min: 0, max: 50 });
 	node.links = populateLinks({ ...node, links: [] }, linksLimit);
 
 	return res(

@@ -5,13 +5,13 @@
 #import "./permissions.graphql"
 
 fragment Parent on Node {
-    id
-    name
-    type
-    owner {
-        id
-        full_name
-        email
-    }
-    ...Permissions
+	id
+	name
+	type
+	owner {
+		id
+		full_name
+		email
+	}
+	...Permissions
 }

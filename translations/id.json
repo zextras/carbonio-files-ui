@@ -21,7 +21,7 @@
                 "title": "Buat Folder Baru",
                 "input": {
                     "label": {
-                        "name": "Nama Folder"
+                        "name": "Nama folder"
                     }
                 },
                 "button": {
@@ -113,7 +113,7 @@
                 "leave_anyway": "Tetap keluar"
             },
             "body": {
-                "line2": "Semua perubahan yang tidak disimpan akan hilang",
+                "line2": "Semua perubahan yang tidak disimpan akan hilang.",
                 "line1": "Yakin ingin keluar dari halaman ini tanpa menyimpan?"
             }
         },
@@ -285,9 +285,9 @@
     },
     "empty": {
         "folder": {
-            "hint": "Sepertinya folder ini kosong",
-            "state": "Seret file atau buat file baru dengan mengklik \"BARU\"",
-            "displayerContent": "Folder ini tidak memiliki konten"
+            "hint": "Sepertinya folder ini kosong.",
+            "state": "Seret file atau buat file baru dengan mengklik \"BARU\".",
+            "displayerContent": "Folder ini tidak memiliki konten."
         },
         "filter": {
             "hint": "Sepertinya tidak ada apa pun di sini.",
@@ -298,7 +298,7 @@
             "recents": "Tampaknya belum ada item terbaru."
         },
         "search": {
-            "hint": "Pencarian Anda tidak cocok dengan file atau folder apa pun",
+            "hint": "Pencarian Anda tidak cocok dengan file atau folder apa pun.",
             "noResults": [
                 "Tidak ada hasil. Terus mencari!",
                 "Tak ada item yang cocok dengan pencarian Anda."
@@ -402,15 +402,15 @@
         },
         "uploads": {
             "title": "Unggah saran",
-            "message": "Semua item yang sedang diunggah ada di sini, dan Anda bisa mengelolanya dari sini"
+            "message": "Semua item yang sedang diunggah ada di sini, dan Anda bisa mengelolanya dari sini."
         },
         "generic": {
-            "message": "Klik item untuk memilihnya",
-            "title": "Lihat file dan folder, bagikan dengan kontak Anda"
+            "message": "Klik item untuk memilihnya.",
+            "title": "Lihat file dan folder, bagikan dengan kontak Anda."
         },
         "search_empty": [
             {
-                "message": "Atau pilih \"Filter Lanjutan\" untuk mempersempit pencarian.",
+                "message": "Atau pilih \"filter Lanjutan\" untuk mempersempit pencarian.",
                 "title": "Mulai pencarian lain."
             },
             {
@@ -611,7 +611,7 @@
                 "title": "Pilih folder untuk mengedit atau mengganti namanya."
             },
             {
-                "message": "Pilih item, lalu buka tab \"Berbagi\"",
+                "message": "Pilih item, lalu buka tab \"Berbagi\".",
                 "title": "Berikan kontak Anda dengan mengedit untuk mengizinkan mereka mengedit item."
             },
             {
@@ -865,12 +865,12 @@
     "dropzone": {
         "move": {
             "title": {
-                "enabled": "Mode Seret & Lepas",
-                "disabled": "Mode Seret & Lepas"
+                "enabled": "Mode Seret & Lepas.",
+                "disabled": "Mode Seret & Lepas."
             },
             "message": {
-                "enabled": "Letakkan item Anda di sini \n untuk menambahkan dengan cepat ke folder ini",
-                "disabled": "Anda tidak dapat menempatkan item di area ini"
+                "enabled": "Letakkan item Anda di sini \n untuk menambahkan dengan cepat ke folder ini.",
+                "disabled": "Anda tidak dapat menempatkan item di area ini."
             }
         }
     },

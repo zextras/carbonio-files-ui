@@ -6,7 +6,6 @@
 
 import React from 'react';
 
-import { gql } from '@apollo/client';
 import {
 	act,
 	fireEvent,
@@ -644,40 +643,6 @@ describe('Drag and drop', () => {
 		await screen.findByText((currentFolder.parent as Folder).name);
 		await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand));
 		await screen.findByText(path[0].name);
-		// TODO: move fragment to graphql file and add type
-		// add missing data in cache
-		global.apolloClient.writeFragment({
-			fragment: gql`
-				fragment NodeOwner on Node {
-					owner {
-						id
-						email
-						full_name
-					}
-				}
-			`,
-			id: global.apolloClient.cache.identify(path[0]),
-			data: {
-				owner
-			}
-		});
-		// TODO: move fragment to graphql file and add type
-		// add missing data in cache
-		global.apolloClient.writeFragment({
-			fragment: gql`
-				fragment NodeOwner on Node {
-					owner {
-						id
-						email
-						full_name
-					}
-				}
-			`,
-			id: global.apolloClient.cache.identify(path[1]),
-			data: {
-				owner
-			}
-		});
 
 		// start to drag an item of the list
 		fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });

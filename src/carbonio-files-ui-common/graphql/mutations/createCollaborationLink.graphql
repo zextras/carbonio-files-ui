@@ -5,7 +5,7 @@
 #import "../fragments/collaborationLink.graphql"
 
 mutation createCollaborationLink($node_id: ID!, $permission: SharePermission!) {
-	createCollaborationLink(node_id: $node_id, permission: $permission ) {
+	createCollaborationLink(node_id: $node_id, permission: $permission) {
 		...CollaborationLink
 	}
 }
