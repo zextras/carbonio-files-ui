@@ -40,7 +40,7 @@
                 "confirm": "Hapus secara permanen"
             },
             "header": "Tindakan ini tidak dapat dibatalkan",
-            "body": "Anda akan menghapus item ini secara permanen. File tidak dapat dipulihkan lagi. Tindakan ini tidak dapat dibatalkan."
+            "body": "Anda akan menghapus item ini secara permanen. Item tidak dapat dipulihkan lagi. Tindakan ini tidak dapat dibatalkan."
         },
         "roots": {
             "rootsList": "Drive",
@@ -69,14 +69,14 @@
             "button": {
                 "confirm": "Hapus"
             },
-            "body": "Tautan ini sudah kedaluwarsa, jadi tidak bisa digunakan lagi untuk mengakses elemen. Anda bisa menghapus tautan dari daftar atau Anda bisa memperbarui tanggal berakhir dan informasi lain agar tetap bisa menggunakannya",
+            "body": "Tautan ini sudah kedaluwarsa, jadi tidak bisa digunakan lagi untuk mengakses item. Anda bisa menghapus tautan dari daftar atau memperbarui tanggal berakhir dan informasi lain agar tetap bisa menggunakannya.",
             "header": "Hapus tautan publik {{nodeName}}"
         },
         "revokeLink": {
             "button": {
                 "confirm": "Batalkan"
             },
-            "body": "Dengan mencabut tautan ini, Anda memblokir akses ke {{nodeName}} bagi siapa saja yang mencoba menggunakan tautan untuk mengakses file",
+            "body": "Dengan mencabut tautan ini, Anda memblokir akses ke {{nodeName}} bagi siapa saja yang mencoba menggunakan tautan untuk mengakses item.",
             "header": "Cabut tautan publik {{nodeName}}"
         },
         "close": {
@@ -86,7 +86,7 @@
             "button": {
                 "confirm": "Konfirmasi"
             },
-            "body": "Apakah Anda yakin untuk mengurangi hak Anda pada node ini? Tindakan ini bersifat permanen dan Anda tidak akan dapat memulihkan hak berbagi sebelumnya sendiri. Anda selalu dapat menghubungi pemilik item bersama jika memerlukan izin sebelumnya untuk dipulihkan",
+            "body": "Apakah Anda yakin akan mengurangi hak Anda pada item ini? Tindakan ini bersifat permanen dan Anda tidak akan dapat memulihkan hak berbagi sebelumnya sendiri. Anda selalu dapat menghubungi pemilik item bersama jika memerlukan izin sebelumnya untuk dipulihkan.",
             "header": "Kurangi hak saat ini"
         },
         "nodesSelection": {
@@ -134,7 +134,7 @@
                 "confirm": "Batalkan"
             },
             "header": "Cabut tautan kolaborasi {{nodeName}}",
-            "body": "Dengan mencabut tautan ini, Anda menghalangi kemungkinan untuk membuat berbagi baru dengannya. Semua orang yang telah menggunakan tautan kolaborasi tetap memiliki akses ke node."
+            "body": "Dengan mencabut tautan ini, Anda menghalangi kemungkinan untuk membuat berbagi baru dengannya. Semua orang yang telah menggunakan tautan kolaborasi tetap memiliki akses ke item."
         }
     },
     "node": {
@@ -185,7 +185,7 @@
             },
             "error": {
                 "not": {
-                    "allowed": "Anda tidak dapat memindahkan banyak node dari filter atau pencarian"
+                    "allowed": "Anda tidak dapat memindahkan beberapa item dari filter atau pencarian"
                 }
             }
         },
@@ -200,8 +200,8 @@
             "sharedByMe": "Dibagikan oleh saya",
             "sharedWithMe": "Dibagikan dengan saya",
             "trash": "Tempat Sampah",
-            "myElements": "Elemen saya",
-            "sharedElements": "Elemen Bersama",
+            "myElements": "Item saya",
+            "sharedElements": "Item Bersama",
             "recents": "Terbaru"
         },
         "uploads": "Unggahan",
@@ -314,7 +314,7 @@
         "openWithDocs": "Buka dokumen",
         "rename": "Ganti nama",
         "restore": "Pulihkan",
-        "deletePermanently": "Hapus Secara Permanen",
+        "deletePermanently": "Hapus secara permanen",
         "flag": "Bendera",
         "goToFolder": "Buka folder tujuan",
         "moveToTrash": "Hapus",
@@ -324,7 +324,7 @@
         "sendViaMail": "Kirim melalui email",
         "edit": "Edit",
         "preview": "Pratinjau",
-        "manageShares": "Kelola Berbagi"
+        "manageShares": "Kelola berbagi"
     },
     "displayer": {
         "list": {
@@ -336,13 +336,13 @@
                 "popover": {
                     "save": "Simpan",
                     "role": {
-                        "editorDescription": "Bisa melihat dan mengedit file atau folder",
-                        "viewerDescription": "Hanya bisa melihat atau mengunduh file atau folder",
+                        "editorDescription": "Bisa melihat dan mengedit item",
+                        "viewerDescription": "Hanya bisa melihat atau mengunduh item",
                         "editor": "Editor",
                         "viewer": "Pemirsa"
                     },
                     "sharingAllowed": "Berbagi diperbolehkan",
-                    "sharingAllowedDescription": "Ini bisa mengelola berbagi file atau folder"
+                    "sharingAllowedDescription": "Bisa mengelola berbagi item"
                 },
                 "owner": "Pemilik",
                 "tooltip": {
@@ -457,7 +457,7 @@
                 "lastWeek": "7 hari terakhir",
                 "olderVersions": "Versi lama"
             },
-            "mainHint": "File menyimpan versi {{maxVersions}} terakhir file Anda. Anda dapat menghapus versi file apa pun secara manual atau memulihkannya sebagai versi saat ini. Pilih satu atau beberapa versi yang ingin disimpan selamanya.",
+            "mainHint": "File menyimpan versi {{maxVersions}} terakhir item Anda. Anda dapat menghapus versi item apa pun secara manual atau memulihkannya sebagai versi saat ini. Pilih satu atau beberapa versi yang ingin disimpan selamanya.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Digandakan dari versi {{versionNumber}} ({{cloneDate}})",
@@ -513,7 +513,7 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "message": "Klik tombol \"BARU\" untuk membuat dokumen baru dan bagikan dengan kontak Anda.",
+                    "message": "Klik tombol \"BARU\" untuk membuat item baru dan bagikan dengan kontak Anda.",
                     "title": "Tidak ada item yang belum dibagikan dengan Anda."
                 },
                 {
@@ -524,7 +524,7 @@
             "sharedWithMe_full": [
                 {
                     "message": "Klik item untuk memilihnya.",
-                    "title": "Mulai mengedit dan berbagi file."
+                    "title": "Mulai mengedit dan berbagi item Anda."
                 },
                 {
                     "message": "Klik item untuk memilihnya.",
@@ -549,7 +549,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Pilih dan pulihkan dokumen Anda yang kini sedang ada di sampah."
+                    "title": "Pilih dan pulihkan item Anda yang kini sedang ada di sampah."
                 },
                 {
                     "message": "Pilih item untuk memulihkan atau menghapus permanen.",
@@ -581,7 +581,7 @@
             "recents_empty": [
                 {
                     "message": "Anda akan melihat paling terbaru di sini.",
-                    "title": "Buka, baca, edit dokumen Anda."
+                    "title": "Buka, baca, edit item Anda."
                 }
             ]
         },
@@ -590,7 +590,7 @@
                 "title": "Klik tombol \"BARU\" untuk membuat item baru dan membagikannya kepada kontak Anda."
             },
             {
-                "message": "Buat file dengan mengklik tombol \"BARU\"",
+                "message": "Buat item dengan mengklik tombol \"BARU.\"",
                 "title": "Mulai mengedit dan berbagi pekerjaan Anda."
             },
             {
@@ -601,7 +601,7 @@
         "folder_full": [
             {
                 "message": "Klik item untuk memilihnya.",
-                "title": "Mulai mengedit dan berbagi file."
+                "title": "Mulai mengedit dan berbagi item."
             },
             {
                 "message": "Klik item untuk memilihnya.",
@@ -756,7 +756,7 @@
             "addLink": "Tambahkan Tautan",
             "limitReached": "Maksimum jumlah tautan publik telah tercapai",
             "title": "Tautan Publik",
-            "description": "Pengguna internal dan eksternal yang memiliki akses ke tautan dapat mengunduh file."
+            "description": "Pengguna internal dan eksternal yang memiliki akses ke tautan dapat mengunduh item."
         },
         "link": {
             "remove": "Hapus",
@@ -810,14 +810,14 @@
         "code": "Terjadi masalah",
         "code_Generic": "Terjadi masalah",
         "code_ACCOUNT_NOT_FOUND": "Tampaknya email ini tidak terkait dengan pengguna",
-        "code_FILE_VERSION_NOT_FOUND": "Maaf, versi file ini tidak bisa ditemukan",
+        "code_FILE_VERSION_NOT_FOUND": "Maaf, versi item ini tidak bisa ditemukan",
         "code_LINK_NOT_FOUND": "Tindakan gagal. Tautan ini sudah tidak ada",
-        "code_MISSING_FIELD": "Terjadi kesalahan internal. Tidak semua informasi objek ini telah dipulihkan",
-        "code_NODE_NOT_FOUND": "Tampaknya objek ini tidak ada atau Anda tidak memiliki izin mengaksesnya",
-        "code_NODE_WRITE_ERROR": "Tampaknya objek ini tidak dapat diedit atau Anda tidak memiliki izin mengeditnya",
+        "code_MISSING_FIELD": "Terjadi kesalahan internal. Tidak semua informasi item ini telah dipulihkan",
+        "code_NODE_NOT_FOUND": "Tampaknya item ini tidak ada, atau Anda tidak memiliki izin mengaksesnya",
+        "code_NODE_WRITE_ERROR": "Tampaknya item ini tidak dapat diedit atau Anda tidak memiliki izin mengeditnya",
         "code_SHARE_CREATION_ERROR": "Maaf, Anda tidak bisa berbagi item dengan pengguna ini",
         "code_SHARE_NOT_FOUND": "Maaf, berbagi ini tidak ditemukan",
-        "code_NODE_DUPLICATED": "Ada file dengan nama yang sama di folder ini",
+        "code_NODE_DUPLICATED": "Ada item dengan nama yang sama di folder ini",
         "code_VERSIONS_LIMIT_REACHED": "Operasi tidak bisa diselesaikan. Anda telah mencapai batas maksimum.",
         "code_NODE_COPY_ERROR": "Maaf, item gagal disalin. Coba lagi"
     },
@@ -844,7 +844,8 @@
         "actions": {
             "tooltip": {
                 "download": "Unduh",
-                "manageShares": "Kelola Berbagi"
+                "manageShares": "Kelola Berbagi",
+                "edit": "Edit"
             }
         },
         "close": {
@@ -852,7 +853,7 @@
         },
         "loading": {
             "retrying": "Mencoba memuat pratinjau…",
-            "file": "Memuat pratinjau file, harap tunggu…",
+            "file": "Memuat pratinjau item, harap tunggu…",
             "error": "Terjadi kesalahan saat memuat pratinjau. Coba lagi."
         },
         "button": {
