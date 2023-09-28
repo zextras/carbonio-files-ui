@@ -23,7 +23,7 @@
             "button": {
                 "confirm": "Permanent verwijderen"
             },
-            "body": "U verwijdert dit bestand/deze bestanden definitief. U zult niet meer in staat zijn dit bestand/deze bestanden te herstellen. Deze actie is onomkeerbaar.",
+            "body": "U verwijdert dit bestand/deze bestanden definitief. U zult niet meer in staat zijn dit item/deze items te herstellen. Deze actie is onomkeerbaar.",
             "header": "Deze actie is onomkeerbaar"
         },
         "roots": {
@@ -54,14 +54,14 @@
                 "confirm": "Verwijderen"
             },
             "header": "Publieke link {{nodeName}} verwijderen",
-            "body": "Deze link is vervallen, daarom kan hij niet meer gebruikt worden om toegang te krijgen tot het element. U kunt de link uit de lijst verwijderen of u kunt de vervaldatum en andere informatie bijwerken om hem te blijven gebruiken"
+            "body": "Deze link is vervallen, daarom kan hij niet meer gebruikt worden om toegang te krijgen tot het item. U kunt de link uit de lijst verwijderen of u kunt de vervaldatum en andere informatie bijwerken om hem te blijven gebruiken."
         },
         "revokeLink": {
             "button": {
                 "confirm": "Intrekken"
             },
             "header": "Publieke link {{nodeName}} intrekken",
-            "body": "Door deze link in te trekken, blokkeert u de toegang tot {{nodeName}} voor iedereen die de link probeert te gebruiken om het bestand te openen"
+            "body": "Door deze link in te trekken, blokkeert u de toegang tot {{nodeName}} voor iedereen die de link probeert te gebruiken om het item te openen."
         },
         "close": {
             "tooltip": "Sluiten"
@@ -71,7 +71,7 @@
                 "confirm": "Bevestigen"
             },
             "header": "Verminder uw huidige rechten",
-            "body": "Ben je zeker dat je de rechten op deze node wil verminderen? De actie is permanent en je zal niet in staat zijn om de rechten van de vorige share zelf te herstellen. Je kan altijd contact opnemen met de eigenaar van het gedeelde item als je de vorige rechten wil herstellen"
+            "body": "Ben je zeker dat je de rechten op dit item wil verminderen? De actie is permanent en je zal niet in staat zijn om de rechten van de vorige share zelf te herstellen. Je kan altijd contact opnemen met de eigenaar van het gedeelde item als je de vorige rechten wil herstellen."
         },
         "nodesSelection": {
             "selectedCount": "{{count}} geselecteerd item",
@@ -118,7 +118,7 @@
                 "confirm": "Intrekken"
             },
             "header": "{{nodeName}} samenwerkingslink intrekken",
-            "body": "Door deze link in te trekken, blokkeert u de mogelijkheid om er nieuwe shares mee aan te maken. Iedereen die de samenwerkingslink al heeft gebruikt, behoudt de toegang tot de node."
+            "body": "Door deze link in te trekken, blokkeert u de mogelijkheid om er nieuwe shares mee aan te maken. Iedereen die de samenwerkingslink al heeft gebruikt, behoudt de toegang tot het item."
         }
     },
     "secondaryBar": {
@@ -128,8 +128,8 @@
             "sharedByMe": "Door mij gedeeld",
             "sharedWithMe": "Met mij gedeeld",
             "trash": "Prullenbak",
-            "myElements": "Mijn elementen",
-            "sharedElements": "Gedeelde elementen",
+            "myElements": "Mijn items",
+            "sharedElements": "Gedeelde items",
             "recents": "Recente"
         },
         "uploads": "Uploads",
@@ -360,12 +360,12 @@
                     "save": "Opslaan",
                     "role": {
                         "editor": "Bewerker",
-                        "editorDescription": "Het zal in staat zijn om het bestand of de map te bekijken en te bewerken",
-                        "viewerDescription": "Het zal alleen in staat zijn om het bestand of de map te bekijken of te downloaden",
+                        "editorDescription": "Het zal in staat zijn om het item te bekijken en te bewerken",
+                        "viewerDescription": "Het zal alleen in staat zijn om het item te bekijken of te downloaden",
                         "viewer": "Viewer"
                     },
                     "sharingAllowed": "Delen toegestaan",
-                    "sharingAllowedDescription": "Het zal in staat zijn om delen van het bestand of de map te beheren"
+                    "sharingAllowedDescription": "Het zal in staat zijn om delen van het item te beheren"
                 },
                 "you": "U",
                 "owner": "Eigenaar",
@@ -401,7 +401,7 @@
             "versioning": "Versiebeheer"
         },
         "uploads": {
-            "message": "Hier vindt u alle items die momenteel aan het uploaden zijn, u kunt ze van hieruit beheren",
+            "message": "Hier vindt u alle items die momenteel aan het uploaden zijn, u kunt ze van hieruit beheren.",
             "title": "Suggesties uploaden"
         },
         "generic": {
@@ -457,7 +457,7 @@
                 "lastWeek": "Afgelopen 7 dagen",
                 "olderVersions": "Oudere versies"
             },
-            "mainHint": "Files bewaart de laatste {{maxVersions}} versies van uw bestanden. U kunt handmatig elke bestandsversie verwijderen of een versie terugzetten als de huidige versie. Selecteer een of meer versies die u voor altijd wilt bewaren.",
+            "mainHint": "Files bewaart de laatste {{maxVersions}} versies van uw items. U kunt handmatig elke itemversie verwijderen of een versie terugzetten als de huidige versie. Selecteer een of meer versies die u voor altijd wilt bewaren.",
             "row": {
                 "clonedIcon": {
                     "tooltip1": "Gekloond van versie {{versionNumber}} ({{cloneDate}})",
@@ -513,7 +513,7 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "message": "Klik op de knop \"NIEUW\" om een nieuw document te maken en het met uw contacten te delen.",
+                    "message": "Klik op de knop \"NIEUW\" om een nieuw item te maken en het met uw contacten te delen.",
                     "title": "Er zijn nog geen items met u gedeeld."
                 },
                 {
@@ -524,7 +524,7 @@
             "sharedWithMe_full": [
                 {
                     "message": "Klik op een item om het te selecteren.",
-                    "title": "Begin met het bewerken en delen van uw bestanden."
+                    "title": "Begin met het bewerken en delen van uw items."
                 },
                 {
                     "message": "Klik op een item om het te selecteren.",
@@ -549,7 +549,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Selecteer en herstel uw documenten die zich nu in de prullenbak bevinden."
+                    "title": "Selecteer en herstel uw items die zich nu in de prullenbak bevinden."
                 },
                 {
                     "message": "Selecteer een item om het te herstellen of definitief te verwijderen.",
@@ -581,7 +581,7 @@
             "recents_empty": [
                 {
                     "message": "De meest recente ziet u hier.",
-                    "title": "Openen, lezen, bewerken van uw documenten."
+                    "title": "Openen, lezen, bewerken van uw items."
                 }
             ]
         },
@@ -590,7 +590,7 @@
                 "title": "Klik op de knop \"NIEUW\" om een nieuw item te maken en het met uw contacten te delen."
             },
             {
-                "message": "Maak een nieuwe bestand aan door op de knop \"NIEUW\" te klikken",
+                "message": "Maak een nieuw item aan door op de knop \"NIEUW\" te klikken.",
                 "title": "Begin met het bewerken en delen van uw werk."
             },
             {
@@ -601,7 +601,7 @@
         "folder_full": [
             {
                 "message": "Klik op een item om het te selecteren.",
-                "title": "Begin met het bewerken en delen van uw bestanden."
+                "title": "Begin met het bewerken en delen van uw items."
             },
             {
                 "title": "Bekijk de details van uw mappen en deel ze met uw contacten.",
@@ -781,13 +781,13 @@
         "code_Generic": "Er ging iets mis",
         "code_ACCOUNT_NOT_FOUND": "Het lijkt erop dat deze e-mail niet is gekoppeld aan een gebruiker",
         "code_LINK_NOT_FOUND": "Actie mislukt. Deze link bestaat niet meer",
-        "code_MISSING_FIELD": "Er is een interne fout opgetreden, niet alle informatie van dit object is hersteld",
-        "code_NODE_WRITE_ERROR": "Het lijkt erop dat dit object niet kan worden bewerkt of dat u geen toestemming hebt om het te bewerken",
+        "code_MISSING_FIELD": "Er is een interne fout opgetreden, niet alle informatie van dit item is hersteld",
+        "code_NODE_WRITE_ERROR": "Het lijkt erop dat dit item niet kan worden bewerkt of dat u geen toestemming hebt om het te bewerken",
         "code_SHARE_CREATION_ERROR": "Het spijt ons, maar het is niet mogelijk om het item te delen met deze gebruiker",
         "code_SHARE_NOT_FOUND": "Het spijt ons, maar dit aandeel kan niet gevonden worden",
-        "code_FILE_VERSION_NOT_FOUND": "Het spijt ons, maar deze versie van het bestand kan niet gevonden worden",
-        "code_NODE_NOT_FOUND": "Het lijkt erop dat dit object niet bestaat, of dat je geen toestemming hebt om het te openen",
-        "code_NODE_DUPLICATED": "Er is een bestand met dezelfde naam in deze map",
+        "code_FILE_VERSION_NOT_FOUND": "Het spijt ons, maar deze versie van het item kan niet gevonden worden",
+        "code_NODE_NOT_FOUND": "Het lijkt erop dat dit item niet bestaat, of dat je geen toestemming hebt om het te openen",
+        "code_NODE_DUPLICATED": "Er is een item met dezelfde naam in deze map",
         "code_VERSIONS_LIMIT_REACHED": "De operatie kan niet worden voltooid. U hebt de maximumlimiet bereikt.",
         "code_NODE_COPY_ERROR": "Sorry, kopiëren van het item is mislukt. Probeer opnieuw"
     },
@@ -798,7 +798,7 @@
             "addLink": "Link toevoegen",
             "title": "Öffentlicher link",
             "limitReached": "Het maximum aantal publieke links is bereikt",
-            "description": "Interne en externe gebruikers die toegang hebben tot de link kunnen het bestand downloaden."
+            "description": "Interne en externe gebruikers die toegang hebben tot de link kunnen het item downloaden."
         },
         "link": {
             "edit": "Bewerken",
@@ -844,7 +844,8 @@
         "actions": {
             "tooltip": {
                 "download": "Download",
-                "manageShares": "Delen managen"
+                "manageShares": "Delen managen",
+                "edit": "Bewerken"
             }
         },
         "close": {
@@ -852,7 +853,7 @@
         },
         "loading": {
             "retrying": "Er wordt geprobeerd om het voorbeeld te laden…",
-            "file": "Voorbeeldbestand wordt geladen, wacht even….",
+            "file": "Voorbeelditem wordt geladen, wacht even….",
             "error": "Er is een fout opgetreden bij het laden van de voorbeeldweergave. Probeer het opnieuw."
         },
         "button": {
@@ -885,7 +886,7 @@
                 "writeAndShare": "Schrijven en Delen",
                 "ReadAndShare": "Lezen en Delen"
             },
-            "placeholder": "Een link maken om het knooppunt te delen"
+            "placeholder": "Een link maken om het item te delen"
         },
         "link": {
             "urlChip": {

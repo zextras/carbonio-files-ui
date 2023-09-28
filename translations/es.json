@@ -844,7 +844,8 @@
         "actions": {
             "tooltip": {
                 "download": "Descargar",
-                "manageShares": "Administrar uso compartido"
+                "manageShares": "Administrar uso compartido",
+                "edit": "Editar"
             }
         },
         "close": {
