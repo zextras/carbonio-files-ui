@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import { ApolloError, FetchResult, useMutation } from '@apollo/client';
 import { reduce } from 'lodash';
 
+import { recursiveShareEvict } from '../../../apollo/cacheUtils';
 import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
 import UPDATE_SHARE from '../../../graphql/mutations/updateShare.graphql';
 import { ShareCachedObject, SharesCachedObject } from '../../../types/apollo';
@@ -79,6 +80,7 @@ export function useUpdateShareMutation(): [
 							}
 						}
 					});
+					recursiveShareEvict(cache, node);
 				}
 			}),
 		[updateShareMutation]

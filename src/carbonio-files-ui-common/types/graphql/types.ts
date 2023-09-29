@@ -14,80 +14,86 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
+	[_ in K]?: never;
+};
+export type Incremental<T> =
+	| T
+	| { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-	ID: string;
-	String: string;
-	Boolean: boolean;
-	Int: number;
-	Float: number;
-	DateTime: number;
-	UploadItem: ClientTypes.UploadItem;
+	ID: { input: string; output: string };
+	String: { input: string; output: string };
+	Boolean: { input: boolean; output: boolean };
+	Int: { input: number; output: number };
+	Float: { input: number; output: number };
+	DateTime: { input: number; output: number };
+	UploadItem: { input: ClientTypes.UploadItem; output: ClientTypes.UploadItem };
 };
 
 export type Account = DistributionList | User;
 
 export type CollaborationLink = {
 	__typename?: 'CollaborationLink';
-	created_at: Scalars['DateTime'];
-	id: Scalars['ID'];
+	created_at: Scalars['DateTime']['output'];
+	id: Scalars['ID']['output'];
 	node: File | Folder;
 	permission: SharePermission;
-	url: Scalars['String'];
+	url: Scalars['String']['output'];
 };
 
 export type Config = {
 	__typename?: 'Config';
-	name: Scalars['String'];
-	value: Scalars['String'];
+	name: Scalars['String']['output'];
+	value: Scalars['String']['output'];
 };
 
 export type DistributionList = {
 	__typename?: 'DistributionList';
-	id: Scalars['ID'];
-	name: Scalars['String'];
+	id: Scalars['ID']['output'];
+	name: Scalars['String']['output'];
 	users: Array<Maybe<User>>;
 };
 
 export type DistributionListUsersArgs = {
-	cursor?: InputMaybe<Scalars['String']>;
-	limit: Scalars['Int'];
+	cursor?: InputMaybe<Scalars['String']['input']>;
+	limit: Scalars['Int']['input'];
 };
 
 export type File = Node & {
 	__typename?: 'File';
-	cloned_from_version?: Maybe<Scalars['Int']>;
+	cloned_from_version?: Maybe<Scalars['Int']['output']>;
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime'];
+	created_at: Scalars['DateTime']['output'];
 	creator: User;
-	description: Scalars['String'];
-	extension?: Maybe<Scalars['String']>;
-	flagged: Scalars['Boolean'];
-	id: Scalars['ID'];
-	keep_forever: Scalars['Boolean'];
+	description: Scalars['String']['output'];
+	extension?: Maybe<Scalars['String']['output']>;
+	flagged: Scalars['Boolean']['output'];
+	id: Scalars['ID']['output'];
+	keep_forever: Scalars['Boolean']['output'];
 	last_editor?: Maybe<User>;
 	links: Array<Maybe<Link>>;
-	mime_type: Scalars['String'];
-	name: Scalars['String'];
+	mime_type: Scalars['String']['output'];
+	name: Scalars['String']['output'];
 	owner?: Maybe<User>;
 	parent?: Maybe<File | Folder>;
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']>;
+	rootId?: Maybe<Scalars['ID']['output']>;
 	share?: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
-	size: Scalars['Float'];
+	size: Scalars['Float']['output'];
 	type: NodeType;
-	updated_at: Scalars['DateTime'];
-	version: Scalars['Int'];
+	updated_at: Scalars['DateTime']['output'];
+	version: Scalars['Int']['output'];
 };
 
 export type FileShareArgs = {
-	share_target_id: Scalars['ID'];
+	share_target_id: Scalars['ID']['input'];
 };
 
 export type FileSharesArgs = {
-	cursor?: InputMaybe<Scalars['String']>;
-	limit: Scalars['Int'];
+	cursor?: InputMaybe<Scalars['String']['input']>;
+	limit: Scalars['Int']['input'];
 	sorts?: InputMaybe<Array<ShareSort>>;
 };
 
@@ -95,48 +101,48 @@ export type Folder = Node & {
 	__typename?: 'Folder';
 	children: NodePage;
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime'];
+	created_at: Scalars['DateTime']['output'];
 	creator: User;
-	description: Scalars['String'];
-	flagged: Scalars['Boolean'];
-	id: Scalars['ID'];
+	description: Scalars['String']['output'];
+	flagged: Scalars['Boolean']['output'];
+	id: Scalars['ID']['output'];
 	last_editor?: Maybe<User>;
 	links: Array<Maybe<Link>>;
-	name: Scalars['String'];
+	name: Scalars['String']['output'];
 	owner?: Maybe<User>;
 	parent?: Maybe<File | Folder>;
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']>;
+	rootId?: Maybe<Scalars['ID']['output']>;
 	share?: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	type: NodeType;
-	updated_at: Scalars['DateTime'];
+	updated_at: Scalars['DateTime']['output'];
 };
 
 export type FolderChildrenArgs = {
-	limit: Scalars['Int'];
-	page_token?: InputMaybe<Scalars['String']>;
+	limit: Scalars['Int']['input'];
+	page_token?: InputMaybe<Scalars['String']['input']>;
 	sort: NodeSort;
 };
 
 export type FolderShareArgs = {
-	share_target_id: Scalars['ID'];
+	share_target_id: Scalars['ID']['input'];
 };
 
 export type FolderSharesArgs = {
-	cursor?: InputMaybe<Scalars['String']>;
-	limit: Scalars['Int'];
+	cursor?: InputMaybe<Scalars['String']['input']>;
+	limit: Scalars['Int']['input'];
 	sorts?: InputMaybe<Array<ShareSort>>;
 };
 
 export type Link = {
 	__typename?: 'Link';
-	created_at: Scalars['DateTime'];
-	description?: Maybe<Scalars['String']>;
-	expires_at?: Maybe<Scalars['DateTime']>;
-	id: Scalars['ID'];
+	created_at: Scalars['DateTime']['output'];
+	description?: Maybe<Scalars['String']['output']>;
+	expires_at?: Maybe<Scalars['DateTime']['output']>;
+	id: Scalars['ID']['output'];
 	node: File | Folder;
-	url?: Maybe<Scalars['String']>;
+	url?: Maybe<Scalars['String']['output']>;
 };
 
 export type Mutation = {
@@ -147,155 +153,155 @@ export type Mutation = {
 	createFolder: File | Folder;
 	createLink: Link;
 	createShare: Share;
-	deleteCollaborationLinks: Array<Maybe<Scalars['ID']>>;
-	deleteLinks: Array<Maybe<Scalars['ID']>>;
-	deleteNodes?: Maybe<Array<Scalars['ID']>>;
-	deleteShare: Scalars['Boolean'];
-	deleteVersions: Array<Maybe<Scalars['Int']>>;
-	flagNodes?: Maybe<Array<Scalars['ID']>>;
-	keepVersions: Array<Maybe<Scalars['Int']>>;
+	deleteCollaborationLinks: Array<Maybe<Scalars['ID']['output']>>;
+	deleteLinks: Array<Maybe<Scalars['ID']['output']>>;
+	deleteNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	deleteShare: Scalars['Boolean']['output'];
+	deleteVersions: Array<Maybe<Scalars['Int']['output']>>;
+	flagNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
 	moveNodes?: Maybe<Array<File | Folder>>;
 	restoreNodes?: Maybe<Array<Maybe<File | Folder>>>;
-	trashNodes?: Maybe<Array<Scalars['ID']>>;
+	trashNodes?: Maybe<Array<Scalars['ID']['output']>>;
 	updateLink?: Maybe<Link>;
 	updateNode: File | Folder;
 	updateShare?: Maybe<Share>;
 };
 
 export type MutationCloneVersionArgs = {
-	node_id: Scalars['ID'];
-	version: Scalars['Int'];
+	node_id: Scalars['ID']['input'];
+	version: Scalars['Int']['input'];
 };
 
 export type MutationCopyNodesArgs = {
-	destination_id: Scalars['ID'];
-	node_ids?: InputMaybe<Array<Scalars['ID']>>;
+	destination_id: Scalars['ID']['input'];
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type MutationCreateCollaborationLinkArgs = {
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 	permission: SharePermission;
 };
 
 export type MutationCreateFolderArgs = {
-	destination_id: Scalars['String'];
-	name: Scalars['String'];
+	destination_id: Scalars['String']['input'];
+	name: Scalars['String']['input'];
 };
 
 export type MutationCreateLinkArgs = {
-	description?: InputMaybe<Scalars['String']>;
-	expires_at?: InputMaybe<Scalars['DateTime']>;
-	node_id: Scalars['ID'];
+	description?: InputMaybe<Scalars['String']['input']>;
+	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	node_id: Scalars['ID']['input'];
 };
 
 export type MutationCreateShareArgs = {
-	custom_message?: InputMaybe<Scalars['String']>;
-	expires_at?: InputMaybe<Scalars['DateTime']>;
-	node_id: Scalars['ID'];
+	custom_message?: InputMaybe<Scalars['String']['input']>;
+	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	node_id: Scalars['ID']['input'];
 	permission: SharePermission;
-	share_target_id: Scalars['ID'];
+	share_target_id: Scalars['ID']['input'];
 };
 
 export type MutationDeleteCollaborationLinksArgs = {
-	collaboration_link_ids: Array<Scalars['ID']>;
+	collaboration_link_ids: Array<Scalars['ID']['input']>;
 };
 
 export type MutationDeleteLinksArgs = {
-	link_ids: Array<Scalars['ID']>;
+	link_ids: Array<Scalars['ID']['input']>;
 };
 
 export type MutationDeleteNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']>>;
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type MutationDeleteShareArgs = {
-	node_id: Scalars['ID'];
-	share_target_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
+	share_target_id: Scalars['ID']['input'];
 };
 
 export type MutationDeleteVersionsArgs = {
-	node_id: Scalars['ID'];
-	versions?: InputMaybe<Array<Scalars['Int']>>;
+	node_id: Scalars['ID']['input'];
+	versions?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 export type MutationFlagNodesArgs = {
-	flag: Scalars['Boolean'];
-	node_ids?: InputMaybe<Array<Scalars['ID']>>;
+	flag: Scalars['Boolean']['input'];
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type MutationKeepVersionsArgs = {
-	keep_forever: Scalars['Boolean'];
-	node_id: Scalars['ID'];
-	versions: Array<Scalars['Int']>;
+	keep_forever: Scalars['Boolean']['input'];
+	node_id: Scalars['ID']['input'];
+	versions: Array<Scalars['Int']['input']>;
 };
 
 export type MutationMoveNodesArgs = {
-	destination_id: Scalars['ID'];
-	node_ids?: InputMaybe<Array<Scalars['ID']>>;
+	destination_id: Scalars['ID']['input'];
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type MutationRestoreNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']>>;
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type MutationTrashNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']>>;
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type MutationUpdateLinkArgs = {
-	description?: InputMaybe<Scalars['String']>;
-	expires_at?: InputMaybe<Scalars['DateTime']>;
-	link_id: Scalars['ID'];
+	description?: InputMaybe<Scalars['String']['input']>;
+	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	link_id: Scalars['ID']['input'];
 };
 
 export type MutationUpdateNodeArgs = {
-	description?: InputMaybe<Scalars['String']>;
-	flagged?: InputMaybe<Scalars['Boolean']>;
-	name?: InputMaybe<Scalars['String']>;
-	node_id: Scalars['String'];
+	description?: InputMaybe<Scalars['String']['input']>;
+	flagged?: InputMaybe<Scalars['Boolean']['input']>;
+	name?: InputMaybe<Scalars['String']['input']>;
+	node_id: Scalars['String']['input'];
 };
 
 export type MutationUpdateShareArgs = {
-	expires_at?: InputMaybe<Scalars['DateTime']>;
-	node_id: Scalars['ID'];
+	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	node_id: Scalars['ID']['input'];
 	permission?: InputMaybe<SharePermission>;
-	share_target_id: Scalars['ID'];
+	share_target_id: Scalars['ID']['input'];
 };
 
 export type Node = {
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime'];
+	created_at: Scalars['DateTime']['output'];
 	creator: User;
-	description: Scalars['String'];
-	flagged: Scalars['Boolean'];
-	id: Scalars['ID'];
+	description: Scalars['String']['output'];
+	flagged: Scalars['Boolean']['output'];
+	id: Scalars['ID']['output'];
 	last_editor?: Maybe<User>;
 	links: Array<Maybe<Link>>;
-	name: Scalars['String'];
+	name: Scalars['String']['output'];
 	owner?: Maybe<User>;
 	parent?: Maybe<File | Folder>;
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']>;
+	rootId?: Maybe<Scalars['ID']['output']>;
 	share?: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	type: NodeType;
-	updated_at: Scalars['DateTime'];
+	updated_at: Scalars['DateTime']['output'];
 };
 
 export type NodeShareArgs = {
-	share_target_id: Scalars['ID'];
+	share_target_id: Scalars['ID']['input'];
 };
 
 export type NodeSharesArgs = {
-	cursor?: InputMaybe<Scalars['String']>;
-	limit: Scalars['Int'];
+	cursor?: InputMaybe<Scalars['String']['input']>;
+	limit: Scalars['Int']['input'];
 	sorts?: InputMaybe<Array<ShareSort>>;
 };
 
 export type NodePage = {
 	__typename?: 'NodePage';
 	nodes: Array<Maybe<File | Folder>>;
-	page_token?: Maybe<Scalars['String']>;
+	page_token?: Maybe<Scalars['String']['output']>;
 };
 
 export enum NodeSort {
@@ -329,16 +335,16 @@ export enum NodeType {
 
 export type Permissions = {
 	__typename?: 'Permissions';
-	can_add_version: Scalars['Boolean'];
-	can_change_link: Scalars['Boolean'];
-	can_change_share: Scalars['Boolean'];
-	can_delete: Scalars['Boolean'];
-	can_read: Scalars['Boolean'];
-	can_read_link: Scalars['Boolean'];
-	can_read_share: Scalars['Boolean'];
-	can_share: Scalars['Boolean'];
-	can_write_file: Scalars['Boolean'];
-	can_write_folder: Scalars['Boolean'];
+	can_add_version: Scalars['Boolean']['output'];
+	can_change_link: Scalars['Boolean']['output'];
+	can_change_share: Scalars['Boolean']['output'];
+	can_delete: Scalars['Boolean']['output'];
+	can_read: Scalars['Boolean']['output'];
+	can_read_link: Scalars['Boolean']['output'];
+	can_read_share: Scalars['Boolean']['output'];
+	can_share: Scalars['Boolean']['output'];
+	can_write_file: Scalars['Boolean']['output'];
+	can_write_folder: Scalars['Boolean']['output'];
 };
 
 export type Query = {
@@ -353,79 +359,79 @@ export type Query = {
 	getPath: Array<Maybe<File | Folder>>;
 	getRootsList: Array<Maybe<Root>>;
 	getShare?: Maybe<Share>;
-	getUploadItem?: Maybe<Scalars['UploadItem']>;
+	getUploadItem?: Maybe<Scalars['UploadItem']['output']>;
 	getUserById?: Maybe<User>;
 	getVersions: Array<Maybe<File>>;
 };
 
 export type QueryFindNodesArgs = {
-	cascade?: InputMaybe<Scalars['Boolean']>;
-	direct_share?: InputMaybe<Scalars['Boolean']>;
-	flagged?: InputMaybe<Scalars['Boolean']>;
-	folder_id?: InputMaybe<Scalars['String']>;
-	keywords?: InputMaybe<Array<Scalars['String']>>;
-	limit?: InputMaybe<Scalars['Int']>;
-	owner_id?: InputMaybe<Scalars['String']>;
-	page_token?: InputMaybe<Scalars['String']>;
-	shared_by_me?: InputMaybe<Scalars['Boolean']>;
-	shared_with_me?: InputMaybe<Scalars['Boolean']>;
+	cascade?: InputMaybe<Scalars['Boolean']['input']>;
+	direct_share?: InputMaybe<Scalars['Boolean']['input']>;
+	flagged?: InputMaybe<Scalars['Boolean']['input']>;
+	folder_id?: InputMaybe<Scalars['String']['input']>;
+	keywords?: InputMaybe<Array<Scalars['String']['input']>>;
+	limit?: InputMaybe<Scalars['Int']['input']>;
+	owner_id?: InputMaybe<Scalars['String']['input']>;
+	page_token?: InputMaybe<Scalars['String']['input']>;
+	shared_by_me?: InputMaybe<Scalars['Boolean']['input']>;
+	shared_with_me?: InputMaybe<Scalars['Boolean']['input']>;
 	sort?: InputMaybe<NodeSort>;
 	type?: InputMaybe<NodeType>;
 };
 
 export type QueryGetAccountByEmailArgs = {
-	email: Scalars['String'];
+	email: Scalars['String']['input'];
 };
 
 export type QueryGetAccountsByEmailArgs = {
-	emails: Array<Scalars['String']>;
+	emails: Array<Scalars['String']['input']>;
 };
 
 export type QueryGetCollaborationLinksArgs = {
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 };
 
 export type QueryGetLinksArgs = {
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 };
 
 export type QueryGetNodeArgs = {
-	node_id: Scalars['ID'];
-	version?: InputMaybe<Scalars['Int']>;
+	node_id: Scalars['ID']['input'];
+	version?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryGetPathArgs = {
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 };
 
 export type QueryGetShareArgs = {
-	node_id: Scalars['ID'];
-	share_target_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
+	share_target_id: Scalars['ID']['input'];
 };
 
 export type QueryGetUploadItemArgs = {
-	id: Scalars['ID'];
+	id: Scalars['ID']['input'];
 };
 
 export type QueryGetUserByIdArgs = {
-	user_id: Scalars['ID'];
+	user_id: Scalars['ID']['input'];
 };
 
 export type QueryGetVersionsArgs = {
-	node_id: Scalars['ID'];
-	versions?: InputMaybe<Array<Scalars['Int']>>;
+	node_id: Scalars['ID']['input'];
+	versions?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 export type Root = {
 	__typename?: 'Root';
-	id: Scalars['ID'];
-	name: Scalars['String'];
+	id: Scalars['ID']['output'];
+	name: Scalars['String']['output'];
 };
 
 export type Share = {
 	__typename?: 'Share';
-	created_at: Scalars['DateTime'];
-	expires_at?: Maybe<Scalars['DateTime']>;
+	created_at: Scalars['DateTime']['output'];
+	expires_at?: Maybe<Scalars['DateTime']['output']>;
 	node: File | Folder;
 	permission: SharePermission;
 	share_target?: Maybe<SharedTarget>;
@@ -453,9 +459,9 @@ export type SharedTarget = DistributionList | User;
 
 export type User = {
 	__typename?: 'User';
-	email: Scalars['String'];
-	full_name: Scalars['String'];
-	id: Scalars['ID'];
+	email: Scalars['String']['output'];
+	full_name: Scalars['String']['output'];
+	id: Scalars['ID']['output'];
 };
 
 export type BaseNode_File_Fragment = {
@@ -788,8 +794,8 @@ export type ShareFragment = {
 export type ShareTargetFragment = { id: string } & { __typename?: 'DistributionList' | 'User' };
 
 export type CloneVersionMutationVariables = Exact<{
-	node_id: Scalars['ID'];
-	version: Scalars['Int'];
+	node_id: Scalars['ID']['input'];
+	version: Scalars['Int']['input'];
 }>;
 
 export type CloneVersionMutation = {
@@ -806,9 +812,9 @@ export type CloneVersionMutation = {
 } & { __typename?: 'Mutation' };
 
 export type CopyNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
-	destination_id: Scalars['ID'];
-	shares_limit?: InputMaybe<Scalars['Int']>;
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	destination_id: Scalars['ID']['input'];
+	shares_limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 export type CopyNodesMutation = {
@@ -895,7 +901,7 @@ export type CopyNodesMutation = {
 } & { __typename?: 'Mutation' };
 
 export type CreateCollaborationLinkMutationVariables = Exact<{
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 	permission: SharePermission;
 }>;
 
@@ -910,9 +916,9 @@ export type CreateCollaborationLinkMutation = {
 } & { __typename?: 'Mutation' };
 
 export type CreateFolderMutationVariables = Exact<{
-	destination_id: Scalars['String'];
-	name: Scalars['String'];
-	shares_limit?: InputMaybe<Scalars['Int']>;
+	destination_id: Scalars['String']['input'];
+	name: Scalars['String']['input'];
+	shares_limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 export type CreateFolderMutation = {
@@ -998,9 +1004,9 @@ export type CreateFolderMutation = {
 } & { __typename?: 'Mutation' };
 
 export type CreateLinkMutationVariables = Exact<{
-	node_id: Scalars['ID'];
-	description?: InputMaybe<Scalars['String']>;
-	expires_at?: InputMaybe<Scalars['DateTime']>;
+	node_id: Scalars['ID']['input'];
+	description?: InputMaybe<Scalars['String']['input']>;
+	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
 }>;
 
 export type CreateLinkMutation = {
@@ -1015,10 +1021,10 @@ export type CreateLinkMutation = {
 } & { __typename?: 'Mutation' };
 
 export type CreateShareMutationVariables = Exact<{
-	node_id: Scalars['ID'];
-	share_target_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
+	share_target_id: Scalars['ID']['input'];
 	permission: SharePermission;
-	custom_message?: InputMaybe<Scalars['String']>;
+	custom_message?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 export type CreateShareMutation = {
@@ -1034,7 +1040,7 @@ export type CreateShareMutation = {
 } & { __typename?: 'Mutation' };
 
 export type DeleteCollaborationLinksMutationVariables = Exact<{
-	collaboration_link_ids: Array<Scalars['ID']> | Scalars['ID'];
+	collaboration_link_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
 export type DeleteCollaborationLinksMutation = {
@@ -1042,7 +1048,7 @@ export type DeleteCollaborationLinksMutation = {
 } & { __typename?: 'Mutation' };
 
 export type DeleteLinksMutationVariables = Exact<{
-	link_ids: Array<Scalars['ID']> | Scalars['ID'];
+	link_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
 export type DeleteLinksMutation = { deleteLinks: Array<string | null> } & {
@@ -1050,7 +1056,7 @@ export type DeleteLinksMutation = { deleteLinks: Array<string | null> } & {
 };
 
 export type DeleteNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
 export type DeleteNodesMutation = { deleteNodes?: Array<string> | null } & {
@@ -1058,15 +1064,15 @@ export type DeleteNodesMutation = { deleteNodes?: Array<string> | null } & {
 };
 
 export type DeleteShareMutationVariables = Exact<{
-	node_id: Scalars['ID'];
-	share_target_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
+	share_target_id: Scalars['ID']['input'];
 }>;
 
 export type DeleteShareMutation = { deleteShare: boolean } & { __typename?: 'Mutation' };
 
 export type DeleteVersionsMutationVariables = Exact<{
-	node_id: Scalars['ID'];
-	versions?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
+	node_id: Scalars['ID']['input'];
+	versions?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
 }>;
 
 export type DeleteVersionsMutation = { deleteVersions: Array<number | null> } & {
@@ -1074,16 +1080,16 @@ export type DeleteVersionsMutation = { deleteVersions: Array<number | null> } & 
 };
 
 export type FlagNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
-	flag: Scalars['Boolean'];
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	flag: Scalars['Boolean']['input'];
 }>;
 
 export type FlagNodesMutation = { flagNodes?: Array<string> | null } & { __typename?: 'Mutation' };
 
 export type KeepVersionsMutationVariables = Exact<{
-	node_id: Scalars['ID'];
-	versions: Array<Scalars['Int']> | Scalars['Int'];
-	keep_forever: Scalars['Boolean'];
+	node_id: Scalars['ID']['input'];
+	versions: Array<Scalars['Int']['input']> | Scalars['Int']['input'];
+	keep_forever: Scalars['Boolean']['input'];
 }>;
 
 export type KeepVersionsMutation = { keepVersions: Array<number | null> } & {
@@ -1091,8 +1097,8 @@ export type KeepVersionsMutation = { keepVersions: Array<number | null> } & {
 };
 
 export type MoveNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
-	destination_id: Scalars['ID'];
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	destination_id: Scalars['ID']['input'];
 }>;
 
 export type MoveNodesMutation = {
@@ -1104,7 +1110,7 @@ export type MoveNodesMutation = {
 } & { __typename?: 'Mutation' };
 
 export type RestoreNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
 export type RestoreNodesMutation = {
@@ -1119,7 +1125,7 @@ export type RestoreNodesMutation = {
 } & { __typename?: 'Mutation' };
 
 export type TrashNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
 export type TrashNodesMutation = { trashNodes?: Array<string> | null } & {
@@ -1127,9 +1133,9 @@ export type TrashNodesMutation = { trashNodes?: Array<string> | null } & {
 };
 
 export type UpdateLinkMutationVariables = Exact<{
-	link_id: Scalars['ID'];
-	description?: InputMaybe<Scalars['String']>;
-	expires_at?: InputMaybe<Scalars['DateTime']>;
+	link_id: Scalars['ID']['input'];
+	description?: InputMaybe<Scalars['String']['input']>;
+	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
 }>;
 
 export type UpdateLinkMutation = {
@@ -1145,9 +1151,9 @@ export type UpdateLinkMutation = {
 } & { __typename?: 'Mutation' };
 
 export type UpdateNodeMutationVariables = Exact<{
-	node_id: Scalars['String'];
-	name?: InputMaybe<Scalars['String']>;
-	description?: InputMaybe<Scalars['String']>;
+	node_id: Scalars['String']['input'];
+	name?: InputMaybe<Scalars['String']['input']>;
+	description?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 export type UpdateNodeMutation = {
@@ -1160,8 +1166,8 @@ export type UpdateNodeMutation = {
 } & { __typename?: 'Mutation' };
 
 export type UpdateNodeDescriptionMutationVariables = Exact<{
-	node_id: Scalars['String'];
-	description?: InputMaybe<Scalars['String']>;
+	node_id: Scalars['String']['input'];
+	description?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 export type UpdateNodeDescriptionMutation = {
@@ -1169,8 +1175,8 @@ export type UpdateNodeDescriptionMutation = {
 } & { __typename?: 'Mutation' };
 
 export type UpdateShareMutationVariables = Exact<{
-	node_id: Scalars['ID'];
-	share_target_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
+	share_target_id: Scalars['ID']['input'];
 	permission: SharePermission;
 }>;
 
@@ -1189,7 +1195,7 @@ export type UpdateShareMutation = {
 } & { __typename?: 'Mutation' };
 
 export type GetUploadItemQueryVariables = Exact<{
-	id: Scalars['ID'];
+	id: Scalars['ID']['input'];
 }>;
 
 export type GetUploadItemQuery = { getUploadItem?: ClientTypes.UploadItem | null } & {
@@ -1197,18 +1203,18 @@ export type GetUploadItemQuery = { getUploadItem?: ClientTypes.UploadItem | null
 };
 
 export type FindNodesQueryVariables = Exact<{
-	keywords?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-	flagged?: InputMaybe<Scalars['Boolean']>;
-	shared_by_me?: InputMaybe<Scalars['Boolean']>;
-	shared_with_me?: InputMaybe<Scalars['Boolean']>;
-	folder_id?: InputMaybe<Scalars['String']>;
-	cascade?: InputMaybe<Scalars['Boolean']>;
-	limit: Scalars['Int'];
-	page_token?: InputMaybe<Scalars['String']>;
+	keywords?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+	flagged?: InputMaybe<Scalars['Boolean']['input']>;
+	shared_by_me?: InputMaybe<Scalars['Boolean']['input']>;
+	shared_with_me?: InputMaybe<Scalars['Boolean']['input']>;
+	folder_id?: InputMaybe<Scalars['String']['input']>;
+	cascade?: InputMaybe<Scalars['Boolean']['input']>;
+	limit: Scalars['Int']['input'];
+	page_token?: InputMaybe<Scalars['String']['input']>;
 	sort?: InputMaybe<NodeSort>;
-	shares_limit?: InputMaybe<Scalars['Int']>;
-	direct_share?: InputMaybe<Scalars['Boolean']>;
-	owner_id?: InputMaybe<Scalars['String']>;
+	shares_limit?: InputMaybe<Scalars['Int']['input']>;
+	direct_share?: InputMaybe<Scalars['Boolean']['input']>;
+	owner_id?: InputMaybe<Scalars['String']['input']>;
 	type?: InputMaybe<NodeType>;
 }>;
 
@@ -1348,7 +1354,7 @@ export type FindNodesQuery = {
 } & { __typename?: 'Query' };
 
 export type GetAccountByEmailQueryVariables = Exact<{
-	email: Scalars['String'];
+	email: Scalars['String']['input'];
 }>;
 
 export type GetAccountByEmailQuery = {
@@ -1356,7 +1362,7 @@ export type GetAccountByEmailQuery = {
 } & { __typename?: 'Query' };
 
 export type GetAccountsByEmailQueryVariables = Exact<{
-	emails: Array<Scalars['String']> | Scalars['String'];
+	emails: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 export type GetAccountsByEmailQuery = {
@@ -1368,7 +1374,7 @@ export type GetAccountsByEmailQuery = {
 } & { __typename?: 'Query' };
 
 export type GetBaseNodeQueryVariables = Exact<{
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetBaseNodeQuery = {
@@ -1419,8 +1425,8 @@ export type GetBaseNodeQuery = {
 } & { __typename?: 'Query' };
 
 export type GetChildQueryVariables = Exact<{
-	node_id: Scalars['ID'];
-	shares_limit?: InputMaybe<Scalars['Int']>;
+	node_id: Scalars['ID']['input'];
+	shares_limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 export type GetChildQuery = {
@@ -1549,11 +1555,11 @@ export type GetChildQuery = {
 } & { __typename?: 'Query' };
 
 export type GetChildrenQueryVariables = Exact<{
-	node_id: Scalars['ID'];
-	children_limit: Scalars['Int'];
-	page_token?: InputMaybe<Scalars['String']>;
+	node_id: Scalars['ID']['input'];
+	children_limit: Scalars['Int']['input'];
+	page_token?: InputMaybe<Scalars['String']['input']>;
 	sort: NodeSort;
-	shares_limit?: InputMaybe<Scalars['Int']>;
+	shares_limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 export type GetChildrenQuery = {
@@ -1736,7 +1742,7 @@ export type GetChildrenQuery = {
 } & { __typename?: 'Query' };
 
 export type GetChildrenParentQueryVariables = Exact<{
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetChildrenParentQuery = {
@@ -1763,7 +1769,7 @@ export type GetChildrenParentQuery = {
 } & { __typename?: 'Query' };
 
 export type GetCollaborationLinksQueryVariables = Exact<{
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetCollaborationLinksQuery = {
@@ -1786,7 +1792,7 @@ export type GetConfigsQuery = {
 } & { __typename?: 'Query' };
 
 export type GetLinksQueryVariables = Exact<{
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetLinksQuery = {
@@ -1804,12 +1810,12 @@ export type GetLinksQuery = {
 } & { __typename?: 'Query' };
 
 export type GetNodeQueryVariables = Exact<{
-	node_id: Scalars['ID'];
-	children_limit: Scalars['Int'];
-	page_token?: InputMaybe<Scalars['String']>;
+	node_id: Scalars['ID']['input'];
+	children_limit: Scalars['Int']['input'];
+	page_token?: InputMaybe<Scalars['String']['input']>;
 	sort: NodeSort;
-	shares_limit: Scalars['Int'];
-	shares_cursor?: InputMaybe<Scalars['String']>;
+	shares_limit: Scalars['Int']['input'];
+	shares_cursor?: InputMaybe<Scalars['String']['input']>;
 	shares_sorts?: InputMaybe<Array<ShareSort> | ShareSort>;
 }>;
 
@@ -2075,7 +2081,7 @@ export type GetNodeQuery = {
 } & { __typename?: 'Query' };
 
 export type GetPathQueryVariables = Exact<{
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetPathQuery = {
@@ -2103,7 +2109,7 @@ export type GetPathQuery = {
 } & { __typename?: 'Query' };
 
 export type GetPermissionsQueryVariables = Exact<{
-	node_id: Scalars['ID'];
+	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetPermissionsQuery = {
@@ -2133,9 +2139,9 @@ export type GetRootsListQuery = {
 } & { __typename?: 'Query' };
 
 export type GetSharesQueryVariables = Exact<{
-	node_id: Scalars['ID'];
-	shares_limit: Scalars['Int'];
-	shares_cursor?: InputMaybe<Scalars['String']>;
+	node_id: Scalars['ID']['input'];
+	shares_limit: Scalars['Int']['input'];
+	shares_cursor?: InputMaybe<Scalars['String']['input']>;
 	shares_sorts?: InputMaybe<Array<ShareSort> | ShareSort>;
 }>;
 
@@ -2161,8 +2167,8 @@ export type GetSharesQuery = {
 } & { __typename?: 'Query' };
 
 export type GetVersionsQueryVariables = Exact<{
-	node_id: Scalars['ID'];
-	versions?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
+	node_id: Scalars['ID']['input'];
+	versions?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
 }>;
 
 export type GetVersionsQuery = {

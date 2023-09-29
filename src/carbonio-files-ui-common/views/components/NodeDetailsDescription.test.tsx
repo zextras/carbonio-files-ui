@@ -130,7 +130,7 @@ describe('NodeDetailsDescription component', () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';
-		const moreThan4096Description = faker.datatype.string(5000);
+		const moreThan4096Description = faker.string.sample(5000);
 
 		expect(moreThan4096Description.length).toBeGreaterThan(4096);
 

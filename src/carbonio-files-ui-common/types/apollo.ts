@@ -29,7 +29,7 @@ export interface FindNodesCachedObject extends NodesPageCachedObject {
 
 export type ShareCachedObject = Omit<Share, 'node' | 'share_target'> & {
 	node: Reference | undefined;
-	share_target: Reference | undefined;
+	share_target: Reference | null | undefined;
 };
 
 export interface SharesCachedObject {

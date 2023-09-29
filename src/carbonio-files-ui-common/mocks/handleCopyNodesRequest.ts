@@ -48,7 +48,7 @@ const handleCopyNodesRequest: ResponseResolver<
 		if (node) {
 			const newNode = {
 				...node,
-				id: faker.datatype.uuid(),
+				id: faker.string.uuid(),
 				name: `${node.name} - Copy`,
 				parent: { __typename: 'Folder', id: destinationId, name: 'parent folder' } as Folder
 			};

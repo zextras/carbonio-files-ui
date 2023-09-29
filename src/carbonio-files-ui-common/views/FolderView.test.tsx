@@ -6,18 +6,40 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
-import { map } from 'lodash';
+import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { find, map } from 'lodash';
 
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
 import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
+import * as actualNetworkModule from '../../network/network';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
-import { populateFolder, populateNode, populateParents } from '../mocks/mockUtils';
+import {
+	populateFile,
+	populateFolder,
+	populateGalContact,
+	populateLocalRoot,
+	populateNode,
+	populateNodePage,
+	populateParents,
+	populateShare,
+	populateUser
+} from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
+import { Folder, Share, SharePermission } from '../types/graphql/types';
+import {
+	mockCreateShare,
+	mockDeleteShare,
+	mockGetAccountByEmail,
+	mockGetCollaborationLinks,
+	mockGetLinks,
+	mockGetNode,
+	mockGetPath,
+	mockMoveNodes,
+	mockUpdateShare
+} from '../utils/resolverMocks';
+import { buildBreadCrumbRegExp, moveNode, screen, setup, within } from '../utils/testUtils';
 
 let mockedCreateOptions: CreateOption[];
 
@@ -32,6 +54,16 @@ jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateO
 		},
 		removeCreateOptions: () => undefined
 	})
+}));
+
+const mockedSoapFetch = jest.fn();
+
+jest.mock<typeof import('../../network/network')>('../../network/network', () => ({
+	soapFetch: <Req, Res>(): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+		new Promise<Res>((resolve, reject) => {
+			const result = mockedSoapFetch();
+			result ? resolve(result) : reject(new Error('no result provided'));
+		})
 }));
 
 describe('Folder View', () => {
@@ -233,5 +265,470 @@ describe('Folder View', () => {
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		await screen.findByText(node.name);
 		expect(screen.getByText(node.name)).toBeVisible();
+	});
+
+	describe('propagation of shares changes', () => {
+		function findChipWithText(text: string | RegExp): HTMLElement | undefined {
+			return find(
+				screen.queryAllByTestId(SELECTORS.chipWithPopover),
+				(chip) => within(chip).queryByText(text) !== null
+			);
+		}
+		test('should show the new share in cached children', async () => {
+			const localRoot = populateLocalRoot();
+			const folder = populateFolder();
+			const subFolder = populateFolder();
+			const subSubFile = populateFile();
+			localRoot.children = populateNodePage([folder]);
+			folder.children = populateNodePage([subFolder]);
+			subFolder.children = populateNodePage([subSubFile]);
+			folder.parent = localRoot;
+			folder.permissions.can_share = true;
+			folder.shares = [];
+			subFolder.parent = folder;
+			subFolder.permissions.can_share = true;
+			subFolder.shares = [];
+			subSubFile.parent = subFolder;
+			subSubFile.permissions.can_share = true;
+			subSubFile.shares = [];
+			const userAccount = populateUser();
+			// set email to lowercase to be compatible with the contact regexp
+			userAccount.email = userAccount.email.toLowerCase();
+			const newShare = populateShare(folder, 'new-share', userAccount);
+			function addShareToChildren(node: Folder, share: Share): Folder {
+				return {
+					...node,
+					children: populateNodePage(
+						map(
+							node.children.nodes,
+							(child) =>
+								child && {
+									...child,
+									shares: [...(child?.shares || []), { ...share, child }]
+								}
+						)
+					)
+				};
+			}
+
+			const folderWithShares = { ...addShareToChildren(folder, newShare), shares: [newShare] };
+			const subFolderWithShares = {
+				...addShareToChildren(subFolder, newShare),
+				shares: [{ ...newShare, node: subFolder }]
+			};
+
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getNode: [folder, subFolder, subSubFile, folderWithShares, subFolderWithShares]
+					}),
+					getPath: mockGetPath([localRoot], [localRoot, folder], [localRoot, folder, subFolder]),
+					getAccountByEmail: mockGetAccountByEmail(userAccount),
+					getCollaborationLinks: mockGetCollaborationLinks([], [], []),
+					getLinks: mockGetLinks([], [], [])
+				},
+				Mutation: {
+					createShare: mockCreateShare(newShare)
+				}
+			} satisfies Partial<Resolvers>;
+
+			mockedSoapFetch.mockReturnValue({
+				match: [populateGalContact(userAccount.full_name, userAccount.email)]
+			});
+
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${localRoot.id}&node=${folder.id}`],
+				mocks
+			});
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			// folder is not shared
+			const folderItem = screen.getByTestId(SELECTORS.nodeItem(folder.id));
+			expect(within(folderItem).queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
+			// navigate inside folder to cache data
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
+			);
+			await screen.findByText(subFolder.name);
+			// sub-folder is not shared
+			const subFolderItem = screen.getByTestId(SELECTORS.nodeItem(subFolder.id));
+			expect(within(subFolderItem).queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
+			await user.click(screen.getByText(subFolder.name));
+			await screen.findByText(/sharing/i);
+			// load shares
+			await user.click(screen.getByText(/sharing/i));
+			// navigate inside sub-folder to cache data
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
+			);
+			await screen.findByText(subSubFile.name);
+			// sub-sub-file is not shared
+			const subSubFileItem = screen.getByTestId(SELECTORS.nodeItem(subSubFile.id));
+			expect(within(subSubFileItem).queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
+			await user.click(screen.getByText(subSubFile.name));
+			await screen.findByText(/sharing/i);
+			// load shares
+			await user.click(screen.getByText(/sharing/i));
+			// navigate back to local root
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand));
+			await screen.findByText(localRoot.name);
+			await user.click(screen.getByText(localRoot.name));
+			// create share on parent folder
+			await screen.findByText(folder.name);
+			await user.click(screen.getByText(folder.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			const shareButton = await screen.findByRole('button', { name: /share/i });
+			await user.type(
+				screen.getByRole('textbox', { name: /add new people or groups/i }),
+				userAccount.full_name[0]
+			);
+			await screen.findByText(userAccount.full_name);
+			await user.click(screen.getByText(userAccount.full_name));
+			const addShareChipInput = screen.getByTestId(SELECTORS.addShareChipInput);
+			await within(addShareChipInput).findByText(userAccount.full_name);
+			await waitFor(() => expect(shareButton).toBeEnabled());
+			await user.click(shareButton);
+			expect(within(addShareChipInput).queryByText(userAccount.full_name)).not.toBeInTheDocument();
+			await waitFor(() => expect(findChipWithText(userAccount.full_name)).toBeDefined());
+			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			// folder is shared
+			expect(
+				within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
+					ICON_REGEXP.sharedByMe
+				)
+			).toBeVisible();
+			// navigate inside folder
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
+			);
+			await screen.findByText(subFolder.name);
+			// sub-folder is shared
+			expect(
+				within(screen.getByTestId(SELECTORS.nodeItem(subFolder.id))).getByTestId(
+					ICON_REGEXP.sharedByMe
+				)
+			).toBeVisible();
+			await user.click(screen.getByText(subFolder.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			// navigate inside sub-folder
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
+			);
+			await screen.findByText(subSubFile.name);
+			// sub-sub-file is shared
+			expect(
+				within(screen.getByTestId(SELECTORS.nodeItem(subSubFile.id))).getByTestId(
+					ICON_REGEXP.sharedByMe
+				)
+			).toBeVisible();
+			await user.click(screen.getByText(subSubFile.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+		});
+
+		test('should show the updated share in cached children', async () => {
+			const localRoot = populateLocalRoot();
+			const folder = populateFolder();
+			const subFolder = populateFolder();
+			const subSubFile = populateFile();
+			localRoot.children = populateNodePage([folder]);
+			folder.children = populateNodePage([subFolder]);
+			subFolder.children = populateNodePage([subSubFile]);
+			folder.parent = localRoot;
+			folder.permissions.can_write_folder = true;
+			folder.permissions.can_write_file = true;
+			folder.permissions.can_share = true;
+			subFolder.parent = folder;
+			subFolder.permissions.can_write_folder = true;
+			subFolder.permissions.can_write_file = true;
+			subFolder.permissions.can_share = true;
+			subSubFile.parent = subFolder;
+			subSubFile.permissions.can_write_folder = true;
+			subSubFile.permissions.can_write_file = true;
+			subSubFile.permissions.can_share = true;
+			const userAccount = populateUser();
+			const share = populateShare(folder, 'share-to-update', userAccount);
+			share.permission = SharePermission.ReadOnly;
+			folder.shares = [{ ...share, node: folder }];
+			subFolder.shares = [{ ...share, node: subFolder }];
+			subSubFile.shares = [{ ...share, node: subSubFile }];
+
+			const shareUpdated = {
+				...share,
+				permission: SharePermission.ReadAndWrite
+			};
+
+			function updateShareInChildren(node: Folder, newShare: Share): Folder {
+				return {
+					...node,
+					children: populateNodePage(
+						map(
+							node.children.nodes,
+							(child) =>
+								child && {
+									...child,
+									shares: [{ ...newShare, node: child }]
+								}
+						)
+					)
+				};
+			}
+
+			const folderUpdated = updateShareInChildren(folder, shareUpdated);
+			folderUpdated.shares = [{ ...shareUpdated, node: folderUpdated }];
+			const subFolderUpdated = updateShareInChildren(subFolder, shareUpdated);
+			subFolderUpdated.shares = [{ ...shareUpdated, node: subFolderUpdated }];
+
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [localRoot],
+						getPermissions: [localRoot],
+						getNode: [folder, subFolder, subSubFile, folderUpdated, subFolderUpdated]
+					}),
+					getPath: mockGetPath([localRoot], [localRoot, folder], [localRoot, folder, subFolder]),
+					getCollaborationLinks: mockGetCollaborationLinks([], [], []),
+					getLinks: mockGetLinks([], [], [])
+				},
+				Mutation: {
+					updateShare: mockUpdateShare({ ...shareUpdated, node: folderUpdated })
+				}
+			} satisfies Partial<Resolvers>;
+
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${localRoot.id}&node=${folder.id}`],
+				mocks
+			});
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			// folder share is read-only
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(
+				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.shareCanRead
+				})
+			).toBeVisible();
+			// navigate inside folder to cache data
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
+			);
+			await screen.findByText(subFolder.name);
+			await user.click(screen.getByText(subFolder.name));
+			// sub-folder share is read-only
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(
+				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.shareCanRead
+				})
+			).toBeVisible();
+			// navigate inside sub-folder to cache data
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
+			);
+			await screen.findByText(subSubFile.name);
+			await user.click(screen.getByText(subSubFile.name));
+			// sub-sub-file share is read-only
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(
+				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.shareCanRead
+				})
+			).toBeVisible();
+			// navigate back to local root
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand));
+			await screen.findByText(localRoot.name);
+			await user.click(screen.getByText(localRoot.name));
+			// edit share on parent folder
+			await screen.findByText(folder.name);
+			await user.click(screen.getByText(folder.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			await user.click(
+				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.shareCanRead
+				})
+			);
+			const shareAsEditor = await screen.findByText(/editor/i);
+			const saveButton = screen.getByRole('button', { name: /save/i });
+			await user.click(shareAsEditor);
+			await waitFor(() => expect(saveButton).toBeEnabled());
+			await user.click(saveButton);
+			// folder share is updated
+			expect(
+				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.shareCanWrite
+				})
+			).toBeVisible();
+			// navigate inside folder
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
+			);
+			await screen.findByText(subFolder.name);
+			await user.click(screen.getByText(subFolder.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			// sub-folder share is updated
+			await waitFor(() => expect(findChipWithText(userAccount.full_name)).toBeDefined());
+			expect(
+				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.shareCanWrite
+				})
+			).toBeVisible();
+			// navigate inside sub-folder
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
+			);
+			await screen.findByText(subSubFile.name);
+			await user.click(screen.getByText(subSubFile.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			// sub-sub-file share is updated
+			expect(
+				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.shareCanWrite
+				})
+			).toBeVisible();
+		});
+
+		test('should not show the deleted share in cached children', async () => {
+			const localRoot = populateLocalRoot();
+			const folder = populateFolder();
+			const subFolder = populateFolder();
+			const subSubFile = populateFile();
+			localRoot.children = populateNodePage([folder]);
+			folder.children = populateNodePage([subFolder]);
+			subFolder.children = populateNodePage([subSubFile]);
+			folder.parent = localRoot;
+			folder.permissions.can_write_folder = true;
+			folder.permissions.can_write_file = true;
+			folder.permissions.can_share = true;
+			subFolder.parent = folder;
+			subFolder.permissions.can_write_folder = true;
+			subFolder.permissions.can_write_file = true;
+			subFolder.permissions.can_share = true;
+			subSubFile.parent = subFolder;
+			subSubFile.permissions.can_write_folder = true;
+			subSubFile.permissions.can_write_file = true;
+			subSubFile.permissions.can_share = true;
+			const userAccount = populateUser();
+			const share = populateShare(folder, 'share-to-update', userAccount);
+			share.permission = SharePermission.ReadOnly;
+			folder.shares = [{ ...share, node: folder }];
+			subFolder.shares = [{ ...share, node: subFolder }];
+			subSubFile.shares = [{ ...share, node: subSubFile }];
+
+			function removeShareInChildren(node: Folder): Folder {
+				return {
+					...node,
+					children: populateNodePage(
+						map(
+							node.children.nodes,
+							(child) =>
+								child && {
+									...child,
+									shares: []
+								}
+						)
+					)
+				};
+			}
+
+			const folderUpdated = removeShareInChildren(folder);
+			folderUpdated.shares = [];
+			const subFolderUpdated = removeShareInChildren(subFolder);
+			subFolderUpdated.shares = [];
+
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [localRoot, folderUpdated],
+						getPermissions: [localRoot],
+						getNode: [folder, subFolder, subSubFile, subFolderUpdated]
+					}),
+					getPath: mockGetPath([localRoot], [localRoot, folder], [localRoot, folder, subFolder]),
+					getCollaborationLinks: mockGetCollaborationLinks([], [], []),
+					getLinks: mockGetLinks([], [], [])
+				},
+				Mutation: {
+					deleteShare: mockDeleteShare(true)
+				}
+			} satisfies Partial<Resolvers>;
+
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${localRoot.id}&node=${folder.id}`],
+				mocks
+			});
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			// folder has share
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			// navigate inside folder to cache data
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
+			);
+			await screen.findByText(subFolder.name);
+			await user.click(screen.getByText(subFolder.name));
+			// sub-folder has share
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			// navigate inside sub-folder to cache data
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
+			);
+			await screen.findByText(subSubFile.name);
+			await user.click(screen.getByText(subSubFile.name));
+			// sub-sub-file has share
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			// navigate back to local root
+			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand));
+			await screen.findByText(localRoot.name);
+			await user.click(screen.getByText(localRoot.name));
+			// remove share on parent folder
+			await screen.findByText(folder.name);
+			await user.click(screen.getByText(folder.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			expect(findChipWithText(userAccount.full_name)).toBeDefined();
+			await user.click(
+				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.close
+				})
+			);
+			const confirmButton = await screen.findByRole('button', { name: /remove/i });
+			await user.click(confirmButton);
+			// folder share is removed
+			expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
+			// navigate inside folder
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
+			);
+			await screen.findByText(subFolder.name);
+			await user.click(screen.getByText(subFolder.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			// sub-folder share has been removed
+			expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
+			// navigate inside sub-folder
+			await user.dblClick(
+				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
+			);
+			await screen.findByText(subSubFile.name);
+			await user.click(screen.getByText(subSubFile.name));
+			await screen.findByText(/sharing/i);
+			await user.click(screen.getByText(/sharing/i));
+			// sub-sub-file share has been removed
+			expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
+		});
 	});
 });

@@ -14,6 +14,7 @@ import { useLocation } from 'react-router-dom';
 
 import { useActiveNode } from '../../../../hooks/useActiveNode';
 import useUserInfo from '../../../../hooks/useUserInfo';
+import { recursiveShareEvict } from '../../../apollo/cacheUtils';
 import PARENT_ID from '../../../graphql/fragments/parentId.graphql';
 import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
 import DELETE_SHARE from '../../../graphql/mutations/deleteShare.graphql';
@@ -102,6 +103,7 @@ export function useDeleteShareMutation(): (
 								}
 							}
 						});
+						recursiveShareEvict(cache, node);
 						// always remove node when user remove self share
 						if (shareTargetId === me) {
 							removeNodesFromFilter([node.id], () => true);

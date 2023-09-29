@@ -19,24 +19,62 @@ module.exports = {
 			}
 		},
 		{
-			// disable check for license header on graphql files
-			files: ['*.graphql'],
+			files: ['src/**/types/graphql/resolvers-types.ts'],
 			rules: {
-				'notice/notice': 'off'
+				'@typescript-eslint/no-unused-vars': [
+					'warn',
+					{
+						varsIgnorePattern: 'RefType'
+					}
+				],
+				'unused-imports/no-unused-vars': ['warn', { varsIgnorePattern: 'RefType' }]
 			}
 		},
 		{
-			files: ['**/graphql/*/*.graphql'],
+			// disable check for license header on graphql files
+			files: ['*.[jt]s?(x)'],
+			processor: '@graphql-eslint/graphql'
+		},
+		{
+			files: ['*.graphql'],
+			rules: {
+				'prettier/prettier': 'error',
+				'notice/notice': [
+					'error',
+					{
+						templateFile: './notice.template.graphql'
+					}
+				],
+				'spaced-comment': ['off']
+			}
+		},
+		{
+			files: ['**/graphql/*/**/*.graphql'],
 			extends: ['plugin:@graphql-eslint/operations-recommended'],
 			rules: {
-				'@graphql-eslint/known-type-names': 'error'
+				'@graphql-eslint/naming-convention': [
+					'error',
+					{
+						VariableDefinition: 'snake_case'
+					}
+				],
+				'@graphql-eslint/no-unused-fragments': 'off',
+				'@graphql-eslint/known-directives': ['error', { ignoreClientDirectives: ['client'] }]
 			}
 		},
 		{
 			files: ['*schema.graphql'],
 			extends: ['plugin:@graphql-eslint/schema-recommended'],
 			rules: {
-				'@graphql-eslint/known-type-names': 'error'
+				'@graphql-eslint/naming-convention': [
+					'error',
+					{
+						'FieldDefinition[parent.name.value=Query]': {
+							forbiddenPrefixes: ['query']
+						}
+					}
+				],
+				'@graphql-eslint/known-directives': ['error', { ignoreClientDirectives: ['client'] }]
 			}
 		},
 		{
@@ -59,6 +97,22 @@ module.exports = {
 			],
 			rules: {
 				'import/no-extraneous-dependencies': 'off'
+			}
+		},
+		{
+			files: 'src/carbonio-files-ui-common/**/*.[jt]s?(x)',
+			rules: {
+				'no-restricted-imports': [
+					'error',
+					{
+						paths: [
+							{
+								name: '@zextras/carbonio-shell-ui',
+								message: 'Do not import shell in common files'
+							}
+						]
+					}
+				]
 			}
 		}
 	],
@@ -85,5 +139,5 @@ module.exports = {
 		'sonarjs/cognitive-complexity': 'warn',
 		'sonarjs/no-duplicate-string': 'off'
 	},
-	ignorePatterns: ['notice.template.js']
+	ignorePatterns: ['notice.template.*']
 };

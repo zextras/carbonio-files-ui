@@ -38,7 +38,7 @@ const handleFindNodesRequest: ResponseResolver<
 		);
 	}
 
-	for (let i = 0; i < faker.datatype.number({ min: 1, max: limit }); i += 1) {
+	for (let i = 0; i < faker.number.int({ min: 1, max: limit }); i += 1) {
 		const node = populateNode();
 		if (flagged) {
 			node.flagged = true;
@@ -46,10 +46,10 @@ const handleFindNodesRequest: ResponseResolver<
 		if (folderId === ROOTS.TRASH) {
 			node.rootId = ROOTS.TRASH;
 		}
-		const sharesNum = faker.datatype.number({ min: 0, max: sharesLimit || 1 });
+		const sharesNum = faker.number.int({ min: 0, max: sharesLimit || 1 });
 		node.shares = take(node.shares, sharesNum);
 		if ((sharedByMe || sharedWithMe) && node.shares.length < 1) {
-			node.shares = populateShares(node, faker.datatype.number({ min: 1, max: sharesLimit || 1 }));
+			node.shares = populateShares(node, faker.number.int({ min: 1, max: sharesLimit || 1 }));
 		} else if (sharedByMe === false && sharedWithMe === false) {
 			node.shares = [];
 		}

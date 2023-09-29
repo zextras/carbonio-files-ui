@@ -841,7 +841,8 @@
         "actions": {
             "tooltip": {
                 "download": "Download",
-                "manageShares": "Gerenciar compartilhamentos"
+                "manageShares": "Gerenciar compartilhamentos",
+                "edit": "Editar"
             }
         },
         "close": {

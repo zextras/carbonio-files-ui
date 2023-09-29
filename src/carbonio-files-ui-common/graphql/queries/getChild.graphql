@@ -4,10 +4,7 @@
 
 #import "../fragments/childWithParent.graphql"
 
-query getChild(
-	$node_id: ID!,
-	$shares_limit: Int = 1
-) {
+query getChild($node_id: ID!, $shares_limit: Int = 1) {
 	getNode(node_id: $node_id) {
 		...ChildWithParent
 	}

@@ -19,13 +19,13 @@ const handleGetSharesRequest: ResponseResolver<
 > = (req, res, ctx) => {
 	const { node_id: id, shares_limit: sharesLimit } = req.variables;
 
-	let nodeName = faker.random.words();
+	let nodeName = faker.word.words();
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
 		nodeName = 'ROOT';
 	}
 	const node = populateNode(undefined, id, nodeName);
 
-	const sharesNum = faker.datatype.number({ min: 0, max: sharesLimit || 1 });
+	const sharesNum = faker.number.int({ min: 0, max: sharesLimit || 1 });
 	node.shares = take(node.shares, sharesNum);
 
 	return res(

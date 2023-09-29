@@ -138,7 +138,7 @@ describe('Upload List', () => {
 									uploadSuccessHandler();
 									return res(
 										ctx.json({
-											nodeId: faker.datatype.uuid()
+											nodeId: faker.string.uuid()
 										})
 									);
 								})
@@ -273,7 +273,7 @@ describe('Upload List', () => {
 							if (fileName === children[1].name || fileName === children[3].name) {
 								return res(ctx.status(500));
 							}
-							return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+							return res(ctx.json({ nodeId: faker.string.uuid() }));
 						}
 					)
 				);
@@ -423,7 +423,7 @@ describe('Upload List', () => {
 								uploadFailedCalled = true;
 								return res(ctx.status(500));
 							}
-							return res(ctx.json({ nodeId: faker.datatype.uuid() }));
+							return res(ctx.json({ nodeId: faker.string.uuid() }));
 						}
 					)
 				);

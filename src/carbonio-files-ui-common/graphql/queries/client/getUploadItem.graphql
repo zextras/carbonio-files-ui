@@ -3,5 +3,5 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 query getUploadItem($id: ID!) {
-    getUploadItem(id: $id)
+	getUploadItem(id: $id)
 }
