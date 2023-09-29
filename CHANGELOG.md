@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.2](https://github.com/zextras/carbonio-files-ui/compare/v2.3.1...v2.3.2) (2023-09-29)
+
+
+### Bug Fixes
+
+* delete cached shares of children when changing shares of a folder ([c3c60b1](https://github.com/zextras/carbonio-files-ui/commit/c3c60b1d2baae8b2a93d1f55b10bc6a6ffff7433)), closes [#261](https://github.com/zextras/carbonio-files-ui/issues/261)
+
 ### [2.3.1](https://github.com/zextras/carbonio-files-ui/compare/v2.3.0...v2.3.1) (2023-09-11)
 
 ## [2.3.0](https://github.com/zextras/carbonio-files-ui/compare/v2.2.1...v2.3.0) (2023-08-31)
