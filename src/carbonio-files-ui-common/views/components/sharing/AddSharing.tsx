@@ -458,8 +458,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 					inputRef={inputRef}
 					placeholder={t('displayer.share.addShare.input.placeholder', 'Add new people or groups')}
 					confirmChipOnBlur={false}
-					confirmChipOnSpace={false}
-					separators={['']}
+					separators={[]}
 					onInputType={onType}
 					onChange={onChipsChange}
 					value={chips}
