@@ -12,7 +12,8 @@ import { act } from 'react-dom/test-utils';
 import { Displayer } from './Displayer';
 import { DATE_FORMAT, DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
-import { populateFile, populateLink } from '../../mocks/mockUtils';
+import { populateFile, populateLink, populateNode } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	mockCreateLink,
@@ -27,86 +28,105 @@ import { formatDate, initExpirationDate } from '../../utils/utils';
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {
 		describe('On add link', () => {
-			test('on description input, click on other tab show dialog to warn user about unsaved changes', async () => {
-				const node = populateFile();
-				node.permissions.can_share = true;
-				node.permissions.can_write_folder = true;
-				node.permissions.can_write_file = true;
-				const description = faker.lorem.words();
-				const mocks = {
-					Query: {
-						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
-						getLinks: mockGetLinks(node.links),
-						getCollaborationLinks: mockGetCollaborationLinks([])
-					}
-				} satisfies Partial<Resolvers>;
+			test.each([
+				[
+					'File',
+					'Public download links',
+					'Internal and external users that have access to the link can download the item.'
+				],
+				[
+					'Folder',
+					'Public access links',
+					'Anyone with this link can view and download the content of this folder.'
+				]
+			])(
+				'on description input of a %s, click on other tab show dialog to warn user about unsaved changes',
+				async (nodeType, title, desc) => {
+					const node = populateNode(nodeType as Node['__typename']);
+					node.permissions.can_share = true;
+					node.permissions.can_write_folder = true;
+					node.permissions.can_write_file = true;
+					const description = faker.lorem.words();
+					const mocks = {
+						Query: {
+							getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+							getLinks: mockGetLinks(node.links),
+							getCollaborationLinks: mockGetCollaborationLinks([])
+						}
+					} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<Displayer translationKey="No.node" />, {
-					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
-					mocks
-				});
+					const { user } = setup(<Displayer translationKey="No.node" />, {
+						initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
+						mocks
+					});
+					await screen.findByText(title);
+					await screen.findByText(desc);
+					await user.click(screen.getByRole('button', { name: /add link/i }));
+					const descriptionInput = await screen.findByRole('textbox', {
+						name: /link's description/i
+					});
+					await user.type(descriptionInput, description);
+					await user.click(screen.getByText(/details/i));
+					await screen.findByText(/you have unsaved changes/i);
+					act(() => {
+						// run timers of modal
+						jest.runOnlyPendingTimers();
+					});
+					expect(screen.getByText(/you have unsaved changes/i)).toBeVisible();
+					expect(screen.getByText(/Do you want to leave the page without saving\?/i)).toBeVisible();
+					expect(screen.getByText(/All unsaved changes will be lost/i)).toBeVisible();
+					expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
+					expect(screen.getByRole('button', { name: /leave anyway/i })).toBeVisible();
+					expect(screen.getByRole('button', { name: /save and leave/i })).toBeVisible();
+				}
+			);
 
-				await screen.findByText(/public link/i);
-				await user.click(screen.getByRole('button', { name: /add link/i }));
-				const descriptionInput = await screen.findByRole('textbox', {
-					name: /link's description/i
-				});
-				await user.type(descriptionInput, description);
-				await user.click(screen.getByText(/details/i));
-				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
-				});
-				expect(screen.getByText(/you have unsaved changes/i)).toBeVisible();
-				expect(screen.getByText(/Do you want to leave the page without saving\?/i)).toBeVisible();
-				expect(screen.getByText(/All unsaved changes will be lost/i)).toBeVisible();
-				expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
-				expect(screen.getByRole('button', { name: /leave anyway/i })).toBeVisible();
-				expect(screen.getByRole('button', { name: /save and leave/i })).toBeVisible();
-			});
+			test.each([
+				['File', 'Public download links'],
+				['Folder', 'Public access links']
+			])(
+				'on expiration date input, click on other tab show dialog to warn user about unsaved changes',
+				async (nodeType, title) => {
+					const node = populateNode(nodeType as Node['__typename']);
+					node.permissions.can_share = true;
+					node.permissions.can_write_folder = true;
+					node.permissions.can_write_file = true;
+					const mocks = {
+						Query: {
+							getNode: mockGetNode({ getNode: [node], getShares: [node] }),
+							getLinks: mockGetLinks(node.links),
+							getCollaborationLinks: mockGetCollaborationLinks([])
+						}
+					} satisfies Partial<Resolvers>;
 
-			test('on expiration date input, click on other tab show dialog to warn user about unsaved changes', async () => {
-				const node = populateFile();
-				node.permissions.can_share = true;
-				node.permissions.can_write_folder = true;
-				node.permissions.can_write_file = true;
-				const mocks = {
-					Query: {
-						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
-						getLinks: mockGetLinks(node.links),
-						getCollaborationLinks: mockGetCollaborationLinks([])
-					}
-				} satisfies Partial<Resolvers>;
-
-				const { user } = setup(<Displayer translationKey="No.node" />, {
-					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
-					mocks
-				});
-
-				await screen.findByText(/public link/i);
-				await user.click(screen.getByRole('button', { name: /add link/i }));
-				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
-				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
-				await user.click(nextMonthButton);
-				// chosen date is the 1st of next month
-				const chosenDate = getFirstOfNextMonth();
-				// always click on first 1 visible on the date picker
-				await user.click(screen.getAllByText('1')[0]);
-				await screen.findByText(formatDate(chosenDate, DATE_FORMAT));
-				await user.click(screen.getByText(/details/i));
-				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
-				});
-				expect(screen.getByText(/you have unsaved changes/i)).toBeVisible();
-				expect(screen.getByText(/Do you want to leave the page without saving\?/i)).toBeVisible();
-				expect(screen.getByText(/All unsaved changes will be lost/i)).toBeVisible();
-				expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
-				expect(screen.getByRole('button', { name: /leave anyway/i })).toBeVisible();
-				expect(screen.getByRole('button', { name: /save and leave/i })).toBeVisible();
-			});
+					const { user } = setup(<Displayer translationKey="No.node" />, {
+						initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
+						mocks
+					});
+					await screen.findByText(title);
+					await user.click(screen.getByRole('button', { name: /add link/i }));
+					await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
+					const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
+					await user.click(nextMonthButton);
+					// chosen date is the 1st of next month
+					const chosenDate = getFirstOfNextMonth();
+					// always click on first 1 visible on the date picker
+					await user.click(screen.getAllByText('1')[0]);
+					await screen.findByText(formatDate(chosenDate, DATE_FORMAT));
+					await user.click(screen.getByText(/details/i));
+					await screen.findByText(/you have unsaved changes/i);
+					act(() => {
+						// run timers of modal
+						jest.runOnlyPendingTimers();
+					});
+					expect(screen.getByText(/you have unsaved changes/i)).toBeVisible();
+					expect(screen.getByText(/Do you want to leave the page without saving\?/i)).toBeVisible();
+					expect(screen.getByText(/All unsaved changes will be lost/i)).toBeVisible();
+					expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
+					expect(screen.getByRole('button', { name: /leave anyway/i })).toBeVisible();
+					expect(screen.getByRole('button', { name: /save and leave/i })).toBeVisible();
+				}
+			);
 
 			test.skip('cancel action leaves fields valued and navigation is kept on sharing tab', async () => {
 				const node = populateFile();

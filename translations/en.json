@@ -508,6 +508,12 @@
             },
             "header": "Purge all versions"
         },
+        "removeAccessLink": {
+            "header": "Remove {{nodeName}} Public access link"
+        },
+        "removeDownloadLink": {
+            "header": "Remove {{nodeName}} Public download link"
+        },
         "removeLink": {
             "body": "This link has expired, therefore it can't be used anymore to access the item. You can remove the link from the list or you can update its expiration date and other information in order to keep using it.",
             "button": {
@@ -515,12 +521,18 @@
             },
             "header": "Remove {{nodeName}} Public link"
         },
+        "revokeAccessLink": {
+            "header": "Revoke {{nodeName}} Public access link"
+        },
         "revokeCollaborationLink": {
             "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.",
             "button": {
                 "confirm": "Revoke"
             },
             "header": "Revoke {{nodeName}} collaboration link"
+        },
+        "revokeDownloadLink": {
+            "header": "Revoke {{nodeName}} Public download link"
         },
         "revokeLink": {
             "body": "By revoking this link, you are blocking access to {{nodeName}} for anyone who tries to use the link to access the item.",
@@ -630,13 +642,19 @@
             "retrying": "Trying to load the preview…"
         }
     },
+    "publicFolderLink": {
+        "addLink": {
+            "description": "Anyone with this link can view and download the content of this folder.",
+            "title": "Public access links"
+        }
+    },
     "publicLink": {
         "addLink": {
             "addLink": "Add Link",
             "description": "Internal and external users that have access to the link can download the item.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
-            "title": "Public links",
+            "title": "Public download links",
             "undo": "Undo"
         },
         "datePickerInput": {
@@ -824,16 +842,25 @@
             "error": "Something went wrong, try again",
             "success": "Item moved"
         },
+        "publicFolderLink": {
+            "copyLink": "Public access link copied",
+            "linkUpdated": {
+                "label": "Public access link updated"
+            },
+            "newPublicLinkGenerated": {
+                "label": "New Public access link generated"
+            }
+        },
         "publicLink": {
             "actionLabel": {
                 "copyLink": "Copy Link"
             },
-            "copyLink": "Public link copied",
+            "copyLink": "Public download link copied",
             "linkUpdated": {
-                "label": "Public link updated"
+                "label": "Public download link updated"
             },
             "newPublicLinkGenerated": {
-                "label": "New Public link generated"
+                "label": "New Public download link generated"
             }
         },
         "restore": {

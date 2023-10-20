@@ -45,6 +45,7 @@ interface PublicLinkComponentProps {
 	onUndo: () => void;
 	onRevokeOrRemove: (linkId: string, isRevoke: boolean) => void;
 	forceUrlCopyDisabled: boolean;
+	copySnackbarMsg: string;
 }
 
 export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
@@ -57,7 +58,8 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	onEditConfirm,
 	onUndo,
 	onRevokeOrRemove,
-	forceUrlCopyDisabled
+	forceUrlCopyDisabled,
+	copySnackbarMsg
 }) => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
@@ -140,12 +142,12 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 			createSnackbar({
 				key: new Date().toLocaleString(),
 				type: 'info',
-				label: t('snackbar.publicLink.copyLink', 'Public link copied'),
+				label: copySnackbarMsg,
 				replace: true,
 				hideButton: true
 			});
 		});
-	}, [createSnackbar, t, url]);
+	}, [createSnackbar, url, copySnackbarMsg]);
 
 	const [pickerIsOpen, setPickerIsOpen] = useState(false);
 
