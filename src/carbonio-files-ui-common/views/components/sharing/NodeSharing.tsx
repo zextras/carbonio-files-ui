@@ -128,8 +128,8 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 	}, [me, node.owner, t]);
 
 	const linkName = isFile(node)
-		? t('publicLink.fileLink', 'Public download link')
-		: t('publicLink.folderLink', 'Public access link');
+		? t('publicLink.fileLink.title', 'Public download link')
+		: t('publicLink.folderLink.title', 'Public access link');
 
 	const linkDescription = isFile(node)
 		? t(

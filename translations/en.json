@@ -645,6 +645,18 @@
         "dateTimePicker": {
             "label": "Expiration date"
         },
+        "fileLink": {
+            "addLink": {
+                "description": "Internal and external users that have access to the link can download the item."
+            },
+            "title": "Public download link"
+        },
+        "folderLink": {
+            "addLink": {
+                "description": "Anyone with this link can view and download the content of this folder."
+            },
+            "title": "Public access link"
+        },
         "input": {
             "description": {
                 "error": {
