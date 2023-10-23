@@ -127,6 +127,20 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 		);
 	}, [me, node.owner, t]);
 
+	const linkName = isFile(node)
+		? t('publicLink.fileLink', 'Public download link')
+		: t('publicLink.folderLink', 'Public access link');
+
+	const linkDescription = isFile(node)
+		? t(
+				'publicLink.fileLink.addLink.description',
+				'Internal and external users that have access to the link can download the item.'
+		  )
+		: t(
+				'publicLink.folderLink.addLink.description',
+				'Anyone with this link can view and download the content of this folder.'
+		  );
+
 	return (
 		<MainContainer
 			mainAlignment="flex-start"
@@ -199,7 +213,8 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 					nodeId={node.id}
 					nodeName={node.name}
 					canShare={node.permissions.can_share}
-					node={node}
+					linkName={linkName}
+					linkDescription={linkDescription}
 				/>
 			)}
 		</MainContainer>

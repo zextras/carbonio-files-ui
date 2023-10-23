@@ -18,46 +18,44 @@ import { formatDate, initExpirationDate } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 
 describe('Public Link', () => {
-	test.each([
-		[
-			'File',
-			'Public download links',
-			'Internal and external users that have access to the link can download the item.'
-		],
-		[
-			'Folder',
-			'Public access links',
-			'Anyone with this link can view and download the content of this folder.'
-		]
-	])(
+	test.each([['File'], ['Folder']])(
 		'should render the link section with title and description if canShare is true',
-		async (nodeType, title, description) => {
+		async (nodeType) => {
 			const node = populateNode(nodeType as Node['__typename']);
-			setup(<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />);
-			expect(screen.getByText(title)).toBeVisible();
-			expect(screen.getByText(description)).toBeVisible();
+			const linkName = 'Link name';
+			const linkDescription = 'Link description';
+			setup(
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={linkName}
+					linkDescription={linkDescription}
+				/>
+			);
+			expect(screen.getByText(`${linkName}s`)).toBeVisible();
+			expect(screen.getByText(linkDescription)).toBeVisible();
 			expect(screen.getByRole('button', { name: /add link/i })).toBeVisible();
 		}
 	);
 
-	test.each([
-		[
-			'File',
-			'Public download links',
-			'Internal and external users that have access to the link can download the item.'
-		],
-		[
-			'Folder',
-			'Public access links',
-			'Anyone with this link can view and download the content of this folder.'
-		]
-	])(
+	test.each([['File'], ['Folder']])(
 		'should not render the link section if canShare is false',
-		async (nodeType, title, description) => {
+		async (nodeType) => {
 			const node = populateNode(nodeType as Node['__typename']);
-			setup(<PublicLink nodeId={node.id} nodeName={node.name} canShare={false} node={node} />);
-			expect(screen.queryByText(title)).not.toBeInTheDocument();
-			expect(screen.queryByText(description)).not.toBeInTheDocument();
+			const linkName = 'Link name';
+			const linkDescription = 'Link description';
+			setup(
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare={false}
+					linkName={linkName}
+					linkDescription={linkDescription}
+				/>
+			);
+			expect(screen.queryByText(`${linkName}s`)).not.toBeInTheDocument();
+			expect(screen.queryByText(linkDescription)).not.toBeInTheDocument();
 			expect(screen.queryByRole('button', { name: /add link/i })).not.toBeInTheDocument();
 		}
 	);
@@ -67,7 +65,13 @@ describe('Public Link', () => {
 		async (nodeType) => {
 			const node = populateNode(nodeType as Node['__typename']);
 			const { user } = setup(
-				<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={'Link name'}
+					linkDescription={'Link description'}
+				/>
 			);
 			const addLinkBtn = screen.getByRole('button', { name: /add link/i });
 			expect(addLinkBtn).toBeVisible();
@@ -91,7 +95,13 @@ describe('Public Link', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(
-				<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />,
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={'Link name'}
+					linkDescription={'Link description'}
+				/>,
 				{ mocks }
 			);
 			const addLinkBtn = screen.getByRole('button', { name: /add link/i });
@@ -102,12 +112,9 @@ describe('Public Link', () => {
 		}
 	);
 
-	test.each([
-		['File', 'New Public download link generated'],
-		['Folder', 'New Public access link generated']
-	])(
+	test.each([['File'], ['Folder']])(
 		'should render revoke and edit buttons when a link is generated',
-		async (nodeType, snackbarMsg) => {
+		async (nodeType) => {
 			const node = populateNode(nodeType as Node['__typename']);
 			const link = populateLink(node);
 			const mocks = {
@@ -118,8 +125,15 @@ describe('Public Link', () => {
 					createLink: mockCreateLink(link)
 				}
 			} satisfies Partial<Resolvers>;
+			const linkName = 'Link name';
 			const { user } = setup(
-				<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />,
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={linkName}
+					linkDescription={'Link description'}
+				/>,
 				{ mocks }
 			);
 			await user.click(screen.getByRole('button', { name: /add link/i }));
@@ -129,7 +143,7 @@ describe('Public Link', () => {
 			expect(screen.getByRole('button', { name: /add link/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /revoke/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /edit/i })).toBeVisible();
-			const snackbar = await screen.findByText(snackbarMsg);
+			const snackbar = await screen.findByText(`New ${linkName} generated`);
 			expect(snackbar).toBeVisible();
 		}
 	);
@@ -145,7 +159,16 @@ describe('Public Link', () => {
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			setup(<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />, { mocks });
+			setup(
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={'Link name'}
+					linkDescription={'Link description'}
+				/>,
+				{ mocks }
+			);
 			await screen.findByText(link.url as string);
 			expect(screen.getByText(/has no expiration date/i)).toBeVisible();
 		}
@@ -164,7 +187,16 @@ describe('Public Link', () => {
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			setup(<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />, { mocks });
+			setup(
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={'Link name'}
+					linkDescription={'Link description'}
+				/>,
+				{ mocks }
+			);
 			await screen.findByText(link.url as string);
 			const expiresOnDate = formatDate(
 				new Date(
@@ -197,7 +229,16 @@ describe('Public Link', () => {
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			setup(<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />, { mocks });
+			setup(
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={'Link name'}
+					linkDescription={'Link description'}
+				/>,
+				{ mocks }
+			);
 			await screen.findByText(link.url as string);
 			const expiresOnDate = formatDate(
 				new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59),
@@ -208,56 +249,70 @@ describe('Public Link', () => {
 		}
 	);
 
-	test.each([
-		['File', 'Public download link copied'],
-		['Folder', 'Public access link copied']
-	])('can copy the link to clipboard if there is no expiration', async (nodeType, snackbarMsg) => {
-		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
-		const node = populateNode(nodeType as Node['__typename']);
-		const link = populateLink(node);
-		link.expires_at = null;
-		const mocks = {
-			Query: {
-				getLinks: mockGetLinks([link])
-			}
-		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />,
-			{ mocks }
-		);
-		const urlElement = await screen.findByText(link.url as string);
-		await user.click(urlElement);
-		expect(copyToClipboardFn).toBeCalledWith(link.url);
-		const snackbar = await screen.findByText(snackbarMsg);
-		expect(snackbar).toBeVisible();
-	});
+	test.each([['File'], ['Folder']])(
+		'can copy the link to clipboard if there is no expiration',
+		async (nodeType) => {
+			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+			const node = populateNode(nodeType as Node['__typename']);
+			const link = populateLink(node);
+			link.expires_at = null;
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			const linkName = 'Link name';
+			const { user } = setup(
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={linkName}
+					linkDescription={'Link description'}
+				/>,
+				{ mocks }
+			);
+			const urlElement = await screen.findByText(link.url as string);
+			await user.click(urlElement);
+			expect(copyToClipboardFn).toBeCalledWith(link.url);
+			const snackbar = await screen.findByText(`${linkName} copied`);
+			expect(snackbar).toBeVisible();
+		}
+	);
 
-	test.each([
-		['File', 'Public download link copied'],
-		['Folder', 'Public access link copied']
-	])('can copy the link to clipboard if it is not expired', async (nodeType, snackbarMsg) => {
-		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
-		const node = populateNode(nodeType as Node['__typename']);
-		const link = populateLink(node);
-		const firstOfNextMonth = getFirstOfNextMonth();
-		const expiresAt = initExpirationDate(firstOfNextMonth) as Date;
-		link.expires_at = expiresAt?.getTime();
-		const mocks = {
-			Query: {
-				getLinks: mockGetLinks([link])
-			}
-		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />,
-			{ mocks }
-		);
-		const urlElement = await screen.findByText(link.url as string);
-		await user.click(urlElement);
-		expect(copyToClipboardFn).toBeCalledWith(link.url);
+	test.each([['File'], ['Folder']])(
+		'can copy the link to clipboard if it is not expired',
+		async (nodeType) => {
+			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+			const node = populateNode(nodeType as Node['__typename']);
+			const link = populateLink(node);
+			const firstOfNextMonth = getFirstOfNextMonth();
+			const expiresAt = initExpirationDate(firstOfNextMonth) as Date;
+			link.expires_at = expiresAt?.getTime();
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			const linkName = 'Link name';
+			const { user } = setup(
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={linkName}
+					linkDescription={'Link description'}
+				/>,
+				{ mocks }
+			);
+			const urlElement = await screen.findByText(link.url as string);
+			await user.click(urlElement);
+			expect(copyToClipboardFn).toBeCalledWith(link.url);
 
-		const snackbar = await screen.findByText(snackbarMsg);
-		expect(snackbar).toBeVisible();
-	});
+			const snackbar = await screen.findByText(`${linkName} copied`);
+			expect(snackbar).toBeVisible();
+		}
+	);
 
 	test.each([['File'], ['Folder']])(
 		'cannot copy the link to clipboard if it is expired',
@@ -276,7 +331,13 @@ describe('Public Link', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(
-				<PublicLink nodeId={node.id} nodeName={node.name} canShare node={node} />,
+				<PublicLink
+					nodeId={node.id}
+					nodeName={node.name}
+					canShare
+					linkName={'Link name'}
+					linkDescription={'Link description'}
+				/>,
 				{ mocks }
 			);
 			const urlElement = await screen.findByText(link.url as string);

@@ -25,29 +25,24 @@ import { useCreateLinkMutation } from '../../../../hooks/graphql/mutations/useCr
 import { useDeleteLinksMutation } from '../../../../hooks/graphql/mutations/useDeleteLinksMutation';
 import { useUpdateLinkMutation } from '../../../../hooks/graphql/mutations/useUpdateLinkMutation';
 import { useGetLinksQuery } from '../../../../hooks/graphql/queries/useGetLinksQuery';
-import { Node, PublicLinkRowStatus } from '../../../../types/common';
-import { Share, SharedTarget } from '../../../../types/graphql/types';
+import { PublicLinkRowStatus } from '../../../../types/common';
 import { NonNullableListItem } from '../../../../types/utils';
-import { copyToClipboard, isFile } from '../../../../utils/utils';
+import { copyToClipboard } from '../../../../utils/utils';
 
 interface AddPublicLinkProps {
 	nodeId: string;
 	nodeName: string;
 	canShare: boolean;
-	node: Pick<Node, '__typename' | 'id' | 'permissions' | 'owner' | 'name'> & {
-		shares?: Array<
-			| (Pick<Share, '__typename'> & { shared_target?: Pick<SharedTarget, '__typename' | 'id'> })
-			| null
-			| undefined
-		>;
-	};
+	linkName: string;
+	linkDescription: string;
 }
 
 export const PublicLink = ({
 	nodeId,
 	nodeName,
 	canShare,
-	node
+	linkName,
+	linkDescription
 }: AddPublicLinkProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { zimbraPrefTimeZoneId } = useUserInfo();
@@ -55,82 +50,6 @@ export const PublicLink = ({
 	const createModal = useModal();
 
 	const { data: getLinksQueryData } = useGetLinksQuery(nodeId);
-
-	const createSnackbarMsg = useMemo(
-		() =>
-			isFile(node)
-				? t(
-						'snackbar.publicLink.newPublicLinkGenerated.label',
-						'New Public download link generated'
-				  )
-				: t(
-						'snackbar.publicFolderLink.newPublicLinkGenerated.label',
-						'New Public access link generated'
-				  ),
-		[node, t]
-	);
-
-	const copySnackbarMsg = useMemo(
-		() =>
-			isFile(node)
-				? t('snackbar.publicLink.copyLink', 'Public download link copied')
-				: t('snackbar.publicFolderLink.copyLink', 'Public access link copied'),
-		[node, t]
-	);
-
-	const updateSnackbarMsg = useMemo(
-		() =>
-			isFile(node)
-				? t('snackbar.publicLink.linkUpdated.label', 'Public download link updated')
-				: t('snackbar.publicFolderLink.linkUpdated.label', 'Public access link updated'),
-		[node, t]
-	);
-
-	const titlePublicLink = useMemo(
-		() =>
-			isFile(node)
-				? t('publicLink.addLink.title', 'Public download links')
-				: t('publicFolderLink.addLink.title', 'Public access links'),
-		[node, t]
-	);
-
-	const descriptionPublicLink = useMemo(
-		() =>
-			isFile(node)
-				? t(
-						'publicLink.addLink.description',
-						'Internal and external users that have access to the link can download the item.'
-				  )
-				: t(
-						'publicFolderLink.addLink.description',
-						'Anyone with this link can view and download the content of this folder.'
-				  ),
-		[node, t]
-	);
-
-	const revokeTitle = useMemo(
-		() =>
-			isFile(node)
-				? t('modal.revokeDownloadLink.header', 'Revoke {{nodeName}} Public download link', {
-						replace: { nodeName }
-				  })
-				: t('modal.revokeAccessLink.header', 'Revoke {{nodeName}} Public access link', {
-						replace: { nodeName }
-				  }),
-		[node, nodeName, t]
-	);
-
-	const removeTitle = useMemo(
-		() =>
-			isFile(node)
-				? t('modal.removeDownloadLink.header', 'Remove {{nodeName}} Public download link', {
-						replace: { nodeName }
-				  })
-				: t('modal.removeAccessLink.header', 'Remove {{nodeName}} Public access link', {
-						replace: { nodeName }
-				  }),
-		[node, nodeName, t]
-	);
 
 	const links = useMemo(() => {
 		if (getLinksQueryData?.getLinks) {
@@ -174,14 +93,22 @@ export const PublicLink = ({
 						createSnackbar({
 							key: new Date().toLocaleString(),
 							type: 'info',
-							label: createSnackbarMsg,
+							label: t(
+								'snackbar.publicLink.newPublicLinkGenerated.label',
+								`New {{linkName}} generated`,
+								{
+									replace: { linkName }
+								}
+							),
 							replace: true,
 							onActionClick: () => {
 								copyToClipboard(data.createLink.url as string).then(() => {
 									createSnackbar({
 										key: new Date().toLocaleString(),
 										type: 'info',
-										label: copySnackbarMsg,
+										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
+											replace: { linkName }
+										}),
 										replace: true,
 										hideButton: true
 									});
@@ -198,7 +125,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createLink, createSnackbar, t, zimbraPrefTimeZoneId, copySnackbarMsg, createSnackbarMsg]
+		[createLink, createSnackbar, t, zimbraPrefTimeZoneId, linkName]
 	);
 
 	/** PublicLinkComponent callbacks */
@@ -215,7 +142,13 @@ export const PublicLink = ({
 	const onRevokeOrRemove = useCallback(
 		(linkId: string, isRevoke: boolean) => {
 			const closeModal = createModal({
-				title: isRevoke ? revokeTitle : removeTitle,
+				title: isRevoke
+					? t('modal.revokeLink.header', 'Revoke {{nodeName}} {{linkName}}', {
+							replace: { nodeName, linkName }
+					  })
+					: t('modal.removeLink.header', 'Remove {{nodeName}} {{linkName}}', {
+							replace: { nodeName, linkName }
+					  }),
 				confirmLabel: isRevoke
 					? t('modal.revokeLink.button.confirm', 'Revoke')
 					: t('modal.removeLink.button.confirm', 'Remove'),
@@ -248,7 +181,7 @@ export const PublicLink = ({
 				)
 			});
 		},
-		[createModal, deleteLinks, nodeName, t, removeTitle, revokeTitle]
+		[createModal, deleteLinks, nodeName, t, linkName]
 	);
 
 	const onEditConfirm = useCallback(
@@ -269,14 +202,18 @@ export const PublicLink = ({
 						createSnackbar({
 							key: new Date().toLocaleString(),
 							type: 'info',
-							label: updateSnackbarMsg,
+							label: t('snackbar.publicLink.linkUpdated.label', '{{linkName}} updated', {
+								replace: { linkName }
+							}),
 							replace: true,
 							onActionClick: () => {
 								copyToClipboard(data.updateLink?.url as string).then(() => {
 									createSnackbar({
 										key: new Date().toLocaleString(),
 										type: 'info',
-										label: copySnackbarMsg,
+										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
+											replace: { linkName }
+										}),
 										replace: true,
 										hideButton: true
 									});
@@ -292,7 +229,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createSnackbar, t, updateLink, zimbraPrefTimeZoneId, copySnackbarMsg, updateSnackbarMsg]
+		[createSnackbar, t, updateLink, zimbraPrefTimeZoneId, linkName]
 	);
 
 	const linkComponents = useMemo(() => {
@@ -319,7 +256,7 @@ export const PublicLink = ({
 							onUndo={onEditUndo}
 							onRevokeOrRemove={onRevokeOrRemove}
 							forceUrlCopyDisabled={thereIsOpenRow}
-							copySnackbarMsg={copySnackbarMsg}
+							linkName={linkName}
 						/>
 					);
 				}
@@ -335,7 +272,7 @@ export const PublicLink = ({
 		onRevokeOrRemove,
 		openLinkId,
 		thereIsOpenRow,
-		copySnackbarMsg
+		linkName
 	]);
 
 	const addPublicLinkComputedStatus = useMemo<PublicLinkRowStatus>(() => {
@@ -363,8 +300,8 @@ export const PublicLink = ({
 					onUndo={onAddUndo}
 					onGenerate={onGenerate}
 					limitReached={size(links) >= 50}
-					titlePublicLink={titlePublicLink}
-					descriptionPublicLink={descriptionPublicLink}
+					linkName={linkName}
+					linkDescription={linkDescription}
 				/>
 			)}
 			{size(links) > 0 && addPublicLinkStatus === PublicLinkRowStatus.OPEN && (
