@@ -7,7 +7,7 @@
 import React, { useMemo } from 'react';
 
 import { ApolloProvider } from '@apollo/client';
-import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
+import { ModalManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
 
 import StyledWrapper from '../../../StyledWrapper';
@@ -33,8 +33,4 @@ export const ViewProvidersWrapper = ({
 	children
 }: {
 	children?: React.ReactNode;
-}): React.JSX.Element => (
-	<SnackbarManager>
-		<ModalManager>{children}</ModalManager>
-	</SnackbarManager>
-);
+}): React.JSX.Element => <ModalManager>{children}</ModalManager>;

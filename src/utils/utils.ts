@@ -9,5 +9,9 @@ import { Account, getUserAccount as shellGetUserAccount, report } from '@zextras
 export const captureException = report;
 
 export function getUserAccount(): Account {
-	return shellGetUserAccount();
+	const loggedUser = shellGetUserAccount();
+	if (loggedUser === undefined) {
+		throw new Error('user account is undefined');
+	}
+	return loggedUser;
 }
