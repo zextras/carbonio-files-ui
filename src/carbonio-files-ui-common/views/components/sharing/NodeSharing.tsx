@@ -127,19 +127,35 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 		);
 	}, [me, node.owner, t]);
 
-	const linkName = isFile(node)
-		? t('publicLink.fileLink.title', 'Public download link')
-		: t('publicLink.folderLink.title', 'Public access link');
+	const linkName = useMemo(
+		() =>
+			isFile(node)
+				? t('publicLink.fileLink.title', 'Public download link')
+				: t('publicLink.folderLink.title', 'Public access link'),
+		[node, t]
+	);
 
-	const linkDescription = isFile(node)
-		? t(
-				'publicLink.fileLink.addLink.description',
-				'Internal and external users that have access to the link can download the item.'
-		  )
-		: t(
-				'publicLink.folderLink.addLink.description',
-				'Anyone with this link can view and download the content of this folder.'
-		  );
+	const linkTitle = useMemo(
+		() =>
+			isFile(node)
+				? t('publicLink.fileLink.title', 'Public download links', { count: 2 })
+				: t('publicLink.folderLink.title', 'Public access links', { count: 2 }),
+		[node, t]
+	);
+
+	const linkDescription = useMemo(
+		() =>
+			isFile(node)
+				? t(
+						'publicLink.fileLink.addLink.description',
+						'Internal and external users that have access to the link can download the item.'
+				  )
+				: t(
+						'publicLink.folderLink.addLink.description',
+						'Anyone with this link can view and download the content of this folder.'
+				  ),
+		[node, t]
+	);
 
 	return (
 		<MainContainer
@@ -212,8 +228,8 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 				<PublicLink
 					nodeId={node.id}
 					nodeName={node.name}
-					canShare={node.permissions.can_share}
 					linkName={linkName}
+					linkTitle={linkTitle}
 					linkDescription={linkDescription}
 				/>
 			)}

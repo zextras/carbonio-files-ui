@@ -636,7 +636,6 @@
             "description": "Internal and external users that have access to the link can download the item.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
-            "title": "{{linkName}}s",
             "undo": "Undo"
         },
         "datePickerInput": {
@@ -649,13 +648,15 @@
             "addLink": {
                 "description": "Internal and external users that have access to the link can download the item."
             },
-            "title": "Public download link"
+            "title": "Public download link",
+            "title_plural": "Public download links"
         },
         "folderLink": {
             "addLink": {
                 "description": "Anyone with this link can view and download the content of this folder."
             },
-            "title": "Public access link"
+            "title": "Public access link",
+            "title_plural": "Public access links"
         },
         "input": {
             "description": {

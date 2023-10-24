@@ -29,21 +29,21 @@ import { PublicLinkRowStatus } from '../../../../types/common';
 import { NonNullableListItem } from '../../../../types/utils';
 import { copyToClipboard } from '../../../../utils/utils';
 
-interface AddPublicLinkProps {
+interface PublicLinkProps {
 	nodeId: string;
 	nodeName: string;
-	canShare: boolean;
 	linkName: string;
+	linkTitle: string;
 	linkDescription: string;
 }
 
 export const PublicLink = ({
 	nodeId,
 	nodeName,
-	canShare,
 	linkName,
+	linkTitle,
 	linkDescription
-}: AddPublicLinkProps): React.JSX.Element => {
+}: PublicLinkProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { zimbraPrefTimeZoneId } = useUserInfo();
 	const createSnackbar = useSnackbar();
@@ -293,24 +293,22 @@ export const PublicLink = ({
 			padding={{ all: 'large' }}
 			background={'gray6'}
 		>
-			{canShare && (
-				<AddPublicLinkComponent
-					status={addPublicLinkComputedStatus}
-					onAddLink={onAddLink}
-					onUndo={onAddUndo}
-					onGenerate={onGenerate}
-					limitReached={size(links) >= 50}
-					linkName={linkName}
-					linkDescription={linkDescription}
-				/>
-			)}
+			<AddPublicLinkComponent
+				status={addPublicLinkComputedStatus}
+				onAddLink={onAddLink}
+				onUndo={onAddUndo}
+				onGenerate={onGenerate}
+				limitReached={size(links) >= 50}
+				linkTitle={linkTitle}
+				linkDescription={linkDescription}
+			/>
 			{size(links) > 0 && addPublicLinkStatus === PublicLinkRowStatus.OPEN && (
 				<>
 					<Padding vertical="small" />
 					<Divider color="gray2" />
 				</>
 			)}
-			{canShare && linkComponents}
+			{linkComponents}
 		</Container>
 	);
 };

@@ -29,7 +29,7 @@ interface AddPublicLinkComponentProps {
 	onUndo: () => void;
 	onGenerate: (linkDescriptionValue: string, date: Date | undefined) => Promise<unknown>;
 	limitReached: boolean;
-	linkName: string;
+	linkTitle: string;
 	linkDescription: string;
 }
 
@@ -39,7 +39,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 	onUndo,
 	onGenerate,
 	limitReached,
-	linkName,
+	linkTitle,
 	linkDescription
 }) => {
 	const [t] = useTranslation();
@@ -121,9 +121,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 					background="gray6"
 					width="fit"
 				>
-					<TextWithLineHeight size="medium">
-						{t('publicLink.addLink.title', '{{linkName}}s', { replace: { linkName } })}
-					</TextWithLineHeight>
+					<TextWithLineHeight size="medium">{linkTitle}</TextWithLineHeight>
 					<TextWithLineHeight size="extrasmall" color="secondary" overflow="break-word">
 						{linkDescription}
 					</TextWithLineHeight>
