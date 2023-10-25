@@ -41,11 +41,11 @@ describe('Displayer', () => {
 				'New Public access link generated'
 			]
 		])('On add link', (nodeType, title, desc, snackbarMsg) => {
-			const node = populateNode(nodeType);
-			node.permissions.can_share = true;
-			node.permissions.can_write_folder = true;
-			node.permissions.can_write_file = true;
 			test('on description input of a %s, click on other tab show dialog to warn user about unsaved changes', async () => {
+				const node = populateNode(nodeType);
+				node.permissions.can_share = true;
+				node.permissions.can_write_folder = true;
+				node.permissions.can_write_file = true;
 				const description = faker.lorem.words();
 				const mocks = {
 					Query: {
@@ -81,6 +81,10 @@ describe('Displayer', () => {
 			});
 
 			test('on expiration date input, click on other tab show dialog to warn user about unsaved changes', async () => {
+				const node = populateNode(nodeType);
+				node.permissions.can_share = true;
+				node.permissions.can_write_folder = true;
+				node.permissions.can_write_file = true;
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
@@ -118,6 +122,10 @@ describe('Displayer', () => {
 			});
 
 			test('cancel action leaves fields valued and navigation is kept on sharing tab', async () => {
+				const node = populateNode(nodeType);
+				node.permissions.can_share = true;
+				node.permissions.can_write_folder = true;
+				node.permissions.can_write_file = true;
 				const description = faker.lorem.words();
 				const mocks = {
 					Query: {
@@ -163,6 +171,10 @@ describe('Displayer', () => {
 			});
 
 			test('leave anyway action reset fields and continue navigation', async () => {
+				const node = populateNode(nodeType);
+				node.permissions.can_share = true;
+				node.permissions.can_write_folder = true;
+				node.permissions.can_write_file = true;
 				const description = faker.lorem.words();
 				const mocks = {
 					Query: {
@@ -221,6 +233,10 @@ describe('Displayer', () => {
 			});
 
 			test('save and leave action create link and continue navigation', async () => {
+				const node = populateNode(nodeType);
+				node.permissions.can_share = true;
+				node.permissions.can_write_folder = true;
+				node.permissions.can_write_file = true;
 				const description = faker.lorem.lines(1);
 				const firstOfNextMonth = getFirstOfNextMonth();
 				const expiresAt = initExpirationDate(firstOfNextMonth) as Date;
@@ -301,6 +317,10 @@ describe('Displayer', () => {
 			}, 60000);
 
 			test('save and leave action with errors leaves fields valued and navigation is kept on sharing tab', async () => {
+				const node = populateNode(nodeType);
+				node.permissions.can_share = true;
+				node.permissions.can_write_folder = true;
+				node.permissions.can_write_file = true;
 				const description = faker.lorem.lines(1);
 				const firstOfNextMonth = getFirstOfNextMonth();
 				const expiresAt = initExpirationDate(firstOfNextMonth) as Date;

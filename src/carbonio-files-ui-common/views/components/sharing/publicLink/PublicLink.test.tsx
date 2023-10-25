@@ -18,8 +18,8 @@ import { formatDate, initExpirationDate } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 
 describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) => {
-	const node = populateNode(nodeType);
-	test('should render the link section with title and description if canShare is true', async () => {
+	test('should render the link section with title and description', async () => {
+		const node = populateNode(nodeType);
 		const linkName = 'Link name';
 		const linkTitle = 'Link title';
 		const linkDescription = 'Link description';
@@ -39,6 +39,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 
 	describe('On add', () => {
 		test('should render the description and expiration date input fields', async () => {
+			const node = populateNode(nodeType);
 			const linkTitle = 'Link title';
 			const { user } = setup(
 				<PublicLink
@@ -57,6 +58,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 		});
 
 		test('should render undo and generate link buttons when a link is created', async () => {
+			const node = populateNode(nodeType);
 			const linkTitle = 'Link title';
 			const linkName = 'Link name';
 			const linkDescription = 'Link description';
@@ -87,6 +89,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 		});
 
 		test('should render revoke and edit buttons when a link is generated', async () => {
+			const node = populateNode(nodeType);
 			const linkTitle = 'Link title';
 			const link = populateLink(node);
 			const mocks = {
@@ -121,6 +124,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 	});
 
 	test('should render has no expiration date if expiration date is not set', async () => {
+		const node = populateNode(nodeType);
 		const linkTitle = 'Link title';
 		const link = populateLink(node);
 		link.expires_at = null;
@@ -144,6 +148,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 	});
 
 	test('should render the expiration date if expiration date is set', async () => {
+		const node = populateNode(nodeType);
 		const link = populateLink(node);
 		const firstOfNextMonth = getFirstOfNextMonth();
 		const expiresAt = initExpirationDate(firstOfNextMonth) as Date;
@@ -179,6 +184,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 	});
 
 	test('should render the message link has expired if the link is expired', async () => {
+		const node = populateNode(nodeType);
 		const link = populateLink(node);
 		// set the date to yesterday at 00:00
 		const date = new Date();
@@ -211,6 +217,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 	});
 
 	test('can copy the link to clipboard if there is no expiration', async () => {
+		const node = populateNode(nodeType);
 		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 		const link = populateLink(node);
 		link.expires_at = null;
@@ -238,6 +245,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 	});
 
 	test('can copy the link to clipboard if it is not expired', async () => {
+		const node = populateNode(nodeType);
 		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 		const link = populateLink(node);
 		const firstOfNextMonth = getFirstOfNextMonth();
@@ -268,6 +276,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 	});
 
 	test('cannot copy the link to clipboard if it is expired', async () => {
+		const node = populateNode(nodeType);
 		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 		const link = populateLink(node);
 		const date = new Date();
