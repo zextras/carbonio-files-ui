@@ -7,7 +7,6 @@
             "position": "位置",
             "collaborators": "协作者",
             "content": "内容",
-            "downloads": "通过公开链接下载",
             "lastEdit": "上次编辑",
             "showPath": "显示路径",
             "editDescription": {
@@ -796,7 +795,6 @@
             "addLink": "添加链接",
             "generateLink": "生成链接",
             "limitReached": "已达到公开链接的最大数量",
-            "title": "公开链接",
             "undo": "撤消",
             "description": "具有此链接访问权限的内部和外部用户可下载文件。"
         },

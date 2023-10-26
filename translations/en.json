@@ -71,7 +71,6 @@
             "copyShortcut": "copy item's shortcut",
             "createdBy": "Created by",
             "description": "Description",
-            "downloads": "Download via Public link",
             "editDescription": {
                 "closeIconTooltip": "Close without saving",
                 "editIconTooltip": "Edit description",

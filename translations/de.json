@@ -334,7 +334,6 @@
             "position": "Position",
             "collaborators": "Mitarbeiter",
             "content": "Inhalt",
-            "downloads": "Über öffentlichen link herunterladen",
             "lastEdit": "Letzte Bearbeitung",
             "showPath": "Pfad anzeigen",
             "editDescription": {
@@ -797,7 +796,6 @@
             "undo": "Rückgängig machen",
             "addLink": "Link hinzufügen",
             "limitReached": "Die maximale Anzahl der öffentlichen Links ist erreicht",
-            "title": "Publieke links",
             "description": "Interne und externe Benutzer, die Zugriff auf den Link haben, können den Artikel herunterladen."
         },
         "link": {

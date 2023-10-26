@@ -377,7 +377,6 @@
             "position": "Posisi",
             "collaborators": "Kolaborator",
             "content": "Konten",
-            "downloads": "Unduh melalui tautan publik",
             "lastEdit": "Editan terakhir",
             "showPath": "Tampilkan jalur",
             "editDescription": {
@@ -755,7 +754,6 @@
             "undo": "Batalkan",
             "addLink": "Tambahkan Tautan",
             "limitReached": "Maksimum jumlah tautan publik telah tercapai",
-            "title": "Tautan Publik",
             "description": "Pengguna internal dan eksternal yang memiliki akses ke tautan dapat mengunduh item."
         },
         "link": {
