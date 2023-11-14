@@ -1,0 +1,12 @@
+{
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "download": "Letöltés"
+            }
+        },
+        "close": {
+            "tooltip": "Bezárás"
+        }
+    }
+}
