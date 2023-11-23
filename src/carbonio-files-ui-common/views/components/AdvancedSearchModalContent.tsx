@@ -288,9 +288,12 @@ export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentPro
 							value={keywords}
 							onChange={keywordsOnChange}
 							onAdd={keywordsOnAdd}
-							separators={[',', ';', 'Enter']}
+							separators={[
+								{ key: ',', ctrlKey: false },
+								{ key: ';', ctrlKey: false },
+								{ key: 'Enter', ctrlKey: false }
+							]}
 							onInputType={keywordsOnType}
-							confirmChipOnSpace={false}
 						/>
 					</Container>
 					<Container maxWidth={'50%'}>
