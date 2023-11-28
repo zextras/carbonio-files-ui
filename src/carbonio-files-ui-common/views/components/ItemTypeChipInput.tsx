@@ -139,10 +139,9 @@ export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
 		<ChipInput
 			placeholder={t('search.advancedSearch.modal.itemType.label', 'Item type')}
 			background="gray5"
-			confirmChipOnSpace={false}
 			confirmChipOnBlur={false}
 			value={itemTypeChipInputValue}
-			separators={['']}
+			separators={[]}
 			disableOptions={false}
 			maxChips={1}
 			onChange={itemTypeOnChange}
