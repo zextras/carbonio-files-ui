@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
 	Button,
@@ -43,6 +43,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 	linkDescription
 }) => {
 	const [t] = useTranslation();
+	const scrollToElementRef = useRef<HTMLElement>(null);
 
 	const [linkDescriptionValue, setLinkDescriptionValue] = useState('');
 
@@ -98,6 +99,15 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 	const handleCalendarClose = useCallback(() => {
 		setPickerIsOpen(false);
 	}, []);
+
+	useEffect(() => {
+		if (status === PublicLinkRowStatus.OPEN && scrollToElementRef?.current) {
+			const rect = scrollToElementRef.current.getBoundingClientRect();
+			if (rect.top > window.document.documentElement.clientHeight) {
+				scrollToElementRef.current.scrollIntoView({ block: 'end' });
+			}
+		}
+	}, [status]);
 
 	return (
 		<Container>
@@ -212,6 +222,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 							</Text>
 						</Row>
 					)}
+					<span ref={scrollToElementRef} />
 				</>
 			)}
 		</Container>
