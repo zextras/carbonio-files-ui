@@ -334,7 +334,6 @@
             "position": "Positie",
             "collaborators": "Medewerkers",
             "content": "Inhoud",
-            "downloads": "Download via publieke link",
             "lastEdit": "Laatste bewerking",
             "showPath": "Pad tonen",
             "editDescription": {
@@ -796,7 +795,6 @@
             "generateLink": "Link genereren",
             "undo": "Ongedaan maken",
             "addLink": "Link toevoegen",
-            "title": "Öffentlicher link",
             "limitReached": "Het maximum aantal publieke links is bereikt",
             "description": "Interne en externe gebruikers die toegang hebben tot de link kunnen het item downloaden."
         },

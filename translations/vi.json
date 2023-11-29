@@ -42,7 +42,6 @@
             "content": "Nội dung",
             "copyShortcut": "Sao chép item's shortcut",
             "description": "Mô tả",
-            "downloads": "Tải xuống qua liên kết Public",
             "editDescription": {
                 "closeIconTooltip": "Đóng và không lưu",
                 "editIconTooltip": "Chỉnh sửa mô tả",
@@ -590,7 +589,6 @@
             "generateLink": "Tạo liên kết",
             "limitReached": "Đã đạt đến số lượng liên kết công khai tối đa",
             "undo": "Hoàn tác",
-            "title": "Liên kết công khai",
             "description": "Người dùng bên trong và bên ngoài có quyền truy cập vào liên kết có thể tải xuống tệp."
         },
         "dateTimePicker": {

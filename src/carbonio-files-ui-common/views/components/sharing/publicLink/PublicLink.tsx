@@ -29,17 +29,21 @@ import { PublicLinkRowStatus } from '../../../../types/common';
 import { NonNullableListItem } from '../../../../types/utils';
 import { copyToClipboard } from '../../../../utils/utils';
 
-interface AddPublicLinkProps {
+interface PublicLinkProps {
 	nodeId: string;
 	nodeName: string;
-	canShare: boolean;
+	linkName: string;
+	linkTitle: string;
+	linkDescription: string;
 }
 
 export const PublicLink = ({
 	nodeId,
 	nodeName,
-	canShare
-}: AddPublicLinkProps): React.JSX.Element => {
+	linkName,
+	linkTitle,
+	linkDescription
+}: PublicLinkProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { zimbraPrefTimeZoneId } = useUserInfo();
 	const createSnackbar = useSnackbar();
@@ -91,7 +95,10 @@ export const PublicLink = ({
 							type: 'info',
 							label: t(
 								'snackbar.publicLink.newPublicLinkGenerated.label',
-								'New Public link generated'
+								`New {{linkName}} generated`,
+								{
+									replace: { linkName }
+								}
 							),
 							replace: true,
 							onActionClick: () => {
@@ -99,7 +106,9 @@ export const PublicLink = ({
 									createSnackbar({
 										key: new Date().toLocaleString(),
 										type: 'info',
-										label: t('snackbar.publicLink.copyLink', 'Public link copied'),
+										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
+											replace: { linkName }
+										}),
 										replace: true,
 										hideButton: true
 									});
@@ -116,7 +125,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createLink, createSnackbar, t, zimbraPrefTimeZoneId]
+		[createLink, createSnackbar, t, zimbraPrefTimeZoneId, linkName]
 	);
 
 	/** PublicLinkComponent callbacks */
@@ -134,11 +143,11 @@ export const PublicLink = ({
 		(linkId: string, isRevoke: boolean) => {
 			const closeModal = createModal({
 				title: isRevoke
-					? t('modal.revokeLink.header', 'Revoke {{nodeName}} public link', {
-							replace: { nodeName }
+					? t('modal.revokeLink.header', 'Revoke {{nodeName}} {{linkName}}', {
+							replace: { nodeName, linkName }
 					  })
-					: t('modal.removeLink.header', 'Remove {{nodeName}} public link', {
-							replace: { nodeName }
+					: t('modal.removeLink.header', 'Remove {{nodeName}} {{linkName}}', {
+							replace: { nodeName, linkName }
 					  }),
 				confirmLabel: isRevoke
 					? t('modal.revokeLink.button.confirm', 'Revoke')
@@ -172,7 +181,7 @@ export const PublicLink = ({
 				)
 			});
 		},
-		[createModal, deleteLinks, nodeName, t]
+		[createModal, deleteLinks, nodeName, t, linkName]
 	);
 
 	const onEditConfirm = useCallback(
@@ -193,14 +202,18 @@ export const PublicLink = ({
 						createSnackbar({
 							key: new Date().toLocaleString(),
 							type: 'info',
-							label: t('snackbar.publicLink.linkUpdated.label', 'Public link updated'),
+							label: t('snackbar.publicLink.linkUpdated.label', '{{linkName}} updated', {
+								replace: { linkName }
+							}),
 							replace: true,
 							onActionClick: () => {
 								copyToClipboard(data.updateLink?.url as string).then(() => {
 									createSnackbar({
 										key: new Date().toLocaleString(),
 										type: 'info',
-										label: t('snackbar.publicLink.copyLink', 'Public link copied'),
+										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
+											replace: { linkName }
+										}),
 										replace: true,
 										hideButton: true
 									});
@@ -216,7 +229,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createSnackbar, t, updateLink, zimbraPrefTimeZoneId]
+		[createSnackbar, t, updateLink, zimbraPrefTimeZoneId, linkName]
 	);
 
 	const linkComponents = useMemo(() => {
@@ -243,6 +256,7 @@ export const PublicLink = ({
 							onUndo={onEditUndo}
 							onRevokeOrRemove={onRevokeOrRemove}
 							forceUrlCopyDisabled={thereIsOpenRow}
+							linkName={linkName}
 						/>
 					);
 				}
@@ -250,7 +264,16 @@ export const PublicLink = ({
 			},
 			[]
 		);
-	}, [links, onEdit, onEditConfirm, onEditUndo, onRevokeOrRemove, openLinkId, thereIsOpenRow]);
+	}, [
+		links,
+		onEdit,
+		onEditConfirm,
+		onEditUndo,
+		onRevokeOrRemove,
+		openLinkId,
+		thereIsOpenRow,
+		linkName
+	]);
 
 	const addPublicLinkComputedStatus = useMemo<PublicLinkRowStatus>(() => {
 		if (createLinkLoading) {
@@ -270,22 +293,22 @@ export const PublicLink = ({
 			padding={{ all: 'large' }}
 			background={'gray6'}
 		>
-			{canShare && (
-				<AddPublicLinkComponent
-					status={addPublicLinkComputedStatus}
-					onAddLink={onAddLink}
-					onUndo={onAddUndo}
-					onGenerate={onGenerate}
-					limitReached={size(links) >= 50}
-				/>
-			)}
+			<AddPublicLinkComponent
+				status={addPublicLinkComputedStatus}
+				onAddLink={onAddLink}
+				onUndo={onAddUndo}
+				onGenerate={onGenerate}
+				limitReached={size(links) >= 50}
+				linkTitle={linkTitle}
+				linkDescription={linkDescription}
+			/>
 			{size(links) > 0 && addPublicLinkStatus === PublicLinkRowStatus.OPEN && (
 				<>
 					<Padding vertical="small" />
 					<Divider color="gray2" />
 				</>
 			)}
-			{canShare && linkComponents}
+			{linkComponents}
 		</Container>
 	);
 };

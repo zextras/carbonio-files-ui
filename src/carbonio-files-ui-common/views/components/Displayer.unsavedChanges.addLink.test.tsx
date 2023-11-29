@@ -12,7 +12,8 @@ import { act } from 'react-dom/test-utils';
 import { Displayer } from './Displayer';
 import { DATE_FORMAT, DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
-import { populateFile, populateLink } from '../../mocks/mockUtils';
+import { populateLink, populateNode } from '../../mocks/mockUtils';
+import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	mockCreateLink,
@@ -26,9 +27,22 @@ import { formatDate, initExpirationDate } from '../../utils/utils';
 
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {
-		describe('On add link', () => {
-			test('on description input, click on other tab show dialog to warn user about unsaved changes', async () => {
-				const node = populateFile();
+		describe.each<[Node['__typename'], string, string, string]>([
+			[
+				'File',
+				'Public download links',
+				'Internal and external users that have access to the link can download the item.',
+				'New Public download link generated'
+			],
+			[
+				'Folder',
+				'Public access links',
+				'Anyone with this link can view and download the content of this folder.',
+				'New Public access link generated'
+			]
+		])('On add link', (nodeType, title, desc, snackbarMsg) => {
+			test('on description input of a %s, click on other tab show dialog to warn user about unsaved changes', async () => {
+				const node = populateNode(nodeType);
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
@@ -45,8 +59,8 @@ describe('Displayer', () => {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
 					mocks
 				});
-
-				await screen.findByText(/public link/i);
+				await screen.findByText(title);
+				await screen.findByText(desc);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				const descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
@@ -67,7 +81,7 @@ describe('Displayer', () => {
 			});
 
 			test('on expiration date input, click on other tab show dialog to warn user about unsaved changes', async () => {
-				const node = populateFile();
+				const node = populateNode(nodeType);
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
@@ -83,8 +97,7 @@ describe('Displayer', () => {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
 					mocks
 				});
-
-				await screen.findByText(/public link/i);
+				await screen.findByText(title);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
@@ -108,8 +121,8 @@ describe('Displayer', () => {
 				expect(screen.getByRole('button', { name: /save and leave/i })).toBeVisible();
 			});
 
-			test.skip('cancel action leaves fields valued and navigation is kept on sharing tab', async () => {
-				const node = populateFile();
+			test('cancel action leaves fields valued and navigation is kept on sharing tab', async () => {
+				const node = populateNode(nodeType);
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
@@ -127,7 +140,7 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(/public link/i);
+				await screen.findByText(title);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				const descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
@@ -157,8 +170,8 @@ describe('Displayer', () => {
 				expect(screen.getByText(chosenDate)).toBeVisible();
 			});
 
-			test.skip('leave anyway action reset fields and continue navigation', async () => {
-				const node = populateFile();
+			test('leave anyway action reset fields and continue navigation', async () => {
+				const node = populateNode(nodeType);
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
@@ -176,7 +189,7 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(/public link/i);
+				await screen.findByText(title);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				let descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
@@ -219,8 +232,8 @@ describe('Displayer', () => {
 				expect(screen.queryByText(chosenDate)).not.toBeInTheDocument();
 			});
 
-			test.skip('save and leave action create link and continue navigation', async () => {
-				const node = populateFile();
+			test('save and leave action create link and continue navigation', async () => {
+				const node = populateNode(nodeType);
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
@@ -246,7 +259,7 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(/public link/i);
+				await screen.findByText(title);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				let descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
@@ -269,7 +282,7 @@ describe('Displayer', () => {
 				const actionButton = screen.getByRole('button', { name: /save and leave/i });
 				expect(actionButton).toBeVisible();
 				await user.click(actionButton);
-				await screen.findByText(/New public Link generated/i);
+				await screen.findByText(snackbarMsg);
 				await screen.findByText(/description/i);
 				// go back to sharing tab
 				await user.click(screen.getByText(/sharing/i));
@@ -303,8 +316,8 @@ describe('Displayer', () => {
 				expect(screen.queryByText(chosenDate)).not.toBeInTheDocument();
 			}, 60000);
 
-			test.skip('save and leave action with errors leaves fields valued and navigation is kept on sharing tab', async () => {
-				const node = populateFile();
+			test('save and leave action with errors leaves fields valued and navigation is kept on sharing tab', async () => {
+				const node = populateNode(nodeType);
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
@@ -330,7 +343,7 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(/public link/i);
+				await screen.findByText(title);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				const descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
