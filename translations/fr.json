@@ -411,7 +411,6 @@
             "description": "Description",
             "collaborators": "Collaborateurs",
             "content": "Contenu",
-            "downloads": "Télécharger via le lien public",
             "lastEdit": "Dernière modification",
             "position": "Position",
             "showPath": "Montrer le chemin",
@@ -802,7 +801,6 @@
             "addLink": "Ajouter un lien",
             "generateLink": "Générer un lien",
             "limitReached": "Le nombre maximum de lien publique a été atteint",
-            "title": "Liens publiques",
             "undo": "Retour arrière",
             "description": "Les utilisateurs internes ou externes en possession du lien peuvent télécharger cet élément."
         },

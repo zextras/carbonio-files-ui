@@ -377,7 +377,6 @@
             "position": "Posición",
             "collaborators": "Colaboradores",
             "content": "Contenido",
-            "downloads": "Descargar utilizando el enlace público",
             "lastEdit": "Última edición",
             "showPath": "Mostrar ruta completa",
             "editDescription": {
@@ -795,7 +794,6 @@
         "addLink": {
             "generateLink": "Generar enlace",
             "undo": "Cancelar",
-            "title": "Enlaces públicos",
             "addLink": "Nuevo enlace",
             "limitReached": "Se ha alcanzado el máximo permitido de enlaces públicos",
             "description": "Todas las personas que tengan acceso al enlace podrán descargar el archivo."

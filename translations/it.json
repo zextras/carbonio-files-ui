@@ -376,7 +376,6 @@
             "size": "Dimensione",
             "collaborators": "Collaboratori",
             "content": "Contenuto",
-            "downloads": "Scarica tramite link pubblico",
             "lastEdit": "Ultima modifica",
             "position": "Posizione",
             "showPath": "Mostra percorso",
@@ -802,7 +801,6 @@
             "addLink": "Aggiungi Link",
             "generateLink": "Genera Link",
             "limitReached": "Hai raggiunto il numero massimo di link pubblici",
-            "title": "Link pubblici",
             "undo": "Annulla",
             "description": "Gli utenti esterni ed interni che hanno accesso al link possono scaricare l'elemento."
         },

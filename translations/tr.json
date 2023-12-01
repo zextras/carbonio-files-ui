@@ -333,7 +333,6 @@
             "description": "Tanım",
             "collaborators": "Birlikte Çalışanlar",
             "content": "İçerik",
-            "downloads": "Genel bağlantıyı kullanarak indir",
             "lastEdit": "En son düzenleme",
             "position": "Yer",
             "showPath": "Yolu göster",
@@ -801,7 +800,6 @@
         "addLink": {
             "addLink": "Bağlantı ekle",
             "limitReached": "Genel kullanım bağlantısı için maksimum değere ulaşıldı",
-            "title": "Genel bağlantılar",
             "undo": "Geri al",
             "generateLink": "Bağlantı oluştur",
             "description": "Bu bağlantıya erişimi olan iç ve dış kullanıcılar öğeyi indirebilirler."

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
 	Button,
@@ -29,6 +29,8 @@ interface AddPublicLinkComponentProps {
 	onUndo: () => void;
 	onGenerate: (linkDescriptionValue: string, date: Date | undefined) => Promise<unknown>;
 	limitReached: boolean;
+	linkTitle: string;
+	linkDescription: string;
 }
 
 export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
@@ -36,9 +38,12 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 	onAddLink,
 	onUndo,
 	onGenerate,
-	limitReached
+	limitReached,
+	linkTitle,
+	linkDescription
 }) => {
 	const [t] = useTranslation();
+	const scrollToElementRef = useRef<HTMLElement>(null);
 
 	const [linkDescriptionValue, setLinkDescriptionValue] = useState('');
 
@@ -95,6 +100,15 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 		setPickerIsOpen(false);
 	}, []);
 
+	useEffect(() => {
+		if (status === PublicLinkRowStatus.OPEN && scrollToElementRef?.current) {
+			const rect = scrollToElementRef.current.getBoundingClientRect();
+			if (rect.top > window.document.documentElement.clientHeight) {
+				scrollToElementRef.current.scrollIntoView({ block: 'end' });
+			}
+		}
+	}, [status]);
+
 	return (
 		<Container>
 			<RouteLeavingGuard
@@ -117,14 +131,9 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 					background="gray6"
 					width="fit"
 				>
-					<TextWithLineHeight size="medium">
-						{t('publicLink.addLink.title', 'Public links')}
-					</TextWithLineHeight>
+					<TextWithLineHeight size="medium">{linkTitle}</TextWithLineHeight>
 					<TextWithLineHeight size="extrasmall" color="secondary" overflow="break-word">
-						{t(
-							'publicLink.addLink.description',
-							'Anyone on the internet with the link can view or download the item.'
-						)}
+						{linkDescription}
 					</TextWithLineHeight>
 				</Container>
 				{limitReached && (
@@ -213,6 +222,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 							</Text>
 						</Row>
 					)}
+					<span ref={scrollToElementRef} />
 				</>
 			)}
 		</Container>
