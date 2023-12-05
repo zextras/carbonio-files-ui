@@ -45,6 +45,7 @@ interface PublicLinkComponentProps {
 	onUndo: () => void;
 	onRevokeOrRemove: (linkId: string, isRevoke: boolean) => void;
 	forceUrlCopyDisabled: boolean;
+	linkName: string;
 }
 
 export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
@@ -57,7 +58,8 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	onEditConfirm,
 	onUndo,
 	onRevokeOrRemove,
-	forceUrlCopyDisabled
+	forceUrlCopyDisabled,
+	linkName
 }) => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
@@ -140,12 +142,12 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 			createSnackbar({
 				key: new Date().toLocaleString(),
 				type: 'info',
-				label: t('snackbar.publicLink.copyLink', 'Public link copied'),
+				label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', { replace: { linkName } }),
 				replace: true,
 				hideButton: true
 			});
 		});
-	}, [createSnackbar, t, url]);
+	}, [createSnackbar, t, url, linkName]);
 
 	const [pickerIsOpen, setPickerIsOpen] = useState(false);
 
@@ -190,7 +192,9 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 							label={
 								isExpired
 									? t('publicLink.link.urlChip.tooltip.expired', 'This link has expired')
-									: t('publicLink.link.urlChip.tooltip.copy', 'Copy Public link')
+									: t('publicLink.link.urlChip.tooltip.copy', 'Copy {{linkName}}', {
+											replace: { linkName }
+									  })
 							}
 							maxWidth="unset"
 							placement="top"
