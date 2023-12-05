@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/zextras/carbonio-files-ui/compare/v2.3.6...v2.4.0) (2023-12-01)
+
+
+### Features
+
+* add the public link section also for folders ([fe84b7f](https://github.com/zextras/carbonio-files-ui/commit/fe84b7f5680a8897f3524feb7308c79ba614fc38)), closes [#280](https://github.com/zextras/carbonio-files-ui/issues/280)
+
 ### [2.3.6](https://github.com/zextras/carbonio-files-ui/compare/v2.3.5...v2.3.6) (2023-11-23)
 
 ### [2.3.5](https://github.com/zextras/carbonio-files-ui/compare/v2.3.4...v2.3.5) (2023-11-06)
