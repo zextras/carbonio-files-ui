@@ -64,12 +64,12 @@
             "actionLabel": {
                 "copyLink": "Copia Link"
             },
-            "copyLink": "Link pubblico copiato",
+            "copyLink": "{{linkName}} copiato",
             "linkUpdated": {
-                "label": "Link pubblico aggiornato"
+                "label": "{{linkName}} aggiornato"
             },
             "newPublicLinkGenerated": {
-                "label": "Nuovo link pubblico generato"
+                "label": "Nuovo {{linkName}} generato"
             }
         },
         "decreaseYourOwnShare": {
@@ -199,7 +199,7 @@
             "button": {
                 "confirm": "Rimuovi"
             },
-            "header": "Rimuovi link pubblico {{nodeName}}",
+            "header": "Rimuovi {{nodeName}} {{linkName}}",
             "body": "Il link è scaduto e quindi non è più utilizzabile per accedere all'elemento. Puoi rimuovere il link dalla lista oppure puoi aggiornare la sua data di scadenza e altre informazioni per poter continuare ad utilizzarlo."
         },
         "revokeLink": {
@@ -207,7 +207,7 @@
             "button": {
                 "confirm": "Revoca"
             },
-            "header": "Revoca link pubblico {{nodeName}}"
+            "header": "Revoca {nodeName}} {{linkName}}"
         },
         "close": {
             "tooltip": "Chiudi"
@@ -829,9 +829,23 @@
             "undo": "Annulla",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copia link pubblico",
+                    "copy": "Copia {{linkName}}",
                     "expired": "Questo link è scaduto"
                 }
+            }
+        },
+        "fileLink": {
+            "title": "Link pubblico per il download",
+            "title_plural": "Link pubblico per il download",
+            "addLink": {
+                "description": "Gli utenti interni e esterni che hanno accesso al link possono scaricare l'elemento."
+            }
+        },
+        "folderLink": {
+            "title": "Link pubblico per l'accesso",
+            "title_plural": "Link pubblico per l'accesso",
+            "addLink": {
+                "description": "Chiunque abbia questo link può vedere e scaricare il contenuto di questa cartella."
             }
         }
     },
@@ -902,6 +916,22 @@
                     "contactNotFound": "Puoi condividere gli elementi sono con gli utenti per cui è stata abilitata questa funzione e non con le liste di distribuzione. L'indirizzo inserito non è associato con alcun utente abilitato. Per favore, controlla e inserisci un indirizzo valido."
                 }
             }
+        }
+    },
+    "carbonio-public-folder-ui": {
+        "emptyFolder": "In questa cartella non ci sono elementi.",
+        "invalidLink": {
+            "description": {
+                "line1": "Il link è stato rimosso o non è valido.",
+                "line2": "Per ulteriori informazioni, prova a contattare la persona che te l'ha condiviso."
+            },
+            "title": "Link di accesso pubblico non disponibile."
+        },
+        "listHeader": {
+            "extension": "Estensione",
+            "lastModified": "Ultima modifica",
+            "name": "Nome",
+            "size": "Dimensione"
         }
     }
 }
