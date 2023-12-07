@@ -25,6 +25,22 @@
             "show": "Show folder's path"
         }
     },
+    "carbonio-public-folder-ui": {
+        "emptyFolder": "There are no items in this folder.",
+        "invalidLink": {
+            "description": {
+                "line1": "This link has been removed or is not valid.",
+                "line2": "For more information, try to contact the person who shared it with you."
+            },
+            "title": "Public access link not available."
+        },
+        "listHeader": {
+            "extension": "Extension",
+            "lastModified": "Last modified",
+            "name": "Name",
+            "size": "Size"
+        }
+    },
     "collaborationLinks": {
         "button": {
             "generateLink": "Generate Link",
@@ -71,7 +87,6 @@
             "copyShortcut": "copy item's shortcut",
             "createdBy": "Created by",
             "description": "Description",
-            "downloads": "Download via Public link",
             "editDescription": {
                 "closeIconTooltip": "Close without saving",
                 "editIconTooltip": "Edit description",
@@ -513,7 +528,7 @@
             "button": {
                 "confirm": "Remove"
             },
-            "header": "Remove {{nodeName}} Public link"
+            "header": "Remove {{nodeName}} {{linkName}}"
         },
         "revokeCollaborationLink": {
             "body": "By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.",
@@ -527,7 +542,7 @@
             "button": {
                 "confirm": "Revoke"
             },
-            "header": "Revoke {{nodeName}} Public link"
+            "header": "Revoke {{nodeName}} {{linkName}}"
         },
         "roots": {
             "filesHome": "Home",
@@ -636,7 +651,6 @@
             "description": "Internal and external users that have access to the link can download the item.",
             "generateLink": "Generate Link",
             "limitReached": "The maximum amount of public links has been reached",
-            "title": "Public links",
             "undo": "Undo"
         },
         "datePickerInput": {
@@ -644,6 +658,20 @@
         },
         "dateTimePicker": {
             "label": "Expiration date"
+        },
+        "fileLink": {
+            "addLink": {
+                "description": "Internal and external users that have access to the link can download the item."
+            },
+            "title": "Public download link",
+            "title_plural": "Public download links"
+        },
+        "folderLink": {
+            "addLink": {
+                "description": "Anyone with this link can view and download the content of this folder."
+            },
+            "title": "Public access link",
+            "title_plural": "Public access links"
         },
         "input": {
             "description": {
@@ -664,7 +692,7 @@
             "undo": "Undo",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copy Public link",
+                    "copy": "Copy {{linkName}}",
                     "expired": "This link has expired"
                 }
             }
@@ -828,12 +856,12 @@
             "actionLabel": {
                 "copyLink": "Copy Link"
             },
-            "copyLink": "Public link copied",
+            "copyLink": "{{linkName}} copied",
             "linkUpdated": {
-                "label": "Public link updated"
+                "label": "{{linkName}} updated"
             },
             "newPublicLinkGenerated": {
-                "label": "New Public link generated"
+                "label": "New {{linkName}} generated"
             }
         },
         "restore": {

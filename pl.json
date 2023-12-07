@@ -18,7 +18,7 @@
             "button": {
                 "confirm": "Usuń"
             },
-            "header": "Usuń publiczny link {{nodeName}}",
+            "header": "Usuń {{nodeName}} {{linkName}}",
             "body": "Ten link wygasł, więc nie może być już używany, aby dostać sie do tego elementu. Możesz usunąć link z listy lub zaktualizować jego datę wygaśnięcia i inne informacje, aby dalej z niego korzystać."
         },
         "revokeLink": {
@@ -26,7 +26,7 @@
                 "confirm": "Deaktywuj"
             },
             "body": "Deaktywując ten link, uniemożliwisz dostęp do {{nodeName}} każdemu, kto spróbuje użyć tego linku, aby dostać się do elementu.",
-            "header": "Deaktywuj publiczny link {{nodeName}}"
+            "header": "Deaktywuj {{nodeName}} {{linkName}}"
         },
         "deletePermanently": {
             "button": {
@@ -243,11 +243,11 @@
                 "copyLink": "Skopiuj link"
             },
             "linkUpdated": {
-                "label": "Publiczny link został zaktualizowany"
+                "label": "Link {{linkName}} został zaktualizowany"
             },
-            "copyLink": "Publiczny link został skopiowany",
+            "copyLink": "Link {{linkName}} został skopiowany",
             "newPublicLinkGenerated": {
-                "label": "Nowy publiczny link został wygenerowany"
+                "label": "Nowy link {{linkName}} został wygenerowany"
             }
         },
         "collaborationLink": {
@@ -336,7 +336,6 @@
             "content": "Zawartość",
             "createdBy": "Stworzone przez",
             "description": "Opis",
-            "downloads": "Pobierz używając publicznego linka",
             "editDescription": {
                 "closeIconTooltip": "Zamknij bez zapisywania",
                 "editIconTooltip": "Edytuj opis",
@@ -588,7 +587,7 @@
             "noExpirationDate": "Nie wygasa",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Skopiuj publiczny link",
+                    "copy": "Skopiuj {{linkName}}",
                     "expired": "Ten link wygasł"
                 }
             }
@@ -597,7 +596,6 @@
             "undo": "Cofnij",
             "generateLink": "Wygeneruj Link",
             "limitReached": "Osiągnięto max. liczbę publicznych linków",
-            "title": "Publiczne linki",
             "addLink": "Dodaj Link",
             "description": "Użytkownicy z i spoza tej domeny, którzy mają dostęp do linka, mogą pobrać ten element."
         },
@@ -614,6 +612,20 @@
         },
         "datePickerInput": {
             "description": "Link wygaśnie z końcem wybranego dnia"
+        },
+        "fileLink": {
+            "addLink": {
+                "description": "Użytkownicy z i spoza tej domeny, którzy mają dostęp do linka, mogą pobrać ten element."
+            },
+            "title": "Link publiczny z opcją pobierania",
+            "title_plural": "Linki publiczne z opcją pobierania"
+        },
+        "folderLink": {
+            "title": "Link dostępu publicznego",
+            "title_plural": "Linki dostępu publicznego",
+            "addLink": {
+                "description": "Każda osoba mająca dostęp do tego linka może wyświetlać i pobierać zawartość tego folderu."
+            }
         }
     },
     "secondaryBar": {
@@ -904,6 +916,22 @@
                     "contactNotFound": "Możesz udostępniać elementy tylko użytkownikom, którzy mają włączoną tę funkcje. Nie możesz też udostępniać elementów listom dystrybucyjnym. Wygląda na to, że wybrany e-mail nie jest przypisany do żadnego aktywnego użytkownika. Wprowadź prawidłowy adres."
                 }
             }
+        }
+    },
+    "carbonio-public-folder-ui": {
+        "emptyFolder": "W tym folderze nie ma żadnych elementów.",
+        "invalidLink": {
+            "description": {
+                "line1": "Ten link został usunięty lub jest nieprawidłowy.",
+                "line2": "Aby uzyskać więcej informacji, skontaktuj się z osobą, która Ci go wysłała."
+            },
+            "title": "Link dostępu publicznego jest niedostępny."
+        },
+        "listHeader": {
+            "extension": "Rozszerzenie",
+            "lastModified": "Ostatnio zmodyfikowano",
+            "name": "Nazwa",
+            "size": "Rozmiar"
         }
     }
 }

@@ -377,7 +377,6 @@
             "position": "場所",
             "collaborators": "共同編集者",
             "content": "コンテンツ",
-            "downloads": "パブリックリンクからダウンロードする",
             "lastEdit": "最終編集",
             "showPath": "パスを表示する",
             "editDescription": {
@@ -797,7 +796,6 @@
             "undo": "元に戻す",
             "addLink": "リンクを追加する",
             "limitReached": "パブリックリンクの最大数に達しました",
-            "title": "パブリックリンク",
             "description": "リンクにアクセスできる内部および外部ユーザーは、アイテムをダウンロードできます。"
         },
         "link": {

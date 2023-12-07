@@ -92,7 +92,7 @@
             "button": {
                 "confirm": "Supprimer"
             },
-            "header": "Supprimer le lien Publique {{nodeName}}",
+            "header": "Supprimer le {{nodeName}} {{nodeName}}",
             "body": "Ce lien a expiré, il ne peut donc plus être utilisé pour accéder à l'élément. Vous pouvez supprimer le lien de la liste ou mettre à jour sa date d'expiration et d'autres informations afin de continuer à l'utiliser."
         },
         "revokeLink": {
@@ -100,7 +100,7 @@
             "button": {
                 "confirm": "Révoquer"
             },
-            "header": "Révoquer le lien Publique {{nodeName}}"
+            "header": "Révoquer le {{nodeName}} {{linkName}}"
         },
         "close": {
             "tooltip": "Fermer"
@@ -274,18 +274,18 @@
             "success": "Réussi"
         },
         "unflag": {
-            "success": "Élément décoché avec succès"
+            "success": "Marqueur des éléments enlevé avec succès"
         },
         "publicLink": {
             "actionLabel": {
                 "copyLink": "Copier le lien"
             },
-            "copyLink": "Lien publique copié",
+            "copyLink": "{{linkName}} copié",
             "linkUpdated": {
-                "label": "Lien publique mis à jour"
+                "label": "{{linkName}} mis à jour"
             },
             "newPublicLinkGenerated": {
-                "label": "Nouveau lien Publique généré"
+                "label": "Nouveau {{linkName}} généré"
             }
         },
         "decreaseYourOwnShare": {
@@ -315,12 +315,12 @@
         "rename": "Renommer",
         "restore": "Restaurer",
         "deletePermanently": "Supprimer définitivement",
-        "flag": "Etiquette",
+        "flag": "Marquer",
         "goToFolder": "Aller au dossier de destination",
         "moveToTrash": "Supprimer",
         "removeUpload": "Supprimer le téléchargement",
         "retryUpload": "Réessayer le téléchargement",
-        "unflag": "Décocher",
+        "unflag": "Enlever le marqueur",
         "sendViaMail": "Envoyer par email",
         "edit": "Modifier",
         "preview": "Prévisualisation",
@@ -364,7 +364,7 @@
                     "reset": "Réinitialiser les filtres"
                 },
                 "flagged": {
-                    "description": "Filtrer les résultats par les éléments que vous avez marqué",
+                    "description": "Filtrer les résultats par les éléments que vous avez marqués",
                     "label": "Marqué"
                 },
                 "folder": {
@@ -411,7 +411,6 @@
             "description": "Description",
             "collaborators": "Collaborateurs",
             "content": "Contenu",
-            "downloads": "Télécharger via le lien public",
             "lastEdit": "Dernière modification",
             "position": "Position",
             "showPath": "Montrer le chemin",
@@ -802,7 +801,6 @@
             "addLink": "Ajouter un lien",
             "generateLink": "Générer un lien",
             "limitReached": "Le nombre maximum de lien publique a été atteint",
-            "title": "Liens publiques",
             "undo": "Retour arrière",
             "description": "Les utilisateurs internes ou externes en possession du lien peuvent télécharger cet élément."
         },
@@ -831,10 +829,24 @@
             "undo": "Revenir en arrière",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copier le lien Publique",
+                    "copy": "Copier {{linkName}}",
                     "expired": "Ce lien a expiré"
                 }
             }
+        },
+        "fileLink": {
+            "title": "Lien de téléchargement publique",
+            "title_plural": "Liens de téléchargement publiques",
+            "addLink": {
+                "description": "Les utilisateurs internes ou externes qui sont en possession du lien peuvent télécharger l'élément."
+            }
+        },
+        "folderLink": {
+            "addLink": {
+                "description": "Toute personne ayant ce lien peut voir et télécharger le contenu de ce dossier."
+            },
+            "title": "Lien d'accès publique",
+            "title_plural": "Liens d'accès publiques"
         }
     },
     "preview": {
@@ -904,6 +916,22 @@
                     "contactNotFound": "Vous ne pouvez partager des éléments qu'avec des utilisateurs pour lesquels cette fonction est activée et non avec des listes de distribution. Il semble que l'email fournie ne soit pas associée à un utilisateur autorisé. Veuillez vérifier à nouveau et insérer une adresse valide."
                 }
             }
+        }
+    },
+    "carbonio-public-folder-ui": {
+        "emptyFolder": "Ce dossier est vide.",
+        "invalidLink": {
+            "description": {
+                "line1": "Ce lien a été supprimé ou n'est plus valide.",
+                "line2": "Pour plus d'information, essayez de contacter la personne qui vous l'a partagé."
+            },
+            "title": "Le lien public n'est pas valide."
+        },
+        "listHeader": {
+            "extension": "Extension",
+            "lastModified": "Dernière modification",
+            "name": "Nom",
+            "size": "Taille"
         }
     }
 }
