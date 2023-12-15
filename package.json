@@ -55,7 +55,7 @@
 		"@types/styled-components": "^5.1.26",
 		"@types/uuid": "^9.0.2",
 		"@zextras/carbonio-ui-configs": "^0.1.12",
-		"@zextras/carbonio-ui-sdk": "^1.5.4",
+		"@zextras/carbonio-ui-sdk": "^1.7.0",
 		"babel-plugin-i18next-extract": "^0.9.0",
 		"babel-plugin-styled-components": "^2.1.4",
 		"eslint-plugin-no-autofix": "^1.2.3",
