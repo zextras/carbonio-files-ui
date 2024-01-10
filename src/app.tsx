@@ -102,7 +102,7 @@ export default function App(): React.JSX.Element {
 	useEffect(() => {
 		addRoute({
 			route: FILES_ROUTE,
-			position: 9,
+			position: 500,
 			visible: true,
 			label: t('label.app_name', 'Files'),
 			primaryBar: PrimaryBarElement,
