@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/zextras/carbonio-files-ui/compare/v2.4.1...v2.5.0) (2024-01-10)
+
+
+### Features
+
+* update position on primary bar ([805694e](https://github.com/zextras/carbonio-files-ui/commit/805694e02fe7d0e79156606e46f2a04798adc3b8)), closes [#303](https://github.com/zextras/carbonio-files-ui/issues/303)
+
 ### [2.4.1](https://github.com/zextras/carbonio-files-ui/compare/v2.4.0...v2.4.1) (2023-12-11)
 
 ## [2.4.0](https://github.com/zextras/carbonio-files-ui/compare/v2.3.6...v2.4.0) (2023-12-01)
