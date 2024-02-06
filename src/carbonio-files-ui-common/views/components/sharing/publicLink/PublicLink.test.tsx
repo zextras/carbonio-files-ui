@@ -16,7 +16,7 @@ import { Node } from '../../../../types/common';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import {
 	mockCreateLink,
-	mockDeleteLink,
+	mockDeleteLinks,
 	mockErrorResolver,
 	mockGetLinks,
 	mockUpdateLink
@@ -822,7 +822,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					getLinks: mockGetLinks([link])
 				},
 				Mutation: {
-					deleteLinks: mockDeleteLink([link.id])
+					deleteLinks: mockDeleteLinks([link.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const linkName = 'Link name';
@@ -857,7 +857,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					getLinks: mockGetLinks([link])
 				},
 				Mutation: {
-					deleteLinks: mockDeleteLink([link.id])
+					deleteLinks: mockDeleteLinks([link.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const linkName = 'Link name';
