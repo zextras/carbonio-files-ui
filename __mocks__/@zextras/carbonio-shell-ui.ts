@@ -67,3 +67,8 @@ export const getCurrentRoute: typeof shell.getCurrentRoute = () => ({
 	id: FILES_APP_ID,
 	app: 'carbonio-files-ui'
 });
+
+export const getIntegratedFunction: typeof shell.getIntegratedFunction = () => [
+	(): void => undefined,
+	false
+];
