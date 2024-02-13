@@ -12,7 +12,11 @@ import {
 	NodeDetailsUserRow as CommonNodeDetailsUserRow,
 	NodeDetailsUserRowProps as CommonNodeDetailsUserRowProps
 } from '../carbonio-files-ui-common/views/components/NodeDetailsUserRow';
-import { Contact, getMailToAction } from '../integrations/actions';
+import {
+	getComposePrefillMessageFunction,
+	Participant,
+	ParticipantRole
+} from '../integrations/functions';
 
 type NodeDetailsUserRowProps = Omit<CommonNodeDetailsUserRowProps, 'clickAction' | 'tooltip'>;
 
@@ -34,32 +38,19 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 		[t, user]
 	);
 
-	const openNewMailBoard = useCallback(
-		(event: React.MouseEvent<HTMLElement> | KeyboardEvent) => {
-			if (user && user.email) {
-				const contact: Contact = {
-					address: user.email,
-					email: {
-						email: {
-							mail: user.email
-						}
-					},
-					firstName: user.full_name || user.email,
-					middleName: ''
-				};
-				const { action, available } = getMailToAction(contact);
-				if (available && action) {
-					if (action.onClick) {
-						action.onClick(event);
-						// TODO remove when click is removed from Shell Action type
-					} else if (action.click) {
-						action.click(event);
-					}
-				}
+	const { integratedFunction, available } = getComposePrefillMessageFunction();
+
+	const openNewMailBoard = useCallback(() => {
+		if (user && user.email) {
+			const contact: Partial<Participant> = {
+				type: ParticipantRole.TO,
+				address: user.email
+			};
+			if (available) {
+				integratedFunction({ recipients: [contact] });
 			}
-		},
-		[user]
-	);
+		}
+	}, [available, integratedFunction, user]);
 
 	return (
 		<CommonNodeDetailsUserRow
