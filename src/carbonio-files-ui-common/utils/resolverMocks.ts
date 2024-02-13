@@ -280,3 +280,6 @@ export function mockCreateLink(...link: GQLTypes.Link[]): Mock<GQLTypes.CreateLi
 export function mockUpdateLink(...link: GQLTypes.Link[]): Mock<GQLTypes.UpdateLinkMutation> {
 	return () => shiftData(link);
 }
+export function mockDeleteLinks(...link: Array<string>[]): Mock<GQLTypes.DeleteLinksMutation> {
+	return () => shiftData(link);
+}
