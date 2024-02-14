@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect, useMemo } from 'react';
 
-import { Spinner } from '@zextras/carbonio-shell-ui';
+import { Matomo, MatomoContext, Spinner } from '@zextras/carbonio-shell-ui';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { INTERNAL_PATH } from '../carbonio-files-ui-common/constants';
@@ -70,24 +70,31 @@ const View = (): React.JSX.Element | null => {
 
 const AppView: React.VFC = () => {
 	const { path } = useRouteMatch<URLParams>();
+	const matomoInstance = useMemo(() => new Matomo('2'), []);
+
+	useEffect(() => {
+		matomoInstance.trackPageView();
+	}, [matomoInstance]);
 
 	return (
-		<PreventDefaultDropContainer>
-			<GlobalProvidersWrapper>
-				<Switch>
-					<Route path={`${path}/:view`}>
-						<View />
-					</Route>
-					<Route path={`${path}/`}>
-						<Suspense fallback={<Spinner />}>
-							<ViewProvidersWrapper>
-								<LazyFileFolderViewSelector />
-							</ViewProvidersWrapper>
-						</Suspense>
-					</Route>
-				</Switch>
-			</GlobalProvidersWrapper>
-		</PreventDefaultDropContainer>
+		<MatomoContext.Provider value={matomoInstance}>
+			<PreventDefaultDropContainer>
+				<GlobalProvidersWrapper>
+					<Switch>
+						<Route path={`${path}/:view`}>
+							<View />
+						</Route>
+						<Route path={`${path}/`}>
+							<Suspense fallback={<Spinner />}>
+								<ViewProvidersWrapper>
+									<LazyFileFolderViewSelector />
+								</ViewProvidersWrapper>
+							</Suspense>
+						</Route>
+					</Switch>
+				</GlobalProvidersWrapper>
+			</PreventDefaultDropContainer>
+		</MatomoContext.Provider>
 	);
 };
 
