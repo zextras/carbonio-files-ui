@@ -54,14 +54,14 @@
             "button": {
                 "confirm": "Kaldır"
             },
-            "header": "{{nodeName}} Genel erişim bağlantısını kaldır"
+            "header": "Kaldır {{nodeName}} {{linkName}}"
         },
         "revokeLink": {
             "body": "Bu bağlantıyı iptal ederek, dosyaya erişim için bağlantıyı kullanan herkesin {{nodeName}} öğesine erişimini bloke edeceksiniz",
             "button": {
                 "confirm": "İptal et"
             },
-            "header": "{{nodeName}} Genel erişim bağlantısını iptal et"
+            "header": "İptal et {{nodeName}} {{linkName}}"
         },
         "close": {
             "tooltip": "Kapat"
@@ -277,12 +277,12 @@
             "success": "Öğe bayrağı başarıyla kaldırıldı"
         },
         "publicLink": {
-            "copyLink": "Genel bağlantı kopyalandı",
+            "copyLink": "{{linkName}} kopyalandı",
             "linkUpdated": {
-                "label": "Genel bağlantı güncellendi"
+                "label": "{{linkName}} güncellendi"
             },
             "newPublicLinkGenerated": {
-                "label": "Yeni Genel bağlantı oluşturuldu"
+                "label": "Yeni {{linkName}} oluşturuldu"
             },
             "actionLabel": {
                 "copyLink": "Bağlantıyı kopyala"
@@ -826,13 +826,27 @@
             "undo": "Geri al",
             "urlChip": {
                 "tooltip": {
-                    "copy": "Genel bağlantıyı kopyala",
+                    "copy": "{{linkName}} kopyala",
                     "expired": "Bağlantı iptal oldu"
                 }
             }
         },
         "datePickerInput": {
             "description": "Seçilen gün sonunda bağlantı iptal olur"
+        },
+        "fileLink": {
+            "addLink": {
+                "description": "Bu bağlantıya erişimi olan iç ve dış kullanıcılar öğeyi indirebilirler."
+            },
+            "title": "Genel indirme bağlantısı",
+            "title_plural": "Genel indirme bağlantıları"
+        },
+        "folderLink": {
+            "addLink": {
+                "description": "Bu bağlantıya sahip olan herkes bu klasörün içeriğini görüntüleyebilir ve indirebilir."
+            },
+            "title": "Herkese Açık Erişim",
+            "title_plural": "Herkese Açık Erişimler"
         }
     },
     "preview": {
@@ -902,6 +916,22 @@
         "button": {
             "revoke": "İptal Et",
             "generateLink": "Bağlantı oluştur"
+        }
+    },
+    "carbonio-public-folder-ui": {
+        "emptyFolder": "Bu klasörde öğe yok.",
+        "invalidLink": {
+            "description": {
+                "line2": "Daha fazla bilgi için, bunu sizinle paylaşan kişiyle iletişime geçmeyi deneyin.",
+                "line1": "Bu bağlantı kaldırıldı veya geçerli değil."
+            },
+            "title": "Genel erişim bağlantısı mevcut değil."
+        },
+        "listHeader": {
+            "extension": "Dahili Numara",
+            "lastModified": "Son değiştirme",
+            "name": "Ad",
+            "size": "Boyut"
         }
     }
 }
