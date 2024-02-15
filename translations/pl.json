@@ -32,7 +32,7 @@
             "button": {
                 "confirm": "Trwale usuń"
             },
-            "header": "Tej czynności nie da się odwrócić",
+            "header": "Tej czynności nie da się cofnąć",
             "body": "Trwale usuniesz ten/te elementy. Nie będziesz w stanie ich już odzyskać. Tej czynności nie da się odwrócić."
         },
         "deleteShare": {
@@ -208,7 +208,7 @@
             "success": "Element został skopiowany"
         },
         "decreaseYourOwnShare": {
-            "success": "Uprawnienia zostały zaktualizowane pomyślnie"
+            "success": "Uprawnienia zostały zaktualizowane"
         },
         "download": {
             "start": "Pobieranie za chwilę się zacznie"
@@ -537,7 +537,7 @@
                 "cloneAsCurrent": "Sklonuj jako aktualne",
                 "deleteVersion": "Usuń wersję",
                 "downloadVersion": "Pobierz tę wersję",
-                "keepVersion": "Zachowuj tę wersję na zawsze",
+                "keepVersion": "Zachowaj tę wersję na zawsze",
                 "openDocumentVersion": "Otwórz tę wersję dokumentu",
                 "removeKeepVersion": "Usuń zachowanie tej wersji na zawsze",
                 "tooltip": {
