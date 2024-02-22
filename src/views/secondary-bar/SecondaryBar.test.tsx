@@ -19,6 +19,10 @@ import {
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { setup } from '../../carbonio-files-ui-common/utils/testUtils';
 
+jest.mock('./FilesQuota', () => ({
+	FilesQuota: (): React.JSX.Element => <div data-testid="quota-test-id"></div>
+}));
+
 describe('SecondaryBar', () => {
 	describe('Upload item', () => {
 		test('should render the upload item without the badge', () => {

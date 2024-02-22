@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { FilesQuota } from './FilesQuota';
 import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secondaryBarItemVar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-common/constants';
@@ -245,15 +246,16 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 		return orderBy([...rootItems, ...filters, uploads], ['priority'], ['asc']);
 	}, [t, uploadsInfo, data, forceTrashOpen, navigateTo, expanded, location]);
 
-	return (
-		<Container height="fit">
-			{expanded ? (
-				<CustomAccordion role="menuitem" items={items || []} />
-			) : (
-				map(
-					items,
-					(value, index) => value && <SecondaryBarItemNotExpanded key={index} item={value} />
-				)
+	return expanded ? (
+		<Container mainAlignment={'space-between'}>
+			<CustomAccordion height={'fit'} role="menuitem" items={items || []} />
+			<FilesQuota />
+		</Container>
+	) : (
+		<Container height={'fit'}>
+			{map(
+				items,
+				(value, index) => value && <SecondaryBarItemNotExpanded key={index} item={value} />
 			)}
 		</Container>
 	);

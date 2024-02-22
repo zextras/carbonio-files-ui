@@ -106,6 +106,7 @@ export const DATE_FORMAT_SHORT = 'DD/MM/YY';
 export const GRAPHQL_ENDPOINT = '/services/files/graphql';
 export const REST_ENDPOINT = '/services/files';
 export const DOCS_ENDPOINT = '/services/docs';
+export const STORAGES_ENDPOINT = '/services/storages';
 // add leading slash in path
 export const OPEN_FILE_PATH = '/files/open';
 export const DOWNLOAD_PATH = '/download';
@@ -113,6 +114,7 @@ export const UPLOAD_PATH = '/upload';
 export const UPLOAD_TO_PATH = '/upload-to';
 export const UPLOAD_VERSION_PATH = '/upload-version';
 export const CREATE_FILE_PATH = '/files/create';
+export const MYSELF_QUOTA_PATH = '/quota/myself';
 export const PREVIEW_PATH = '/preview';
 export const PREVIEW_TYPE = {
 	IMAGE: 'image',

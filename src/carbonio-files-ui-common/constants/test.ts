@@ -64,6 +64,7 @@ export const ICON_REGEXP = {
 	removeUpload: 'icon: CloseCircleOutline',
 	goToFolder: 'icon: FolderOutline',
 	uploadFailed: 'icon: AlertCircle',
+	overQuota: 'icon: AlertCircleOutline',
 	uploadCompleted: 'icon: CheckmarkCircle2',
 	uploadLoading: 'icon: AnimatedLoader',
 	previewClose: 'icon: ArrowBackOutline',
@@ -73,6 +74,7 @@ export const ICON_REGEXP = {
 } as const;
 
 export const SELECTORS = {
+	filesQuota: 'files-quota',
 	dropdownList: 'dropdown-popper-list',
 	checkedAvatar: 'icon: Checkmark',
 	pdfPreview: 'pdf-preview-container',
