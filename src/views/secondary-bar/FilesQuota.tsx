@@ -48,12 +48,20 @@ const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): Reac
 			crossAlignment={'flex-start'}
 			height="fit"
 			padding={{ vertical: '1rem', horizontal: '0.5rem' }}
+			gap={'0.5rem'}
 		>
 			<Container orientation={'row'} mainAlignment={'flex-start'} gap={'0.5rem'}>
 				<Text>{quotaString}</Text>
 				{limit > 0 && fillProp >= 100 && (
-					<Tooltip label={'You have reached the maximum quota'}>
-						<Icon icon={'AlertCircleOutline'} color={'error'} />
+					<Tooltip
+						label={t(
+							'quota.overQuota.tooltip.label',
+							'You have reached the maximum quota available.'
+						)}
+					>
+						<div>
+							<Icon icon={'AlertCircle'} color={'error'} size={'large'} />
+						</div>
 					</Tooltip>
 				)}
 			</Container>

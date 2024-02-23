@@ -700,6 +700,11 @@
     },
     "quota": {
         "limitedSpace": "{{used}} of {{limit}} used",
+        "overQuota": {
+            "tooltip": {
+                "label": "You have reached the maximum quota available."
+            }
+        },
         "unlimitedSpace": "{{used}} of unlimited space"
     },
     "search": {

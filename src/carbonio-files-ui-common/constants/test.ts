@@ -64,7 +64,7 @@ export const ICON_REGEXP = {
 	removeUpload: 'icon: CloseCircleOutline',
 	goToFolder: 'icon: FolderOutline',
 	uploadFailed: 'icon: AlertCircle',
-	overQuota: 'icon: AlertCircleOutline',
+	overQuota: 'icon: AlertCircle',
 	uploadCompleted: 'icon: CheckmarkCircle2',
 	uploadLoading: 'icon: AnimatedLoader',
 	previewClose: 'icon: ArrowBackOutline',

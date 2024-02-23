@@ -7,6 +7,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
+import { act } from '@testing-library/react';
 import { QuotaProps } from '@zextras/carbonio-design-system';
 
 import { FilesQuota, getPercentage } from './FilesQuota';
@@ -126,7 +127,7 @@ describe('Files Quota', () => {
 			});
 		});
 
-		it('should show an informative icon near the string, with a tooltip explaining what is happening when used > limit', () => {
+		it('should show an informative icon near the string, with a tooltip explaining what is happening when used > limit', async () => {
 			const limit = faker.number.int({ min: 1000 });
 			const used = limit * 2;
 
@@ -134,11 +135,22 @@ describe('Files Quota', () => {
 				.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo')
 				.mockReturnValue({ used, limit, requestFailed: false, responseReceived: true });
 
-			setup(<FilesQuota />);
-			expect(screen.getByTestId(ICON_REGEXP.overQuota)).toBeVisible();
+			const { user } = setup(<FilesQuota />);
+
+			const overQuotaIcon = screen.getByTestId(ICON_REGEXP.overQuota);
+			expect(overQuotaIcon).toBeVisible();
+			act(() => {
+				// run tooltip timer to register listeners
+				jest.runOnlyPendingTimers();
+			});
+			await user.hover(overQuotaIcon);
+
+			expect(
+				await screen.findByText(/You have reached the maximum quota available./i)
+			).toBeVisible();
 		});
 
-		it('should show an informative icon near the string, with a tooltip explaining what is happening when used = limit', () => {
+		it('should show an informative icon near the string, with a tooltip explaining what is happening when used = limit', async () => {
 			const limit = faker.number.int({ min: 1000 });
 			const used = limit;
 
@@ -146,8 +158,18 @@ describe('Files Quota', () => {
 				.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo')
 				.mockReturnValue({ used, limit, requestFailed: false, responseReceived: true });
 
-			setup(<FilesQuota />);
-			expect(screen.getByTestId(ICON_REGEXP.overQuota)).toBeVisible();
+			const { user } = setup(<FilesQuota />);
+			const overQuotaIcon = screen.getByTestId(ICON_REGEXP.overQuota);
+			expect(overQuotaIcon).toBeVisible();
+			act(() => {
+				// run tooltip timer to register listeners
+				jest.runOnlyPendingTimers();
+			});
+			await user.hover(overQuotaIcon);
+
+			expect(
+				await screen.findByText(/You have reached the maximum quota available./i)
+			).toBeVisible();
 		});
 
 		it('should not show an informative icon near the string when used < limit', () => {
