@@ -698,6 +698,10 @@
             }
         }
     },
+    "quota": {
+        "limitedSpace": "{{used}} of {{limit}} used",
+        "unlimitedSpace": "{{used}} of unlimited space"
+    },
     "search": {
         "advancedSearch": {
             "button": {

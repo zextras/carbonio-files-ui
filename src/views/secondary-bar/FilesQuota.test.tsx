@@ -48,6 +48,18 @@ describe('Files Quota', () => {
 			expect(mockQuota).not.toHaveBeenCalled();
 			expect(screen.queryByText('mock Quota')).not.toBeInTheDocument();
 		});
+
+		it('should never show an informative icon near the string', () => {
+			const limit = 0;
+			const used = faker.number.int();
+
+			jest
+				.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo')
+				.mockReturnValue({ used, limit, requestFailed: false, responseReceived: true });
+
+			setup(<FilesQuota />);
+			expect(screen.queryByTestId(ICON_REGEXP.overQuota)).not.toBeInTheDocument();
+		});
 	});
 
 	describe('Limited available space (limit != 0)', () => {
@@ -137,6 +149,7 @@ describe('Files Quota', () => {
 			setup(<FilesQuota />);
 			expect(screen.getByTestId(ICON_REGEXP.overQuota)).toBeVisible();
 		});
+
 		it('should not show an informative icon near the string when used < limit', () => {
 			const limit = faker.number.int({ min: 1000 });
 			const used = Math.floor(limit / 2);

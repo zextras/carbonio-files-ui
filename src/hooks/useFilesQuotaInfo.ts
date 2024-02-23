@@ -34,7 +34,7 @@ export const useFilesQuotaInfo = (): {
 				setState((prevState) => ({
 					...prevState,
 					responseReceived: true,
-					requestFailed: false
+					requestFailed: true
 				}));
 			});
 	}, []);

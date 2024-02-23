@@ -6,6 +6,7 @@
 import React, { useMemo } from 'react';
 
 import { Container, Icon, Quota, Text, Tooltip } from '@zextras/carbonio-design-system';
+import { useTranslation } from 'react-i18next';
 
 import { humanFileSize } from '../../carbonio-files-ui-common/utils/utils';
 import { useFilesQuotaInfo } from '../../hooks/useFilesQuotaInfo';
@@ -21,12 +22,23 @@ export function getPercentage(used: number, limit: number): number {
 }
 
 const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): React.JSX.Element => {
+	const [t] = useTranslation();
+
 	const quotaString = useMemo(() => {
 		if (limit === 0) {
-			return `${humanFileSize(used)} of unlimited space`;
+			return t('quota.unlimitedSpace', '{{used}} of unlimited space', {
+				replace: {
+					used: humanFileSize(used)
+				}
+			});
 		}
-		return `${humanFileSize(used)} of ${humanFileSize(limit)} used`;
-	}, [used, limit]);
+		return t('quota.limitedSpace', '{{used}} of {{limit}} used', {
+			replace: {
+				used: humanFileSize(used),
+				limit: humanFileSize(limit)
+			}
+		});
+	}, [limit, used, t]);
 
 	const fillProp = useMemo(() => getPercentage(used, limit), [limit, used]);
 
@@ -39,7 +51,7 @@ const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): Reac
 		>
 			<Container orientation={'row'} mainAlignment={'flex-start'} gap={'0.5rem'}>
 				<Text>{quotaString}</Text>
-				{fillProp >= 100 && (
+				{limit > 0 && fillProp >= 100 && (
 					<Tooltip label={'You have reached the maximum quota'}>
 						<Icon icon={'AlertCircleOutline'} color={'error'} />
 					</Tooltip>

@@ -29,18 +29,6 @@ const getMyQuotaCompleted = (
 };
 
 export const mySelfQuota = (): Promise<{ limit: number; used: number }> =>
-	// fetch(new URL(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, document.location.origin), {
-	// 	method: 'GET',
-	// 	headers: {
-	// 		'Content-Type': 'application/json'
-	// 	}
-	// }).then((response) => {
-	// 	if (response.ok) {
-	// 		return response.json();
-	// 	}
-	// 	throw new Error('Something went wrong');
-	// });
-
 	new Promise<{ limit: number; used: number }>((resolve, reject) => {
 		const xhr = new XMLHttpRequest();
 		const url = `${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`;
