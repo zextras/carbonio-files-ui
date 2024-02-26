@@ -8,8 +8,8 @@ import React, { useMemo } from 'react';
 import { Container, Icon, Quota, Text, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { humanFileSize } from '../../carbonio-files-ui-common/utils/utils';
 import { useFilesQuotaInfo } from '../../hooks/useFilesQuotaInfo';
+import { humanFileSize } from '../../utils/utils';
 
 function assertIsNumber(val: unknown): asserts val is number {
 	if (typeof val !== 'number') {

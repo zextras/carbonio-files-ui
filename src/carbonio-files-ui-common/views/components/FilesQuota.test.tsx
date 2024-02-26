@@ -11,10 +11,10 @@ import { act } from '@testing-library/react';
 import { QuotaProps } from '@zextras/carbonio-design-system';
 
 import { FilesQuota, getPercentage } from './FilesQuota';
-import { ICON_REGEXP, SELECTORS } from '../../carbonio-files-ui-common/constants/test';
-import { screen, setup } from '../../carbonio-files-ui-common/utils/testUtils';
-import { humanFileSize } from '../../carbonio-files-ui-common/utils/utils';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import * as useFilesQuotaInfo from '../../hooks/useFilesQuotaInfo';
+import { screen, setup } from '../../utils/testUtils';
+import { humanFileSize } from '../../utils/utils';
 
 const mockQuota = jest.fn().mockReturnValue(<div>mock Quota</div>);
 

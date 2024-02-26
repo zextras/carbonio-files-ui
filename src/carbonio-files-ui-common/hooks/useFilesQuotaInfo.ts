@@ -5,7 +5,7 @@
  */
 import { useEffect, useState } from 'react';
 
-import { mySelfQuota } from '../network/mySelfQuota';
+import { mySelfQuota } from '../../network/mySelfQuota';
 
 export const useFilesQuotaInfo = (): {
 	limit: number | undefined;
