@@ -5,9 +5,10 @@
  */
 import React, { useMemo } from 'react';
 
-import { Container, Icon, Quota, Text, Tooltip } from '@zextras/carbonio-design-system';
+import { Container, Icon, Quota, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
+import { Text } from '../../design_system_fork/Text';
 import { useFilesQuotaInfo } from '../../hooks/useFilesQuotaInfo';
 import { humanFileSize } from '../../utils/utils';
 
