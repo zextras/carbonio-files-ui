@@ -2,6 +2,6 @@
 . "$(dirname $0)/_/husky.sh"
 
 npm run type-check
-npm run lint -- --quiet
+npm run lint
 reuse --include-submodules download --all && reuse --include-submodules lint
-npm test
+npm test -- --changedSince=devel
