@@ -12,19 +12,11 @@ const getMyQuotaCompleted = (
 	) => void,
 	reject: (reason?: { statusText: string; status: number }) => void
 ): void => {
-	switch (xhr.status) {
-		case 200: {
-			const response = JSON.parse(xhr.response);
-			resolve({ limit: response.limit, used: response.used });
-			break;
-		}
-		case 400:
-		case 404:
-		case 413:
-		case 500:
-		default: {
-			reject({ statusText: xhr.statusText, status: xhr.status });
-		}
+	if (xhr.status === 200) {
+		const response = JSON.parse(xhr.response);
+		resolve({ limit: response.limit, used: response.used });
+	} else {
+		reject({ statusText: xhr.statusText, status: xhr.status });
 	}
 };
 

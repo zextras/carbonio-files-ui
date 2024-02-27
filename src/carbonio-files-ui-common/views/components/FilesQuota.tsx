@@ -52,7 +52,7 @@ const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): Reac
 			gap={'0.5rem'}
 		>
 			<Container orientation={'row'} mainAlignment={'flex-start'} gap={'0.5rem'}>
-				<Text>{quotaString}</Text>
+				<Text overflow={'break-word'}>{quotaString}</Text>
 				{limit > 0 && fillProp >= 100 && (
 					<Tooltip
 						label={t(
@@ -74,15 +74,13 @@ const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): Reac
 export const FilesQuota = (): React.JSX.Element | null => {
 	const { used, limit, responseReceived, requestFailed } = useFilesQuotaInfo();
 
-	return useMemo((): null | React.JSX.Element => {
-		if (!responseReceived) {
-			return null;
-		}
-		if (requestFailed) {
-			return null;
-		}
-		assertIsNumber(limit);
-		assertIsNumber(used);
-		return <InnerFilesQuota used={used} limit={limit} />;
-	}, [limit, requestFailed, responseReceived, used]);
+	if (!responseReceived) {
+		return null;
+	}
+	if (requestFailed) {
+		return null;
+	}
+	assertIsNumber(limit);
+	assertIsNumber(used);
+	return <InnerFilesQuota used={used} limit={limit} />;
 };
