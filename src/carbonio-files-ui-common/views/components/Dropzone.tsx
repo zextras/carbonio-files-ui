@@ -12,7 +12,6 @@ import styled, { DefaultTheme } from 'styled-components';
 
 import { DropzoneModal } from './DropzoneModal';
 import { TIMERS } from '../../constants';
-import { cssCalcBuilder } from '../../utils/utils';
 
 interface DropzoneProps {
 	onDrop?: (event: React.DragEvent<HTMLElement>) => void;
@@ -40,11 +39,12 @@ const DropzoneOverlay = styled(Container)<{ $borderSize: keyof DefaultTheme['siz
 	position: absolute;
 	opacity: 0.4;
 	border-radius: 0.25rem;
-	height: ${({ theme, $borderSize }): string =>
-		cssCalcBuilder('100%', ['-', theme.sizes.padding[$borderSize]], ['*', 2])};
-	width: ${({ theme, $borderSize }): string =>
-		cssCalcBuilder('100%', ['-', theme.sizes.padding[$borderSize]], ['*', 2])}
+	height: auto;
+	width: auto;
 	top: ${({ theme, $borderSize }): string => theme.sizes.padding[$borderSize]};
+	bottom: ${({ theme, $borderSize }): string => theme.sizes.padding[$borderSize]};
+	left: ${({ theme, $borderSize }): string => theme.sizes.padding[$borderSize]};
+	right: ${({ theme, $borderSize }): string => theme.sizes.padding[$borderSize]};
 	pointer-events: none;
 `;
 
