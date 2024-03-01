@@ -109,7 +109,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 				);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				await user.click(screen.getByRole('textbox', { name: /expiration date/i }));
-				await user.click(screen.getByText(currentDate));
+				await user.click(screen.getAllByText(currentDate)[0]);
 				await user.click(screen.getByRole('button', { name: /generate link/i }));
 				const expiresOnDate = formatDate(
 					new Date(expiresAt.getFullYear(), expiresAt.getMonth(), expiresAt.getDate(), 23, 59),
@@ -200,10 +200,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 				/>
 			);
 			await user.click(screen.getByRole('button', { name: /add link/i }));
-			await user.type(
-				screen.getByRole('textbox', { name: /link's description/i }),
-				faker.string.alpha(301)
-			);
+			await user.click(screen.getByRole('textbox', { name: /link's description/i }));
+			await user.paste(faker.string.alpha(301));
 			expect(screen.getByText(/Maximum length allowed is 300 characters/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /generate link/i })).toBeDisabled();
 		});
