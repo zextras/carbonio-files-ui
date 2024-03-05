@@ -3,5 +3,19 @@
 
 npm run type-check
 npm run lint
-reuse --include-submodules download --all && reuse --include-submodules lint
-npm test -- --changedSince=devel
+if command -v pipx > /dev/null 2>&1; then
+  pipx run reuse --include-submodules download --all && pipx run reuse --include-submodules lint
+else
+  if command -v reuse > /dev/null 2>&1; then
+    reuse --include-submodules download --all && reuse --include-submodules lint
+  else
+    echo "install reuse or pipx to enable license check"
+    exit 1
+  fi
+fi
+
+if [ "$JEST_RUN_ALL" ]; then
+  npm test
+else
+  npm test -- --changedSince=devel
+fi
