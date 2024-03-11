@@ -705,6 +705,11 @@
                 "label": "You have reached the maximum quota available."
             }
         },
+        "refresh": {
+            "tooltip": {
+                "label": "Refresh"
+            }
+        },
         "unlimitedSpace": "{{used}} of unlimited space"
     },
     "search": {

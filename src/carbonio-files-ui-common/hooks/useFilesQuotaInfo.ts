@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { mySelfQuota } from '../../network/mySelfQuota';
 
@@ -12,13 +12,38 @@ export const useFilesQuotaInfo = (): {
 	used: number | undefined;
 	responseReceived: boolean;
 	requestFailed: boolean;
+	refreshData: () => void;
 } => {
 	const [state, setState] = useState<{
 		limit: number | undefined;
 		used: number | undefined;
 		responseReceived: boolean;
 		requestFailed: boolean;
-	}>({ limit: undefined, used: undefined, requestFailed: false, responseReceived: false });
+	}>({
+		limit: undefined,
+		used: undefined,
+		responseReceived: false,
+		requestFailed: false
+	});
+
+	const refreshData = useCallback(() => {
+		mySelfQuota()
+			.then((response) => {
+				setState({
+					limit: response.limit,
+					used: response.used,
+					responseReceived: true,
+					requestFailed: false
+				});
+			})
+			.catch(() => {
+				setState((prevState) => ({
+					...prevState,
+					responseReceived: true,
+					requestFailed: true
+				}));
+			});
+	}, []);
 
 	useEffect(() => {
 		mySelfQuota()
@@ -39,5 +64,5 @@ export const useFilesQuotaInfo = (): {
 			});
 	}, []);
 
-	return state;
+	return { ...state, refreshData };
 };

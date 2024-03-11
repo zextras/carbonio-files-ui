@@ -33,14 +33,18 @@ describe('Files Quota', () => {
 
 		setup(<FilesQuota />);
 		await waitFor(() =>
-			expect(spyInstance.mock.results.map((item) => item.value)).toContainEqual({
-				requestFailed: true,
-				responseReceived: true,
-				limit: undefined,
-				used: undefined
-			})
+			expect(spyInstance.mock.results.map((item) => item.value)).toEqual(
+				expect.arrayContaining([
+					{
+						requestFailed: true,
+						responseReceived: true,
+						limit: undefined,
+						used: undefined,
+						refreshData: expect.any(Function)
+					}
+				])
+			)
 		);
-
 		expect(screen.queryByTestId(SELECTORS.filesQuota)).not.toBeInTheDocument();
 	});
 });

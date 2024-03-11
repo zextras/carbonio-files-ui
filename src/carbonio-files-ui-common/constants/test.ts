@@ -70,7 +70,8 @@ export const ICON_REGEXP = {
 	previewClose: 'icon: ArrowBackOutline',
 	previewDownload: 'icon: DownloadOutline',
 	queryLoading: 'icon: Refresh',
-	revoke: 'icon: SlashOutline'
+	revoke: 'icon: SlashOutline',
+	refreshQuota: 'icon: Refresh'
 } as const;
 
 export const SELECTORS = {
