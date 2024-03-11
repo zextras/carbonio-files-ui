@@ -46,23 +46,8 @@ export const useFilesQuotaInfo = (): {
 	}, []);
 
 	useEffect(() => {
-		mySelfQuota()
-			.then((response) => {
-				setState({
-					limit: response.limit,
-					used: response.used,
-					responseReceived: true,
-					requestFailed: false
-				});
-			})
-			.catch(() => {
-				setState((prevState) => ({
-					...prevState,
-					responseReceived: true,
-					requestFailed: true
-				}));
-			});
-	}, []);
+		refreshData();
+	}, [refreshData]);
 
 	return { ...state, refreshData };
 };
