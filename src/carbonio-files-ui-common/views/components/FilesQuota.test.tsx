@@ -250,7 +250,7 @@ describe('Files Quota', () => {
 	});
 
 	describe('Refresh button', () => {
-		it('should render refresh button', () => {
+		it('should render refresh button if limit is set', () => {
 			const used = faker.number.int();
 			const limit = faker.number.int({ min: 1000 });
 			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
@@ -262,6 +262,22 @@ describe('Files Quota', () => {
 			});
 			setup(<FilesQuota />);
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshQuota })).toBeVisible();
+		});
+
+		it('should not render refresh button if limit is 0', () => {
+			const used = faker.number.int();
+			const limit = 0;
+			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+				used,
+				limit,
+				requestFailed: false,
+				responseReceived: true,
+				refreshData: jest.fn()
+			});
+			setup(<FilesQuota />);
+			expect(
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.refreshQuota })
+			).not.toBeInTheDocument();
 		});
 
 		it('should show tooltip on hover', async () => {
