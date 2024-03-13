@@ -7,6 +7,7 @@ import React, { useMemo } from 'react';
 
 import { Container, Icon, IconButton, Quota, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import { Text } from '../../design_system_fork/Text';
 import { useFilesQuotaInfo } from '../../hooks/useFilesQuotaInfo';
@@ -21,6 +22,11 @@ function assertIsNumber(val: unknown): asserts val is number {
 export function getPercentage(used: number, limit: number): number {
 	return Math.min(100, Math.floor((used / limit) * 100));
 }
+
+const CustomText = styled(Text)`
+	margin-right: auto;
+	margin-left: 0;
+`;
 
 const InnerFilesQuota = ({
 	used,
@@ -59,8 +65,8 @@ const InnerFilesQuota = ({
 			padding={{ vertical: '1rem', horizontal: '0.5rem' }}
 			gap={'0.5rem'}
 		>
-			<Container orientation={'row'} mainAlignment={'space-between'} gap={'0.5rem'}>
-				<Text overflow={'break-word'}>{quotaString}</Text>
+			<Container orientation={'row'} mainAlignment={'flex-end'} gap={'0.5rem'}>
+				<CustomText overflow={'break-word'}>{quotaString}</CustomText>
 				{limit > 0 && fillProp >= 100 && (
 					<Tooltip
 						label={t(
