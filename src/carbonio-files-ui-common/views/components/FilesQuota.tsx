@@ -5,8 +5,9 @@
  */
 import React, { useMemo } from 'react';
 
-import { Container, Icon, Quota, Tooltip } from '@zextras/carbonio-design-system';
+import { Container, Icon, IconButton, Quota, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import { Text } from '../../design_system_fork/Text';
 import { useFilesQuotaInfo } from '../../hooks/useFilesQuotaInfo';
@@ -22,7 +23,20 @@ export function getPercentage(used: number, limit: number): number {
 	return Math.min(100, Math.floor((used / limit) * 100));
 }
 
-const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): React.JSX.Element => {
+const CustomText = styled(Text)`
+	margin-right: auto;
+	margin-left: 0;
+`;
+
+const InnerFilesQuota = ({
+	used,
+	limit,
+	refreshData
+}: {
+	used: number;
+	limit: number;
+	refreshData: () => void;
+}): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const quotaString = useMemo(() => {
@@ -51,8 +65,8 @@ const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): Reac
 			padding={{ vertical: '1rem', horizontal: '0.5rem' }}
 			gap={'0.5rem'}
 		>
-			<Container orientation={'row'} mainAlignment={'flex-start'} gap={'0.5rem'}>
-				<Text overflow={'break-word'}>{quotaString}</Text>
+			<Container orientation={'row'} mainAlignment={'flex-end'} gap={'0.5rem'}>
+				<CustomText overflow={'break-word'}>{quotaString}</CustomText>
 				{limit > 0 && fillProp >= 100 && (
 					<Tooltip
 						label={t(
@@ -65,6 +79,9 @@ const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): Reac
 						</div>
 					</Tooltip>
 				)}
+				<Tooltip label={t('quota.refresh.tooltip.label', 'Refresh')}>
+					<IconButton icon={'Refresh'} size={'large'} type={'ghost'} onClick={refreshData} />
+				</Tooltip>
 			</Container>
 			{limit > 0 && <Quota fill={fillProp} fillBackground={fillProp < 100 ? 'info' : 'error'} />}
 		</Container>
@@ -72,7 +89,7 @@ const InnerFilesQuota = ({ used, limit }: { used: number; limit: number }): Reac
 };
 
 export const FilesQuota = (): React.JSX.Element | null => {
-	const { used, limit, responseReceived, requestFailed } = useFilesQuotaInfo();
+	const { used, limit, responseReceived, requestFailed, refreshData } = useFilesQuotaInfo();
 
 	if (!responseReceived) {
 		return null;
@@ -82,5 +99,5 @@ export const FilesQuota = (): React.JSX.Element | null => {
 	}
 	assertIsNumber(limit);
 	assertIsNumber(used);
-	return <InnerFilesQuota used={used} limit={limit} />;
+	return <InnerFilesQuota used={used} limit={limit} refreshData={refreshData} />;
 };

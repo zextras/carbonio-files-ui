@@ -37,10 +37,10 @@ describe('Files Quota', () => {
 				requestFailed: true,
 				responseReceived: true,
 				limit: undefined,
-				used: undefined
+				used: undefined,
+				refreshData: expect.any(Function)
 			})
 		);
-
 		expect(screen.queryByTestId(SELECTORS.filesQuota)).not.toBeInTheDocument();
 	});
 });
