@@ -79,11 +79,9 @@ const InnerFilesQuota = ({
 						</div>
 					</Tooltip>
 				)}
-				{limit !== 0 && (
-					<Tooltip label={t('quota.refresh.tooltip.label', 'Refresh')}>
-						<IconButton icon={'Refresh'} size={'large'} type={'ghost'} onClick={refreshData} />
-					</Tooltip>
-				)}
+				<Tooltip label={t('quota.refresh.tooltip.label', 'Refresh')}>
+					<IconButton icon={'Refresh'} size={'large'} type={'ghost'} onClick={refreshData} />
+				</Tooltip>
 			</Container>
 			{limit > 0 && <Quota fill={fillProp} fillBackground={fillProp < 100 ? 'info' : 'error'} />}
 		</Container>

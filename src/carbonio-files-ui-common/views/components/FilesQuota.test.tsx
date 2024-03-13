@@ -250,7 +250,7 @@ describe('Files Quota', () => {
 	});
 
 	describe('Refresh button', () => {
-		it('should render refresh button if limit is set', () => {
+		it('should render refresh button', () => {
 			const used = faker.number.int();
 			const limit = faker.number.int({ min: 1000 });
 			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
@@ -262,22 +262,6 @@ describe('Files Quota', () => {
 			});
 			setup(<FilesQuota />);
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshQuota })).toBeVisible();
-		});
-
-		it('should not render refresh button if limit is 0', () => {
-			const used = faker.number.int();
-			const limit = 0;
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
-				used,
-				limit,
-				requestFailed: false,
-				responseReceived: true,
-				refreshData: jest.fn()
-			});
-			setup(<FilesQuota />);
-			expect(
-				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.refreshQuota })
-			).not.toBeInTheDocument();
 		});
 
 		it('should show tooltip on hover', async () => {
@@ -321,5 +305,31 @@ describe('Files Quota', () => {
 			expect(mockMySelfQuota).toHaveBeenCalledTimes(2);
 			expect(screen.getByText(updatedQuotaString)).toBeVisible();
 		});
+
+		it.each([
+			[0, 'unlimited space'],
+			[100, `${humanFileSize(100)} used`]
+		])(
+			'should refresh the quota data when the user clicks on the refresh button (limit: %s)',
+			async (limit, description) => {
+				const quotaUsed = 50;
+				const updatedQuotaUsed = 99;
+				const quotaString = `${humanFileSize(quotaUsed)} of ${description}`;
+				const updatedQuotaString = `${humanFileSize(updatedQuotaUsed)} of ${description}`;
+				const mockMySelfQuota = jest
+					.spyOn(mySelfQuotaModule, 'mySelfQuota')
+					.mockResolvedValueOnce({ limit, used: quotaUsed })
+					.mockResolvedValueOnce({ limit, used: updatedQuotaUsed });
+
+				const { user } = setup(<FilesQuota />);
+				expect(await screen.findByTestId(SELECTORS.filesQuota)).toBeVisible();
+				expect(mockMySelfQuota).toHaveBeenCalledTimes(1);
+				expect(screen.getByText(quotaString)).toBeVisible();
+				const refreshBtn = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshQuota });
+				await user.click(refreshBtn);
+				expect(mockMySelfQuota).toHaveBeenCalledTimes(2);
+				expect(screen.getByText(updatedQuotaString)).toBeVisible();
+			}
+		);
 	});
 });
