@@ -15,7 +15,6 @@ import {
 	Text,
 	useSnackbar
 } from '@zextras/carbonio-design-system';
-import { MatomoContext } from '@zextras/carbonio-shell-ui';
 import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { includes, some, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -211,8 +210,6 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		]
 	);
 
-	const matomo = useContext(MatomoContext);
-
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
 			[Action.Edit]: {
@@ -242,7 +239,6 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'Download',
 				label: t('actions.download', 'Download'),
 				onClick: (): void => {
-					matomo?.trackEvent('actions', 'download');
 					// download node without version to be sure last version is downloaded
 					downloadNode(id);
 					createSnackbar({
@@ -340,7 +336,6 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			sendViaMailCallback,
 			id,
 			openPreview,
-			matomo,
 			createSnackbar,
 			manageSharesCallback,
 			toggleFlagTrue,

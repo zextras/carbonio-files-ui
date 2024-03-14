@@ -29,6 +29,7 @@ import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
 import { PrimaryBarElement } from './components/PrimaryBarElement';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
+import './tracker';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 

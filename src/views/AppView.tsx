@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { lazy, Suspense, useEffect, useMemo } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 
-import { Matomo, MatomoContext, Spinner } from '@zextras/carbonio-shell-ui';
+import { Spinner } from '@zextras/carbonio-shell-ui';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { INTERNAL_PATH } from '../carbonio-files-ui-common/constants';
@@ -16,6 +16,7 @@ import {
 	GlobalProvidersWrapper,
 	ViewProvidersWrapper
 } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
+import { trackerInstance } from '../tracker';
 
 const LazyFileFolderViewSelector = lazy(
 	() =>
@@ -70,31 +71,28 @@ const View = (): React.JSX.Element | null => {
 
 const AppView: React.VFC = () => {
 	const { path } = useRouteMatch<URLParams>();
-	const matomoInstance = useMemo(() => new Matomo('2'), []);
 
 	useEffect(() => {
-		matomoInstance.trackPageView();
-	}, [matomoInstance]);
+		trackerInstance.trackPageView();
+	}, []);
 
 	return (
-		<MatomoContext.Provider value={matomoInstance}>
-			<PreventDefaultDropContainer>
-				<GlobalProvidersWrapper>
-					<Switch>
-						<Route path={`${path}/:view`}>
-							<View />
-						</Route>
-						<Route path={`${path}/`}>
-							<Suspense fallback={<Spinner />}>
-								<ViewProvidersWrapper>
-									<LazyFileFolderViewSelector />
-								</ViewProvidersWrapper>
-							</Suspense>
-						</Route>
-					</Switch>
-				</GlobalProvidersWrapper>
-			</PreventDefaultDropContainer>
-		</MatomoContext.Provider>
+		<PreventDefaultDropContainer>
+			<GlobalProvidersWrapper>
+				<Switch>
+					<Route path={`${path}/:view`}>
+						<View />
+					</Route>
+					<Route path={`${path}/`}>
+						<Suspense fallback={<Spinner />}>
+							<ViewProvidersWrapper>
+								<LazyFileFolderViewSelector />
+							</ViewProvidersWrapper>
+						</Suspense>
+					</Route>
+				</Switch>
+			</GlobalProvidersWrapper>
+		</PreventDefaultDropContainer>
 	);
 };
 
