@@ -122,7 +122,7 @@ export function useSearch(): UseSearchReturnType {
 						hasAvatar: false,
 						background: 'gray2',
 						value: keyword
-					} satisfies QueryChip)
+					}) satisfies QueryChip
 			);
 			updateQuery(reducedForQuery);
 		},

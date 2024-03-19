@@ -143,7 +143,7 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 						// assuming it's a folder, not the best solution
 						id: apolloClient.cache.identify({ __typename: 'Folder', id }),
 						returnPartialData: true
-				  })
+					})
 				: null;
 			const nodeToSet = node?.id !== undefined ? node : null;
 			setCurrent(nodeToSet);

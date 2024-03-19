@@ -620,7 +620,8 @@ export type AccountResolvers<
 
 export type CollaborationLinkResolvers<
 	ContextType = any,
-	ParentType extends ResolversParentTypes['CollaborationLink'] = ResolversParentTypes['CollaborationLink']
+	ParentType extends
+		ResolversParentTypes['CollaborationLink'] = ResolversParentTypes['CollaborationLink']
 > = {
 	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -646,7 +647,8 @@ export interface DateTimeScalarConfig
 
 export type DistributionListResolvers<
 	ContextType = any,
-	ParentType extends ResolversParentTypes['DistributionList'] = ResolversParentTypes['DistributionList']
+	ParentType extends
+		ResolversParentTypes['DistributionList'] = ResolversParentTypes['DistributionList']
 > = {
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
