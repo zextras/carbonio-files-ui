@@ -11,7 +11,7 @@ import { faker } from '@faker-js/faker';
 import { screen, waitFor } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { forEach, keyBy } from 'lodash';
-import { graphql, rest } from 'msw';
+import { graphql, http, HttpResponse } from 'msw';
 
 import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
@@ -33,6 +33,7 @@ import {
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
+	CreateFolderDocument,
 	CreateFolderMutation,
 	CreateFolderMutationVariables,
 	Folder
@@ -126,21 +127,19 @@ describe('Upload List', () => {
 				const emitter = new EventEmitter();
 
 				server.use(
-					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+					http.post<UploadRequestParams, UploadRequestBody, UploadResponse | Record<string, never>>(
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
-						(req, res, ctx) =>
+						() =>
 							Promise.any([
 								delayUntil(emitter, EMITTER_CODES.fail).then(() => {
 									uploadFailedHandler();
-									return res(ctx.status(500));
+									return HttpResponse.json({}, { status: 500 });
 								}),
 								delayUntil(emitter, EMITTER_CODES.success).then(() => {
 									uploadSuccessHandler();
-									return res(
-										ctx.json({
-											nodeId: faker.string.uuid()
-										})
-									);
+									return HttpResponse.json({
+										nodeId: faker.string.uuid()
+									});
 								})
 							])
 					)
@@ -208,14 +207,17 @@ describe('Upload List', () => {
 				const uploadHandler = jest.fn(handleUploadFileRequest);
 
 				server.use(
-					graphql.mutation('createFolder', (req, res, ctx) =>
-						res.once(
-							ctx.errors([
-								new ApolloError({ graphQLErrors: [generateError('create folder msw error')] })
-							])
-						)
+					graphql.mutation(
+						CreateFolderDocument,
+						() =>
+							HttpResponse.json({
+								errors: [
+									new ApolloError({ graphQLErrors: [generateError('create folder msw error')] })
+								]
+							}),
+						{ once: true }
 					),
-					rest.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, uploadHandler)
+					http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, uploadHandler)
 				);
 
 				const mocks = {
@@ -256,24 +258,25 @@ describe('Upload List', () => {
 
 				server.use(
 					graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
-						'createFolder',
-						(req, res, ctx) => {
+						CreateFolderDocument,
+						() => {
 							createFolderMutation();
-							return res(
-								ctx.data({ createFolder: { ...folder, children: populateNodePage([]) } as Folder })
-							);
+							return HttpResponse.json({
+								data: { createFolder: { ...folder, children: populateNodePage([]) } as Folder }
+							});
 						}
 					),
-					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+					http.post<UploadRequestParams, UploadRequestBody, UploadResponse | Record<string, never>>(
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
-						(req, res, ctx) => {
+						({ request }) => {
 							uploadHandler();
 							const fileName =
-								req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
+								request.headers.get('filename') &&
+								window.atob(request.headers.get('filename') as string);
 							if (fileName === children[1].name || fileName === children[3].name) {
-								return res(ctx.status(500));
+								return HttpResponse.json({}, { status: 500 });
 							}
-							return res(ctx.json({ nodeId: faker.string.uuid() }));
+							return HttpResponse.json({ nodeId: faker.string.uuid() });
 						}
 					)
 				);
@@ -330,34 +333,34 @@ describe('Upload List', () => {
 
 				server.use(
 					graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
-						'createFolder',
-						(req, res, ctx) => {
-							if (req.variables.name === subFolder.name) {
+						CreateFolderDocument,
+						({ variables }) => {
+							if (variables.name === subFolder.name) {
 								if (!createSubFolderCalled) {
 									createSubFolderCalled = true;
-									return res(
-										ctx.errors([
+									return HttpResponse.json({
+										errors: [
 											new ApolloError({ graphQLErrors: [generateError('create folder msw error')] })
-										])
-									);
+										]
+									});
 								}
-								res(
-									ctx.data({
+								HttpResponse.json({
+									data: {
 										createFolder: {
 											...subFolder,
 											children: populateNodePage([]),
 											parent: { ...folder, children: populateNodePage([]) }
 										} as Folder
-									})
-								);
+									}
+								});
 							}
 
-							return res(
-								ctx.data({ createFolder: { ...folder, children: populateNodePage([]) } as Folder })
-							);
+							return HttpResponse.json({
+								data: { createFolder: { ...folder, children: populateNodePage([]) } as Folder }
+							});
 						}
 					),
-					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+					http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
 						uploadHandler
 					)
@@ -413,17 +416,18 @@ describe('Upload List', () => {
 				let uploadFailedCalled = false;
 
 				server.use(
-					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+					http.post<UploadRequestParams, UploadRequestBody, UploadResponse | Record<string, never>>(
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
-						(req, res, ctx) => {
+						({ request }) => {
 							uploadHandler();
 							const fileName =
-								req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
+								request.headers.get('filename') &&
+								window.atob(request.headers.get('filename') as string);
 							if (!uploadFailedCalled && fileName === subFolderChildren[1].name) {
 								uploadFailedCalled = true;
-								return res(ctx.status(500));
+								return HttpResponse.json({}, { status: 500 });
 							}
-							return res(ctx.json({ nodeId: faker.string.uuid() }));
+							return HttpResponse.json({ nodeId: faker.string.uuid() });
 						}
 					)
 				);

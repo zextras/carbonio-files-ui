@@ -91,6 +91,7 @@ module.exports = {
 			files: [
 				'**/mocks/**/*.[jt]s?(x)',
 				'**/types/**/*.[jt]s?(x)',
+				'**/tests/**/*.[jt]s?(x)',
 				'**/jest-*.ts?(x)',
 				'**/test*.ts?(x)',
 				'**/__mocks__/**/*'

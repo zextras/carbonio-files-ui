@@ -7,7 +7,7 @@ import React from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
 import { map, find } from 'lodash';
-import { graphql, rest } from 'msw';
+import { graphql, http, HttpResponse } from 'msw';
 
 import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
@@ -27,6 +27,7 @@ import {
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
+	GetVersionsDocument,
 	GetVersionsQuery,
 	GetVersionsQueryVariables,
 	NodeType
@@ -452,18 +453,16 @@ describe('Versioning', () => {
 		} satisfies Partial<Resolvers>;
 
 		server.use(
-			rest.post<UploadRequestBody, UploadVersionRequestParams, UploadVersionResponse>(
+			http.post<UploadVersionRequestParams, UploadRequestBody, UploadVersionResponse>(
 				`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`,
-				(req, res, ctx) =>
-					res(
-						ctx.json({
-							nodeId: fileVersion1.id,
-							version: 5
-						})
-					)
+				() =>
+					HttpResponse.json({
+						nodeId: fileVersion1.id,
+						version: 5
+					})
 			),
-			graphql.query<GetVersionsQuery, GetVersionsQueryVariables>('getVersions', (req, res, ctx) =>
-				res(ctx.data({ getVersions: [version5, ...versions] }))
+			graphql.query<GetVersionsQuery, GetVersionsQueryVariables>(GetVersionsDocument, () =>
+				HttpResponse.json({ data: { getVersions: [version5, ...versions] } })
 			)
 		);
 
@@ -641,18 +640,16 @@ describe('Versioning', () => {
 		} satisfies Partial<Resolvers>;
 
 		server.use(
-			rest.post<UploadRequestBody, UploadVersionRequestParams, UploadVersionResponse>(
+			http.post<UploadVersionRequestParams, UploadRequestBody, UploadVersionResponse>(
 				`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`,
-				(req, res, ctx) =>
-					res(
-						ctx.json({
-							nodeId: baseFile.id,
-							version: fileVersionUpload.version
-						})
-					)
+				() =>
+					HttpResponse.json({
+						nodeId: baseFile.id,
+						version: fileVersionUpload.version
+					})
 			),
-			graphql.query<GetVersionsQuery, GetVersionsQueryVariables>('getVersions', (req, res, ctx) =>
-				res(ctx.data({ getVersions: updatedVersions }))
+			graphql.query<GetVersionsQuery, GetVersionsQueryVariables>(GetVersionsDocument, () =>
+				HttpResponse.json({ data: { getVersions: updatedVersions } })
 			)
 		);
 

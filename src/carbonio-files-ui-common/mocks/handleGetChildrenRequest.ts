@@ -6,23 +6,22 @@
 
 import { faker } from '@faker-js/faker';
 import { forEach, take } from 'lodash';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { delay, GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateFolder, sortNodes } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetChildrenQuery, GetChildrenQueryVariables } from '../types/graphql/types';
 
-const handleGetChildrenRequest: ResponseResolver<
-	GraphQLRequest<GetChildrenQueryVariables>,
-	GraphQLContext<GetChildrenQuery>,
-	GetChildrenQuery
-> = (req, res, ctx) => {
+const handleGetChildrenRequest: GraphQLResponseResolver<
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+> = async ({ variables }) => {
 	const {
 		node_id: parentNode,
 		children_limit: childrenLimit,
 		sort,
 		shares_limit: sharesLimit
-	} = req.variables;
+	} = variables;
 
 	let parentNodeName = faker.word.words();
 	if (parentNode.trim() === ROOTS.LOCAL_ROOT) {
@@ -44,12 +43,12 @@ const handleGetChildrenRequest: ResponseResolver<
 		sortNodes(folder.children.nodes, sort);
 	}
 
-	return res(
-		ctx.delay(),
-		ctx.data({
+	await delay();
+	return HttpResponse.json({
+		data: {
 			getNode: folder
-		})
-	);
+		}
+	});
 };
 
 export default handleGetChildrenRequest;

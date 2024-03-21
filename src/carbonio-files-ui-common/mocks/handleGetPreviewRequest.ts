@@ -5,7 +5,7 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { PathParams, ResponseResolver, RestContext, RestRequest } from 'msw';
+import { HttpResponse, HttpResponseResolver, PathParams, StrictResponse } from 'msw';
 
 import { PREVIEW_TYPE } from '../constants';
 
@@ -16,19 +16,19 @@ interface GetPreviewParams extends PathParams {
 	area: string;
 	thumbnail: 'thumbnail' | '';
 }
-const handleGetPreviewRequest: ResponseResolver<
-	RestRequest<never, GetPreviewParams>,
-	RestContext,
-	ArrayBuffer
-> = async (req, res, ctx) => {
-	const { type, id, thumbnail } = req.params;
+
+const handleGetPreviewRequest: HttpResponseResolver<GetPreviewParams, never, ArrayBuffer> = async ({
+	params
+}) => {
+	const { type, id, thumbnail } = params;
 	if (thumbnail || type === PREVIEW_TYPE.IMAGE) {
 		const image = await fetch(faker.image.url()).then((response) => response.arrayBuffer());
-		return res(
-			ctx.set('Content-Length', image.byteLength.toString()),
-			ctx.set('Content-Type', 'image/png'),
-			ctx.body(image)
-		);
+		return HttpResponse.arrayBuffer(image, {
+			headers: {
+				'Content-Length': image.byteLength.toString(),
+				'Content-Type': 'image/png'
+			}
+		}) as StrictResponse<ArrayBuffer>;
 	}
 	if (type === PREVIEW_TYPE.PDF || type === PREVIEW_TYPE.DOCUMENT) {
 		const mimeType =
@@ -36,13 +36,17 @@ const handleGetPreviewRequest: ResponseResolver<
 		const file = await new File(['(⌐□_□)'], id, {
 			type: mimeType
 		}).arrayBuffer();
-		return res(
-			ctx.set('Content-Length', file.byteLength.toString()),
-			ctx.set('Content-Type', mimeType),
-			ctx.body(file)
-		);
+		return HttpResponse.arrayBuffer(file, {
+			headers: {
+				'Content-Length': file.byteLength.toString(),
+				'Content-Type': mimeType
+			}
+		}) as StrictResponse<ArrayBuffer>;
 	}
-	return res(ctx.status(400, 'wrong type'));
+	return HttpResponse.arrayBuffer(undefined, {
+		status: 400,
+		statusText: 'wrong type'
+	}) as StrictResponse<ArrayBuffer>;
 };
 
 export default handleGetPreviewRequest;

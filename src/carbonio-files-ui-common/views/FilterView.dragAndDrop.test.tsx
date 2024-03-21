@@ -91,6 +91,8 @@ describe('Filter View', () => {
 			);
 			expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 
+			await jest.advanceTimersToNextTimerAsync();
+
 			await waitFor(() => {
 				const localRootCachedData = global.apolloClient.readQuery<
 					GetChildrenQuery,

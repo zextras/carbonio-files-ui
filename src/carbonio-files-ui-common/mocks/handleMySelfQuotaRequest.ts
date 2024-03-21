@@ -5,27 +5,21 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { ResponseResolver, RestContext, RestRequest } from 'msw';
+import { HttpResponse, HttpResponseResolver } from 'msw';
 
 export interface MySelfQuotaResponse {
 	used: number;
 	limit: number;
 }
 
-const handleMySelfQuotaRequest: ResponseResolver<RestRequest, RestContext, MySelfQuotaResponse> = (
-	req,
-	res,
-	ctx
-) => {
+const handleMySelfQuotaRequest: HttpResponseResolver<never, never, MySelfQuotaResponse> = () => {
 	const used = faker.number.int({ max: 10000 });
 	const limit = used * 2;
 
-	return res(
-		ctx.json({
-			used,
-			limit
-		})
-	);
+	return HttpResponse.json({
+		used,
+		limit
+	});
 };
 
 export default handleMySelfQuotaRequest;
