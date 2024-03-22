@@ -26,7 +26,8 @@ export default {
 		'!src/**/mocks/*', // exclude msw handlers
 		'!src/mocks/*', // exclude msw handlers
 		'!**/(test|mock)*.ts(x)?', // exclude file which name starts with test or mock
-		'!src/**/types/*' // exclude types
+		'!src/**/types/*', // exclude types,
+		'!**/resolverMocks.ts'
 	],
 
 	// The directory where Jest should output its coverage files
