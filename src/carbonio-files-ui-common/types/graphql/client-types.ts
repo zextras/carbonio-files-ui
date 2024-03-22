@@ -17,6 +17,7 @@ export interface UploadItem {
 	parentId: string | null;
 	parentNodeId: string | null;
 	status: UploadStatus;
+	statusCode?: number;
 	progress: number; // (should be rounded down)
 	id: string;
 	// reference to the id of the node of Files after it is created

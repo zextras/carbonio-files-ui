@@ -10,6 +10,7 @@ import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system
 import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { OverQuotaBanner } from './components/OverQuotaBanner';
 import { UploadDisplayer } from './components/UploadDisplayer';
 import { UploadList } from './components/UploadList';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
@@ -182,6 +183,7 @@ const UploadView: React.VFC = () => {
 
 	return (
 		<ListContext.Provider value={listContextValue}>
+			<OverQuotaBanner />
 			<Container
 				orientation="row"
 				crossAlignment="flex-start"

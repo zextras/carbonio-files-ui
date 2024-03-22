@@ -13,7 +13,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
-import { REST_ENDPOINT, SHARES_LOAD_LIMIT, UPLOAD_PATH, UPLOAD_VERSION_PATH } from '../constants';
+import {
+	REST_ENDPOINT,
+	SHARES_LOAD_LIMIT,
+	UPLOAD_PATH,
+	UPLOAD_STATUS_CODE,
+	UPLOAD_VERSION_PATH
+} from '../constants';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_VERSIONS from '../graphql/queries/getVersions.graphql';
@@ -409,11 +415,17 @@ export function uploadCompleted(
 
 		uploadVarReducer({
 			type: 'update',
-			value: { id: fileEnriched.id, status: UploadStatus.FAILED }
+			value: { id: fileEnriched.id, status: UploadStatus.FAILED, statusCode: xhr.status }
 		});
 		incrementAllParentsFailedCount(fileEnriched);
 
-		const handledStatuses = [405, 413, 500, 0];
+		const handledStatuses = [
+			UPLOAD_STATUS_CODE.maxVersionReached,
+			413,
+			UPLOAD_STATUS_CODE.internalServerError,
+			UPLOAD_STATUS_CODE.aborted,
+			UPLOAD_STATUS_CODE.overQuota
+		];
 		if (xhr.readyState !== XMLHttpRequest.UNSENT && !handledStatuses.includes(xhr.status)) {
 			console.error('upload error: unhandled status', xhr.status, fileEnriched);
 		}
@@ -525,10 +537,11 @@ export function getUploadAddType(dataTransfer: DataTransfer): UploadAddType[] {
 	const fileEntries: UploadAddType[] = [];
 	forEach(dataTransfer.items, (droppedItem, index) => {
 		const item: FileSystemEntry | null =
-			(droppedItem.webkitGetAsEntry && droppedItem.webkitGetAsEntry()) ||
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			(droppedItem.getAsEntry && droppedItem.getAsEntry()) ||
+			droppedItem.webkitGetAsEntry?.() ||
+			('getAsEntry' in droppedItem &&
+				(
+					droppedItem as DataTransferItem & { getAsEntry: () => FileSystemEntry | null }
+				).getAsEntry?.()) ||
 			null;
 		if (item?.name !== dataTransfer.files[index].name) {
 			console.error('dataTransfer items and files mismatch');

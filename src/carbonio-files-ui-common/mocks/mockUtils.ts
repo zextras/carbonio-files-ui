@@ -65,22 +65,26 @@ export function populateNodePage(
 
 export function populateUser(id?: string, name?: string, email?: string): User {
 	return {
-		id: id || faker.string.uuid(),
-		email: email || faker.internet.exampleEmail({ firstName: name }),
-		full_name: name || faker.person.fullName(),
+		id: id ?? faker.string.uuid(),
+		email: email ?? faker.internet.exampleEmail({ firstName: name }),
+		full_name: name ?? faker.person.fullName(),
 		__typename: 'User'
 	};
 }
 
-export function populateDistributionList(limit = 10, id = '', name = ''): DistributionList {
+export function populateDistributionList(
+	limit = 10,
+	id: string | undefined = undefined,
+	name: string | undefined = undefined
+): DistributionList {
 	const users = [];
 	for (let i = 0; i < faker.number.int(limit); i += 1) {
 		users.push(populateUser(undefined, `user${i}`));
 	}
 	return {
 		__typename: 'DistributionList',
-		id: id || faker.string.uuid(),
-		name: name || faker.person.jobArea(),
+		id: id ?? faker.string.uuid(),
+		name: name ?? faker.person.jobArea(),
 		users
 	};
 }
@@ -102,7 +106,7 @@ export function populatePermissions(grantAll?: boolean): Permissions {
 }
 
 export function populateSharePermission(sharePermission?: SharePermission): SharePermission {
-	return sharePermission || SharePermission.ReadAndWrite;
+	return sharePermission ?? SharePermission.ReadAndWrite;
 }
 
 export function populateShare(
@@ -144,16 +148,16 @@ function populateNodeFields(
 	name?: string
 ): MakeRequiredNonNull<GQLNode, 'owner'> {
 	const types = filter(Object.values(NodeType), (t) => t !== NodeType.Root);
-	const nodeType = type || faker.helpers.arrayElement(types);
+	const nodeType = type ?? faker.helpers.arrayElement(types);
 	return {
-		id: id || faker.string.uuid(),
+		id: id ?? faker.string.uuid(),
 		creator: populateUser(),
 		owner: populateUser(LOGGED_USER.id, LOGGED_USER.name),
 		last_editor: populateUser(),
 		created_at: faker.date.past().getTime(),
 		updated_at: faker.date.recent().getTime(),
 		permissions: populatePermissions(),
-		name: name || faker.word.words(),
+		name: name ?? faker.word.words(),
 		description: faker.lorem.paragraph(),
 		type: (id && some(ROOTS, (root) => root === id) && NodeType.Root) || nodeType,
 		flagged: faker.datatype.boolean(),
@@ -171,14 +175,14 @@ export function populateUnknownNode(
 	name?: string
 ): Partial<Node> & Omit<ActionsFactoryNodeType, '__typename'> {
 	return {
-		id: id || faker.string.uuid(),
+		id: id ?? faker.string.uuid(),
 		creator: populateUser(),
 		owner: populateUser(),
 		last_editor: populateUser(),
 		created_at: faker.date.past().getTime(),
 		updated_at: faker.date.recent().getTime(),
 		permissions: populatePermissions(),
-		name: name || faker.word.words(),
+		name: name ?? faker.word.words(),
 		description: '',
 		type: NodeType.Other,
 		flagged: faker.datatype.boolean(),
@@ -206,7 +210,7 @@ export function populateNode(type?: NodeTypename, id?: string, name?: string): F
 }
 
 export function populateNodes(limit?: number, type?: NodeTypename): Array<FilesFile | Folder> {
-	const nodesLength = limit || 100;
+	const nodesLength = limit ?? 100;
 	const nodes: Array<FilesFile | Folder> = [];
 	for (let i = 0; i < nodesLength; i += 1) {
 		const node = populateNode(type);
@@ -218,8 +222,8 @@ export function populateNodes(limit?: number, type?: NodeTypename): Array<FilesF
 
 export function populateFolder(
 	childrenLimit = 0,
-	id = '',
-	name = '',
+	id: string | undefined = undefined,
+	name: string | undefined = undefined,
 	sort = NODES_SORT_DEFAULT
 ): Folder {
 	const children: Node[] = [];
@@ -343,7 +347,7 @@ export function populateContact(
 			email ||
 			(fullName && `${fullName.replace(/\s+/i, '.')}@example.com`) ||
 			faker.internet.exampleEmail({ firstName: fullName }),
-		full: fullName || faker.person.fullName()
+		full: fullName ?? faker.person.fullName()
 	};
 }
 
@@ -360,7 +364,7 @@ export function populateContactGroupMatch(name?: string): ContactGroupMatch {
 		id: faker.string.uuid(),
 		type: 'contact',
 		isGroup: true,
-		display: name || `${faker.person.jobArea()} ${faker.person.jobDescriptor()}`
+		display: name ?? `${faker.person.jobArea()} ${faker.person.jobDescriptor()}`
 	};
 }
 
@@ -376,12 +380,12 @@ export function populateContactInformation(type: Member['type']): ContactInforma
 }
 
 export function populateMember(memberType?: Member['type']): Member {
-	const type = memberType || faker.helpers.arrayElement<Member['type']>(['C', 'G', 'I']);
+	const type = memberType ?? faker.helpers.arrayElement<Member['type']>(['C', 'G', 'I']);
 	const contactInformation = populateContactInformation(type);
 	if (type === 'I') {
 		return {
 			type,
-			value: contactInformation._attrs?.email || ''
+			value: contactInformation._attrs?.email ?? ''
 		};
 	}
 	return {
@@ -436,7 +440,7 @@ export function populateCollaborationLink(
 ): CollaborationLink {
 	return {
 		permission:
-			sharePermission ||
+			sharePermission ??
 			faker.helpers.arrayElement([SharePermission.ReadAndShare, SharePermission.ReadWriteAndShare]),
 		__typename: 'CollaborationLink',
 		id: faker.string.uuid(),
@@ -469,7 +473,7 @@ export function populateConfigs(configMap?: Record<string, string>): Config[] {
 }
 
 export function populateUploadItem(item?: Partial<UploadItem>): UploadItem {
-	const name = item?.name || faker.system.fileName();
+	const name = item?.name ?? faker.system.fileName();
 	const mimeType = faker.system.mimeType();
 	const file = new File(['(⌐□_□)'], name, { type: mimeType });
 	return {
@@ -491,7 +495,7 @@ export function populateUploadFolderItem(item?: Partial<UploadFolderItem>): Uplo
 	return {
 		...uploadItem,
 		file: new File(['(⌐□_□)'], uploadItem.name, { type: undefined }),
-		contentCount: 1 + (item?.children?.length || 0),
+		contentCount: 1 + (item?.children?.length ?? 0),
 		children: item?.children || [],
 		failedCount: 0,
 		...item
@@ -501,7 +505,7 @@ export function populateUploadFolderItem(item?: Partial<UploadFolderItem>): Uplo
 export function populateUploadItems(limit?: number, type?: NodeTypename): UploadItem[] {
 	const items: UploadItem[] = [];
 	for (let i = 0; i < (limit || 10); i += 1) {
-		const itemType = type || faker.helpers.arrayElement<NodeTypename>(['Folder', 'File']);
+		const itemType = type ?? faker.helpers.arrayElement<NodeTypename>(['Folder', 'File']);
 		const item = itemType === 'Folder' ? populateUploadFolderItem() : populateUploadItem();
 		items.push(item);
 	}

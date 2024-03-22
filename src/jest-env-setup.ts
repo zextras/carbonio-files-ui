@@ -86,6 +86,17 @@ beforeEach(() => {
 		})
 	});
 
+	Object.defineProperty(window, 'ResizeObserver', {
+		writable: true,
+		value: jest.fn(function ResizeObserverMock(): ResizeObserver {
+			return {
+				observe: jest.fn(),
+				unobserve: jest.fn(),
+				disconnect: jest.fn()
+			};
+		})
+	});
+
 	// cleanup local storage
 	window.localStorage.clear();
 });

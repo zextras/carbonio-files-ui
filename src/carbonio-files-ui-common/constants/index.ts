@@ -100,7 +100,12 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 // TODO: use locale aware date format (L)
 export const DATE_FORMAT = 'DD/MM/YYYY';
 export const DATE_FORMAT_SHORT = 'DD/MM/YY';
-
+export const UPLOAD_STATUS_CODE = {
+	internalServerError: 500,
+	maxVersionReached: 405,
+	aborted: 0,
+	overQuota: 422
+} as const;
 // endpoint
 // keep endpoint without trailing slash
 export const GRAPHQL_ENDPOINT = '/services/files/graphql';
