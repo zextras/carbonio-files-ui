@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import { waitFor } from '@testing-library/react';
+
 import { Displayer } from './Displayer';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
@@ -20,6 +22,7 @@ import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File,
 	Folder,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
 	Maybe
@@ -101,14 +104,18 @@ describe('Displayer', () => {
 		await user.click(copyButton);
 		expect(screen.queryByRole('button', { name: ACTION_REGEXP.copy })).not.toBeInTheDocument();
 		await screen.findByText(/item copied/i);
-		jest.advanceTimersToNextTimer();
-		const queryResult = global.apolloClient.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-			query: GET_CHILDREN,
-			variables: getChildrenVariables(parent.id)
+		await waitFor(() => {
+			const queryResult = global.apolloClient.readQuery<
+				GetChildrenQuery,
+				GetChildrenQueryVariables
+			>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(parent.id)
+			});
+			return expect(
+				(queryResult?.getNode as Maybe<Folder> | undefined)?.children.nodes || []
+			).toHaveLength(3);
 		});
-		expect((queryResult?.getNode as Maybe<Folder> | undefined)?.children.nodes || []).toHaveLength(
-			3
-		);
 	});
 
 	test('Move action open move modal', async () => {

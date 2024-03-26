@@ -322,7 +322,9 @@ describe('Copy Nodes Modal', () => {
 		expect(breadcrumb).toBeVisible();
 		await user.click(sharedWithMeItem);
 		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
-
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		// navigate inside shared with me filter
 		await user.dblClick(sharedWithMeItem);
 		await screen.findByText(sharedWithMeFilter[0].name);
@@ -769,6 +771,9 @@ describe('Copy Nodes Modal', () => {
 		expect(confirmButton).toBeDisabled();
 		await user.click(screen.getByText('Home'));
 		expect(confirmButton).toBeEnabled();
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);

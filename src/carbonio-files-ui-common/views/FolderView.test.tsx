@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { find, map } from 'lodash';
 
 import FolderView from './FolderView';
@@ -399,6 +399,9 @@ describe('Folder View', () => {
 					ICON_REGEXP.sharedByMe
 				)
 			).toBeVisible();
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
 			// navigate inside folder
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
@@ -513,6 +516,9 @@ describe('Folder View', () => {
 					icon: ICON_REGEXP.shareCanRead
 				})
 			).toBeVisible();
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
 			// navigate inside folder to cache data
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
@@ -670,6 +676,9 @@ describe('Folder View', () => {
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
 			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
 			// navigate inside folder to cache data
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)

@@ -437,6 +437,9 @@ describe('Node Sharing', () => {
 			// click on chip to close popover
 			await user.click(screen.getByText(userAccount.full_name));
 			expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
 			// click on share button to complete the creation of the new share
 			await user.click(screen.getByRole('button', { name: /share/i }));
 			// and then a new chip is created in the collaborators list
@@ -598,6 +601,9 @@ describe('Node Sharing', () => {
 			);
 			// and 1 with share permissions
 			expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
 			// click on share button to complete the creation of the new share
 			await user.click(screen.getByRole('button', { name: /share/i }));
 			// chips are removed from the add section
