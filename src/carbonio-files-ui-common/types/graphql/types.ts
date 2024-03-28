@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
+ * SPDX-FileCopyrightText: 2024 Zextras <https://www.zextras.com>
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -28,6 +28,7 @@ export type Scalars = {
 	Int: { input: number; output: number };
 	Float: { input: number; output: number };
 	DateTime: { input: number; output: number };
+	/** Define an upload item, with its status and all the required info */
 	UploadItem: { input: ClientTypes.UploadItem; output: ClientTypes.UploadItem };
 };
 
