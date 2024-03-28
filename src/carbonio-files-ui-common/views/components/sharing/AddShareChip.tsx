@@ -4,21 +4,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/* eslint-disable arrow-body-style */
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { ChipAction } from '@zextras/carbonio-design-system';
-import { filter, toLower } from 'lodash';
+import { ChipAction, ChipInputProps } from '@zextras/carbonio-design-system';
+import { filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { ChipWithPopover } from './ChipWithPopover';
 import { NewShareChipPopoverContainer } from './NewShareChipPopoverContainer';
 import { ShareChipLabel } from './ShareChipLabel';
-import { useActiveNode } from '../../../../hooks/useActiveNode';
 import { SHARE_CHIP_MAX_WIDTH } from '../../../constants';
-import { useGetNodeQuery } from '../../../hooks/graphql/queries/useGetNodeQuery';
-import { Role, ShareChip } from '../../../types/common';
-import { Node } from '../../../types/graphql/types';
+import { Node, Role, ShareChip } from '../../../types/common';
 import { getChipLabel, isFile, isFolder } from '../../../utils/utils';
 
 const rowRoleToIdxMap: { [key in Role]: number } = {
@@ -27,11 +23,11 @@ const rowRoleToIdxMap: { [key in Role]: number } = {
 };
 
 const roleAssignChecker: {
-	[key in Role]: (node: Pick<Node, 'type' | 'permissions'>) => boolean;
+	[key in Role]: (node: Pick<Node, '__typename' | 'permissions'>) => boolean;
 } = {
-	[Role.Editor]: (node: Pick<Node, 'type' | 'permissions'>): boolean =>
-		(toLower(node.type) === 'folder' && node.permissions.can_write_folder) ||
-		(toLower(node.type) !== 'folder' && node.permissions.can_write_file),
+	[Role.Editor]: (node: Pick<Node, '__typename' | 'permissions'>): boolean =>
+		(isFolder(node) && node.permissions.can_write_folder) ||
+		(isFile(node) && node.permissions.can_write_file),
 	[Role.Viewer]: (): boolean => true
 };
 
@@ -40,7 +36,11 @@ const rowIdxToRoleMap: { [key: number]: Role } = {
 	1: Role.Editor
 };
 
-export const AddShareChip = React.forwardRef<HTMLDivElement, Omit<ShareChip, 'label'>>(
+type AddShareChipProps = React.ComponentPropsWithoutRef<
+	NonNullable<ChipInputProps<ShareChip['value']>['ChipComponent']>
+>;
+
+export const AddShareChip = React.forwardRef<HTMLDivElement, AddShareChipProps>(
 	function AddShareChipFn(
 		{
 			/** Chip value */
@@ -51,38 +51,29 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, Omit<ShareChip, 'la
 		},
 		ref
 	) {
+		const node = value?.node;
 		const [t] = useTranslation();
 		const [popoverOpen, setPopoverOpen] = useState(false);
-		const error = useMemo(() => value.id === undefined, [value.id]);
+		const error = useMemo(() => value?.id === undefined, [value?.id]);
 
-		const switchSharingAllowed = (): void => {
-			value.onUpdate(value.id, { sharingAllowed: !value.sharingAllowed });
-		};
+		const switchSharingAllowed = useCallback((): void => {
+			value?.onUpdate(value.id, { sharingAllowed: !value.sharingAllowed });
+		}, [value]);
 
-		const { activeNodeId } = useActiveNode();
-		const { data: nodeData } = useGetNodeQuery(activeNodeId, undefined, {
-			fetchPolicy: 'cache-only'
-		});
-		const node = useMemo(() => nodeData?.getNode || null, [nodeData]);
+		const changeRole = useCallback(
+			(containerIdx: keyof typeof rowIdxToRoleMap): void => {
+				const desiredRole = rowIdxToRoleMap[containerIdx];
+				if (node && roleAssignChecker[desiredRole](node)) {
+					value?.onUpdate(value.id, { role: rowIdxToRoleMap[containerIdx] });
+				}
+			},
+			[node, value]
+		);
 
-		const changeRole = (containerIdx: keyof typeof rowIdxToRoleMap): void => {
-			const desiredRole = rowIdxToRoleMap[containerIdx];
-			if (
-				desiredRole !== Role.Editor ||
-				// if desiredRole === Role.Editor you need write permission
-				(node &&
-					((isFolder(node) && node.permissions.can_write_folder) ||
-						(isFile(node) && node.permissions.can_write_file)))
-			) {
-				value.onUpdate(value.id, { role: rowIdxToRoleMap[containerIdx] });
-			}
-		};
-
-		const disabledRows = useMemo(() => {
-			return filter(rowRoleToIdxMap, (idx, role) => {
-				return !node || !roleAssignChecker[role as Role](node);
-			});
-		}, [node]);
+		const disabledRows = useMemo(
+			() => filter(rowRoleToIdxMap, (idx, role) => !node || !roleAssignChecker[role as Role](node)),
+			[node]
+		);
 
 		const openPermissionsPopover = useCallback(() => {
 			setPopoverOpen((prevState) => !prevState);
@@ -102,7 +93,7 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, Omit<ShareChip, 'la
 
 		const actions = useMemo<ChipAction[]>(() => {
 			const icons: Array<ChipAction> = [];
-			if (!error) {
+			if (!error && value) {
 				if (value.role === Role.Viewer) {
 					icons.push({
 						icon: 'EyeOutline',
@@ -144,15 +135,7 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, Omit<ShareChip, 'la
 				});
 			}
 			return icons;
-		}, [
-			editShareTooltip,
-			error,
-			onClose,
-			openPermissionsPopover,
-			removeShareTooltip,
-			value.role,
-			value.sharingAllowed
-		]);
+		}, [editShareTooltip, error, onClose, openPermissionsPopover, removeShareTooltip, value]);
 
 		const updatePermissionsPopover = useCallback((newState: boolean) => {
 			setPopoverOpen(newState);
@@ -167,8 +150,8 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, Omit<ShareChip, 'la
 				onValueChange={updatePermissionsPopover}
 				{...rest}
 				avatarLabel={getChipLabel(value)}
-				label={<ShareChipLabel contact={value} showTooltip={value.id !== undefined} />}
-				background={(value.id !== undefined && 'gray2') || undefined}
+				label={<ShareChipLabel contact={value} showTooltip={value?.id !== undefined} />}
+				background={(value?.id !== undefined && 'gray2') || undefined}
 				error={
 					error &&
 					t(
@@ -180,9 +163,9 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, Omit<ShareChip, 'la
 			>
 				{(): React.JSX.Element => (
 					<NewShareChipPopoverContainer
-						activeRow={rowRoleToIdxMap[value.role]}
+						activeRow={rowRoleToIdxMap[value?.role ?? Role.Viewer]}
 						disabledRows={disabledRows}
-						checkboxValue={value.sharingAllowed}
+						checkboxValue={!!value?.sharingAllowed}
 						checkboxOnClick={switchSharingAllowed}
 						containerOnClick={changeRole}
 					/>

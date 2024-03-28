@@ -27,7 +27,7 @@ export const Displayer: React.VFC<DisplayerProps> = ({ translationKey, icons = [
 		hasMore
 	} = useGetNodeQuery(activeNodeId, undefined, { returnPartialData: true });
 
-	const node = useMemo(() => nodeData?.getNode || null, [nodeData]);
+	const node = useMemo(() => nodeData?.getNode ?? null, [nodeData]);
 
 	return (
 		<Container

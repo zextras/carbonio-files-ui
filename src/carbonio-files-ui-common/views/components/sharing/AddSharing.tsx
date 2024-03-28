@@ -55,7 +55,7 @@ import { RouteLeavingGuard } from '../RouteLeavingGuard';
 import { Hint, Loader } from '../StyledComponents';
 
 interface AddSharingProps {
-	node: Pick<Node, '__typename' | 'id' | 'owner'> & {
+	node: Pick<Node, '__typename' | 'id' | 'owner' | 'permissions'> & {
 		shares?: Array<Pick<Share, '__typename' | 'share_target'> | null | undefined>;
 	};
 }
@@ -225,7 +225,8 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 									id: result.data.getAccountByEmail.id,
 									role: Role.Viewer,
 									sharingAllowed: false,
-									onUpdate: updateChip
+									onUpdate: updateChip,
+									node
 								}
 							};
 							setChips((c) => [...c, contactWithId]);
@@ -234,7 +235,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 					.catch(() => null); // FIXME: this catch shouldn't be necessary but for some reason it is
 			}
 		},
-		[chips, getAccountByEmailLazyQuery, updateChip]
+		[chips, getAccountByEmailLazyQuery, node, updateChip]
 	);
 
 	const addShareContactGroup = useCallback(
@@ -270,7 +271,8 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 							role: Role.Viewer,
 							sharingAllowed: false,
 							id: member.cn[0]._attrs.zimbraId,
-							onUpdate: updateChip
+							onUpdate: updateChip,
+							node
 						});
 					}
 				});
@@ -297,7 +299,8 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 								role: Role.Viewer,
 								sharingAllowed: false,
 								id: validAccountsMap[email]?.id,
-								onUpdate: updateChip
+								onUpdate: updateChip,
+								node
 							}));
 
 							const cleanedEmails = cleanEmails([...mappedMembers, ...galMembers], chips, node);
@@ -415,7 +418,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 		return items;
 	}, [addShareContact, loading, searchResult, addShareContactGroup]);
 
-	const onAdd = useCallback<NonNullable<ChipInputProps['onAdd']>>(
+	const onAdd = useCallback<NonNullable<ChipInputProps<ShareChip['value']>['onAdd']>>(
 		(value) => {
 			function isContact(val: unknown): val is Contact {
 				return typeof val === 'object' && val !== null && 'email' in val;
@@ -452,7 +455,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 					onInputType={onType}
 					onChange={onChipsChange}
 					value={chips}
-					ChipComponent={AddShareChip as React.ComponentType<ChipItem>}
+					ChipComponent={AddShareChip}
 					options={dropdownItems}
 					onAdd={onAdd}
 					background="gray5"

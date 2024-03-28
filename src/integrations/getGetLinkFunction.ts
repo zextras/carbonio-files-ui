@@ -10,6 +10,7 @@ import { map, find } from 'lodash';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
 import LINK from '../carbonio-files-ui-common/graphql/fragments/link.graphql';
+import { NodeCachedObject } from '../carbonio-files-ui-common/types/apollo';
 import { NodeWithMetadata } from '../carbonio-files-ui-common/types/common';
 import {
 	CreateLinkDocument,
@@ -55,6 +56,64 @@ function isGetLinksInfoType(args: GetLinkFunctionArgsType): args is GetLinksInfo
 	return args.type === 'getLinksInfo';
 }
 
+async function createLink(
+	apolloClient: ApolloClient<NormalizedCacheObject>,
+	{ node, description, expiresAt }: CreateLinkType
+): Promise<CreateLinkMutation['createLink']> {
+	const { id, __typename } = node;
+	const value = await apolloClient.mutate<CreateLinkMutation, CreateLinkMutationVariables>({
+		mutation: CreateLinkDocument,
+		variables: {
+			node_id: id,
+			description,
+			expires_at: expiresAt
+		},
+		update(cache, { data }) {
+			if (data?.createLink) {
+				cache.modify<NodeCachedObject>({
+					id: cache.identify({ id, __typename }),
+					fields: {
+						links(existingLinks) {
+							const newLinkRef = cache.writeFragment<LinkFragment>({
+								data: data.createLink,
+								fragment: LINK
+							});
+							return newLinkRef !== undefined ? [newLinkRef, ...existingLinks] : existingLinks;
+						}
+					}
+				});
+			}
+		}
+	});
+	if (value?.data?.createLink) {
+		return value.data.createLink;
+	}
+	throw new Error('link not created');
+}
+
+async function getLinksInfo(
+	apolloClient: ApolloClient<NormalizedCacheObject>,
+	{ node, linkIds }: GetLinksInfoType
+): Promise<LinksType> {
+	const value = await apolloClient.query<GetLinksQuery, GetLinksQueryVariables>({
+		query: GetLinksDocument,
+		variables: {
+			node_id: node.id
+		}
+	});
+	if (value?.data?.getLinks) {
+		const links = value?.data?.getLinks;
+		if (linkIds) {
+			return map(linkIds, (id) => {
+				const link = find(links, (item) => item?.id === id);
+				return link ?? null;
+			});
+		}
+		return value.data.getLinks;
+	}
+	throw new Error('no data has been returned by query');
+}
+
 function getLinkWithClient(
 	apolloClient: ApolloClient<NormalizedCacheObject>
 ): (args: GetLinkFunctionArgsType) => Promise<CreateLinkMutation['createLink'] | LinksType> {
@@ -62,80 +121,10 @@ function getLinkWithClient(
 		args: GetLinkFunctionArgsType
 	): Promise<CreateLinkMutation['createLink'] | LinksType> {
 		if (isCreateLinkType(args)) {
-			const { node, description, expiresAt } = args;
-			const { id, __typename } = node;
-			return new Promise<CreateLinkMutation['createLink']>((resolve, reject) => {
-				apolloClient
-					.mutate<CreateLinkMutation, CreateLinkMutationVariables>({
-						mutation: CreateLinkDocument,
-						variables: {
-							node_id: id,
-							description,
-							expires_at: expiresAt
-						},
-						update(cache, { data }) {
-							if (data?.createLink) {
-								cache.modify({
-									id: cache.identify({ id, __typename }),
-									fields: {
-										links(existingLinks) {
-											const newLinkRef = cache.writeFragment<LinkFragment>({
-												data: data.createLink,
-												fragment: LINK
-											});
-											return [newLinkRef, ...existingLinks];
-										}
-									}
-								});
-							}
-						}
-					})
-					.then(
-						(value) => {
-							if (value?.data?.createLink) {
-								resolve(value.data.createLink);
-							} else {
-								reject();
-							}
-						},
-						(reason) => reject(reason)
-					);
-			});
+			return createLink(apolloClient, args);
 		}
 		if (isGetLinksInfoType(args)) {
-			const { node, linkIds } = args;
-
-			return new Promise<LinksType>((resolve, reject) => {
-				apolloClient
-					.query<GetLinksQuery, GetLinksQueryVariables>({
-						query: GetLinksDocument,
-						variables: {
-							node_id: node.id
-						}
-					})
-					.then(
-						(value) => {
-							if (value?.data?.getLinks) {
-								const links = value?.data?.getLinks;
-								if (linkIds) {
-									resolve(
-										map(linkIds, (id) => {
-											const link = find(links, (item) => item?.id === id);
-											return link || null;
-										})
-									);
-								} else {
-									resolve(value.data.getLinks);
-								}
-							} else {
-								reject();
-							}
-						},
-						(reason) => {
-							reject(reason);
-						}
-					);
-			});
+			return getLinksInfo(apolloClient, args);
 		}
 		return Promise.reject(new Error('the type field of args is missing or wrong'));
 	}

@@ -109,7 +109,7 @@ export const List: React.VFC<ListProps> = ({
 		GetChildrenParentDocument,
 		{
 			variables: {
-				node_id: folderId || ''
+				node_id: folderId ?? ''
 			},
 			skip: !folderId,
 			fetchPolicy: 'cache-only'
@@ -379,7 +379,7 @@ export const List: React.VFC<ListProps> = ({
 								accumulator.push({
 									previewType: 'image',
 									filename: node.name,
-									extension: node.extension || undefined,
+									extension: node.extension ?? undefined,
 									size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
 									actions,
 									closeAction,
@@ -729,7 +729,7 @@ export const List: React.VFC<ListProps> = ({
 	return (
 		<MainContainer
 			mainAlignment="flex-start"
-			data-testid={`list-${folderId || ''}`}
+			data-testid={`list-${folderId ?? ''}`}
 			maxHeight="100%"
 			background={'gray6'}
 		>

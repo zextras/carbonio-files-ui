@@ -15,6 +15,7 @@ import { useLocation } from 'react-router-dom';
 import { useActiveNode } from '../../../../hooks/useActiveNode';
 import FLAG_NODES from '../../../graphql/mutations/flagNodes.graphql';
 import FIND_NODES from '../../../graphql/queries/findNodes.graphql';
+import { NodeCachedObject } from '../../../types/apollo';
 import { PickIdNodeType } from '../../../types/common';
 import {
 	FindNodesQuery,
@@ -71,10 +72,10 @@ export function useFlagNodesMutation(): FlagNodesType {
 						forEach(flaggedNodes, (id) => {
 							const node = find(nodes, ['id', id]);
 							if (node) {
-								cache.modify({
+								cache.modify<NodeCachedObject>({
 									id: cache.identify(node),
 									fields: {
-										flagged(): boolean {
+										flagged() {
 											return flagValue;
 										}
 									}

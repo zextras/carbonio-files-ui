@@ -8,7 +8,7 @@
 
 import React from 'react';
 
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { CopyNodesModalContent } from './CopyNodesModalContent';
@@ -387,19 +387,12 @@ describe('Copy Nodes Modal', () => {
 				mocks
 			}
 		);
-		const folderItem = await screen.findByText(folder.name);
-		// context menu
-		fireEvent.contextMenu(folderItem);
-		act(() => {
-			jest.runOnlyPendingTimers();
-		});
+		await user.rightClick(await screen.findByText(folder.name));
 		expect(screen.queryByText(ACTION_REGEXP.flag)).not.toBeInTheDocument();
 		// hover bar
 		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 		// selection mode
 		await selectNodes([folder.id], user);
-		// wait a tick to be sure eventual selection icon is shown
-
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 	});
 

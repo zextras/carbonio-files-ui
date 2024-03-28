@@ -31,7 +31,7 @@ export function useDeleteShareModal(
 			confirmColor: 'error',
 			onConfirm: () => {
 				deleteShareAction().then(() => {
-					deleteShareActionCallback && deleteShareActionCallback();
+					deleteShareActionCallback?.();
 					closeModal();
 				});
 			},

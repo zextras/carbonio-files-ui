@@ -89,6 +89,7 @@ export const SELECTORS = {
 	sharingTabCollaborators: 'node-sharing-collaborators',
 	exclusiveSelectionEditor: 'exclusive-selection-editor',
 	exclusiveSelectionViewer: 'exclusive-selection-viewer',
+	chip: 'chip',
 	chipWithPopover: 'chip-with-popover',
 	listHeader: 'list-header',
 	listHeaderSelectionMode: 'list-header-selectionModeActive',
@@ -116,7 +117,8 @@ export const SELECTORS = {
 	},
 	avatar: 'avatar',
 	customBreadcrumbs: 'customBreadcrumbs',
-	missingFilter: 'missing-filter'
+	missingFilter: 'missing-filter',
+	popper: 'popper'
 };
 
 export const EMITTER_CODES = {

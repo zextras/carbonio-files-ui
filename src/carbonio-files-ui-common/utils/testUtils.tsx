@@ -37,7 +37,7 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
 import { resolvers } from './resolvers';
-import { isFile, isFolder } from './utils';
+import { asyncForEach, isFile, isFolder } from './utils';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -46,7 +46,9 @@ import { AdvancedFilters, Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../types/graphql/types';
 
-export type UserEvent = ReturnType<(typeof userEvent)['setup']>;
+export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
+	readonly rightClick: (target: Element) => Promise<void>;
+};
 
 /**
  * Matcher function to search a string in more html elements and not just in a single element.
@@ -88,16 +90,18 @@ const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> =
 		rtlWithin(container).queryAllByRole(role, options),
 		(element) => rtlWithin(element).queryByTestId(icon) !== null
 	);
+const printRole = (role: ByRoleMatcher): string =>
+	typeof role === 'string' ? role : `unprintable matcher function ${JSON.stringify(role)}`;
 const getByRoleWithIconMultipleError = (
 	container: Element | null,
 	role: ByRoleMatcher,
 	options: ByRoleWithIconOptions
-): string => `Found multiple elements with role ${role} and icon ${options.icon}`;
+): string => `Found multiple elements with role ${printRole(role)} and icon ${options.icon}`;
 const getByRoleWithIconMissingError = (
 	container: Element | null,
 	role: ByRoleMatcher,
 	options: ByRoleWithIconOptions
-): string => `Unable to find an element with role ${role} and icon ${options.icon}`;
+): string => `Unable to find an element with role ${printRole(role)} and icon ${options.icon}`;
 
 const [
 	queryByTextWithMarkup,
@@ -217,7 +221,11 @@ const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): React
 		<ApolloProviderWrapper mocks={mocks}>
 			<MemoryRouter
 				initialEntries={initialRouterEntries}
-				initialIndex={(initialRouterEntries?.length || 1) - 1}
+				initialIndex={
+					initialRouterEntries !== undefined && initialRouterEntries.length > 0
+						? initialRouterEntries.length - 1
+						: 0
+				}
 			>
 				<StyledWrapper>
 					<I18nextProvider i18n={i18n}>
@@ -259,11 +267,21 @@ type SetupOptions = Pick<WrapperProps, 'initialRouterEntries' | 'mocks'> & {
 	setupOptions?: Parameters<(typeof userEvent)['setup']>[0];
 };
 
+const setupUserEvent = (options: SetupOptions['setupOptions']): UserEvent => {
+	const user = userEvent.setup(options);
+	const rightClick = (target: Element): Promise<void> =>
+		user.pointer({ target, keys: '[MouseRight]' });
+	return {
+		...user,
+		rightClick
+	};
+};
+
 export const setup = (
 	ui: ReactElement,
 	options?: SetupOptions
 ): { user: UserEvent } & ReturnType<typeof customRender> => ({
-	user: userEvent.setup({ advanceTimers: jest.advanceTimersByTime, ...options?.setupOptions }),
+	user: setupUserEvent({ advanceTimers: jest.advanceTimersByTime, ...options?.setupOptions }),
 	...customRender(ui, {
 		initialRouterEntries: options?.initialRouterEntries,
 		mocks: options?.mocks,
@@ -306,8 +324,7 @@ export async function triggerLoadMore(): Promise<void> {
 }
 
 export async function selectNodes(nodesToSelect: string[], user: UserEvent): Promise<void> {
-	for (let i = 0; i < nodesToSelect.length; i += 1) {
-		const id = nodesToSelect[i];
+	await asyncForEach(nodesToSelect, async (id) => {
 		const node = within(screen.getByTestId(SELECTORS.nodeItem(id)));
 		let clickableItem = node.queryByTestId(SELECTORS.nodeAvatar);
 		if (clickableItem == null) {
@@ -317,10 +334,9 @@ export async function selectNodes(nodesToSelect: string[], user: UserEvent): Pro
 			clickableItem = node.queryByTestId(SELECTORS.checkedAvatar);
 		}
 		if (clickableItem) {
-			// eslint-disable-next-line no-await-in-loop
 			await user.click(clickableItem);
 		}
-	}
+	});
 }
 
 export async function renameNode(newName: string, user: UserEvent): Promise<void> {
@@ -500,7 +516,7 @@ export function createMoveDataTransfer(): () => DataTransferMoveStub {
 			dataTransferTypes.includes(type) || dataTransferTypes.push(type);
 		},
 		getData(key): string {
-			return dataTransferData.get(key) || '';
+			return dataTransferData.get(key) ?? '';
 		},
 		types: dataTransferTypes,
 		clearData(): void {

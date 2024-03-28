@@ -8,9 +8,9 @@ import { useCallback } from 'react';
 
 import { ApolloError, FetchResult, useMutation } from '@apollo/client';
 
-import { recursiveShareEvict } from '../../../apollo/cacheUtils';
+import { assertCachedObject, recursiveShareEvict } from '../../../apollo/cacheUtils';
 import CREATE_SHARE from '../../../graphql/mutations/createShare.graphql';
-import { ShareCachedObject, SharesCachedObject } from '../../../types/apollo';
+import { NodeCachedObject, ShareCachedObject } from '../../../types/apollo';
 import { Node } from '../../../types/common';
 import {
 	CreateShareMutation,
@@ -49,10 +49,11 @@ export function useCreateShareMutation(): [
 				},
 				update(cache, { data }) {
 					if (data?.createShare) {
-						cache.modify({
+						cache.modify<NodeCachedObject>({
 							id: cache.identify(node),
 							fields: {
-								shares(existingShareRefs: SharesCachedObject, { toReference }): SharesCachedObject {
+								shares(existingShareRefs, { toReference }) {
+									assertCachedObject(existingShareRefs);
 									const nodeRef = toReference(data.createShare.node);
 									const targetRef =
 										data.createShare.share_target && toReference(data.createShare.share_target);
