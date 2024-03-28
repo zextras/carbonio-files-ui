@@ -133,11 +133,11 @@ describe('Upload List', () => {
 							Promise.any([
 								delayUntil(emitter, EMITTER_CODES.fail).then(() => {
 									uploadFailedHandler();
-									return HttpResponse.json({}, { status: 500 });
+									return HttpResponse.json<Record<string, never>>({}, { status: 500 });
 								}),
 								delayUntil(emitter, EMITTER_CODES.success).then(() => {
 									uploadSuccessHandler();
-									return HttpResponse.json({
+									return HttpResponse.json<UploadResponse>({
 										nodeId: faker.string.uuid()
 									});
 								})

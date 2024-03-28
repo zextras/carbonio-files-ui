@@ -708,7 +708,7 @@ describe('Upload View', () => {
 					async () =>
 						Promise.any([
 							delayUntil(emitter, EMITTER_CODES.never).then(() =>
-								HttpResponse.json(null, { status: 500 })
+								HttpResponse.json<null>(null, { status: 500 })
 							)
 						])
 				)
@@ -837,7 +837,7 @@ describe('Upload View', () => {
 						async () =>
 							Promise.any([
 								delayUntil(emitter, EMITTER_CODES.never).then(() =>
-									HttpResponse.json(null, { status: 500 })
+									HttpResponse.json<null>(null, { status: 500 })
 								)
 							])
 					)

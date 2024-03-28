@@ -11,15 +11,13 @@ import CHILD from '../graphql/fragments/child.graphql';
 import { Node } from '../types/common';
 import {
 	ChildFragment,
-	UpdateNodeDescriptionMutation,
-	UpdateNodeDescriptionMutationVariables,
 	UpdateNodeMutation,
 	UpdateNodeMutationVariables
 } from '../types/graphql/types';
 
 const handleUpdateNodeRequest: GraphQLResponseResolver<
-	UpdateNodeMutation | UpdateNodeDescriptionMutation,
-	UpdateNodeMutationVariables | UpdateNodeDescriptionMutationVariables
+	UpdateNodeMutation,
+	UpdateNodeMutationVariables
 > = ({ variables }) => {
 	const apolloClient = buildClient();
 
