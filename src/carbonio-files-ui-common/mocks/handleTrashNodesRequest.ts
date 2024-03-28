@@ -4,16 +4,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { TrashNodesMutation, TrashNodesMutationVariables } from '../types/graphql/types';
 
-const handleTrashNodesRequest: ResponseResolver<
-	GraphQLRequest<TrashNodesMutationVariables>,
-	GraphQLContext<TrashNodesMutation>,
-	TrashNodesMutation
-> = (req, res, ctx) => {
-	const { node_ids: nodes } = req.variables;
+const handleTrashNodesRequest: GraphQLResponseResolver<
+	TrashNodesMutation,
+	TrashNodesMutationVariables
+> = ({ variables }) => {
+	const { node_ids: nodes } = variables;
 
 	let result = null;
 	if (nodes) {
@@ -24,11 +23,11 @@ const handleTrashNodesRequest: ResponseResolver<
 		}
 	}
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			trashNodes: result
-		})
-	);
+		}
+	});
 };
 
 export default handleTrashNodesRequest;

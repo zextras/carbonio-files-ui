@@ -145,10 +145,10 @@ export const PublicLink = ({
 				title: isRevoke
 					? t('modal.revokeLink.header', 'Revoke {{nodeName}} {{linkName}}', {
 							replace: { nodeName, linkName }
-					  })
+						})
 					: t('modal.removeLink.header', 'Remove {{nodeName}} {{linkName}}', {
 							replace: { nodeName, linkName }
-					  }),
+						}),
 				confirmLabel: isRevoke
 					? t('modal.revokeLink.button.confirm', 'Revoke')
 					: t('modal.removeLink.button.confirm', 'Remove'),
@@ -171,11 +171,11 @@ export const PublicLink = ({
 										{
 											replace: { nodeName }
 										}
-								  )
+									)
 								: t(
 										'modal.removeLink.body',
 										"This link has expired, therefore it can't be used anymore to access the item. You can remove the link from the list or you can update its expiration date and other information in order to keep using it."
-								  )}
+									)}
 						</Text>
 					</Container>
 				)

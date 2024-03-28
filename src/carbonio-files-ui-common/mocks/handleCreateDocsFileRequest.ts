@@ -5,7 +5,7 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { ResponseResolver, RestContext, RestRequest } from 'msw';
+import { HttpResponse, HttpResponseResolver } from 'msw';
 
 import { DocsType } from '../types/common';
 
@@ -19,15 +19,13 @@ export interface CreateDocsFileRequestBody {
 	type: DocsType;
 }
 
-const handleCreateDocsFileRequest: ResponseResolver<
-	RestRequest<CreateDocsFileRequestBody>,
-	RestContext,
+const handleCreateDocsFileRequest: HttpResponseResolver<
+	never,
+	CreateDocsFileRequestBody,
 	CreateDocsFileResponse
-> = (req, res, ctx) =>
-	res(
-		ctx.json({
-			nodeId: faker.string.uuid()
-		})
-	);
+> = () =>
+	HttpResponse.json({
+		nodeId: faker.string.uuid()
+	});
 
 export default handleCreateDocsFileRequest;

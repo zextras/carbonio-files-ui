@@ -5,18 +5,16 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateLinks, populateNode } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetLinksQuery, GetLinksQueryVariables } from '../types/graphql/types';
 
-const handleGetLinksRequest: ResponseResolver<
-	GraphQLRequest<GetLinksQueryVariables>,
-	GraphQLContext<GetLinksQuery>,
-	GetLinksQuery
-> = (req, res, ctx) => {
-	const { node_id: id } = req.variables;
+const handleGetLinksRequest: GraphQLResponseResolver<GetLinksQuery, GetLinksQueryVariables> = ({
+	variables
+}) => {
+	const { node_id: id } = variables;
 
 	let nodeName = faker.word.words();
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
@@ -27,11 +25,11 @@ const handleGetLinksRequest: ResponseResolver<
 	const linksLimit = faker.number.int({ min: 0, max: 50 });
 	node.links = populateLinks({ ...node, links: [] }, linksLimit);
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			getLinks: node.links
-		})
-	);
+		}
+	});
 };
 
 export default handleGetLinksRequest;

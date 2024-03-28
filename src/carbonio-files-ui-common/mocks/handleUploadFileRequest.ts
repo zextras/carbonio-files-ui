@@ -5,7 +5,7 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { PathParams, ResponseResolver, RestContext, RestRequest } from 'msw';
+import { HttpResponse, HttpResponseResolver, PathParams } from 'msw';
 
 export interface UploadResponse {
 	nodeId: string;
@@ -21,15 +21,13 @@ export interface UploadRequestBody {
 	file: File;
 }
 
-const handleUploadFileRequest: ResponseResolver<
-	RestRequest<UploadRequestBody, UploadRequestParams>,
-	RestContext,
+const handleUploadFileRequest: HttpResponseResolver<
+	UploadRequestParams,
+	UploadRequestBody,
 	UploadResponse
-> = (req, res, ctx) =>
-	res(
-		ctx.json({
-			nodeId: faker.string.uuid()
-		})
-	);
+> = () =>
+	HttpResponse.json({
+		nodeId: faker.string.uuid()
+	});
 
 export default handleUploadFileRequest;

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { graphql, RequestHandler, rest } from 'msw';
+import { graphql, http, RequestHandler } from 'msw';
 
 import {
 	DOCS_ENDPOINT,
@@ -49,54 +49,85 @@ import handleUpdateNodeRequest from '../carbonio-files-ui-common/mocks/handleUpd
 import handleUpdateShareRequest from '../carbonio-files-ui-common/mocks/handleUpdateShareRequest';
 import handleUploadFileRequest from '../carbonio-files-ui-common/mocks/handleUploadFileRequest';
 import handleUploadVersionRequest from '../carbonio-files-ui-common/mocks/handleUploadVersionRequest';
+import {
+	CopyNodesDocument,
+	CreateFolderDocument,
+	CreateLinkDocument,
+	CreateShareDocument,
+	DeleteLinksDocument,
+	DeleteNodesDocument,
+	DeleteShareDocument,
+	FindNodesDocument,
+	FlagNodesDocument,
+	GetAccountByEmailDocument,
+	GetBaseNodeDocument,
+	GetChildDocument,
+	GetChildrenDocument,
+	GetCollaborationLinksDocument,
+	GetLinksDocument,
+	GetNodeDocument,
+	GetPathDocument,
+	GetPermissionsDocument,
+	GetRootsListDocument,
+	GetSharesDocument,
+	GetVersionsDocument,
+	MoveNodesDocument,
+	RestoreNodesDocument,
+	TrashNodesDocument,
+	UpdateLinkDocument,
+	UpdateNodeDescriptionDocument,
+	UpdateNodeDocument,
+	UpdateShareDocument
+} from '../carbonio-files-ui-common/types/graphql/types';
 
 const handlers: RequestHandler[] = [];
 
 // queries
 handlers.push(
 	graphql.query('IntrospectionQuery', handleIntrospectionRequest),
-	graphql.query('findNodes', handleFindNodesRequest),
-	graphql.query('getAccountByEmail', handleGetAccountByEmailRequest),
-	graphql.query('getBaseNode', handleGetBaseNodeRequest),
-	graphql.query('getChild', handleGetChildRequest),
-	graphql.query('getChildren', handleGetChildrenRequest),
-	graphql.query('getLinks', handleGetLinksRequest),
-	graphql.query('getNode', handleGetNodeRequest),
-	graphql.query('getPath', handleGetPathRequest),
-	graphql.query('getPermissions', handleGetPermissionsRequest),
-	graphql.query('getRootsList', handleGetRootsListRequest),
-	graphql.query('getShares', handleGetSharesRequest),
-	graphql.query('getVersions', handleGetVersionsRequest),
-	graphql.query('getCollaborationLinks', handleGetCollaborationLinksRequest)
+	graphql.query(FindNodesDocument, handleFindNodesRequest),
+	graphql.query(GetAccountByEmailDocument, handleGetAccountByEmailRequest),
+	graphql.query(GetBaseNodeDocument, handleGetBaseNodeRequest),
+	graphql.query(GetChildDocument, handleGetChildRequest),
+	graphql.query(GetChildrenDocument, handleGetChildrenRequest),
+	graphql.query(GetLinksDocument, handleGetLinksRequest),
+	graphql.query(GetNodeDocument, handleGetNodeRequest),
+	graphql.query(GetPathDocument, handleGetPathRequest),
+	graphql.query(GetPermissionsDocument, handleGetPermissionsRequest),
+	graphql.query(GetRootsListDocument, handleGetRootsListRequest),
+	graphql.query(GetSharesDocument, handleGetSharesRequest),
+	graphql.query(GetVersionsDocument, handleGetVersionsRequest),
+	graphql.query(GetCollaborationLinksDocument, handleGetCollaborationLinksRequest)
 );
 // mutations
 handlers.push(
-	graphql.mutation('copyNodes', handleCopyNodesRequest),
-	graphql.mutation('createFolder', handleCreateFolderRequest),
-	graphql.mutation('createLink', handleCreateLinkRequest),
-	graphql.mutation('createShare', handleCreateShareRequest),
-	graphql.mutation('deleteLinks', handleDeleteLinksRequest),
-	graphql.mutation('deleteNodes', handleDeleteNodesRequest),
-	graphql.mutation('deleteShare', handleDeleteShareRequest),
-	graphql.mutation('flagNodes', handleFlagNodesRequest),
-	graphql.mutation('moveNodes', handleMoveNodesRequest),
-	graphql.mutation('restoreNodes', handleRestoreNodesRequest),
-	graphql.mutation('trashNodes', handleTrashNodesRequest),
-	graphql.mutation('updateLink', handleUpdateLinkRequest),
-	graphql.mutation('updateNode', handleUpdateNodeRequest),
-	graphql.mutation('updateNodeDescription', handleUpdateNodeRequest),
-	graphql.mutation('updateShare', handleUpdateShareRequest)
+	graphql.mutation(CopyNodesDocument, handleCopyNodesRequest),
+	graphql.mutation(CreateFolderDocument, handleCreateFolderRequest),
+	graphql.mutation(CreateLinkDocument, handleCreateLinkRequest),
+	graphql.mutation(CreateShareDocument, handleCreateShareRequest),
+	graphql.mutation(DeleteLinksDocument, handleDeleteLinksRequest),
+	graphql.mutation(DeleteNodesDocument, handleDeleteNodesRequest),
+	graphql.mutation(DeleteShareDocument, handleDeleteShareRequest),
+	graphql.mutation(FlagNodesDocument, handleFlagNodesRequest),
+	graphql.mutation(MoveNodesDocument, handleMoveNodesRequest),
+	graphql.mutation(RestoreNodesDocument, handleRestoreNodesRequest),
+	graphql.mutation(TrashNodesDocument, handleTrashNodesRequest),
+	graphql.mutation(UpdateLinkDocument, handleUpdateLinkRequest),
+	graphql.mutation(UpdateNodeDocument, handleUpdateNodeRequest),
+	graphql.mutation(UpdateNodeDescriptionDocument, handleUpdateNodeRequest),
+	graphql.mutation(UpdateShareDocument, handleUpdateShareRequest)
 );
 // rest
 handlers.push(
-	rest.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, handleCreateDocsFileRequest),
-	rest.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, handleUploadFileRequest),
-	rest.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, handleUploadVersionRequest),
-	rest.get(
+	http.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, handleCreateDocsFileRequest),
+	http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, handleUploadFileRequest),
+	http.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, handleUploadVersionRequest),
+	http.get(
 		`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:version/:area/:thumbnail`,
 		handleGetPreviewRequest
 	),
-	rest.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, handleMySelfQuotaRequest)
+	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:version`, handleGetPreviewRequest),
+	http.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, handleMySelfQuotaRequest)
 );
 
 export default handlers;

@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { forEach } from 'lodash';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
@@ -283,12 +283,13 @@ describe('Filter view', () => {
 				limit: NODES_LOAD_LIMIT,
 				shares_limit: SHARES_LOAD_LIMIT
 			};
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({
 					variables: expectedVariables
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
@@ -312,12 +313,13 @@ describe('Filter view', () => {
 				limit: NODES_LOAD_LIMIT,
 				shares_limit: SHARES_LOAD_LIMIT
 			};
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({
 					variables: expectedVariables
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});

@@ -159,7 +159,7 @@ export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentPro
 							avatarIcon: 'Flag',
 							avatarBackground: 'error',
 							value: true
-					  }
+						}
 					: undefined
 			);
 		},
@@ -176,7 +176,7 @@ export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentPro
 							avatarIcon: 'Share',
 							avatarBackground: 'secondary',
 							value: true
-					  }
+						}
 					: undefined
 			);
 		},

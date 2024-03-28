@@ -17,7 +17,7 @@ import {
 } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { forEach, find, keyBy } from 'lodash';
-import { rest } from 'msw';
+import { http, HttpResponse, StrictResponse } from 'msw';
 
 import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
@@ -246,15 +246,13 @@ describe('Upload list', () => {
 			});
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async () => {
 						await delayUntil(emitter, EMITTER_CODES.success);
-						return res(
-							ctx.json({
-								nodeId: faker.string.uuid()
-							})
-						);
+						return HttpResponse.json({
+							nodeId: faker.string.uuid()
+						});
 					}
 				)
 			);
@@ -330,17 +328,18 @@ describe('Upload list', () => {
 			const emitter = new EventEmitter();
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse | Record<string, never>>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async ({ request }) => {
 						const fileName =
-							req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
+							request.headers.get('filename') &&
+							window.atob(request.headers.get('filename') as string);
 						if (fileName === uploadedFiles[0].name) {
 							await delayUntil(emitter, EMITTER_CODES.fail);
-							return res(ctx.status(500));
+							return HttpResponse.json({}, { status: 500 });
 						}
 						await delayUntil(emitter, EMITTER_CODES.success);
-						return res(ctx.json({ nodeId: faker.string.uuid() }));
+						return HttpResponse.json({ nodeId: faker.string.uuid() });
 					}
 				)
 			);
@@ -390,17 +389,18 @@ describe('Upload list', () => {
 			const emitter = new EventEmitter();
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse | null>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async ({ request }) => {
 						const fileName =
-							req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
+							request.headers.get('filename') &&
+							window.atob(request.headers.get('filename') as string);
 						if (fileName === uploadedFiles[0].name) {
 							await delayUntil(emitter, EMITTER_CODES.never);
-							return res(ctx.status(XMLHttpRequest.UNSENT));
+							return new Response(null, { status: XMLHttpRequest.UNSENT }) as StrictResponse<null>;
 						}
 						await delayUntil(emitter, EMITTER_CODES.success);
-						return res(ctx.json({ nodeId: faker.string.uuid() }));
+						return HttpResponse.json({ nodeId: faker.string.uuid() });
 					}
 				)
 			);
@@ -460,16 +460,17 @@ describe('Upload list', () => {
 			const emitter = new EventEmitter();
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async ({ request }) => {
 						const fileName =
-							req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
+							request.headers.get('filename') &&
+							window.atob(request.headers.get('filename') as string);
 						const result =
 							find(uploadedFiles, (uploadedFile) => uploadedFile.name === fileName)?.id ||
 							faker.string.uuid();
 						await delayUntil(emitter, EMITTER_CODES.success);
-						return res(ctx.json({ nodeId: result }));
+						return HttpResponse.json({ nodeId: result });
 					}
 				)
 			);
@@ -572,7 +573,7 @@ describe('Upload list', () => {
 			const uploadFileHandler = jest.fn(handleUploadFileRequest);
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
 					uploadFileHandler
 				)

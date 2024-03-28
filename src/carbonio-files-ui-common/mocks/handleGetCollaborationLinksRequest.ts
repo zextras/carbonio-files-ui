@@ -4,22 +4,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import {
 	GetCollaborationLinksQuery,
 	GetCollaborationLinksQueryVariables
 } from '../types/graphql/types';
 
-const handleGetCollaborationLinksRequest: ResponseResolver<
-	GraphQLRequest<GetCollaborationLinksQueryVariables>,
-	GraphQLContext<GetCollaborationLinksQuery>,
-	GetCollaborationLinksQuery
-> = (req, res, ctx) =>
-	res(
-		ctx.data({
+const handleGetCollaborationLinksRequest: GraphQLResponseResolver<
+	GetCollaborationLinksQuery,
+	GetCollaborationLinksQueryVariables
+> = () =>
+	HttpResponse.json({
+		data: {
 			getCollaborationLinks: []
-		})
-	);
+		}
+	});
 
 export default handleGetCollaborationLinksRequest;

@@ -5,7 +5,7 @@
  */
 
 import { forEach } from 'lodash';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import buildClient from '../apollo';
 import CHILD from '../graphql/fragments/child.graphql';
@@ -16,12 +16,11 @@ import {
 	Folder
 } from '../types/graphql/types';
 
-const handleMoveNodesRequest: ResponseResolver<
-	GraphQLRequest<MoveNodesMutationVariables>,
-	GraphQLContext<MoveNodesMutation>,
-	MoveNodesMutation
-> = (req, res, ctx) => {
-	const { node_ids: nodeIds, destination_id: destinationId } = req.variables;
+const handleMoveNodesRequest: GraphQLResponseResolver<
+	MoveNodesMutation,
+	MoveNodesMutationVariables
+> = ({ variables }) => {
+	const { node_ids: nodeIds, destination_id: destinationId } = variables;
 
 	const apolloClient = buildClient();
 
@@ -51,11 +50,11 @@ const handleMoveNodesRequest: ResponseResolver<
 		}
 	});
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			moveNodes: nodes
-		})
-	);
+		}
+	});
 };
 
 export default handleMoveNodesRequest;

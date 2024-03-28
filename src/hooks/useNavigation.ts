@@ -41,11 +41,11 @@ export const useNavigation: UseNavigationHook = () => {
 				? replaceHistory({
 						route: FILES_ROUTE,
 						path: location
-				  })
+					})
 				: pushHistory({
 						route: FILES_ROUTE,
 						path: location
-				  });
+					});
 		},
 		[pushHistory, replaceHistory]
 	);

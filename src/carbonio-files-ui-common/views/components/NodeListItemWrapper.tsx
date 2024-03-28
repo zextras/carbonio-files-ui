@@ -81,7 +81,7 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 	const createSnackbar = useSnackbar();
 
 	// timer to start navigation
-	const navigationTimerRef = useRef<NodeJS.Timer | null>(null);
+	const navigationTimerRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(
 		() => (): void => {

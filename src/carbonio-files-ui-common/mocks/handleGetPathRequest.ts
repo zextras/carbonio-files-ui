@@ -5,29 +5,27 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateFolder, populateLocalRoot, populateParents } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetPathQuery, GetPathQueryVariables } from '../types/graphql/types';
 
-const handleGetPathRequest: ResponseResolver<
-	GraphQLRequest<GetPathQueryVariables>,
-	GraphQLContext<GetPathQuery>,
-	GetPathQuery
-> = (req, res, ctx) => {
-	const { node_id: id } = req.variables;
+const handleGetPathRequest: GraphQLResponseResolver<GetPathQuery, GetPathQueryVariables> = ({
+	variables
+}) => {
+	const { node_id: id } = variables;
 
 	const { path } = populateParents(populateFolder(0, id), faker.number.int(15));
 	if (id !== ROOTS.LOCAL_ROOT) {
 		path.unshift(populateLocalRoot());
 	}
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			getPath: path
-		})
-	);
+		}
+	});
 };
 
 export default handleGetPathRequest;

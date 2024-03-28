@@ -6,8 +6,8 @@
 
 import React from 'react';
 
-import { waitFor } from '@testing-library/react';
-import { rest } from 'msw';
+import { act, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
 
 import { FilesQuota } from './FilesQuota';
 import server from '../../../mocks/server';
@@ -19,6 +19,9 @@ import { screen, setup } from '../../utils/testUtils';
 describe('Files Quota', () => {
 	it('should show files quota when request return successfully', async () => {
 		setup(<FilesQuota />);
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
 		expect(await screen.findByTestId(SELECTORS.filesQuota)).toBeVisible();
 	});
 
@@ -26,8 +29,8 @@ describe('Files Quota', () => {
 		const spyInstance = jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo');
 
 		server.use(
-			rest.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, (req, res, ctx) =>
-				res(ctx.status(403, ''))
+			http.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, () =>
+				HttpResponse.json(null, { status: 403 })
 			)
 		);
 

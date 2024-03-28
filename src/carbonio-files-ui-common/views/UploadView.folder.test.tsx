@@ -9,7 +9,7 @@ import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import { EventEmitter } from 'events';
-import { graphql, rest } from 'msw';
+import { graphql, http, HttpResponse, StrictResponse } from 'msw';
 
 import UploadView from './UploadView';
 import server from '../../mocks/server';
@@ -29,6 +29,7 @@ import {
 } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
+	CreateFolderDocument,
 	CreateFolderMutation,
 	CreateFolderMutationVariables,
 	Folder
@@ -63,11 +64,11 @@ describe('Upload View', () => {
 			const emitter = new EventEmitter();
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async () => {
 						await delayUntil(emitter, EMITTER_CODES.never);
-						return res(ctx.json({ nodeId: faker.string.uuid() }));
+						return HttpResponse.json({ nodeId: faker.string.uuid() });
 					}
 				)
 			);
@@ -118,14 +119,14 @@ describe('Upload View', () => {
 			let uploadRequestCount = 0;
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async () => {
 						if (uploadRequestCount > 0) {
 							await delayUntil(emitter, EMITTER_CODES.never);
 						}
 						uploadRequestCount += 1;
-						return res(ctx.json({ nodeId: faker.string.uuid() }));
+						return HttpResponse.json({ nodeId: faker.string.uuid() });
 					}
 				)
 			);
@@ -173,20 +174,21 @@ describe('Upload View', () => {
 			// 3) delay at infinite the upload of the 3 external items
 			// 4) retry the upload of the failed content item -> this one should stay in queued status since there are 3 items uploading in queue
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse | Record<string, never>>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async ({ request }) => {
 						const fileName =
-							req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
+							request.headers.get('filename') &&
+							window.atob(request.headers.get('filename') as string);
 						const childIndex = children.findIndex((child) => child.name === fileName);
 						if (childIndex >= 0 && childIndex < UploadQueue.LIMIT) {
-							return res(ctx.json({ nodeId: faker.string.uuid() }));
+							return HttpResponse.json({ nodeId: faker.string.uuid() });
 						}
 						if (childIndex === UploadQueue.LIMIT) {
-							return res(ctx.status(500));
+							return HttpResponse.json({}, { status: 500 });
 						}
 						await delayUntil(emitter, EMITTER_CODES.never);
-						return res(ctx.json({ nodeId: faker.string.uuid() }));
+						return HttpResponse.json({ nodeId: faker.string.uuid() });
 					}
 				)
 			);
@@ -263,14 +265,14 @@ describe('Upload View', () => {
 
 			server.use(
 				graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
-					'createFolder',
-					async (req, res, ctx) => {
+					CreateFolderDocument,
+					async () => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
 						const result = createFolderResponses.shift();
 						if (result) {
-							return res(
-								ctx.data({
+							return HttpResponse.json({
+								data: {
 									createFolder: {
 										...result,
 										children: populateNodePage([]),
@@ -283,22 +285,22 @@ describe('Upload View', () => {
 											}) ||
 											null
 									} as Folder
-								})
-							);
+								}
+							});
 						}
-						return res(
-							ctx.errors([
+						return HttpResponse.json({
+							errors: [
 								new ApolloError({ graphQLErrors: [generateError('msw no more folders to create')] })
-							])
-						);
+							]
+						});
 					}
 				),
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async () => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						uploadFile();
-						return res(ctx.json({ nodeId: faker.string.uuid() }));
+						return HttpResponse.json({ nodeId: faker.string.uuid() });
 					}
 				)
 			);
@@ -396,14 +398,14 @@ describe('Upload View', () => {
 
 			server.use(
 				graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
-					'createFolder',
-					async (req, res, ctx) => {
+					CreateFolderDocument,
+					async () => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
 						const result = createFolderResponses.shift();
 						if (result) {
-							return res(
-								ctx.data({
+							return HttpResponse.json({
+								data: {
 									createFolder: {
 										...result,
 										children: populateNodePage([]),
@@ -416,22 +418,22 @@ describe('Upload View', () => {
 											}) ||
 											null
 									} as Folder
-								})
-							);
+								}
+							});
 						}
-						return res(
-							ctx.errors([
+						return HttpResponse.json({
+							errors: [
 								new ApolloError({ graphQLErrors: [generateError('msw no more folders to create')] })
-							])
-						);
+							]
+						});
 					}
 				),
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async () => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						uploadFile();
-						return res(ctx.json({ nodeId: faker.string.uuid() }));
+						return HttpResponse.json({ nodeId: faker.string.uuid() });
 					}
 				)
 			);
@@ -506,14 +508,14 @@ describe('Upload View', () => {
 
 			server.use(
 				graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
-					'createFolder',
-					async (req, res, ctx) => {
+					CreateFolderDocument,
+					async () => {
 						await delayUntil(emitter, EMITTER_CODES.success);
 						createFolderMutation();
 						const result = createFolderResponses.shift();
 						if (result) {
-							return res(
-								ctx.data({
+							return HttpResponse.json({
+								data: {
 									createFolder: {
 										...result,
 										children: populateNodePage([]),
@@ -526,22 +528,22 @@ describe('Upload View', () => {
 											}) ||
 											null
 									} as Folder
-								})
-							);
+								}
+							});
 						}
-						return res(
-							ctx.errors([
+						return HttpResponse.json({
+							errors: [
 								new ApolloError({ graphQLErrors: [generateError('msw no more folders to create')] })
-							])
-						);
+							]
+						});
 					}
 				),
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse | Record<string, never>>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) => {
+					async () => {
 						await delayUntil(emitter, EMITTER_CODES.fail);
 						uploadFile();
-						return res(ctx.status(500));
+						return HttpResponse.json({}, { status: 500 });
 					}
 				)
 			);
@@ -612,15 +614,16 @@ describe('Upload View', () => {
 			} satisfies Partial<Resolvers>;
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse | Record<string, never>>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					(req, res, ctx) => {
+					({ request }) => {
 						const fileName =
-							req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
+							request.headers.get('filename') &&
+							window.atob(request.headers.get('filename') as string);
 						if (fileName === children[children.length - 1].name) {
-							return res(ctx.status(500));
+							return HttpResponse.json({}, { status: 500 });
 						}
-						return res(ctx.json({ nodeId: faker.string.uuid() }));
+						return HttpResponse.json({ nodeId: faker.string.uuid() });
 					}
 				)
 			);
@@ -700,12 +703,12 @@ describe('Upload View', () => {
 			const emitter = new EventEmitter();
 
 			server.use(
-				rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+				http.post<UploadRequestParams, UploadRequestBody, UploadResponse | null>(
 					`${REST_ENDPOINT}${UPLOAD_PATH}`,
-					async (req, res, ctx) =>
+					async () =>
 						Promise.any([
 							delayUntil(emitter, EMITTER_CODES.never).then(() =>
-								res(ctx.status(XMLHttpRequest.UNSENT))
+								HttpResponse.json<null>(null, { status: 500 })
 							)
 						])
 				)
@@ -761,12 +764,13 @@ describe('Upload View', () => {
 				const emitter = new EventEmitter();
 
 				server.use(
-					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+					http.post<UploadRequestParams, UploadRequestBody, UploadResponse | null>(
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
-						async (req, res, ctx) =>
+						async () =>
 							Promise.any([
-								delayUntil(emitter, EMITTER_CODES.never).then(() =>
-									res(ctx.status(XMLHttpRequest.UNSENT))
+								delayUntil(emitter, EMITTER_CODES.never).then(
+									() =>
+										new Response(null, { status: XMLHttpRequest.UNSENT }) as StrictResponse<null>
 								)
 							])
 					)
@@ -828,12 +832,12 @@ describe('Upload View', () => {
 				const emitter = new EventEmitter();
 
 				server.use(
-					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+					http.post<UploadRequestParams, UploadRequestBody, UploadResponse | null>(
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
-						async (req, res, ctx) =>
+						async () =>
 							Promise.any([
 								delayUntil(emitter, EMITTER_CODES.never).then(() =>
-									res(ctx.status(XMLHttpRequest.UNSENT))
+									HttpResponse.json<null>(null, { status: 500 })
 								)
 							])
 					)
@@ -894,9 +898,9 @@ describe('Upload View', () => {
 				const dataTransferObj = createUploadDataTransfer([folder]);
 
 				server.use(
-					rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+					http.post<UploadRequestParams, UploadRequestBody, UploadResponse | Record<string, never>>(
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
-						async (req, res, ctx) => res(ctx.status(500))
+						async () => HttpResponse.json({}, { status: 500 })
 					)
 				);
 

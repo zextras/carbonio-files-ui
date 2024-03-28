@@ -6,18 +6,16 @@
 
 import { faker } from '@faker-js/faker';
 import { take } from 'lodash';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateNode } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetSharesQuery, GetSharesQueryVariables } from '../types/graphql/types';
 
-const handleGetSharesRequest: ResponseResolver<
-	GraphQLRequest<GetSharesQueryVariables>,
-	GraphQLContext<GetSharesQuery>,
-	GetSharesQuery
-> = (req, res, ctx) => {
-	const { node_id: id, shares_limit: sharesLimit } = req.variables;
+const handleGetSharesRequest: GraphQLResponseResolver<GetSharesQuery, GetSharesQueryVariables> = ({
+	variables
+}) => {
+	const { node_id: id, shares_limit: sharesLimit } = variables;
 
 	let nodeName = faker.word.words();
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
@@ -28,11 +26,11 @@ const handleGetSharesRequest: ResponseResolver<
 	const sharesNum = faker.number.int({ min: 0, max: sharesLimit || 1 });
 	node.shares = take(node.shares, sharesNum);
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			getNode: node
-		})
-	);
+		}
+	});
 };
 
 export default handleGetSharesRequest;

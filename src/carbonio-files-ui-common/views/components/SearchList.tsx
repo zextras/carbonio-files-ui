@@ -73,11 +73,11 @@ export const SearchList: React.VFC = () => {
 			? t('empty.search.noResults', {
 					returnObjects: true,
 					defaultValue: t('empty.search.hint', "Your search didn't match any files or folders.")
-			  })
+				})
 			: t('empty.search.notRun', {
 					returnObjects: true,
 					defaultValue: 'No search executed'
-			  });
+				});
 		if (translations instanceof Array) {
 			return sample(translations) as string;
 		}

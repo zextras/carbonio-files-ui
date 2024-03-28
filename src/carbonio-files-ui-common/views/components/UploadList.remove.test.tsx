@@ -10,7 +10,7 @@ import { faker } from '@faker-js/faker';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { forEach, keyBy } from 'lodash';
-import { graphql, ResponseResolver, rest, RestContext, RestRequest } from 'msw';
+import { graphql, http, HttpResponse, HttpResponseResolver, StrictResponse } from 'msw';
 
 import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
@@ -32,6 +32,7 @@ import {
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
+	CreateFolderDocument,
 	CreateFolderMutation,
 	CreateFolderMutationVariables,
 	Folder,
@@ -108,30 +109,31 @@ describe('Upload List', () => {
 
 				const emitter = new EventEmitter();
 
-				const handleUploadFileRequest: ResponseResolver<
-					RestRequest<UploadRequestBody, UploadRequestParams>,
-					RestContext,
-					UploadResponse
-				> = async (req, res, ctx) => {
+				const handleUploadFileRequest: HttpResponseResolver<
+					UploadRequestParams,
+					UploadRequestBody,
+					UploadResponse | null
+				> = async ({ request }) => {
 					const fileName =
-						req.headers.get('filename') && window.atob(req.headers.get('filename') as string);
+						request.headers.get('filename') &&
+						window.atob(request.headers.get('filename') as string);
 					if (fileName === filesToUpload[0].name) {
 						await delayUntil(emitter, EMITTER_CODES.fail);
-						return res(ctx.status(500));
+						return HttpResponse.json(null, { status: 500 });
 					}
 					if (fileName === filesToUpload[1].name) {
 						await delayUntil(emitter, EMITTER_CODES.success);
-						return res(ctx.json({ nodeId: filesToUpload[1].id }));
+						return HttpResponse.json({ nodeId: filesToUpload[1].id });
 					}
 					await delayUntil(emitter, EMITTER_CODES.never);
-					return res(ctx.status(XMLHttpRequest.UNSENT));
+					return new Response(null, { status: XMLHttpRequest.UNSENT }) as StrictResponse<null>;
 				};
 
 				const uploadFileHandler = jest.fn(handleUploadFileRequest);
 				server.use(
-					rest.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, uploadFileHandler),
-					graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) =>
-						res(ctx.data({ getNode: filesToUpload[1] }))
+					http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, uploadFileHandler),
+					graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', () =>
+						HttpResponse.json({ data: { getNode: filesToUpload[1] } })
 					)
 				);
 				const mocks = {
@@ -237,11 +239,11 @@ describe('Upload List', () => {
 					const emitter = new EventEmitter();
 
 					server.use(
-						rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+						http.post<UploadRequestParams, UploadRequestBody, UploadResponse | null>(
 							`${REST_ENDPOINT}${UPLOAD_PATH}`,
-							async (req, res, ctx) => {
+							async () => {
 								await delayUntil(emitter, EMITTER_CODES.never);
-								return res(ctx.status(XMLHttpRequest.UNSENT));
+								return HttpResponse.json(null, { status: 500 });
 							}
 						)
 					);
@@ -306,12 +308,14 @@ describe('Upload List', () => {
 					const uploadHandlerResolve = jest.fn();
 
 					server.use(
-						rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+						http.post<UploadRequestParams, UploadRequestBody, UploadResponse | null>(
 							`${REST_ENDPOINT}${UPLOAD_PATH}`,
-							async (req, res, ctx) => {
+							async () => {
 								await delayUntil(emitter, EMITTER_CODES.never);
 								uploadHandlerResolve();
-								return res(ctx.status(XMLHttpRequest.UNSENT));
+								return new Response(null, {
+									status: XMLHttpRequest.UNSENT
+								}) as StrictResponse<null>;
 							}
 						)
 					);
@@ -380,19 +384,19 @@ describe('Upload List', () => {
 
 					server.use(
 						graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
-							'createFolder',
-							(req, res, ctx) =>
-								res(
-									ctx.errors([
+							CreateFolderDocument,
+							() =>
+								HttpResponse.json({
+									errors: [
 										new ApolloError({ graphQLErrors: [generateError('create folder msw error')] })
-									])
-								)
+									]
+								})
 						),
-						rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+						http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 							`${REST_ENDPOINT}${UPLOAD_PATH}`,
-							async (req, res, ctx) => {
+							async () => {
 								uploadHandler();
-								return res(ctx.json({ nodeId: faker.string.uuid() }));
+								return HttpResponse.json({ nodeId: faker.string.uuid() });
 							}
 						)
 					);
@@ -452,11 +456,11 @@ describe('Upload List', () => {
 					const uploadHandler = jest.fn();
 
 					server.use(
-						rest.post<UploadRequestBody, UploadRequestParams, UploadResponse>(
+						http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(
 							`${REST_ENDPOINT}${UPLOAD_PATH}`,
-							async (req, res, ctx) => {
+							async () => {
 								uploadHandler();
-								return res(ctx.json({ nodeId: faker.string.uuid() }));
+								return HttpResponse.json({ nodeId: faker.string.uuid() });
 							}
 						)
 					);

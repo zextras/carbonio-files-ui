@@ -6,7 +6,7 @@
 
 import { faker } from '@faker-js/faker';
 import { forEach, take } from 'lodash';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import {
 	populateLinks,
@@ -18,17 +18,10 @@ import {
 import { ROOTS } from '../constants';
 import { GetNodeQuery, GetNodeQueryVariables } from '../types/graphql/types';
 
-const handleGetNodeRequest: ResponseResolver<
-	GraphQLRequest<GetNodeQueryVariables>,
-	GraphQLContext<GetNodeQuery>,
-	GetNodeQuery
-> = (req, res, ctx) => {
-	const {
-		node_id: id,
-		children_limit: childrenLimit,
-		sort,
-		shares_limit: sharesLimit
-	} = req.variables;
+const handleGetNodeRequest: GraphQLResponseResolver<GetNodeQuery, GetNodeQueryVariables> = ({
+	variables
+}) => {
+	const { node_id: id, children_limit: childrenLimit, sort, shares_limit: sharesLimit } = variables;
 
 	let nodeName = faker.word.words();
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
@@ -56,11 +49,11 @@ const handleGetNodeRequest: ResponseResolver<
 	const linksLimit = faker.number.int({ min: 0, max: 50 });
 	node.links = populateLinks(node, linksLimit);
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			getNode: node
-		})
-	);
+		}
+	});
 };
 
 export default handleGetNodeRequest;

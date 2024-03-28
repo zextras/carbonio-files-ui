@@ -5,16 +5,15 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { UpdateLinkMutation, UpdateLinkMutationVariables } from '../types/graphql/types';
 
-const handleUpdateLinkRequest: ResponseResolver<
-	GraphQLRequest<UpdateLinkMutationVariables>,
-	GraphQLContext<UpdateLinkMutation>,
-	UpdateLinkMutation
-> = (req, res, ctx) => {
-	const { link_id: id, description, expires_at: expiresAt } = req.variables;
+const handleUpdateLinkRequest: GraphQLResponseResolver<
+	UpdateLinkMutation,
+	UpdateLinkMutationVariables
+> = ({ variables }) => {
+	const { link_id: id, description, expires_at: expiresAt } = variables;
 	const link: UpdateLinkMutation['updateLink'] = {
 		__typename: 'Link',
 		id,
@@ -24,11 +23,11 @@ const handleUpdateLinkRequest: ResponseResolver<
 		created_at: faker.date.recent().getTime()
 	};
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			updateLink: link
-		})
-	);
+		}
+	});
 };
 
 export default handleUpdateLinkRequest;

@@ -4,27 +4,26 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populatePermissions } from './mockUtils';
 import { GetPermissionsQuery, GetPermissionsQueryVariables } from '../types/graphql/types';
 
-const handleGetPermissionsRequest: ResponseResolver<
-	GraphQLRequest<GetPermissionsQueryVariables>,
-	GraphQLContext<GetPermissionsQuery>,
-	GetPermissionsQuery
-> = (req, res, ctx) => {
-	const { node_id: id } = req.variables;
+const handleGetPermissionsRequest: GraphQLResponseResolver<
+	GetPermissionsQuery,
+	GetPermissionsQueryVariables
+> = ({ variables }) => {
+	const { node_id: id } = variables;
 	const permissions = populatePermissions();
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			getNode: {
 				id,
 				__typename: 'Folder',
 				permissions
 			}
-		})
-	);
+		}
+	});
 };
 
 export default handleGetPermissionsRequest;

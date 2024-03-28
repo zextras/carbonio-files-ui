@@ -289,7 +289,7 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 						fragmentName: 'Child',
 						// assuming it's a folder, not the best solution
 						id: apolloClient.cache.identify(node)
-				  })
+					})
 				: null;
 			if (cachedNode?.id) {
 				// set directly cached data to make operation immediate

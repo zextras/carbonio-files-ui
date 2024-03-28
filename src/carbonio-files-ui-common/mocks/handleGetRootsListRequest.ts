@@ -4,18 +4,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { ROOTS } from '../constants';
 import { GetRootsListQuery, GetRootsListQueryVariables } from '../types/graphql/types';
 
-const handleGetRootsListRequest: ResponseResolver<
-	GraphQLRequest<GetRootsListQueryVariables>,
-	GraphQLContext<GetRootsListQuery>,
-	GetRootsListQuery
-> = (req, res, ctx) =>
-	res(
-		ctx.data({
+const handleGetRootsListRequest: GraphQLResponseResolver<
+	GetRootsListQuery,
+	GetRootsListQueryVariables
+> = () =>
+	HttpResponse.json({
+		data: {
 			getRootsList: [
 				{
 					id: ROOTS.LOCAL_ROOT,
@@ -28,7 +27,7 @@ const handleGetRootsListRequest: ResponseResolver<
 					__typename: 'Root'
 				}
 			]
-		})
-	);
+		}
+	});
 
 export default handleGetRootsListRequest;

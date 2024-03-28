@@ -4,11 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, MockedRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
-const handleIntrospectionRequest: ResponseResolver<
-	MockedRequest,
-	GraphQLContext<Record<string, unknown>>
-> = (req, res, ctx) => res(ctx.data({}));
+const handleIntrospectionRequest: GraphQLResponseResolver = () => HttpResponse.json({ data: {} });
 
 export default handleIntrospectionRequest;

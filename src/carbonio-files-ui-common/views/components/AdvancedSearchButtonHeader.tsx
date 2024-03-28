@@ -37,7 +37,7 @@ export const AdvancedSearchButtonHeader: React.VFC = () => {
 						filterCount > 0
 							? t('search.advancedSearch.button.filters', '{{count}} advanced filter', {
 									count: filterCount
-							  })
+								})
 							: t('search.advancedSearch.button.noFilter', 'Advanced filters')
 					}
 					icon="Options2Outline"

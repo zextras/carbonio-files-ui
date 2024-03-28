@@ -167,7 +167,7 @@ export const DisplayerPreview: React.VFC<DisplayerPreviewProps> = ({
 							: t(
 									'preview.loading.error',
 									'An error occurred while loading the preview. Try again.'
-							  )}
+								)}
 					</Text>
 					{!loading && (
 						<Button

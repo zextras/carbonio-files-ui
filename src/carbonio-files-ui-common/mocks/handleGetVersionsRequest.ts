@@ -5,37 +5,36 @@
  */
 
 import { map } from 'lodash';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { getVersionFromFile, populateFile } from './mockUtils';
 import { GetVersionsQuery, GetVersionsQueryVariables } from '../types/graphql/types';
 
-const handleGetVersionsRequest: ResponseResolver<
-	GraphQLRequest<GetVersionsQueryVariables>,
-	GraphQLContext<GetVersionsQuery>,
-	GetVersionsQuery
-> = (req, res, ctx) => {
-	const { versions } = req.variables;
+const handleGetVersionsRequest: GraphQLResponseResolver<
+	GetVersionsQuery,
+	GetVersionsQueryVariables
+> = ({ variables }) => {
+	const { versions } = variables;
 
 	if (versions && versions instanceof Array) {
 		const file = populateFile();
 
 		const resVersions = map(versions, (version) => getVersionFromFile({ ...file, version }));
 
-		return res(
-			ctx.data({
+		return HttpResponse.json({
+			data: {
 				getVersions: resVersions
-			})
-		);
+			}
+		});
 	}
 	const fileVersion1 = populateFile();
 	fileVersion1.version = 1;
 	const version1 = getVersionFromFile(fileVersion1);
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			getVersions: [version1]
-		})
-	);
+		}
+	});
 };
 
 export default handleGetVersionsRequest;

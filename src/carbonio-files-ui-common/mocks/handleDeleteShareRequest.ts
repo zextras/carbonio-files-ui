@@ -4,19 +4,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { DeleteShareMutation, DeleteShareMutationVariables } from '../types/graphql/types';
 
-const handleDeleteShareRequest: ResponseResolver<
-	GraphQLRequest<DeleteShareMutationVariables>,
-	GraphQLContext<DeleteShareMutation>,
-	DeleteShareMutation
-> = (req, res, ctx) =>
-	res(
-		ctx.data({
+const handleDeleteShareRequest: GraphQLResponseResolver<
+	DeleteShareMutation,
+	DeleteShareMutationVariables
+> = () =>
+	HttpResponse.json({
+		data: {
 			deleteShare: true
-		})
-	);
+		}
+	});
 
 export default handleDeleteShareRequest;

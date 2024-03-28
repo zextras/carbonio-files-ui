@@ -5,18 +5,17 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateNode } from './mockUtils';
 import { ROOTS } from '../constants';
 import { GetBaseNodeQuery, GetBaseNodeQueryVariables } from '../types/graphql/types';
 
-const handleGetBaseNodeRequest: ResponseResolver<
-	GraphQLRequest<GetBaseNodeQueryVariables>,
-	GraphQLContext<GetBaseNodeQuery>,
-	GetBaseNodeQuery
-> = (req, res, ctx) => {
-	const { node_id: id } = req.variables;
+const handleGetBaseNodeRequest: GraphQLResponseResolver<
+	GetBaseNodeQuery,
+	GetBaseNodeQueryVariables
+> = ({ variables }) => {
+	const { node_id: id } = variables;
 
 	let nodeName = faker.word.words();
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
@@ -24,11 +23,11 @@ const handleGetBaseNodeRequest: ResponseResolver<
 	}
 	const node = populateNode(undefined, id, nodeName);
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			getNode: node
-		})
-	);
+		}
+	});
 };
 
 export default handleGetBaseNodeRequest;

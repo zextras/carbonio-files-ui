@@ -15,7 +15,7 @@ import {
 	within
 } from '@testing-library/react';
 import { forEach, map, find } from 'lodash';
-import { graphql } from 'msw';
+import { graphql, HttpResponse } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -36,6 +36,7 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
 	Folder,
+	GetChildDocument,
 	GetChildQuery,
 	GetChildQueryVariables
 } from '../types/graphql/types';
@@ -69,15 +70,15 @@ describe('Drag and drop', () => {
 		const mockedGetChildHandler = jest.fn();
 
 		server.use(
-			graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-				const { node_id: id } = req.variables;
+			graphql.query<GetChildQuery, GetChildQueryVariables>(GetChildDocument, ({ variables }) => {
+				const { node_id: id } = variables;
 				const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
 				if (result) {
 					result.id = id;
 					reqIndex += 1;
 				}
 				mockedGetChildHandler(id);
-				return res(ctx.data({ getNode: result }));
+				return HttpResponse.json({ data: { getNode: result } });
 			})
 		);
 		const mocks = {
@@ -109,6 +110,9 @@ describe('Drag and drop', () => {
 			dataTransfer: dataTransferObj
 		});
 
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
 		await waitFor(() => expect(mockedGetChildHandler).toHaveBeenCalledTimes(uploadedFiles.length));
 		await screen.findByText(uploadedFiles[0].name);
 		await screen.findByText(uploadedFiles[1].name);
@@ -134,15 +138,15 @@ describe('Drag and drop', () => {
 		const mockedGetChildHandler = jest.fn();
 
 		server.use(
-			graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-				const { node_id: id } = req.variables;
+			graphql.query<GetChildQuery, GetChildQueryVariables>(GetChildDocument, ({ variables }) => {
+				const { node_id: id } = variables;
 				const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
 				if (result) {
 					result.id = id;
 					reqIndex += 1;
 				}
 				mockedGetChildHandler(id);
-				return res(ctx.data({ getNode: result }));
+				return HttpResponse.json({ data: { getNode: result } });
 			})
 		);
 		const mocks = {
@@ -195,14 +199,14 @@ describe('Drag and drop', () => {
 		let reqIndex = 0;
 
 		server.use(
-			graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-				const { node_id: id } = req.variables;
+			graphql.query<GetChildQuery, GetChildQueryVariables>(GetChildDocument, ({ variables }) => {
+				const { node_id: id } = variables;
 				const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
 				if (result) {
 					result.id = id;
 					reqIndex += 1;
 				}
-				return res(ctx.data({ getNode: result }));
+				return HttpResponse.json({ data: { getNode: result } });
 			})
 		);
 		const mocks = {
@@ -255,14 +259,14 @@ describe('Drag and drop', () => {
 		let reqIndex = 0;
 
 		server.use(
-			graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-				const { node_id: id } = req.variables;
+			graphql.query<GetChildQuery, GetChildQueryVariables>(GetChildDocument, ({ variables }) => {
+				const { node_id: id } = variables;
 				const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
 				if (result) {
 					result.id = id;
 					reqIndex += 1;
 				}
-				return res(ctx.data({ getNode: result }));
+				return HttpResponse.json({ data: { getNode: result } });
 			})
 		);
 		const mocks = {
@@ -318,15 +322,15 @@ describe('Drag and drop', () => {
 		const mockedGetChildHandler = jest.fn();
 
 		server.use(
-			graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', (req, res, ctx) => {
-				const { node_id: id } = req.variables;
+			graphql.query<GetChildQuery, GetChildQueryVariables>(GetChildDocument, ({ variables }) => {
+				const { node_id: id } = variables;
 				const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
 				if (result) {
 					result.id = id;
 					reqIndex += 1;
 				}
 				mockedGetChildHandler(id);
-				return res(ctx.data({ getNode: result }));
+				return HttpResponse.json({ data: { getNode: result } });
 			})
 		);
 		const mocks = {
@@ -358,6 +362,9 @@ describe('Drag and drop', () => {
 			dataTransfer: dataTransferObj
 		});
 
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
 		await waitFor(() => expect(mockedGetChildHandler).toHaveBeenCalledTimes(uploadedFiles.length));
 		await screen.findByText(uploadedFiles[0].name);
 		await screen.findByText(uploadedFiles[1].name);

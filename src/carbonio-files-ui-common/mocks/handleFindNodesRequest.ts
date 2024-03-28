@@ -6,17 +6,15 @@
 
 import { faker } from '@faker-js/faker';
 import { take } from 'lodash';
-import { GraphQLContext, GraphQLRequest, ResponseResolver, ResponseTransformer } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateNode, populateNodePage, populateShares, sortNodes } from './mockUtils';
 import { ROOTS } from '../constants';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 
-const handleFindNodesRequest: ResponseResolver<
-	GraphQLRequest<FindNodesQueryVariables>,
-	GraphQLContext<FindNodesQuery>,
-	FindNodesQuery
-> = (req, res, ctx) => {
+const handleFindNodesRequest: GraphQLResponseResolver<FindNodesQuery, FindNodesQueryVariables> = ({
+	variables
+}) => {
 	const {
 		keywords,
 		flagged,
@@ -26,16 +24,14 @@ const handleFindNodesRequest: ResponseResolver<
 		sort,
 		folder_id: folderId,
 		shares_limit: sharesLimit
-	} = req.variables;
+	} = variables;
 
 	const nodes = [];
 
 	if (!flagged && !sharedWithMe && !sharedByMe && !folderId && !keywords) {
-		return res(
-			ctx.errors([
-				{ message: 'MSW handleFindNodesRequest: Invalid parameters in findNodes request' }
-			]) as ResponseTransformer
-		);
+		return HttpResponse.json({
+			errors: [{ message: 'MSW handleFindNodesRequest: Invalid parameters in findNodes request' }]
+		});
 	}
 
 	for (let i = 0; i < faker.number.int({ min: 1, max: limit }); i += 1) {
@@ -63,11 +59,11 @@ const handleFindNodesRequest: ResponseResolver<
 		sortNodes(nodes, sort);
 	}
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			findNodes: populateNodePage(nodes, limit)
-		})
-	);
+		}
+	});
 };
 
 export default handleFindNodesRequest;
