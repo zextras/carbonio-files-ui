@@ -10,7 +10,7 @@ module.exports = {
 			'@babel/preset-env',
 			{
 				useBuiltIns: 'usage',
-				corejs: 3.32
+				corejs: 3.36
 			}
 		],
 		'@babel/preset-react',
