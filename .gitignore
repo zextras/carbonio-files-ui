@@ -13,3 +13,4 @@ sdk/package-lock.json
 /dist
 /LICENSES
 zextras-carbonio-*.tgz
+.env

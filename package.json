@@ -58,6 +58,7 @@
 		"@zextras/carbonio-ui-sdk": "^1.7.1",
 		"babel-plugin-i18next-extract": "^0.10.0",
 		"babel-plugin-styled-components": "^2.1.4",
+		"dotenv": "^16.4.5",
 		"eslint-plugin-no-autofix": "^1.2.3",
 		"eslint-plugin-notice": "^0.9.10",
 		"graphql-tag": "^2.12.6",
