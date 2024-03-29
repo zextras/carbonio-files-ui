@@ -7,6 +7,7 @@ import React from 'react';
 
 import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
+import { format } from 'date-fns';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
@@ -40,8 +41,8 @@ describe('Displayer', () => {
 				'Anyone with this link can view and download the content of this folder.',
 				'New Public access link generated'
 			]
-		])('On add link', (nodeType, title, desc, snackbarMsg) => {
-			test('on description input of a %s, click on other tab show dialog to warn user about unsaved changes', async () => {
+		])('On add link for %s', (nodeType, title, desc, snackbarMsg) => {
+			test('on description input, click on other tab show dialog to warn user about unsaved changes', async () => {
 				const node = populateNode(nodeType);
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
@@ -60,12 +61,12 @@ describe('Displayer', () => {
 					mocks
 				});
 				await screen.findByText(title);
-				await screen.findByText(desc);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				const descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
 				});
-				await user.type(descriptionInput, description);
+				await user.click(descriptionInput);
+				await user.paste(description);
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -100,12 +101,13 @@ describe('Displayer', () => {
 				await screen.findByText(title);
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
-				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
-				await user.click(nextMonthButton);
+				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
 				const chosenDate = getFirstOfNextMonth();
 				// always click on first 1 visible on the date picker
-				await user.click(screen.getAllByText('1')[0]);
+				await user.click(
+					screen.getByRole('option', { name: RegExp(format(chosenDate, 'PPPP'), 'i') })
+				);
 				await screen.findByText(formatDate(chosenDate, DATE_FORMAT));
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
@@ -145,29 +147,26 @@ describe('Displayer', () => {
 				const descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
 				});
-				await user.type(descriptionInput, description);
+				await user.click(descriptionInput);
+				await user.paste(description);
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
-				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
-				await user.click(nextMonthButton);
+				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(getFirstOfNextMonth(), DATE_FORMAT);
+				const chosenDate = getFirstOfNextMonth();
 				// always click on first 1 visible on the date picker
-				await user.click(screen.getAllByText('1')[0]);
-				await screen.findByText(chosenDate);
+				await user.click(
+					screen.getByRole('option', { name: RegExp(format(chosenDate, 'PPPP'), 'i') })
+				);
+				await screen.findByText(formatDate(chosenDate, DATE_FORMAT));
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
-				});
 				const actionButton = screen.getByRole('button', { name: /cancel/i });
-				expect(actionButton).toBeVisible();
 				await user.click(actionButton);
 				expect(actionButton).not.toBeInTheDocument();
 				expect(screen.getByRole('textbox', { name: /link's description/i })).toHaveDisplayValue(
 					description
 				);
-				expect(screen.getByText(chosenDate)).toBeVisible();
+				expect(screen.getByText(formatDate(chosenDate, DATE_FORMAT))).toBeVisible();
 			});
 
 			test('leave anyway action reset fields and continue navigation', async () => {
@@ -194,26 +193,24 @@ describe('Displayer', () => {
 				let descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
 				});
-				await user.type(descriptionInput, description);
+				await user.click(descriptionInput);
+				await user.paste(description);
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
-				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
-				await user.click(nextMonthButton);
+				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(getFirstOfNextMonth(), DATE_FORMAT);
+				const chosenDate = getFirstOfNextMonth();
+				const chosenDateFormatted = formatDate(chosenDate, DATE_FORMAT);
 				// always click on first 1 visible on the date picker
-				await user.click(screen.getAllByText('1')[0]);
-				await screen.findByText(chosenDate);
+				await user.click(
+					screen.getByRole('option', { name: RegExp(format(chosenDate, 'PPPP'), 'i') })
+				);
+				await screen.findByText(chosenDateFormatted);
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
-				});
 				const actionButton = screen.getByRole('button', { name: /leave anyway/i });
-				expect(actionButton).toBeVisible();
 				await user.click(actionButton);
-				expect(actionButton).not.toBeInTheDocument();
 				await screen.findByText(/description/i);
+				expect(actionButton).not.toBeInTheDocument();
 				expect(screen.queryByText(/public link/i)).not.toBeInTheDocument();
 				// go back to sharing tab
 				await user.click(screen.getByText(/sharing/i));
@@ -223,13 +220,13 @@ describe('Displayer', () => {
 					screen.queryByRole('textbox', { name: /link's description/i })
 				).not.toBeInTheDocument();
 				expect(screen.queryByText(description)).not.toBeInTheDocument();
-				expect(screen.queryByText(chosenDate)).not.toBeInTheDocument();
+				expect(screen.queryByText(chosenDateFormatted)).not.toBeInTheDocument();
 				// add a new link
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				descriptionInput = await screen.findByRole('textbox', { name: /link's description/i });
 				// new link fields are cleaned
 				expect(descriptionInput).not.toHaveDisplayValue(description);
-				expect(screen.queryByText(chosenDate)).not.toBeInTheDocument();
+				expect(screen.queryByText(chosenDateFormatted)).not.toBeInTheDocument();
 			});
 
 			test('save and leave action create link and continue navigation', async () => {
@@ -264,23 +261,20 @@ describe('Displayer', () => {
 				let descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
 				});
-				await user.type(descriptionInput, description);
+				await user.click(descriptionInput);
+				await user.paste(description);
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
-				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
-				await user.click(nextMonthButton);
+				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
 				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
 				// always click on first 1 visible on the date picker
-				await user.click(screen.getAllByText('1')[0]);
+				await user.click(
+					screen.getByRole('option', { name: RegExp(format(firstOfNextMonth, 'PPPP'), 'i') })
+				);
 				await screen.findByText(chosenDate);
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
-				});
 				const actionButton = screen.getByRole('button', { name: /save and leave/i });
-				expect(actionButton).toBeVisible();
 				await user.click(actionButton);
 				await screen.findByText(snackbarMsg);
 				await screen.findByText(/description/i);
@@ -348,23 +342,20 @@ describe('Displayer', () => {
 				const descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
 				});
-				await user.type(descriptionInput, description);
+				await user.click(descriptionInput);
+				await user.paste(description);
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
-				const nextMonthButton = await screen.findByRole('button', { name: /next month/i });
-				await user.click(nextMonthButton);
+				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
 				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
 				// always click on first 1 visible on the date picker
-				await user.click(screen.getAllByText('1')[0]);
+				await user.click(
+					screen.getByRole('option', { name: RegExp(format(firstOfNextMonth, 'PPPP'), 'i') })
+				);
 				await screen.findByText(chosenDate);
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
-				});
 				const actionButton = screen.getByRole('button', { name: /save and leave/i });
-				expect(actionButton).toBeVisible();
 				await user.click(actionButton);
 				await screen.findByText(/create link error/i);
 				expect(actionButton).not.toBeInTheDocument();

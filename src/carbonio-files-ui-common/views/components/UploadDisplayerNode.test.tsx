@@ -6,12 +6,11 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { screen } from '@testing-library/react';
 import { keyBy } from 'lodash';
 
 import { UploadDisplayerNode } from './UploadDisplayerNode';
 import { uploadVar } from '../../apollo/uploadVar';
-import { ICON_REGEXP } from '../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFolder,
 	populateUploadFolderItem,
@@ -21,7 +20,7 @@ import {
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetNode } from '../../utils/resolverMocks';
-import { setup } from '../../utils/testUtils';
+import { setup, screen, within } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
 
 describe('Upload Displayer Node', () => {
@@ -224,12 +223,16 @@ describe('Upload Displayer Node', () => {
 					getNode: mockGetNode({ getBaseNode: [parentFolder] })
 				}
 			} satisfies Partial<Resolvers>;
-			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
 			await screen.findByText(uploadItem.name);
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })).toBeVisible();
+			expect(
+				within(screen.getByTestId(SELECTORS.displayerActionsHeader)).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.retryUpload
+				})
+			).toBeVisible();
 		});
 	});
 

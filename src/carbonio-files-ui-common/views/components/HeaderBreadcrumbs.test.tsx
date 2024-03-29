@@ -68,10 +68,10 @@ describe('Header Breadcrumbs', () => {
 			const breadcrumbCrumbs = screen.queryByTestId(SELECTORS.dropCrumb);
 			expect(breadcrumbCrumbs).not.toBeInTheDocument();
 			expect(destinationCrumbItem).not.toHaveStyle({
-				'background-color': COLORS.dropzone.enabled
+				background: COLORS.dropzone.enabled
 			});
 			expect(destinationCrumbItem).not.toHaveStyle({
-				'background-color': COLORS.dropzone.disabled
+				background: COLORS.dropzone.disabled
 			});
 		});
 
@@ -142,11 +142,11 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': COLORS.dropzone.enabled
+				background: COLORS.dropzone.enabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': ''
+				background: ''
 			});
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
 			const snackbar = await screen.findByText(/item moved/i);
@@ -224,7 +224,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).not.toHaveStyle({
-				'background-color': COLORS.dropzone.enabled
+				background: COLORS.dropzone.enabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -290,7 +290,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(parent.name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': COLORS.dropzone.enabled
+				background: COLORS.dropzone.enabled
 			});
 			// wait for navigation to start
 			await waitFor(() => expect(mockedUseNavigationHook.navigateToFolder).toHaveBeenCalled());
@@ -353,7 +353,7 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(parent.name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': COLORS.dropzone.disabled
+				background: COLORS.dropzone.disabled
 			});
 			// wait for navigation to start eventually
 			jest.advanceTimersByTime(TIMERS.DRAG_NAVIGATION_TRIGGER);
@@ -435,11 +435,11 @@ describe('Header Breadcrumbs', () => {
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': COLORS.dropzone.disabled
+				background: COLORS.dropzone.disabled
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			expect(destinationCrumb).toHaveStyle({
-				'background-color': ''
+				background: ''
 			});
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
 			// wait a tick to allow mutation to eventually be executed

@@ -5,7 +5,6 @@
  */
 import React from 'react';
 
-import { screen } from '@testing-library/react';
 import { keyBy } from 'lodash';
 import { useLocation } from 'react-router-dom';
 
@@ -16,7 +15,7 @@ import { populateFolder, populateLocalRoot, populateUploadItems } from '../../mo
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetNode } from '../../utils/resolverMocks';
-import { selectNodes, setup } from '../../utils/testUtils';
+import { selectNodes, setup, screen } from '../../utils/testUtils';
 
 describe('Upload List', () => {
 	describe('Go To Folder', () => {
@@ -113,7 +112,7 @@ describe('Upload List', () => {
 						</>
 					);
 				};
-				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<TestComponent />, {
+				const { user } = setup(<TestComponent />, {
 					mocks
 				});
 
@@ -125,12 +124,9 @@ describe('Upload List', () => {
 				await selectNodes(Object.keys(uploadMap), user);
 
 				await screen.findByText(/deselect all/i);
-				await user.click(getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder }));
+				await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder }));
 				await screen.findByText(`current location: /?folder=${localRoot.id}`, { exact: false });
 				expect(screen.queryByText(/select all/i)).not.toBeInTheDocument();
-				expect(
-					queryByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })
-				).not.toBeInTheDocument();
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();
 			});

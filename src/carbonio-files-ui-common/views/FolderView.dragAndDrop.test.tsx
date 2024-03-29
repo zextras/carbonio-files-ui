@@ -664,7 +664,7 @@ describe('Drag and drop', () => {
 			(crumb) => within(crumb).queryByText(path[1].name) !== null
 		);
 		expect(folderWithoutPermissionsCrumb).toHaveStyle({
-			'background-color': COLORS.dropzone.disabled
+			background: COLORS.dropzone.disabled
 		});
 		fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
@@ -673,7 +673,7 @@ describe('Drag and drop', () => {
 		expect(itemToDrag).not.toHaveAttribute('disabled', '');
 
 		expect(folderWithoutPermissionsCrumb).toHaveStyle({
-			'background-color': ''
+			background: ''
 		});
 
 		// drag and drop on crumb with permissions
@@ -686,12 +686,12 @@ describe('Drag and drop', () => {
 		fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragOver(destinationItem, { dataTransfer: dataTransfer() });
 		expect(destinationCrumb).toHaveStyle({
-			'background-color': COLORS.dropzone.enabled
+			background: COLORS.dropzone.enabled
 		});
 		fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(destinationCrumb).toHaveStyle({
-			'background-color': ''
+			background: ''
 		});
 		await waitForElementToBeRemoved(itemToDrag);
 		await screen.findByText(/Item moved/i);
