@@ -3,10 +3,6 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-// KNOWN ISSUE: Since that folders are actually files, this is the only way to distinguish them from another kind of file.
-// Although this method doesn't give you absolute certainty that a file is a folder:
-// it might be a file without extension and with a size of 0 or exactly N x 4096B.
-// https://stackoverflow.com/a/25095250/17280436
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import { forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -386,7 +382,7 @@ export function uploadCompleted(
 	addNodeToFolder: UpdateFolderContentType['addNodeToFolder'],
 	isUploadVersion: boolean
 ): void {
-	if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+	if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === UPLOAD_STATUS_CODE.success) {
 		const response = JSON.parse(xhr.response);
 		const { nodeId } = response;
 		if (isUploadVersion) {
@@ -404,24 +400,14 @@ export function uploadCompleted(
 			loadItemAsChild(nodeId, fileEnriched.parentNodeId, apolloClient, nodeSort, addNodeToFolder);
 		}
 	} else {
-		/*
-		 * Handled Statuses
-		 * 405: upload-version error should happen only when number of versions is
-		 * 			strictly greater than max number of version config value (config changed)
-		 * 413:
-		 * 500: name already exists
-		 * 0: aborted (also blocked request)
-		 */
-
 		uploadVarReducer({
 			type: 'update',
 			value: { id: fileEnriched.id, status: UploadStatus.FAILED, statusCode: xhr.status }
 		});
 		incrementAllParentsFailedCount(fileEnriched);
 
-		const handledStatuses = [
+		const handledStatuses: number[] = [
 			UPLOAD_STATUS_CODE.maxVersionReached,
-			413,
 			UPLOAD_STATUS_CODE.internalServerError,
 			UPLOAD_STATUS_CODE.aborted,
 			UPLOAD_STATUS_CODE.overQuota

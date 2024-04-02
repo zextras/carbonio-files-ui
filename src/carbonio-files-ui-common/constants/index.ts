@@ -101,8 +101,15 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 export const DATE_FORMAT = 'DD/MM/YYYY';
 export const DATE_FORMAT_SHORT = 'DD/MM/YY';
 export const UPLOAD_STATUS_CODE = {
+	success: 200,
 	internalServerError: 500,
+	/**
+	 * upload-version error should happen only when number of versions is
+	 * strictly greater than max number of version allowed by config value
+	 * (caused by a change of the config)
+	 */
 	maxVersionReached: 405,
+	/** aborted or blocked request */
 	aborted: 0,
 	overQuota: 422
 } as const;
