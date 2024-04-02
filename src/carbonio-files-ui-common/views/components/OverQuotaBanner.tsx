@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Banner } from '@zextras/carbonio-design-system';
-import { filter } from 'lodash';
+import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { uploadVar } from '../../apollo/uploadVar';
@@ -19,9 +19,9 @@ export const OverQuotaBanner = (): React.JSX.Element | null => {
 	const [t] = useTranslation();
 	const uploadVarData = useReactiveVar(uploadVar);
 
-	const failedUploadItems = useMemo(
+	const isOverQuotaFailure = useMemo(
 		() =>
-			filter(
+			some(
 				uploadVarData,
 				(upload) =>
 					upload.status === UploadStatus.FAILED &&
@@ -30,7 +30,7 @@ export const OverQuotaBanner = (): React.JSX.Element | null => {
 		[uploadVarData]
 	);
 
-	return failedUploadItems.length > 0 ? (
+	return isOverQuotaFailure ? (
 		<Banner
 			description={t(
 				'uploads.banner.overQuota.description',
