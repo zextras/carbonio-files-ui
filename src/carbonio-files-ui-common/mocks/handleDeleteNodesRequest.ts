@@ -4,16 +4,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { DeleteNodesMutation, DeleteNodesMutationVariables } from '../types/graphql/types';
 
-const handleDeleteNodesRequest: ResponseResolver<
-	GraphQLRequest<DeleteNodesMutationVariables>,
-	GraphQLContext<DeleteNodesMutation>,
-	DeleteNodesMutation
-> = (req, res, ctx) => {
-	const { node_ids: nodes } = req.variables;
+const handleDeleteNodesRequest: GraphQLResponseResolver<
+	DeleteNodesMutation,
+	DeleteNodesMutationVariables
+> = ({ variables }) => {
+	const { node_ids: nodes } = variables;
 
 	let result = null;
 	if (nodes) {
@@ -24,11 +23,11 @@ const handleDeleteNodesRequest: ResponseResolver<
 		}
 	}
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			deleteNodes: result
-		})
-	);
+		}
+	});
 };
 
 export default handleDeleteNodesRequest;

@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
@@ -46,12 +46,13 @@ describe('Filter View', () => {
 				limit: NODES_LOAD_LIMIT,
 				shares_limit: SHARES_LOAD_LIMIT
 			};
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({
 					variables: expectedVariables
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 			expect(screen.queryByText(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});

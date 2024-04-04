@@ -4,26 +4,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import buildClient from '../apollo';
 import CHILD from '../graphql/fragments/child.graphql';
 import { Node } from '../types/common';
 import {
 	ChildFragment,
-	UpdateNodeDescriptionMutation,
-	UpdateNodeDescriptionMutationVariables,
 	UpdateNodeMutation,
 	UpdateNodeMutationVariables
 } from '../types/graphql/types';
 
-const handleUpdateNodeRequest: ResponseResolver<
-	GraphQLRequest<UpdateNodeMutationVariables | UpdateNodeDescriptionMutationVariables>,
-	GraphQLContext<UpdateNodeMutation | UpdateNodeDescriptionMutation>,
-	UpdateNodeMutation | UpdateNodeDescriptionMutation | string
-> = (req, res, ctx) => {
-	const { variables } = req;
-
+const handleUpdateNodeRequest: GraphQLResponseResolver<
+	UpdateNodeMutation,
+	UpdateNodeMutationVariables
+> = ({ variables }) => {
 	const apolloClient = buildClient();
 
 	// try to read the node as a file
@@ -43,15 +38,15 @@ const handleUpdateNodeRequest: ResponseResolver<
 	}
 
 	const name = ('name' in variables && variables.name) || result?.name || '';
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			updateNode: {
 				...result,
 				name,
-				description: variables.description || ''
+				description: variables.description ?? ''
 			} as Node
-		})
-	);
+		}
+	});
 };
 
 export default handleUpdateNodeRequest;

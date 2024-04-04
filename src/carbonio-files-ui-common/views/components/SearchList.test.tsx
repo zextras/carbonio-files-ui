@@ -8,7 +8,7 @@ import React from 'react';
 
 import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
-import { graphql } from 'msw';
+import { graphql, HttpResponse } from 'msw';
 
 import { SearchList } from './SearchList';
 import server from '../../../mocks/server';
@@ -20,6 +20,7 @@ import { AdvancedFilters } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
+	GetChildDocument,
 	GetChildQuery,
 	GetChildrenDocument,
 	GetChildrenQuery,
@@ -66,15 +67,18 @@ describe('Search list', () => {
 			});
 
 			server.use(
-				graphql.query<GetChildQuery, GetChildrenQueryVariables>('getChild', (req, res, ctx) => {
-					const { node_id: id } = req.variables;
-					const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
-					if (result) {
-						result.id = id;
+				graphql.query<GetChildQuery, GetChildrenQueryVariables>(
+					GetChildDocument,
+					({ variables }) => {
+						const { node_id: id } = variables;
+						const result = (reqIndex < uploadedFiles.length && uploadedFiles[reqIndex]) || null;
+						if (result) {
+							result.id = id;
+						}
+						reqIndex += 1;
+						return HttpResponse.json({ data: { getNode: result } });
 					}
-					reqIndex += 1;
-					return res(ctx.data({ getNode: result }));
-				})
+				)
 			);
 
 			const keywords = ['keyword1', 'keyword2'];

@@ -70,16 +70,17 @@ describe('List', () => {
 			node.type = NodeType.Application;
 			node.extension = 'pdf';
 
-			const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(
-				<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
-			);
+			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
 			await user.dblClick(screen.getByText(node.name));
 			await screen.findByTestId(SELECTORS.pdfPreview);
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })).toBeVisible();
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
+			// 1 inside the list, 1 in the preview
+			expect(screen.getAllByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toHaveLength(2);
 			expect(
-				queryByRoleWithIcon('button', { icon: ICON_REGEXP.openDocument })
+				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })
+			).toBeVisible();
+			expect(
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.openDocument })
 			).not.toBeInTheDocument();
 		});
 
@@ -110,7 +111,8 @@ describe('List', () => {
 			await screen.findByTestId(SELECTORS.pdfPreview);
 			expect(openWithDocsFn).not.toHaveBeenCalled();
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
-			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
+			// 1 inside the list, 1 inside preview
+			expect(screen.getAllByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toHaveLength(2);
 			expect(
 				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })
 			).toBeVisible();

@@ -22,9 +22,10 @@ type MutationName<TData> = keyof TData & keyof MutationResolvers;
 
 type Mock<
 	TData extends Pick<GQLTypes.Query, '__typename'> | Pick<GQLTypes.Mutation, '__typename'>
-> = TData extends Pick<GQLTypes.Query, '__typename'>
-	? QueryResolvers[QueryName<TData>]
-	: MutationResolvers[MutationName<TData>];
+> =
+	TData extends Pick<GQLTypes.Query, '__typename'>
+		? QueryResolvers[QueryName<TData>]
+		: MutationResolvers[MutationName<TData>];
 
 export function mockErrorResolver(error: GraphQLError): () => never {
 	return () => {

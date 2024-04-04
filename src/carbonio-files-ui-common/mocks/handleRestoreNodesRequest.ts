@@ -5,7 +5,7 @@
  */
 
 import { map } from 'lodash';
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { ROOTS } from '../constants';
 import CHILD from '../graphql/fragments/child.graphql';
@@ -34,12 +34,11 @@ function readDataFromCache(nodeId: string): ChildFragment | null {
 	return node;
 }
 
-const handleRestoreNodesRequest: ResponseResolver<
-	GraphQLRequest<RestoreNodesMutationVariables>,
-	GraphQLContext<RestoreNodesMutation>,
-	RestoreNodesMutation
-> = (req, res, ctx) => {
-	const { node_ids: nodes } = req.variables;
+const handleRestoreNodesRequest: GraphQLResponseResolver<
+	RestoreNodesMutation,
+	RestoreNodesMutationVariables
+> = ({ variables }) => {
+	const { node_ids: nodes } = variables;
 
 	let result: RestoreNodesMutation['restoreNodes'] = null;
 	if (nodes) {
@@ -72,11 +71,11 @@ const handleRestoreNodesRequest: ResponseResolver<
 		}
 	}
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			restoreNodes: result
-		})
-	);
+		}
+	});
 };
 
 export default handleRestoreNodesRequest;

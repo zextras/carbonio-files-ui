@@ -192,7 +192,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 				? t('displayer.share.chip.tooltip.edit.you', 'Edit your collaboration')
 				: t('displayer.share.chip.tooltip.edit.collaborator', "Edit {{username}}'s collaboration", {
 						replace: { username: getChipLabel(share.share_target) }
-				  }),
+					}),
 		[yourselfChip, share.share_target, t]
 	);
 
@@ -255,7 +255,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 					? t('displayer.share.chip.tooltip.remove.yourself', 'Remove your collaboration')
 					: t('displayer.share.chip.tooltip.remove.collaborator', 'Remove {{username}}', {
 							replace: { username: getChipLabel(share.share_target) }
-					  }),
+						}),
 				id: 'Remove',
 				type: 'button',
 				color: 'gray0',

@@ -105,7 +105,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 					(parent: Pick<Node, 'id' | 'name' | 'permissions' | 'type'> | undefined | null) =>
 						// TODO: it might be convenient to move this check in parent component through the checkDisabled function
 						parent && canBeWriteNodeDestination(parent, writingFile, writingFolder)
-			  )
+				)
 			: pathData?.getPath;
 		if (validParents) {
 			$crumbs.push(...buildCrumbs(validParents, navigateTo, t));

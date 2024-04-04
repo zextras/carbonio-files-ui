@@ -4,24 +4,23 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { DeleteLinksMutation, DeleteLinksMutationVariables } from '../types/graphql/types';
 
-const handleDeleteLinksRequest: ResponseResolver<
-	GraphQLRequest<DeleteLinksMutationVariables>,
-	GraphQLContext<DeleteLinksMutation>,
-	DeleteLinksMutation
-> = (req, res, ctx) => {
-	const { link_ids: linkIds } = req.variables;
+const handleDeleteLinksRequest: GraphQLResponseResolver<
+	DeleteLinksMutation,
+	DeleteLinksMutationVariables
+> = ({ variables }) => {
+	const { link_ids: linkIds } = variables;
 
 	const result = linkIds instanceof Array ? linkIds : [linkIds];
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			deleteLinks: result
-		})
-	);
+		}
+	});
 };
 
 export default handleDeleteLinksRequest;

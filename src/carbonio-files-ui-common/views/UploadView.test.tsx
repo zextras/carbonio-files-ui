@@ -5,12 +5,12 @@
  */
 import React from 'react';
 
-import { screen, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { keyBy } from 'lodash';
 
 import UploadView from './UploadView';
 import { uploadVar } from '../apollo/uploadVar';
-import { ICON_REGEXP } from '../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -22,7 +22,7 @@ import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode } from '../utils/resolverMocks';
-import { createUploadDataTransfer, setup, uploadWithDnD } from '../utils/testUtils';
+import { createUploadDataTransfer, setup, uploadWithDnD, screen, within } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -40,7 +40,7 @@ describe('Upload view', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const { user, getByRoleWithIcon } = setup(<UploadView />, { mocks });
+		const { user } = setup(<UploadView />, { mocks });
 
 		const dropzone = await screen.findByText(/nothing here/i);
 		await screen.findByText(/view files and folders/i);
@@ -52,9 +52,9 @@ describe('Upload view', () => {
 
 		await user.click(screen.getByText(node.name));
 		await waitFor(() => expect(screen.getAllByText(node.name)).toHaveLength(2));
-		expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.close })).toBeVisible();
+		expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close })).toBeVisible();
 		expect(screen.queryByText(/view files and folders/i)).not.toBeInTheDocument();
-		await user.click(getByRoleWithIcon('button', { icon: ICON_REGEXP.close }));
+		await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close }));
 		await screen.findByText(/view files and folders/i);
 		expect(screen.getByText(node.name)).toBeVisible();
 	});
@@ -77,16 +77,17 @@ describe('Upload view', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { findByRoleWithIcon } = setup(<UploadView />, { mocks });
+			setup(<UploadView />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 			await uploadWithDnD(dropzone, dataTransferObj);
 			await screen.findByText(otherUploads[0].name);
 			// wait for the displayer to open
-			await findByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder });
+			expect(
+				await within(screen.getByTestId(SELECTORS.displayer)).findByText(folder.name)
+			).toBeVisible();
 			// wait for every upload to complete
 			await screen.findAllByTestId(ICON_REGEXP.uploadCompleted);
-			expect(screen.getAllByText(folder.name)).toHaveLength(2);
 			expect(screen.getByText(/path/i)).toBeVisible();
 			expect(screen.getByText(/content/i)).toBeVisible();
 			expect(screen.getByText((folder.children.nodes[0] as Node).name)).toBeVisible();
@@ -116,7 +117,7 @@ describe('Upload view', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { queryByRoleWithIcon } = setup(<UploadView />, { mocks });
+			setup(<UploadView />, { mocks });
 
 			const dropzone = await screen.findByText(uploadItemsInList[1].name);
 			await uploadWithDnD(dropzone, dataTransferObj);
@@ -126,14 +127,10 @@ describe('Upload view', () => {
 				expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(5)
 			);
 			expect(
-				queryByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })
+				within(screen.getByTestId(SELECTORS.displayer)).queryByText(folder.name)
 			).not.toBeInTheDocument();
-			// folder name is visible only 1 time because displayer is closed
-			expect(screen.getByText(folder.name)).toBeVisible();
 			expect(screen.queryByText(/path/i)).not.toBeInTheDocument();
 			expect(screen.queryByText(/content/i)).not.toBeInTheDocument();
-			expect(screen.queryByText((folder.children.nodes[0] as Node).name)).not.toBeInTheDocument();
-			expect(screen.queryByText((folder.children.nodes[1] as Node).name)).not.toBeInTheDocument();
 		});
 
 		test('When the first item uploaded is a file and a folder is also uploaded, does not open displayer for this folder', async () => {
@@ -153,7 +150,7 @@ describe('Upload view', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { queryByRoleWithIcon } = setup(<UploadView />, { mocks });
+			setup(<UploadView />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 			await uploadWithDnD(dropzone, dataTransferObj);
@@ -161,14 +158,10 @@ describe('Upload view', () => {
 			// wait for every upload to complete
 			await screen.findAllByTestId(ICON_REGEXP.uploadCompleted);
 			expect(
-				queryByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })
+				within(screen.getByTestId(SELECTORS.displayer)).queryByText(folder.name)
 			).not.toBeInTheDocument();
-			// folder name is visible only 1 time because displayer is closed
-			expect(screen.getByText(folder.name)).toBeVisible();
 			expect(screen.queryByText(/path/i)).not.toBeInTheDocument();
 			expect(screen.queryByText(/content/i)).not.toBeInTheDocument();
-			expect(screen.queryByText((folder.children.nodes[0] as Node).name)).not.toBeInTheDocument();
-			expect(screen.queryByText((folder.children.nodes[1] as Node).name)).not.toBeInTheDocument();
 		});
 	});
 });

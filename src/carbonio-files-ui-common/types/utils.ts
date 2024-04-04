@@ -25,8 +25,8 @@ export type MakeDeepOptional<T, K extends keyof T> = Omit<T, K> & {
 		T[SubKey] extends Array<infer U>
 			? Array<U | null | undefined>
 			: T[SubKey] extends Record<string, unknown>
-			? Partial<T[SubKey]>
-			: T[SubKey]
+				? Partial<T[SubKey]>
+				: T[SubKey]
 	>;
 };
 
@@ -46,8 +46,9 @@ export type SnakeToCamelCase<S extends string> = S extends `${infer T}_${infer U
 	? `${T}${Capitalize<SnakeToCamelCase<U>>}`
 	: S;
 
-export type SnakeToCamelCaseNested<T> = T extends Record<string, unknown>
-	? {
-			[K in keyof T as SnakeToCamelCase<K & string>]: SnakeToCamelCaseNested<T[K]>;
-	  }
-	: T;
+export type SnakeToCamelCaseNested<T> =
+	T extends Record<string, unknown>
+		? {
+				[K in keyof T as SnakeToCamelCase<K & string>]: SnakeToCamelCaseNested<T[K]>;
+			}
+		: T;
