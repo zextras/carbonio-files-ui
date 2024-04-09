@@ -4,24 +4,23 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateFolder } from './mockUtils';
 import { CreateFolderMutation, CreateFolderMutationVariables } from '../types/graphql/types';
 
-const handleCreateFolderRequest: ResponseResolver<
-	GraphQLRequest<CreateFolderMutationVariables>,
-	GraphQLContext<CreateFolderMutation>,
-	CreateFolderMutation
-> = (req, res, ctx) => {
-	const { name } = req.variables;
+const handleCreateFolderRequest: GraphQLResponseResolver<
+	CreateFolderMutation,
+	CreateFolderMutationVariables
+> = ({ variables }) => {
+	const { name } = variables;
 	const folder = populateFolder(0, undefined, name);
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			createFolder: folder
-		})
-	);
+		}
+	});
 };
 
 export default handleCreateFolderRequest;

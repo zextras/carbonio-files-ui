@@ -4,26 +4,25 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateUser } from './mockUtils';
 import { GetAccountByEmailQuery, GetAccountByEmailQueryVariables } from '../types/graphql/types';
 
-const handleGetAccountByEmailRequest: ResponseResolver<
-	GraphQLRequest<GetAccountByEmailQueryVariables>,
-	GraphQLContext<GetAccountByEmailQuery>,
-	GetAccountByEmailQuery
-> = (req, res, ctx) => {
-	const { email } = req.variables;
+const handleGetAccountByEmailRequest: GraphQLResponseResolver<
+	GetAccountByEmailQuery,
+	GetAccountByEmailQueryVariables
+> = ({ variables }) => {
+	const { email } = variables;
 
 	const user = populateUser();
 	user.email = email;
 
-	return res(
-		ctx.data({
+	return HttpResponse.json({
+		data: {
 			getAccountByEmail: user
-		})
-	);
+		}
+	});
 };
 
 export default handleGetAccountByEmailRequest;

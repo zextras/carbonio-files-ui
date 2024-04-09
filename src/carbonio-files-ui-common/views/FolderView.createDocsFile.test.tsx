@@ -9,7 +9,7 @@ import React from 'react';
 import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { DropdownItem } from '@zextras/carbonio-design-system';
 import { find } from 'lodash';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -119,8 +119,8 @@ describe('Create docs file', () => {
 		} satisfies Partial<Resolvers>;
 
 		server.use(
-			rest.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, (req, res, ctx) =>
-				res(ctx.status(500, 'Error! Name already assigned'))
+			http.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, () =>
+				HttpResponse.json(null, { status: 500, statusText: 'Error! Name already assigned' })
 			)
 		);
 
@@ -178,12 +178,10 @@ describe('Create docs file', () => {
 		} satisfies Partial<Resolvers>;
 
 		server.use(
-			rest.post(DOCS_ENDPOINT + CREATE_FILE_PATH, (req, res, ctx) =>
-				res(
-					ctx.json({
-						nodeId: node2.id
-					})
-				)
+			http.post(DOCS_ENDPOINT + CREATE_FILE_PATH, () =>
+				HttpResponse.json({
+					nodeId: node2.id
+				})
 			)
 		);
 
@@ -267,18 +265,14 @@ describe('Create docs file', () => {
 		} satisfies Partial<Resolvers>;
 
 		server.use(
-			rest.post<CreateDocsFileRequestBody, never, CreateDocsFileResponse>(
+			http.post<never, CreateDocsFileRequestBody, CreateDocsFileResponse>(
 				`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`,
-				async (req, res, ctx) => {
-					const { filename } = await req.json<CreateDocsFileRequestBody>();
-					return res(
-						ctx.json({
-							nodeId:
-								(filename === node2.name && node2.id) ||
-								(filename === node1.name && node1.id) ||
-								null
-						})
-					);
+				async ({ request }) => {
+					const { filename } = await request.json();
+					return HttpResponse.json({
+						nodeId:
+							(filename === node2.name && node2.id) || (filename === node1.name && node1.id) || null
+					});
 				}
 			)
 		);

@@ -194,7 +194,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 									? t('publicLink.link.urlChip.tooltip.expired', 'This link has expired')
 									: t('publicLink.link.urlChip.tooltip.copy', 'Copy {{linkName}}', {
 											replace: { linkName }
-									  })
+										})
 							}
 							maxWidth="unset"
 							placement="top"

@@ -4,21 +4,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { GraphQLContext, GraphQLRequest, ResponseResolver } from 'msw';
+import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { FlagNodesMutation, FlagNodesMutationVariables } from '../types/graphql/types';
 
-const handleFlagNodesRequest: ResponseResolver<
-	GraphQLRequest<FlagNodesMutationVariables>,
-	GraphQLContext<FlagNodesMutation>,
-	FlagNodesMutation
-> = (req, res, ctx) => {
-	const { node_ids: ids } = req.variables;
-	return res(
-		ctx.data({
+const handleFlagNodesRequest: GraphQLResponseResolver<
+	FlagNodesMutation,
+	FlagNodesMutationVariables
+> = ({ variables }) => {
+	const { node_ids: ids } = variables;
+	return HttpResponse.json({
+		data: {
 			flagNodes: (ids as string[]) || []
-		})
-	);
+		}
+	});
 };
 
 export default handleFlagNodesRequest;

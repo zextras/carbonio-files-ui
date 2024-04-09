@@ -149,11 +149,11 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 				? t(
 						'publicLink.fileLink.addLink.description',
 						'Internal and external users that have access to the link can download the item.'
-				  )
+					)
 				: t(
 						'publicLink.folderLink.addLink.description',
 						'Anyone with this link can view and download the content of this folder.'
-				  ),
+					),
 		[node, t]
 	);
 
