@@ -12,8 +12,6 @@ import { AddShareChip } from './AddShareChip';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateGalContact, populateNode } from '../../../mocks/mockUtils';
 import { Role, ShareChip } from '../../../types/common';
-import { GetNodeDocument, GetNodeQuery, GetNodeQueryVariables } from '../../../types/graphql/types';
-import { getNodeVariables } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 
@@ -29,7 +27,8 @@ describe('Add Share Chip', () => {
 					role: Role.Viewer,
 					sharingAllowed: false,
 					onUpdate: onUpdateFn,
-					...contact
+					...contact,
+					node: populateNode()
 				}}
 				onClose={onCloseFn}
 			/>
@@ -57,7 +56,8 @@ describe('Add Share Chip', () => {
 					role: Role.Editor,
 					sharingAllowed: false,
 					onUpdate: onUpdateFn,
-					...contact
+					...contact,
+					node: populateNode()
 				}}
 				onClose={onCloseFn}
 			/>
@@ -85,7 +85,8 @@ describe('Add Share Chip', () => {
 					role: Role.Viewer,
 					sharingAllowed: true,
 					onUpdate: onUpdateFn,
-					...contact
+					...contact,
+					node: populateNode()
 				}}
 				onClose={onCloseFn}
 			/>
@@ -113,7 +114,8 @@ describe('Add Share Chip', () => {
 					role: Role.Editor,
 					sharingAllowed: true,
 					onUpdate: onUpdateFn,
-					...contact
+					...contact,
+					node: populateNode()
 				}}
 				onClose={onCloseFn}
 			/>
@@ -141,7 +143,8 @@ describe('Add Share Chip', () => {
 					role: Role.Viewer,
 					sharingAllowed: false,
 					onUpdate: onUpdateFn,
-					...contact
+					...contact,
+					node: populateNode()
 				}}
 				onClose={onCloseFn}
 			/>
@@ -168,20 +171,13 @@ describe('Add Share Chip', () => {
 			const onCloseFn = jest.fn();
 			const contact = populateGalContact();
 
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GetNodeDocument,
-				variables: getNodeVariables(node.id),
-				data: {
-					getNode: node
-				}
-			});
-
 			const chip: ShareChip['value'] = {
 				id: 'chip-id',
 				role: Role.Viewer,
 				sharingAllowed: false,
 				onUpdate: onUpdateFn,
-				...contact
+				...contact,
+				node
 			};
 
 			const { user } = setup(<AddShareChip value={chip} onClose={onCloseFn} />, {
@@ -209,14 +205,6 @@ describe('Add Share Chip', () => {
 			const onCloseFn = jest.fn();
 			const contact = populateGalContact();
 
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GetNodeDocument,
-				variables: getNodeVariables(node.id),
-				data: {
-					getNode: node
-				}
-			});
-
 			const { user } = setup(
 				<AddShareChip
 					value={{
@@ -224,7 +212,8 @@ describe('Add Share Chip', () => {
 						role: Role.Viewer,
 						sharingAllowed: false,
 						onUpdate: onUpdateFn,
-						...contact
+						...contact,
+						node
 					}}
 					onClose={onCloseFn}
 				/>,
@@ -252,20 +241,13 @@ describe('Add Share Chip', () => {
 			const onCloseFn = jest.fn();
 			const contact = populateGalContact();
 
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GetNodeDocument,
-				variables: getNodeVariables(node.id),
-				data: {
-					getNode: node
-				}
-			});
-
 			const chip: ShareChip['value'] = {
 				id: 'chip-id',
 				role: Role.Viewer,
 				sharingAllowed: false,
 				onUpdate: onUpdateFn,
-				...contact
+				...contact,
+				node
 			};
 
 			const { user } = setup(<AddShareChip value={chip} onClose={onCloseFn} />, {
@@ -298,20 +280,13 @@ describe('Add Share Chip', () => {
 			const onCloseFn = jest.fn();
 			const contact = populateGalContact();
 
-			global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-				query: GetNodeDocument,
-				variables: getNodeVariables(node.id),
-				data: {
-					getNode: node
-				}
-			});
-
 			const chip: ShareChip['value'] = {
 				id: 'chip-id',
 				role: Role.Viewer,
 				sharingAllowed: true,
 				onUpdate: onUpdateFn,
-				...contact
+				...contact,
+				node
 			};
 
 			const { user } = setup(<AddShareChip value={chip} onClose={onCloseFn} />, {
@@ -331,6 +306,32 @@ describe('Add Share Chip', () => {
 			expect(screen.getByText('Viewer')).toBeVisible();
 			expect(screen.getByText('Editor')).toBeVisible();
 			expect(screen.getByText('Sharing allowed')).toBeVisible();
+		});
+
+		it('should not show save button', async () => {
+			const node = populateNode();
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			const onUpdateFn = jest.fn();
+			const onCloseFn = jest.fn();
+			const contact = populateGalContact();
+
+			const chip: ShareChip['value'] = {
+				id: 'chip-id',
+				role: Role.Viewer,
+				sharingAllowed: true,
+				onUpdate: onUpdateFn,
+				...contact,
+				node
+			};
+
+			const { user } = setup(<AddShareChip value={chip} onClose={onCloseFn} />, {
+				initialRouterEntries: [`/?node=${node.id}`]
+			});
+
+			await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
+			await screen.findByTestId(SELECTORS.popper);
+			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 		});
 	});
 });

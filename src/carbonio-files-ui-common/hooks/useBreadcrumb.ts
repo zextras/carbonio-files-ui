@@ -58,7 +58,7 @@ export const useBreadcrumb: UseBreadcrumbType = (folderId, labels, crumbAction) 
 	);
 
 	const { data, loading, error } = useQuery(GetPathDocument, {
-		variables: { node_id: folderId || '' },
+		variables: { node_id: folderId ?? '' },
 		skip: !folderId,
 		errorPolicy: 'all',
 		returnPartialData: true

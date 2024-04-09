@@ -220,7 +220,6 @@ export interface Contact {
 	middleName?: string;
 	lastName?: string;
 	fullName?: string;
-	// eslint-disable-next-line camelcase
 	full_name?: string;
 	email?: string;
 	name?: string;
@@ -265,7 +264,6 @@ export enum Action {
 	RemoveUpload = 'REMOVE_UPLOAD',
 	RetryUpload = 'RETRY_UPLOAD',
 	GoToFolder = 'GO_TO_FOLDER'
-	// CreateFolder = 'CREATE_FOLDER',
 }
 
 export interface ShareChip extends ChipItem {
@@ -277,5 +275,6 @@ export interface ShareChip extends ChipItem {
 			id: string | undefined,
 			updatedPartialObject: Partial<Omit<ShareChip['value'], 'onUpdate'>>
 		) => void;
+		node: Pick<Node, '__typename' | 'permissions'>;
 	} & (Contact | User);
 }

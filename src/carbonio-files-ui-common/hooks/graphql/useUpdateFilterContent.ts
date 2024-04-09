@@ -9,7 +9,8 @@ import { useCallback } from 'react';
 import { ApolloClient, NormalizedCacheObject, useApolloClient } from '@apollo/client';
 import { filter, size } from 'lodash';
 
-import { FindNodesCachedObject } from '../../types/apollo';
+import { assertCachedObject } from '../../apollo/cacheUtils';
+import { FindNodesCachedObject, QueryCachedObject } from '../../types/apollo';
 
 type FilterMatchCondition = (existingRefs: FindNodesCachedObject) => boolean;
 
@@ -28,12 +29,10 @@ export const useUpdateFilterContent = (
 	const removeNodesFromFilter = useCallback<UpdateFilterContentReturnType['removeNodesFromFilter']>(
 		(nodeIdsToRemove, filterMatchCondition) => {
 			const { cache } = apolloClient;
-			cache.modify({
+			cache.modify<QueryCachedObject>({
 				fields: {
-					findNodes(
-						existingNodesRefs: FindNodesCachedObject | undefined,
-						{ readField, DELETE }
-					): FindNodesCachedObject | undefined {
+					findNodes(existingNodesRefs, { readField, DELETE }) {
+						assertCachedObject(existingNodesRefs);
 						if (existingNodesRefs && filterMatchCondition(existingNodesRefs)) {
 							const ordered = filter(existingNodesRefs.nodes?.ordered, (orderedNode) => {
 								const id = readField<string>('id', orderedNode);
