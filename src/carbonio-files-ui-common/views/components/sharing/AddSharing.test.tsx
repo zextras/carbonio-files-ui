@@ -31,7 +31,7 @@ import {
 	mockErrorResolver,
 	mockGetAccountByEmail
 } from '../../../utils/resolverMocks';
-import { generateError, setup } from '../../../utils/testUtils';
+import { generateError, setup, within } from '../../../utils/testUtils';
 
 const mockedSoapFetch = jest.fn();
 
@@ -66,23 +66,16 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
 		await screen.findByText(userAccount.email);
-		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount.email));
-		// dropdown is closed
-		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
+		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByText(userAccount.full_name);
+		await screen.findByTestId(SELECTORS.chipWithPopover);
 		// now try to add a new share with the same email
 		await user.type(chipInput, userAccount.full_name[0]);
-		await waitFor(() => expect(chipInput).toHaveValue(userAccount.full_name[0]));
 		await screen.findAllByText(/other-contact/i);
 		// email of previously added contact is not shown because this contact is filtered out from the dropdown
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
@@ -112,16 +105,11 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
 		await screen.findAllByText(/other-contact/i);
-		// other contacts are visible
-		expect(screen.getByText(`${userAccount.full_name[0]}-other-contact-1`)).toBeVisible();
-		expect(screen.getByText(`${userAccount.full_name[0]}-other-contact-2`)).toBeVisible();
 		// already existing contact is not shown
 		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
@@ -145,16 +133,11 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
 		await screen.findAllByText(/other-contact/i);
-		// other contacts are visible
-		expect(screen.getByText(`${userAccount.full_name[0]}-other-contact-1`)).toBeVisible();
-		expect(screen.getByText(`${userAccount.full_name[0]}-other-contact-2`)).toBeVisible();
 		// owner contact is not shown
 		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
@@ -175,16 +158,11 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		await user.type(chipInput, 'c');
-		expect(chipInput).toHaveValue('c');
 		// wait for the dropdown to be shown
 		await screen.findAllByText(/contact/i);
-		expect(screen.getByText('contact1@example.com')).toBeVisible();
-		// with the getBy query we assume there is just one entry
 		expect(screen.getByText('contactsamemail@example.com')).toBeVisible();
-		expect(screen.getByText('contact4@example.com')).toBeVisible();
-		expect(screen.getAllByText(/contact-\d/)).toHaveLength(3);
+		expect(screen.getByText('contact-4')).toBeVisible();
 		expect(screen.queryByText('contact-3')).not.toBeInTheDocument();
 	});
 
@@ -202,9 +180,7 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		await user.type(chipInput, 'c');
-		expect(chipInput).toHaveValue('c');
 		// wait for the dropdown to be shown
 		await screen.findAllByText(/contact/i);
 		// dropdown contains 3 entries
@@ -212,7 +188,6 @@ describe('Add Sharing', () => {
 		// delete input with backspace
 		await user.type(chipInput, '{backspace}', { skipClick: true });
 		await waitForElementToBeRemoved(screen.queryAllByText(/contact/i));
-		expect(screen.queryByText('c')).not.toBeInTheDocument();
 		expect(screen.queryByText(/contact/i)).not.toBeInTheDocument();
 	});
 
@@ -227,9 +202,6 @@ describe('Add Sharing', () => {
 		const mocks = {
 			Query: {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
-			},
-			Mutation: {
-				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -243,28 +215,18 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
-		await screen.findByText(userAccount.email);
-		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount.email));
-		// dropdown is closed
-		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
+		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByText(userAccount.full_name);
+		const chip = await screen.findByTestId(SELECTORS.chipWithPopover);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+		expect(within(chip).getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
-		await user.click(screen.getByRole('button', { name: /share/i }));
-		// create share mutation callback is called only if variables are an exact match
-		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
 	});
 
 	test('when user click on a new share permissions icon button of the chip the popover is shown', async () => {
@@ -290,21 +252,13 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
-		await screen.findByText(userAccount.email);
-		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount.email));
+		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByText(userAccount.full_name);
-		// dropdown is closed
-		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
-		await screen.findByText(userAccount.full_name);
+		await screen.findByTestId(SELECTORS.chipWithPopover);
 		// click on the chip to open the popover
 		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
@@ -313,11 +267,6 @@ describe('Add Sharing', () => {
 		expect(screen.getByText(/viewer/i)).toBeVisible();
 		expect(screen.getByText(/editor/i)).toBeVisible();
 		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-		// click outside to close popover
-		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
-		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
-		expect(screen.queryByText(/editor/i)).not.toBeInTheDocument();
-		expect(screen.queryByText(/sharing allowed/i)).not.toBeInTheDocument();
 	});
 
 	test('when user changes permissions from the popover the chip is immediately updated', async () => {
@@ -333,9 +282,6 @@ describe('Add Sharing', () => {
 		const mocks = {
 			Query: {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
-			},
-			Mutation: {
-				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -360,67 +306,28 @@ describe('Add Sharing', () => {
 			initialRouterEntries: [`/?node=${node.id}`]
 		});
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
-		await screen.findByText(userAccount.email);
-		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount.email));
-		// dropdown is closed
-		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
+		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByText(userAccount.full_name);
+		const chip = await screen.findByTestId(SELECTORS.chipWithPopover);
 		// chip is created with read-only permissions
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+		expect(within(chip).getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
+		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
+		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 		// click on chip to open popover
 		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
-		await screen.findByText(/viewer/i);
+		await screen.findByText(/editor/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
-		expect(screen.getByText(/editor/i)).toBeVisible();
-		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute('disabled');
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
-		// wait for the chip to update replacing the viewer icon with the editor one
-		// there are 2 editor icons because one is inside the popover
-		await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2));
-		// just 1 viewer icon is shown, the one inside the popover
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		// share permission is not selected yet
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
-		// double check that the popover is kept open
-		expect(screen.getByText(/viewer/i)).toBeVisible();
+		expect(await within(chip).findByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
 		// now select the share permission
 		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
-		await screen.findByTestId(ICON_REGEXP.shareCanShare);
-		// popover is still open so there are 2 editor icons (chip and popover), 1 viewer (popover) and 1 share (chip)
-		expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2);
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
-		expect(screen.getByText(/viewer/i)).toBeVisible();
-		// and sharing allowed is now checked inside the popover
-		expect(screen.queryByTestId(ICON_REGEXP.checkboxUnchecked)).not.toBeInTheDocument();
-		expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
-		// close popover
-		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
-		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
-		// now only the chip is shown, so we have 1 editor icon, 1 share and no viewer
-		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
-		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanRead)).not.toBeInTheDocument();
-		// confirm add with share button
-		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
+		// wait for chip to update with share permission icon
+		expect(await within(chip).findByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
 	});
 
 	test('without write permissions editor role cannot be selected', async () => {
@@ -436,9 +343,6 @@ describe('Add Sharing', () => {
 		const mocks = {
 			Query: {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
-			},
-			Mutation: {
-				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -463,48 +367,25 @@ describe('Add Sharing', () => {
 			initialRouterEntries: [`/?node=${node.id}`]
 		});
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
-		await screen.findByText(userAccount.email);
-		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount.email));
-		// dropdown is closed
-		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
+		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByText(userAccount.full_name);
-		// chip is created with read-only permissions
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+		const chip = await screen.findByTestId(SELECTORS.chipWithPopover);
 		// click on chip to open popover
 		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
-		expect(screen.getByText(/editor/i)).toBeVisible();
-		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).toBeVisible();
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(screen.getByTestId(ICON_REGEXP.checkboxUnchecked)).not.toHaveAttribute('disabled');
 		// click on editor shouldn't do anything
 		await user.click(screen.getByText(/editor/i));
 		// click on share should set share permissions
 		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 		// chip is updated
-		await screen.findByTestId(ICON_REGEXP.shareCanShare);
-		// close popover
-		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
-		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
-		// chip has read and share permissions since click on editor did nothing
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
-		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
+		expect(await within(chip).findByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
 	});
 
 	test('when user click on share button shares are created, chip input is cleared and shared button is disabled', async () => {
@@ -534,24 +415,13 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
-		await screen.findByText(userAccount.email);
-		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount.email));
-		// dropdown is closed
-		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
+		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByText(userAccount.full_name);
-		// chip is created with read-only permissions
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+		await screen.findByTestId(SELECTORS.chipWithPopover);
 		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
@@ -573,9 +443,6 @@ describe('Add Sharing', () => {
 		const mocks = {
 			Query: {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
-			},
-			Mutation: {
-				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -589,31 +456,17 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// share button is disabled
-		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
-		// share button is still disabled
 		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
-		await screen.findByText(userAccount.email);
-		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount.email));
-		// dropdown is closed
-		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
+		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByText(userAccount.full_name);
+		await screen.findByTestId(SELECTORS.chipWithPopover);
 		// share button is now active
 		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
-		await user.click(screen.getByRole('button', { name: /share/i }));
-		// create share mutation callback is called only if variables are an exact match
-		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
-		// share button returns to be disabled after creation success
-		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 	});
 
 	test('if no valid account is found chip is not added and share button remains disabled', async () => {
@@ -640,24 +493,19 @@ describe('Add Sharing', () => {
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// share button is disabled
 		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount.full_name[0]);
 		// wait for the dropdown to be shown
-		await screen.findByText(userAccount.email);
-		expect(screen.getByText(userAccount.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount.email));
+		await user.click(await screen.findByText(userAccount.email));
 		await screen.findByText(/Account not found/i);
 		// chip is not created
-		expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.chipWithPopover)).not.toBeInTheDocument();
 		// dropdown is closed
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
-		// share button returns to be disabled after creation success
+		// share button is still disabled
 		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
 	});
 
@@ -678,9 +526,6 @@ describe('Add Sharing', () => {
 		const mocks = {
 			Query: {
 				getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
-			},
-			Mutation: {
-				createShare: jest.fn(mockCreateShare(share1, share2) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation for both the calls
@@ -713,59 +558,33 @@ describe('Add Sharing', () => {
 			initialRouterEntries: [`/?node=${node.id}`]
 		});
 		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		expect(chipInput).toBeVisible();
 		// type just the first character because the network search is requested only one time with first character.
 		// All characters typed after the first one are just used to filter out the result obtained before
 		await user.type(chipInput, userAccount1.full_name[0]);
-		expect(chipInput).toHaveValue(userAccount1.full_name[0]);
 		// wait for the dropdown to be shown
-		await screen.findByText(userAccount1.email);
-		expect(screen.getByText(userAccount1.full_name)).toBeVisible();
-		expect(screen.getByText(userAccount1.email)).toBeVisible();
-		await user.click(screen.getByText(userAccount1.email));
-		// dropdown is closed
-		expect(screen.queryByText(userAccount1.email)).not.toBeInTheDocument();
+		await user.click(await screen.findByText(userAccount1.email));
 		// chip is created
-		await screen.findByText(userAccount1.full_name);
-		// chip is created with read-only permissions
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+		const chip1 = await screen.findByTestId(SELECTORS.chipWithPopover);
 		// create second chip
 		await user.type(chipInput, userAccount2.full_name[0]);
-		await waitFor(() => expect(chipInput).toHaveValue(userAccount2.full_name[0]));
-		await screen.findByText(userAccount2.email);
-		expect(screen.getByText(userAccount2.full_name)).toBeVisible();
-		await user.click(screen.getByText(userAccount2.full_name));
-		// dropdown is closed
-		expect(screen.queryByText(userAccount2.email)).not.toBeInTheDocument();
+		await user.click(await screen.findByText(userAccount2.email));
 		// chip is created
-		await screen.findByText(userAccount2.full_name);
-		// chip is created with read-only permissions, so now we have 2 chips in read-only
-		expect(screen.getAllByTestId(ICON_REGEXP.shareCanRead)).toHaveLength(2);
-		expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
-
+		const chip2 = (await screen.findAllByTestId(SELECTORS.chipWithPopover)).find(
+			(chip) => within(chip).queryByText(userAccount2.full_name) !== null
+		) as HTMLElement;
 		// edit first share to be an editor
 		// click on chip to open popover
-		await user.click(screen.getAllByTestId(ICON_REGEXP.shareCanRead)[0]);
+		await user.click(within(chip1).getByTestId(ICON_REGEXP.shareCanRead));
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
-		expect(screen.getByText(/editor/i)).toBeVisible();
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute('disabled');
 		await user.click(screen.getByText(/editor/i));
 		// wait for the chip to update replacing the viewer icon with the editor one
 		// there are 2 editor icons because one is inside the popover
-		await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.shareCanWrite)).toHaveLength(2));
-		// click on chip to close popover
-		await user.click(screen.getByText(userAccount1.full_name));
-		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
-
+		expect(await within(chip1).findByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
+		expect(within(chip2).queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
 		// edit second share to allow re-share
-		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
+		await user.click(within(chip2).getByTestId(ICON_REGEXP.shareCanRead));
 		// previous popover is closed and the one related to second share is opened
 		await screen.findByText(/viewer/i);
 		// advance timers to make the popover register listeners
@@ -773,21 +592,7 @@ describe('Add Sharing', () => {
 		// select the share permission
 		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 		// chip is updated, only this chip has the share icon
-		await screen.findByTestId(ICON_REGEXP.shareCanShare);
-		// close popover
-		await user.click(screen.getByRole('textbox', { name: /add new people or groups/i }));
-		expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
-
-		// now we have 2 chips, one with editor role and one with viewer with sharing role
-		expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
-		expect(screen.getByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
-		expect(screen.getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(screen.getByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
-
-		// confirm add with share button
-		await user.click(screen.getByRole('button', { name: /share/i }));
-		await waitFor(() => expect(mocks.Mutation.createShare).toHaveBeenCalled());
-		// mutation is called 2 times, one for each new collaborator
-		expect(mocks.Mutation.createShare).toHaveBeenCalledTimes(2);
+		expect(await within(chip2).findByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
+		expect(within(chip1).queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 	});
 });

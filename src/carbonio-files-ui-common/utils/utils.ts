@@ -15,6 +15,7 @@ import {
 	findIndex,
 	first,
 	forEach,
+	isEmpty,
 	map,
 	reduce,
 	size,
@@ -24,7 +25,6 @@ import {
 import moment, { Moment } from 'moment-timezone';
 import { DefaultTheme } from 'styled-components';
 
-import { searchParamsVar } from '../apollo/searchVar';
 import {
 	DOCS_ENDPOINT,
 	DOCS_EXTENSIONS,
@@ -174,7 +174,7 @@ export const buildCrumbs = (
 			(node): Crumb => ({
 				id: node.id,
 				/* i18next-extract-disable-next-line */
-				label: (t && t('node.alias.name', node.name, { context: node.id })) || node.name,
+				label: t?.('node.alias.name', node.name, { context: node.id }) ?? node.name,
 				onClick:
 					node && clickHandler && nodeClickCondition(node)
 						? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler(node.id, event)
@@ -224,31 +224,35 @@ export const initExpirationDate = (date: Date | undefined): Date | undefined => 
 	return undefined;
 };
 
+function takeIfNotEmpty(value: string | undefined): string | undefined {
+	return value !== undefined && !isEmpty(value) ? value : undefined;
+}
+
 /**
  * Decode an Apollo Error in a string message
  */
 export const decodeError = (error: ApolloError, t: TFunction): string | null => {
-	if (error) {
-		let errorMsg;
-		if (error.graphQLErrors && size(error.graphQLErrors) > 0) {
-			const err = first(error.graphQLErrors);
-			if (err?.extensions?.errorCode) {
-				return t('errorCode.code', 'Something went wrong', { context: err.extensions.errorCode });
-			}
-			if (err?.message) {
-				errorMsg = err?.message;
-			}
-		}
-		if (error.networkError && 'result' in error.networkError) {
-			const netError = map(
-				error.networkError.result,
-				(err) => err.extensions?.code || err.message
-			).join('\n');
-			errorMsg = errorMsg ? errorMsg + netError : netError;
-		}
-		return errorMsg || (error.message ? error.message : '');
+	if (!error) {
+		return null;
 	}
-	return null;
+	let errorMsg;
+	if (error.graphQLErrors && size(error.graphQLErrors) > 0) {
+		const err = first(error.graphQLErrors);
+		if (err?.extensions?.errorCode) {
+			return t('errorCode.code', 'Something went wrong', { context: err.extensions.errorCode });
+		}
+		if (err?.message) {
+			errorMsg = err?.message;
+		}
+	}
+	if (error.networkError && 'result' in error.networkError) {
+		const netError =
+			typeof error.networkError.result === 'string'
+				? error.networkError.result
+				: map(error.networkError.result, (err) => err.extensions?.code || err.message).join('\n');
+		errorMsg = errorMsg ? errorMsg + netError : netError;
+	}
+	return takeIfNotEmpty(errorMsg) ?? error.message;
 };
 
 export const getChipLabel = (contact: Contact | null | undefined): string => {
@@ -258,14 +262,20 @@ export const getChipLabel = (contact: Contact | null | undefined): string => {
 	if (contact.firstName || contact.middleName || contact.lastName) {
 		return trim(`${contact.firstName ?? ''} ${contact.middleName ?? ''} ${contact.lastName ?? ''}`);
 	}
-	return contact.full_name || contact.fullName || contact.email || contact.name || '';
+	return (
+		takeIfNotEmpty(contact.full_name) ??
+		takeIfNotEmpty(contact.fullName) ??
+		takeIfNotEmpty(contact.email) ??
+		takeIfNotEmpty(contact.name) ??
+		''
+	);
 };
 
 export const getChipTooltip = (contact: Contact | null | undefined): string => {
 	if (!contact) {
 		return '';
 	}
-	return contact.email || '';
+	return contact.email ?? '';
 };
 
 /**
@@ -280,7 +290,7 @@ export const copyToClipboard = (text: string): Promise<void> => {
 		const success = window.parent.document.execCommand('copy');
 		window.parent.document.body.removeChild(textArea);
 		return new Promise<void>((resolve, reject) => {
-			success ? resolve() : reject();
+			success ? resolve() : reject(new Error('copy command does not succeeded'));
 		});
 	}
 
@@ -357,10 +367,8 @@ export function propertyComparator<T extends SortableNode[keyof SortableNode]>(
 		propertyModifier?: (p: NonNullable<T>) => NonNullable<T>;
 	} = {}
 ): number {
-	let propA =
-		(nodeA == null || nodeA[property] == null ? defaultIfNull : (nodeA[property] as T)) || null;
-	let propB =
-		(nodeB == null || nodeB[property] == null ? defaultIfNull : (nodeB[property] as T)) || null;
+	let propA = (nodeA?.[property] == null ? defaultIfNull : (nodeA[property] as T)) ?? null;
+	let propB = (nodeB?.[property] == null ? defaultIfNull : (nodeB[property] as T)) ?? null;
 	if (propA === propB) {
 		return 0;
 	}
@@ -465,15 +473,6 @@ export function isTrashView(params: { filter?: string }): boolean {
 	return params.filter === 'myTrash' || params.filter === 'sharedTrash';
 }
 
-export function isTrashedVisible(params: { filter?: string }, location: Location): boolean {
-	const searchParams = searchParamsVar();
-	return (
-		isTrashView(params) ||
-		(isSearchView(location) &&
-			(!searchParams.folderId?.value || searchParams.folderId.value === ROOTS.TRASH))
-	);
-}
-
 export function sharePermissionsGetter(role: Role, sharingAllowed: boolean): SharePermission {
 	if (role === Role.Viewer && sharingAllowed) {
 		return SharePermission.ReadAndShare;
@@ -509,7 +508,7 @@ export function nodeSortGetter(order: OrderTrend, orderType: OrderType): NodeSor
 	if (order === OrderTrend.Descending && orderType === OrderType.Size) {
 		return NodeSort.SizeDesc;
 	}
-	throw new Error();
+	throw new Error(`invalid order ${orderType} ${order}`);
 }
 
 export function getInverseOrder(order: OrderTrend): OrderTrend {
@@ -731,7 +730,7 @@ type OperationTuple = [operator: CalcOperator, secondValue: string | number];
 export function cssCalcBuilder(
 	firstValue: string | number,
 	...operations: OperationTuple[]
-): `calc(${string})` | string {
+): string {
 	if (operations.length === 0) {
 		return `${firstValue}`;
 	}
@@ -766,4 +765,16 @@ export function isFolder(
 	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
 ): node is Folder & MakeRequiredNonNull<Folder, '__typename'> {
 	return node?.__typename === 'Folder';
+}
+
+export async function asyncForEach<T>(
+	items: T[],
+	callback: (item: T) => Promise<void>
+): Promise<void> {
+	await items.reduce(async (previous, item) => {
+		// Wait for the previous item to finish processing
+		await previous;
+		// Process this item
+		await callback(item);
+	}, Promise.resolve());
 }

@@ -6,7 +6,6 @@
 
 import { useEffect, useRef } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useMemoCompare<T>(
 	next: T,
 	compare: (previous: T | undefined, next: T) => boolean

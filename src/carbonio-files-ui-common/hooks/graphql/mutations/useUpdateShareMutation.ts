@@ -9,10 +9,10 @@ import { useCallback } from 'react';
 import { ApolloError, FetchResult, useMutation } from '@apollo/client';
 import { reduce } from 'lodash';
 
-import { recursiveShareEvict } from '../../../apollo/cacheUtils';
+import { assertCachedObject, recursiveShareEvict } from '../../../apollo/cacheUtils';
 import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
 import UPDATE_SHARE from '../../../graphql/mutations/updateShare.graphql';
-import { ShareCachedObject, SharesCachedObject } from '../../../types/apollo';
+import { NodeCachedObject, ShareCachedObject } from '../../../types/apollo';
 import { PickIdNodeType } from '../../../types/common';
 import {
 	SharePermission,
@@ -49,10 +49,11 @@ export function useUpdateShareMutation(): [
 					permission
 				},
 				update(cache) {
-					cache.modify({
+					cache.modify<NodeCachedObject>({
 						id: cache.identify(node),
 						fields: {
-							shares(existingShares: SharesCachedObject): SharesCachedObject {
+							shares(existingShares) {
+								assertCachedObject(existingShares);
 								const updatedShares = reduce<ShareCachedObject, ShareCachedObject[]>(
 									existingShares.shares,
 									(accumulator, existingShareRef) => {

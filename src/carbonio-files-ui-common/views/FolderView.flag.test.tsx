@@ -63,35 +63,31 @@ describe('Flag', () => {
 			// wait for the load to be completed
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 			expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
-
 			// activate selection mode by selecting items
 			await selectNodes(nodesIdsToFlag, user);
-
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesIdsToFlag.length);
-
-			const flagIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.flag });
 			// click on flag action on header bar
-			await user.click(flagIcon);
+			await user.click(await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.flag }));
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			await screen.findAllByTestId(ICON_REGEXP.flagged);
-			expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(nodesIdsToFlag.length);
-
+			expect(await screen.findAllByTestId(ICON_REGEXP.flagged)).toHaveLength(nodesIdsToFlag.length);
 			// activate selection mode by selecting items
 			await selectNodes(nodesIdsToUnflag, user);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesIdsToUnflag.length);
-			// if present, open the additional actions
-			const moreActionsItem = screen.queryByTestId(ICON_REGEXP.moreVertical);
-			if (moreActionsItem !== null) {
-				await user.click(moreActionsItem);
-				await screen.findByTestId(SELECTORS.dropdownList);
+			const listHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
+			const iconAction = await within(listHeader).findByRoleWithIcon('button', {
+				icon: ICON_REGEXP.unflag
+			});
+			if (iconAction !== null) {
+				await user.click(iconAction);
+			} else {
+				await user.click(within(listHeader).getByTestId(ICON_REGEXP.moreVertical));
+				const dropdown = await screen.findByTestId(SELECTORS.dropdownList);
+				await user.click(await within(dropdown).findByText(/unflag/i));
 			}
-			const unflagIcon = await screen.findByTestId(ICON_REGEXP.unflag);
-			await user.click(unflagIcon);
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-			await screen.findAllByTestId(ICON_REGEXP.flagged);
-			expect(screen.getAllByTestId(ICON_REGEXP.flagged)).toHaveLength(
+			expect(await screen.findAllByTestId(ICON_REGEXP.flagged)).toHaveLength(
 				nodesIdsToFlag.length - nodesIdsToUnflag.length
 			);
 		});

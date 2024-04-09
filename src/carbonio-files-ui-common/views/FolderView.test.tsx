@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { find, map } from 'lodash';
 
 import FolderView from './FolderView';
@@ -399,6 +399,9 @@ describe('Folder View', () => {
 					ICON_REGEXP.sharedByMe
 				)
 			).toBeVisible();
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
 			// navigate inside folder
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
@@ -513,6 +516,9 @@ describe('Folder View', () => {
 					icon: ICON_REGEXP.shareCanRead
 				})
 			).toBeVisible();
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
 			// navigate inside folder to cache data
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
@@ -599,9 +605,9 @@ describe('Folder View', () => {
 
 		test('should not show the deleted share in cached children', async () => {
 			const localRoot = populateLocalRoot();
-			const folder = populateFolder();
-			const subFolder = populateFolder();
-			const subSubFile = populateFile();
+			const folder = populateFolder(0, 'folder');
+			const subFolder = populateFolder(0, 'subFolder');
+			const subSubFile = populateFile('subSubFile');
 			localRoot.children = populateNodePage([folder]);
 			folder.children = populateNodePage([subFolder]);
 			subFolder.children = populateNodePage([subSubFile]);
@@ -667,66 +673,55 @@ describe('Folder View', () => {
 			});
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 			// folder has share
-			await screen.findByText(/sharing/i);
-			await user.click(screen.getByText(/sharing/i));
+			await user.click(await screen.findByText(/sharing/i));
 			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			act(() => {
+				jest.runOnlyPendingTimers();
+			});
 			// navigate inside folder to cache data
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
 			);
-			await screen.findByText(subFolder.name);
-			await user.click(screen.getByText(subFolder.name));
+			await user.click(await screen.findByText(subFolder.name));
 			// sub-folder has share
-			await screen.findByText(/sharing/i);
-			await user.click(screen.getByText(/sharing/i));
+			await user.click(await screen.findByText(/sharing/i));
 			expect(findChipWithText(userAccount.full_name)).toBeVisible();
 			// navigate inside sub-folder to cache data
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
 			);
-			await screen.findByText(subSubFile.name);
-			await user.click(screen.getByText(subSubFile.name));
+			await user.click(await screen.findByText(subSubFile.name));
 			// sub-sub-file has share
-			await screen.findByText(/sharing/i);
-			await user.click(screen.getByText(/sharing/i));
+			await user.click(await screen.findByText(/sharing/i));
 			expect(findChipWithText(userAccount.full_name)).toBeVisible();
 			// navigate back to local root
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand));
-			await screen.findByText(localRoot.name);
-			await user.click(screen.getByText(localRoot.name));
+			await user.click(await screen.findByText(localRoot.name));
 			// remove share on parent folder
-			await screen.findByText(folder.name);
-			await user.click(screen.getByText(folder.name));
-			await screen.findByText(/sharing/i);
-			await user.click(screen.getByText(/sharing/i));
-			expect(findChipWithText(userAccount.full_name)).toBeDefined();
+			await user.click(await screen.findByText(folder.name));
+			await user.click(await screen.findByText(/sharing/i));
 			await user.click(
 				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.close
 				})
 			);
-			const confirmButton = await screen.findByRole('button', { name: /remove/i });
-			await user.click(confirmButton);
+			await user.click(await screen.findByRole('button', { name: /remove/i }));
 			// folder share is removed
 			expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 			// navigate inside folder
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(localRoot.id))).getByText(folder.name)
 			);
-			await screen.findByText(subFolder.name);
-			await user.click(screen.getByText(subFolder.name));
-			await screen.findByText(/sharing/i);
-			await user.click(screen.getByText(/sharing/i));
+			await user.click(await screen.findByText(subFolder.name));
+			await user.click(await screen.findByText(/sharing/i));
 			// sub-folder share has been removed
 			expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 			// navigate inside sub-folder
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
 			);
-			await screen.findByText(subSubFile.name);
-			await user.click(screen.getByText(subSubFile.name));
-			await screen.findByText(/sharing/i);
-			await user.click(screen.getByText(/sharing/i));
+			await user.click(await screen.findByText(subSubFile.name));
+			await user.click(await screen.findByText(/sharing/i));
 			// sub-sub-file share has been removed
 			expect(screen.queryByText(userAccount.full_name)).not.toBeInTheDocument();
 		});

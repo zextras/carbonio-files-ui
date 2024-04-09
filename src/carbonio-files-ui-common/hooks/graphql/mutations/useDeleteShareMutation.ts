@@ -14,15 +14,13 @@ import { useLocation } from 'react-router-dom';
 
 import { useActiveNode } from '../../../../hooks/useActiveNode';
 import useUserInfo from '../../../../hooks/useUserInfo';
-import { recursiveShareEvict } from '../../../apollo/cacheUtils';
-import PARENT_ID from '../../../graphql/fragments/parentId.graphql';
-import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
-import DELETE_SHARE from '../../../graphql/mutations/deleteShare.graphql';
+import { assertCachedObject, recursiveShareEvict } from '../../../apollo/cacheUtils';
 import FIND_NODES from '../../../graphql/queries/findNodes.graphql';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
-import { SharesCachedObject } from '../../../types/apollo';
+import { NodeCachedObject } from '../../../types/apollo';
 import { Node, PickIdNodeType } from '../../../types/common';
 import {
+	DeleteShareDocument,
 	DeleteShareMutation,
 	DeleteShareMutationVariables,
 	DistributionList,
@@ -30,7 +28,9 @@ import {
 	Folder,
 	GetChildrenQuery,
 	ParentIdFragment,
+	ParentIdFragmentDoc,
 	SharedTarget,
+	ShareTargetFragmentDoc,
 	User
 } from '../../../types/graphql/types';
 import { isFolder, isSearchView } from '../../../utils/utils';
@@ -58,7 +58,7 @@ export function useDeleteShareMutation(): (
 	const [deleteShareMutation, { error }] = useMutation<
 		DeleteShareMutation,
 		DeleteShareMutationVariables
-	>(DELETE_SHARE);
+	>(DeleteShareDocument);
 
 	useErrorHandler(error, 'DELETE_SHARE', { type: 'error' });
 
@@ -79,16 +79,17 @@ export function useDeleteShareMutation(): (
 				errorPolicy: 'all',
 				update(cache, { data }) {
 					if (data?.deleteShare) {
-						cache.modify({
+						cache.modify<NodeCachedObject>({
 							id: cache.identify(node),
 							fields: {
-								shares(existingShares: SharesCachedObject): SharesCachedObject {
+								shares(existingShares) {
+									assertCachedObject(existingShares);
 									const updatedShares = filter(existingShares.shares, (existingShareRef) => {
 										const sharedTarget: User | DistributionList | null | undefined =
 											existingShareRef.share_target &&
 											cache.readFragment<SharedTarget>({
 												id: cache.identify(existingShareRef.share_target),
-												fragment: SHARE_TARGET
+												fragment: ShareTargetFragmentDoc
 											});
 										return !(sharedTarget && sharedTarget.id === shareTargetId);
 									});
@@ -110,7 +111,7 @@ export function useDeleteShareMutation(): (
 
 							const parentFolder = cache.readFragment<ParentIdFragment>({
 								id: cache.identify(node),
-								fragment: PARENT_ID
+								fragment: ParentIdFragmentDoc
 							});
 							if (parentFolder?.parent) {
 								removeNodesFromFolder(parentFolder.parent as Pick<Folder, '__typename' | 'id'>, [

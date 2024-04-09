@@ -20,6 +20,7 @@ import PARENT_ID from '../../../graphql/fragments/parentId.graphql';
 import TRASH_NODES from '../../../graphql/mutations/trashNodes.graphql';
 import FIND_NODES from '../../../graphql/queries/findNodes.graphql';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
+import { NodeCachedObject } from '../../../types/apollo';
 import { PickIdNodeType } from '../../../types/common';
 import {
 	FindNodesQuery,
@@ -110,7 +111,7 @@ export function useTrashNodesMutation(): TrashNodesType {
 									}
 								}
 
-								cache.modify({
+								cache.modify<NodeCachedObject>({
 									id: cache.identify(node),
 									fields: {
 										rootId(): string {

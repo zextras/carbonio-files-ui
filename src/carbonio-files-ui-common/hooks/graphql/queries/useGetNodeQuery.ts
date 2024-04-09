@@ -10,8 +10,7 @@ import { QueryOptions, QueryResult, useQuery, useReactiveVar } from '@apollo/cli
 
 import { nodeSortVar } from '../../../apollo/nodeSortVar';
 import { NODES_LOAD_LIMIT, SHARES_LOAD_LIMIT } from '../../../constants';
-import GET_NODE from '../../../graphql/queries/getNode.graphql';
-import { GetNodeQuery, GetNodeQueryVariables } from '../../../types/graphql/types';
+import { GetNodeDocument, GetNodeQuery, GetNodeQueryVariables } from '../../../types/graphql/types';
 import { isFolder } from '../../../utils/utils';
 import { useErrorHandler } from '../../useErrorHandler';
 
@@ -34,10 +33,10 @@ export function useGetNodeQuery(
 ): GetNodeQueryHook {
 	const nodeSort = useReactiveVar(nodeSortVar);
 	const { data, loading, error, fetchMore } = useQuery<GetNodeQuery, GetNodeQueryVariables>(
-		GET_NODE,
+		GetNodeDocument,
 		{
 			variables: {
-				node_id: nodeId || '',
+				node_id: nodeId ?? '',
 				children_limit: NODES_LOAD_LIMIT,
 				sort: nodeSort,
 				shares_limit: sharesLimit

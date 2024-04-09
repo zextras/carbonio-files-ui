@@ -3,27 +3,31 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { ApolloCache, FieldFunctionOptions } from '@apollo/client';
+import { ApolloCache, FieldFunctionOptions, isReference, Reference } from '@apollo/client';
 import { filter, find, findIndex, forEach, size } from 'lodash';
 
 import { nodeSortVar } from './nodeSortVar';
-import { NodesPageCachedObject } from '../types/apollo';
+import { FolderCachedObject } from '../types/apollo';
 import { Node } from '../types/common';
 import introspection from '../types/graphql/possible-types';
 import { ChildFragment, ChildWithParentFragmentDoc, NodeType } from '../types/graphql/types';
+
+export function assertCachedObject<T>(value: T | Reference): asserts value is T {
+	if (isReference(value)) {
+		throw new Error(`value ${JSON.stringify(value)} is a reference`);
+	}
+}
 
 export const removeNodesFromFolder = (
 	cache: ApolloCache<object>,
 	folderId: string,
 	nodeIdsToRemove: string[]
 ): void => {
-	cache.modify({
+	cache.modify<FolderCachedObject>({
 		id: cache.identify({ __typename: 'Folder', id: folderId }),
 		fields: {
-			children(
-				existingNodesRefs: NodesPageCachedObject,
-				{ readField, DELETE }
-			): NodesPageCachedObject {
+			children(existingNodesRefs, { readField, DELETE }) {
+				assertCachedObject(existingNodesRefs);
 				const newOrdered = filter(existingNodesRefs.nodes?.ordered, (ref) => {
 					const id = readField<string>('id', ref);
 					return !!id && !nodeIdsToRemove.includes(id);
@@ -65,14 +69,11 @@ export const addNodeInCachedChildren = (
 	addIfUnordered = true
 ): boolean =>
 	// using the cache modify function allows to override the cache data skipping the merge function
-	cache.modify({
+	cache.modify<FolderCachedObject>({
 		id: cache.identify({ __typename: 'Folder', id: folderId }),
 		fields: {
-			// existingChildrenRefs is the data of the cache (array of references)
-			children(
-				existingChildrenRefs: NodesPageCachedObject,
-				{ readField, storeFieldName, DELETE }
-			): NodesPageCachedObject {
+			children(existingChildrenRefs, { readField, storeFieldName, DELETE }) {
+				assertCachedObject(existingChildrenRefs);
 				const sortArg = JSON.parse(storeFieldName.replace(`children:`, '')).sort;
 
 				if (nodeSortVar() !== sortArg) {
@@ -153,16 +154,17 @@ export const recursiveShareEvict = (
 	cache: ApolloCache<unknown>,
 	node: Pick<Node, 'id' | '__typename'>
 ): boolean =>
-	cache.modify({
+	cache.modify<FolderCachedObject>({
 		id: cache.identify(node),
 		fields: {
-			children(existingChildrenRefs: NodesPageCachedObject, { readField }): void {
+			children(existingChildrenRefs, { readField, DELETE }) {
+				assertCachedObject(existingChildrenRefs);
 				if (existingChildrenRefs.nodes) {
 					forEach(
 						[...existingChildrenRefs.nodes.ordered, ...existingChildrenRefs.nodes.unOrdered],
 						(ref) => {
 							cache.evict({ id: ref.__ref, fieldName: 'shares' });
-							if (readField<NodeType>('type', ref) === 'FOLDER') {
+							if (readField<NodeType>('type', ref) === NodeType.Folder) {
 								const id = readField<string>('id', ref);
 								const __typename = readField<Node['__typename']>('__typename', ref);
 								if (id && __typename) {
@@ -173,6 +175,7 @@ export const recursiveShareEvict = (
 					);
 					cache.gc();
 				}
+				return DELETE;
 			}
 		}
 	});

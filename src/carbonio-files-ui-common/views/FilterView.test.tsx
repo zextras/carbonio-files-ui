@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { graphql } from 'msw';
 import { Link, Route, Switch } from 'react-router-dom';
@@ -189,6 +189,9 @@ describe('Filter view', () => {
 		// folder list, first load
 		await screen.findByTestId(SELECTORS.nodeItem(node.id));
 		expect(screen.getByTestId(SELECTORS.nodeItem(), { exact: false })).toBeInTheDocument();
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		// flag the node through the hover bar
 		await user.click(screen.getByTestId(ICON_REGEXP.flag));
 		await screen.findByTestId(ICON_REGEXP.flagged);
