@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import UploadView from './UploadView';
 import server from '../../mocks/server';
@@ -23,8 +23,8 @@ describe('Upload view quota', () => {
 		node.parent = localRoot;
 		const dataTransferObj = createUploadDataTransfer([node]);
 		server.use(
-			rest.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, (req, res, ctx) =>
-				res(ctx.status(UPLOAD_STATUS_CODE.overQuota))
+			http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, () =>
+				HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.overQuota })
 			)
 		);
 		setup(<UploadView />);
