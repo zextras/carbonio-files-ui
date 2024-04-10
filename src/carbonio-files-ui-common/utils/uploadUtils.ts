@@ -391,7 +391,13 @@ export function uploadCompleted(
 
 		uploadVarReducer({
 			type: 'update',
-			value: { id: fileEnriched.id, status: UploadStatus.COMPLETED, progress: 100, nodeId }
+			value: {
+				id: fileEnriched.id,
+				status: UploadStatus.COMPLETED,
+				statusCode: UPLOAD_STATUS_CODE.success,
+				progress: 100,
+				nodeId
+			}
 		});
 
 		incrementAllParents(fileEnriched);
@@ -435,6 +441,7 @@ export function upload(
 		value: {
 			id: fileEnriched.id,
 			status: UploadStatus.LOADING,
+			statusCode: undefined,
 			progress: 0
 		}
 	});
