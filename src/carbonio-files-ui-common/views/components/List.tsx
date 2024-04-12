@@ -109,7 +109,7 @@ export const List: React.VFC<ListProps> = ({
 		GetChildrenParentDocument,
 		{
 			variables: {
-				node_id: folderId || ''
+				node_id: folderId ?? ''
 			},
 			skip: !folderId,
 			fetchPolicy: 'cache-only'
@@ -379,7 +379,7 @@ export const List: React.VFC<ListProps> = ({
 								accumulator.push({
 									previewType: 'image',
 									filename: node.name,
-									extension: node.extension || undefined,
+									extension: node.extension ?? undefined,
 									size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
 									actions,
 									closeAction,
@@ -389,7 +389,7 @@ export const List: React.VFC<ListProps> = ({
 												height: 0,
 												quality: 'high',
 												outputFormat: getPreviewOutputFormat(node.mime_type)
-										  })
+											})
 										: '',
 									id: node.id
 								});
@@ -647,7 +647,7 @@ export const List: React.VFC<ListProps> = ({
 							'Drop here your items \n to quickly move them to this folder.'
 						),
 						icons: ['ImageOutline', 'FileAddOutline', 'FilmOutline']
-				  }
+					}
 				: {
 						title: t('dropzone.move.title.disabled', 'Drag&Drop mode.'),
 						message: t(
@@ -655,7 +655,7 @@ export const List: React.VFC<ListProps> = ({
 							'You cannot drop your items in this area.'
 						),
 						icons: ['AlertTriangleOutline']
-				  }
+					}
 		);
 		return canMove;
 	}, [folderNode, me, t]);
@@ -676,7 +676,7 @@ export const List: React.VFC<ListProps> = ({
 								'Drop here your attachments \n to quick-add them to your Home'
 							),
 						icons: ['ImageOutline', 'FileAddOutline', 'FilmOutline']
-				  }
+					}
 				: {
 						title: t('uploads.dropzone.title.disabled', 'Drag&Drop mode.'),
 						message: t(
@@ -684,7 +684,7 @@ export const List: React.VFC<ListProps> = ({
 							'You cannot drop an attachment in this area'
 						),
 						icons: ['AlertTriangleOutline']
-				  }
+					}
 		);
 		return canUpload;
 	}, [canUpload, folderId, t]);
@@ -729,7 +729,7 @@ export const List: React.VFC<ListProps> = ({
 	return (
 		<MainContainer
 			mainAlignment="flex-start"
-			data-testid={`list-${folderId || ''}`}
+			data-testid={`list-${folderId ?? ''}`}
 			maxHeight="100%"
 			background={'gray6'}
 		>

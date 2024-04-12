@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -149,19 +149,20 @@ describe('Mark for deletion - trash', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
-
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
-
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
+			act(() => {
+				// run lazy query
+				jest.runOnlyPendingTimers();
+			});
 			await user.click(trashAction);
-
 			await screen.findByText(/Item moved to trash/i);
+			await screen.findByText((secondPage[0] as Node).name);
 			expect(screen.queryByText((firstPage[0] as Node).name)).not.toBeInTheDocument();
 			expect(
 				screen.queryByText((firstPage[NODES_LOAD_LIMIT - 1] as Node).name)
 			).not.toBeInTheDocument();
-			await screen.findByText((secondPage[0] as Node).name);
 			expect(screen.queryByText((firstPage[0] as Node).name)).not.toBeInTheDocument();
 			expect(
 				screen.queryByText((firstPage[NODES_LOAD_LIMIT - 1] as Node).name)

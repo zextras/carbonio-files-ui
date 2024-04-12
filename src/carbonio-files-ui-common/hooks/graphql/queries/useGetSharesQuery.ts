@@ -7,8 +7,11 @@
 import { QueryResult, useQuery } from '@apollo/client';
 
 import { FULL_SHARES_LOAD_LIMIT } from '../../../constants';
-import GET_SHARES from '../../../graphql/queries/getShares.graphql';
-import { GetSharesQuery, GetSharesQueryVariables } from '../../../types/graphql/types';
+import {
+	GetSharesDocument,
+	GetSharesQuery,
+	GetSharesQueryVariables
+} from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
 /**
@@ -17,16 +20,19 @@ import { useErrorHandler } from '../../useErrorHandler';
 export function useGetSharesQuery(
 	nodeId?: string
 ): Pick<QueryResult<GetSharesQuery>, 'data' | 'loading' | 'error'> {
-	const { data, loading, error } = useQuery<GetSharesQuery, GetSharesQueryVariables>(GET_SHARES, {
-		variables: {
-			node_id: nodeId || '',
-			shares_limit: FULL_SHARES_LOAD_LIMIT
-		},
-		skip: !nodeId,
-		notifyOnNetworkStatusChange: true,
-		errorPolicy: 'all',
-		returnPartialData: true
-	});
+	const { data, loading, error } = useQuery<GetSharesQuery, GetSharesQueryVariables>(
+		GetSharesDocument,
+		{
+			variables: {
+				node_id: nodeId ?? '',
+				shares_limit: FULL_SHARES_LOAD_LIMIT
+			},
+			skip: !nodeId,
+			notifyOnNetworkStatusChange: true,
+			errorPolicy: 'all',
+			returnPartialData: true
+		}
+	);
 
 	useErrorHandler(error, 'GET_SHARES');
 

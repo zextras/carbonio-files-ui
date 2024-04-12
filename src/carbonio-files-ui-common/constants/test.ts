@@ -64,15 +64,18 @@ export const ICON_REGEXP = {
 	removeUpload: 'icon: CloseCircleOutline',
 	goToFolder: 'icon: FolderOutline',
 	uploadFailed: 'icon: AlertCircle',
+	overQuota: 'icon: AlertCircle',
 	uploadCompleted: 'icon: CheckmarkCircle2',
 	uploadLoading: 'icon: AnimatedLoader',
 	previewClose: 'icon: ArrowBackOutline',
 	previewDownload: 'icon: DownloadOutline',
 	queryLoading: 'icon: Refresh',
-	revoke: 'icon: SlashOutline'
+	revoke: 'icon: SlashOutline',
+	refreshQuota: 'icon: Refresh'
 } as const;
 
 export const SELECTORS = {
+	filesQuota: 'files-quota',
 	dropdownList: 'dropdown-popper-list',
 	checkedAvatar: 'icon: Checkmark',
 	pdfPreview: 'pdf-preview-container',
@@ -86,6 +89,7 @@ export const SELECTORS = {
 	sharingTabCollaborators: 'node-sharing-collaborators',
 	exclusiveSelectionEditor: 'exclusive-selection-editor',
 	exclusiveSelectionViewer: 'exclusive-selection-viewer',
+	chip: 'chip',
 	chipWithPopover: 'chip-with-popover',
 	listHeader: 'list-header',
 	listHeaderSelectionMode: 'list-header-selectionModeActive',
@@ -113,7 +117,8 @@ export const SELECTORS = {
 	},
 	avatar: 'avatar',
 	customBreadcrumbs: 'customBreadcrumbs',
-	missingFilter: 'missing-filter'
+	missingFilter: 'missing-filter',
+	popper: 'popper'
 };
 
 export const EMITTER_CODES = {

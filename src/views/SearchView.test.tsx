@@ -7,7 +7,7 @@ import React, { useCallback, useState } from 'react';
 
 import { act, screen, waitFor } from '@testing-library/react';
 import { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
-import { graphql } from 'msw';
+import { graphql, HttpResponse } from 'msw';
 
 import SearchView from './SearchView';
 import { INTERNAL_PATH, ROOTS } from '../carbonio-files-ui-common/constants';
@@ -15,6 +15,7 @@ import { ICON_REGEXP } from '../carbonio-files-ui-common/constants/test';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import { populateNodePage, populateNodes } from '../carbonio-files-ui-common/mocks/mockUtils';
 import {
+	FindNodesDocument,
 	FindNodesQuery,
 	FindNodesQueryVariables
 } from '../carbonio-files-ui-common/types/graphql/types';
@@ -87,9 +88,7 @@ describe('Search view', () => {
 			expect(mockedFindNodes).toHaveBeenCalledWith(
 				expect.objectContaining({
 					variables: expect.objectContaining({ flagged: true })
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
 		});
@@ -140,9 +139,7 @@ describe('Search view', () => {
 			expect(mockedFindNodes).toHaveBeenCalledWith(
 				expect.objectContaining({
 					variables: expect.objectContaining({ shared_by_me: true })
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
 		});
@@ -209,9 +206,7 @@ describe('Search view', () => {
 			expect(mockedFindNodes).toHaveBeenCalledWith(
 				expect.objectContaining({
 					variables: expect.objectContaining({ folder_id: ROOTS.LOCAL_ROOT, cascade: true })
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 		});
 
@@ -276,9 +271,7 @@ describe('Search view', () => {
 			expect(mockedFindNodes).toHaveBeenCalledWith(
 				expect.objectContaining({
 					variables: expect.objectContaining({ folder_id: ROOTS.LOCAL_ROOT, cascade: false })
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 		});
 
@@ -338,9 +331,7 @@ describe('Search view', () => {
 			expect(mockedFindNodes).toHaveBeenCalledWith(
 				expect.objectContaining({
 					variables: expect.objectContaining({ keywords: ['keyword1', 'keyword2'] })
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 			expect(screen.getByRole('button', { name: /1 advanced filter/i })).toBeVisible();
 		});
@@ -445,9 +436,7 @@ describe('Search view', () => {
 						folder_id: ROOTS.LOCAL_ROOT,
 						cascade: false
 					})
-				}),
-				expect.anything(),
-				expect.anything()
+				})
 			);
 			expect(screen.getByRole('button', { name: /4 advanced filter/i })).toBeVisible();
 		});
@@ -457,12 +446,12 @@ describe('Search view', () => {
 			const useDisableSearch = jest.fn();
 			const nodes = populateNodes(10);
 			server.use(
-				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', (req, res, ctx) =>
-					res(
-						ctx.data({
+				graphql.query<FindNodesQuery, FindNodesQueryVariables>(FindNodesDocument, () =>
+					HttpResponse.json({
+						data: {
 							findNodes: populateNodePage(nodes)
-						})
-					)
+						}
+					})
 				)
 			);
 			const { user } = setup(

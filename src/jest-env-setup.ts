@@ -8,6 +8,7 @@ import '@testing-library/jest-dom';
 import { type ApolloClient } from '@apollo/client';
 import { act, configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
+import dotenv from 'dotenv';
 import failOnConsole from 'jest-fail-on-console';
 import { noop } from 'lodash';
 
@@ -22,10 +23,13 @@ import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
 import { LOGGED_USER } from './mocks/constants';
 import server from './mocks/server';
 
+dotenv.config();
+
 type FileSystemDirectoryEntryMock = Omit<FileSystemDirectoryEntry, 'filesystem'> & {
 	filesystem: Partial<FileSystemDirectoryEntry['filesystem']>;
 };
 
+// see https://stackoverflow.com/a/68328575
 declare global {
 	// eslint-disable-next-line no-var,vars-on-top
 	var apolloClient: ApolloClient<object>;
@@ -55,9 +59,6 @@ failOnConsole({
 jest.setTimeout(60000);
 
 beforeEach(() => {
-	// Do not useFakeTimers with `whatwg-fetch` if using mocked server
-	// https://github.com/mswjs/msw/issues/448
-
 	// reset apollo client cache
 	global.apolloClient.resetStore();
 	// reset reactive variables
@@ -93,7 +94,8 @@ beforeEach(() => {
 beforeAll(() => {
 	server.listen({ onUnhandledRequest: 'warn' });
 
-	jest.retryTimes(2, { logErrorsBeforeRetry: true });
+	const retryTimes = process.env.JEST_RETRY_TIMES ? parseInt(process.env.JEST_RETRY_TIMES, 10) : 2;
+	jest.retryTimes(retryTimes, { logErrorsBeforeRetry: true });
 
 	// initialize an apollo client instance for test and makes it available globally
 	global.apolloClient = buildClient();

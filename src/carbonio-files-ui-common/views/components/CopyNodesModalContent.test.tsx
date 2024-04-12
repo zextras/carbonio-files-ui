@@ -8,7 +8,7 @@
 
 import React from 'react';
 
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { CopyNodesModalContent } from './CopyNodesModalContent';
@@ -322,7 +322,9 @@ describe('Copy Nodes Modal', () => {
 		expect(breadcrumb).toBeVisible();
 		await user.click(sharedWithMeItem);
 		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
-
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		// navigate inside shared with me filter
 		await user.dblClick(sharedWithMeItem);
 		await screen.findByText(sharedWithMeFilter[0].name);
@@ -385,19 +387,12 @@ describe('Copy Nodes Modal', () => {
 				mocks
 			}
 		);
-		const folderItem = await screen.findByText(folder.name);
-		// context menu
-		fireEvent.contextMenu(folderItem);
-		act(() => {
-			jest.runOnlyPendingTimers();
-		});
+		await user.rightClick(await screen.findByText(folder.name));
 		expect(screen.queryByText(ACTION_REGEXP.flag)).not.toBeInTheDocument();
 		// hover bar
 		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 		// selection mode
 		await selectNodes([folder.id], user);
-		// wait a tick to be sure eventual selection icon is shown
-
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 	});
 
@@ -769,6 +764,9 @@ describe('Copy Nodes Modal', () => {
 		expect(confirmButton).toBeDisabled();
 		await user.click(screen.getByText('Home'));
 		expect(confirmButton).toBeEnabled();
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
 		await screen.findByText(/item copied/i);

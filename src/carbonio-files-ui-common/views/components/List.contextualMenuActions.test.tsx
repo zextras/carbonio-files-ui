@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { forEach } from 'lodash';
 
 import { ContextualMenuProps } from './ContextualMenu';
@@ -17,7 +17,7 @@ import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetPath } from '../../utils/resolverMocks';
-import { setup, selectNodes } from '../../utils/testUtils';
+import { setup, selectNodes, screen } from '../../utils/testUtils';
 
 describe('Contextual menu actions', () => {
 	describe('Contextual menu on empty space', () => {
@@ -488,25 +488,17 @@ describe('Contextual menu actions', () => {
 				{ mocks }
 			);
 
+			await screen.findByTextWithMarkup(currentFolder.name);
 			await selectNodes([element0.id, element1.id], user);
-
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
-			fireEvent.contextMenu(nodeItem);
-
-			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
-			expect(moveToTrashAction).toBeVisible();
-
+			await user.rightClick(screen.getByTestId(SELECTORS.nodeItem(element0.id)));
+			expect(await screen.findByText(ACTION_REGEXP.moveToTrash)).toBeVisible();
+			expect(await screen.findByText(ACTION_REGEXP.copy)).toBeVisible();
+			expect(await screen.findByText(ACTION_REGEXP.flag)).toBeVisible();
 			expect(screen.queryByText(ACTION_REGEXP.openDocument)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.download)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.unflag)).not.toBeInTheDocument();
-
-			const copyAction = await screen.findByText(ACTION_REGEXP.copy);
-			expect(copyAction).toBeVisible();
-
-			const flagAction = await screen.findByText(ACTION_REGEXP.flag);
-			expect(flagAction).toBeVisible();
 		});
 
 		test('Contextual menu works only on selected nodes', async () => {
@@ -544,41 +536,18 @@ describe('Contextual menu actions', () => {
 				{ mocks }
 			);
 
+			await screen.findByTextWithMarkup(currentFolder.name);
 			await selectNodes([element0.id, element1.id], user);
-
 			// right click to open contextual menu
-			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
-			fireEvent.contextMenu(nodeItem);
-
-			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
-			expect(moveToTrashAction).toBeVisible();
-
-			const moveAction = await screen.findByText(ACTION_REGEXP.move);
-			expect(moveAction).toBeVisible();
-
-			const copyAction = await screen.findByText(ACTION_REGEXP.copy);
-			expect(copyAction).toBeVisible();
-
-			const flagAction = await screen.findByText(ACTION_REGEXP.flag);
-			expect(flagAction).toBeVisible();
-
+			await user.rightClick(screen.getByTestId(SELECTORS.nodeItem(element0.id)));
+			expect(await screen.findByTestId(SELECTORS.dropdownList)).toBeVisible();
 			act(() => {
 				// run timers of dropdown
 				jest.runOnlyPendingTimers();
 			});
-
-			expect(screen.queryByText(ACTION_REGEXP.openDocument)).not.toBeInTheDocument();
-			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
-			expect(screen.queryByText(ACTION_REGEXP.download)).not.toBeInTheDocument();
-			expect(screen.queryByText(ACTION_REGEXP.unflag)).not.toBeInTheDocument();
-
 			// right click on unSelected node close open contextual menu
-			const nodeItem2 = screen.getByTestId(SELECTORS.nodeItem(element2.id));
-			fireEvent.contextMenu(nodeItem2);
-
-			expect(moveToTrashAction).not.toBeVisible();
-			expect(copyAction).not.toBeVisible();
-			expect(flagAction).not.toBeVisible();
+			await user.rightClick(screen.getByTestId(SELECTORS.nodeItem(element2.id)));
+			expect(screen.queryByTestId(SELECTORS.dropdownList)).not.toBeInTheDocument();
 		});
 	});
 

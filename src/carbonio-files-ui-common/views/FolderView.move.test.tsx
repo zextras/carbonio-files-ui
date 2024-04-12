@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -29,11 +29,12 @@ import {
 	mockMoveNodes
 } from '../utils/resolverMocks';
 import {
-	buildBreadCrumbRegExp,
 	moveNode,
 	setup,
 	selectNodes,
-	triggerLoadMore
+	triggerLoadMore,
+	screen,
+	buildBreadCrumbRegExp
 } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
@@ -243,7 +244,7 @@ describe('Move', () => {
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([commonParent], [commonParent, currentFolder]),
-					// use default children resolver to split chidlren in pages
+					// use default children resolver to split children in pages
 					getNode: mockGetNode({
 						getChildren: [
 							{ ...currentFolder, children: populateNodePage(firstPage) },
@@ -260,7 +261,7 @@ describe('Move', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { findByTextWithMarkup, user } = setup(<FolderView />, {
+			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
 			});
@@ -282,16 +283,22 @@ describe('Move', () => {
 			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 			expect(moveAction).not.toHaveAttribute('disabled', '');
 			await user.click(moveAction);
-			await findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name, currentFolder.name));
+			await screen.findByTextWithMarkup(
+				buildBreadCrumbRegExp(commonParent.name, currentFolder.name)
+			);
 			const modalList = screen.getByTestId(SELECTORS.modalList);
 			await within(modalList).findByText((currentFolder.children.nodes[0] as Node).name);
 			const moveModalButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });
 			expect(moveModalButton).toBeDisabled();
+			act(() => {
+				// run path lazy query
+				jest.runOnlyPendingTimers();
+			});
 			await user.click(screen.getByText(commonParent.name));
-			await findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name));
+			await screen.findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name));
 			await screen.findByText(destinationFolder.name);
 			act(() => {
-				// run modal timers
+				// 	run modal timers
 				jest.runOnlyPendingTimers();
 			});
 			expect(screen.getByText(destinationFolder.name)).toBeVisible();

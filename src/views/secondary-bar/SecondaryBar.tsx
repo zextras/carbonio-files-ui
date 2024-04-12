@@ -19,6 +19,7 @@ import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-commo
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
+import { FilesQuota } from '../../carbonio-files-ui-common/views/components/FilesQuota';
 import {
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
@@ -245,15 +246,16 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 		return orderBy([...rootItems, ...filters, uploads], ['priority'], ['asc']);
 	}, [t, uploadsInfo, data, forceTrashOpen, navigateTo, expanded, location]);
 
-	return (
-		<Container height="fit">
-			{expanded ? (
-				<CustomAccordion role="menuitem" items={items || []} />
-			) : (
-				map(
-					items,
-					(value, index) => value && <SecondaryBarItemNotExpanded key={index} item={value} />
-				)
+	return expanded ? (
+		<Container mainAlignment={'space-between'}>
+			<CustomAccordion height={'fit'} role="menuitem" items={items || []} />
+			<FilesQuota />
+		</Container>
+	) : (
+		<Container height={'fit'}>
+			{map(
+				items,
+				(value, index) => value && <SecondaryBarItemNotExpanded key={index} item={value} />
 			)}
 		</Container>
 	);

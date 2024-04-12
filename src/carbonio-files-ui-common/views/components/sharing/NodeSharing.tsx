@@ -29,7 +29,7 @@ import { SHARE_CHIP_MAX_WIDTH, SHARE_CHIP_SIZE } from '../../../constants';
 import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
 import { useGetSharesQuery } from '../../../hooks/graphql/queries/useGetSharesQuery';
 import { Node } from '../../../types/common';
-import { Share, SharedTarget } from '../../../types/graphql/types';
+import { GetSharesQuery, Share, SharedTarget } from '../../../types/graphql/types';
 import { MakePartial, MakeRequiredNonNull } from '../../../types/utils';
 import { cssCalcBuilder, getChipLabel, getChipTooltip, isFile } from '../../../utils/utils';
 
@@ -38,12 +38,13 @@ const MainContainer = styled(Container)`
 	overflow-y: auto;
 `;
 
-const ScrollContainer = styled(Container)`
+const ScrollContainer = styled(Container).attrs(({ theme }) => ({
+	$marginSize: cssCalcBuilder(theme.sizes.padding.extrasmall, ['/', 2])
+}))`
 	overflow-y: auto;
 
 	> div {
-		margin: ${({ theme }): string => cssCalcBuilder(theme.sizes.padding.extrasmall, ['/', 2])};
-		margin-left: 0;
+		margin: ${({ $marginSize }): string => `${$marginSize} ${$marginSize} ${$marginSize} 0`};
 	}
 `;
 
@@ -77,7 +78,7 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 
 	const collaborators = useMemo(
 		() =>
-			reduce(
+			reduce<NonNullable<GetSharesQuery['getNode']>['shares'][number], React.JSX.Element[]>(
 				data?.getNode?.shares,
 				(accumulator, share) => {
 					if (share && shareTargetExists(share)) {
@@ -98,7 +99,7 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 					}
 					return accumulator;
 				},
-				[] as React.JSX.Element[]
+				[]
 			),
 		[data?.getNode?.shares, node.permissions, me, deleteShare]
 	);
@@ -149,11 +150,11 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 				? t(
 						'publicLink.fileLink.addLink.description',
 						'Internal and external users that have access to the link can download the item.'
-				  )
+					)
 				: t(
 						'publicLink.folderLink.addLink.description',
 						'Anyone with this link can view and download the content of this folder.'
-				  ),
+					),
 		[node, t]
 	);
 

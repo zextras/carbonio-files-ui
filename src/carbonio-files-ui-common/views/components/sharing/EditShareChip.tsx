@@ -15,18 +15,16 @@ import { ChipWithPopover } from './ChipWithPopover';
 import { EditShareChipPopoverContainer } from './EditShareChipPopoverContainer';
 import { ShareChipLabel } from './ShareChipLabel';
 import { SHARE_CHIP_MAX_WIDTH, SHARE_CHIP_SIZE } from '../../../constants';
-import GET_PERMISSIONS from '../../../graphql/queries/getPermissions.graphql';
 import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
 import { useUpdateShareMutation } from '../../../hooks/graphql/mutations/useUpdateShareMutation';
 import { useDecreaseYourOwnSharePermissionModal } from '../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
 import { useDeleteShareModal } from '../../../hooks/useDeleteShareModal';
-import { Role } from '../../../types/common';
+import { Role, Node } from '../../../types/common';
 import {
 	DeleteNodesMutation,
+	GetPermissionsDocument,
 	GetPermissionsQuery,
 	GetPermissionsQueryVariables,
-	Node,
-	NodeType,
 	Permissions,
 	ShareFragment,
 	SharePermission
@@ -48,13 +46,12 @@ const rowRoleToIdxMap: { [Role.Editor]: number; [Role.Viewer]: number } = {
 };
 
 const roleAssignChecker: {
-	[Role.Editor]: (node: Pick<Node, 'type'>, permissions: Permissions) => boolean;
-	[Role.Viewer]: (node: Pick<Node, 'type'>, permissions: Permissions) => boolean;
+	[Role.Editor]: (node: Pick<Node, '__typename'>, permissions: Permissions) => boolean;
+	[Role.Viewer]: (node: Pick<Node, '__typename'>, permissions: Permissions) => boolean;
 } = {
-	[Role.Editor]: (node: Pick<Node, 'type'>, permissions: Permissions) =>
-		node?.type &&
-		((node.type === NodeType.Folder && permissions.can_write_folder) ||
-			(node.type !== NodeType.Folder && permissions.can_write_file)),
+	[Role.Editor]: (node: Pick<Node, '__typename'>, permissions: Permissions) =>
+		(isFolder(node) && permissions.can_write_folder) ||
+		(isFile(node) && permissions.can_write_file),
 	[Role.Viewer]: () => true
 };
 
@@ -64,14 +61,15 @@ const rowIdxToRoleMap: { [id: number]: Role } = {
 };
 
 interface EditShareChipProps {
-	share: MakeRequiredNonNull<ShareFragment, 'share_target'> & { node: Pick<Node, 'id' | 'type'> };
+	share: MakeRequiredNonNull<ShareFragment, 'share_target'> & {
+		node: Pick<Node, 'id' | '__typename'>;
+	};
 	permissions: Permissions;
 	yourselfChip: boolean;
 	deleteShare: ReturnType<typeof useDeleteShareMutation>;
 }
 
 export const EditShareChip: React.FC<EditShareChipProps> = ({
-	/** Chip value */
 	share,
 	permissions,
 	deleteShare,
@@ -83,7 +81,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
 	const [getPermissionsLazy] = useLazyQuery<GetPermissionsQuery, GetPermissionsQueryVariables>(
-		GET_PERMISSIONS,
+		GetPermissionsDocument,
 		{
 			fetchPolicy: 'network-only',
 			variables: {
@@ -192,7 +190,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 				? t('displayer.share.chip.tooltip.edit.you', 'Edit your collaboration')
 				: t('displayer.share.chip.tooltip.edit.collaborator', "Edit {{username}}'s collaboration", {
 						replace: { username: getChipLabel(share.share_target) }
-				  }),
+					}),
 		[yourselfChip, share.share_target, t]
 	);
 
@@ -255,7 +253,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 					? t('displayer.share.chip.tooltip.remove.yourself', 'Remove your collaboration')
 					: t('displayer.share.chip.tooltip.remove.collaborator', 'Remove {{username}}', {
 							replace: { username: getChipLabel(share.share_target) }
-					  }),
+						}),
 				id: 'Remove',
 				type: 'button',
 				color: 'gray0',

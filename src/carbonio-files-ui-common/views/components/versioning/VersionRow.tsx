@@ -314,14 +314,14 @@ export const VersionRow: React.VFC<{
 												cloneDate: formatDate(cloneUpdatedAt, 'DD MMM', zimbraPrefTimeZoneId)
 											}
 										}
-								  )
+									)
 								: t(
 										'displayer.version.row.clonedIcon.tooltip2',
 										'Cloned from version {{versionNumber}} (version deleted)',
 										{
 											replace: { versionNumber: clonedFromVersion }
 										}
-								  )
+									)
 						}
 					>
 						<Container width="fit" padding={{ right: 'medium' }}>
