@@ -16,7 +16,8 @@
 		"generate": "graphql-codegen",
 		"translations:push": "git subtree push --prefix translations $npm_package_config_translations_repository translations-updater/$(date '+%Y-%m-%d')",
 		"translations:pull": "git subtree pull --squash --prefix translations $npm_package_config_translations_repository master",
-		"build:dev": "sdk build --dev --pkgRel $(date +%s)"
+		"build:dev": "sdk build --dev --pkgRel $(date +%s)",
+		"update-zextras-dependencies": "git checkout -b update-zextras-deps/$(date '+%Y-%m-%d') && ncu @zextras/carbonio-design-system @zextras/carbonio-shell-ui -u && npm install && git checkout -b update-zextras-deps/$(date '+%Y-%m-%d')"
 	},
 	"keywords": [],
 	"author": "",
@@ -71,13 +72,14 @@
 		"jest-junit": "^16.0.0",
 		"jest-styled-components": "^7.2.0",
 		"msw": "^2.2.13",
+		"npm-check-updates": "^16.14.18",
 		"react-test-renderer": "^17.0.2",
 		"ts-node": "^10.9.2"
 	},
 	"dependencies": {
 		"@apollo/client": "3.9.10",
-		"@zextras/carbonio-design-system": "^4.2.1",
-		"@zextras/carbonio-shell-ui": "5.1.0-devel.1710329945518",
+		"@zextras/carbonio-design-system": "^5.0.0",
+		"@zextras/carbonio-shell-ui": "6.0.0",
 		"@zextras/carbonio-ui-preview": "^1.2.3",
 		"core-js": "^3.36.1",
 		"graphql": "^16.8.1",
