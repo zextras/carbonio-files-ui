@@ -1,6 +1,6 @@
 {
 	"name": "carbonio-files-ui",
-	"version": "2.5.1",
+	"version": "2.6.0",
 	"description": "Files module",
 	"main": "src/app.tsx",
 	"scripts": {

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/zextras/carbonio-files-ui/compare/v2.5.1...v2.6.0) (2024-04-12)
+
+
+### Features
+
+* add button to update quota ([28e37b1](https://github.com/zextras/carbonio-files-ui/commit/28e37b13d851e07f560bf4d7d4e72a81494ee273)), closes [#316](https://github.com/zextras/carbonio-files-ui/issues/316)
+* show quota info ([3303040](https://github.com/zextras/carbonio-files-ui/commit/33030407d36430cd4b266900d8cfe3de898b36ea)), closes [#313](https://github.com/zextras/carbonio-files-ui/issues/313)
+
+
+### Bug Fixes
+
+* center dropzone overlay inside container ([4f53b77](https://github.com/zextras/carbonio-files-ui/commit/4f53b7722b77c51fc46cd2cd66bae9ccba916500)), closes [#315](https://github.com/zextras/carbonio-files-ui/issues/315)
+
 ### [2.5.1](https://github.com/zextras/carbonio-files-ui/compare/v2.5.0...v2.5.1) (2024-02-15)
 
 ## [2.5.0](https://github.com/zextras/carbonio-files-ui/compare/v2.4.1...v2.5.0) (2024-01-10)
