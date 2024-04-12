@@ -17,7 +17,7 @@
 		"translations:push": "git subtree push --prefix translations $npm_package_config_translations_repository translations-updater/$(date '+%Y-%m-%d')",
 		"translations:pull": "git subtree pull --squash --prefix translations $npm_package_config_translations_repository master",
 		"build:dev": "sdk build --dev --pkgRel $(date +%s)",
-		"update-zextras-dependencies": "git checkout -b update-zextras-deps/$(date '+%Y-%m-%d') && ncu @zextras/carbonio-design-system @zextras/carbonio-shell-ui -u && npm install"
+		"update-zextras-dependencies": "git checkout -b update-zextras-deps/$(date '+%Y-%m-%d') && ncu @zextras/carbonio-design-system @zextras/carbonio-shell-ui @zextras/carbonio-ui-preview -u && npm install"
 	},
 	"keywords": [],
 	"author": "",
