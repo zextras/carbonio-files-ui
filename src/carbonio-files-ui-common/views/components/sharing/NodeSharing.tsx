@@ -131,8 +131,8 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 	const linkName = useMemo(
 		() =>
 			isFile(node)
-				? t('publicLink.fileLink.title', 'Public download link')
-				: t('publicLink.folderLink.title', 'Public access link'),
+				? t('publicLink.fileLink.title', 'Public download link', { count: 1 })
+				: t('publicLink.folderLink.title', 'Public access link', { count: 1 }),
 		[node, t]
 	);
 
