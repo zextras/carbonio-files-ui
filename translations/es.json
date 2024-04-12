@@ -74,8 +74,8 @@
             "header": "Degradar los permisos actuales"
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} elemento seleccionado",
-            "selectedCount_plural": "{{count}} elementos seleccionados"
+            "selectedCount_one": "{{count}} elemento seleccionado",
+            "selectedCount_other": "{{count}} elementos seleccionados"
         },
         "moreInfo": {
             "title": "Información adicional"
@@ -148,8 +148,8 @@
                         "confirm": "No puedes realizar esta acción aquí"
                     }
                 },
-                "title": "Copiar \"{{node.name}}\"",
-                "title_plural": "Copiar elementos"
+                "title_one": "Copiar \"{{node.name}}\"",
+                "title_other": "Copiar elementos"
             }
         },
         "move": {
@@ -164,8 +164,8 @@
                     "filter": "Filtrar carpetas"
                 },
                 "subtitle": "Selecciona la carpeta de destino:",
-                "title": "Mover \"{{node.name}}\"",
-                "title_plural": "Mover elementos"
+                "title_one": "Mover \"{{node.name}}\"",
+                "title_other": "Mover elementos"
             },
             "error": {
                 "not": {
@@ -650,8 +650,8 @@
         "advancedSearch": {
             "button": {
                 "noFilter": "Filtros avanzados",
-                "filters": "{{count}} filtro aplicado",
-                "filters_plural": "{{count}} filtros aplicados"
+                "filters_one": "{{count}} filtro aplicado",
+                "filters_other": "{{count}} filtros aplicados"
             },
             "modal": {
                 "button": {

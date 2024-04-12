@@ -127,8 +127,8 @@
             "tooltip": "Fechar"
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} item selecionado",
-            "selectedCount_plural": "{{count}} itens selecionados"
+            "selectedCount_one": "{{count}} item selecionado",
+            "selectedCount_other": "{{count}} itens selecionados"
         },
         "moreInfo": {
             "title": "Informações adicionais"
@@ -196,8 +196,8 @@
                         "confirm": "Você não pode realizar esta ação aqui"
                     }
                 },
-                "title": "Copiar {{node.name}}",
-                "title_plural": "Copiar itens"
+                "title_one": "Copiar {{node.name}}",
+                "title_other": "Copiar itens"
             }
         },
         "alias": {
@@ -217,8 +217,8 @@
                     "filter": "Filtrar pastas"
                 },
                 "subtitle": "Selecionar pasta de destino:",
-                "title": "Mover {{node.name}}",
-                "title_plural": "Mover itens"
+                "title_one": "Mover {{node.name}}",
+                "title_other": "Mover itens"
             },
             "error": {
                 "not": {
@@ -398,8 +398,8 @@
             },
             "button": {
                 "noFilter": "Filtros avançados",
-                "filters": "{{count}} filtro aplicado",
-                "filters_plural": "{{count}} filtros aplicados"
+                "filters_one": "{{count}} filtro aplicado",
+                "filters_other": "{{count}} filtros aplicados"
             }
         },
         "resultsFor": "Resultados para:"

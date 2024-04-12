@@ -75,8 +75,8 @@
                         "confirm": "आप यहाँ यह नहीं कर सकते"
                     }
                 },
-                "title_plural": "आइटम कॉपी करे",
-                "title": "{{node.name}} कॉपी करें"
+                "title_other": "आइटम कॉपी करे",
+                "title_one": "{{node.name}} कॉपी करें"
             }
         },
         "alias": {
@@ -95,8 +95,8 @@
                 "input": {
                     "filter": "फोल्डर फिल्टर करें"
                 },
-                "title": "{{node.name}} को ले जाएँ",
-                "title_plural": "आइटम ले जाएँ",
+                "title_one": "{{node.name}} को ले जाएँ",
+                "title_other": "आइटम ले जाएँ",
                 "subtitle": "कोई गंतव्य फोल्डर चुनें:"
             },
             "error": {
@@ -183,8 +183,8 @@
             "header": "अपने वर्तमान अधिकार कम करें"
         },
         "nodesSelection": {
-            "selectedCount_plural": "{{count}} आइटम चुने गए",
-            "selectedCount": "{{count}} आइटम चुने गए"
+            "selectedCount_other": "{{count}} आइटम चुने गए",
+            "selectedCount_one": "{{count}} आइटम चुने गए"
         },
         "moreInfo": {
             "title": "अतिरिक्त जानकारी"
@@ -637,9 +637,9 @@
         },
         "advancedSearch": {
             "button": {
-                "filters": "{{count}} एड्वांड्स्ड फिल्टर",
+                "filters_one": "{{count}} एड्वांड्स्ड फिल्टर",
                 "noFilter": "एड्वान्स्ड फ़िल्टर",
-                "filters_plural": "{{count}} एड्वांड्स्ड फिल्टर"
+                "filters_other": "{{count}} एड्वांड्स्ड फिल्टर"
             },
             "modal": {
                 "button": {

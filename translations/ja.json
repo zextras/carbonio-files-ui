@@ -75,8 +75,8 @@
             "body": "このアイテムでの権限を減らしてもよろしいですか？ このアクションは永続され、以前の共有権限を復元することができなくなります。 以前の権限を復元する必要がある場合は、いつでも共有アイテムの所有者に連絡できます。"
         },
         "nodesSelection": {
-            "selectedCount": "{{count}}選択された要素",
-            "selectedCount_plural": "{{count}}選択した要素"
+            "selectedCount_one": "{{count}}選択された要素",
+            "selectedCount_other": "{{count}}選択した要素"
         },
         "moreInfo": {
             "title": "追加情報"
@@ -149,8 +149,8 @@
                         "confirm": "ここではこのアクションを実行できません"
                     }
                 },
-                "title": "{{node.name}}をコピーする",
-                "title_plural": "アイテムをコピーする"
+                "title_one": "{{node.name}}をコピーする",
+                "title_other": "アイテムをコピーする"
             }
         },
         "move": {
@@ -165,8 +165,8 @@
                     "filter": "フォルダをフィルタリングする"
                 },
                 "subtitle": "宛先フォルダーを選択します:",
-                "title": "{{node.name}}を移動する",
-                "title_plural": "アイテムを移動する"
+                "title_one": "{{node.name}}を移動する",
+                "title_other": "アイテムを移動する"
             },
             "error": {
                 "not": {
@@ -693,8 +693,8 @@
             },
             "button": {
                 "noFilter": "高度なフィルタ",
-                "filters": "{{count}}高度なフィルター",
-                "filters_plural": "{{count}}高度なフィルター"
+                "filters_one": "{{count}}高度なフィルター",
+                "filters_other": "{{count}}高度なフィルター"
             }
         },
         "resultsFor": "検索結果:"

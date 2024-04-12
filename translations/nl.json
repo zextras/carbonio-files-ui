@@ -74,8 +74,8 @@
             "body": "Ben je zeker dat je de rechten op dit item wil verminderen? De actie is permanent en je zal niet in staat zijn om de rechten van de vorige share zelf te herstellen. Je kan altijd contact opnemen met de eigenaar van het gedeelde item als je de vorige rechten wil herstellen."
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} geselecteerd item",
-            "selectedCount_plural": "{{count}} geselecteerde item"
+            "selectedCount_one": "{{count}} geselecteerd item",
+            "selectedCount_other": "{{count}} geselecteerde item"
         },
         "moreInfo": {
             "title": "Aanvullende informatie"
@@ -276,8 +276,8 @@
                     "filter": "Mappen filteren"
                 },
                 "subtitle": "Een doelmap selecteren:",
-                "title": "{{node.name}} verwijderen",
-                "title_plural": "Items verwijderen"
+                "title_one": "{{node.name}} verwijderen",
+                "title_other": "Items verwijderen"
             },
             "error": {
                 "not": {
@@ -293,8 +293,8 @@
                         "confirm": "U kunt deze actie hier niet uitvoeren"
                     }
                 },
-                "title": "{{node.name}} kopiëren",
-                "title_plural": "Items kopiëren"
+                "title_one": "{{node.name}} kopiëren",
+                "title_other": "Items kopiëren"
             }
         },
         "alias": {
@@ -650,8 +650,8 @@
         "advancedSearch": {
             "button": {
                 "noFilter": "Geavanceerde filters",
-                "filters": "{{count}} geavanceerde filter",
-                "filters_plural": "{{count}} geavanceerde filters"
+                "filters_one": "{{count}} geavanceerde filter",
+                "filters_other": "{{count}} geavanceerde filters"
             },
             "modal": {
                 "button": {

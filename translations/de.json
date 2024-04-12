@@ -116,8 +116,8 @@
             "title": "Weitere Information"
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} ausgewähltes Element",
-            "selectedCount_plural": "{{count}} ausgewählte Elemente"
+            "selectedCount_one": "{{count}} ausgewähltes Element",
+            "selectedCount_other": "{{count}} ausgewählte Elemente"
         },
         "purgeAllVersions": {
             "button": {
@@ -182,8 +182,8 @@
                         "confirm": "Sie können diese Aktion hier nicht durchführen"
                     }
                 },
-                "title": "Kopieren {{node.name}}",
-                "title_plural": "Elemente kopieren"
+                "title_one": "Kopieren {{node.name}}",
+                "title_other": "Elemente kopieren"
             }
         },
         "alias": {
@@ -203,8 +203,8 @@
                     "filter": "Ordner filtern"
                 },
                 "subtitle": "Wählen Sie einen Zielordner aus:",
-                "title": "Verschieben {{node.name}}",
-                "title_plural": "Elemente verschieben"
+                "title_one": "Verschieben {{node.name}}",
+                "title_other": "Elemente verschieben"
             },
             "error": {
                 "not": {
@@ -650,8 +650,8 @@
         "advancedSearch": {
             "button": {
                 "noFilter": "Fortgeschrittene filter",
-                "filters": "Erweiterter Filter {{count}}",
-                "filters_plural": "Erweiterte Filter {{count}}"
+                "filters_one": "Erweiterter Filter {{count}}",
+                "filters_other": "Erweiterte Filter {{count}}"
             },
             "modal": {
                 "button": {

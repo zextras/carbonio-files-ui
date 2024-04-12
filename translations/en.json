@@ -513,8 +513,8 @@
             }
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} selected item",
-            "selectedCount_plural": "{{count}} selected items"
+            "selectedCount_one": "{{count}} selected item",
+            "selectedCount_other": "{{count}} selected items"
         },
         "purgeAllVersions": {
             "body": "All versions that are not marked to be kept forever, except the current one, will be deleted. You will not be able to recover these versions.",
@@ -583,8 +583,8 @@
                         "confirm": "You can't perform this action here"
                     }
                 },
-                "title": "Copy {{node.name}}",
-                "title_plural": "Copy items"
+                "title_one": "Copy {{node.name}}",
+                "title_other": "Copy items"
             }
         },
         "move": {
@@ -604,8 +604,8 @@
                     "filter": "Filter folders"
                 },
                 "subtitle": "Select a destination folder:",
-                "title": "Move {{node.name}}",
-                "title_plural": "Move items"
+                "title_one": "Move {{node.name}}",
+                "title_other": "Move items"
             }
         },
         "rename": {
@@ -663,15 +663,15 @@
             "addLink": {
                 "description": "Internal and external users that have access to the link can download the item."
             },
-            "title": "Public download link",
-            "title_plural": "Public download links"
+            "title_one": "Public download link",
+            "title_other": "Public download links"
         },
         "folderLink": {
             "addLink": {
                 "description": "Anyone with this link can view and download the content of this folder."
             },
-            "title": "Public access link",
-            "title_plural": "Public access links"
+            "title_one": "Public access link",
+            "title_other": "Public access links"
         },
         "input": {
             "description": {
@@ -715,8 +715,8 @@
     "search": {
         "advancedSearch": {
             "button": {
-                "filters": "{{count}} advanced filter",
-                "filters_plural": "{{count}} advanced filters",
+                "filters_one": "{{count}} advanced filter",
+                "filters_other": "{{count}} advanced filters",
                 "noFilter": "Advanced filters"
             },
             "modal": {

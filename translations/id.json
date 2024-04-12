@@ -90,8 +90,8 @@
             "header": "Kurangi hak saat ini"
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} item dipilih",
-            "selectedCount_plural": "{{count}} item dipilih"
+            "selectedCount_one": "{{count}} item dipilih",
+            "selectedCount_other": "{{count}} item dipilih"
         },
         "moreInfo": {
             "title": "Informasi tambahan"
@@ -164,8 +164,8 @@
                         "confirm": "Anda tidak dapat melakukan tindakan ini di sini"
                     }
                 },
-                "title": "Salin {{node.name}}",
-                "title_plural": "Salin item"
+                "title_one": "Salin {{node.name}}",
+                "title_other": "Salin item"
             }
         },
         "move": {
@@ -180,8 +180,8 @@
                     "filter": "Filter folder"
                 },
                 "subtitle": "Pilih folder tujuan:",
-                "title": "Pindahkan {{node.name}}",
-                "title_plural": "Pindahkan item"
+                "title_one": "Pindahkan {{node.name}}",
+                "title_other": "Pindahkan item"
             },
             "error": {
                 "not": {
@@ -650,8 +650,8 @@
         "advancedSearch": {
             "button": {
                 "noFilter": "Filter lanjutan",
-                "filters": "{{count}} filter lanjutan",
-                "filters_plural": "{{count}} filter lanjutan"
+                "filters_one": "{{count}} filter lanjutan",
+                "filters_other": "{{count}} filter lanjutan"
             },
             "modal": {
                 "button": {

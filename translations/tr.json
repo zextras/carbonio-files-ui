@@ -74,8 +74,8 @@
             "header": "Geçerli izinlerinizi azaltın"
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} seçilen öğe",
-            "selectedCount_plural": "{{count}} seçilen öğe"
+            "selectedCount_one": "{{count}} seçilen öğe",
+            "selectedCount_other": "{{count}} seçilen öğe"
         },
         "moreInfo": {
             "title": "Ek Bilgi"
@@ -182,8 +182,8 @@
                         "confirm": "Bu işlemi burada yapamazsınız"
                     }
                 },
-                "title": "Kopyala {{node.name}}",
-                "title_plural": "Öğeleri kopyala"
+                "title_one": "Kopyala {{node.name}}",
+                "title_other": "Öğeleri kopyala"
             }
         },
         "alias": {
@@ -203,8 +203,8 @@
                     "filter": "Klasörleri filtrele"
                 },
                 "subtitle": "Hedef klasör seçin:",
-                "title": "Taşı {{node.name}}",
-                "title_plural": "Öğeleri taşı"
+                "title_one": "Taşı {{node.name}}",
+                "title_other": "Öğeleri taşı"
             },
             "error": {
                 "not": {
@@ -649,8 +649,8 @@
         },
         "advancedSearch": {
             "button": {
-                "filters": "{{count}} gelişmiş filtre",
-                "filters_plural": "{{count}} gelişmiş filtre",
+                "filters_one": "{{count}} gelişmiş filtre",
+                "filters_other": "{{count}} gelişmiş filtre",
                 "noFilter": "Gelişmiş filtreler"
             },
             "modal": {
@@ -838,15 +838,15 @@
             "addLink": {
                 "description": "Bu bağlantıya erişimi olan iç ve dış kullanıcılar öğeyi indirebilirler."
             },
-            "title": "Genel indirme bağlantısı",
-            "title_plural": "Genel indirme bağlantıları"
+            "title_one": "Genel indirme bağlantısı",
+            "title_other": "Genel indirme bağlantıları"
         },
         "folderLink": {
             "addLink": {
                 "description": "Bu bağlantıya sahip olan herkes bu klasörün içeriğini görüntüleyebilir ve indirebilir."
             },
-            "title": "Herkese Açık Erişim",
-            "title_plural": "Herkese Açık Erişimler"
+            "title_one": "Herkese Açık Erişim",
+            "title_other": "Herkese Açık Erişimler"
         }
     },
     "preview": {

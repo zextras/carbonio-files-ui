@@ -62,8 +62,8 @@
             "title": "Dodatkowe informacje"
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} wybrany element",
-            "selectedCount_plural": "{{count}} wybranych elementów"
+            "selectedCount_one": "{{count}} wybrany element",
+            "selectedCount_other": "{{count}} wybranych elementów"
         },
         "purgeAllVersions": {
             "button": {
@@ -152,8 +152,8 @@
                 }
             },
             "button": {
-                "filters": "{{count}} zaawansowany filtr",
-                "filters_plural": "{{count}} zaawansowane filtry",
+                "filters_one": "{{count}} zaawansowany filtr",
+                "filters_other": "{{count}} zaawansowane filtry",
                 "noFilter": "Zaawansowane filtry"
             }
         },
@@ -617,12 +617,12 @@
             "addLink": {
                 "description": "Użytkownicy z i spoza tej domeny, którzy mają dostęp do linka, mogą pobrać ten element."
             },
-            "title": "Link publiczny z opcją pobierania",
-            "title_plural": "Linki publiczne z opcją pobierania"
+            "title_one": "Link publiczny z opcją pobierania",
+            "title_other": "Linki publiczne z opcją pobierania"
         },
         "folderLink": {
-            "title": "Link dostępu publicznego",
-            "title_plural": "Linki dostępu publicznego",
+            "title_one": "Link dostępu publicznego",
+            "title_other": "Linki dostępu publicznego",
             "addLink": {
                 "description": "Każda osoba mająca dostęp do tego linka może wyświetlać i pobierać zawartość tego folderu."
             }
@@ -770,8 +770,8 @@
                     "filter": "Filtruj foldery"
                 },
                 "subtitle": "Wybierz folder docelowy:",
-                "title": "Przenieś {{node.name}}",
-                "title_plural": "Przenieś elementy"
+                "title_one": "Przenieś {{node.name}}",
+                "title_other": "Przenieś elementy"
             },
             "error": {
                 "not": {
@@ -787,8 +787,8 @@
                         "confirm": "Nie możesz tutaj przeprowadzić tej czynności"
                     }
                 },
-                "title": "Skopiuj {{node.name}}",
-                "title_plural": "Skopiuj elementy"
+                "title_one": "Skopiuj {{node.name}}",
+                "title_other": "Skopiuj elementy"
             }
         },
         "rename": {

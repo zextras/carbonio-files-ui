@@ -113,8 +113,8 @@
             "header": "Diminuez vos droits actuels"
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} élément sélectionné",
-            "selectedCount_plural": "{{count}} éléments sélectionnés"
+            "selectedCount_one": "{{count}} élément sélectionné",
+            "selectedCount_other": "{{count}} éléments sélectionnés"
         },
         "moreInfo": {
             "title": "Informations complémentaires"
@@ -182,8 +182,8 @@
                         "confirm": "Vous pouvez réaliser cette action ici"
                     }
                 },
-                "title": "Copier {{node.name}}",
-                "title_plural": "Copier les éléments"
+                "title_one": "Copier {{node.name}}",
+                "title_other": "Copier les éléments"
             }
         },
         "alias": {
@@ -203,8 +203,8 @@
                     "filter": "Filtrer les dossiers"
                 },
                 "subtitle": "Sélectionnez un dossier de destination :",
-                "title": "Déplacer {{node.name}}",
-                "title_plural": "Déplacer les éléments"
+                "title_one": "Déplacer {{node.name}}",
+                "title_other": "Déplacer les éléments"
             },
             "error": {
                 "not": {
@@ -354,8 +354,8 @@
         },
         "advancedSearch": {
             "button": {
-                "filters": "{{count}} filtre avancé",
-                "filters_plural": "{{count}} filtres avancés",
+                "filters_one": "{{count}} filtre avancé",
+                "filters_other": "{{count}} filtres avancés",
                 "noFilter": "Filtres avancés"
             },
             "modal": {
@@ -835,8 +835,8 @@
             }
         },
         "fileLink": {
-            "title": "Lien de téléchargement publique",
-            "title_plural": "Liens de téléchargement publiques",
+            "title_one": "Lien de téléchargement publique",
+            "title_other": "Liens de téléchargement publiques",
             "addLink": {
                 "description": "Les utilisateurs internes ou externes qui sont en possession du lien peuvent télécharger l'élément."
             }
@@ -845,8 +845,8 @@
             "addLink": {
                 "description": "Toute personne ayant ce lien peut voir et télécharger le contenu de ce dossier."
             },
-            "title": "Lien d'accès publique",
-            "title_plural": "Liens d'accès publiques"
+            "title_one": "Lien d'accès publique",
+            "title_other": "Liens d'accès publiques"
         }
     },
     "preview": {

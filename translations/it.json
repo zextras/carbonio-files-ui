@@ -131,8 +131,8 @@
                         "confirm": "Non puoi effettuare questa azione qui"
                     }
                 },
-                "title": "Copia {{node.name}}",
-                "title_plural": "Copia elementi"
+                "title_one": "Copia {{node.name}}",
+                "title_other": "Copia elementi"
             }
         },
         "move": {
@@ -147,8 +147,8 @@
                     "filter": "Filtra cartelle"
                 },
                 "subtitle": "Seleziona una cartella di destinazione:",
-                "title": "Sposta {{node.name}}",
-                "title_plural": "Sposta elementi"
+                "title_one": "Sposta {{node.name}}",
+                "title_other": "Sposta elementi"
             },
             "error": {
                 "not": {
@@ -220,8 +220,8 @@
             "body": "Vuoi diminuire i tuoi permessi su questo elemento? L'azione è permanente e non sarà possibile ripristinare i permessi precedenti in maniera autonoma. Per ripristinare i tuoi permessi originali dovrai contattare il proprietario della condivisione per farli riabilitare."
         },
         "nodesSelection": {
-            "selectedCount": "{{count}} elemento selezionato",
-            "selectedCount_plural": "{{count}} elementi selezionati"
+            "selectedCount_one": "{{count}} elemento selezionato",
+            "selectedCount_other": "{{count}} elementi selezionati"
         },
         "moreInfo": {
             "title": "Ulteriori informazioni"
@@ -649,9 +649,9 @@
         },
         "advancedSearch": {
             "button": {
-                "filters": "{{count}} filtro avanzato",
+                "filters_one": "{{count}} filtro avanzato",
                 "noFilter": "Filtri avanzati",
-                "filters_plural": "{{count}} filtri avanzati"
+                "filters_other": "{{count}} filtri avanzati"
             },
             "modal": {
                 "button": {
@@ -835,15 +835,15 @@
             }
         },
         "fileLink": {
-            "title": "Link pubblico per il download",
-            "title_plural": "Link pubblico per il download",
+            "title_one": "Link pubblico per il download",
+            "title_other": "Link pubblico per il download",
             "addLink": {
                 "description": "Gli utenti interni e esterni che hanno accesso al link possono scaricare l'elemento."
             }
         },
         "folderLink": {
-            "title": "Link pubblico per l'accesso",
-            "title_plural": "Link pubblico per l'accesso",
+            "title_one": "Link pubblico per l'accesso",
+            "title_other": "Link pubblico per l'accesso",
             "addLink": {
                 "description": "Chiunque abbia questo link può vedere e scaricare il contenuto di questa cartella."
             }
