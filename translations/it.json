@@ -650,7 +650,7 @@
         "advancedSearch": {
             "button": {
                 "filters_one": "{{count}} filtro avanzato",
-                "noFilter": "Filtri avanzati",
+                "filters_zero": "Filtri avanzati",
                 "filters_other": "{{count}} filtri avanzati"
             },
             "modal": {

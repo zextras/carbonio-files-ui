@@ -190,7 +190,7 @@
         },
         "advancedSearch": {
             "button": {
-                "noFilter": "Filtre avansate"
+                "filters_zero": "Filtre avansate"
             },
             "modal": {
                 "button": {

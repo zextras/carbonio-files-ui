@@ -627,7 +627,7 @@
             "button": {
                 "filters_one": "Bộ lọc nâng cao {{count}}",
                 "filters_other": "Bộ lọc nâng cao {{count}}",
-                "noFilter": "Bộ lọc nâng cao"
+                "filters_zero": "Bộ lọc nâng cao"
             },
             "modal": {
                 "button": {

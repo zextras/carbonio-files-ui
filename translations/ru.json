@@ -355,7 +355,7 @@
         "advancedSearch": {
             "button": {
                 "filters_one": "{{count}} расширенный фильтр",
-                "noFilter": "Расширенные фильтры",
+                "filters_zero": "Расширенные фильтры",
                 "filters_other": "{{count}} расширенные фильтры"
             },
             "modal": {

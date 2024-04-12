@@ -638,7 +638,7 @@
         "advancedSearch": {
             "button": {
                 "filters_one": "{{count}} एड्वांड्स्ड फिल्टर",
-                "noFilter": "एड्वान्स्ड फ़िल्टर",
+                "filters_zero": "एड्वान्स्ड फ़िल्टर",
                 "filters_other": "{{count}} एड्वांड्स्ड फिल्टर"
             },
             "modal": {

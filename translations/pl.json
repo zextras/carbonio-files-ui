@@ -154,7 +154,7 @@
             "button": {
                 "filters_one": "{{count}} zaawansowany filtr",
                 "filters_other": "{{count}} zaawansowane filtry",
-                "noFilter": "Zaawansowane filtry"
+                "filters_zero": "Zaawansowane filtry"
             }
         },
         "header": {

@@ -397,7 +397,7 @@
                 }
             },
             "button": {
-                "noFilter": "Filtros avançados",
+                "filters_zero": "Filtros avançados",
                 "filters_one": "{{count}} filtro aplicado",
                 "filters_other": "{{count}} filtros aplicados"
             }

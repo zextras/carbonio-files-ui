@@ -651,7 +651,7 @@
             "button": {
                 "filters_one": "{{count}} gelişmiş filtre",
                 "filters_other": "{{count}} gelişmiş filtre",
-                "noFilter": "Gelişmiş filtreler"
+                "filters_zero": "Gelişmiş filtreler"
             },
             "modal": {
                 "button": {

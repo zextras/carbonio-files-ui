@@ -692,7 +692,7 @@
                 }
             },
             "button": {
-                "noFilter": "高度なフィルタ",
+                "filters_zero": "高度なフィルタ",
                 "filters_one": "{{count}}高度なフィルター",
                 "filters_other": "{{count}}高度なフィルター"
             }

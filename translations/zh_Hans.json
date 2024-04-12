@@ -633,7 +633,7 @@
         "resultsFor": "结果：",
         "advancedSearch": {
             "button": {
-                "noFilter": "高级过滤条件",
+                "filters_zero": "高级过滤条件",
                 "filters_one": "{{count}}高级过滤条件",
                 "filters_other": "{{count}}高级过滤条件"
             },

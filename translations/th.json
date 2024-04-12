@@ -692,7 +692,7 @@
                 }
             },
             "button": {
-                "noFilter": "ตัวกรองขั้นสูง",
+                "filters_zero": "ตัวกรองขั้นสูง",
                 "filters_other": "{{count}} ตัวกรองขั้นสูง",
                 "filters_one": "{{count}} ตัวกรองขั้นสูง"
             }

@@ -717,7 +717,7 @@
             "button": {
                 "filters_one": "{{count}} advanced filter",
                 "filters_other": "{{count}} advanced filters",
-                "noFilter": "Advanced filters"
+                "filters_zero": "Advanced filters"
             },
             "modal": {
                 "button": {

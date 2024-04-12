@@ -649,7 +649,7 @@
         },
         "advancedSearch": {
             "button": {
-                "noFilter": "Filter lanjutan",
+                "filters_zero": "Filter lanjutan",
                 "filters_one": "{{count}} filter lanjutan",
                 "filters_other": "{{count}} filter lanjutan"
             },
