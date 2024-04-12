@@ -36,7 +36,7 @@ export const OverQuotaBanner = (): React.JSX.Element | null => {
 				'uploads.banner.overQuota.description',
 				'The uploading of some items failed because you have reached your storage limit. Delete some items to free up storage space and try again.'
 			)}
-			status="error"
+			severity="error"
 			title={t('uploads.banner.overQuota.title', 'Quota exceeded')}
 			type="standard"
 		/>
