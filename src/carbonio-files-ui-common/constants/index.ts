@@ -115,6 +115,7 @@ export const UPLOAD_TO_PATH = '/upload-to';
 export const UPLOAD_VERSION_PATH = '/upload-version';
 export const CREATE_FILE_PATH = '/files/create';
 export const MYSELF_QUOTA_PATH = '/quota/myself';
+export const HEALTH_PATH = '/health';
 export const PREVIEW_PATH = '/preview';
 export const PREVIEW_TYPE = {
 	IMAGE: 'image',

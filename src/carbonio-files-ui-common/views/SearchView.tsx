@@ -17,6 +17,7 @@ import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
 import { DISPLAYER_WIDTH, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
 import { ListContext } from '../contexts';
+import { useHealthInfo } from '../hooks/useHealthInfo';
 import { useUpload } from '../hooks/useUpload';
 import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
@@ -64,6 +65,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 		},
 		[add]
 	);
+	const { canUseDocs } = useHealthInfo();
 
 	useEffect(() => {
 		setCreateOptions(
@@ -96,84 +98,88 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 					onClick: noop
 				})
 			},
-			{
-				type: ACTION_TYPES.NEW,
-				id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-				action: () => ({
-					group: FILES_APP_ID,
-					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-					label: t('create.options.new.document', 'New document'),
-					icon: 'FileTextOutline',
-					disabled: true,
-					onClick: noop,
-					items: [
+			...(canUseDocs
+				? [
 						{
-							id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
-							label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-							onClick: noop,
-							disabled: true
+							type: ACTION_TYPES.NEW,
+							id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
+							action: () => ({
+								group: FILES_APP_ID,
+								id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
+								label: t('create.options.new.document', 'New document'),
+								icon: 'FileTextOutline',
+								disabled: true,
+								onClick: noop,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
+										onClick: noop,
+										disabled: true
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
+										onClick: noop,
+										disabled: true
+									}
+								]
+							})
 						},
 						{
-							id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
-							label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-							onClick: noop,
-							disabled: true
-						}
-					]
-				})
-			},
-			{
-				type: ACTION_TYPES.NEW,
-				id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-				action: () => ({
-					group: FILES_APP_ID,
-					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-					label: t('create.options.new.spreadsheet', 'New spreadsheet'),
-					icon: 'FileCalcOutline',
-					disabled: true,
-					onClick: noop,
-					items: [
-						{
-							id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
-							label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-							onClick: noop,
-							disabled: true
+							type: ACTION_TYPES.NEW,
+							id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
+							action: () => ({
+								group: FILES_APP_ID,
+								id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
+								label: t('create.options.new.spreadsheet', 'New spreadsheet'),
+								icon: 'FileCalcOutline',
+								disabled: true,
+								onClick: noop,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
+										onClick: noop,
+										disabled: true
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
+										onClick: noop,
+										disabled: true
+									}
+								]
+							})
 						},
 						{
-							id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
-							label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-							onClick: noop,
-							disabled: true
+							type: ACTION_TYPES.NEW,
+							id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
+							action: () => ({
+								group: FILES_APP_ID,
+								id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
+								label: t('create.options.new.presentation', 'New presentation'),
+								icon: 'FilePresentationOutline',
+								disabled: true,
+								onClick: noop,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
+										onClick: noop,
+										disabled: true
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
+										onClick: noop,
+										disabled: true
+									}
+								]
+							})
 						}
 					]
-				})
-			},
-			{
-				type: ACTION_TYPES.NEW,
-				id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-				action: () => ({
-					group: FILES_APP_ID,
-					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-					label: t('create.options.new.presentation', 'New presentation'),
-					icon: 'FilePresentationOutline',
-					disabled: true,
-					onClick: noop,
-					items: [
-						{
-							id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
-							label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-							onClick: noop,
-							disabled: true
-						},
-						{
-							id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
-							label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-							onClick: noop,
-							disabled: true
-						}
-					]
-				})
-			}
+				: [])
 		);
 		return (): void => {
 			removeCreateOptions(
@@ -183,7 +189,14 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 				ACTION_IDS.CREATE_DOCS_PRESENTATION
 			);
 		};
-	}, [inputElementOnchange, navigateToFolder, removeCreateOptions, setCreateOptions, t]);
+	}, [
+		canUseDocs,
+		inputElementOnchange,
+		navigateToFolder,
+		removeCreateOptions,
+		setCreateOptions,
+		t
+	]);
 
 	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
 		() => ({

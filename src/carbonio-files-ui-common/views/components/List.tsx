@@ -50,6 +50,7 @@ import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
 import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useHealthInfo } from '../../hooks/useHealthInfo';
 import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { Action, Crumb, NodeListItemType } from '../../types/common';
@@ -173,9 +174,16 @@ export const List: React.VFC<ListProps> = ({
 		[folderId]
 	);
 
+	const { canUsePreview, canUseDocs } = useHealthInfo();
+
 	const actionCheckers = useMemo<ActionsFactoryCheckerMap>(
-		() => ({ [Action.Move]: moveCheckFunction }),
-		[moveCheckFunction]
+		() => ({
+			[Action.Move]: moveCheckFunction,
+			[Action.Preview]: () => canUsePreview,
+			[Action.Edit]: () => canUseDocs,
+			[Action.OpenWithDocs]: () => canUseDocs
+		}),
+		[canUseDocs, canUsePreview, moveCheckFunction]
 	);
 
 	const permittedSelectionModeActions = useMemo(
