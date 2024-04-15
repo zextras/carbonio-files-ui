@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/zextras/carbonio-files-ui/compare/v2.6.0...v2.7.0) (2024-04-15)
+
+
+### Features
+
+* handle over quota failure on upload operation ([d428da0](https://github.com/zextras/carbonio-files-ui/commit/d428da02564ec6a19e5abf108114c596f193a45a)), closes [#324](https://github.com/zextras/carbonio-files-ui/issues/324)
+
 ## [2.6.0](https://github.com/zextras/carbonio-files-ui/compare/v2.5.1...v2.6.0) (2024-04-12)
 
 
