@@ -73,7 +73,7 @@
 		"jest-styled-components": "^7.2.0",
 		"msw": "^2.2.13",
 		"npm-check-updates": "^16.14.18",
-		"react-test-renderer": "^17.0.2",
+		"react-test-renderer": "^18.2.0",
 		"ts-node": "^10.9.2"
 	},
 	"dependencies": {
