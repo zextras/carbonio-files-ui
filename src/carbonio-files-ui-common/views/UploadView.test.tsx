@@ -9,7 +9,11 @@ import { waitFor } from '@testing-library/react';
 import { keyBy } from 'lodash';
 
 import UploadView from './UploadView';
+import { ACTION_IDS } from '../../constants';
+import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
+import { CreateOption } from '../../hooks/useCreateOptions';
 import { uploadVar } from '../apollo/uploadVar';
+import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	populateFile,
@@ -21,8 +25,10 @@ import {
 import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
+import { Folder, GetChildrenDocument } from '../types/graphql/types';
 import { mockGetNode } from '../utils/resolverMocks';
 import { createUploadDataTransfer, setup, uploadWithDnD, screen, within } from '../utils/testUtils';
+import { inputElement } from '../utils/utils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -162,6 +168,81 @@ describe('Upload view', () => {
 			).not.toBeInTheDocument();
 			expect(screen.queryByText(/path/i)).not.toBeInTheDocument();
 			expect(screen.queryByText(/content/i)).not.toBeInTheDocument();
+		});
+	});
+
+	it('should show all actions disabled, except the upload', async () => {
+		const actionIds = Object.values(ACTION_IDS);
+		const actions: CreateOption[] = [];
+		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
+			setCreateOptions: (...options): void => {
+				actions.push(...options);
+			},
+			removeCreateOptions: (): void => undefined
+		});
+
+		setup(<UploadView />);
+		await screen.findByText(/nothing here/i);
+		expect(actions).toHaveLength(actionIds.length);
+		actions.forEach((action) => {
+			const actionIsDisabled = action.id !== ACTION_IDS.UPLOAD_FILE;
+			expect(action.action(undefined).disabled).toBe(actionIsDisabled);
+		});
+	});
+
+	it('should show snackbar on upload through new action', async () => {
+		let uploadAction: CreateOption | undefined;
+		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
+			setCreateOptions: (...options): void => {
+				uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
+			},
+			removeCreateOptions: (): void => undefined
+		});
+
+		const file = new File(['(⌐□_□)'], 'a file');
+		const { user } = setup(<UploadView />);
+		await screen.findByText(/nothing here/i);
+		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
+		await user.upload(inputElement, file);
+		expect(await screen.findByText(/Upload occurred in Files' Home/i)).toBeVisible();
+	});
+
+	it('should upload item inside local root', async () => {
+		const localRoot = populateLocalRoot(0);
+		apolloClient.cache.writeQuery({
+			query: GetChildrenDocument,
+			variables: {
+				node_id: localRoot.id,
+				children_limit: NODES_LOAD_LIMIT,
+				sort: NODES_SORT_DEFAULT
+			},
+			data: {
+				getNode: localRoot
+			}
+		});
+		let uploadAction: CreateOption | undefined;
+		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
+			setCreateOptions: (...options): void => {
+				uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
+			},
+			removeCreateOptions: (): void => undefined
+		});
+
+		const file = new File(['(⌐□_□)'], 'a file');
+		const { user } = setup(<UploadView />);
+		await screen.findByText(/nothing here/i);
+		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
+		await user.upload(inputElement, file);
+		await waitFor(() => {
+			const localRootData = apolloClient.cache.readQuery({
+				query: GetChildrenDocument,
+				variables: {
+					node_id: localRoot.id,
+					children_limit: NODES_LOAD_LIMIT,
+					sort: NODES_SORT_DEFAULT
+				}
+			});
+			return expect((localRootData?.getNode as Folder).children.nodes).toHaveLength(1);
 		});
 	});
 });

@@ -2,12 +2,14 @@
   "extends": "@zextras/carbonio-ui-configs/rules/typescript.json",
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "jest.config.ts"
   ],
   "exclude": [
     "node_modules"
   ],
   "compilerOptions": {
+    "noEmit": true,
     "skipLibCheck": true
   },
   "ts-node": {

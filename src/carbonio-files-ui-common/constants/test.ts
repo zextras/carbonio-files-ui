@@ -71,7 +71,8 @@ export const ICON_REGEXP = {
 	previewDownload: 'icon: DownloadOutline',
 	queryLoading: 'icon: Refresh',
 	revoke: 'icon: SlashOutline',
-	refreshQuota: 'icon: Refresh'
+	refreshQuota: 'icon: Refresh',
+	alertQuota: 'icon: CloseCircleOutline'
 } as const;
 
 export const SELECTORS = {
