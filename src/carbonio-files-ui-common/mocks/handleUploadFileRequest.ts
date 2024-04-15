@@ -13,8 +13,8 @@ export interface UploadResponse {
 
 export interface UploadRequestParams extends PathParams {
 	Filename: string;
-	Description: string | '';
-	ParentId: string | '';
+	Description: string;
+	ParentId: string;
 }
 
 export interface UploadRequestBody {

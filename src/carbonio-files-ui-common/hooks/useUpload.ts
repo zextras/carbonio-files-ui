@@ -36,7 +36,7 @@ import {
 	uploadVarReducer,
 	uploadVersion
 } from '../utils/uploadUtils';
-import { isFileSystemDirectoryEntry, isFolder, scan } from '../utils/utils';
+import { asyncForEach, isFileSystemDirectoryEntry, isFolder, scan } from '../utils/utils';
 
 type UploadVarObject = {
 	filesEnriched: { [id: string]: UploadItem };
@@ -129,6 +129,7 @@ export const useUpload: UseUploadHook = () => {
 											id: child,
 											parentNodeId: parentFolderNodeId,
 											status: UploadStatus.QUEUED,
+											statusCode: undefined,
 											progress: 0
 										}
 									});
@@ -146,6 +147,7 @@ export const useUpload: UseUploadHook = () => {
 										type: 'update',
 										value: {
 											id: item.id,
+											// there is no status code here to set
 											status: UploadStatus.FAILED,
 											failedCount: item.failedCount + 1
 										}
@@ -155,6 +157,7 @@ export const useUpload: UseUploadHook = () => {
 										type: 'update',
 										value: {
 											id: item.id,
+											// there is no status code here to set
 											status: UploadStatus.FAILED
 										}
 									});
@@ -257,28 +260,25 @@ export const useUpload: UseUploadHook = () => {
 	>(
 		async (items, destinationId) => {
 			const accumulator: UploadVarObject = { filesEnriched: {}, uploadFunctions: {} };
-			for (let i = 0; i < items.length; i += 1) {
-				const item = items[i];
+			await asyncForEach(items, async (item) => {
 				const itemEnriched = prepareItem(item, destinationId);
 				if (item.fileSystemEntry && isFileSystemDirectoryEntry(item.fileSystemEntry)) {
-					// eslint-disable-next-line no-await-in-loop
 					const folderWithChildren = await prepareFolderItem(
 						itemEnriched.item,
 						item.fileSystemEntry
 					);
-					for (let j = 0; j < folderWithChildren.length; j += 1) {
-						const folderWithChildrenItem = folderWithChildren[j];
+					folderWithChildren.forEach((folderWithChildrenItem) => {
 						UploadQueue.add(folderWithChildrenItem.item.id);
 						accumulator.filesEnriched[folderWithChildrenItem.item.id] = folderWithChildrenItem.item;
 						accumulator.uploadFunctions[folderWithChildrenItem.item.id] =
 							folderWithChildrenItem.functions;
-					}
+					});
 				} else {
 					UploadQueue.add(itemEnriched.item.id);
 					accumulator.filesEnriched[itemEnriched.item.id] = itemEnriched.item;
 					accumulator.uploadFunctions[itemEnriched.item.id] = itemEnriched.functions;
 				}
-			}
+			});
 			return accumulator;
 		},
 		[prepareFolderItem, prepareItem]
@@ -303,9 +303,9 @@ export const useUpload: UseUploadHook = () => {
 				status: UploadStatus.LOADING,
 				id: `upload-${uuidv4()}`,
 				nodeId: node.id,
-				parentNodeId: node.parent?.id || null,
+				parentNodeId: node.parent?.id ?? null,
 				parentId: null,
-				fullPath: node.parent?.name || '',
+				fullPath: node.parent?.name ?? '',
 				name: file.name
 			};
 			uploadVarReducer({ type: 'add', value: { [fileEnriched.id]: fileEnriched } });
@@ -438,6 +438,7 @@ export const useUpload: UseUploadHook = () => {
 									value: {
 										id: item.id,
 										status: UploadStatus.QUEUED,
+										statusCode: undefined,
 										failedCount
 									}
 								});
@@ -446,7 +447,8 @@ export const useUpload: UseUploadHook = () => {
 									type: 'update',
 									value: {
 										id: item.id,
-										status: UploadStatus.QUEUED
+										status: UploadStatus.QUEUED,
+										statusCode: undefined
 									}
 								});
 							}
@@ -459,7 +461,7 @@ export const useUpload: UseUploadHook = () => {
 				} else {
 					uploadVarReducer({
 						type: 'update',
-						value: { id, status: UploadStatus.QUEUED, progress: 0 }
+						value: { id, status: UploadStatus.QUEUED, statusCode: undefined, progress: 0 }
 					});
 					UploadQueue.add(id);
 					decrementAllParentsFailedCountByAmount(uploadItem, 1);
