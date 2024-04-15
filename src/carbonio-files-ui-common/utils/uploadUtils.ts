@@ -3,17 +3,19 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-// KNOWN ISSUE: Since that folders are actually files, this is the only way to distinguish them from another kind of file.
-// Although this method doesn't give you absolute certainty that a file is a folder:
-// it might be a file without extension and with a size of 0 or exactly N x 4096B.
-// https://stackoverflow.com/a/25095250/17280436
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import { forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
-import { REST_ENDPOINT, SHARES_LOAD_LIMIT, UPLOAD_PATH, UPLOAD_VERSION_PATH } from '../constants';
+import {
+	REST_ENDPOINT,
+	SHARES_LOAD_LIMIT,
+	UPLOAD_PATH,
+	UPLOAD_STATUS_CODE,
+	UPLOAD_VERSION_PATH
+} from '../constants';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
 import GET_CHILDREN from '../graphql/queries/getChildren.graphql';
 import GET_VERSIONS from '../graphql/queries/getVersions.graphql';
@@ -380,7 +382,7 @@ export function uploadCompleted(
 	addNodeToFolder: UpdateFolderContentType['addNodeToFolder'],
 	isUploadVersion: boolean
 ): void {
-	if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+	if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === UPLOAD_STATUS_CODE.success) {
 		const response = JSON.parse(xhr.response);
 		const { nodeId } = response;
 		if (isUploadVersion) {
@@ -389,7 +391,13 @@ export function uploadCompleted(
 
 		uploadVarReducer({
 			type: 'update',
-			value: { id: fileEnriched.id, status: UploadStatus.COMPLETED, progress: 100, nodeId }
+			value: {
+				id: fileEnriched.id,
+				status: UploadStatus.COMPLETED,
+				statusCode: UPLOAD_STATUS_CODE.success,
+				progress: 100,
+				nodeId
+			}
 		});
 
 		incrementAllParents(fileEnriched);
@@ -398,22 +406,18 @@ export function uploadCompleted(
 			loadItemAsChild(nodeId, fileEnriched.parentNodeId, apolloClient, nodeSort, addNodeToFolder);
 		}
 	} else {
-		/*
-		 * Handled Statuses
-		 * 405: upload-version error should happen only when number of versions is
-		 * 			strictly greater than max number of version config value (config changed)
-		 * 413:
-		 * 500: name already exists
-		 * 0: aborted (also blocked request)
-		 */
-
 		uploadVarReducer({
 			type: 'update',
-			value: { id: fileEnriched.id, status: UploadStatus.FAILED }
+			value: { id: fileEnriched.id, status: UploadStatus.FAILED, statusCode: xhr.status }
 		});
 		incrementAllParentsFailedCount(fileEnriched);
 
-		const handledStatuses = [405, 413, 500, 0];
+		const handledStatuses: number[] = [
+			UPLOAD_STATUS_CODE.maxVersionReached,
+			UPLOAD_STATUS_CODE.internalServerError,
+			UPLOAD_STATUS_CODE.aborted,
+			UPLOAD_STATUS_CODE.overQuota
+		];
 		if (xhr.readyState !== XMLHttpRequest.UNSENT && !handledStatuses.includes(xhr.status)) {
 			console.error('upload error: unhandled status', xhr.status, fileEnriched);
 		}
@@ -437,6 +441,7 @@ export function upload(
 		value: {
 			id: fileEnriched.id,
 			status: UploadStatus.LOADING,
+			statusCode: undefined,
 			progress: 0
 		}
 	});
@@ -525,10 +530,11 @@ export function getUploadAddType(dataTransfer: DataTransfer): UploadAddType[] {
 	const fileEntries: UploadAddType[] = [];
 	forEach(dataTransfer.items, (droppedItem, index) => {
 		const item: FileSystemEntry | null =
-			(droppedItem.webkitGetAsEntry && droppedItem.webkitGetAsEntry()) ||
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			(droppedItem.getAsEntry && droppedItem.getAsEntry()) ||
+			droppedItem.webkitGetAsEntry?.() ||
+			('getAsEntry' in droppedItem &&
+				(
+					droppedItem as DataTransferItem & { getAsEntry: () => FileSystemEntry | null }
+				).getAsEntry?.()) ||
 			null;
 		if (item?.name !== dataTransfer.files[index].name) {
 			console.error('dataTransfer items and files mismatch');
