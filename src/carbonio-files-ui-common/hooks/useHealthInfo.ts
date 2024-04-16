@@ -7,41 +7,33 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { getFilesHealth } from '../../network/getFilesHealth';
 
-export const healthCache: {
+interface HealthState {
 	previewIsLive: boolean | undefined;
 	docsIsLive: boolean | undefined;
 	healthRequested: boolean;
 	healthReceived: boolean;
 	healthFailed: boolean;
-	cbs: Array<() => void>;
-} = {
+	callbackArray: Array<() => void>;
+}
+
+export const healthCache: HealthState = {
 	previewIsLive: undefined,
 	docsIsLive: undefined,
 	healthRequested: false,
 	healthReceived: false,
 	healthFailed: false,
-	cbs: []
+	callbackArray: []
 };
 
 export const useHealthInfo = (): {
-	previewIsLive: boolean | undefined;
-	docsIsLive: boolean | undefined;
-	responseReceived: boolean;
-	requestFailed: boolean;
-	refreshData: () => void;
 	canUsePreview: boolean;
 	canUseDocs: boolean;
 } => {
-	const [state, setState] = useState<{
-		previewIsLive: boolean | undefined;
-		docsIsLive: boolean | undefined;
-		responseReceived: boolean;
-		requestFailed: boolean;
-	}>({
+	const [state, setState] = useState<Omit<HealthState, 'callbackArray' | 'healthRequested'>>({
 		previewIsLive: undefined,
 		docsIsLive: undefined,
-		responseReceived: false,
-		requestFailed: false
+		healthReceived: false,
+		healthFailed: false
 	});
 
 	const refreshData = useCallback(() => {
@@ -54,8 +46,8 @@ export const useHealthInfo = (): {
 				setState({
 					previewIsLive: response.previewIsLive,
 					docsIsLive: response.docsIsLive,
-					responseReceived: true,
-					requestFailed: false
+					healthReceived: true,
+					healthFailed: false
 				});
 			})
 			.catch(() => {
@@ -63,12 +55,12 @@ export const useHealthInfo = (): {
 				healthCache.healthReceived = true;
 				setState((prevState) => ({
 					...prevState,
-					responseReceived: true,
-					requestFailed: true
+					healthReceived: true,
+					healthFailed: true
 				}));
 			})
 			.finally(() => {
-				healthCache.cbs.forEach((cb) => cb());
+				healthCache.callbackArray.forEach((cb) => cb());
 			});
 	}, []);
 
@@ -76,8 +68,8 @@ export const useHealthInfo = (): {
 		setState({
 			previewIsLive: healthCache.previewIsLive,
 			docsIsLive: healthCache.docsIsLive,
-			responseReceived: healthCache.healthReceived,
-			requestFailed: healthCache.healthFailed
+			healthReceived: healthCache.healthReceived,
+			healthFailed: healthCache.healthFailed
 		});
 	}, []);
 
@@ -85,16 +77,14 @@ export const useHealthInfo = (): {
 		if (healthCache.healthReceived) {
 			readCache();
 		} else if (healthCache.healthRequested) {
-			healthCache.cbs.push(readCache);
+			healthCache.callbackArray.push(readCache);
 		} else {
 			refreshData();
 		}
 	}, [readCache, refreshData]);
 
 	return {
-		...state,
-		canUsePreview: state.responseReceived && !state.requestFailed && !!state.previewIsLive,
-		canUseDocs: state.responseReceived && !state.requestFailed && !!state.docsIsLive,
-		refreshData
+		canUsePreview: state.healthReceived && !state.healthFailed && !!state.previewIsLive,
+		canUseDocs: state.healthReceived && !state.healthFailed && !!state.docsIsLive
 	};
 };

@@ -6,11 +6,11 @@
 
 import { HttpResponse, HttpResponseResolver } from 'msw';
 
-export interface MySelfQuotaResponse {
+export interface HealthResponse {
 	dependencies: Array<{ name: string; live: boolean }>;
 }
 
-const handleHealthRequest: HttpResponseResolver<never, never, MySelfQuotaResponse> = () =>
+const handleHealthRequest: HttpResponseResolver<never, never, HealthResponse> = () =>
 	HttpResponse.json({
 		dependencies: [
 			{ name: 'carbonio-preview', live: true },
