@@ -17,6 +17,7 @@ import { ACTION_IDS } from '../../constants';
 import { CreateOption } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
+	DOCS_SERVICE_NAME,
 	FILTER_TYPE,
 	HEALTH_PATH,
 	INTERNAL_PATH,
@@ -205,7 +206,7 @@ describe('Filter view', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: true }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
 			)
 		);
 		setup(<FilterView />);
@@ -229,7 +230,7 @@ describe('Filter view', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: false }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
 			)
 		);
 		setup(<FilterView />);

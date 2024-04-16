@@ -12,7 +12,7 @@ import FileView from './FileView';
 import { ACTION_IDS } from '../../constants';
 import { CreateOption } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
-import { HEALTH_PATH, REST_ENDPOINT } from '../constants';
+import { DOCS_SERVICE_NAME, HEALTH_PATH, REST_ENDPOINT } from '../constants';
 import { healthCache } from '../hooks/useHealthInfo';
 import { HealthResponse } from '../mocks/handleHealthRequest';
 import { setup, spyOnUseCreateOptions } from '../utils/testUtils';
@@ -24,7 +24,7 @@ describe('FileView', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: true }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
 			)
 		);
 		setup(<FileView />);
@@ -48,7 +48,7 @@ describe('FileView', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: false }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
 			)
 		);
 		setup(<FileView />);

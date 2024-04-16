@@ -19,13 +19,13 @@ import server from '../../mocks/server';
 import {
 	CREATE_FILE_PATH,
 	DOCS_ENDPOINT,
+	DOCS_SERVICE_NAME,
 	HEALTH_PATH,
 	NODES_LOAD_LIMIT,
 	NODES_SORT_DEFAULT,
-	REST_ENDPOINT,
-	TIMERS
+	REST_ENDPOINT
 } from '../constants';
-import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS, TIMERS } from '../constants/test';
 import { healthCache } from '../hooks/useHealthInfo';
 import {
 	CreateDocsFileRequestBody,
@@ -42,6 +42,8 @@ import {
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
 import { setup, spyOnUseCreateOptions, triggerLoadMore, UserEvent } from '../utils/testUtils';
+
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
 	<div>
@@ -84,7 +86,7 @@ describe('Create docs file', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: true }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
 			)
 		);
 		setup(<FolderView />);
@@ -108,7 +110,7 @@ describe('Create docs file', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: false }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
 			)
 		);
 		setup(<FolderView />);
@@ -124,6 +126,56 @@ describe('Create docs file', () => {
 		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
 		);
+	});
+
+	it('should show docs actions inside contextual menu actions if docs is available', async () => {
+		healthCache.reset();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
+			)
+		);
+		const currentFolder = populateFolder(0);
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
+		const { user } = setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+		await user.rightClick(await screen.findByText(/It looks like there's nothing here/i));
+		const dropdown = await screen.findByTestId(SELECTORS.dropdownList);
+		expect(within(dropdown).getByText(ACTION_REGEXP.newDocument)).toBeVisible();
+		expect(within(dropdown).getByText(ACTION_REGEXP.newSpreadsheet)).toBeVisible();
+		expect(within(dropdown).getByText(ACTION_REGEXP.newPresentation)).toBeVisible();
+	});
+
+	it('should not show docs actions inside contextual menu actions if docs is not available', async () => {
+		healthCache.reset();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
+			)
+		);
+		const currentFolder = populateFolder(0);
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
+		const { user } = setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+		await user.rightClick(await screen.findByText(/It looks like there's nothing here/i));
+		const dropdown = await screen.findByTestId(SELECTORS.dropdownList);
+		expect(within(dropdown).queryByText(ACTION_REGEXP.newDocument)).not.toBeInTheDocument();
+		expect(within(dropdown).queryByText(ACTION_REGEXP.newSpreadsheet)).not.toBeInTheDocument();
+		expect(within(dropdown).queryByText(ACTION_REGEXP.newPresentation)).not.toBeInTheDocument();
 	});
 
 	test('Create file options are disabled if current folder has not can_write_file permission', async () => {
@@ -423,7 +475,7 @@ describe('Create docs file', () => {
 				createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
 			});
 			act(() => {
-				jest.advanceTimersByTime(TIMERS.MODAL_DELAY_OPEN);
+				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
 			});
 			expect(await screen.findByText('.odt')).toBeVisible();
 		});
@@ -442,7 +494,7 @@ describe('Create docs file', () => {
 				createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
 			});
 			act(() => {
-				jest.advanceTimersByTime(TIMERS.MODAL_DELAY_OPEN);
+				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
 			});
 			expect(await screen.findByText('.docx')).toBeVisible();
 		});

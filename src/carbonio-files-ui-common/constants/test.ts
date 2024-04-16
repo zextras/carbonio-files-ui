@@ -12,13 +12,17 @@ export const ACTION_REGEXP = {
 	moveToTrash: /^move to trash$/i,
 	download: /^download$/i,
 	openDocument: /^open document$/i,
+	editDocument: /^edit$/i,
 	deletePermanently: /^delete permanently$/i,
 	restore: /^restore$/i,
 	manageShares: /^manage shares$/i,
 	preview: /^preview$/i,
 	retryUpload: /^retry upload$/i,
 	removeUpload: /^remove upload$/i,
-	goToFolder: /^go to destination folder$/i
+	goToFolder: /^go to destination folder$/i,
+	newDocument: /^new document$/i,
+	newPresentation: /^new presentation$/i,
+	newSpreadsheet: /^new spreadsheet$/i
 } as const;
 
 export const ICON_REGEXP = {
@@ -139,4 +143,8 @@ export const COLORS = {
 		enabled: 'rgba(43, 115, 210, 0.4)',
 		disabled: 'rgba(130, 130, 130, 0.4)'
 	}
+};
+
+export const TIMERS = {
+	modalDelayOpen: 1
 };

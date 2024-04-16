@@ -87,8 +87,7 @@ export const TIMERS = {
 	HIDE_DROPZONE: 50,
 	DRAG_THROTTLE: 100,
 	DRAG_PREVENT_HOVER_DROPDOWN: 10,
-	DRAG_DELAY_CLOSE_DROPDOWN: 150,
-	MODAL_DELAY_OPEN: 1
+	DRAG_DELAY_CLOSE_DROPDOWN: 150
 } as const;
 export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 	[DocsType.LIBRE_DOCUMENT]: 'odt',
@@ -98,6 +97,8 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 	[DocsType.MS_SPREADSHEET]: 'xlsx',
 	[DocsType.MS_PRESENTATION]: 'pptx'
 } as const;
+export const DOCS_SERVICE_NAME = 'carbonio-docs-connector';
+export const PREVIEW_SERVICE_NAME = 'carbonio-preview';
 // TODO: use locale aware date format (L)
 export const DATE_FORMAT = 'DD/MM/YYYY';
 export const DATE_FORMAT_SHORT = 'DD/MM/YY';

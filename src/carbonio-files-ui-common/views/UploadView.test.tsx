@@ -15,7 +15,13 @@ import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
 import { CreateOption } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { uploadVar } from '../apollo/uploadVar';
-import { HEALTH_PATH, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, REST_ENDPOINT } from '../constants';
+import {
+	DOCS_SERVICE_NAME,
+	HEALTH_PATH,
+	NODES_LOAD_LIMIT,
+	NODES_SORT_DEFAULT,
+	REST_ENDPOINT
+} from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { healthCache } from '../hooks/useHealthInfo';
 import { HealthResponse } from '../mocks/handleHealthRequest';
@@ -259,7 +265,7 @@ describe('Upload view', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: true }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
 			)
 		);
 		setup(<UploadView />);
@@ -283,7 +289,7 @@ describe('Upload view', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: false }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
 			)
 		);
 		setup(<UploadView />);

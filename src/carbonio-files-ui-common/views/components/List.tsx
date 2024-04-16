@@ -429,7 +429,7 @@ export const List: React.VFC<ListProps> = ({
 								forceCache: false,
 								previewType: 'pdf',
 								filename: node.name,
-								extension: node.extension || undefined,
+								extension: node.extension ?? undefined,
 								size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
 								useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE,
 								actions,

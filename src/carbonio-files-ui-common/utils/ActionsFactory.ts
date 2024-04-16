@@ -521,7 +521,7 @@ export function getPermittedActions(
 		(accumulator: Action[], action: Action) => {
 			if (size(nodes) > 0) {
 				let externalCheckerResult = true;
-				const externalChecker = customCheckers && customCheckers[action];
+				const externalChecker = customCheckers?.[action];
 				if (externalChecker) {
 					externalCheckerResult = externalChecker(nodes);
 				}

@@ -15,7 +15,7 @@ import { ACTION_IDS } from '../../constants';
 import { CreateOption } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { searchParamsVar } from '../apollo/searchVar';
-import { HEALTH_PATH, INTERNAL_PATH, REST_ENDPOINT, ROOTS } from '../constants';
+import { DOCS_SERVICE_NAME, HEALTH_PATH, INTERNAL_PATH, REST_ENDPOINT, ROOTS } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import BaseNodeFragmentDoc from '../graphql/fragments/baseNode.graphql';
 import { healthCache } from '../hooks/useHealthInfo';
@@ -558,7 +558,7 @@ describe('Search view', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: true }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
 			)
 		);
 		setup(<SearchView />);
@@ -582,7 +582,7 @@ describe('Search view', () => {
 		spyOnUseCreateOptions(createOptions);
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: false }] })
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
 			)
 		);
 		setup(<SearchView />);

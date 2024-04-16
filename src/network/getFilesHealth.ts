@@ -3,7 +3,12 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { HEALTH_PATH, REST_ENDPOINT } from '../carbonio-files-ui-common/constants';
+import {
+	DOCS_SERVICE_NAME,
+	HEALTH_PATH,
+	PREVIEW_SERVICE_NAME,
+	REST_ENDPOINT
+} from '../carbonio-files-ui-common/constants';
 
 export const getFilesHealth = (): Promise<{ previewIsLive: boolean; docsIsLive: boolean }> =>
 	fetch(`${REST_ENDPOINT}${HEALTH_PATH}`, {
@@ -19,7 +24,7 @@ export const getFilesHealth = (): Promise<{ previewIsLive: boolean; docsIsLive: 
 			throw new Error('Something went wrong');
 		})
 		.then(({ dependencies }) => {
-			const previewDep = dependencies.find((value) => value.name === 'carbonio-preview');
-			const docsDep = dependencies.find((value) => value.name === 'carbonio-docs-connector');
+			const previewDep = dependencies.find((value) => value.name === PREVIEW_SERVICE_NAME);
+			const docsDep = dependencies.find((value) => value.name === DOCS_SERVICE_NAME);
 			return { previewIsLive: previewDep?.live ?? false, docsIsLive: docsDep?.live ?? false };
 		});

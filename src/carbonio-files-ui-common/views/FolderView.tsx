@@ -144,7 +144,7 @@ const FolderView: React.VFC = () => {
 	}, [setNewFile]);
 
 	const documentGenericType = useMemo(
-		() => (last(newFile?.split('_')) || 'document').toLowerCase(),
+		() => (last(newFile?.split('_')) ?? 'document').toLowerCase(),
 		[newFile]
 	);
 
