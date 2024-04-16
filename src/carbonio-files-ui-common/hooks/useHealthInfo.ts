@@ -10,26 +10,36 @@ import { getFilesHealth } from '../../network/getFilesHealth';
 interface HealthState {
 	previewIsLive: boolean | undefined;
 	docsIsLive: boolean | undefined;
-	healthRequested: boolean;
 	healthReceived: boolean;
 	healthFailed: boolean;
-	callbackArray: Array<() => void>;
 }
 
-export const healthCache: HealthState = {
+export const healthCache: HealthState & {
+	healthRequested: boolean;
+	callbackArray: Array<() => void>;
+	reset: () => void;
+} = {
 	previewIsLive: undefined,
 	docsIsLive: undefined,
 	healthRequested: false,
 	healthReceived: false,
 	healthFailed: false,
-	callbackArray: []
+	callbackArray: [],
+	reset: () => {
+		healthCache.previewIsLive = undefined;
+		healthCache.docsIsLive = undefined;
+		healthCache.healthRequested = false;
+		healthCache.healthReceived = false;
+		healthCache.healthFailed = false;
+		healthCache.callbackArray = [];
+	}
 };
 
 export const useHealthInfo = (): {
 	canUsePreview: boolean;
 	canUseDocs: boolean;
 } => {
-	const [state, setState] = useState<Omit<HealthState, 'callbackArray' | 'healthRequested'>>({
+	const [state, setState] = useState<HealthState>({
 		previewIsLive: undefined,
 		docsIsLive: undefined,
 		healthReceived: false,

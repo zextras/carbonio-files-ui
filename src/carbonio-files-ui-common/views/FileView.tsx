@@ -222,7 +222,7 @@ const FileView: React.VFC = () => {
 						borderRadius="none"
 						background="gray6"
 					>
-						<FileList fileId={fileId || ''} canUploadFile={false} />
+						<FileList fileId={fileId ?? ''} canUploadFile={false} />
 					</Container>
 					<Container
 						width={DISPLAYER_WIDTH}
@@ -235,7 +235,7 @@ const FileView: React.VFC = () => {
 					</Container>
 				</Responsive>
 				<Responsive mode="mobile">
-					<FileList fileId={fileId || ''} canUploadFile={false} />
+					<FileList fileId={fileId ?? ''} canUploadFile={false} />
 				</Responsive>
 			</Container>
 			<Snackbar

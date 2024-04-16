@@ -8,37 +8,32 @@ import React from 'react';
 
 import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
-import { graphql } from 'msw';
+import { graphql, http, HttpResponse } from 'msw';
 import { Link, Route, Switch } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
+import { CreateOption } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
-import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
+import {
+	FILTER_TYPE,
+	HEALTH_PATH,
+	INTERNAL_PATH,
+	NODES_LOAD_LIMIT,
+	REST_ENDPOINT
+} from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { healthCache } from '../hooks/useHealthInfo';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
+import { HealthResponse } from '../mocks/handleHealthRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { selectNodes, setup, triggerLoadMore } from '../utils/testUtils';
+import { selectNodes, setup, spyOnUseCreateOptions, triggerLoadMore } from '../utils/testUtils';
 
-let mockedCreateOptions: CreateOption[];
-
-beforeEach(() => {
-	mockedCreateOptions = [];
-});
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsReturnType => ({
-		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
-			mockedCreateOptions = options;
-		},
-		removeCreateOptions: () => undefined
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter view', () => {
 	test('No url param render a "Missing filter" message', async () => {
@@ -55,14 +50,14 @@ describe('Filter view', () => {
 	});
 
 	test('Create folder option is always disabled', async () => {
+		const createOptions: CreateOption[] = [];
+		spyOnUseCreateOptions(createOptions);
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 		});
 		await screen.findByText(/view files and folders/i);
-		expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
-			])
+		expect(map(createOptions, (createOption) => createOption.action({}))).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
 		);
 	});
 
@@ -202,6 +197,54 @@ describe('Filter view', () => {
 		const nodesItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodesItems).toHaveLength(2);
 		expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toBe(nodesItems[1]);
+	});
+
+	it('should show docs creation actions if docs is available', async () => {
+		healthCache.reset();
+		const createOptions: CreateOption[] = [];
+		spyOnUseCreateOptions(createOptions);
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: true }] })
+			)
+		);
+		setup(<FilterView />);
+		await waitFor(() =>
+			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
+		);
+	});
+
+	it('should not show docs creation actions if docs is not available', async () => {
+		healthCache.reset();
+		const createOptions: CreateOption[] = [];
+		spyOnUseCreateOptions(createOptions);
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: 'carbonio-docs-connector', live: false }] })
+			)
+		);
+		setup(<FilterView />);
+		await waitFor(() =>
+			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
+		);
 	});
 
 	describe('Selection mode', () => {

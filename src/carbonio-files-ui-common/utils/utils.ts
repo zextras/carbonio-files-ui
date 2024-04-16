@@ -224,7 +224,7 @@ export const initExpirationDate = (date: Date | undefined): Date | undefined => 
 	return undefined;
 };
 
-function takeIfNotEmpty(value: string | undefined): string | undefined {
+export function takeIfNotEmpty(value: string | undefined): string | undefined {
 	return value !== undefined && !isEmpty(value) ? value : undefined;
 }
 
