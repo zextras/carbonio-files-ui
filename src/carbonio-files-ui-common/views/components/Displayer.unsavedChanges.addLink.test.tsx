@@ -215,7 +215,7 @@ describe('Displayer', () => {
 				// go back to sharing tab
 				await user.click(screen.getByText(/sharing/i));
 				// add link status is reset
-				expect(screen.getByRole('button', { name: /add link/i })).toBeVisible();
+				expect(await screen.findByRole('button', { name: /add link/i })).toBeVisible();
 				expect(
 					screen.queryByRole('textbox', { name: /link's description/i })
 				).not.toBeInTheDocument();
