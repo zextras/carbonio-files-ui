@@ -45,7 +45,7 @@ describe('Displayer Actions', () => {
 				parentFolder.children = populateNodePage([node]);
 
 				const { user } = setup(<DisplayerActions node={node} />);
-
+				await screen.findByTestId(SELECTORS.displayerActionsHeader);
 				await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 				const actionButton = screen.queryByRoleWithIcon('button', { icon: actionIcon });
 				if (actionButton !== null) {
@@ -82,7 +82,7 @@ describe('Displayer Actions', () => {
 				parentFolder.children = populateNodePage([node]);
 
 				const { user } = setup(<DisplayerActions node={node} />);
-
+				await screen.findByTestId(SELECTORS.displayerActionsHeader);
 				await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 				expect(screen.queryByRoleWithIcon('button', { icon: actionIcon })).not.toBeInTheDocument();
 				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
