@@ -410,20 +410,22 @@ export const List: React.VFC<ListProps> = ({
 										(documentType === PREVIEW_TYPE.DOCUMENT &&
 											getDocumentPreviewSrc(node.id, node.version)))) ||
 								'';
-							if (canEdit([node])) {
-								actions.unshift({
-									icon: 'Edit2Outline',
-									id: 'Edit',
-									onClick: (): void => openNodeWithDocs(node.id),
-									tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
-								});
-							} else if (canOpenWithDocs([node])) {
-								actions.unshift({
-									id: 'OpenWithDocs',
-									icon: 'BookOpenOutline',
-									tooltipLabel: t('actions.openWithDocs', 'Open document'),
-									onClick: (): void => openNodeWithDocs(node.id)
-								});
+							if (canUseDocs) {
+								if (canEdit([node])) {
+									actions.unshift({
+										icon: 'Edit2Outline',
+										id: 'Edit',
+										onClick: (): void => openNodeWithDocs(node.id),
+										tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
+									});
+								} else if (canOpenWithDocs([node])) {
+									actions.unshift({
+										id: 'OpenWithDocs',
+										icon: 'BookOpenOutline',
+										tooltipLabel: t('actions.openWithDocs', 'Open document'),
+										onClick: (): void => openNodeWithDocs(node.id)
+									});
+								}
 							}
 							accumulator.push({
 								forceCache: false,
@@ -445,7 +447,7 @@ export const List: React.VFC<ListProps> = ({
 				},
 				[]
 			),
-		[nodes, setActiveNode, t]
+		[canUseDocs, nodes, setActiveNode, t]
 	);
 
 	useEffect(() => {

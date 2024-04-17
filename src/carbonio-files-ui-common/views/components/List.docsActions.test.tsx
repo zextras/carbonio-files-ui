@@ -325,8 +325,7 @@ describe('List', () => {
 				expect(screen.getByTestId(actionIcon)).toBeVisible();
 			});
 
-			// FIXME: docs actions should not be visible
-			it.failing.each([
+			it.each([
 				['edit', ICON_REGEXP.edit, true],
 				['open document', ICON_REGEXP.openDocument, false]
 			])(
