@@ -255,7 +255,7 @@ describe('Upload view', () => {
 					sort: NODES_SORT_DEFAULT
 				}
 			});
-			return expect((localRootData?.getNode as Folder).children.nodes).toHaveLength(1);
+			return expect((localRootData?.getNode as Folder | null)?.children.nodes).toHaveLength(1);
 		});
 	});
 
