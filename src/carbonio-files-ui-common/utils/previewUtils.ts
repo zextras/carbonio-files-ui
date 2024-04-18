@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../constants';
-import { NodeType } from '../types/graphql/types';
+import { File, NodeType } from '../types/graphql/types';
 
 type ThumbnailType = 'thumbnail' | 'thumbnail_detail';
 type PreviewOptions = {
@@ -127,6 +127,31 @@ export function getDocumentPreviewSrc(id: string, version?: number): string {
 	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}`;
 }
 
+export function getPreviewOutputFormat(
+	mimeType: string | undefined
+): PreviewOptions['outputFormat'] {
+	return mimeType === 'image/gif' ? 'gif' : 'jpeg';
+}
+
+export function getPreviewSrc(
+	node: File,
+	documentType: ReturnType<typeof isSupportedByPreview>[1]
+): string {
+	return (
+		(node.version &&
+			((documentType === PREVIEW_TYPE.PDF && getPdfPreviewSrc(node.id, node.version)) ||
+				(documentType === PREVIEW_TYPE.DOCUMENT && getDocumentPreviewSrc(node.id, node.version)) ||
+				(documentType === PREVIEW_TYPE.IMAGE &&
+					getImgPreviewSrc(node.id, node.version, {
+						width: 0,
+						height: 0,
+						quality: 'high',
+						outputFormat: getPreviewOutputFormat(node.mime_type)
+					})))) ||
+		''
+	);
+}
+
 export function getPreviewThumbnailSrc(
 	id: string,
 	version: number | undefined,
@@ -145,10 +170,4 @@ export function getPreviewThumbnailSrc(
 		return `${REST_ENDPOINT}${PREVIEW_PATH}/${previewType}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
 	}
 	return undefined;
-}
-
-export function getPreviewOutputFormat(
-	mimeType: string | undefined
-): PreviewOptions['outputFormat'] {
-	return mimeType === 'image/gif' ? 'gif' : 'jpeg';
 }
