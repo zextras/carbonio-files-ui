@@ -73,6 +73,7 @@ export const ICON_REGEXP = {
 	uploadLoading: 'icon: AnimatedLoader',
 	previewClose: 'icon: ArrowBackOutline',
 	previewDownload: 'icon: DownloadOutline',
+	preview: 'icon: MaximizeOutline',
 	queryLoading: 'icon: Refresh',
 	revoke: 'icon: SlashOutline',
 	refreshQuota: 'icon: Refresh',
