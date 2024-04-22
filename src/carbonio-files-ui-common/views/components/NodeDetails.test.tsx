@@ -8,18 +8,24 @@ import React from 'react';
 
 import { screen } from '@testing-library/react';
 import { forEach, map } from 'lodash';
+import { http, HttpResponse } from 'msw';
 import { DefaultTheme } from 'styled-components';
 import 'jest-styled-components';
 
 import { NodeDetails } from './NodeDetails';
+import server from '../../../mocks/server';
 import {
 	DATE_FORMAT_SHORT,
+	HEALTH_PATH,
 	NODES_LOAD_LIMIT,
 	PREVIEW_PATH,
+	PREVIEW_SERVICE_NAME,
 	PREVIEW_TYPE,
 	REST_ENDPOINT
 } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { healthCache } from '../../hooks/useHealthInfo';
+import { HealthResponse } from '../../mocks/handleHealthRequest';
 import {
 	populateFile,
 	populateFolder,
@@ -33,6 +39,7 @@ import {
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder, NodeType, QueryGetPathArgs } from '../../types/graphql/types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
+import * as previewUtils from '../../utils/previewUtils';
 import { mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../utils/testUtils';
 import { formatDate, formatTime, humanFileSize } from '../../utils/utils';
@@ -333,7 +340,14 @@ describe('Node Details', () => {
 		expect(screen.queryByText('|')).not.toBeInTheDocument();
 	});
 
-	test('Show file preview for image', async () => {
+	test('should show file preview for image when preview is live', async () => {
+		const getPreviewThumbnailSrcFn = jest.spyOn(previewUtils, 'getPreviewThumbnailSrc');
+		healthCache.reset();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: PREVIEW_SERVICE_NAME, live: true }] })
+			)
+		);
 		const node = populateFile();
 		const loadMore = jest.fn();
 		node.type = NodeType.Image;
@@ -361,8 +375,53 @@ describe('Node Details', () => {
 			/>,
 			{ mocks: {} }
 		);
+		await screen.findByTestId('node-details');
+		expect(healthCache.healthReceived).toBeTruthy();
 		await screen.findByRole('img');
 		expect(screen.getByRole('img')).toBeVisible();
+		expect(getPreviewThumbnailSrcFn).toHaveBeenCalled();
+	});
+
+	test('should not show file preview for image when preview is not live', async () => {
+		const getPreviewThumbnailSrcFn = jest.spyOn(previewUtils, 'getPreviewThumbnailSrc');
+		healthCache.reset();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: PREVIEW_SERVICE_NAME, live: false }] })
+			)
+		);
+		const node = populateFile();
+		const loadMore = jest.fn();
+		node.type = NodeType.Image;
+		node.mime_type = 'image/png';
+		setup(
+			<NodeDetails
+				typeName={node.__typename}
+				id={node.id}
+				name={node.name}
+				owner={node.owner}
+				creator={node.creator}
+				lastEditor={node.last_editor}
+				createdAt={node.created_at}
+				updatedAt={node.updated_at}
+				description={node.description}
+				canUpsertDescription={canUpsertDescription(node)}
+				loadMore={loadMore}
+				loading={false}
+				shares={node.shares}
+				hasMore={false}
+				size={node.size}
+				type={node.type}
+				version={node.version}
+				mimeType={node.mime_type}
+			/>,
+			{ mocks: {} }
+		);
+		await screen.findByTestId('node-details');
+		expect(healthCache.healthReceived).toBeTruthy();
+		expect(getPreviewThumbnailSrcFn).not.toHaveBeenCalled();
+		expect(screen.getByText(node.name)).toBeVisible();
+		expect(screen.queryByRole('img')).not.toBeInTheDocument();
 	});
 
 	test('should show preview of gif image with gif format', async () => {
