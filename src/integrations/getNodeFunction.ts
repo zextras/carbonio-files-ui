@@ -44,8 +44,8 @@ function getNodeWithClient(
 						reject();
 					}
 				})
-				.catch(() => {
-					reject();
+				.catch((error) => {
+					reject(error);
 				});
 		});
 }
