@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
-import { AnyFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
+import { registerFunctions } from '@zextras/carbonio-shell-ui';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
 import GET_BASE_NODE from '../carbonio-files-ui-common/graphql/queries/getBaseNode.graphql';
@@ -44,8 +44,8 @@ function getNodeWithClient(
 						reject();
 					}
 				})
-				.catch((error) => {
-					reject(error);
+				.catch(() => {
+					reject();
 				});
 		});
 }
@@ -55,6 +55,6 @@ export const getNodeFunction = (): Parameters<typeof registerFunctions>[number] 
 
 	return {
 		id: FUNCTION_IDS.GET_NODE,
-		fn: getNodeWithClient(apolloClient) as AnyFunction
+		fn: getNodeWithClient(apolloClient)
 	};
 };

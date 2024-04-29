@@ -59,7 +59,9 @@ jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateO
 const mockedSoapFetch = jest.fn();
 
 jest.mock<typeof import('../../network/network')>('../../network/network', () => ({
-	soapFetch: <Req, Res>(): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+	soapFetch: <Req, Res extends Record<string, unknown>>(): ReturnType<
+		typeof actualNetworkModule.soapFetch<Req, Res>
+	> =>
 		new Promise<Res>((resolve, reject) => {
 			const result = mockedSoapFetch();
 			result ? resolve(result) : reject(new Error('no result provided'));

@@ -8,7 +8,7 @@ import { soapFetch as shellSoapFetch } from '@zextras/carbonio-shell-ui';
 
 import { RequestName } from '../carbonio-files-ui-common/types/network';
 
-export const soapFetch = <Req, Res>(
+export const soapFetch = <Req, Res extends Record<string, unknown>>(
 	request: RequestName,
 	args: Req,
 	nameSpaceValue = 'urn:zimbraMail'

@@ -5,8 +5,6 @@
  */
 import { useCallback } from 'react';
 
-import { AnyFunction } from '@zextras/carbonio-shell-ui';
-
 import {
 	OpenNodesSelectionModal,
 	useNodesSelectionModal
@@ -22,10 +20,10 @@ export type OpenSelectNodesModalArgs = Parameters<OpenNodesSelectionModal>[numbe
 	actionIcon?: string;
 };
 
-export const useSelectNodes = (): AnyFunction => {
+export const useSelectNodes = (): ((args: OpenSelectNodesModalArgs) => void) => {
 	const { openNodesSelectionModal } = useNodesSelectionModal();
 
-	const openSelectNodesModal = useCallback(
+	return useCallback(
 		({
 			allowFiles = true,
 			allowFolders = true,
@@ -41,6 +39,4 @@ export const useSelectNodes = (): AnyFunction => {
 		},
 		[openNodesSelectionModal]
 	);
-
-	return openSelectNodesModal as AnyFunction;
 };
