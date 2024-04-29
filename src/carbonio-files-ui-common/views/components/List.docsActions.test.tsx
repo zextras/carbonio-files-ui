@@ -24,7 +24,10 @@ import { populateFile, populateFolder, populateNodePage } from '../../mocks/mock
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder, GetChildrenParentDocument, NodeType, User } from '../../types/graphql/types';
-import { MIME_TYPE_PREVIEW_SUPPORT } from '../../utils/previewUtils';
+import {
+	MIME_TYPE_PREVIEW_SUPPORT,
+	PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS
+} from '../../utils/previewUtils';
 import { mockGetPath } from '../../utils/resolverMocks';
 import { screen, selectNodes, setup } from '../../utils/testUtils';
 import { docsHandledMimeTypes } from '../../utils/utils';
@@ -141,6 +144,54 @@ describe('List', () => {
 		});
 
 		describe('contextual menu', () => {
+			it.each(PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS)(
+				'should not show preview action if docs is not available for %s mime type',
+				async (mimeType) => {
+					healthCache.reset();
+					server.use(
+						http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+							HttpResponse.json({
+								dependencies: [
+									{ name: DOCS_SERVICE_NAME, live: false },
+									{ name: PREVIEW_SERVICE_NAME, live: true }
+								]
+							})
+						)
+					);
+					const currentFolder = populateFolder(0);
+					currentFolder.permissions.can_write_file = true;
+					currentFolder.permissions.can_write_folder = true;
+					const node = populateFile();
+					node.parent = currentFolder;
+					node.owner = currentFolder.owner as User;
+					node.type = NodeType.Text;
+					node.mime_type = mimeType;
+					currentFolder.children = populateNodePage([node]);
+					prepareCache(currentFolder);
+					const mocks = {
+						Query: {
+							getPath: mockGetPath([currentFolder])
+						}
+					} satisfies Partial<Resolvers>;
+
+					const { user } = setup(
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as Array<Node>}
+							mainList
+							emptyListMessage={'hint'}
+						/>,
+						{ mocks }
+					);
+
+					await screen.findByTextWithMarkup(currentFolder.name);
+					await user.rightClick(screen.getByText(node.name));
+					await screen.findByTestId(SELECTORS.dropdownList);
+					expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
+				}
+			);
+
 			it.each([
 				['edit', ACTION_REGEXP.editDocument, true],
 				['open document', ACTION_REGEXP.openDocument, false]
@@ -324,59 +375,6 @@ describe('List', () => {
 				await user.click(screen.getByText(ACTION_REGEXP.preview));
 				expect(screen.getByTestId(actionIcon)).toBeVisible();
 			});
-
-			it.each([
-				['edit', ICON_REGEXP.edit, true],
-				['open document', ICON_REGEXP.openDocument, false]
-			])(
-				'should not show %s action if docs is not available',
-				async (_, actionIcon, writePermission) => {
-					healthCache.reset();
-					server.use(
-						http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-							HttpResponse.json({
-								dependencies: [
-									{ name: DOCS_SERVICE_NAME, live: false },
-									{ name: PREVIEW_SERVICE_NAME, live: true }
-								]
-							})
-						)
-					);
-					const currentFolder = populateFolder(0);
-					currentFolder.permissions.can_write_file = true;
-					currentFolder.permissions.can_write_folder = true;
-					const node = populateFile();
-					node.permissions.can_write_file = writePermission;
-					node.parent = currentFolder;
-					node.owner = currentFolder.owner as User;
-					node.type = NodeType.Text;
-					node.mime_type = 'application/msword';
-					currentFolder.children = populateNodePage([node]);
-					prepareCache(currentFolder);
-					const mocks = {
-						Query: {
-							getPath: mockGetPath([currentFolder])
-						}
-					} satisfies Partial<Resolvers>;
-
-					const { user } = setup(
-						<List
-							folderId={currentFolder.id}
-							fillerWithActions={<EmptySpaceFiller actions={[]} />}
-							nodes={currentFolder.children.nodes as Array<Node>}
-							mainList
-							emptyListMessage={'hint'}
-						/>,
-						{ mocks }
-					);
-
-					await screen.findByTextWithMarkup(currentFolder.name);
-					await user.rightClick(screen.getByText(node.name));
-					await screen.findByTestId(SELECTORS.dropdownList);
-					await user.click(screen.getByText(ACTION_REGEXP.preview));
-					expect(screen.queryByTestId(actionIcon)).not.toBeInTheDocument();
-				}
-			);
 		});
 	});
 });

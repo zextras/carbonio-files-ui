@@ -5,9 +5,9 @@
  */
 
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
-import { forEach, find, includes, reduce, size, some, every, isBoolean } from 'lodash';
+import { every, find, forEach, includes, isBoolean, reduce, size, some } from 'lodash';
 
-import { isSupportedByPreview } from './previewUtils';
+import { isPreviewDependantOnDocs, isSupportedByPreview } from './previewUtils';
 import { docsHandledMimeTypes, isFile, isFolder } from './utils';
 import { ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT } from '../../constants';
 import { ROOTS } from '../constants';
@@ -100,7 +100,14 @@ export function hasWritePermission(
 	}
 }
 
-export function canRename(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+type ArgsType = {
+	nodes: OneOrMany<ActionsFactoryGlobalType>;
+	loggedUserId?: string;
+	canUsePreview?: boolean;
+	canUseDocs?: boolean;
+};
+
+export function canRename({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canRename on Node type');
 	}
@@ -116,7 +123,7 @@ export function canRename(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
 	return hasWritePermission($nodes, 'canRename') && $nodes[0].rootId !== ROOTS.TRASH;
 }
 
-export function canFlag(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canFlag({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canFlag on Node type');
 	}
@@ -136,7 +143,7 @@ export function canFlag(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
 	return !$nodes[0].flagged;
 }
 
-export function canUnFlag(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canUnFlag({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canUnFlag on Node type');
 	}
@@ -238,7 +245,7 @@ export function canBeCopyDestination(
 	);
 }
 
-export function canRestore(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canRestore({ nodes }: ArgsType): boolean {
 	let someNotTrashed: boolean;
 	const $nodes = nodes as OneOrMany<ActionsFactoryNodeType>;
 	if ($nodes instanceof Array) {
@@ -249,7 +256,7 @@ export function canRestore(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean 
 	return hasWritePermission($nodes, 'canRestore') && !someNotTrashed;
 }
 
-export function canMarkForDeletion(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canMarkForDeletion({ nodes }: ArgsType): boolean {
 	let someTrashed: boolean;
 	const $nodes = nodes as OneOrMany<ActionsFactoryNodeType>;
 	if ($nodes instanceof Array) {
@@ -260,12 +267,12 @@ export function canMarkForDeletion(nodes: OneOrMany<ActionsFactoryGlobalType>): 
 	return hasWritePermission($nodes, 'canMarkForDeletion') && !someTrashed;
 }
 
-export function canUpsertDescription(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canUpsertDescription({ nodes }: ArgsType): boolean {
 	const $nodes = nodes as ActionsFactoryNodeType[];
 	return hasWritePermission($nodes, 'canUpsertDescription');
 }
 
-export function canDeletePermanently(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canDeletePermanently({ nodes }: ArgsType): boolean {
 	const $nodes = nodes as OneOrMany<ActionsFactoryNodeType>;
 	if (!($nodes instanceof Array)) {
 		if (isFile($nodes) || isFolder($nodes)) {
@@ -276,14 +283,11 @@ export function canDeletePermanently(nodes: OneOrMany<ActionsFactoryGlobalType>)
 		}
 		throw Error(`cannot evaluate DeletePermanently on UnknownType`);
 	} else {
-		return every($nodes, (node) => canDeletePermanently(node));
+		return every($nodes, (node) => canDeletePermanently({ nodes: node }));
 	}
 }
 
-export function canMove(
-	nodes: OneOrMany<ActionsFactoryGlobalType>,
-	loggedUserId?: string
-): boolean {
+export function canMove({ nodes, loggedUserId }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canMove on Node type');
 	}
@@ -325,7 +329,7 @@ export function canMove(
 	});
 }
 
-export function canCopy(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canCopy({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canCopy on Node type');
 	}
@@ -336,7 +340,7 @@ export function canCopy(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
 	return every($nodes, (node) => node.rootId !== ROOTS.TRASH);
 }
 
-export function canDownload(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canDownload({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canDownload on Node type');
 	}
@@ -347,7 +351,7 @@ export function canDownload(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean
 	return size($nodes) === 1 && isFile($nodes[0]) && $nodes[0].rootId !== ROOTS.TRASH;
 }
 
-export function canOpenWithDocs(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canOpenWithDocs({ nodes, canUseDocs }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canOpenWithDocs on Node type');
 	}
@@ -356,6 +360,7 @@ export function canOpenWithDocs(nodes: OneOrMany<ActionsFactoryGlobalType>): boo
 	}
 	const $nodes = nodes as ActionsFactoryNodeType[];
 	return (
+		!!canUseDocs &&
 		size($nodes) === 1 &&
 		isFile($nodes[0]) &&
 		includes(docsHandledMimeTypes, $nodes[0].mime_type) &&
@@ -381,7 +386,7 @@ export function canOpenVersionWithDocs(nodes: OneOrMany<ActionsFactoryGlobalType
 	);
 }
 
-export function canEdit(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canEdit({ nodes, canUseDocs }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canEdit on Node type');
 	}
@@ -390,6 +395,7 @@ export function canEdit(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
 	}
 	const $nodes = nodes as ActionsFactoryNodeType[];
 	return (
+		!!canUseDocs &&
 		size($nodes) === 1 &&
 		isFile($nodes[0]) &&
 		includes(docsHandledMimeTypes, $nodes[0].mime_type) &&
@@ -398,7 +404,7 @@ export function canEdit(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
 	);
 }
 
-export function canPreview(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canPreview({ nodes, canUseDocs, canUsePreview }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canPreview on Node type');
 	}
@@ -410,11 +416,13 @@ export function canPreview(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean 
 		size($nodes) === 1 &&
 		isFile($nodes[0]) &&
 		$nodes[0].rootId !== ROOTS.TRASH &&
-		isSupportedByPreview($nodes[0].mime_type, 'preview')[0]
+		isSupportedByPreview($nodes[0].mime_type, 'preview')[0] &&
+		!!canUsePreview &&
+		(!isPreviewDependantOnDocs($nodes[0].mime_type) || !!canUseDocs)
 	);
 }
 
-export function canRemoveUpload(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canRemoveUpload({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canRemoveUpload on Node type');
 	}
@@ -424,7 +432,7 @@ export function canRemoveUpload(nodes: OneOrMany<ActionsFactoryGlobalType>): boo
 	return true;
 }
 
-export function canRetryUpload(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canRetryUpload({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canRetryUpload on Node type');
 	}
@@ -444,7 +452,7 @@ export function canRetryUpload(nodes: OneOrMany<ActionsFactoryGlobalType>): bool
 	);
 }
 
-export function canGoToFolder(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canGoToFolder({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canGoToFolder on Node type');
 	}
@@ -460,7 +468,7 @@ export function canGoToFolder(nodes: OneOrMany<ActionsFactoryGlobalType>): boole
 	);
 }
 
-export function canSendViaMail(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canSendViaMail({ nodes }: ArgsType): boolean {
 	if (includes(ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT, Action.SendViaMail)) {
 		return false;
 	}
@@ -474,7 +482,7 @@ export function canSendViaMail(nodes: OneOrMany<ActionsFactoryGlobalType>): bool
 	return size($nodes) === 1 && isFile($nodes[0]) && $nodes[0].rootId !== ROOTS.TRASH;
 }
 
-export function canManageShares(nodes: OneOrMany<ActionsFactoryGlobalType>): boolean {
+export function canManageShares({ nodes }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canManageShares on Node type');
 	}
@@ -486,7 +494,7 @@ export function canManageShares(nodes: OneOrMany<ActionsFactoryGlobalType>): boo
 }
 
 const actionsCheckMap: {
-	[key in Action]: (nodes: OneOrMany<ActionsFactoryGlobalType>, loggedUserId?: string) => boolean;
+	[key in Action]: (args: ArgsType) => boolean;
 } = {
 	[Action.Edit]: canEdit,
 	[Action.Preview]: canPreview,
@@ -506,7 +514,6 @@ const actionsCheckMap: {
 	[Action.GoToFolder]: canGoToFolder,
 	[Action.RetryUpload]: canRetryUpload,
 	[Action.RemoveUpload]: canRemoveUpload
-	// [Actions.CreateFolder]: canCreateFolder,
 };
 
 export function getPermittedActions(
@@ -514,6 +521,8 @@ export function getPermittedActions(
 	actions: Action[],
 	// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
 	loggedUserId?: string,
+	canUsePreview?: boolean,
+	canUseDocs?: boolean,
 	customCheckers?: ActionsFactoryCheckerMap
 ): Action[] {
 	return reduce(
@@ -525,7 +534,10 @@ export function getPermittedActions(
 				if (externalChecker) {
 					externalCheckerResult = externalChecker(nodes);
 				}
-				if (actionsCheckMap[action](nodes, loggedUserId) && externalCheckerResult) {
+				if (
+					actionsCheckMap[action]({ nodes, loggedUserId, canUsePreview, canUseDocs }) &&
+					externalCheckerResult
+				) {
 					accumulator.push(action);
 				}
 			}
@@ -538,13 +550,17 @@ export function getPermittedActions(
 export function getAllPermittedActions(
 	nodes: ActionsFactoryNodeType[],
 	// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-	loggedUserId?: string,
+	loggedUserId: string,
+	canUsePreview?: boolean,
+	canUseDocs?: boolean,
 	customCheckers?: ActionsFactoryCheckerMap
 ): Action[] {
 	return getPermittedActions(
 		nodes as ActionsFactoryGlobalType[],
 		completeListActions,
 		loggedUserId,
+		canUsePreview,
+		canUseDocs,
 		customCheckers
 	);
 }
@@ -560,6 +576,8 @@ export function getPermittedUploadActions(
 	return getPermittedActions(
 		nodes as ActionsFactoryGlobalType[],
 		uploadActions,
+		undefined,
+		undefined,
 		undefined,
 		customCheckers
 	);

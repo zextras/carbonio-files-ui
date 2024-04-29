@@ -333,6 +333,7 @@ export const openNodeWithDocs = (id: string, version?: number): void => {
 
 export const inputElement = ((): HTMLInputElement => {
 	const input = document.createElement('input');
+	console.log(input);
 	if (input) {
 		input.type = 'file';
 		input.multiple = true;

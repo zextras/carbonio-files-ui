@@ -76,7 +76,7 @@ export const DisplayerNode: React.VFC<DisplayerNodeProps> = ({
 
 	const canUpsertNodeDescription = useMemo(() => {
 		if (node) {
-			return canUpsertDescription(node);
+			return canUpsertDescription({ nodes: node });
 		}
 		return false;
 	}, [node]);

@@ -27,7 +27,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks: {} }
 		);
@@ -43,7 +43,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks: {} }
 		);
@@ -60,7 +60,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks: {} }
 		);
@@ -78,7 +78,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks: {} }
 		);
@@ -98,7 +98,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks: {} }
 		);
@@ -138,7 +138,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks: {} }
 		);
@@ -175,7 +175,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks: {} }
 		);
@@ -234,7 +234,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks }
 		);
@@ -282,7 +282,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription(node)}
+				canUpsertDescription={canUpsertDescription({ nodes: node })}
 			/>,
 			{ mocks }
 		);

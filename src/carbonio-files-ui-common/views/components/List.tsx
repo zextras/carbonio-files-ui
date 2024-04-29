@@ -94,22 +94,20 @@ function getHeaderActions(
 			onClick: (): void => downloadNode(node.id)
 		}
 	];
-	if (canUseDocs) {
-		if (canEdit([node])) {
-			actions.unshift({
-				icon: 'Edit2Outline',
-				id: 'Edit',
-				onClick: (): void => openNodeWithDocs(node.id),
-				tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
-			});
-		} else if (canOpenWithDocs([node])) {
-			actions.unshift({
-				id: 'OpenWithDocs',
-				icon: 'BookOpenOutline',
-				tooltipLabel: t('actions.openWithDocs', 'Open document'),
-				onClick: (): void => openNodeWithDocs(node.id)
-			});
-		}
+	if (canEdit({ nodes: [node], canUseDocs })) {
+		actions.unshift({
+			icon: 'Edit2Outline',
+			id: 'Edit',
+			onClick: (): void => openNodeWithDocs(node.id),
+			tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
+		});
+	} else if (canOpenWithDocs({ nodes: [node], canUseDocs })) {
+		actions.unshift({
+			id: 'OpenWithDocs',
+			icon: 'BookOpenOutline',
+			tooltipLabel: t('actions.openWithDocs', 'Open document'),
+			onClick: (): void => openNodeWithDocs(node.id)
+		});
 	}
 	return actions;
 }
@@ -214,19 +212,16 @@ export const List: React.VFC<ListProps> = ({
 
 	const actionCheckers = useMemo<ActionsFactoryCheckerMap>(
 		() => ({
-			[Action.Move]: moveCheckFunction,
-			[Action.Preview]: () => canUsePreview,
-			[Action.Edit]: () => canUseDocs,
-			[Action.OpenWithDocs]: () => canUseDocs
+			[Action.Move]: moveCheckFunction
 		}),
-		[canUseDocs, canUsePreview, moveCheckFunction]
+		[moveCheckFunction]
 	);
 
 	const permittedSelectionModeActions = useMemo(
 		() =>
 			// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-			getAllPermittedActions(selectedNodes, me, actionCheckers),
-		[actionCheckers, me, selectedNodes]
+			getAllPermittedActions(selectedNodes, me, canUsePreview, canUseDocs, actionCheckers),
+		[actionCheckers, canUseDocs, canUsePreview, me, selectedNodes]
 	);
 
 	const setActiveNodeHandler = useCallback<

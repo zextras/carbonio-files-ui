@@ -155,11 +155,8 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 				[node],
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
 				me,
-				{
-					[Action.Preview]: () => canUsePreview,
-					[Action.Edit]: () => canUseDocs,
-					[Action.OpenWithDocs]: () => canUseDocs
-				}
+				canUsePreview,
+				canUseDocs
 			),
 		[canUseDocs, canUsePreview, me, node]
 	);

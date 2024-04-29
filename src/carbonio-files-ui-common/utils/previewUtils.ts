@@ -17,6 +17,22 @@ type ThumbnailOptions = PreviewOptions & {
 	shape?: 'rectangular' | 'rounded';
 };
 
+export const PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS = [
+	'application/msword',
+	'application/vnd.ms-excel',
+	'application/vnd.ms-powerpoint',
+	'application/vnd.oasis.opendocument.presentation',
+	'application/vnd.oasis.opendocument.spreadsheet',
+	'application/vnd.oasis.opendocument.text',
+	'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+];
+
+export function isPreviewDependantOnDocs(mimeType: string | undefined): boolean {
+	return PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS.includes(mimeType ?? '');
+}
+
 export const MIME_TYPE_PREVIEW_SUPPORT: Record<
 	string,
 	Record<ThumbnailType | 'preview', boolean>
