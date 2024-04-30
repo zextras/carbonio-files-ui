@@ -17,7 +17,7 @@ import { ACTION_IDS } from '../../constants';
 import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
-import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
@@ -58,7 +58,7 @@ describe('Filter view', () => {
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 		});
-		await screen.findByText(/view files and folders/i);
+		await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 		expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })

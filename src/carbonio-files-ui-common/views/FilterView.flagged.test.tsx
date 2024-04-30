@@ -18,7 +18,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
-import { SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
@@ -45,7 +45,7 @@ describe('Filter view', () => {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 			});
 
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const expectedVariables = {
 				flagged: true,
 				folder_id: ROOTS.LOCAL_ROOT,
