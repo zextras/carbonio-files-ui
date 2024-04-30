@@ -32,7 +32,7 @@ import { DocsType, NodeListItemType, URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
-import { getNewDocumentActionLabel, inputElement, isFolder } from '../utils/utils';
+import { getNewDocumentActionLabel, inputElement, isFolder, takeIfNotEmpty } from '../utils/utils';
 
 const FolderView: React.VFC = () => {
 	const { rootId } = useParams<URLParams>();
@@ -45,22 +45,22 @@ const FolderView: React.VFC = () => {
 
 	const { add } = useUpload();
 
-	const currentFolderId = useMemo(() => folderId || rootId || ROOTS.LOCAL_ROOT, [folderId, rootId]);
+	const currentFolderId = useMemo(
+		() => takeIfNotEmpty(folderId) ?? takeIfNotEmpty(rootId) ?? ROOTS.LOCAL_ROOT,
+		[folderId, rootId]
+	);
 
 	const inputElementOnchange = useCallback(
 		(ev: Event) => {
 			if (ev.currentTarget instanceof HTMLInputElement) {
 				if (ev.currentTarget.files) {
-					add(
-						getUploadAddTypeFromInput(ev.currentTarget.files),
-						folderId || rootId || ROOTS.LOCAL_ROOT
-					);
+					add(getUploadAddTypeFromInput(ev.currentTarget.files), currentFolderId);
 				}
 				// required to select 2 times the same file/files
 				ev.currentTarget.value = '';
 			}
 		},
-		[add, folderId, rootId]
+		[add, currentFolderId]
 	);
 
 	const { data: currentFolder, loading, hasMore, loadMore } = useGetChildrenQuery(currentFolderId);
@@ -119,7 +119,7 @@ const FolderView: React.VFC = () => {
 	}, [currentFolderId, newFolder, openCreateFolderModal]);
 
 	const createFolderAction = useCallback((event) => {
-		event && event.stopPropagation();
+		event?.stopPropagation();
 		setNewFolder(true);
 	}, []);
 
@@ -143,7 +143,7 @@ const FolderView: React.VFC = () => {
 	}, [setNewFile]);
 
 	const documentGenericType = useMemo(
-		() => (last(newFile?.split('_')) || 'document').toLowerCase(),
+		() => (last(newFile?.split('_')) ?? 'document').toLowerCase(),
 		[newFile]
 	);
 

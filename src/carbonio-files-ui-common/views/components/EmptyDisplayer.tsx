@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { CenteredText } from './StyledComponents';
+import { TIMERS } from '../../constants';
 import { ListContext } from '../../contexts';
 import { OneOrMany } from '../../types/utils';
 import { cssCalcBuilder } from '../../utils/utils';
@@ -69,7 +70,7 @@ export const EmptyDisplayer: React.VFC<EmptyDisplayerProps> = ({ icons, translat
 							: $placeholders;
 					setRandomPlaceholder(result);
 				},
-				250,
+				TIMERS.DISPLAYER_SHOW_MESSAGE,
 				{ leading: false, trailing: true }
 			),
 		[]
@@ -88,11 +89,11 @@ export const EmptyDisplayer: React.VFC<EmptyDisplayerProps> = ({ icons, translat
 			<Row>{iconItems}</Row>
 			<Padding all="medium">
 				<CenteredText color="gray1" overflow="break-word" weight="bold" size="large">
-					{randomPlaceholder?.title || ''}
+					{randomPlaceholder?.title ?? ''}
 				</CenteredText>
 			</Padding>
 			<CenteredText size="small" color="gray1" overflow="break-word" $width="60%">
-				{randomPlaceholder?.message || ''}
+				{randomPlaceholder?.message ?? ''}
 			</CenteredText>
 		</Container>
 	);
