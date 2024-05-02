@@ -13,7 +13,7 @@ import { ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT } from '../../constants';
 import { ROOTS } from '../constants';
 import { Action, GetNodeParentType, Node } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
-import { File as FilesFile, Folder, MakeOptional, Root } from '../types/graphql/types';
+import { File as FilesFile, Folder, MakeOptional, Permissions, Root } from '../types/graphql/types';
 import { OneOrMany } from '../types/utils';
 
 export type ActionsFactoryNodeType = Pick<
@@ -287,6 +287,21 @@ export function canDeletePermanently({ nodes }: ArgsType): boolean {
 	}
 }
 
+function canMoveCommonCriteria(
+	node: ActionsFactoryNodeType,
+	permission: keyof Omit<Permissions, '__typename'>,
+	loggedUserId?: string
+): boolean {
+	return (
+		node.permissions[permission] &&
+		!!node.parent &&
+		// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
+		(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner?.id === loggedUserId) &&
+		node.parent.permissions[permission] &&
+		node.rootId !== ROOTS.TRASH
+	);
+}
+
 export function canMove({ nodes, loggedUserId }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canMove on Node type');
@@ -296,36 +311,22 @@ export function canMove({ nodes, loggedUserId }: ArgsType): boolean {
 	}
 	const $nodes = nodes as ActionsFactoryNodeType[];
 	return every($nodes, (node) => {
-		let canMoveResult = false;
 		if (isFile(node)) {
 			if (!isBoolean(node.permissions.can_write_file)) {
 				throw Error('can_write_file not defined');
 			}
 			// a file can be moved if it has can_write_file permission, and it has a parent which has can_write_file permission.
 			// If a node is shared with me and its parent is the LOCAL_ROOT, then the node cannot be moved (it's a direct share)
-			canMoveResult =
-				node.permissions.can_write_file &&
-				!!node.parent &&
-				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner?.id === loggedUserId) &&
-				node.parent.permissions.can_write_file &&
-				node.rootId !== ROOTS.TRASH;
-		} else if (isFolder(node)) {
+			return canMoveCommonCriteria(node, 'can_write_file', loggedUserId);
+		}
+		if (isFolder(node)) {
 			if (!isBoolean(node.permissions.can_write_folder)) {
 				throw Error('can_write_folder not defined');
 			}
 			// a folder can be moved if it has can_write_folder permission, and it has a parent which has can_write_folder permission
-			canMoveResult =
-				node.permissions.can_write_folder &&
-				!!node.parent &&
-				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				(node.parent.id !== ROOTS.LOCAL_ROOT || node.owner?.id === loggedUserId) &&
-				!!node.parent?.permissions.can_write_folder &&
-				node.rootId !== ROOTS.TRASH;
-		} else {
-			throw Error('cannot evaluate canMove on UnknownType');
+			return canMoveCommonCriteria(node, 'can_write_folder', loggedUserId);
 		}
-		return canMoveResult;
+		throw Error('cannot evaluate canMove on UnknownType');
 	});
 }
 
