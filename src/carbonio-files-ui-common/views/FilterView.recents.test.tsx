@@ -18,7 +18,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
-import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
@@ -38,7 +38,7 @@ describe('Filter View', () => {
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`]
 			});
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const expectedVariables = {
 				folder_id: ROOTS.LOCAL_ROOT,
 				cascade: true,

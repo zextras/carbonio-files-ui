@@ -42,7 +42,6 @@ export function useGetNodeQuery(
 				shares_limit: sharesLimit
 			},
 			skip: !nodeId,
-			notifyOnNetworkStatusChange: true,
 			errorPolicy: 'all',
 			...options
 		}

@@ -39,3 +39,5 @@ export const FUNCTION_IDS = {
 export const ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT = [];
 
 export const EMAIL_REGEXP = EMAIL_VALIDATION_REGEX;
+
+export const UPDATE_VIEW_EVENT = 'updateView';

@@ -19,7 +19,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
@@ -63,7 +63,7 @@ describe('Filter view', () => {
 				}
 			);
 			// wait the content to be rendered
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			const nodeItem = screen.getByText(node.name);
 			expect(nodeItem).toBeVisible();
@@ -82,12 +82,10 @@ describe('Filter view', () => {
 				)
 			);
 			await screen.findByText(/^success$/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(within(displayer).queryByText(node.name)).not.toBeInTheDocument();
 			expect(restoreAction).not.toBeInTheDocument();
-			expect(
-				screen.getByText(/View files and folders, share them with your contacts/i)
-			).toBeVisible();
+			expect(screen.getByText(DISPLAYER_EMPTY_MESSAGE)).toBeVisible();
 		});
 
 		test('Delete permanently close the displayer from trash views', async () => {
@@ -115,7 +113,7 @@ describe('Filter view', () => {
 				}
 			);
 			// wait the content to be rendered
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			const nodeItem = screen.getByText(node.name);
 			expect(nodeItem).toBeVisible();
@@ -134,7 +132,7 @@ describe('Filter view', () => {
 			await user.click(deletePermanentlyConfirm);
 			await screen.findByText(/The trash is empty/i);
 			await screen.findByText(/success/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(deletePermanentlyConfirm).not.toBeInTheDocument();
 			expect(within(displayer).queryByText(node.name)).not.toBeInTheDocument();
 			expect(deletePermanentlyAction).not.toBeInTheDocument();
@@ -160,7 +158,7 @@ describe('Filter view', () => {
 				{ initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`], mocks }
 			);
 			// right click to open contextual menu
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const nodeItem = await screen.findByText(node.name);
 			fireEvent.contextMenu(nodeItem);
 			// check that restore action becomes visible
@@ -274,7 +272,7 @@ describe('Filter view', () => {
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
 			});
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const expectedVariables = {
 				folder_id: ROOTS.TRASH,
 				cascade: false,
@@ -304,7 +302,7 @@ describe('Filter view', () => {
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`]
 			});
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const expectedVariables = {
 				folder_id: ROOTS.TRASH,
 				cascade: false,
