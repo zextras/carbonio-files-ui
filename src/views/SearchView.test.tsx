@@ -11,7 +11,7 @@ import { graphql, HttpResponse } from 'msw';
 
 import SearchView from './SearchView';
 import { INTERNAL_PATH, ROOTS } from '../carbonio-files-ui-common/constants';
-import { ICON_REGEXP } from '../carbonio-files-ui-common/constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP } from '../carbonio-files-ui-common/constants/test';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import { populateNodePage, populateNodes } from '../carbonio-files-ui-common/mocks/mockUtils';
 import {
@@ -59,7 +59,7 @@ describe('Search view', () => {
 			);
 
 			await screen.findByText(/No search executed/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
@@ -110,7 +110,7 @@ describe('Search view', () => {
 			);
 
 			await screen.findByText(/No search executed/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
@@ -161,7 +161,7 @@ describe('Search view', () => {
 			);
 
 			await screen.findByText(/No search executed/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
@@ -227,7 +227,7 @@ describe('Search view', () => {
 			);
 
 			await screen.findByText(/No search executed/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
@@ -292,7 +292,7 @@ describe('Search view', () => {
 			);
 
 			await screen.findByText(/No search executed/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
@@ -353,7 +353,7 @@ describe('Search view', () => {
 			);
 
 			await screen.findByText(/No search executed/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
@@ -464,7 +464,7 @@ describe('Search view', () => {
 			);
 
 			await screen.findByText(/No search executed/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
@@ -499,7 +499,7 @@ describe('Search view', () => {
 			);
 
 			await screen.findByText(/No search executed/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
 			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));

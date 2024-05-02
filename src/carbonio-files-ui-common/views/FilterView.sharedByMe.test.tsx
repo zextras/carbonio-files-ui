@@ -19,7 +19,7 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
-import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNode, populateNodes, populateShares } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
@@ -46,7 +46,7 @@ describe('Filter view', () => {
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`]
 			});
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const expectedVariables = {
 				folder_id: ROOTS.LOCAL_ROOT,
 				cascade: true,
@@ -138,7 +138,7 @@ describe('Filter view', () => {
 			// node is removed from main list
 			expect(nodeItem).not.toBeInTheDocument();
 			// displayer is closed
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.queryByText(nodeWithShares.name)).not.toBeInTheDocument();
 			expect(screen.queryByText(/sharing/i)).not.toBeInTheDocument();
 		});

@@ -140,3 +140,5 @@ export const COLORS = {
 		disabled: 'rgba(130, 130, 130, 0.4)'
 	}
 };
+
+export const DISPLAYER_EMPTY_MESSAGE = 'View files and folders, share them with your contacts.';
