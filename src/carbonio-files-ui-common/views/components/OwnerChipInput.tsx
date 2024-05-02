@@ -31,9 +31,9 @@ const removeGroups: (autocompleteGalResponse: AutocompleteGalResponse) => Contac
 
 interface OwnerChipInputProps {
 	currentFilters: AdvancedFilters;
-	updateFilter: (
-		key: keyof AdvancedFilters,
-		value: AdvancedFilters[typeof key] | undefined
+	updateFilter: <K extends keyof AdvancedFilters>(
+		key: K,
+		value: AdvancedFilters[K] | undefined
 	) => void;
 }
 

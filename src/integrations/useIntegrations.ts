@@ -5,7 +5,7 @@
  */
 import { useEffect, useMemo } from 'react';
 
-import { AnyFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
+import { registerFunctions } from '@zextras/carbonio-shell-ui';
 
 import { getGetLinkFunction } from './getGetLinkFunction';
 import { getNodeFunction } from './getNodeFunction';
@@ -28,7 +28,7 @@ export const useIntegrations = (): void => {
 	const updateLinkFunction = useMemo(
 		() => ({
 			id: FUNCTION_IDS.UPDATE_LINK,
-			fn: updateLink as AnyFunction
+			fn: updateLink
 		}),
 		[updateLink]
 	);
