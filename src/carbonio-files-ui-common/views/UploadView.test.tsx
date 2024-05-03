@@ -22,7 +22,7 @@ import {
 	NODES_SORT_DEFAULT,
 	REST_ENDPOINT
 } from '../constants';
-import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { healthCache } from '../hooks/useHealthInfo';
 import { HealthResponse } from '../mocks/handleHealthRequest';
 import {
@@ -66,19 +66,19 @@ describe('Upload view', () => {
 		const { user } = setup(<UploadView />, { mocks });
 
 		const dropzone = await screen.findByText(/nothing here/i);
-		await screen.findByText(/view files and folders/i);
+		await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 
 		await uploadWithDnD(dropzone, dataTransferObj);
 
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(/view files and folders/i)).toBeVisible();
+		expect(screen.getByText(DISPLAYER_EMPTY_MESSAGE)).toBeVisible();
 
 		await user.click(screen.getByText(node.name));
 		await waitFor(() => expect(screen.getAllByText(node.name)).toHaveLength(2));
 		expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close })).toBeVisible();
-		expect(screen.queryByText(/view files and folders/i)).not.toBeInTheDocument();
+		expect(screen.queryByText(DISPLAYER_EMPTY_MESSAGE)).not.toBeInTheDocument();
 		await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close }));
-		await screen.findByText(/view files and folders/i);
+		await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 		expect(screen.getByText(node.name)).toBeVisible();
 	});
 

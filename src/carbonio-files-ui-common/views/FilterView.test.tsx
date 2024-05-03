@@ -24,7 +24,7 @@ import {
 	NODES_LOAD_LIMIT,
 	REST_ENDPOINT
 } from '../constants';
-import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { healthCache } from '../hooks/useHealthInfo';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { HealthResponse } from '../mocks/handleHealthRequest';
@@ -56,7 +56,7 @@ describe('Filter view', () => {
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 		});
-		await screen.findByText(/view files and folders/i);
+		await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 		expect(map(createOptions, (createOption) => createOption.action({}))).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
 		);

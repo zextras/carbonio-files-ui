@@ -23,11 +23,11 @@
 	"author": "",
 	"license": "AGPL-3.0-only",
 	"devDependencies": {
-		"@babel/core": "^7.24.4",
-		"@babel/preset-env": "^7.24.4",
+		"@babel/core": "^7.24.5",
+		"@babel/preset-env": "^7.24.5",
 		"@babel/preset-react": "^7.24.1",
 		"@babel/preset-typescript": "^7.24.1",
-		"@commitlint/cli": "^19.2.2",
+		"@commitlint/cli": "^19.3.0",
 		"@commitlint/config-conventional": "^19.2.2",
 		"@faker-js/faker": "^8.4.1",
 		"@graphql-codegen/add": "^5.0.2",
@@ -79,7 +79,7 @@
 	"dependencies": {
 		"@apollo/client": "3.9.10",
 		"@zextras/carbonio-design-system": "^5.0.0",
-		"@zextras/carbonio-shell-ui": "6.0.0",
+		"@zextras/carbonio-shell-ui": "6.0.0-devel.1713196254679",
 		"@zextras/carbonio-ui-preview": "^1.2.3",
 		"core-js": "^3.36.1",
 		"graphql": "^16.8.1",

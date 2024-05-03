@@ -149,3 +149,4 @@ export const COLORS = {
 export const TIMERS = {
 	modalDelayOpen: 1
 };
+export const DISPLAYER_EMPTY_MESSAGE = 'View files and folders, share them with your contacts.';

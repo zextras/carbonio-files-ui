@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
 
 import { Spinner } from '@zextras/carbonio-shell-ui';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
+import buildClient from '../carbonio-files-ui-common/apollo';
 import { INTERNAL_PATH } from '../carbonio-files-ui-common/constants';
 import { URLParams } from '../carbonio-files-ui-common/types/common';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
@@ -16,6 +17,7 @@ import {
 	GlobalProvidersWrapper,
 	ViewProvidersWrapper
 } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
+import { UPDATE_VIEW_EVENT } from '../constants';
 
 const LazyFileFolderViewSelector = lazy(
 	() =>
@@ -70,6 +72,20 @@ const View = (): React.JSX.Element | null => {
 
 const AppView: React.VFC = () => {
 	const { path } = useRouteMatch<URLParams>();
+
+	const apolloClient = useMemo(() => buildClient(), []);
+
+	const clearApolloCache = useCallback(() => {
+		apolloClient.resetStore();
+	}, [apolloClient]);
+
+	useEffect(() => {
+		window.addEventListener(UPDATE_VIEW_EVENT, clearApolloCache);
+
+		return (): void => {
+			window.removeEventListener(UPDATE_VIEW_EVENT, clearApolloCache);
+		};
+	}, [clearApolloCache]);
 
 	return (
 		<PreventDefaultDropContainer>
