@@ -229,7 +229,12 @@ describe('Upload view', () => {
 		});
 
 		const file = new File(['(⌐□_□)'], 'a file');
-		const { user } = setup(<UploadView />);
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getBaseNode: [localRoot] })
+			}
+		} satisfies Partial<Resolvers>;
+		const { user } = setup(<UploadView />, { mocks });
 		await screen.findByText(/nothing here/i);
 		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
 		await user.upload(inputElement, file);
