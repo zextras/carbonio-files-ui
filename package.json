@@ -15,7 +15,7 @@
 		"lint": "eslint --ext .js,.jsx,.ts,.tsx,.graphql --resolve-plugins-relative-to node_modules/@zextras/carbonio-ui-configs src",
 		"generate": "graphql-codegen",
 		"translations:push": "git subtree push --prefix translations $npm_package_config_translations_repository translations-updater/$(date '+%Y-%m-%d')",
-		"translations:pull": "git checkout -b translations/$(date '+%Y-%m-%d') && git subtree pull --squash --prefix translations $npm_package_config_translations_repository master",
+		"translations:pull": "git subtree pull --squash --prefix translations $npm_package_config_translations_repository master",
 		"build:dev": "sdk build --dev --pkgRel $(date +%s)",
 		"update-zextras-dependencies": "git checkout -b update-zextras-deps/$(date '+%Y-%m-%d') && ncu @zextras/carbonio-design-system @zextras/carbonio-shell-ui @zextras/carbonio-ui-preview -u && npm install"
 	},
