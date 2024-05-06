@@ -1,1 +1,17 @@
-{}
+{
+    "displayer": {
+        "details": {
+            "description": "Сүрөттөө"
+        }
+    },
+    "preview": {
+        "actions": {
+            "tooltip": {
+                "download": "Жүктөө"
+            }
+        },
+        "close": {
+            "tooltip": "Жабуу"
+        }
+    }
+}
