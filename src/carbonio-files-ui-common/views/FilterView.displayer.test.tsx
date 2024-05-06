@@ -11,7 +11,7 @@ import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
-import { SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodes, populateParents } from '../mocks/mockUtils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
@@ -41,7 +41,7 @@ describe('Filter View', () => {
 				}
 			);
 			// wait the content to be rendered
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				nodes.length
@@ -50,7 +50,7 @@ describe('Filter View', () => {
 			expect(nodeItem).toBeVisible();
 			expect(screen.queryByText(/details/)).not.toBeInTheDocument();
 			await user.click(nodeItem);
-			await waitForElementToBeRemoved(screen.queryByText(/view files and folders/i));
+			await waitForElementToBeRemoved(screen.queryByText(DISPLAYER_EMPTY_MESSAGE));
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
 			const displayer = screen.getByTestId(SELECTORS.displayer);
@@ -98,7 +98,7 @@ describe('Filter View', () => {
 				}
 			);
 			// wait the content to be rendered
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).not.toBeNull();
 			expect(nodes.length).toBeGreaterThan(0);

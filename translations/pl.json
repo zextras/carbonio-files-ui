@@ -712,6 +712,12 @@
             "moreInfo": {
                 "foldersNotAllowed": "Foldery nie mogą być przesyłane. Jeżeli próbowałeś przesłać plik, system mógł go nieprawidłowo rozpoznać. Spróbuj ponownie używając przycisku \"PRZEŚLIJ\"."
             }
+        },
+        "banner": {
+            "overQuota": {
+                "description": "Przesyłanie niektórych elementów się nie powiodło, ponieważ osiągnąłeś Twój limit przestrzeni. Usuń kilka elementów, aby zwolnić przestrzeń i spróbuj ponownie.",
+                "title": "Limit przestrzeni został przekroczony"
+            }
         }
     },
     "empty": {
@@ -933,5 +939,19 @@
             "name": "Nazwa",
             "size": "Rozmiar"
         }
+    },
+    "quota": {
+        "overQuota": {
+            "tooltip": {
+                "label": "Osiągnąłeś dozwolony limit przestrzeni."
+            }
+        },
+        "limitedSpace": "Użyto {{used}} z {{limit}}",
+        "refresh": {
+            "tooltip": {
+                "label": "Odśwież"
+            }
+        },
+        "unlimitedSpace": "{{used}} z nielimitowanej przestrzeni"
     }
 }

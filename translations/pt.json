@@ -106,7 +106,7 @@
             "button": {
                 "confirm": "Remover"
             },
-            "header": "Remover a ligação pública de {{nodeName}}",
+            "header": "Remover {{linkName}} de {{nodeName}}",
             "body": "Esta ligação expirou, portanto já não pode ser usada para aceder ao documento. Pode removê-la ou atualizar a sua data de expiração para continuar a usar."
         },
         "revokeLink": {
@@ -114,7 +114,7 @@
                 "confirm": "Revogar"
             },
             "body": "Ao revogar esta ligação, está a retirar o acesso a qualquer utilizador que a tente usar para abrir o documento \"{{nodeName}}\".",
-            "header": "Revogar ligação pública do documento: {{nodeName}}"
+            "header": "Revogar {{linkName}} de {{nodeName}}"
         },
         "decreaseYourOwnSharePermissions": {
             "button": {
@@ -277,12 +277,12 @@
                 "copyLink": "Copiar link"
             },
             "linkUpdated": {
-                "label": "Ligação pública atualizada"
+                "label": "{{linkName}} atualizado"
             },
             "newPublicLinkGenerated": {
-                "label": "Foi gerada uma nova ligação pública"
+                "label": "Foi gerado um novo {{linkName}}"
             },
-            "copyLink": "Link público copiado"
+            "copyLink": "{{linkName}} copiado"
         },
         "clipboard": {
             "email": "Endereço de e-mail copiado",
@@ -746,6 +746,12 @@
             "moreInfo": {
                 "foldersNotAllowed": "Não é possível carregar pastas. Se você estiver tentando carregar um arquivo, o sistema pode não tê-lo reconhecido. Tente novamente usando o botão \"UPLOAD\"."
             }
+        },
+        "banner": {
+            "overQuota": {
+                "title": "Cota excedida",
+                "description": "O carregamento de alguns itens falhou porque você atingiu seu limite de armazenamento. Exclua alguns itens para liberar espaço e tente novamente."
+            }
         }
     },
     "selectionMode": {
@@ -810,7 +816,7 @@
             "urlChip": {
                 "tooltip": {
                     "expired": "Este link expirou",
-                    "copy": "Copiar a ligação pública"
+                    "copy": "Copiar {{linkName}}"
                 }
             }
         },
@@ -827,6 +833,20 @@
                 }
             },
             "label": "Descrição do link"
+        },
+        "fileLink": {
+            "title": "Link de download público",
+            "title_plural": "Links de download público",
+            "addLink": {
+                "description": "Os usuários internos e externos com acesso ao link podem baixar o item."
+            }
+        },
+        "folderLink": {
+            "addLink": {
+                "description": "Qualquer pessoa com este link pode visualizar e baixar o conteúdo desta pasta."
+            },
+            "title": "Link de acesso público",
+            "title_plural": "Links de acesso público"
         }
     },
     "breadcrumb": {
@@ -903,5 +923,35 @@
                 }
             }
         }
+    },
+    "carbonio-public-folder-ui": {
+        "emptyFolder": "Não há itens nesta pasta.",
+        "invalidLink": {
+            "description": {
+                "line1": "Este link foi removido ou é inválido.",
+                "line2": "Para mais informações, fale com a pessoa que compartilhou com você."
+            },
+            "title": "Link de acesso público indisponível."
+        },
+        "listHeader": {
+            "extension": "Extensão",
+            "name": "Nome",
+            "size": "Tamanho",
+            "lastModified": "Última modificação"
+        }
+    },
+    "quota": {
+        "limitedSpace": "usado {{used}} de {{limit}}",
+        "overQuota": {
+            "tooltip": {
+                "label": "Você atingiu a cota máxima disponível."
+            }
+        },
+        "refresh": {
+            "tooltip": {
+                "label": "Atualizar"
+            }
+        },
+        "unlimitedSpace": "{{used}} de espaço ilimitado"
     }
 }

@@ -12,7 +12,7 @@ import { map, find } from 'lodash';
 import { SearchView } from './SearchView';
 import { searchParamsVar } from '../apollo/searchVar';
 import { INTERNAL_PATH, ROOTS } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import BaseNodeFragmentDoc from '../graphql/fragments/baseNode.graphql';
 import {
 	populateFolder,
@@ -154,7 +154,7 @@ describe('Search view', () => {
 			await user.click(closeDisplayerAction);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
 			expect(screen.getByText(currentSearch[0].name)).toBeVisible();
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 		});
 
 		test('Move action does not close the displayer if node is not removed from the main list', async () => {

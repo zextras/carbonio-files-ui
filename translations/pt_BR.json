@@ -5,8 +5,8 @@
             "sharedByMe": "Compartilhado por mim",
             "sharedWithMe": "Compartilhado comigo",
             "trash": "Lixeira",
-            "myElements": "Meus documentos",
-            "sharedElements": "Documentos compartilhados",
+            "myElements": "Meus itens",
+            "sharedElements": "Itens compartilhados",
             "recents": "Recentes"
         },
         "filters": "Filtros",
@@ -31,9 +31,9 @@
     },
     "empty": {
         "folder": {
-            "hint": "Parece que esta pasta está vazia",
-            "state": "Arraste um arquivo ou crie um novo clicando em \"NOVO\"",
-            "displayerContent": "Esta pasta não possui conteúdo"
+            "hint": "Parece que esta pasta está vazia.",
+            "state": "Arraste um arquivo ou crie um novo clicando em \"NOVO\".",
+            "displayerContent": "Esta pasta não possui conteúdo."
         },
         "filter": {
             "hint": "Parece que não há nada aqui.",
@@ -44,7 +44,7 @@
             "recents": "Parece que ainda não existem itens recentes."
         },
         "search": {
-            "hint": "Sua busca não coincide com nenhum arquivo ou pasta",
+            "hint": "Sua busca não coincide com nenhum arquivo ou pasta.",
             "noResults": [
                 "Sem resultados. Continue procurando!",
                 "Nenhum item encontrado."
@@ -58,7 +58,7 @@
                 "button": {
                     "confirm": "Criar"
                 },
-                "title": "Nova pasta",
+                "title": "Criar nova pasta",
                 "input": {
                     "label": {
                         "name": "Nome da pasta"
@@ -77,7 +77,7 @@
                 "confirm": "Excluir permanentemente"
             },
             "header": "Esta ação é irreversível",
-            "body": "Você irá excluir permanentemente este(s) item(ns). Não será mais possível recuperar este(s) arquivo(s). Esta ação é irreversível."
+            "body": "Você irá excluir permanentemente este(s) item(ns). Não será mais possível recuperar este(s) item(s). Esta ação é irreversível."
         },
         "roots": {
             "rootsList": "Files",
@@ -106,22 +106,22 @@
             "button": {
                 "confirm": "Remover"
             },
-            "header": "Remover link público de {{nodeName}}",
-            "body": "O link expirou, portanto não pode mais ser usado para acessar o item. Você pode remover o link da sua lista ou pode atualizar sua data de expiração e outras informações para continuar usando-o"
+            "header": "Remover {{linkName}} de {{nodeName}}",
+            "body": "O link expirou, portanto não pode mais ser usado para acessar o item. Você pode remover o link da sua lista ou pode atualizar sua data de expiração e outras informações para continuar usando-o."
         },
         "revokeLink": {
             "button": {
                 "confirm": "Revogar"
             },
-            "body": "Ao revogar este link, você estará restringindo o acesso a qualquer um que tentar abrir \"{{nodeName}}\"",
-            "header": "Revogar link público de {{nodeName}}"
+            "body": "Ao revogar este link, você estará restringindo o acesso a qualquer um que tentar usá-lo para acessar o item.",
+            "header": "Revogar {{linkName}} de {{nodeName}}"
         },
         "decreaseYourOwnSharePermissions": {
             "button": {
                 "confirm": "Confirmar"
             },
             "header": "Rebaixar as permissões atuais",
-            "body": "Tem certeza de querer rebaixar as permissões que lhe foram outorgados para acessar este item? A ação é permanente e você não poderá restaurar sozinho os direitos do compartilhamento. Você sempre pode entrar em contato com o proprietário do item compartilhado caso precise que a permissão anterior seja restaurada"
+            "body": "Tem certeza de que quer reduzir os direitos que lhe foram outorgados para acessar este item? A ação é permanente e você não poderá restaurar sozinho os direitos do compartilhamento. Você sempre pode entrar em contato com o proprietário do item compartilhado caso precise que a permissão anterior seja restaurada."
         },
         "close": {
             "tooltip": "Fechar"
@@ -150,7 +150,7 @@
                 "leave_anyway": "Sair assim mesmo"
             },
             "body": {
-                "line2": "Alterações não salvas serão perdidas",
+                "line2": "Todas as alterações não salvas serão perdidas.",
                 "line1": "Tem certeza que deseja sair desta página sem salvar?"
             }
         },
@@ -171,7 +171,7 @@
                 "confirm": "Revogar"
             },
             "header": "Revogar o link de {{nodeName}}",
-            "body": "Ao revogar este link, você está bloqueando a possibilidade de criar novos compartilhamentos com ele. Todos que já usaram o link de colaboração manterão o acesso ao nó."
+            "body": "Ao revogar este link, você está bloqueando a possibilidade de criar novos compartilhamentos com ele. Todos que já usaram o link de colaboração manterão o acesso ao item."
         }
     },
     "node": {
@@ -222,7 +222,7 @@
             },
             "error": {
                 "not": {
-                    "allowed": "Você não pode mover vários resultados de um filtro ou pesquisa"
+                    "allowed": "Você não pode mover vários itens de um filtro ou pesquisa"
                 }
             }
         },
@@ -277,12 +277,12 @@
                 "copyLink": "Copiar link"
             },
             "linkUpdated": {
-                "label": "Link público atualizado"
+                "label": "{{linkName}} atualizado"
             },
             "newPublicLinkGenerated": {
-                "label": "Novo link público gerado"
+                "label": "Novo {{linkName}} gerado"
             },
-            "copyLink": "Link público copiado"
+            "copyLink": "{{linkName}} copiado"
         },
         "clipboard": {
             "email": "Endereço de e-mail copiado",
@@ -379,7 +379,7 @@
                     "label": "Compartilhado",
                     "description": "Filtre os resultados por itens que contenham ao menos um colaborador além de você"
                 },
-                "title": "Filtros avançados",
+                "title": "Filtros avançados.",
                 "itemType": {
                     "label": "Tipo",
                     "dropdownOption": {
@@ -438,11 +438,11 @@
                     "role": {
                         "editor": "Editar",
                         "viewer": "Visualizar",
-                        "viewerDescription": "Pode apenas visualizar ou baixar o arquivo ou pasta",
-                        "editorDescription": "Pode visualizar e editar o arquivo ou pasta"
+                        "viewerDescription": "Poderá apenas visualizar ou baixar o item",
+                        "editorDescription": "Será possível visualizar e editar o item"
                     },
                     "sharingAllowed": "Compartilhar",
-                    "sharingAllowedDescription": "Pode gerenciar os compartilhamentos do arquivo ou pasta"
+                    "sharingAllowedDescription": "Poderá gerenciar os compartilhamentos do item"
                 },
                 "you": "Você",
                 "owner": "Proprietário",
@@ -478,16 +478,16 @@
             "versioning": "Versionamento"
         },
         "uploads": {
-            "message": "Aqui você poderá ver e gerenciar todos os elementos que estão sendo carregados no Files",
+            "message": "Aqui você poderá ver todos os itens que estão sendo carregados , você pode gerenciá-los aqui.",
             "title": "Sugestões de upload"
         },
         "generic": {
-            "message": "Clique em um item para selecioná-lo",
-            "title": "Visualize arquivos e pastas e compartilhe-os com seus contatos"
+            "message": "Clique em um item para selecioná-lo.",
+            "title": "Visualize arquivos e pastas e compartilhe-os com seus contatos."
         },
         "search_empty": [
             {
-                "message": "Ou selecione \"Filtros Avançados\" para refinar sua busca.",
+                "message": "Ou selecione \"Filtros avançados\" para refinar sua busca.",
                 "title": "Iniciar uma nova busca."
             },
             {
@@ -536,7 +536,7 @@
                 },
                 "versionNumber": "Versão {{versionNumber}}"
             },
-            "mainHint": "O Files salva as últimas {{maxVersions}} versões dos seus arquivos. Você pode excluir manualmente qualquer versão, ou restaurar uma delas para a versão atual. Selecione uma ou mais versões que você deseja manter para sempre (ꝏ)."
+            "mainHint": "O Files salva as últimas {{maxVersions}} versões dos seus itens. Você pode excluir manualmente qualquer versão ou restaurar uma delas para a versão atual. Selecione uma ou mais versões que você deseja manter para sempre."
         },
         "search_full": [
             {
@@ -590,7 +590,7 @@
             ],
             "sharedWithMe_empty": [
                 {
-                    "message": "Clique no botão \"NOVO\" para criar um documento e compartilhe com seus contatos.",
+                    "message": "Clique no botão \"NOVO\" para criar um novo item e compartilhe com seus contatos.",
                     "title": "Ainda não há itens compartilhados com você."
                 },
                 {
@@ -601,7 +601,7 @@
             "sharedWithMe_full": [
                 {
                     "message": "Clique em um item para selecioná-lo.",
-                    "title": "Comece a editar e compartilhar seus arquivos."
+                    "title": "Comece a editar e compartilhar seus itens."
                 },
                 {
                     "message": "Clique em um item para selecioná-lo.",
@@ -626,7 +626,7 @@
             ],
             "trash_full": [
                 {
-                    "title": "Selecione os itens que deseja restaurar da lixeira."
+                    "title": "Selecione e restaure os itens que estão na lixeira."
                 },
                 {
                     "message": "Selecione um item para restaurá-lo ou excluí-lo permanentemente.",
@@ -658,7 +658,7 @@
             "recents_empty": [
                 {
                     "message": "Você verá os mais recentes aqui.",
-                    "title": "Abra, leia, edite seus documentos."
+                    "title": "Abra, leia, edite seus itens."
                 }
             ]
         },
@@ -681,7 +681,7 @@
         "folder_full": [
             {
                 "message": "Clique em um item para selecioná-lo.",
-                "title": "Comece a editar e compartilhar seus arquivos."
+                "title": "Comece a editar e compartilhar seus itens."
             },
             {
                 "title": "Veja os detalhes das suas pastas e compartilhe-as com seus contatos.",
@@ -691,7 +691,7 @@
                 "title": "Selecione uma pasta para editá-la ou renomeá-la."
             },
             {
-                "message": "Selecione o item e acesse a aba \"Compartilhamentos\"",
+                "message": "Selecione o item e acesse a aba \"Compartilhamentos\".",
                 "title": "Conceda permissões aos seus contatos para que possam editar seus itens."
             },
             {
@@ -712,9 +712,9 @@
                     }
                 },
                 "title": {
-                    "document": "Novo documento de texto",
-                    "presentation": "Nova apresentação",
-                    "spreadsheet": "Nova planilha"
+                    "document": "Criar novo documento",
+                    "presentation": "Criar nova apresentação",
+                    "spreadsheet": "Criar nova planilha"
                 }
             }
         }
@@ -735,8 +735,8 @@
                 }
             },
             "title": {
-                "disabled": "Arrastar e soltar",
-                "enabled": "Arrastar e soltar"
+                "disabled": "Modo Arrastar e Soltar.",
+                "enabled": "Modo Arrastar e Soltar."
             }
         },
         "destination": {
@@ -745,6 +745,12 @@
         "error": {
             "moreInfo": {
                 "foldersNotAllowed": "Não é possível carregar pastas. Se você estiver tentando carregar um arquivo, o sistema pode não tê-lo reconhecido. Tente novamente usando o botão \"UPLOAD\"."
+            }
+        },
+        "banner": {
+            "overQuota": {
+                "description": "O carregamento de alguns itens falhou porque você atingiu seu limite de armazenamento. Exclua alguns itens para liberar espaço e tente novamente.",
+                "title": "Cota excedida"
             }
         }
     },
@@ -778,15 +784,15 @@
     "errorCode": {
         "code": "Algo deu errado",
         "code_Generic": "Algo deu errado",
-        "code_FILE_VERSION_NOT_FOUND": "Esta versão do arquivo não pode ser encontrada",
+        "code_FILE_VERSION_NOT_FOUND": "Lamentamos, mas esta versão do item não pode ser encontrada",
         "code_LINK_NOT_FOUND": "A ação falhou. Este link não existe mais",
-        "code_NODE_NOT_FOUND": "Parece que este elemento não existe ou você não tem permissão para acessá-lo",
-        "code_NODE_WRITE_ERROR": "Parece que este elemento não pode ser modificado ou você não tem permissão para modificá-lo",
+        "code_NODE_NOT_FOUND": "Parece que este item não existe ou você não tem permissão para acessá-lo",
+        "code_NODE_WRITE_ERROR": "Parece que este item não pode ser modificado ou você não tem permissão para modificá-lo",
         "code_SHARE_CREATION_ERROR": "Lamentamos, mas não é possível compartilhar um item com este usuário",
         "code_ACCOUNT_NOT_FOUND": "Este email não está associado a nenhum usuário",
-        "code_MISSING_FIELD": "Ocorreu um erro interno. Não todas as informações deste objeto foram recuperadas",
+        "code_MISSING_FIELD": "Ocorreu um erro interno, nem todas as informações deste item foram recuperadas",
         "code_SHARE_NOT_FOUND": "Este compartilhamento não pode ser encontrado",
-        "code_NODE_DUPLICATED": "Já existe um arquivo com o mesmo nome nesta pasta",
+        "code_NODE_DUPLICATED": "Já existe um item com o mesmo nome nesta pasta",
         "code_VERSIONS_LIMIT_REACHED": "A operação não pode ser completada. Você atingiu o limite máximo.",
         "code_NODE_COPY_ERROR": "A cópia do item falhou. Tente novamente"
     },
@@ -796,7 +802,7 @@
             "undo": "Cancelar",
             "addLink": "Adicionar link",
             "limitReached": "O número máximo de links públicos foi atingido",
-            "description": "Todos que tiverem acesso ao link poderão fazer o download do arquivo."
+            "description": "Usuários internos e externos com acesso ao link poderão fazer o download do item."
         },
         "link": {
             "edit": "Editar",
@@ -810,7 +816,7 @@
             "urlChip": {
                 "tooltip": {
                     "expired": "Este link expirou",
-                    "copy": "Copiar link público"
+                    "copy": "Copiar {{linkName}}"
                 }
             }
         },
@@ -827,6 +833,20 @@
                 }
             },
             "label": "Descrição do link"
+        },
+        "fileLink": {
+            "title": "Link de download público",
+            "title_plural": "Links de download público",
+            "addLink": {
+                "description": "Usuários internos e externos com acesso ao link podem baixar o item."
+            }
+        },
+        "folderLink": {
+            "addLink": {
+                "description": "Qualquer pessoa com este link pode visualizar e baixar o conteúdo desta pasta."
+            },
+            "title": "Link de acesso público",
+            "title_plural": "Links de acesso público"
         }
     },
     "breadcrumb": {
@@ -848,7 +868,7 @@
         },
         "loading": {
             "retrying": "Tentando carregar a pré-visualização…",
-            "file": "Carregando a pré-visualização do arquivo. Por favor, aguarde…",
+            "file": "Carregando a visualização do item. Por favor, aguarde…",
             "error": "Houve um erro ao carregar a pré-visualização. Tente novamente."
         },
         "button": {
@@ -864,12 +884,12 @@
     "dropzone": {
         "move": {
             "title": {
-                "enabled": "Arrastar e soltar",
-                "disabled": "Arrastar e soltar"
+                "enabled": "Modo Arrastar e Soltar.",
+                "disabled": "Modo Arrastar e Soltar."
             },
             "message": {
-                "enabled": "Solte seus itens aqui\n para movê-los rapidamente para esta pasta",
-                "disabled": "Você não pode soltar seus itens nesta área"
+                "enabled": "Solte seus itens aqui\n para movê-los rapidamente para esta pasta.",
+                "disabled": "Você não pode soltar seus itens nesta área."
             }
         }
     },
@@ -884,12 +904,12 @@
                 "writeAndShare": "Modificar e compartilhar",
                 "ReadAndShare": "Ler e compartilhar"
             },
-            "placeholder": "Crie um link para compartilhar"
+            "placeholder": "Crie um link para compartilhar o item"
         },
         "link": {
             "urlChip": {
                 "tooltip": {
-                    "copy": "Copiar link de colaboração"
+                    "copy": "Copiar link de Colaboração"
                 }
             }
         },
@@ -903,5 +923,35 @@
                 }
             }
         }
+    },
+    "carbonio-public-folder-ui": {
+        "invalidLink": {
+            "description": {
+                "line1": "Este link foi removido ou é inválido.",
+                "line2": "Para mais informações, fale com a pessoa que compartilhou com você."
+            },
+            "title": "Link de acesso público inválido."
+        },
+        "listHeader": {
+            "extension": "Extensão",
+            "lastModified": "Última modificação",
+            "name": "Nome",
+            "size": "Tamanho"
+        },
+        "emptyFolder": "Não há itens nesta pasta."
+    },
+    "quota": {
+        "limitedSpace": "Usado {{used}} de {{limit}}",
+        "overQuota": {
+            "tooltip": {
+                "label": "Você atingiu a cota máxima disponível."
+            }
+        },
+        "refresh": {
+            "tooltip": {
+                "label": "Atualizar"
+            }
+        },
+        "unlimitedSpace": "{{used}} de espaço ilimitado"
     }
 }

@@ -15,7 +15,7 @@ export interface AutocompleteRequest {
 	name: { _content: string };
 }
 
-export interface AutocompleteResponse {
+export interface AutocompleteResponse extends Record<string, unknown> {
 	match: Array<Match>;
 }
 
@@ -47,7 +47,7 @@ export interface ContactInfo {
 	_attrs: ContactInfoAttrs;
 }
 
-export interface AutocompleteGalResponse {
+export interface AutocompleteGalResponse extends Record<string, unknown> {
 	cn: Array<ContactInfo>;
 }
 
@@ -97,7 +97,7 @@ export interface DerefContactInformation extends ContactInformation {
 	};
 }
 
-export interface GetContactsResponse {
+export interface GetContactsResponse extends Record<string, unknown> {
 	cn?: Array<ContactInformation>;
 }
 

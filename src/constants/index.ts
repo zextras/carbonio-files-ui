@@ -9,16 +9,13 @@ import React from 'react';
 import type { QueryChip } from '@zextras/carbonio-shell-ui';
 import {
 	ACTION_TYPES as SHELL_ACTION_TYPES,
-	// FIXME: remove ts-comment when SHELL-157 will be available
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-expect-error
 	EMAIL_VALIDATION_REGEX
 } from '@zextras/carbonio-shell-ui';
 import { noop } from 'lodash';
 
 export const UpdateQueryContext = React.createContext<(arg: Array<QueryChip>) => void>(() => noop);
 
-export const ACTION_TYPES: typeof SHELL_ACTION_TYPES = {
+export const ACTION_TYPES: typeof SHELL_ACTION_TYPES & { FILES_ACTION: string } = {
 	...SHELL_ACTION_TYPES,
 	FILES_ACTION: 'carbonio_files_action'
 } as const;
@@ -42,3 +39,5 @@ export const FUNCTION_IDS = {
 export const ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT = [];
 
 export const EMAIL_REGEXP = EMAIL_VALIDATION_REGEX;
+
+export const UPDATE_VIEW_EVENT = 'updateView';

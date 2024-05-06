@@ -5,7 +5,7 @@
  */
 
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
-import { AnyFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
+import { registerFunctions } from '@zextras/carbonio-shell-ui';
 import { map, find } from 'lodash';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
@@ -137,6 +137,6 @@ export const getGetLinkFunction = (): Parameters<typeof registerFunctions>[numbe
 
 	return {
 		id: FUNCTION_IDS.GET_LINK,
-		fn: getLinkWithClient(apolloClient) as AnyFunction
+		fn: getLinkWithClient(apolloClient)
 	};
 };

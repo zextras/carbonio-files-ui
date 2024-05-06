@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.1](https://github.com/zextras/carbonio-files-ui/compare/v2.7.0...v2.7.1) (2024-05-06)
+
+
+### Bug Fixes
+
+* extend humanFileSize function support ([1df974e](https://github.com/zextras/carbonio-files-ui/commit/1df974e8387e8d648f7e9d531f2fd954f2d3d574)), closes [#347](https://github.com/zextras/carbonio-files-ui/issues/347)
+
 ## [2.7.0](https://github.com/zextras/carbonio-files-ui/compare/v2.6.0...v2.7.0) (2024-04-15)
 
 
