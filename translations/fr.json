@@ -746,6 +746,12 @@
             "moreInfo": {
                 "foldersNotAllowed": "Les dossiers ne peuvent pas être téléversés. Toutefois, si vous vouliez téléverser un fichier, le système n'a peut-être pas réussi à le reconnaître. Veuillez réessayer en utilisant le bouton \"TÉLÉVERSER\"."
             }
+        },
+        "banner": {
+            "overQuota": {
+                "description": "Le téléversement de certains éléments a échoué, car vous avez atteint la limite de stockage. Supprimez des éléments pour libérer de l'espace de stockage puis réessayez.",
+                "title": "Quota dépassé"
+            }
         }
     },
     "breadcrumb": {
@@ -933,5 +939,19 @@
             "name": "Nom",
             "size": "Taille"
         }
+    },
+    "quota": {
+        "limitedSpace": "{{used}} utilisés sur {{limit}}",
+        "overQuota": {
+            "tooltip": {
+                "label": "Vous avez atteint le maximum du quota disponible."
+            }
+        },
+        "refresh": {
+            "tooltip": {
+                "label": "Rafraîchir"
+            }
+        },
+        "unlimitedSpace": "{{used}} sur un espace illimité"
     }
 }
