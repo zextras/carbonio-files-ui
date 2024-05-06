@@ -698,6 +698,20 @@
             }
         }
     },
+    "quota": {
+        "limitedSpace": "{{used}} of {{limit}} used",
+        "overQuota": {
+            "tooltip": {
+                "label": "You have reached the maximum quota available."
+            }
+        },
+        "refresh": {
+            "tooltip": {
+                "label": "Refresh"
+            }
+        },
+        "unlimitedSpace": "{{used}} of unlimited space"
+    },
     "search": {
         "advancedSearch": {
             "button": {
@@ -906,6 +920,12 @@
         "queued": "Queued"
     },
     "uploads": {
+        "banner": {
+            "overQuota": {
+                "description": "The uploading of some items failed because you have reached your storage limit. Delete some items to free up storage space and try again.",
+                "title": "Quota exceeded"
+            }
+        },
         "clean": {
             "completed": "Clean completed uploads"
         },
