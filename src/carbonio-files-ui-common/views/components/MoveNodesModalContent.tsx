@@ -62,7 +62,9 @@ export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
 	const title = useMemo(
 		() => (
 			<TextWithTooltip weight="bold">
-				{t('node.move.modal.title', 'Move items', {
+				{t('node.move.modal.title', {
+					defaultValue_one: 'Move {{node.name}}',
+					defaultValue_other: 'Move items',
 					count: nodesToMove.length,
 					replace: { node: nodesToMove.length === 1 && nodesToMove[0] }
 				})}
