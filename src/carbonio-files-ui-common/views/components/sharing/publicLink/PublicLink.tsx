@@ -15,12 +15,10 @@ import {
 	useSnackbar
 } from '@zextras/carbonio-design-system';
 import { reduce, size } from 'lodash';
-import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
 
 import { AddPublicLinkComponent } from './AddPublicLinkComponent';
 import { PublicLinkComponent } from './PublicLinkComponent';
-import useUserInfo from '../../../../../hooks/useUserInfo';
 import { useCreateLinkMutation } from '../../../../hooks/graphql/mutations/useCreateLinkMutation';
 import { useDeleteLinksMutation } from '../../../../hooks/graphql/mutations/useDeleteLinksMutation';
 import { useUpdateLinkMutation } from '../../../../hooks/graphql/mutations/useUpdateLinkMutation';
@@ -45,7 +43,6 @@ export const PublicLink = ({
 	linkDescription
 }: PublicLinkProps): React.JSX.Element => {
 	const [t] = useTranslation();
-	const { zimbraPrefTimeZoneId } = useUserInfo();
 	const createSnackbar = useSnackbar();
 	const createModal = useModal();
 
@@ -80,14 +77,9 @@ export const PublicLink = ({
 
 	const onGenerate = useCallback(
 		(description?: string, expiresAt?: Date) => {
-			let expiresWithOffset;
-			if (expiresAt) {
-				const minOffset = moment().tz(zimbraPrefTimeZoneId).utcOffset();
-				expiresWithOffset = expiresAt.getTime() - minOffset * 60 * 1000;
-			}
 			setAddPublicLinkStatus(PublicLinkRowStatus.CLOSED);
 			setThereIsOpenRow(false);
-			return createLink(description, expiresWithOffset)
+			return createLink(description, expiresAt?.getTime())
 				.then(({ data }) => {
 					if (data) {
 						createSnackbar({
@@ -125,7 +117,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createLink, createSnackbar, t, zimbraPrefTimeZoneId, linkName]
+		[createLink, createSnackbar, t, linkName]
 	);
 
 	/** PublicLinkComponent callbacks */
@@ -186,17 +178,9 @@ export const PublicLink = ({
 
 	const onEditConfirm = useCallback(
 		(linkId: string, description?: string, expiresAt?: number) => {
-			let expiresWithOffset;
-			if (expiresAt) {
-				const minOffset = moment().tz(zimbraPrefTimeZoneId).utcOffset();
-				expiresWithOffset = expiresAt - minOffset * 60 * 1000;
-			} else if (expiresAt === 0) {
-				expiresWithOffset = expiresAt;
-			}
-
 			setOpenLinkId(undefined);
 			setThereIsOpenRow(false);
-			return updateLink(linkId, description, expiresWithOffset)
+			return updateLink(linkId, description, expiresAt)
 				.then(({ data }) => {
 					if (data) {
 						createSnackbar({
@@ -229,7 +213,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createSnackbar, t, updateLink, zimbraPrefTimeZoneId, linkName]
+		[createSnackbar, t, updateLink, linkName]
 	);
 
 	const linkComponents = useMemo(() => {

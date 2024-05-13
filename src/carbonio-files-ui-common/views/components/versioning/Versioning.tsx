@@ -9,14 +9,12 @@ import React, { useCallback, useMemo } from 'react';
 import { FetchResult } from '@apollo/client';
 import { Button, Container, Padding, Text } from '@zextras/carbonio-design-system';
 import { map, filter, partition, take, keyBy, drop } from 'lodash';
-import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { GridContainer } from './GridElements';
 import UploadVersionButton, { UploadVersionButtonProps } from './UploadVersionButton';
 import { SectionRow, VersionRow } from './VersionRow';
-import useUserInfo from '../../../../hooks/useUserInfo';
 import { CONFIGS } from '../../../constants';
 import { useCloneVersionMutation } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
 import { useDeleteVersionsMutation } from '../../../hooks/graphql/mutations/useDeleteVersionsMutation';
@@ -40,9 +38,10 @@ interface VersioningProps {
 	node: ActionsFactoryNodeType;
 }
 
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
 export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 	const [t] = useTranslation();
-	const { zimbraPrefTimeZoneId } = useUserInfo();
 
 	const deleteVersions = useDeleteVersionsMutation();
 	const keepVersions = useKeepVersionsMutation();
@@ -82,12 +81,12 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 	const lastVersion = take(filteredVersions);
 	const othersVersions = drop(filteredVersions);
 
-	const now = moment().tz(zimbraPrefTimeZoneId);
+	const now = Date.now();
 
-	const partitions = partition(othersVersions, (version) => {
-		const versionDate = moment.tz(version.updated_at, zimbraPrefTimeZoneId);
-		return now.diff(versionDate, 'days') <= 7;
-	});
+	const partitions = partition(
+		othersVersions,
+		(version) => now - version.updated_at <= SEVEN_DAYS_MS
+	);
 
 	const lastWeekVersions = partitions[0];
 	const olderVersions = partitions[1];
@@ -122,7 +121,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 	}, [configs, disabledByPermissionLabel, node.permissions.can_write_file, t, versions.length]);
 
 	const numberOfVersionsWithKeep = useMemo(
-		() => filter(versions, (version) => version && version.keep_forever).length,
+		() => filter(versions, (version) => version?.keep_forever === true).length,
 		[versions]
 	);
 
@@ -207,7 +206,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 			keepVersionTooltip={keepVersionDisabledTooltip}
 			canOpenWithDocs={$canOpenVersionWithDocs}
 			openWithDocsTooltip={openWithDocsDisabledTooltip}
-			clonedFromVersion={version.cloned_from_version || undefined}
+			clonedFromVersion={version.cloned_from_version ?? undefined}
 			cloneUpdatedAt={
 				version.cloned_from_version
 					? mappedVersions[version.cloned_from_version]?.updated_at
@@ -223,7 +222,6 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 			size={version.size}
 			updatedAt={version.updated_at}
 			version={version.version}
-			zimbraPrefTimeZoneId={zimbraPrefTimeZoneId}
 		/>
 	));
 
@@ -239,7 +237,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 			keepVersionTooltip={keepVersionDisabledTooltip}
 			canOpenWithDocs={$canOpenVersionWithDocs}
 			openWithDocsTooltip={openWithDocsDisabledTooltip}
-			clonedFromVersion={version.cloned_from_version || undefined}
+			clonedFromVersion={version.cloned_from_version ?? undefined}
 			cloneUpdatedAt={
 				version.cloned_from_version
 					? mappedVersions[version.cloned_from_version]?.updated_at
@@ -265,7 +263,6 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 			size={version.size}
 			updatedAt={version.updated_at}
 			version={version.version}
-			zimbraPrefTimeZoneId={zimbraPrefTimeZoneId}
 		/>
 	));
 
@@ -281,7 +278,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 			keepVersionTooltip={keepVersionDisabledTooltip}
 			canOpenWithDocs={$canOpenVersionWithDocs}
 			openWithDocsTooltip={openWithDocsDisabledTooltip}
-			clonedFromVersion={version.cloned_from_version || undefined}
+			clonedFromVersion={version.cloned_from_version ?? undefined}
 			cloneUpdatedAt={
 				version.cloned_from_version
 					? mappedVersions[version.cloned_from_version]?.updated_at
@@ -308,7 +305,6 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 			size={version.size}
 			updatedAt={version.updated_at}
 			version={version.version}
-			zimbraPrefTimeZoneId={zimbraPrefTimeZoneId}
 		/>
 	));
 

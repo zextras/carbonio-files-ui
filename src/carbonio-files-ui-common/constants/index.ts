@@ -98,9 +98,24 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 	[DocsType.MS_SPREADSHEET]: 'xlsx',
 	[DocsType.MS_PRESENTATION]: 'pptx'
 } as const;
-// TODO: use locale aware date format (L)
-export const DATE_FORMAT = 'DD/MM/YYYY';
-export const DATE_FORMAT_SHORT = 'DD/MM/YY';
+export const DATE_FORMAT = {
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit'
+} satisfies Intl.DateTimeFormatOptions;
+export const DATE_FORMAT_SHORT = {
+	year: '2-digit',
+	month: '2-digit',
+	day: '2-digit'
+} satisfies Intl.DateTimeFormatOptions;
+export const TIME_FORMAT = {
+	hour: '2-digit',
+	minute: '2-digit'
+} satisfies Intl.DateTimeFormatOptions;
+export const DATE_TIME_FORMAT = {
+	...DATE_FORMAT_SHORT,
+	...TIME_FORMAT
+} satisfies Intl.DateTimeFormatOptions;
 export const UPLOAD_STATUS_CODE = {
 	success: 200,
 	internalServerError: 500,

@@ -14,7 +14,7 @@ import { Draggable } from './Draggable';
 import { NodeListItem } from './NodeListItem';
 import { NodeListItemWrapper } from './NodeListItemWrapper';
 import { ScrollContainer } from './ScrollContainer';
-import useUserInfo from '../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES } from '../../constants';
 import { DeleteNodesType } from '../../hooks/graphql/mutations/useDeleteNodesMutation';

@@ -20,13 +20,13 @@ import {
 	useSnackbar
 } from '@zextras/carbonio-design-system';
 import { size } from 'lodash';
-import moment from 'moment-timezone';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import useUserInfo from '../../../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../../../hooks/useUserInfo';
+import { DATE_TIME_FORMAT } from '../../../../constants';
 import { PublicLinkRowStatus } from '../../../../types/common';
-import { copyToClipboard, formatDate } from '../../../../utils/utils';
+import { copyToClipboard, formatDate, initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 
 const CustomText = styled(Text)`
@@ -63,7 +63,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 }) => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
-	const { zimbraPrefTimeZoneId } = useUserInfo();
+	const { locale } = useUserInfo();
 
 	const isExpired = useMemo(() => (expiresAt ? Date.now() > expiresAt : false), [expiresAt]);
 
@@ -78,15 +78,9 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 		setLinkDescriptionValue(ev.target.value);
 	}, []);
 
-	const initialMomentDate = useMemo(() => {
-		if (expiresAt) {
-			const momentDate = moment(expiresAt).tz(zimbraPrefTimeZoneId);
-			return new Date(momentDate.year(), momentDate.month(), momentDate.date());
-		}
-		return undefined;
-	}, [expiresAt, zimbraPrefTimeZoneId]);
+	const initialDate = useMemo(() => (expiresAt ? new Date(expiresAt) : undefined), [expiresAt]);
 
-	const [date, setDate] = useState(initialMomentDate);
+	const [date, setDate] = useState(initialDate);
 	const [updatedTimestamp, setUpdatedTimestamp] = useState(expiresAt);
 
 	const isSomethingChanged = useMemo(
@@ -96,18 +90,10 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 		[description, expiresAt, linkDescriptionValue, updatedTimestamp]
 	);
 
-	const handleChange = useCallback((d: Date | null) => {
-		if (d === null) {
-			setDate(undefined);
-			setUpdatedTimestamp(undefined);
-		} else {
-			const userTimezoneOffset = d.getTimezoneOffset() * 60000;
-			const epoch = d.getTime() - userTimezoneOffset;
-			// add 23 hours and 59 minutes
-			const epochPlusOneDay = epoch + 24 * 60 * 60 * 1000 - 60000;
-			setUpdatedTimestamp(epochPlusOneDay);
-			setDate(d);
-		}
+	const handleChange = useCallback((newDate: Date | null) => {
+		setDate(newDate ?? undefined);
+		const expirationDate = initExpirationDate(newDate);
+		setUpdatedTimestamp(expirationDate?.getTime());
 	}, []);
 
 	const onEditCallback = useCallback(() => {
@@ -115,11 +101,11 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	}, [id, onEdit]);
 
 	const onUndoCallback = useCallback(() => {
-		setLinkDescriptionValue(description || '');
-		setDate(initialMomentDate);
+		setLinkDescriptionValue(description ?? '');
+		setDate(initialDate);
 		setUpdatedTimestamp(expiresAt);
 		onUndo();
-	}, [description, expiresAt, initialMomentDate, onUndo]);
+	}, [description, expiresAt, initialDate, onUndo]);
 
 	const onRevokeOrRemoveCallback = useCallback(() => {
 		onRevokeOrRemove(id, !isExpired);
@@ -131,7 +117,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 				onEditConfirm(
 					id,
 					linkDescriptionValue,
-					updatedTimestamp !== expiresAt ? updatedTimestamp || 0 : undefined
+					updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined
 				)
 			]),
 		[expiresAt, id, linkDescriptionValue, onEditConfirm, updatedTimestamp]
@@ -161,14 +147,14 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 
 	const expirationText = useMemo(() => {
 		if (expiresAt) {
-			const expirationDateStr = formatDate(expiresAt, 'DD/MM/YY HH:mm', zimbraPrefTimeZoneId);
+			const expirationDateStr = formatDate(expiresAt, locale, DATE_TIME_FORMAT);
 			if (!isExpired) {
 				return `${t('publicLink.link.expireOn', 'Expires on:')} ${expirationDateStr}`;
 			}
 			return `${t('publicLink.link.expiredOn', 'This link has expired on:')} ${expirationDateStr}`;
 		}
 		return t('publicLink.link.noExpirationDate', 'Has no expiration date');
-	}, [expiresAt, isExpired, t, zimbraPrefTimeZoneId]);
+	}, [expiresAt, isExpired, locale, t]);
 
 	return (
 		<Container>
@@ -289,7 +275,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 						label={t('publicLink.dateTimePicker.label', 'Expiration date')}
 						includeTime={false}
 						enableChips
-						dateFormat="dd/MM/yyyy"
+						dateFormat="P"
 						chipProps={{ hasAvatar: false }}
 						onChange={handleChange}
 						defaultValue={date}
