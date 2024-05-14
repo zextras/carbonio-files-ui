@@ -7,6 +7,7 @@
 import React, { lazy, useEffect, Suspense, useCallback, useMemo } from 'react';
 
 import { ApolloProvider } from '@apollo/client';
+import { ModalManager } from '@zextras/carbonio-design-system';
 import {
 	Spinner,
 	addRoute,
@@ -133,7 +134,9 @@ export default function App(): React.JSX.Element {
 
 	return (
 		<ApolloProvider client={apolloClient}>
-			<IntegrationsRegisterer />
+			<ModalManager>
+				<IntegrationsRegisterer />
+			</ModalManager>
 		</ApolloProvider>
 	);
 }
