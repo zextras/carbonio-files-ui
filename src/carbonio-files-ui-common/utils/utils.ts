@@ -195,7 +195,22 @@ export const formatDate = (
 	if (date === null || date === undefined || (typeof date === 'string' && date.trim() === '')) {
 		return '';
 	}
-	return Intl.DateTimeFormat(locale, format).format(new Date(date));
+	const fixedLocale = locale?.replaceAll('_', '-');
+	try {
+		return Intl.DateTimeFormat(fixedLocale, format).format(new Date(date));
+	} catch (e) {
+		if (e instanceof RangeError) {
+			// try to format with only the language part of the locale
+			// if there is no hyphen, use the system language by passing locale undefined
+			const hyphenIndex = locale?.indexOf('-') ?? -1;
+			return formatDate(
+				date,
+				hyphenIndex > -1 ? locale?.substring(0, hyphenIndex) : undefined,
+				format
+			);
+		}
+		throw e;
+	}
 };
 
 export const initExpirationDate = (date: Date | null | undefined): Date | undefined => {

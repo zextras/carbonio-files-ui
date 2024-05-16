@@ -18,10 +18,25 @@ describe('formatDate function', () => {
 		expect(result).toBe('09/05/2024');
 	});
 
-	it('should format date based on system local if invalid locale arg is set', () => {
+	it.each(['astronauta', 'astronauta-locale'])(
+		'should format date based on system locale if invalid locale arg is set (%s)',
+		(locale) => {
+			const date = new Date(2024, 4, 9);
+			const result = formatDate(date, locale);
+			expect(result).toBe('05/09/2024');
+		}
+	);
+
+	it('should format date based on the given locale if the locale arg is valid but with underscores', () => {
 		const date = new Date(2024, 4, 9);
-		const result = formatDate(date, 'invalid');
-		expect(result).toBe('05/09/2024');
+		const result = formatDate(date, 'pt_BR');
+		expect(result).toBe('09/05/2024');
+	});
+
+	it('should format date based on the given locale language if the locale arg has a valid language but an invalid subtag', () => {
+		const date = new Date(2024, 4, 9);
+		const result = formatDate(date, 'pt-ASTRONAUTA');
+		expect(result).toBe('09/05/2024');
 	});
 
 	it('should format date with given format options', () => {
