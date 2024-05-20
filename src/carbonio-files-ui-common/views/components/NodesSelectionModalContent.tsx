@@ -505,10 +505,8 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 									>
 										<Text size="small" weight="light">
 											{t('modal.nodesSelection.selectedCount', {
-												defaultValue:
-													selectedNodes.length === 1
-														? '{{count}} element selected'
-														: '{{count}} elements selected',
+												defaultValue_one: '{{count}} element selected',
+												defaultValue_other: '{{count}} elements selected',
 												count: selectedNodes.length
 											})}
 										</Text>

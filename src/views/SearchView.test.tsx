@@ -501,8 +501,8 @@ describe('Search view', () => {
 			await screen.findByText(/No search executed/i);
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.getByText(/results header/i)).toBeVisible();
-			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
-			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
+			expect(screen.getByRole('button', { name: /advanced filters/i })).toBeVisible();
+			await user.click(screen.getByRole('button', { name: /advanced filters/i }));
 			await screen.findByRole('button', { name: /search/i });
 			act(() => {
 				// run timers of modal

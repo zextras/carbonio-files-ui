@@ -347,7 +347,7 @@ describe('Move Nodes Modal', () => {
 		expect(folderCachedData).toBeNull();
 	});
 
-	test('click on disabled nodes or outside the list reset selected destination to opened folder. Click on filter input does not reset selected destination', async () => {
+	test('click on disabled nodes or outside the list reset selected destination to opened folder', async () => {
 		const currentFolder = populateFolder();
 		const file = populateFile();
 		file.permissions.can_write_file = true;
@@ -394,7 +394,9 @@ describe('Move Nodes Modal', () => {
 		// confirm button becomes active
 		await waitFor(() => expect(confirmButton).toBeEnabled());
 		// click on modal title
-		await user.click(screen.getByText(/move items/i));
+		await user.click(screen.getByText(`Move ${file.name}`));
+		// confirm button becomes disabled
+		await waitFor(() => expect(confirmButton).toBeDisabled());
 	});
 
 	test('breadcrumb shows full path of opened folder and allows navigation to parent nodes', async () => {
