@@ -10,10 +10,11 @@ import {
 	canFlag,
 	canMarkForDeletion,
 	canMove,
+	canOpenVersionWithDocs,
 	canRename,
 	canUnFlag
 } from './ActionsFactory';
-import { isFile, isFolder } from './utils';
+import { docsHandledMimeTypes, isFile, isFolder } from './utils';
 import { populateFile, populateFolder, populateUnknownNode } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { File, Folder } from '../types/graphql/types';
@@ -364,5 +365,21 @@ describe('ActionsFactory test', () => {
 		expect(canCopy({ nodes: [testFile] })).toBeTruthy();
 		const testFolder: Folder = populateFolder();
 		expect(canCopy({ nodes: [testFolder] })).toBeTruthy();
+	});
+
+	/**
+	 * canOpenVersionWithDocs
+	 */
+
+	it('canOpenVersionWithDocs return true when canUseDocs is true and others criteria are valid', () => {
+		const testFile: File = populateFile();
+		[testFile.mime_type] = docsHandledMimeTypes;
+		expect(canOpenVersionWithDocs([testFile], true)).toBeTruthy();
+	});
+
+	it('canOpenVersionWithDocs return false when canUseDocs is false and others criteria are valid', () => {
+		const testFile: File = populateFile();
+		[testFile.mime_type] = docsHandledMimeTypes;
+		expect(canOpenVersionWithDocs([testFile], false)).toBeFalsy();
 	});
 });
