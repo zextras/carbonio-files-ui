@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 import { Text, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import useUserInfo from '../../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { SHARE_CHIP_SIZE } from '../../../constants';
 import { Contact } from '../../../types/common';
 import { getChipLabel, getChipTooltip } from '../../../utils/utils';

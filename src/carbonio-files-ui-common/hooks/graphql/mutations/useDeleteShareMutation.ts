@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import { useActiveNode } from '../../../../hooks/useActiveNode';
-import useUserInfo from '../../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { assertCachedObject, recursiveShareEvict } from '../../../apollo/cacheUtils';
 import FIND_NODES from '../../../graphql/queries/findNodes.graphql';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';

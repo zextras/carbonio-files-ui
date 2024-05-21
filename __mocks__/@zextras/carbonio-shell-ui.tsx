@@ -10,7 +10,7 @@ import * as shell from '@zextras/carbonio-shell-ui';
 import { useHistory } from 'react-router-dom';
 
 import { FILES_APP_ID, FILES_ROUTE } from '../../src/carbonio-files-ui-common/constants';
-import { LOGGED_USER, USER_SETTINGS } from '../../src/mocks/constants';
+import { LOGGED_USER } from '../../src/mocks/constants';
 
 export const useReplaceHistoryCallback: typeof shell.useReplaceHistoryCallback = () => {
 	const history = useHistory();
@@ -56,7 +56,6 @@ export const soapFetch: typeof shell.soapFetch = (req, body) =>
 
 export const useUserAccount: typeof shell.useUserAccount = () => LOGGED_USER;
 export const getUserAccount: typeof shell.getUserAccount = () => LOGGED_USER;
-export const useUserSettings: typeof shell.useUserSettings = () => USER_SETTINGS;
 export const report: typeof shell.report = () => '';
 export const ACTION_TYPES: Partial<typeof shell.ACTION_TYPES> = {
 	NEW: 'new'

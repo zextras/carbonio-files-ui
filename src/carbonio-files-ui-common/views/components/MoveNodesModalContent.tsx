@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { ModalFooterCustom } from './ModalFooterCustom';
 import { ModalList } from './ModalList';
 import { CustomModalBody } from './StyledComponents';
-import useUserInfo from '../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../hooks/useUserInfo';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';

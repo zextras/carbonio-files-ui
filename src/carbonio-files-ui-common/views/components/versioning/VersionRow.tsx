@@ -21,6 +21,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { GridItem } from './GridElements';
+import { useUserInfo } from '../../../../hooks/useUserInfo';
+import { DATE_TIME_FORMAT } from '../../../constants';
 import { DropdownListItemContent } from '../../../design_system_fork/DropdownListItemComponent';
 import { CloneVersionType } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
 import { DeleteVersionsType } from '../../../hooks/graphql/mutations/useDeleteVersionsMutation';
@@ -78,7 +80,6 @@ export const VersionRow: React.VFC<{
 	size: number;
 	updatedAt: number;
 	version: number;
-	zimbraPrefTimeZoneId: string;
 }> = ({
 	background,
 	canCloneVersion,
@@ -100,11 +101,11 @@ export const VersionRow: React.VFC<{
 	rowNumber,
 	size,
 	updatedAt,
-	version,
-	zimbraPrefTimeZoneId
+	version
 }) => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
+	const { locale } = useUserInfo();
 
 	const deleteVersionCallback = useCallback(() => {
 		deleteVersions(nodeId, [version]);
@@ -243,7 +244,7 @@ export const VersionRow: React.VFC<{
 				columnStart={1}
 				columnEnd={2}
 			>
-				<CustomText>{formatDate(updatedAt, 'DD/MM/YY HH:mm', zimbraPrefTimeZoneId)}</CustomText>
+				<CustomText>{formatDate(updatedAt, locale, DATE_TIME_FORMAT)}</CustomText>
 			</GridItem>
 			<GridItem
 				padding={{ left: 'small', right: 'small' }}
@@ -311,7 +312,10 @@ export const VersionRow: React.VFC<{
 										{
 											replace: {
 												versionNumber: clonedFromVersion,
-												cloneDate: formatDate(cloneUpdatedAt, 'DD MMM', zimbraPrefTimeZoneId)
+												cloneDate: formatDate(cloneUpdatedAt, locale, {
+													day: '2-digit',
+													month: 'short'
+												})
 											}
 										}
 									)

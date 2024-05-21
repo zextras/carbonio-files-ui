@@ -64,9 +64,9 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 	);
 
 	const handleChange = useCallback<NonNullable<DateTimePickerProps['onChange']>>(
-		(d: Date | null) => {
-			if (d instanceof Date) {
-				setDate(d);
+		(newDate: Date | null) => {
+			if (newDate instanceof Date) {
+				setDate(newDate);
 			} else {
 				setDate(undefined);
 			}
@@ -203,7 +203,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 						label={t('publicLink.dateTimePicker.label', 'Expiration date')}
 						includeTime={false}
 						enableChips
-						dateFormat="dd/MM/yyyy"
+						dateFormat="P"
 						chipProps={{ hasAvatar: false }}
 						onChange={handleChange}
 						onCalendarClose={handleCalendarClose}
