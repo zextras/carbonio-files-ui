@@ -116,6 +116,8 @@ export const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
 						nodesToDrag,
 						[Action.Move, Action.MoveToTrash],
 						me,
+						undefined,
+						undefined,
 						customCheckers
 					);
 					forEach(nodesToDrag, (nodeToDrag) => {

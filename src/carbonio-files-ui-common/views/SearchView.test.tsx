@@ -6,14 +6,20 @@
 
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { map, find } from 'lodash';
+import { http, HttpResponse } from 'msw';
 
 import { SearchView } from './SearchView';
+import { ACTION_IDS } from '../../constants';
+import { CreateOption } from '../../hooks/useCreateOptions';
+import server from '../../mocks/server';
 import { searchParamsVar } from '../apollo/searchVar';
-import { INTERNAL_PATH, ROOTS } from '../constants';
+import { DOCS_SERVICE_NAME, HEALTH_PATH, INTERNAL_PATH, REST_ENDPOINT, ROOTS } from '../constants';
 import { ACTION_REGEXP, DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import BaseNodeFragmentDoc from '../graphql/fragments/baseNode.graphql';
+import { healthCache } from '../hooks/useHealthInfo';
+import { HealthResponse } from '../mocks/handleHealthRequest';
 import {
 	populateFolder,
 	populateNode,
@@ -36,7 +42,13 @@ import {
 	mockRestoreNodes,
 	mockTrashNodes
 } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, buildChipsFromKeywords, moveNode, setup } from '../utils/testUtils';
+import {
+	buildBreadCrumbRegExp,
+	buildChipsFromKeywords,
+	moveNode,
+	setup,
+	spyOnUseCreateOptions
+} from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
@@ -538,5 +550,53 @@ describe('Search view', () => {
 			expect(screen.queryByText(ACTION_REGEXP.deletePermanently)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.restore)).not.toBeInTheDocument();
 		});
+	});
+
+	it('should show docs creation actions if docs is available', async () => {
+		healthCache.reset();
+		const createOptions: CreateOption[] = [];
+		spyOnUseCreateOptions(createOptions);
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
+			)
+		);
+		setup(<SearchView />);
+		await waitFor(() =>
+			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
+		);
+	});
+
+	it('should not show docs creation actions if docs is not available', async () => {
+		healthCache.reset();
+		const createOptions: CreateOption[] = [];
+		spyOnUseCreateOptions(createOptions);
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
+			)
+		);
+		setup(<SearchView />);
+		await waitFor(() =>
+			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
+		);
 	});
 });

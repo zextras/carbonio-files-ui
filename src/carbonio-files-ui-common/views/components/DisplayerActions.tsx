@@ -24,6 +24,7 @@ import { useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { Action, GetNodeParentType } from '../../types/common';
 import { File, MakeOptional, Node } from '../../types/graphql/types';
 import {
@@ -72,15 +73,18 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 	const { openDeletePermanentlyModal } = useDeletePermanentlyModal(deletePermanentlyCallback);
 
 	const { me } = useUserInfo();
+	const { canUsePreview, canUseDocs } = useHealthInfo();
 
 	const permittedDisplayerActions: Action[] = useMemo(
 		() =>
 			getAllPermittedActions(
 				[node],
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				me
+				me,
+				canUsePreview,
+				canUseDocs
 			),
-		[me, node]
+		[canUseDocs, canUsePreview, me, node]
 	);
 
 	const { openMoveNodesModal } = useMoveModal();

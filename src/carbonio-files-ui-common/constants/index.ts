@@ -98,6 +98,8 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 	[DocsType.MS_SPREADSHEET]: 'xlsx',
 	[DocsType.MS_PRESENTATION]: 'pptx'
 } as const;
+export const DOCS_SERVICE_NAME = 'carbonio-docs-connector';
+export const PREVIEW_SERVICE_NAME = 'carbonio-preview';
 export const DATE_FORMAT = {
 	year: 'numeric',
 	month: '2-digit',
@@ -143,6 +145,7 @@ export const UPLOAD_TO_PATH = '/upload-to';
 export const UPLOAD_VERSION_PATH = '/upload-version';
 export const CREATE_FILE_PATH = '/files/create';
 export const MYSELF_QUOTA_PATH = '/quota/myself';
+export const HEALTH_PATH = '/health';
 export const PREVIEW_PATH = '/preview';
 export const PREVIEW_TYPE = {
 	IMAGE: 'image',

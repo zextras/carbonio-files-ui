@@ -36,6 +36,7 @@ import {
 	PREVIEW_TYPE,
 	ROOTS
 } from '../../constants';
+import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { Action } from '../../types/common';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { buildActionItems } from '../../utils/ActionsFactory';
@@ -174,6 +175,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 	const [$isSupportedByPreview] = useMemo<
 		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
 	>(() => isSupportedByPreview(mimeType, 'preview'), [mimeType]);
+	const { canUsePreview, canUseDocs } = useHealthInfo();
 
 	const openNode = useCallback(
 		(event: React.SyntheticEvent | KeyboardEvent) => {
@@ -186,12 +188,12 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			if (!isSelectionModeActive && !disabled && !trashed) {
 				if (isNavigable) {
 					navigateTo(id, event);
-				} else if (includes(permittedContextualMenuActions, Action.Edit)) {
+				} else if (canUseDocs && includes(permittedContextualMenuActions, Action.Edit)) {
 					// if node can be opened with docs on edit mode, open editor
 					openNodeWithDocs(id);
-				} else if ($isSupportedByPreview) {
+				} else if (canUsePreview && $isSupportedByPreview) {
 					openPreview(id);
-				} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
+				} else if (canUseDocs && includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
 					// if preview is not supported and document can be opened with docs, open editor
 					openNodeWithDocs(id);
 				}
@@ -202,7 +204,9 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			disabled,
 			trashed,
 			isNavigable,
+			canUseDocs,
 			permittedContextualMenuActions,
+			canUsePreview,
 			$isSupportedByPreview,
 			navigateTo,
 			id,
@@ -443,14 +447,18 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 							selectable={selectable}
 							icon={getIconByFileType(type, mimeType ?? id)}
 							color={getIconColorByFileType(type, mimeType ?? id, theme)}
-							picture={getPreviewThumbnailSrc(
-								id,
-								version,
-								type,
-								mimeType,
-								{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
-								'thumbnail'
-							)}
+							picture={
+								canUsePreview
+									? getPreviewThumbnailSrc(
+											id,
+											version,
+											type,
+											mimeType,
+											{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
+											'thumbnail'
+										)
+									: undefined
+							}
 						/>
 						<Container
 							orientation="vertical"

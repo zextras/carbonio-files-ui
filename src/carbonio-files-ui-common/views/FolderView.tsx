@@ -26,6 +26,7 @@ import { useGetChildrenQuery } from '../hooks/graphql/queries/useGetChildrenQuer
 import { useGetPermissionsQuery } from '../hooks/graphql/queries/useGetPermissionsQuery';
 import { useCreateModal } from '../hooks/modals/useCreateModal';
 import { useCreateDocsFile } from '../hooks/useCreateDocsFile';
+import { useHealthInfo } from '../hooks/useHealthInfo';
 import useQueryParam from '../hooks/useQueryParam';
 import { useUpload } from '../hooks/useUpload';
 import { DocsType, NodeListItemType, URLParams } from '../types/common';
@@ -174,6 +175,8 @@ const FolderView: React.VFC = () => {
 		[]
 	);
 
+	const { canUseDocs } = useHealthInfo();
+
 	const actions = useMemo(
 		(): ContextualMenuProps['actions'] => [
 			{
@@ -183,68 +186,72 @@ const FolderView: React.VFC = () => {
 				onClick: createFolderAction,
 				disabled: !isCanCreateFolder
 			},
-			{
-				id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-				label: t('create.options.new.document', 'New document'),
-				icon: 'FileTextOutline',
-				disabled: !isCanCreateFile,
-				items: [
-					{
-						id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
-						label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-						onClick: createDocsAction(DocsType.LIBRE_DOCUMENT),
-						disabled: !isCanCreateFile
-					},
-					{
-						id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
-						label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-						onClick: createDocsAction(DocsType.MS_DOCUMENT),
-						disabled: !isCanCreateFile
-					}
-				]
-			},
-			{
-				id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-				label: t('create.options.new.spreadsheet', 'New spreadsheet'),
-				icon: 'FileCalcOutline',
-				disabled: !isCanCreateFile,
-				items: [
-					{
-						id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
-						label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-						onClick: createDocsAction(DocsType.LIBRE_SPREADSHEET),
-						disabled: !isCanCreateFile
-					},
-					{
-						id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
-						label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-						onClick: createDocsAction(DocsType.MS_SPREADSHEET),
-						disabled: !isCanCreateFile
-					}
-				]
-			},
-			{
-				id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-				label: t('create.options.new.presentation', 'New presentation'),
-				icon: 'FilePresentationOutline',
-				disabled: !isCanCreateFile,
-				items: [
-					{
-						id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
-						label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-						onClick: createDocsAction(DocsType.LIBRE_PRESENTATION),
-						disabled: !isCanCreateFile
-					},
-					{
-						id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
-						label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-						onClick: createDocsAction(DocsType.MS_PRESENTATION),
-						disabled: !isCanCreateFile
-					}
-				]
-			}
+			...(canUseDocs
+				? [
+						{
+							id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
+							label: t('create.options.new.document', 'New document'),
+							icon: 'FileTextOutline',
+							disabled: !isCanCreateFile,
+							items: [
+								{
+									id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
+									label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
+									onClick: createDocsAction(DocsType.LIBRE_DOCUMENT),
+									disabled: !isCanCreateFile
+								},
+								{
+									id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
+									label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
+									onClick: createDocsAction(DocsType.MS_DOCUMENT),
+									disabled: !isCanCreateFile
+								}
+							]
+						},
+						{
+							id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
+							label: t('create.options.new.spreadsheet', 'New spreadsheet'),
+							icon: 'FileCalcOutline',
+							disabled: !isCanCreateFile,
+							items: [
+								{
+									id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
+									label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
+									onClick: createDocsAction(DocsType.LIBRE_SPREADSHEET),
+									disabled: !isCanCreateFile
+								},
+								{
+									id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
+									label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
+									onClick: createDocsAction(DocsType.MS_SPREADSHEET),
+									disabled: !isCanCreateFile
+								}
+							]
+						},
+						{
+							id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
+							label: t('create.options.new.presentation', 'New presentation'),
+							icon: 'FilePresentationOutline',
+							disabled: !isCanCreateFile,
+							items: [
+								{
+									id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
+									label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
+									onClick: createDocsAction(DocsType.LIBRE_PRESENTATION),
+									disabled: !isCanCreateFile
+								},
+								{
+									id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
+									label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
+									onClick: createDocsAction(DocsType.MS_PRESENTATION),
+									disabled: !isCanCreateFile
+								}
+							]
+						}
+					]
+				: [])
 		],
-		[createDocsAction, createFolderAction, isCanCreateFile, isCanCreateFolder, t]
+		[canUseDocs, createDocsAction, createFolderAction, isCanCreateFile, isCanCreateFolder, t]
 	);
 
 	useEffect(() => {

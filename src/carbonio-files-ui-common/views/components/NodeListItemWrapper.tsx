@@ -20,6 +20,7 @@ import { DRAG_TYPES, ROOTS, TIMERS } from '../../constants';
 import { DeleteNodesType } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
+import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useUpload } from '../../hooks/useUpload';
 import { Action, NodeListItemType, URLParams } from '../../types/common';
 import {
@@ -145,15 +146,19 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 
 	const { me } = useUserInfo();
 
+	const { canUsePreview, canUseDocs } = useHealthInfo();
+
 	const permittedContextualMenuActions = useMemo(
 		() =>
 			node.permissions &&
 			getAllPermittedActions(
 				[node],
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				me
+				me,
+				canUsePreview,
+				canUseDocs
 			),
-		[me, node]
+		[canUseDocs, canUsePreview, me, node]
 	);
 
 	const setActiveNode = useCallback(

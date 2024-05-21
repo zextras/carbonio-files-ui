@@ -9,7 +9,9 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
 import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
+import { HeaderAction } from '@zextras/carbonio-ui-preview/lib/preview/Header';
 import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
+import { TFunction } from 'i18next';
 import { isEmpty, find, filter, includes, reduce, size, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -50,6 +52,7 @@ import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
 import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useHealthInfo } from '../../hooks/useHealthInfo';
 import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { Action, Crumb, NodeListItemType } from '../../types/common';
@@ -63,19 +66,51 @@ import {
 	canOpenWithDocs,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import {
-	getDocumentPreviewSrc,
-	getImgPreviewSrc,
-	getPdfPreviewSrc,
-	getPreviewOutputFormat,
-	isSupportedByPreview
-} from '../../utils/previewUtils';
+import { getPreviewSrc, isSupportedByPreview } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import { downloadNode, humanFileSize, isFile, isFolder, openNodeWithDocs } from '../../utils/utils';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};
 `;
+
+function getHeaderActions(
+	t: TFunction,
+	setActiveNode: ReturnType<typeof useActiveNode>['setActiveNode'],
+	node: File,
+	canUseDocs: boolean
+): Array<HeaderAction> {
+	const actions: Array<HeaderAction> = [
+		{
+			icon: 'ShareOutline',
+			id: 'ShareOutline',
+			tooltipLabel: t('preview.actions.tooltip.manageShares', 'Manage shares'),
+			onClick: (): void => setActiveNode(node.id, DISPLAYER_TABS.sharing)
+		},
+		{
+			icon: 'DownloadOutline',
+			tooltipLabel: t('preview.actions.tooltip.download', 'Download'),
+			id: 'DownloadOutline',
+			onClick: (): void => downloadNode(node.id)
+		}
+	];
+	if (canEdit({ nodes: [node], canUseDocs })) {
+		actions.unshift({
+			icon: 'Edit2Outline',
+			id: 'Edit',
+			onClick: (): void => openNodeWithDocs(node.id),
+			tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
+		});
+	} else if (canOpenWithDocs({ nodes: [node], canUseDocs })) {
+		actions.unshift({
+			id: 'OpenWithDocs',
+			icon: 'BookOpenOutline',
+			tooltipLabel: t('actions.openWithDocs', 'Open document'),
+			onClick: (): void => openNodeWithDocs(node.id)
+		});
+	}
+	return actions;
+}
 
 interface ListProps {
 	nodes: NodeListItemType[];
@@ -173,16 +208,20 @@ export const List: React.VFC<ListProps> = ({
 		[folderId]
 	);
 
+	const { canUsePreview, canUseDocs } = useHealthInfo();
+
 	const actionCheckers = useMemo<ActionsFactoryCheckerMap>(
-		() => ({ [Action.Move]: moveCheckFunction }),
+		() => ({
+			[Action.Move]: moveCheckFunction
+		}),
 		[moveCheckFunction]
 	);
 
 	const permittedSelectionModeActions = useMemo(
 		() =>
 			// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-			getAllPermittedActions(selectedNodes, me, actionCheckers),
-		[actionCheckers, me, selectedNodes]
+			getAllPermittedActions(selectedNodes, me, canUsePreview, canUseDocs, actionCheckers),
+		[actionCheckers, canUseDocs, canUsePreview, me, selectedNodes]
 	);
 
 	const setActiveNodeHandler = useCallback<
@@ -350,94 +389,48 @@ export const List: React.VFC<ListProps> = ({
 			reduce(
 				nodes,
 				(accumulator: Parameters<PreviewManagerContextType['initPreview']>[0], node) => {
-					if (isFile(node)) {
-						const [$isSupportedByPreview, documentType] = isSupportedByPreview(
-							node.mime_type,
-							'preview'
-						);
-						if ($isSupportedByPreview) {
-							const actions = [
-								{
-									icon: 'ShareOutline',
-									id: 'ShareOutline',
-									tooltipLabel: t('preview.actions.tooltip.manageShares', 'Manage shares'),
-									onClick: (): void => setActiveNode(node.id, DISPLAYER_TABS.sharing)
-								},
-								{
-									icon: 'DownloadOutline',
-									tooltipLabel: t('preview.actions.tooltip.download', 'Download'),
-									id: 'DownloadOutline',
-									onClick: (): void => downloadNode(node.id)
-								}
-							];
-							const closeAction = {
-								id: 'close-action',
-								icon: 'ArrowBackOutline',
-								tooltipLabel: t('preview.close.tooltip', 'Close')
-							};
-							if (documentType === PREVIEW_TYPE.IMAGE) {
-								accumulator.push({
-									previewType: 'image',
-									filename: node.name,
-									extension: node.extension ?? undefined,
-									size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
-									actions,
-									closeAction,
-									src: node.version
-										? getImgPreviewSrc(node.id, node.version, {
-												width: 0,
-												height: 0,
-												quality: 'high',
-												outputFormat: getPreviewOutputFormat(node.mime_type)
-											})
-										: '',
-									id: node.id
-								});
-								return accumulator;
-							}
-							// if supported, open document with preview
-							const src =
-								(node.version &&
-									((documentType === PREVIEW_TYPE.PDF && getPdfPreviewSrc(node.id, node.version)) ||
-										(documentType === PREVIEW_TYPE.DOCUMENT &&
-											getDocumentPreviewSrc(node.id, node.version)))) ||
-								'';
-							if (canEdit([node])) {
-								actions.unshift({
-									icon: 'Edit2Outline',
-									id: 'Edit',
-									onClick: (): void => openNodeWithDocs(node.id),
-									tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
-								});
-							} else if (canOpenWithDocs([node])) {
-								actions.unshift({
-									id: 'OpenWithDocs',
-									icon: 'BookOpenOutline',
-									tooltipLabel: t('actions.openWithDocs', 'Open document'),
-									onClick: (): void => openNodeWithDocs(node.id)
-								});
-							}
-							accumulator.push({
-								forceCache: false,
-								previewType: 'pdf',
-								filename: node.name,
-								extension: node.extension || undefined,
-								size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
-								useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE,
-								actions,
-								closeAction,
-								src,
-								id: node.id
-							});
-							return accumulator;
-						}
+					if (!isFile(node)) {
 						return accumulator;
+					}
+					const [$isSupportedByPreview, documentType] = isSupportedByPreview(
+						node.mime_type,
+						'preview'
+					);
+					if (!$isSupportedByPreview) {
+						return accumulator;
+					}
+					const item = {
+						filename: node.name,
+						extension: node.extension ?? undefined,
+						size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
+						actions: getHeaderActions(t, setActiveNode, node, canUseDocs),
+						closeAction: {
+							id: 'close-action',
+							icon: 'ArrowBackOutline',
+							tooltipLabel: t('preview.close.tooltip', 'Close')
+						},
+						src: getPreviewSrc(node, documentType),
+						id: node.id
+					};
+
+					if (documentType === PREVIEW_TYPE.IMAGE) {
+						accumulator.push({
+							...item,
+							previewType: 'image'
+						});
+					} else {
+						accumulator.push({
+							...item,
+							forceCache: false,
+							previewType: 'pdf',
+							useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE
+						});
 					}
 					return accumulator;
 				},
 				[]
 			),
-		[nodes, setActiveNode, t]
+		[canUseDocs, nodes, setActiveNode, t]
 	);
 
 	useEffect(() => {

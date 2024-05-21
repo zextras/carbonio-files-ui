@@ -38,6 +38,8 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { resolvers } from './resolvers';
 import { asyncForEach, isFile, isFolder } from './utils';
+import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
+import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -548,4 +550,13 @@ export async function uploadWithDnD(
 		await screen.findAllByText(dataTransferObj.files[0].name);
 	}
 	expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
+}
+
+export function spyOnUseCreateOptions(createOptionsCollector: CreateOption[]): void {
+	jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
+		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+			createOptionsCollector.splice(0, createOptionsCollector.length, ...options);
+		},
+		removeCreateOptions: () => undefined
+	});
 }

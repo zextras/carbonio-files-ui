@@ -7,14 +7,24 @@ import React from 'react';
 
 import { waitFor } from '@testing-library/react';
 import { keyBy } from 'lodash';
+import { http, HttpResponse } from 'msw';
 
 import UploadView from './UploadView';
 import { ACTION_IDS } from '../../constants';
 import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
 import { CreateOption } from '../../hooks/useCreateOptions';
+import server from '../../mocks/server';
 import { uploadVar } from '../apollo/uploadVar';
-import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
+import {
+	DOCS_SERVICE_NAME,
+	HEALTH_PATH,
+	NODES_LOAD_LIMIT,
+	NODES_SORT_DEFAULT,
+	REST_ENDPOINT
+} from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { healthCache } from '../hooks/useHealthInfo';
+import { HealthResponse } from '../mocks/handleHealthRequest';
 import {
 	populateFile,
 	populateFolder,
@@ -27,7 +37,14 @@ import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, GetChildrenDocument } from '../types/graphql/types';
 import { mockGetNode } from '../utils/resolverMocks';
-import { createUploadDataTransfer, setup, uploadWithDnD, screen, within } from '../utils/testUtils';
+import {
+	createUploadDataTransfer,
+	setup,
+	uploadWithDnD,
+	screen,
+	within,
+	spyOnUseCreateOptions
+} from '../utils/testUtils';
 import { inputElement } from '../utils/utils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
@@ -174,16 +191,12 @@ describe('Upload view', () => {
 	it('should show all actions disabled, except the upload', async () => {
 		const actionIds = Object.values(ACTION_IDS);
 		const actions: CreateOption[] = [];
-		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
-			setCreateOptions: (...options): void => {
-				actions.push(...options);
-			},
-			removeCreateOptions: (): void => undefined
-		});
-
+		spyOnUseCreateOptions(actions);
 		setup(<UploadView />);
 		await screen.findByText(/nothing here/i);
-		expect(actions).toHaveLength(actionIds.length);
+		await waitFor(() => {
+			expect(actions).toHaveLength(actionIds.length);
+		});
 		actions.forEach((action) => {
 			const actionIsDisabled = action.id !== ACTION_IDS.UPLOAD_FILE;
 			expect(action.action(undefined).disabled).toBe(actionIsDisabled);
@@ -247,7 +260,55 @@ describe('Upload view', () => {
 					sort: NODES_SORT_DEFAULT
 				}
 			});
-			return expect((localRootData?.getNode as Folder).children.nodes).toHaveLength(1);
+			return expect((localRootData?.getNode as Folder | null)?.children.nodes).toHaveLength(1);
 		});
+	});
+
+	it('should show docs creation actions if docs is available', async () => {
+		healthCache.reset();
+		const createOptions: CreateOption[] = [];
+		spyOnUseCreateOptions(createOptions);
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
+			)
+		);
+		setup(<UploadView />);
+		await waitFor(() =>
+			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
+		);
+	});
+
+	it('should not show docs creation actions if docs is not available', async () => {
+		healthCache.reset();
+		const createOptions: CreateOption[] = [];
+		spyOnUseCreateOptions(createOptions);
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
+			)
+		);
+		setup(<UploadView />);
+		await waitFor(() =>
+			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
+		);
 	});
 });

@@ -22,6 +22,7 @@ import { useKeepVersionsMutation } from '../../../hooks/graphql/mutations/useKee
 import { useGetConfigsQuery } from '../../../hooks/graphql/queries/useGetConfigsQuery';
 import { useGetVersionsQuery } from '../../../hooks/graphql/queries/useGetVersionsQuery';
 import { useConfirmationModal } from '../../../hooks/useConfirmationModal';
+import { useHealthInfo } from '../../../hooks/useHealthInfo';
 import { DeleteVersionsMutation, GetVersionsQuery } from '../../../types/graphql/types';
 import { NonNullableList, NonNullableListItem } from '../../../types/utils';
 import { ActionsFactoryNodeType, canOpenVersionWithDocs } from '../../../utils/ActionsFactory';
@@ -182,7 +183,12 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 		[disabledByPermissionLabel, lastVersion, node.permissions.can_write_file, t]
 	);
 
-	const $canOpenVersionWithDocs = useMemo(() => canOpenVersionWithDocs([node]), [node]);
+	const { canUseDocs } = useHealthInfo();
+
+	const $canOpenVersionWithDocs = useMemo(
+		() => canOpenVersionWithDocs({ nodes: [node], canUseDocs }),
+		[canUseDocs, node]
+	);
 
 	const openWithDocsDisabledTooltip = useMemo(() => {
 		if (!$canOpenVersionWithDocs) {
