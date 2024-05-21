@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
-import { DATE_FORMAT, DISPLAYER_TABS } from '../../constants';
+import { DATE_TIME_FORMAT, DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateLinks, populateNode } from '../../mocks/mockUtils';
 import { Node } from '../../types/common';
@@ -117,7 +117,7 @@ describe('Displayer', () => {
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(chosenDate, 'PPPP'), 'i') })
 				);
-				await screen.findByText(formatDate(chosenDate, DATE_FORMAT));
+				await screen.findByText(formatDate(chosenDate));
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -166,7 +166,7 @@ describe('Displayer', () => {
 				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
 				const firstOfNextMonth = getFirstOfNextMonth(link.expires_at ?? undefined);
-				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
+				const chosenDate = formatDate(firstOfNextMonth);
 				// always click on first 1 visible on the date picker
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(firstOfNextMonth, 'PPPP'), 'i') })
@@ -218,7 +218,7 @@ describe('Displayer', () => {
 				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
 				const firstOfNextMonth = getFirstOfNextMonth(link.expires_at);
-				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
+				const chosenDate = formatDate(firstOfNextMonth);
 				// always click on first 1 visible on the date picker
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(firstOfNextMonth, 'PPPP'), 'i') })
@@ -246,7 +246,7 @@ describe('Displayer', () => {
 				// new link fields are cleaned
 				expect(descriptionInput).toHaveDisplayValue(link.description);
 				expect(screen.queryByText(chosenDate)).not.toBeInTheDocument();
-				expect(screen.getByText(formatDate(link.expires_at, DATE_FORMAT))).toBeVisible();
+				expect(screen.getByText(formatDate(link.expires_at))).toBeVisible();
 			});
 
 			test('save and leave action update link and continue navigation', async () => {
@@ -293,7 +293,7 @@ describe('Displayer', () => {
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
+				const chosenDate = formatDate(firstOfNextMonth);
 				// always click on first 1 visible on the date picker
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(firstOfNextMonth, 'PPPP'), 'i') })
@@ -319,7 +319,8 @@ describe('Displayer', () => {
 						23,
 						59
 					),
-					'DD/MM/YY HH:mm'
+					undefined,
+					DATE_TIME_FORMAT
 				);
 				const expiresOnRegexp = RegExp(`expires on: ${expiresOnDate}`, 'i');
 				expect(screen.getByText(expiresOnRegexp)).toBeVisible();
@@ -370,7 +371,7 @@ describe('Displayer', () => {
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
+				const chosenDate = formatDate(firstOfNextMonth);
 				// always click on first 1 visible on the date picker
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(firstOfNextMonth, 'PPPP'), 'i') })

@@ -15,8 +15,8 @@ import 'jest-styled-components';
 import { NodeDetails } from './NodeDetails';
 import server from '../../../mocks/server';
 import {
-	DATE_FORMAT_SHORT,
 	HEALTH_PATH,
+	DATE_TIME_FORMAT,
 	NODES_LOAD_LIMIT,
 	PREVIEW_PATH,
 	PREVIEW_SERVICE_NAME,
@@ -42,7 +42,7 @@ import { canUpsertDescription } from '../../utils/ActionsFactory';
 import * as previewUtils from '../../utils/previewUtils';
 import { mockGetPath } from '../../utils/resolverMocks';
 import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../utils/testUtils';
-import { formatDate, formatTime, humanFileSize } from '../../utils/utils';
+import { formatDate, humanFileSize } from '../../utils/utils';
 
 describe('Node Details', () => {
 	test('Show file info', () => {
@@ -75,22 +75,12 @@ describe('Node Details', () => {
 		);
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		expect(
-			screen.getByText(
-				`${formatDate(node.created_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
-					node.created_at,
-					'UTC'
-				)}`
-			)
+			screen.getByText(formatDate(node.created_at, undefined, DATE_TIME_FORMAT))
 		).toBeVisible();
 		expect(screen.getByText(node.last_editor.full_name)).toBeVisible();
 		expect(screen.getByText(node.last_editor.email)).toBeVisible();
 		expect(
-			screen.getByText(
-				`${formatDate(node.updated_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
-					node.updated_at,
-					'UTC'
-				)}`
-			)
+			screen.getByText(formatDate(node.created_at, undefined, DATE_TIME_FORMAT))
 		).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
 		expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
@@ -131,22 +121,12 @@ describe('Node Details', () => {
 		expect(screen.getByText('Collaborators')).toBeVisible();
 		expect(screen.getAllByText(node.owner.full_name)).toHaveLength(children.length + 1);
 		expect(
-			screen.getByText(
-				`${formatDate(node.created_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
-					node.created_at,
-					'UTC'
-				)}`
-			)
+			screen.getByText(formatDate(node.created_at, undefined, DATE_TIME_FORMAT))
 		).toBeVisible();
 		expect(screen.getByText(node.last_editor.full_name)).toBeVisible();
 		expect(screen.getByText(node.last_editor.email)).toBeVisible();
 		expect(
-			screen.getByText(
-				`${formatDate(node.updated_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
-					node.updated_at,
-					'UTC'
-				)}`
-			)
+			screen.getByText(formatDate(node.created_at, undefined, DATE_TIME_FORMAT))
 		).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
 		expect(screen.queryByText('Size')).not.toBeInTheDocument();
@@ -184,12 +164,7 @@ describe('Node Details', () => {
 		);
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		expect(
-			screen.getByText(
-				`${formatDate(node.created_at, DATE_FORMAT_SHORT, 'UTC')} - ${formatTime(
-					node.created_at,
-					'UTC'
-				)}`
-			)
+			screen.getByText(formatDate(node.created_at, undefined, DATE_TIME_FORMAT))
 		).toBeVisible();
 		expect(screen.queryByText('Last edit')).not.toBeInTheDocument();
 		expect(screen.getByText('Description')).toBeInTheDocument();

@@ -15,7 +15,7 @@ import { DefaultTheme, useTheme } from 'styled-components';
 import { useMoveNodesMutation } from './graphql/mutations/useMoveNodesMutation';
 import { useUpload } from './useUpload';
 import { useNavigation } from '../../hooks/useNavigation';
-import useUserInfo from '../../hooks/useUserInfo';
+import { useUserInfo } from '../../hooks/useUserInfo';
 import { draggedItemsVar } from '../apollo/dragAndDropVar';
 import { selectionModeVar } from '../apollo/selectionVar';
 import { DRAG_TYPES, TIMERS } from '../constants';

@@ -24,7 +24,7 @@ import { AddSharing } from './AddSharing';
 import { CollaborationLinks } from './collaborationLinks/CollaborationLinks';
 import { EditShareChip } from './EditShareChip';
 import { PublicLink } from './publicLink/PublicLink';
-import useUserInfo from '../../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { SHARE_CHIP_MAX_WIDTH, SHARE_CHIP_SIZE } from '../../../constants';
 import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
 import { useGetSharesQuery } from '../../../hooks/graphql/queries/useGetSharesQuery';

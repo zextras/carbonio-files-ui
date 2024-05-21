@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 
 import { Dropzone } from './Dropzone';
 import { NodeListItem } from './NodeListItem';
-import useUserInfo from '../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, ROOTS, TIMERS } from '../../constants';
 import { DeleteNodesType } from '../../hooks/graphql/mutations/useDeleteNodesMutation';

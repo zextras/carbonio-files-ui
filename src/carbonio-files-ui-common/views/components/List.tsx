@@ -23,7 +23,7 @@ import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
-import useUserInfo from '../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DISPLAYER_TABS, DRAG_TYPES, PREVIEW_MAX_SIZE, PREVIEW_TYPE, ROOTS } from '../../constants';
 import { ListContext, NodeAvatarIconContext } from '../../contexts';

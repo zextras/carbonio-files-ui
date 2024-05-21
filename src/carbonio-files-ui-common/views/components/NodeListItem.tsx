@@ -26,7 +26,7 @@ import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { NodeHoverBar } from './NodeHoverBar';
 import { HoverContainer, ListItemContainer } from './StyledComponents';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
-import useUserInfo from '../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../hooks/useUserInfo';
 import {
 	DATE_FORMAT_SHORT,
 	DOUBLE_CLICK_DELAY,
@@ -144,7 +144,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 	const [t] = useTranslation();
 	const { openPreview } = useContext(PreviewsManagerContext);
 	const location = useLocation();
-	const userInfo = useUserInfo();
+	const { me, locale } = useUserInfo();
 	const [isContextualMenuActive, setIsContextualMenuActive] = useState(false);
 	const selectIdCallback = useCallback(
 		(event: React.SyntheticEvent) => {
@@ -387,11 +387,11 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		if (lastEditor && lastEditor.id !== owner?.id) {
 			return lastEditor.full_name;
 		}
-		if (owner && owner.id !== userInfo.me) {
+		if (owner && owner.id !== me) {
 			return owner.full_name;
 		}
 		return '';
-	}, [lastEditor, owner, userInfo.me]);
+	}, [lastEditor, owner, me]);
 
 	const openContextualMenuHandler = useCallback(() => {
 		setIsContextualMenuActive(true);
@@ -445,8 +445,8 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 							compact={compact}
 							disabled={disabled}
 							selectable={selectable}
-							icon={getIconByFileType(type, mimeType || id)}
-							color={getIconColorByFileType(type, mimeType || id, theme)}
+							icon={getIconByFileType(type, mimeType ?? id)}
+							color={getIconColorByFileType(type, mimeType ?? id, theme)}
 							picture={
 								canUsePreview
 									? getPreviewThumbnailSrc(
@@ -507,8 +507,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										)}
 										<Padding left="extrasmall">
 											<Text size="extrasmall" color="gray1" disabled={disabled}>
-												{/* eslint-disable-next-line max-len */}
-												{formatDate(updatedAt, DATE_FORMAT_SHORT, userInfo.zimbraPrefTimeZoneId)}
+												{formatDate(updatedAt, locale, DATE_FORMAT_SHORT)}
 											</Text>
 										</Padding>
 									</Container>
@@ -530,8 +529,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										width="fit"
 									>
 										<CustomText color="gray1" disabled={disabled} size="small">
-											{/* i18next-extract-disable-next-line */}
-											{extension || t(`node.type.${type.toLowerCase()}`, type)}
+											{extension ?? t(`node.type.${type.toLowerCase()}`, type)}
 										</CustomText>
 										{size != null && (
 											<Padding left="small">

@@ -22,10 +22,10 @@ import {
 	toLower,
 	trim
 } from 'lodash';
-import moment, { Moment } from 'moment-timezone';
 import { DefaultTheme } from 'styled-components';
 
 import {
+	DATE_FORMAT,
 	DOCS_ENDPOINT,
 	DOCS_EXTENSIONS,
 	DOWNLOAD_PATH,
@@ -188,44 +188,38 @@ export const buildCrumbs = (
 		.value();
 
 export const formatDate = (
-	date: Moment | Date | string | number | undefined | null,
-	format: string,
-	zimbraPrefTimeZoneId?: string
+	date: Date | string | number | undefined | null,
+	locale?: string,
+	format: Intl.DateTimeFormatOptions = DATE_FORMAT
 ): string => {
-	if (!date) {
+	if (date === null || date === undefined || (typeof date === 'string' && date.trim() === '')) {
 		return '';
 	}
-	// TODO manage locale
-	if (zimbraPrefTimeZoneId) {
-		return moment(date).tz(zimbraPrefTimeZoneId).format(format);
+	const fixedLocale = locale?.replaceAll('_', '-');
+	try {
+		return Intl.DateTimeFormat(fixedLocale, format).format(new Date(date));
+	} catch (e) {
+		if (e instanceof RangeError) {
+			// try to format with only the language part of the locale
+			// if there is no hyphen, use the system language by passing locale undefined
+			const hyphenIndex = locale?.indexOf('-') ?? -1;
+			return formatDate(
+				date,
+				hyphenIndex > -1 ? locale?.substring(0, hyphenIndex) : undefined,
+				format
+			);
+		}
+		throw e;
 	}
-	return moment(date).format(format);
 };
 
-export const formatTime = (
-	date: Moment | Date | string | number,
-	zimbraPrefTimeZoneId?: string
-): string => {
-	if (zimbraPrefTimeZoneId) {
-		return moment(date).tz(zimbraPrefTimeZoneId).format('HH.mm A');
+export const initExpirationDate = (date: Date | null | undefined): Date | undefined => {
+	if (date === undefined || date === null) {
+		return undefined;
 	}
-	// TODO manage locale
-	return moment(date).format('HH.mm A');
-};
-
-export const removeTimezoneOffset = (date: Date): number => {
-	const userTimezoneOffset = date.getTimezoneOffset() * 60000;
-	return date.getTime() - userTimezoneOffset;
-};
-
-export const initExpirationDate = (date: Date | undefined): Date | undefined => {
-	if (date) {
-		const epoch = removeTimezoneOffset(date);
-		// add 23 hours and 59 minutes
-		const epochPlusOneDay = epoch + 24 * 60 * 60 * 1000 - 60000;
-		return new Date(epochPlusOneDay);
-	}
-	return undefined;
+	const endOfDay = new Date(date);
+	endOfDay.setHours(23, 59, 59);
+	return endOfDay;
 };
 
 export function takeIfNotEmpty(value: string | undefined): string | undefined {

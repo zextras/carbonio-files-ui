@@ -10,10 +10,10 @@ import { Padding, Row, Text, Tooltip } from '@zextras/carbonio-design-system';
 import styled from 'styled-components';
 
 import { ShimmerText } from './StyledComponents';
-import useUserInfo from '../../../hooks/useUserInfo';
-import { DATE_FORMAT_SHORT } from '../../constants';
+import { useUserInfo } from '../../../hooks/useUserInfo';
+import { DATE_TIME_FORMAT } from '../../constants';
 import { User } from '../../types/graphql/types';
-import { formatDate, formatTime } from '../../utils/utils';
+import { formatDate } from '../../utils/utils';
 
 const MainText = styled(Text)`
 	flex: 0 0 auto;
@@ -59,7 +59,7 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 	clickAction,
 	loading
 }) => {
-	const { zimbraPrefTimeZoneId } = useUserInfo();
+	const { locale } = useUserInfo();
 
 	return (
 		((loading || user) && (
@@ -91,17 +91,12 @@ export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
 								)}
 								<Tooltip label={tooltip} placement="bottom-start">
 									<SecondaryText color="secondary" onClick={clickAction}>
-										{user.email || ''}
+										{user.email ?? ''}
 									</SecondaryText>
 								</Tooltip>
 							</Row>
 							{dateTime && (
-								<DateText size="small">
-									{`${formatDate(dateTime, DATE_FORMAT_SHORT, zimbraPrefTimeZoneId)} - ${formatTime(
-										dateTime,
-										zimbraPrefTimeZoneId
-									)}`}
-								</DateText>
+								<DateText size="small">{formatDate(dateTime, locale, DATE_TIME_FORMAT)}</DateText>
 							)}
 						</>
 					)}

@@ -61,7 +61,6 @@ export const DisplayerNode: React.VFC<DisplayerNodeProps> = ({
 						displayerTab !== DISPLAYER_TABS.versioning ||
 						(activeNodeIsFile != null && activeNodeIsFile)
 				),
-				/* i18next-extract-disable-next-line */
 				(dTab) => ({ id: dTab, label: t(`displayer.tabs.${dTab}`, dTab) })
 			),
 		[t, activeNodeIsFile]
