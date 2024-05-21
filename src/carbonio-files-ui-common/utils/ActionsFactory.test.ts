@@ -374,12 +374,12 @@ describe('ActionsFactory test', () => {
 	it('canOpenVersionWithDocs return true when canUseDocs is true and others criteria are valid', () => {
 		const testFile: File = populateFile();
 		[testFile.mime_type] = docsHandledMimeTypes;
-		expect(canOpenVersionWithDocs([testFile], true)).toBeTruthy();
+		expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: true })).toBeTruthy();
 	});
 
 	it('canOpenVersionWithDocs return false when canUseDocs is false and others criteria are valid', () => {
 		const testFile: File = populateFile();
 		[testFile.mime_type] = docsHandledMimeTypes;
-		expect(canOpenVersionWithDocs([testFile], false)).toBeFalsy();
+		expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: false })).toBeFalsy();
 	});
 });

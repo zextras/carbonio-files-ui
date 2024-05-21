@@ -371,10 +371,7 @@ export function canOpenWithDocs({ nodes, canUseDocs }: ArgsType): boolean {
 	);
 }
 
-export function canOpenVersionWithDocs(
-	nodes: OneOrMany<ActionsFactoryGlobalType>,
-	canUseDocs: boolean
-): boolean {
+export function canOpenVersionWithDocs({ nodes, canUseDocs }: ArgsType): boolean {
 	if (!(nodes instanceof Array)) {
 		throw Error('cannot evaluate canOpenWithDocs on Node type');
 	}
@@ -383,7 +380,7 @@ export function canOpenVersionWithDocs(
 	}
 	const $nodes = nodes as ActionsFactoryNodeType[];
 	return (
-		canUseDocs &&
+		!!canUseDocs &&
 		size($nodes) === 1 &&
 		isFile($nodes[0]) &&
 		includes(docsHandledMimeTypes, $nodes[0].mime_type) &&

@@ -186,7 +186,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 	const { canUseDocs } = useHealthInfo();
 
 	const $canOpenVersionWithDocs = useMemo(
-		() => canOpenVersionWithDocs([node], canUseDocs),
+		() => canOpenVersionWithDocs({ nodes: [node], canUseDocs }),
 		[canUseDocs, node]
 	);
 
