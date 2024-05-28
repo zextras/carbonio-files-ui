@@ -36,6 +36,8 @@ import { forEach, map, filter, reduce, merge, noop } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
+import { CreateOption } from '../../hooks/useCreateOptions';
+import * as useCeateOptionsModule from '../../hooks/useCreateOptions';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -548,4 +550,17 @@ export async function uploadWithDnD(
 		await screen.findAllByText(dataTransferObj.files[0].name);
 	}
 	expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
+}
+
+export function spyOnCreateOptions(): CreateOption[] {
+	const createOptions: CreateOption[] = [];
+	jest.spyOn(useCeateOptionsModule, 'useCreateOptions').mockReturnValue({
+		setCreateOptions: (...options: CreateOption[]): void => {
+			createOptions.push(...options);
+		},
+		removeCreateOptions: (...ids: string[]): void => {
+			createOptions.filter((option) => !ids.includes(option.id));
+		}
+	});
+	return createOptions;
 }

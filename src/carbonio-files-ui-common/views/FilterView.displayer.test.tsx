@@ -18,8 +18,6 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockFindNodes, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Filter View', () => {
 	describe('Displayer', () => {
 		test('Single click on a node opens the details tab on displayer', async () => {

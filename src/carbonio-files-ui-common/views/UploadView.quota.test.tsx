@@ -15,8 +15,6 @@ import { ICON_REGEXP } from '../constants/test';
 import { populateFile, populateLocalRoot } from '../mocks/mockUtils';
 import { createUploadDataTransfer, screen, setup, uploadWithDnD } from '../tests/utils';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Upload view quota', () => {
 	it('should render the banner if there is a failed item for over quota', async () => {
 		const localRoot = populateLocalRoot();

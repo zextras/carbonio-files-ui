@@ -32,8 +32,6 @@ import {
 	mockGetLinks
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Filter view', () => {
 	describe('Shared With Me filter', () => {
 		test('Shared with me filter has sharedWithMe=true and excludes trashed nodes', async () => {

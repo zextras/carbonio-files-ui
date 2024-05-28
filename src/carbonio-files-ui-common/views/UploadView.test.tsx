@@ -10,8 +10,6 @@ import { keyBy } from 'lodash';
 
 import UploadView from './UploadView';
 import { ACTION_IDS } from '../../constants';
-import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
-import { CreateOption } from '../../hooks/useCreateOptions';
 import { uploadVar } from '../apollo/uploadVar';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -22,15 +20,20 @@ import {
 	populateNodes,
 	populateUploadItems
 } from '../mocks/mockUtils';
-import { createUploadDataTransfer, setup, uploadWithDnD, screen, within } from '../tests/utils';
+import {
+	createUploadDataTransfer,
+	setup,
+	uploadWithDnD,
+	screen,
+	within,
+	spyOnCreateOptions
+} from '../tests/utils';
 import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, GetChildrenDocument } from '../types/graphql/types';
 import { mockGetNode } from '../utils/resolverMocks';
 import { inputElement } from '../utils/utils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload view', () => {
 	test('Click on an item open the displayer', async () => {
@@ -173,13 +176,7 @@ describe('Upload view', () => {
 
 	it('should show all actions disabled, except the upload', async () => {
 		const actionIds = Object.values(ACTION_IDS);
-		const actions: CreateOption[] = [];
-		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
-			setCreateOptions: (...options): void => {
-				actions.push(...options);
-			},
-			removeCreateOptions: (): void => undefined
-		});
+		const actions = spyOnCreateOptions();
 
 		setup(<UploadView />);
 		await screen.findByText(/nothing here/i);
@@ -191,17 +188,11 @@ describe('Upload view', () => {
 	});
 
 	it('should show snackbar on upload through new action', async () => {
-		let uploadAction: CreateOption | undefined;
-		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
-			setCreateOptions: (...options): void => {
-				uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
-			},
-			removeCreateOptions: (): void => undefined
-		});
-
+		const options = spyOnCreateOptions();
 		const file = new File(['(⌐□_□)'], 'a file');
 		const { user } = setup(<UploadView />);
 		await screen.findByText(/nothing here/i);
+		const uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
 		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
 		await user.upload(inputElement, file);
 		expect(await screen.findByText(/Upload occurred in Files' Home/i)).toBeVisible();
@@ -220,14 +211,7 @@ describe('Upload view', () => {
 				getNode: localRoot
 			}
 		});
-		let uploadAction: CreateOption | undefined;
-		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
-			setCreateOptions: (...options): void => {
-				uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
-			},
-			removeCreateOptions: (): void => undefined
-		});
-
+		const options = spyOnCreateOptions();
 		const file = new File(['(⌐□_□)'], 'a file');
 		const mocks = {
 			Query: {
@@ -236,6 +220,7 @@ describe('Upload view', () => {
 		} satisfies Partial<Resolvers>;
 		const { user } = setup(<UploadView />, { mocks });
 		await screen.findByText(/nothing here/i);
+		const uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
 		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
 		await user.upload(inputElement, file);
 		await waitFor(() => {

@@ -34,8 +34,6 @@ import {
 } from '../utils/resolverMocks';
 import { getChipLabel } from '../utils/utils';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Filter view', () => {
 	describe('Shared By Me filter', () => {
 		test('Shared by me filter has sharedByMe=true and excludes trashed nodes', async () => {

@@ -44,8 +44,6 @@ import {
 import { mockGetNode } from '../utils/resolverMocks';
 import { UploadQueue } from '../utils/uploadUtils';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Upload View', () => {
 	describe('Folder', () => {
 		test('Progress for folders is shown as the number of completed items on the total number of items contained in the folder plus 1 (the folder itself)', async () => {

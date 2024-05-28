@@ -36,8 +36,6 @@ beforeEach(() => {
 	);
 });
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Filter view', () => {
 	describe('Flagged filter', () => {
 		test('Flagged filter has flagged=true and excludes trashed nodes', async () => {

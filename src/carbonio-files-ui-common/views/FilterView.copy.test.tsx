@@ -35,8 +35,6 @@ import {
 	mockGetPath
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Filter View', () => {
 	describe('Copy', () => {
 		describe('Selection Mode', () => {

@@ -18,8 +18,6 @@ import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes, mockTrashNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Filter View', () => {
 	describe('Mark for deletion', () => {
 		describe('Selection mode', () => {

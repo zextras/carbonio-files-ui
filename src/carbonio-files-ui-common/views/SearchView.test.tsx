@@ -39,8 +39,6 @@ import {
 } from '../utils/resolverMocks';
 import { getChipLabel } from '../utils/utils';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Search view', () => {
 	describe('Shared by me param', () => {
 		test('Deletion of all collaborators does not remove node from list. Displayer is kept open', async () => {

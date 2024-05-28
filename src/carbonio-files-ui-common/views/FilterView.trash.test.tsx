@@ -32,8 +32,6 @@ import {
 	mockRestoreNodes
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Filter view', () => {
 	describe('Trash filter', () => {
 		test('Restore close the displayer from trash views', async () => {

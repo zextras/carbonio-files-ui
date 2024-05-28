@@ -7,38 +7,22 @@
 import React from 'react';
 
 import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
-import { forEach, map } from 'lodash';
+import { forEach } from 'lodash';
 import { graphql } from 'msw';
 import { Link, Route, Switch } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
-import { selectNodes, setup, triggerLoadMore } from '../tests/utils';
+import { selectNodes, setup, spyOnCreateOptions, triggerLoadMore } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
-
-let mockedCreateOptions: CreateOption[];
-
-beforeEach(() => {
-	mockedCreateOptions = [];
-});
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsReturnType => ({
-		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
-			mockedCreateOptions = options;
-		},
-		removeCreateOptions: () => undefined
-	})
-}));
 
 describe('Filter view', () => {
 	test('No url param render a "Missing filter" message', async () => {
@@ -55,11 +39,12 @@ describe('Filter view', () => {
 	});
 
 	test('Create folder option is always disabled', async () => {
+		const createOptions = spyOnCreateOptions();
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 		});
 		await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-		expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
+		expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
 			])

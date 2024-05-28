@@ -38,8 +38,6 @@ import {
 } from '../utils/resolverMocks';
 import { addNodeInSortedList } from '../utils/utils';
 
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
-
 describe('Filter View', () => {
 	describe('Rename', () => {
 		describe('Selection Mode', () => {
