@@ -14,6 +14,7 @@ import { Displayer } from './Displayer';
 import { DATE_FORMAT, DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateLink, populateNode } from '../../mocks/mockUtils';
+import { generateError, getFirstOfNextMonth, setup } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -23,7 +24,6 @@ import {
 	mockGetLinks,
 	mockErrorResolver
 } from '../../utils/resolverMocks';
-import { generateError, getFirstOfNextMonth, setup } from '../../utils/testUtils';
 import { formatDate, initExpirationDate } from '../../utils/utils';
 
 describe('Displayer', () => {

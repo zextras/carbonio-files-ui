@@ -12,10 +12,10 @@ import { map } from 'lodash';
 import ListHeader from '../../../components/ListHeader';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateParents } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
 describe('ListHeader', () => {
 	describe('Breadcrumb', () => {

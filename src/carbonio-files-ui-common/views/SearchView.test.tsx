@@ -22,6 +22,7 @@ import {
 	populatePermissions,
 	populateShares
 } from '../mocks/mockUtils';
+import { buildBreadCrumbRegExp, buildChipsFromKeywords, moveNode, setup } from '../tests/utils';
 import { AdvancedFilters } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { BaseNodeFragment, Folder, NodeType } from '../types/graphql/types';
@@ -36,7 +37,6 @@ import {
 	mockRestoreNodes,
 	mockTrashNodes
 } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, buildChipsFromKeywords, moveNode, setup } from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');

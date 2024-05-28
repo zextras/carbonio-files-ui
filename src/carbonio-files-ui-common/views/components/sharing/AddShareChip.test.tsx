@@ -11,8 +11,8 @@ import { screen } from '@testing-library/react';
 import { AddShareChip } from './AddShareChip';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateGalContact, populateNode } from '../../../mocks/mockUtils';
+import { setup } from '../../../tests/utils';
 import { Role, ShareChip } from '../../../types/common';
-import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 
 describe('Add Share Chip', () => {

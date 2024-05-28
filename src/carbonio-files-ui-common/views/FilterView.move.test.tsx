@@ -20,6 +20,7 @@ import {
 	populateNodes,
 	populateParents
 } from '../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup, selectNodes } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	Folder,
@@ -34,7 +35,6 @@ import {
 	mockGetPath,
 	mockMoveNodes
 } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup, selectNodes } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 

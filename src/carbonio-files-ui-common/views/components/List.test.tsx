@@ -9,9 +9,9 @@ import { List } from './List';
 import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateNodes } from '../../mocks/mockUtils';
+import { selectNodes, setup, screen } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
-import { selectNodes, setup, screen } from '../../utils/testUtils';
 import * as utils from '../../utils/utils';
 
 describe('List', () => {

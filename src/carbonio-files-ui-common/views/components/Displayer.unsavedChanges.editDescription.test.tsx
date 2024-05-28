@@ -12,6 +12,7 @@ import { act } from 'react-dom/test-utils';
 import { Displayer } from './Displayer';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
+import { generateError, setup, screen, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeType } from '../../types/graphql/types';
 import {
@@ -21,7 +22,6 @@ import {
 	mockUpdateNode,
 	mockErrorResolver
 } from '../../utils/resolverMocks';
-import { generateError, setup, screen, within } from '../../utils/testUtils';
 
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {

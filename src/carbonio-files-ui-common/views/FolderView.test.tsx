@@ -25,6 +25,7 @@ import {
 	populateShare,
 	populateUser
 } from '../mocks/mockUtils';
+import { buildBreadCrumbRegExp, moveNode, screen, setup, within } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, Share, SharePermission } from '../types/graphql/types';
@@ -39,7 +40,6 @@ import {
 	mockMoveNodes,
 	mockUpdateShare
 } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, moveNode, screen, setup, within } from '../utils/testUtils';
 
 let mockedCreateOptions: CreateOption[];
 

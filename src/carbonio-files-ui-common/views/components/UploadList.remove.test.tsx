@@ -29,6 +29,14 @@ import {
 	populateNodes,
 	populateUploadItems
 } from '../../mocks/mockUtils';
+import {
+	createUploadDataTransfer,
+	delayUntil,
+	generateError,
+	selectNodes,
+	setup,
+	uploadWithDnD
+} from '../../tests/utils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -43,14 +51,6 @@ import {
 	GetChildrenQueryVariables
 } from '../../types/graphql/types';
 import { getChildrenVariables, mockGetNode } from '../../utils/resolverMocks';
-import {
-	createUploadDataTransfer,
-	delayUntil,
-	generateError,
-	selectNodes,
-	setup,
-	uploadWithDnD
-} from '../../utils/testUtils';
 
 describe('Upload List', () => {
 	describe('Remove', () => {

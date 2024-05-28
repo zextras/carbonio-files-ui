@@ -21,10 +21,10 @@ import {
 import { DISPLAYER_EMPTY_MESSAGE, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import { mockFindNodes } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup } from '../utils/testUtils';
 
 type FindNodesHandler = typeof handleFindNodesRequest;
 const mockedRequestHandler = jest.fn<ReturnType<FindNodesHandler>, Parameters<FindNodesHandler>>();

@@ -11,8 +11,8 @@ import { map } from 'lodash';
 import { List } from './List';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
+import { setup, selectNodes } from '../../tests/utils';
 import { Node } from '../../types/common';
-import { setup, selectNodes } from '../../utils/testUtils';
 
 describe('Mark for deletion - trash', () => {
 	describe('Selection mode', () => {

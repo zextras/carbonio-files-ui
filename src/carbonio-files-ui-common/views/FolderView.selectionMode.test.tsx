@@ -14,11 +14,11 @@ import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes } from '../mocks/mockUtils';
+import { setup, selectNodes, triggerLoadMore } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 

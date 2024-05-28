@@ -17,6 +17,7 @@ import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOpti
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
+import { generateError, setup, triggerLoadMore, UserEvent } from '../tests/utils';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import {
 	mockCreateFolder,
@@ -24,7 +25,6 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../utils/resolverMocks';
-import { generateError, setup, triggerLoadMore, UserEvent } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
 let mockedCreateOptions: CreateOption[];

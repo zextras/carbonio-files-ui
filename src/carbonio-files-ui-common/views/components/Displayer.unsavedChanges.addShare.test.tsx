@@ -19,6 +19,7 @@ import {
 	populateShare,
 	populateUser
 } from '../../mocks/mockUtils';
+import { generateError, setup } from '../../tests/utils';
 import { MutationResolvers, Resolvers } from '../../types/graphql/resolvers-types';
 import { SharePermission } from '../../types/graphql/types';
 import {
@@ -28,7 +29,6 @@ import {
 	mockGetCollaborationLinks,
 	mockGetLinks
 } from '../../utils/resolverMocks';
-import { generateError, setup } from '../../utils/testUtils';
 
 const mockedSoapFetch = jest.fn();
 

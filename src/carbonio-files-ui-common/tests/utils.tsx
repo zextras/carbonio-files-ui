@@ -36,8 +36,6 @@ import { forEach, map, filter, reduce, merge, noop } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
-import { resolvers } from './resolvers';
-import { asyncForEach, isFile, isFolder } from './utils';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -45,6 +43,8 @@ import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../types/graphql/types';
+import { resolvers } from '../utils/resolvers';
+import { asyncForEach, isFile, isFolder } from '../utils/utils';
 
 export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
 	readonly rightClick: (target: Element) => Promise<void>;

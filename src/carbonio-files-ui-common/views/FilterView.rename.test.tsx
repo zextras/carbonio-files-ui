@@ -20,6 +20,7 @@ import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodes, sortNodes } from '../mocks/mockUtils';
+import { generateError, renameNode, setup, selectNodes } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
@@ -35,7 +36,6 @@ import {
 	mockGetNode,
 	mockUpdateNode
 } from '../utils/resolverMocks';
-import { generateError, renameNode, setup, selectNodes } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');

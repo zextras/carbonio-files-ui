@@ -12,8 +12,8 @@ import { UploadNodeDetailsListItem } from './UploadNodeDetailsListItem';
 import { uploadVar } from '../../apollo/uploadVar';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateUploadFolderItem, populateUploadItem } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup } from '../../tests/utils';
 import { UploadStatus } from '../../types/graphql/client-types';
-import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
 describe('Upload Node Details List Item', () => {
 	test('The progress of the upload is visible if status is loading', async () => {

@@ -13,8 +13,8 @@ import { uploadVar } from '../../apollo/uploadVar';
 import { UPLOAD_STATUS_CODE } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateUploadItems } from '../../mocks/mockUtils';
+import { screen, setup } from '../../tests/utils';
 import { UploadStatus } from '../../types/graphql/client-types';
-import { screen, setup } from '../../utils/testUtils';
 
 describe('OverQuotaBanner', () => {
 	it('should render the banner if there is a failed item for over quota', () => {

@@ -20,10 +20,10 @@ import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
+import { selectNodes, setup, triggerLoadMore } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { selectNodes, setup, triggerLoadMore } from '../utils/testUtils';
 
 let mockedCreateOptions: CreateOption[];
 

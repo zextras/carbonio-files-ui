@@ -13,6 +13,12 @@ import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS, TIMERS } from '../constants';
 import { SELECTORS } from '../constants/test';
 import { populateFolder, populateNodes } from '../mocks/mockUtils';
+import {
+	setup,
+	selectNodes,
+	createUploadDataTransfer,
+	createMoveDataTransfer
+} from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
@@ -28,12 +34,6 @@ import {
 	mockGetNode,
 	mockMoveNodes
 } from '../utils/resolverMocks';
-import {
-	setup,
-	selectNodes,
-	createUploadDataTransfer,
-	createMoveDataTransfer
-} from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 

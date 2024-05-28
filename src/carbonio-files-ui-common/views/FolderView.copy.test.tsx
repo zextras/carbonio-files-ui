@@ -14,6 +14,7 @@ import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder } from '../mocks/mockUtils';
+import { setup, selectNodes, screen, within } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
@@ -28,7 +29,6 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../utils/resolverMocks';
-import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 

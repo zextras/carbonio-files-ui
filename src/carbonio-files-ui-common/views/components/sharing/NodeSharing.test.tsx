@@ -20,6 +20,7 @@ import {
 	populateShares,
 	populateUser
 } from '../../../mocks/mockUtils';
+import { setup, screen, within } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
 	GetNodeDocument,
@@ -39,7 +40,6 @@ import {
 	mockUpdateShare,
 	getNodeVariables
 } from '../../../utils/resolverMocks';
-import { setup, screen, within } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 
 let mockedUserLogged: User;

@@ -11,7 +11,7 @@ import { screen } from '@testing-library/react';
 import { NodeListItemWrapper } from './NodeListItemWrapper';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateNode } from '../../mocks/mockUtils';
-import { setup } from '../../utils/testUtils';
+import { setup } from '../../tests/utils';
 
 describe('NodeListItemWrapper', () => {
 	describe('hover actions', () => {

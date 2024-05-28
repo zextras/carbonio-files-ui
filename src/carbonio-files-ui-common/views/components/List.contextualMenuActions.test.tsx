@@ -14,10 +14,10 @@ import { List } from './List';
 import { ACTION_IDS } from '../../../constants';
 import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
+import { setup, selectNodes, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetPath } from '../../utils/resolverMocks';
-import { setup, selectNodes, screen } from '../../utils/testUtils';
 
 describe('Contextual menu actions', () => {
 	describe('Contextual menu on empty space', () => {

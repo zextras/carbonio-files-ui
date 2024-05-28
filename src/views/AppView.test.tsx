@@ -21,13 +21,13 @@ import {
 	populateNode,
 	populateNodePage
 } from '../carbonio-files-ui-common/mocks/mockUtils';
+import { delayUntil, screen, setup, within } from '../carbonio-files-ui-common/tests/utils';
 import {
 	GetChildrenDocument,
 	GetNodeDocument,
 	GetPathDocument,
 	GetPermissionsDocument
 } from '../carbonio-files-ui-common/types/graphql/types';
-import { delayUntil, screen, setup, within } from '../carbonio-files-ui-common/utils/testUtils';
 import { UPDATE_VIEW_EVENT } from '../constants';
 import server from '../mocks/server';
 

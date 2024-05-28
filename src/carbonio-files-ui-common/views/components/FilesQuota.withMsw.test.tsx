@@ -14,7 +14,7 @@ import server from '../../../mocks/server';
 import { MYSELF_QUOTA_PATH, STORAGES_ENDPOINT } from '../../constants';
 import { SELECTORS } from '../../constants/test';
 import * as useFilesQuotaInfo from '../../hooks/useFilesQuotaInfo';
-import { screen, setup } from '../../utils/testUtils';
+import { screen, setup } from '../../tests/utils';
 
 describe('Files Quota', () => {
 	it('should show files quota when request return successfully', async () => {

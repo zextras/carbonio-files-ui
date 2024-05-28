@@ -13,10 +13,10 @@ import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode } from '../mocks/mockUtils';
+import { setup, selectNodes, screen, within } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { setup, selectNodes, screen, within } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 

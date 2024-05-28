@@ -13,10 +13,10 @@ import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodes, populateParents } from '../mocks/mockUtils';
+import { buildBreadCrumbRegExp, moveNode, setup } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockFindNodes, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 

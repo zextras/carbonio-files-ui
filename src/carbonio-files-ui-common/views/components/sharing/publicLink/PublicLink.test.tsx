@@ -12,6 +12,7 @@ import { act } from '@testing-library/react';
 import { PublicLink } from './PublicLink';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateLinks, populateNode } from '../../../../mocks/mockUtils';
+import { generateError, getFirstOfNextMonth, screen, setup, within } from '../../../../tests/utils';
 import { Node } from '../../../../types/common';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import {
@@ -21,13 +22,6 @@ import {
 	mockGetLinks,
 	mockUpdateLink
 } from '../../../../utils/resolverMocks';
-import {
-	generateError,
-	getFirstOfNextMonth,
-	screen,
-	setup,
-	within
-} from '../../../../utils/testUtils';
 import { formatDate, initExpirationDate } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 

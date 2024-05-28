@@ -13,7 +13,7 @@ import server from '../../mocks/server';
 import { REST_ENDPOINT, UPLOAD_PATH, UPLOAD_STATUS_CODE } from '../constants';
 import { ICON_REGEXP } from '../constants/test';
 import { populateFile, populateLocalRoot } from '../mocks/mockUtils';
-import { createUploadDataTransfer, screen, setup, uploadWithDnD } from '../utils/testUtils';
+import { createUploadDataTransfer, screen, setup, uploadWithDnD } from '../tests/utils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 

@@ -22,12 +22,12 @@ import {
 	populateNodes,
 	populateUploadItems
 } from '../mocks/mockUtils';
+import { createUploadDataTransfer, setup, uploadWithDnD, screen, within } from '../tests/utils';
 import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, GetChildrenDocument } from '../types/graphql/types';
 import { mockGetNode } from '../utils/resolverMocks';
-import { createUploadDataTransfer, setup, uploadWithDnD, screen, within } from '../utils/testUtils';
 import { inputElement } from '../utils/utils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');

@@ -14,6 +14,14 @@ import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
+import {
+	moveNode,
+	setup,
+	selectNodes,
+	triggerLoadMore,
+	screen,
+	buildBreadCrumbRegExp
+} from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
@@ -28,14 +36,6 @@ import {
 	mockGetPath,
 	mockMoveNodes
 } from '../utils/resolverMocks';
-import {
-	moveNode,
-	setup,
-	selectNodes,
-	triggerLoadMore,
-	screen,
-	buildBreadCrumbRegExp
-} from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
