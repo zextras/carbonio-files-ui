@@ -29,7 +29,7 @@ import {
 	moveNode,
 	screen,
 	setup,
-	spyOnCreateOptions,
+	spyOnUseCreateOptions,
 	within
 } from '../tests/utils';
 import { Node } from '../types/common';
@@ -65,7 +65,7 @@ describe('Folder View', () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = false;
 			currentFolder.permissions.can_write_file = false;
-			const createOptions = spyOnCreateOptions();
+			const createOptions = spyOnUseCreateOptions();
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -78,17 +78,15 @@ describe('Folder View', () => {
 			});
 			await screen.findByText(/nothing here/i);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
-			expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
-				])
+			expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
+				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
 			);
 		});
 
 		test('Create folder option is active if current folder has can_write_folder permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = true;
-			const createOptions = spyOnCreateOptions();
+			const createOptions = spyOnUseCreateOptions();
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -101,10 +99,8 @@ describe('Folder View', () => {
 				mocks
 			});
 			await screen.findByText(/nothing here/i);
-			expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: false })
-				])
+			expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
+				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: false })
 			);
 		});
 	});
@@ -199,7 +195,7 @@ describe('Folder View', () => {
 		test('Create file options are disabled if current folder has not can_write_file permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = false;
-			const createOptions = spyOnCreateOptions();
+			const createOptions = spyOnUseCreateOptions();
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -223,7 +219,7 @@ describe('Folder View', () => {
 		test('Create docs files options are active if current folder has can_write_file permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = true;
-			const createOptions = spyOnCreateOptions();
+			const createOptions = spyOnUseCreateOptions();
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),

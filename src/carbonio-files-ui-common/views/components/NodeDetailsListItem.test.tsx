@@ -11,7 +11,6 @@ import { screen } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeDetailsListItem } from './NodeDetailsListItem';
-import { DATE_FORMAT } from '../../constants';
 import { SELECTORS } from '../../constants/test';
 import { populateNode, populateUser } from '../../mocks/mockUtils';
 import { setup } from '../../tests/utils';
@@ -47,7 +46,7 @@ describe('Node List Item', () => {
 		expect(nodeItem).toBeVisible();
 		expect(nodeItem).not.toBeEmptyDOMElement();
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.getByText(formatDate(node.updated_at, DATE_FORMAT, 'UTC'))).toBeVisible();
+		expect(screen.getByText(formatDate(node.updated_at))).toBeVisible();
 		expect(screen.queryByText(mockedUserLogged.full_name)).not.toBeInTheDocument();
 		expect(screen.getByText(/you/i)).toBeVisible();
 	});

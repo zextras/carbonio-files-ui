@@ -4,16 +4,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { useUserAccount, useUserSettings } from '@zextras/carbonio-shell-ui';
+import { useUserAccount } from '@zextras/carbonio-shell-ui';
+import { useTranslation } from 'react-i18next';
 
-const useUserInfo: () => { me: string; zimbraPrefTimeZoneId: string } = () => {
+export const useUserInfo = (): { me: string; locale: string | undefined } => {
 	const userAccount = useUserAccount();
-	const settings = useUserSettings();
+	const { i18n } = useTranslation();
 
 	return {
 		me: userAccount.id,
-		zimbraPrefTimeZoneId: settings?.prefs?.zimbraPrefTimeZoneId as string
+		locale: i18n.language
 	};
 };
-
-export default useUserInfo;

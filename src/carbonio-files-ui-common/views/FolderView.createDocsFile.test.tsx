@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
@@ -17,12 +17,23 @@ import server from '../../mocks/server';
 import {
 	CREATE_FILE_PATH,
 	DOCS_ENDPOINT,
+	DOCS_SERVICE_NAME,
+	HEALTH_PATH,
+	HTTP_STATUS_CODE,
 	NODES_LOAD_LIMIT,
 	NODES_SORT_DEFAULT,
-	HTTP_STATUS_CODE
+	REST_ENDPOINT
 } from '../constants';
-import { ICON_REGEXP, LIST_EMPTY_MESSAGE, SELECTORS, TIMERS } from '../constants/test';
+import {
+	ACTION_REGEXP,
+	ICON_REGEXP,
+	LIST_EMPTY_MESSAGE,
+	SELECTORS,
+	TIMERS
+} from '../constants/test';
 import { CreateDocsFileRequestBody, CreateDocsFileResponse } from '../hooks/useCreateDocsFile';
+import { healthCache } from '../hooks/useHealthInfo';
+import { HealthResponse } from '../mocks/handleHealthRequest';
 import {
 	populateFile,
 	populateFolder,
@@ -30,9 +41,8 @@ import {
 	populateNodes,
 	sortNodes
 } from '../mocks/mockUtils';
-import { setup, spyOnCreateOptions, triggerLoadMore, UserEvent } from '../tests/utils';
+import { setup, spyOnUseCreateOptions, triggerLoadMore, UserEvent } from '../tests/utils';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
-import { ValueOf } from '../types/utils';
 import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
 
 const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
@@ -47,14 +57,19 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 
 function clickOnCreateDocsAction(
 	createOptions: CreateOption[],
-	action: ValueOf<typeof ACTION_IDS>,
-	docType: 'libre' | 'ms'
+	type: (typeof ACTION_IDS)[keyof Pick<
+		typeof ACTION_IDS,
+		'CREATE_DOCS_DOCUMENT' | 'CREATE_DOCS_PRESENTATION' | 'CREATE_DOCS_SPREADSHEET'
+	>],
+	subType: 'libre' | 'ms' = 'libre'
 ): void {
-	const mainItem = createOptions.find((item) => item.id === action);
-	const subItems = mainItem?.action(undefined)?.items;
-	const subItem = subItems?.find((item) => item.id === `${action}-${docType}`);
+	const createDocsDocument = createOptions
+		.find((option) => option.id === type)
+		?.action(undefined)
+		.items?.find((subOption) => subOption.id === `${type}-${subType}`);
+	expect(createDocsDocument).toBeDefined();
 	act(() => {
-		subItem?.onClick?.(new KeyboardEvent(''));
+		createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
 	});
 }
 
@@ -69,6 +84,150 @@ async function createNode(newNode: { name: string }, user: UserEvent): Promise<v
 }
 
 describe('Create docs file', () => {
+	it('should show docs creation actions if docs is available', async () => {
+		healthCache.reset();
+		const createOptions = spyOnUseCreateOptions();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
+			)
+		);
+		setup(<FolderView />);
+		await waitFor(() =>
+			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions).toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
+		);
+	});
+
+	it('should not show docs creation actions if docs is not available', async () => {
+		healthCache.reset();
+		const createOptions = spyOnUseCreateOptions();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
+			)
+		);
+		setup(<FolderView />);
+		await waitFor(() =>
+			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
+		);
+	});
+
+	it('should show docs actions inside contextual menu actions if docs is available', async () => {
+		healthCache.reset();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
+			)
+		);
+		const currentFolder = populateFolder(0);
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
+		const { user } = setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+		await user.rightClick(await screen.findByText(/It looks like there's nothing here/i));
+		const dropdown = await screen.findByTestId(SELECTORS.dropdownList);
+		expect(within(dropdown).getByText(ACTION_REGEXP.newDocument)).toBeVisible();
+		expect(within(dropdown).getByText(ACTION_REGEXP.newSpreadsheet)).toBeVisible();
+		expect(within(dropdown).getByText(ACTION_REGEXP.newPresentation)).toBeVisible();
+	});
+
+	it('should not show docs actions inside contextual menu actions if docs is not available', async () => {
+		healthCache.reset();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
+			)
+		);
+		const currentFolder = populateFolder(0);
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
+		const { user } = setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+		await user.rightClick(await screen.findByText(/It looks like there's nothing here/i));
+		const dropdown = await screen.findByTestId(SELECTORS.dropdownList);
+		expect(within(dropdown).queryByText(ACTION_REGEXP.newDocument)).not.toBeInTheDocument();
+		expect(within(dropdown).queryByText(ACTION_REGEXP.newSpreadsheet)).not.toBeInTheDocument();
+		expect(within(dropdown).queryByText(ACTION_REGEXP.newPresentation)).not.toBeInTheDocument();
+	});
+
+	test('Create file options are disabled if current folder has not can_write_file permission', async () => {
+		const currentFolder = populateFolder();
+		currentFolder.permissions.can_write_file = false;
+		const createOptions = spyOnUseCreateOptions();
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
+		setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+		await screen.findByText(/nothing here/i);
+		expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: true }),
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: true }),
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: true })
+			])
+		);
+	});
+
+	test('Create docs files options are active if current folder has can_write_file permission', async () => {
+		const currentFolder = populateFolder();
+		currentFolder.permissions.can_write_file = true;
+		const createOptions = spyOnUseCreateOptions();
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
+		setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+		await screen.findByText(/nothing here/i);
+		expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: false }),
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: false }),
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: false })
+			])
+		);
+	});
+
 	test('Create docs file operation fail shows an error in the modal and does not close it', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
@@ -76,8 +235,8 @@ describe('Create docs file', () => {
 		const node2 = populateFile('n2', 'second');
 		const node3 = populateFile('n3', 'third');
 		currentFolder.children.nodes.push(node1, node2, node3);
-
 		const newName = node2.name;
+		const createOptions = spyOnUseCreateOptions();
 
 		const mocks = {
 			Query: {
@@ -95,8 +254,6 @@ describe('Create docs file', () => {
 				HttpResponse.json(null, { status: 500, statusText: 'Error! Name already assigned' })
 			)
 		);
-
-		const createOptions = spyOnCreateOptions();
 
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
@@ -131,9 +288,7 @@ describe('Create docs file', () => {
 		const node3 = populateFile('n3', 'third');
 		// add node 1 and 3 as children, node 2 is the new file
 		currentFolder.children.nodes.push(node1, node3);
-
-		const createOptions = spyOnCreateOptions();
-
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
@@ -189,6 +344,7 @@ describe('Create docs file', () => {
 		node2.parent = currentFolder;
 		const node3 = populateFile('n3', `zzzz-new-file-n3`);
 		node3.parent = currentFolder;
+		const createOptions = spyOnUseCreateOptions();
 		// 1) folder with more pages, just 1 loaded
 		// 2) create node2 as unordered node3 (not loaded) as neighbor)
 		// --> node2 should be last element of the list
@@ -205,9 +361,6 @@ describe('Create docs file', () => {
 			}
 			return parent.children;
 		};
-
-		const createOptions = spyOnCreateOptions();
-
 		const mocks = {
 			Folder: {
 				children: childrenResolver
@@ -263,7 +416,6 @@ describe('Create docs file', () => {
 		await createNode(node1, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node1.id));
 		expect(screen.getByText(node1.name)).toBeVisible();
-
 		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
 		expect(node1Item).toBeVisible();
@@ -288,25 +440,23 @@ describe('Create docs file', () => {
 
 	describe('Extension new item', () => {
 		test('should render .ods extension when click createLibreDocument button', async () => {
-			const createOptions = spyOnCreateOptions();
+			const createOptions = spyOnUseCreateOptions();
 			setup(<FolderView />);
 			clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 			act(() => {
-				// make modal become visible
-				jest.runOnlyPendingTimers();
+				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
 			});
-			expect(await screen.findByText(/.odt/i)).toBeVisible();
+			expect(await screen.findByText('.odt')).toBeVisible();
 		});
 
 		test('should render .docx extension when click createMsDocument button', async () => {
-			const createOptions = spyOnCreateOptions();
+			const createOptions = spyOnUseCreateOptions();
 			setup(<FolderView />);
 			clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'ms');
 			act(() => {
-				// make modal become visible
-				jest.runOnlyPendingTimers();
+				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
 			});
-			expect(await screen.findByText(/.docx/i)).toBeVisible();
+			expect(await screen.findByText('.docx')).toBeVisible();
 		});
 	});
 
@@ -329,7 +479,7 @@ describe('Create docs file', () => {
 				})
 			)
 		);
-		const createOptions = spyOnCreateOptions();
+		const createOptions = spyOnUseCreateOptions();
 		const { user } = setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
@@ -343,7 +493,7 @@ describe('Create docs file', () => {
 		expect(snackbar).toBeVisible();
 		expect(screen.getByRole('button', { name: /ok/i })).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.errorSnackbar)).toBeVisible();
-		jest.advanceTimersByTime(TIMERS.snackbar.hide);
+		jest.advanceTimersByTime(TIMERS.snackbarHide);
 		expect(snackbar).toBeVisible();
 	});
 
@@ -381,7 +531,7 @@ describe('Create docs file', () => {
 					})
 				)
 			);
-			const createOptions = spyOnCreateOptions();
+			const createOptions = spyOnUseCreateOptions();
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks

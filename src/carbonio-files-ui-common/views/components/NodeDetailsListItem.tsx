@@ -11,8 +11,8 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
 import { NodeAvatarIcon } from './NodeAvatarIcon';
-import useUserInfo from '../../../hooks/useUserInfo';
-import { DATE_FORMAT, LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
+import { useUserInfo } from '../../../hooks/useUserInfo';
+import { LIST_ITEM_HEIGHT_DETAILS } from '../../constants';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { formatDate, getIconByFileType, getIconColorByFileType } from '../../utils/utils';
 
@@ -25,25 +25,25 @@ interface NodeDetailsListItemProps {
 	updatedAt?: number;
 }
 
-export const NodeDetailsListItem: React.VFC<NodeDetailsListItemProps> = ({
+export const NodeDetailsListItem = ({
 	id,
 	type,
 	name = '',
 	owner,
 	updatedAt,
 	mimeType
-}) => {
-	const userInfo = useUserInfo();
+}: NodeDetailsListItemProps): React.JSX.Element => {
+	const { me, locale } = useUserInfo();
 	const [t] = useTranslation();
 
 	const theme = useTheme();
 
 	const displayName = useMemo(() => {
-		if (owner && owner.id !== userInfo.me) {
+		if (owner && owner.id !== me) {
 			return owner.full_name;
 		}
 		return t('displayer.list.you', 'You');
-	}, [owner, t, userInfo.me]);
+	}, [owner, t, me]);
 
 	return (
 		<Container
@@ -60,7 +60,7 @@ export const NodeDetailsListItem: React.VFC<NodeDetailsListItemProps> = ({
 				selectionModeActive={false}
 				selected={false}
 				icon={getIconByFileType(type, mimeType)}
-				color={getIconColorByFileType(type, mimeType || id, theme)}
+				color={getIconColorByFileType(type, mimeType ?? id, theme)}
 				compact
 			/>
 			<Container
@@ -84,7 +84,7 @@ export const NodeDetailsListItem: React.VFC<NodeDetailsListItemProps> = ({
 					{displayName && <Text>&middot;</Text>}
 					<Padding left="extrasmall">
 						<Text color="gray1" size="extrasmall">
-							{formatDate(updatedAt, DATE_FORMAT, userInfo.zimbraPrefTimeZoneId)}
+							{formatDate(updatedAt, locale)}
 						</Text>
 					</Padding>
 				</>

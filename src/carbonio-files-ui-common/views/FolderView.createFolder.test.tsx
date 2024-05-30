@@ -18,7 +18,7 @@ import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../m
 import {
 	generateError,
 	setup,
-	spyOnCreateOptions,
+	spyOnUseCreateOptions,
 	triggerLoadMore,
 	UserEvent
 } from '../tests/utils';
@@ -66,11 +66,8 @@ describe('Create folder', () => {
 		const node2 = populateFolder(0, 'n2', 'second');
 		const node3 = populateFolder(0, 'n3', 'third');
 		currentFolder.children.nodes.push(node1, node2, node3);
-
 		const newName = node2.name;
-
-		const createOptions = spyOnCreateOptions();
-
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
@@ -121,9 +118,7 @@ describe('Create folder', () => {
 		const node3 = populateFolder(0, 'n3', 'third');
 		// add node 1 and 3 as children, node 2 is the new folder
 		currentFolder.children.nodes.push(node1, node3);
-
-		const createOptions = spyOnCreateOptions();
-
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
@@ -169,6 +164,7 @@ describe('Create folder', () => {
 		const node1 = populateFolder(0, 'n1', `zzzz-new-folder-n1`);
 		const node2 = populateFolder(0, 'n2', `zzzz-new-folder-n2`);
 		const node3 = populateFolder(0, 'n3', `zzzz-new-folder-n3`);
+		const createOptions = spyOnUseCreateOptions();
 		// 1) folder with more pages, just 1 loaded
 		// 2) create node2 as unordered node3 (not loaded) as neighbor)
 		// --> node2 should be last element of the list
@@ -181,8 +177,6 @@ describe('Create folder', () => {
 			args.page_token === 'page2'
 				? populateNodePage([node1, node2, node3])
 				: populateNodePage(currentFolder.children.nodes, NODES_LOAD_LIMIT, 'page2');
-
-		const createOptions = spyOnCreateOptions();
 		const mocks = {
 			Folder: {
 				children: childrenResolver
@@ -228,7 +222,6 @@ describe('Create folder', () => {
 		await createNode(node1, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node1.id));
 		expect(screen.getByText(node1.name)).toBeVisible();
-
 		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
 		expect(node1Item).toBeVisible();
@@ -254,14 +247,10 @@ describe('Create folder', () => {
 	test('Create folder that fill a page size does not trigger new page request', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT - 1);
 		currentFolder.permissions.can_write_folder = true;
-
 		const newNode = populateFolder();
-
 		let newPos = addNodeInSortedList(currentFolder.children.nodes, newNode, NODES_SORT_DEFAULT);
 		newPos = newPos > -1 ? newPos : currentFolder.children.nodes.length;
-
-		const createOptions = spyOnCreateOptions();
-
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),

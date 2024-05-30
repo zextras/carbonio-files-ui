@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
-import { DATE_FORMAT, DISPLAYER_TABS } from '../../constants';
+import { DATE_TIME_FORMAT, DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateLink, populateNode } from '../../mocks/mockUtils';
 import { generateError, getFirstOfNextMonth, setup } from '../../tests/utils';
@@ -108,7 +108,7 @@ describe('Displayer', () => {
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(chosenDate, 'PPPP'), 'i') })
 				);
-				await screen.findByText(formatDate(chosenDate, DATE_FORMAT));
+				await screen.findByText(formatDate(chosenDate));
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -157,7 +157,7 @@ describe('Displayer', () => {
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(chosenDate, 'PPPP'), 'i') })
 				);
-				await screen.findByText(formatDate(chosenDate, DATE_FORMAT));
+				await screen.findByText(formatDate(chosenDate));
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				const actionButton = screen.getByRole('button', { name: /cancel/i });
@@ -166,7 +166,7 @@ describe('Displayer', () => {
 				expect(screen.getByRole('textbox', { name: /link's description/i })).toHaveDisplayValue(
 					description
 				);
-				expect(screen.getByText(formatDate(chosenDate, DATE_FORMAT))).toBeVisible();
+				expect(screen.getByText(formatDate(chosenDate))).toBeVisible();
 			});
 
 			test('leave anyway action reset fields and continue navigation', async () => {
@@ -199,7 +199,7 @@ describe('Displayer', () => {
 				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
 				const chosenDate = getFirstOfNextMonth();
-				const chosenDateFormatted = formatDate(chosenDate, DATE_FORMAT);
+				const chosenDateFormatted = formatDate(chosenDate);
 				// always click on first 1 visible on the date picker
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(chosenDate, 'PPPP'), 'i') })
@@ -215,7 +215,7 @@ describe('Displayer', () => {
 				// go back to sharing tab
 				await user.click(screen.getByText(/sharing/i));
 				// add link status is reset
-				expect(screen.getByRole('button', { name: /add link/i })).toBeVisible();
+				expect(await screen.findByRole('button', { name: /add link/i })).toBeVisible();
 				expect(
 					screen.queryByRole('textbox', { name: /link's description/i })
 				).not.toBeInTheDocument();
@@ -266,7 +266,7 @@ describe('Displayer', () => {
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
+				const chosenDate = formatDate(firstOfNextMonth);
 				// always click on first 1 visible on the date picker
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(firstOfNextMonth, 'PPPP'), 'i') })
@@ -291,7 +291,8 @@ describe('Displayer', () => {
 						23,
 						59
 					),
-					'DD/MM/YY HH:mm'
+					undefined,
+					DATE_TIME_FORMAT
 				);
 				const expiresOnRegexp = RegExp(`expires on: ${expiresOnDate}`, 'i');
 				expect(screen.getByText(expiresOnRegexp)).toBeVisible();
@@ -347,7 +348,7 @@ describe('Displayer', () => {
 				await user.click(screen.getByTestId(ICON_REGEXP.openCalendarPicker));
 				await user.click(await screen.findByRole('button', { name: /next month/i }));
 				// chosen date is the 1st of next month
-				const chosenDate = formatDate(firstOfNextMonth, DATE_FORMAT);
+				const chosenDate = formatDate(firstOfNextMonth);
 				// always click on first 1 visible on the date picker
 				await user.click(
 					screen.getByRole('option', { name: RegExp(format(firstOfNextMonth, 'PPPP'), 'i') })

@@ -98,9 +98,26 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 	[DocsType.MS_SPREADSHEET]: 'xlsx',
 	[DocsType.MS_PRESENTATION]: 'pptx'
 } as const;
-// TODO: use locale aware date format (L)
-export const DATE_FORMAT = 'DD/MM/YYYY';
-export const DATE_FORMAT_SHORT = 'DD/MM/YY';
+export const DOCS_SERVICE_NAME = 'carbonio-docs-connector';
+export const PREVIEW_SERVICE_NAME = 'carbonio-preview';
+export const DATE_FORMAT = {
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit'
+} satisfies Intl.DateTimeFormatOptions;
+export const DATE_FORMAT_SHORT = {
+	year: '2-digit',
+	month: '2-digit',
+	day: '2-digit'
+} satisfies Intl.DateTimeFormatOptions;
+export const TIME_FORMAT = {
+	hour: '2-digit',
+	minute: '2-digit'
+} satisfies Intl.DateTimeFormatOptions;
+export const DATE_TIME_FORMAT = {
+	...DATE_FORMAT_SHORT,
+	...TIME_FORMAT
+} satisfies Intl.DateTimeFormatOptions;
 export const HTTP_STATUS_CODE = {
 	success: 200,
 	internalServerError: 500,
@@ -128,6 +145,7 @@ export const UPLOAD_TO_PATH = '/upload-to';
 export const UPLOAD_VERSION_PATH = '/upload-version';
 export const CREATE_FILE_PATH = '/files/create';
 export const MYSELF_QUOTA_PATH = '/quota/myself';
+export const HEALTH_PATH = '/health';
 export const PREVIEW_PATH = '/preview';
 export const PREVIEW_TYPE = {
 	IMAGE: 'image',

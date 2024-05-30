@@ -552,15 +552,15 @@ export async function uploadWithDnD(
 	expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 }
 
-export function spyOnCreateOptions(): CreateOption[] {
-	const createOptions: CreateOption[] = [];
+export function spyOnUseCreateOptions(): CreateOption[] {
+	const createOptionsCollector: CreateOption[] = [];
 	jest.spyOn(useCeateOptionsModule, 'useCreateOptions').mockReturnValue({
 		setCreateOptions: (...options: CreateOption[]): void => {
-			createOptions.push(...options);
+			createOptionsCollector.splice(0, createOptionsCollector.length, ...options);
 		},
 		removeCreateOptions: (...ids: string[]): void => {
-			createOptions.filter((option) => !ids.includes(option.id));
+			createOptionsCollector.filter((option) => !ids.includes(option.id));
 		}
 	});
-	return createOptions;
+	return createOptionsCollector;
 }

@@ -21,7 +21,7 @@ import { map, uniq, find, noop, every } from 'lodash';
 import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
-import useUserInfo from '../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { selectionModeVar } from '../../apollo/selectionVar';
 import { DRAG_TYPES, ROOTS, TIMERS } from '../../constants';

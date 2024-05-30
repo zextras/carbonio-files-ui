@@ -12,13 +12,17 @@ export const ACTION_REGEXP = {
 	moveToTrash: /^move to trash$/i,
 	download: /^download$/i,
 	openDocument: /^open document$/i,
+	editDocument: /^edit$/i,
 	deletePermanently: /^delete permanently$/i,
 	restore: /^restore$/i,
 	manageShares: /^manage shares$/i,
 	preview: /^preview$/i,
 	retryUpload: /^retry upload$/i,
 	removeUpload: /^remove upload$/i,
-	goToFolder: /^go to destination folder$/i
+	goToFolder: /^go to destination folder$/i,
+	newDocument: /^new document$/i,
+	newPresentation: /^new presentation$/i,
+	newSpreadsheet: /^new spreadsheet$/i
 } as const;
 
 export const ICON_REGEXP = {
@@ -69,6 +73,7 @@ export const ICON_REGEXP = {
 	uploadLoading: 'icon: AnimatedLoader',
 	previewClose: 'icon: ArrowBackOutline',
 	previewDownload: 'icon: DownloadOutline',
+	preview: 'icon: MaximizeOutline',
 	queryLoading: 'icon: Refresh',
 	revoke: 'icon: SlashOutline',
 	refreshQuota: 'icon: Refresh',
@@ -142,9 +147,9 @@ export const COLORS = {
 	}
 };
 
+export const TIMERS = {
+	modalDelayOpen: 1,
+	snackbarHide: 4000
+};
 export const DISPLAYER_EMPTY_MESSAGE = 'View files and folders, share them with your contacts.';
 export const LIST_EMPTY_MESSAGE = "It looks like there's nothing here.";
-
-export const TIMERS = {
-	snackbar: { hide: 4000 }
-};

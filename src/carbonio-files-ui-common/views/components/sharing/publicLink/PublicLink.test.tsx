@@ -10,6 +10,7 @@ import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
 
 import { PublicLink } from './PublicLink';
+import { DATE_TIME_FORMAT } from '../../../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateLinks, populateNode } from '../../../../mocks/mockUtils';
 import { generateError, getFirstOfNextMonth, screen, setup, within } from '../../../../tests/utils';
@@ -107,7 +108,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 				await user.click(screen.getByRole('button', { name: /generate link/i }));
 				const expiresOnDate = formatDate(
 					new Date(expiresAt.getFullYear(), expiresAt.getMonth(), expiresAt.getDate(), 23, 59),
-					'DD/MM/YY'
+					undefined,
+					DATE_TIME_FORMAT
 				);
 				const expiresOnRegexp = RegExp(`expires on: ${expiresOnDate}`, 'i');
 				expect(screen.getByText(expiresOnRegexp)).toBeVisible();
@@ -315,20 +317,21 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					23,
 					59
 				),
-				'DD/MM/YY HH:mm'
+				undefined,
+				DATE_TIME_FORMAT
 			);
 			const expDate = formatDate(
 				new Date(
 					firstOfNextMonth.getFullYear(),
 					firstOfNextMonth.getMonth(),
 					firstOfNextMonth.getDate()
-				),
-				'DD/MM/YYYY'
+				)
 			);
 			const secondDay = firstOfNextMonth.getDate() + 1;
 			const newExpiresOnDate = formatDate(
 				new Date(firstOfNextMonth.getFullYear(), firstOfNextMonth.getMonth(), secondDay, 23, 59),
-				'DD/MM/YY HH:mm'
+				undefined,
+				DATE_TIME_FORMAT
 			);
 			const expiresOnRegexp = RegExp(`expires on: ${expiresOnDate}`, 'i');
 			const expiresOnRegexpUpdated = RegExp(`expires on: ${newExpiresOnDate}`, 'i');
@@ -428,7 +431,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					23,
 					59
 				),
-				'DD/MM/YY HH:mm'
+				undefined,
+				DATE_TIME_FORMAT
 			);
 			const expiresOnRegexp = RegExp(`expires on: ${expiresOnDate}`, 'i');
 			expect(screen.getByText(expiresOnRegexp)).toBeVisible();
@@ -461,7 +465,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			await screen.findByText(link.url as string);
 			const expiresOnDate = formatDate(
 				new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59),
-				'DD/MM/YY HH:mm'
+				undefined,
+				DATE_TIME_FORMAT
 			);
 			const expiresOnRegexp = RegExp(`this link has expired on: ${expiresOnDate}`, 'i');
 			expect(screen.getByText(expiresOnRegexp)).toBeVisible();
@@ -692,8 +697,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					firstOfNextMonth.getFullYear(),
 					firstOfNextMonth.getMonth(),
 					firstOfNextMonth.getDate()
-				),
-				'DD/MM/YYYY'
+				)
 			);
 			expect(screen.getByText(expiresOnDate)).toBeVisible();
 		});
@@ -933,8 +937,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					firstOfNextMonth.getFullYear(),
 					firstOfNextMonth.getMonth(),
 					firstOfNextMonth.getDate()
-				),
-				'DD/MM/YYYY'
+				)
 			);
 			expect(screen.getByRole('textbox', { name: /expiration date/i })).toBeVisible();
 			expect(screen.getByText(expiresOnDate)).toBeVisible();
