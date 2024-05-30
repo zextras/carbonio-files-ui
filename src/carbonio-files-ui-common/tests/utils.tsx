@@ -37,7 +37,7 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
 import { CreateOption } from '../../hooks/useCreateOptions';
-import * as useCeateOptionsModule from '../../hooks/useCreateOptions';
+import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -554,7 +554,7 @@ export async function uploadWithDnD(
 
 export function spyOnUseCreateOptions(): CreateOption[] {
 	const createOptionsCollector: CreateOption[] = [];
-	jest.spyOn(useCeateOptionsModule, 'useCreateOptions').mockReturnValue({
+	jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
 		setCreateOptions: (...options: CreateOption[]): void => {
 			createOptionsCollector.splice(0, createOptionsCollector.length, ...options);
 		},
