@@ -72,7 +72,8 @@ export const ICON_REGEXP = {
 	queryLoading: 'icon: Refresh',
 	revoke: 'icon: SlashOutline',
 	refreshQuota: 'icon: Refresh',
-	alertQuota: 'icon: CloseCircleOutline'
+	alertQuota: 'icon: CloseCircleOutline',
+	errorSnackbar: 'icon: CloseCircleOutline'
 } as const;
 
 export const SELECTORS = {
@@ -142,3 +143,8 @@ export const COLORS = {
 };
 
 export const DISPLAYER_EMPTY_MESSAGE = 'View files and folders, share them with your contacts.';
+export const LIST_EMPTY_MESSAGE = "It looks like there's nothing here.";
+
+export const TIMERS = {
+	snackbar: { hide: 4000 }
+};

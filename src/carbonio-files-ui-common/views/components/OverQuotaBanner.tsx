@@ -12,7 +12,7 @@ import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { uploadVar } from '../../apollo/uploadVar';
-import { UPLOAD_STATUS_CODE } from '../../constants';
+import { HTTP_STATUS_CODE } from '../../constants';
 import { UploadStatus } from '../../types/graphql/client-types';
 
 export const OverQuotaBanner = (): React.JSX.Element | null => {
@@ -24,8 +24,7 @@ export const OverQuotaBanner = (): React.JSX.Element | null => {
 			some(
 				uploadVarData,
 				(upload) =>
-					upload.status === UploadStatus.FAILED &&
-					upload.statusCode === UPLOAD_STATUS_CODE.overQuota
+					upload.status === UploadStatus.FAILED && upload.statusCode === HTTP_STATUS_CODE.overQuota
 			),
 		[uploadVarData]
 	);

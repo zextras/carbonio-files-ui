@@ -782,3 +782,21 @@ export async function asyncForEach<T>(
 		await callback(item);
 	}, Promise.resolve());
 }
+
+export function getDocumentGenericType(
+	specificType: DocsType
+): 'document' | 'spreadsheet' | 'presentation' {
+	switch (specificType) {
+		case DocsType.LIBRE_DOCUMENT:
+		case DocsType.MS_DOCUMENT:
+			return 'document';
+		case DocsType.LIBRE_SPREADSHEET:
+		case DocsType.MS_SPREADSHEET:
+			return 'spreadsheet';
+		case DocsType.LIBRE_PRESENTATION:
+		case DocsType.MS_PRESENTATION:
+			return 'presentation';
+		default:
+			return 'document';
+	}
+}

@@ -52,3 +52,5 @@ export type SnakeToCamelCaseNested<T> =
 				[K in keyof T as SnakeToCamelCase<K & string>]: SnakeToCamelCaseNested<T[K]>;
 			}
 		: T;
+
+export type ValueOf<T> = T[keyof T];

@@ -101,7 +101,7 @@ export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 // TODO: use locale aware date format (L)
 export const DATE_FORMAT = 'DD/MM/YYYY';
 export const DATE_FORMAT_SHORT = 'DD/MM/YY';
-export const UPLOAD_STATUS_CODE = {
+export const HTTP_STATUS_CODE = {
 	success: 200,
 	internalServerError: 500,
 	/**

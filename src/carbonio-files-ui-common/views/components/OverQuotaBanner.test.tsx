@@ -10,7 +10,7 @@ import { keyBy } from 'lodash';
 
 import { OverQuotaBanner } from './OverQuotaBanner';
 import { uploadVar } from '../../apollo/uploadVar';
-import { UPLOAD_STATUS_CODE } from '../../constants';
+import { HTTP_STATUS_CODE } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateUploadItems } from '../../mocks/mockUtils';
 import { screen, setup } from '../../tests/utils';
@@ -24,7 +24,7 @@ describe('OverQuotaBanner', () => {
 			item.status = UploadStatus.COMPLETED;
 		});
 		uploadItemsInList[0].status = UploadStatus.FAILED;
-		uploadItemsInList[0].statusCode = UPLOAD_STATUS_CODE.overQuota;
+		uploadItemsInList[0].statusCode = HTTP_STATUS_CODE.overQuota;
 		setup(<OverQuotaBanner />);
 		expect(screen.getByTestId(ICON_REGEXP.alertQuota)).toBeVisible();
 		expect(screen.getByText(/Quota exceeded/i)).toBeVisible();

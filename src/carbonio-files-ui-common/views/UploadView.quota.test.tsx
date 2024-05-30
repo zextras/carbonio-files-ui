@@ -10,7 +10,7 @@ import { http, HttpResponse } from 'msw';
 
 import UploadView from './UploadView';
 import server from '../../mocks/server';
-import { REST_ENDPOINT, UPLOAD_PATH, UPLOAD_STATUS_CODE } from '../constants';
+import { REST_ENDPOINT, UPLOAD_PATH, HTTP_STATUS_CODE } from '../constants';
 import { ICON_REGEXP } from '../constants/test';
 import { populateFile, populateLocalRoot } from '../mocks/mockUtils';
 import { createUploadDataTransfer, screen, setup, uploadWithDnD } from '../tests/utils';
@@ -23,7 +23,7 @@ describe('Upload view quota', () => {
 		const dataTransferObj = createUploadDataTransfer([node]);
 		server.use(
 			http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, () =>
-				HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.overQuota })
+				HttpResponse.json(null, { status: HTTP_STATUS_CODE.overQuota })
 			)
 		);
 		setup(<UploadView />);
@@ -46,12 +46,12 @@ describe('Upload view quota', () => {
 		server.use(
 			http.post(
 				`${REST_ENDPOINT}${UPLOAD_PATH}`,
-				() => HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.overQuota }),
+				() => HttpResponse.json(null, { status: HTTP_STATUS_CODE.overQuota }),
 				{ once: true }
 			),
 			http.post(
 				`${REST_ENDPOINT}${UPLOAD_PATH}`,
-				() => HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.internalServerError }),
+				() => HttpResponse.json(null, { status: HTTP_STATUS_CODE.internalServerError }),
 				{ once: true }
 			)
 		);

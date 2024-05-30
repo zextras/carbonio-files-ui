@@ -13,7 +13,7 @@ import {
 	REST_ENDPOINT,
 	SHARES_LOAD_LIMIT,
 	UPLOAD_PATH,
-	UPLOAD_STATUS_CODE,
+	HTTP_STATUS_CODE,
 	UPLOAD_VERSION_PATH
 } from '../constants';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
@@ -382,7 +382,7 @@ export function uploadCompleted(
 	addNodeToFolder: UpdateFolderContentType['addNodeToFolder'],
 	isUploadVersion: boolean
 ): void {
-	if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === UPLOAD_STATUS_CODE.success) {
+	if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === HTTP_STATUS_CODE.success) {
 		const response = JSON.parse(xhr.response);
 		const { nodeId } = response;
 		if (isUploadVersion) {
@@ -394,7 +394,7 @@ export function uploadCompleted(
 			value: {
 				id: fileEnriched.id,
 				status: UploadStatus.COMPLETED,
-				statusCode: UPLOAD_STATUS_CODE.success,
+				statusCode: HTTP_STATUS_CODE.success,
 				progress: 100,
 				nodeId
 			}
@@ -413,10 +413,10 @@ export function uploadCompleted(
 		incrementAllParentsFailedCount(fileEnriched);
 
 		const handledStatuses: number[] = [
-			UPLOAD_STATUS_CODE.maxVersionReached,
-			UPLOAD_STATUS_CODE.internalServerError,
-			UPLOAD_STATUS_CODE.aborted,
-			UPLOAD_STATUS_CODE.overQuota
+			HTTP_STATUS_CODE.maxVersionReached,
+			HTTP_STATUS_CODE.internalServerError,
+			HTTP_STATUS_CODE.aborted,
+			HTTP_STATUS_CODE.overQuota
 		];
 		if (xhr.readyState !== XMLHttpRequest.UNSENT && !handledStatuses.includes(xhr.status)) {
 			console.error('upload error: unhandled status', xhr.status, fileEnriched);
