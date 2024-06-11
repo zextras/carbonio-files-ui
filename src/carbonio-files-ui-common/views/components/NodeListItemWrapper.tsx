@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useReactiveVar } from '@apollo/client';
 import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
+import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
 import { isEmpty, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -51,6 +52,7 @@ interface NodeListItemWrapperProps {
 	compact?: boolean;
 	navigateTo?: (id: string, event?: React.SyntheticEvent | Event) => void;
 	selectionContextualMenuActionsItems?: DSAction[];
+	openPreview: PreviewManagerContextType['openPreview'];
 }
 
 export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
@@ -72,7 +74,8 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 	setActive = (): void => undefined,
 	compact = false,
 	navigateTo = (): void => undefined,
-	selectionContextualMenuActionsItems
+	selectionContextualMenuActionsItems,
+	openPreview
 }) => {
 	const [t] = useTranslation();
 	const draggedItems = useReactiveVar(draggedItemsVar);
@@ -321,6 +324,7 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 					selectionContextualMenuActionsItems={selectionContextualMenuActionsItems}
 					dragging={dragging}
 					version={isFile(node) ? node.version : undefined}
+					openPreview={openPreview}
 				/>
 			)}
 		</Dropzone>
