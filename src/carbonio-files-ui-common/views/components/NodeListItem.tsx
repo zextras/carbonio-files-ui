@@ -15,7 +15,6 @@ import {
 	Text,
 	useSnackbar
 } from '@zextras/carbonio-design-system';
-import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
 import { includes, some, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -36,6 +35,7 @@ import {
 	ROOTS
 } from '../../constants';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { usePreview } from '../../hooks/usePreview';
 import { Action } from '../../types/common';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { buildActionItems } from '../../utils/ActionsFactory';
@@ -99,7 +99,6 @@ interface NodeListItemProps {
 	selectionContextualMenuActionsItems?: DSAction[];
 	dragging?: boolean;
 	version?: number;
-	openPreview?: PreviewManagerContextType['openPreview'];
 }
 
 const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
@@ -140,10 +139,10 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 	deletePermanentlyCallback,
 	selectionContextualMenuActionsItems,
 	dragging = false,
-	version,
-	openPreview
+	version
 }) => {
 	const [t] = useTranslation();
+	const { openPreview } = usePreview();
 	const location = useLocation();
 	const { me, locale } = useUserInfo();
 	const [isContextualMenuActive, setIsContextualMenuActive] = useState(false);
@@ -197,7 +196,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 					// if node can be opened with docs on edit mode, open editor
 					openNodeWithDocs(id);
 				} else if ($isSupportedByPreview) {
-					openPreview?.(id);
+					openPreview(id);
 				} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
 					// if preview is not supported and document can be opened with docs, open editor
 					openNodeWithDocs(id);
@@ -232,7 +231,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'MaximizeOutline',
 				label: t('actions.preview', 'Preview'),
 				onClick: (): void => {
-					openPreview?.(id);
+					openPreview(id);
 				}
 			},
 			[Action.SendViaMail]: {

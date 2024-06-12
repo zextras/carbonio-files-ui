@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
-import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { forEach, map, filter, includes } from 'lodash';
 import styled from 'styled-components';
 
@@ -160,8 +159,6 @@ export const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
 			draggedItemsVar(null);
 		}, []);
 
-		const { openPreview } = useContext(PreviewsManagerContext);
-
 		const items = useMemo(
 			() =>
 				map(nodes, (node) => (
@@ -173,7 +170,6 @@ export const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
 						effect="move"
 					>
 						<NodeListItemWrapper
-							openPreview={openPreview}
 							node={node}
 							toggleFlag={toggleFlag}
 							markNodesForDeletion={markNodesForDeletion}
@@ -207,7 +203,6 @@ export const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
 				draggable,
 				dragStartHandler,
 				dragEndHandler,
-				openPreview,
 				toggleFlag,
 				markNodesForDeletion,
 				restore,

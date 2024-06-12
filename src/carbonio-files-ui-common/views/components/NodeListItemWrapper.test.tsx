@@ -11,6 +11,7 @@ import { screen } from '@testing-library/react';
 import { NodeListItemWrapper } from './NodeListItemWrapper';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import * as useHealthInfo from '../../hooks/useHealthInfo';
+import * as usePreview from '../../hooks/usePreview';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
 import { PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS } from '../../utils/previewUtils';
 import { setup } from '../../utils/testUtils';
@@ -28,9 +29,7 @@ describe('NodeListItemWrapper', () => {
 				}
 			});
 
-			const { user } = setup(
-				<NodeListItemWrapper node={node} toggleFlag={toggleFlag} openPreview={() => undefined} />
-			);
+			const { user } = setup(<NodeListItemWrapper node={node} toggleFlag={toggleFlag} />);
 			expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 			await user.click(screen.getByTestId(ICON_REGEXP.flag));
 			expect(toggleFlag).toHaveBeenCalledTimes(1);
@@ -47,9 +46,7 @@ describe('NodeListItemWrapper', () => {
 				}
 			});
 
-			const { user } = setup(
-				<NodeListItemWrapper node={node} toggleFlag={toggleFlag} openPreview={() => undefined} />
-			);
+			const { user } = setup(<NodeListItemWrapper node={node} toggleFlag={toggleFlag} />);
 			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.unflag));
@@ -90,6 +87,13 @@ describe('NodeListItemWrapper', () => {
 				const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
 				const openPreview = jest.fn();
 
+				jest.spyOn(usePreview, 'usePreview').mockReturnValue({
+					openPreview,
+					initPreview: () => undefined,
+					emptyPreview: () => undefined,
+					createPreview: () => undefined
+				});
+
 				jest.spyOn(useHealthInfo, 'useHealthInfo').mockReturnValue({
 					canUsePreview,
 					canUseDocs
@@ -99,9 +103,7 @@ describe('NodeListItemWrapper', () => {
 				node.permissions.can_write_file = canWriteFile;
 				node.mime_type = mimeType;
 
-				const { user } = setup(
-					<NodeListItemWrapper node={node} toggleFlag={() => undefined} openPreview={openPreview} />
-				);
+				const { user } = setup(<NodeListItemWrapper node={node} toggleFlag={() => undefined} />);
 
 				await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
 				if (action === 'open with docs') {
