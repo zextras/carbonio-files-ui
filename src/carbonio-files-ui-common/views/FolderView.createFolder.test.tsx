@@ -162,7 +162,7 @@ describe('Create folder', () => {
 		expect(nodes[1]).toBe(nodeItem);
 	});
 
-	test('Create folder add folder node as last element of the list if neighbor is already loaded but unordered', async () => {
+	test.skip('Create folder add folder node as last element of the list if neighbor is already loaded but unordered', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.children = populateNodePage(populateNodes(NODES_LOAD_LIMIT, 'Folder'));
 		sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);

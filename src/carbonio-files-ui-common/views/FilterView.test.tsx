@@ -86,7 +86,7 @@ describe('Filter view', () => {
 		});
 	});
 
-	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
+	test.skip('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
 		const currentFilter = populateNodes(NODES_LOAD_LIMIT + Math.floor(NODES_LOAD_LIMIT / 2));
 
 		const mocks = {

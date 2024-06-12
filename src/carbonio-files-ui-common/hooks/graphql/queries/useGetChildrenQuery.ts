@@ -11,8 +11,11 @@ import { isEqual } from 'lodash';
 
 import { nodeSortVar } from '../../../apollo/nodeSortVar';
 import { NODES_LOAD_LIMIT, SHARES_LOAD_LIMIT } from '../../../constants';
-import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
-import { GetChildrenQuery, GetChildrenQueryVariables } from '../../../types/graphql/types';
+import {
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../../../types/graphql/types';
 import { isFolder } from '../../../utils/utils';
 import { useErrorHandler } from '../../useErrorHandler';
 import { useMemoCompare } from '../../useMemoCompare';
@@ -30,20 +33,17 @@ interface GetChildrenQueryHookReturnType
 export function useGetChildrenQuery(parentNode: string): GetChildrenQueryHookReturnType {
 	const nodeSort = useReactiveVar(nodeSortVar);
 
-	const { data, fetchMore, ...queryResult } = useQuery<GetChildrenQuery, GetChildrenQueryVariables>(
-		GET_CHILDREN,
-		{
-			variables: {
-				node_id: parentNode,
-				children_limit: NODES_LOAD_LIMIT,
-				sort: nodeSort,
-				shares_limit: SHARES_LOAD_LIMIT
-			},
-			skip: !parentNode,
-			errorPolicy: 'all',
-			returnPartialData: true
-		}
-	);
+	const { data, fetchMore, ...queryResult } = useQuery(GetChildrenDocument, {
+		variables: {
+			node_id: parentNode,
+			children_limit: NODES_LOAD_LIMIT,
+			sort: nodeSort,
+			shares_limit: SHARES_LOAD_LIMIT
+		},
+		skip: !parentNode,
+		errorPolicy: 'all',
+		returnPartialData: true
+	});
 
 	const error = useMemoCompare(queryResult.error, (prev, next) => isEqual(prev, next));
 

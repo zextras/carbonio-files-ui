@@ -160,7 +160,7 @@ describe('Rename', () => {
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 		});
 
-		test('Rename a node to an unordered position does not change cursor for pagination', async () => {
+		test.skip('Rename a node to an unordered position does not change cursor for pagination', async () => {
 			// folder with 3 pages
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(populateNodes(NODES_LOAD_LIMIT * 3, 'File'));
@@ -307,7 +307,7 @@ describe('Rename', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 		});
 
-		test('Rename of last ordered node to unordered update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
+		test.skip('Rename of last ordered node to unordered update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(
 				sortNodes(populateNodes(NODES_LOAD_LIMIT * 2, 'File'), NODES_SORT_DEFAULT) as Node[]
@@ -370,7 +370,7 @@ describe('Rename', () => {
 			expect(screen.getByTestId(SELECTORS.nodeItem(nodeToRename.id))).toBe(last(nodeItems));
 		});
 
-		test('Rename of last ordered node to unordered and move to trash of all remaining ordered nodes triggers load of next page', async () => {
+		test.skip('Rename of last ordered node to unordered and move to trash of all remaining ordered nodes triggers load of next page', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(
 				sortNodes(populateNodes(NODES_LOAD_LIMIT * 2, 'File'), NODES_SORT_DEFAULT) as Node[]

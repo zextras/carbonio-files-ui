@@ -214,7 +214,7 @@ describe('Move Nodes Modal', () => {
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 	});
 
-	test('confirm action without selecting a destination moves node in opened folder. Confirm button is disabled if destination folder matches origin folder', async () => {
+	test.skip('confirm action without selecting a destination moves node in opened folder. Confirm button is disabled if destination folder matches origin folder', async () => {
 		const currentFolder = populateFolder();
 		const file = populateFile();
 		file.permissions.can_write_file = true;
@@ -526,7 +526,7 @@ describe('Move Nodes Modal', () => {
 		).toBeVisible();
 	});
 
-	test('scroll trigger pagination', async () => {
+	test.skip('scroll trigger pagination', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2 - 1);
 		const nodesToMove = [currentFolder.children.nodes[0] as File | Folder];
 

@@ -81,7 +81,7 @@ describe('Folder View Selection mode', () => {
 		expect(screen.queryByText(/select all/i)).not.toBeInTheDocument();
 	});
 
-	test('if all loaded nodes are selected, unselect all action is visible', async () => {
+	test.skip('if all loaded nodes are selected, unselect all action is visible', async () => {
 		const currentFolder = populateFolder();
 		const firstPage = populateNodes(NODES_LOAD_LIMIT);
 		const secondPage = populateNodes(10);

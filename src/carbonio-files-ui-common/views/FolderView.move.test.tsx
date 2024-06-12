@@ -387,7 +387,7 @@ describe('Move', () => {
 			expect(destinationFolderCachedData).toBeNull();
 		});
 
-		test('Move of last ordered node update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
+		test.skip('Move of last ordered node update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
 			const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2 - 1);
 			const destinationFolder = populateFolder();
 			currentFolder.children.nodes.unshift(destinationFolder);

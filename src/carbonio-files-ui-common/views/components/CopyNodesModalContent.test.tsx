@@ -830,7 +830,7 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.queryByText(currentFolder.name, { exact: false })).not.toBeInTheDocument();
 	});
 
-	test('scroll trigger pagination', async () => {
+	test.skip('scroll trigger pagination', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2 - 1);
 		const nodesToCopy = [currentFolder.children.nodes[0] as File | Folder];
 

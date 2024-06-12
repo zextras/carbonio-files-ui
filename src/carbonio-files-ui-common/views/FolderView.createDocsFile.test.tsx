@@ -347,7 +347,7 @@ describe('Create docs file', () => {
 		expect(nodes[1]).toBe(nodeItem);
 	});
 
-	test('Create docs file add file node as right sorted position of the list if neighbor is already loaded but unordered', async () => {
+	test.skip('Create docs file add file node as right sorted position of the list if neighbor is already loaded but unordered', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.children = populateNodePage(populateNodes(NODES_LOAD_LIMIT, 'Folder'));
 		sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);

@@ -325,6 +325,27 @@ export async function triggerLoadMore(): Promise<void> {
 	);
 }
 
+export function triggerListLoadMore(): void {
+	const { calls, instances } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>)
+		.mock;
+
+	const [onChange] = calls[calls.length - 1];
+	const instance = instances[instances.length - 1];
+	// trigger the intersection on the observed element
+	act(() => {
+		onChange(
+			[
+				{
+					target: screen.getByTestId('list-bottom-element'),
+					intersectionRatio: 0.5,
+					isIntersecting: true
+				} as unknown as IntersectionObserverEntry
+			],
+			instance
+		);
+	});
+}
+
 export async function selectNodes(nodesToSelect: string[], user: UserEvent): Promise<void> {
 	await asyncForEach(nodesToSelect, async (id) => {
 		const node = within(screen.getByTestId(SELECTORS.nodeItem(id)));

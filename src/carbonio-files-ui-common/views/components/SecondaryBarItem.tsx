@@ -201,7 +201,7 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 									icon={item.icon || ''}
 									onClick={item.onClick || noop}
 									backgroundColor={(item.active && 'highlight') || undefined}
-									iconColor={item.iconCustomColor || item.iconColor}
+									iconColor={item.iconColor}
 								/>
 							</Padding>
 						</Tooltip>

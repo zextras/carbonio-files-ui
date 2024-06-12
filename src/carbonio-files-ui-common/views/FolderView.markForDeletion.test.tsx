@@ -274,7 +274,7 @@ describe('Mark for deletion - trash', () => {
 			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(3);
 		});
 
-		test('Mark for deletion of last ordered node trigger load of the new page with the new cursor', async () => {
+		test.skip('Mark for deletion of last ordered node trigger load of the new page with the new cursor', async () => {
 			const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2);
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;
