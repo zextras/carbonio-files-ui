@@ -541,40 +541,49 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 /** Mapping of union types */
-export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
+export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
 	Account: DistributionList | User;
 	SharedTarget: DistributionList | User;
 };
 
 /** Mapping of interface types */
-export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
-	Node: File | Folder;
+export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = {
+	Node:
+		| (Omit<File, 'parent'> & { parent?: Maybe<_RefType['Node']> })
+		| (Omit<Folder, 'parent'> & { parent?: Maybe<_RefType['Node']> });
 };
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
 	Account: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Account']>;
 	Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
-	CollaborationLink: ResolverTypeWrapper<CollaborationLink>;
+	CollaborationLink: ResolverTypeWrapper<
+		Omit<CollaborationLink, 'node'> & { node: ResolversTypes['Node'] }
+	>;
 	Config: ResolverTypeWrapper<Config>;
 	DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
 	DistributionList: ResolverTypeWrapper<DistributionList>;
-	File: ResolverTypeWrapper<File>;
+	File: ResolverTypeWrapper<Omit<File, 'parent'> & { parent?: Maybe<ResolversTypes['Node']> }>;
 	Float: ResolverTypeWrapper<Scalars['Float']['output']>;
-	Folder: ResolverTypeWrapper<Folder>;
+	Folder: ResolverTypeWrapper<Omit<Folder, 'parent'> & { parent?: Maybe<ResolversTypes['Node']> }>;
 	ID: ResolverTypeWrapper<Scalars['ID']['output']>;
 	Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-	Link: ResolverTypeWrapper<Link>;
+	Link: ResolverTypeWrapper<Omit<Link, 'node'> & { node: ResolversTypes['Node'] }>;
 	Mutation: ResolverTypeWrapper<{}>;
 	Node: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['Node']>;
-	NodePage: ResolverTypeWrapper<NodePage>;
+	NodePage: ResolverTypeWrapper<
+		Omit<NodePage, 'nodes'> & { nodes: Array<Maybe<ResolversTypes['Node']>> }
+	>;
 	NodeSort: NodeSort;
 	NodeType: NodeType;
 	Permissions: ResolverTypeWrapper<Permissions>;
 	Query: ResolverTypeWrapper<{}>;
 	Root: ResolverTypeWrapper<Root>;
 	Share: ResolverTypeWrapper<
-		Omit<Share, 'share_target'> & { share_target?: Maybe<ResolversTypes['SharedTarget']> }
+		Omit<Share, 'node' | 'share_target'> & {
+			node: ResolversTypes['Node'];
+			share_target?: Maybe<ResolversTypes['SharedTarget']>;
+		}
 	>;
 	SharePermission: SharePermission;
 	ShareSort: ShareSort;
@@ -587,23 +596,24 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
 	Account: ResolversUnionTypes<ResolversParentTypes>['Account'];
 	Boolean: Scalars['Boolean']['output'];
-	CollaborationLink: CollaborationLink;
+	CollaborationLink: Omit<CollaborationLink, 'node'> & { node: ResolversParentTypes['Node'] };
 	Config: Config;
 	DateTime: Scalars['DateTime']['output'];
 	DistributionList: DistributionList;
-	File: File;
+	File: Omit<File, 'parent'> & { parent?: Maybe<ResolversParentTypes['Node']> };
 	Float: Scalars['Float']['output'];
-	Folder: Folder;
+	Folder: Omit<Folder, 'parent'> & { parent?: Maybe<ResolversParentTypes['Node']> };
 	ID: Scalars['ID']['output'];
 	Int: Scalars['Int']['output'];
-	Link: Link;
+	Link: Omit<Link, 'node'> & { node: ResolversParentTypes['Node'] };
 	Mutation: {};
 	Node: ResolversInterfaceTypes<ResolversParentTypes>['Node'];
-	NodePage: NodePage;
+	NodePage: Omit<NodePage, 'nodes'> & { nodes: Array<Maybe<ResolversParentTypes['Node']>> };
 	Permissions: Permissions;
 	Query: {};
 	Root: Root;
-	Share: Omit<Share, 'share_target'> & {
+	Share: Omit<Share, 'node' | 'share_target'> & {
+		node: ResolversParentTypes['Node'];
 		share_target?: Maybe<ResolversParentTypes['SharedTarget']>;
 	};
 	SharedTarget: ResolversUnionTypes<ResolversParentTypes>['SharedTarget'];

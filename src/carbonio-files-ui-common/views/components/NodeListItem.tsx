@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
 	Action as DSAction,
@@ -15,7 +15,6 @@ import {
 	Text,
 	useSnackbar
 } from '@zextras/carbonio-design-system';
-import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { includes, some, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -33,16 +32,17 @@ import {
 	LIST_ITEM_AVATAR_HEIGHT,
 	LIST_ITEM_HEIGHT,
 	LIST_ITEM_HEIGHT_COMPACT,
-	PREVIEW_TYPE,
 	ROOTS
 } from '../../constants';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { usePreview } from '../../hooks/usePreview';
 import { Action } from '../../types/common';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { buildActionItems } from '../../utils/ActionsFactory';
 import {
 	getPreviewOutputFormat,
 	getPreviewThumbnailSrc,
+	isPreviewDependantOnDocs,
 	isSupportedByPreview
 } from '../../utils/previewUtils';
 import {
@@ -142,7 +142,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 	version
 }) => {
 	const [t] = useTranslation();
-	const { openPreview } = useContext(PreviewsManagerContext);
+	const { openPreview } = usePreview();
 	const location = useLocation();
 	const { me, locale } = useUserInfo();
 	const [isContextualMenuActive, setIsContextualMenuActive] = useState(false);
@@ -171,11 +171,15 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			type === NodeType.Folder || type === NodeType.Root || some(ROOTS, (rootId) => rootId === id),
 		[id, type]
 	);
-
-	const [$isSupportedByPreview] = useMemo<
-		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview(mimeType, 'preview'), [mimeType]);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
+
+	const $isSupportedByPreview = useMemo(
+		() =>
+			canUsePreview &&
+			isSupportedByPreview(mimeType, 'preview')[0] &&
+			(!isPreviewDependantOnDocs(mimeType) || canUseDocs),
+		[canUseDocs, canUsePreview, mimeType]
+	);
 
 	const openNode = useCallback(
 		(event: React.SyntheticEvent | KeyboardEvent) => {
@@ -188,12 +192,12 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			if (!isSelectionModeActive && !disabled && !trashed) {
 				if (isNavigable) {
 					navigateTo(id, event);
-				} else if (canUseDocs && includes(permittedContextualMenuActions, Action.Edit)) {
+				} else if (includes(permittedContextualMenuActions, Action.Edit)) {
 					// if node can be opened with docs on edit mode, open editor
 					openNodeWithDocs(id);
-				} else if (canUsePreview && $isSupportedByPreview) {
+				} else if ($isSupportedByPreview) {
 					openPreview(id);
-				} else if (canUseDocs && includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
+				} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
 					// if preview is not supported and document can be opened with docs, open editor
 					openNodeWithDocs(id);
 				}
@@ -204,9 +208,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			disabled,
 			trashed,
 			isNavigable,
-			canUseDocs,
 			permittedContextualMenuActions,
-			canUsePreview,
 			$isSupportedByPreview,
 			navigateTo,
 			id,
