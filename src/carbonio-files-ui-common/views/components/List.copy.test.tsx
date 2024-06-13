@@ -40,7 +40,6 @@ describe('Copy', () => {
 				jest.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByRole('button', { name: /copy/i }));
-			screen.logTestingPlaygroundURL();
 			const snackbar = await screen.findByTestId('snackbar');
 			expect(within(snackbar).getByText(/Error! Copy action failed./i)).toBeVisible();
 		});
