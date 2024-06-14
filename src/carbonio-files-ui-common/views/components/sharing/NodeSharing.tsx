@@ -24,7 +24,7 @@ import { AddSharing } from './AddSharing';
 import { CollaborationLinks } from './collaborationLinks/CollaborationLinks';
 import { EditShareChip } from './EditShareChip';
 import { PublicLink } from './publicLink/PublicLink';
-import useUserInfo from '../../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { SHARE_CHIP_MAX_WIDTH, SHARE_CHIP_SIZE } from '../../../constants';
 import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
 import { useGetSharesQuery } from '../../../hooks/graphql/queries/useGetSharesQuery';
@@ -131,16 +131,16 @@ export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
 	const linkName = useMemo(
 		() =>
 			isFile(node)
-				? t('publicLink.fileLink.title', 'Public download link')
-				: t('publicLink.folderLink.title', 'Public access link'),
+				? t('publicLink.fileLink.title', { defaultValue_one: 'Public download link', count: 1 })
+				: t('publicLink.folderLink.title', { defaultValue_one: 'Public access link', count: 1 }),
 		[node, t]
 	);
 
 	const linkTitle = useMemo(
 		() =>
 			isFile(node)
-				? t('publicLink.fileLink.title', 'Public download links', { count: 2 })
-				: t('publicLink.folderLink.title', 'Public access links', { count: 2 }),
+				? t('publicLink.fileLink.title', { defaultValue_other: 'Public download links', count: 2 })
+				: t('publicLink.folderLink.title', { defaultValue_other: 'Public access links', count: 2 }),
 		[node, t]
 	);
 

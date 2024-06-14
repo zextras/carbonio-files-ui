@@ -39,7 +39,7 @@ beforeEach(() => {
 });
 
 jest.mock<typeof import('../../../../network/network')>('../../../../network/network', () => ({
-	soapFetch: <Req, Res>(
+	soapFetch: <Req, Res extends Record<string, unknown>>(
 		...args: Parameters<typeof actualNetworkModule.soapFetch<Req, Res>>
 	): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
 		new Promise<Res>((resolve, reject) => {

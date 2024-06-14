@@ -21,7 +21,7 @@ import { map, uniq, find, noop, every } from 'lodash';
 import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
-import useUserInfo from '../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { selectionModeVar } from '../../apollo/selectionVar';
 import { DRAG_TYPES, ROOTS, TIMERS } from '../../constants';
@@ -201,7 +201,7 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 									icon={item.icon || ''}
 									onClick={item.onClick || noop}
 									backgroundColor={(item.active && 'highlight') || undefined}
-									iconColor={item.iconCustomColor || item.iconColor}
+									iconColor={item.iconColor}
 								/>
 							</Padding>
 						</Tooltip>

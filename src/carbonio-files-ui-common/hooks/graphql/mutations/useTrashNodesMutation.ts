@@ -14,7 +14,7 @@ import { useLocation } from 'react-router-dom';
 
 import { useActiveNode } from '../../../../hooks/useActiveNode';
 import { useNavigation } from '../../../../hooks/useNavigation';
-import useUserInfo from '../../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { ROOTS, INTERNAL_PATH, FILTER_TYPE } from '../../../constants';
 import PARENT_ID from '../../../graphql/fragments/parentId.graphql';
 import TRASH_NODES from '../../../graphql/mutations/trashNodes.graphql';

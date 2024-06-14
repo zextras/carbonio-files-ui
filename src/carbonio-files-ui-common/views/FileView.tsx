@@ -17,6 +17,7 @@ import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
 import { DISPLAYER_WIDTH, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
 import { ListContext } from '../contexts';
+import { useHealthInfo } from '../hooks/useHealthInfo';
 import useQueryParam from '../hooks/useQueryParam';
 import { useUpload } from '../hooks/useUpload';
 import { DocsType } from '../types/common';
@@ -54,6 +55,9 @@ const FileView: React.VFC = () => {
 		},
 		[add]
 	);
+
+	const { canUseDocs } = useHealthInfo();
+
 	useEffect(() => {
 		setCreateOptions(
 			{
@@ -81,84 +85,88 @@ const FileView: React.VFC = () => {
 					disabled: true
 				})
 			},
-			{
-				id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-				type: ACTION_TYPES.NEW,
-				action: () => ({
-					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-					group: FILES_APP_ID,
-					label: t('create.options.new.document', 'New document'),
-					icon: 'FileTextOutline',
-					onClick: noop,
-					disabled: true,
-					items: [
+			...(canUseDocs
+				? [
 						{
-							id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
-							label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-							onClick: noop,
-							disabled: true
+							id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
+							type: ACTION_TYPES.NEW,
+							action: () => ({
+								id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
+								group: FILES_APP_ID,
+								label: t('create.options.new.document', 'New document'),
+								icon: 'FileTextOutline',
+								onClick: noop,
+								disabled: true,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
+										onClick: noop,
+										disabled: true
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
+										onClick: noop,
+										disabled: true
+									}
+								]
+							})
 						},
 						{
-							id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
-							label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-							onClick: noop,
-							disabled: true
-						}
-					]
-				})
-			},
-			{
-				id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-				type: ACTION_TYPES.NEW,
-				action: () => ({
-					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-					group: FILES_APP_ID,
-					label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
-					icon: 'FileCalcOutline',
-					onClick: noop,
-					disabled: true,
-					items: [
-						{
-							id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
-							label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-							onClick: noop,
-							disabled: true
+							id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
+							type: ACTION_TYPES.NEW,
+							action: () => ({
+								id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
+								group: FILES_APP_ID,
+								label: t('create.options.new.spreadsheet', 'New Spreadsheet'),
+								icon: 'FileCalcOutline',
+								onClick: noop,
+								disabled: true,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
+										onClick: noop,
+										disabled: true
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
+										onClick: noop,
+										disabled: true
+									}
+								]
+							})
 						},
 						{
-							id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
-							label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-							onClick: noop,
-							disabled: true
+							id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
+							type: ACTION_TYPES.NEW,
+							action: () => ({
+								id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
+								group: FILES_APP_ID,
+								label: t('create.options.new.presentation', 'New presentation'),
+								icon: 'FilePresentationOutline',
+								onClick: noop,
+								disabled: true,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
+										onClick: noop,
+										disabled: true
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
+										onClick: noop,
+										disabled: true
+									}
+								]
+							})
 						}
 					]
-				})
-			},
-			{
-				id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-				type: ACTION_TYPES.NEW,
-				action: () => ({
-					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-					group: FILES_APP_ID,
-					label: t('create.options.new.presentation', 'New presentation'),
-					icon: 'FilePresentationOutline',
-					onClick: noop,
-					disabled: true,
-					items: [
-						{
-							id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
-							label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-							onClick: noop,
-							disabled: true
-						},
-						{
-							id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
-							label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-							onClick: noop,
-							disabled: true
-						}
-					]
-				})
-			}
+				: [])
 		);
 
 		return (): void => {
@@ -187,7 +195,7 @@ const FileView: React.VFC = () => {
 				})
 			});
 		};
-	}, [inputElementOnchange, removeCreateOptions, setCreateOptions, t]);
+	}, [canUseDocs, inputElementOnchange, removeCreateOptions, setCreateOptions, t]);
 
 	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
 		() => ({ isEmpty, setIsEmpty }),
@@ -214,7 +222,7 @@ const FileView: React.VFC = () => {
 						borderRadius="none"
 						background="gray6"
 					>
-						<FileList fileId={fileId || ''} canUploadFile={false} />
+						<FileList fileId={fileId ?? ''} canUploadFile={false} />
 					</Container>
 					<Container
 						width={DISPLAYER_WIDTH}
@@ -227,7 +235,7 @@ const FileView: React.VFC = () => {
 					</Container>
 				</Responsive>
 				<Responsive mode="mobile">
-					<FileList fileId={fileId || ''} canUploadFile={false} />
+					<FileList fileId={fileId ?? ''} canUploadFile={false} />
 				</Responsive>
 			</Container>
 			<Snackbar

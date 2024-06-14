@@ -76,7 +76,7 @@ describe('Flag', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesIdsToUnflag.length);
 			const listHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
-			const iconAction = await within(listHeader).findByRoleWithIcon('button', {
+			const iconAction = within(listHeader).queryByRoleWithIcon('button', {
 				icon: ICON_REGEXP.unflag
 			});
 			if (iconAction !== null) {
@@ -84,7 +84,7 @@ describe('Flag', () => {
 			} else {
 				await user.click(within(listHeader).getByTestId(ICON_REGEXP.moreVertical));
 				const dropdown = await screen.findByTestId(SELECTORS.dropdownList);
-				await user.click(await within(dropdown).findByText(/unflag/i));
+				await user.click(within(dropdown).getByText(/unflag/i));
 			}
 			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 			expect(await screen.findAllByTestId(ICON_REGEXP.flagged)).toHaveLength(

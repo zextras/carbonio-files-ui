@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
 	Action as DSAction,
@@ -15,7 +15,6 @@ import {
 	Text,
 	useSnackbar
 } from '@zextras/carbonio-design-system';
-import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { includes, some, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -26,22 +25,24 @@ import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { NodeHoverBar } from './NodeHoverBar';
 import { HoverContainer, ListItemContainer } from './StyledComponents';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
-import useUserInfo from '../../../hooks/useUserInfo';
+import { useUserInfo } from '../../../hooks/useUserInfo';
 import {
 	DATE_FORMAT_SHORT,
 	DOUBLE_CLICK_DELAY,
 	LIST_ITEM_AVATAR_HEIGHT,
 	LIST_ITEM_HEIGHT,
 	LIST_ITEM_HEIGHT_COMPACT,
-	PREVIEW_TYPE,
 	ROOTS
 } from '../../constants';
+import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { usePreview } from '../../hooks/usePreview';
 import { Action } from '../../types/common';
 import { Maybe, NodeType, User } from '../../types/graphql/types';
 import { buildActionItems } from '../../utils/ActionsFactory';
 import {
 	getPreviewOutputFormat,
 	getPreviewThumbnailSrc,
+	isPreviewDependantOnDocs,
 	isSupportedByPreview
 } from '../../utils/previewUtils';
 import {
@@ -141,9 +142,9 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 	version
 }) => {
 	const [t] = useTranslation();
-	const { openPreview } = useContext(PreviewsManagerContext);
+	const { openPreview } = usePreview();
 	const location = useLocation();
-	const userInfo = useUserInfo();
+	const { me, locale } = useUserInfo();
 	const [isContextualMenuActive, setIsContextualMenuActive] = useState(false);
 	const selectIdCallback = useCallback(
 		(event: React.SyntheticEvent) => {
@@ -170,10 +171,15 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 			type === NodeType.Folder || type === NodeType.Root || some(ROOTS, (rootId) => rootId === id),
 		[id, type]
 	);
+	const { canUsePreview, canUseDocs } = useHealthInfo();
 
-	const [$isSupportedByPreview] = useMemo<
-		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview(mimeType, 'preview'), [mimeType]);
+	const $isSupportedByPreview = useMemo(
+		() =>
+			canUsePreview &&
+			isSupportedByPreview(mimeType, 'preview')[0] &&
+			(!isPreviewDependantOnDocs(mimeType) || canUseDocs),
+		[canUseDocs, canUsePreview, mimeType]
+	);
 
 	const openNode = useCallback(
 		(event: React.SyntheticEvent | KeyboardEvent) => {
@@ -383,11 +389,11 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		if (lastEditor && lastEditor.id !== owner?.id) {
 			return lastEditor.full_name;
 		}
-		if (owner && owner.id !== userInfo.me) {
+		if (owner && owner.id !== me) {
 			return owner.full_name;
 		}
 		return '';
-	}, [lastEditor, owner, userInfo.me]);
+	}, [lastEditor, owner, me]);
 
 	const openContextualMenuHandler = useCallback(() => {
 		setIsContextualMenuActive(true);
@@ -441,16 +447,20 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 							compact={compact}
 							disabled={disabled}
 							selectable={selectable}
-							icon={getIconByFileType(type, mimeType || id)}
-							color={getIconColorByFileType(type, mimeType || id, theme)}
-							picture={getPreviewThumbnailSrc(
-								id,
-								version,
-								type,
-								mimeType,
-								{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
-								'thumbnail'
-							)}
+							icon={getIconByFileType(type, mimeType ?? id)}
+							color={getIconColorByFileType(type, mimeType ?? id, theme)}
+							picture={
+								canUsePreview
+									? getPreviewThumbnailSrc(
+											id,
+											version,
+											type,
+											mimeType,
+											{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
+											'thumbnail'
+										)
+									: undefined
+							}
 						/>
 						<Container
 							orientation="vertical"
@@ -499,8 +509,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										)}
 										<Padding left="extrasmall">
 											<Text size="extrasmall" color="gray1" disabled={disabled}>
-												{/* eslint-disable-next-line max-len */}
-												{formatDate(updatedAt, DATE_FORMAT_SHORT, userInfo.zimbraPrefTimeZoneId)}
+												{formatDate(updatedAt, locale, DATE_FORMAT_SHORT)}
 											</Text>
 										</Padding>
 									</Container>
@@ -522,8 +531,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 										width="fit"
 									>
 										<CustomText color="gray1" disabled={disabled} size="small">
-											{/* i18next-extract-disable-next-line */}
-											{extension || t(`node.type.${type.toLowerCase()}`, type)}
+											{extension ?? t(`node.type.${type.toLowerCase()}`, type)}
 										</CustomText>
 										{size != null && (
 											<Padding left="small">

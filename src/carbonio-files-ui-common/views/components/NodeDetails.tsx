@@ -21,6 +21,7 @@ import { PathRow } from './PathRow';
 import { DisplayerContentContainer } from './StyledComponents';
 import { TextRowWithShim } from './TextRowWithShim';
 import { NodeDetailsUserRow } from '../../../components/NodeDetailsUserRow';
+import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { Node } from '../../types/common';
 import { ChildFragment, Maybe, NodeType, User } from '../../types/graphql/types';
 import { isSupportedByPreview } from '../../utils/previewUtils';
@@ -101,6 +102,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 			),
 		[nodes]
 	);
+	const { canUsePreview } = useHealthInfo();
 
 	return (
 		<Container
@@ -112,7 +114,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 			gap="0.75rem"
 		>
 			<Container background={'gray6'} height={'auto'}>
-				{$isSupportedByPreview && previewType && (
+				{canUsePreview && $isSupportedByPreview && previewType && (
 					<Container padding={{ all: 'small' }} height={'auto'}>
 						<DisplayerPreview id={id} version={version} type={type} mimeType={mimeType} />
 					</Container>

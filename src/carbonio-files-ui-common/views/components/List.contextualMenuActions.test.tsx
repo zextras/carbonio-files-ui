@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { forEach } from 'lodash';
 
 import { ContextualMenuProps } from './ContextualMenu';
@@ -20,8 +20,8 @@ import { mockGetPath } from '../../utils/resolverMocks';
 import { setup, selectNodes, screen } from '../../utils/testUtils';
 
 describe('Contextual menu actions', () => {
-	describe('Contextual menu on empty space', () => {
-		describe('Contextual menu on empty space in a folder with few nodes', () => {
+	describe('on empty space', () => {
+		describe('in a folder with few nodes', () => {
 			test('when isCanCreateFolder and isCanCreateFolder are true', async () => {
 				const currentFolder = populateFolder();
 				const node1 = populateNode();
@@ -88,7 +88,7 @@ describe('Contextual menu actions', () => {
 				const fillerContainer = await screen.findByTestId(`fillerContainer`);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(fillerContainer);
+				await user.rightClick(fillerContainer);
 
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
@@ -96,10 +96,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
-				expect(createFolderAction).toBeCalledTimes(1);
+				expect(createFolderAction).toHaveBeenCalledTimes(1);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(fillerContainer);
+				await user.rightClick(fillerContainer);
 
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
@@ -107,10 +107,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
-				expect(createDocumentAction).toBeCalledTimes(1);
+				expect(createDocumentAction).toHaveBeenCalledTimes(1);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(fillerContainer);
+				await user.rightClick(fillerContainer);
 
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
@@ -118,10 +118,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
-				expect(createSpreadsheetAction).toBeCalledTimes(1);
+				expect(createSpreadsheetAction).toHaveBeenCalledTimes(1);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(fillerContainer);
+				await user.rightClick(fillerContainer);
 
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
@@ -129,7 +129,7 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
-				expect(createPresentationAction).toBeCalledTimes(1);
+				expect(createPresentationAction).toHaveBeenCalledTimes(1);
 			});
 
 			test('when isCanCreateFolder and isCanCreateFolder are false', async () => {
@@ -198,7 +198,7 @@ describe('Contextual menu actions', () => {
 				const fillerContainer = await screen.findByTestId(`fillerContainer`);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(fillerContainer);
+				await user.rightClick(fillerContainer);
 
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
@@ -206,10 +206,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
-				expect(createFolderAction).not.toBeCalled();
+				expect(createFolderAction).not.toHaveBeenCalled();
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(fillerContainer);
+				await user.rightClick(fillerContainer);
 
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
@@ -217,10 +217,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
-				expect(createDocumentAction).not.toBeCalled();
+				expect(createDocumentAction).not.toHaveBeenCalled();
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(fillerContainer);
+				await user.rightClick(fillerContainer);
 
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
@@ -228,10 +228,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
-				expect(createSpreadsheetAction).not.toBeCalled();
+				expect(createSpreadsheetAction).not.toHaveBeenCalled();
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(fillerContainer);
+				await user.rightClick(fillerContainer);
 
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
@@ -239,11 +239,11 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
-				expect(createPresentationAction).not.toBeCalled();
+				expect(createPresentationAction).not.toHaveBeenCalled();
 			});
 		});
 
-		describe('Contextual menu on empty space in a folder with no nodes', () => {
+		describe('in a folder with no nodes', () => {
 			test('when isCanCreateFolder and isCanCreateFolder are true', async () => {
 				const currentFolder = populateFolder();
 
@@ -305,7 +305,7 @@ describe('Contextual menu actions', () => {
 				const emptySpaceFiller = await screen.findByTestId(`emptyFolder`);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(emptySpaceFiller);
+				await user.rightClick(emptySpaceFiller);
 
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
@@ -313,10 +313,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
-				expect(createFolderAction).toBeCalledTimes(1);
+				expect(createFolderAction).toHaveBeenCalledTimes(1);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(emptySpaceFiller);
+				await user.rightClick(emptySpaceFiller);
 
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
@@ -324,10 +324,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
-				expect(createDocumentAction).toBeCalledTimes(1);
+				expect(createDocumentAction).toHaveBeenCalledTimes(1);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(emptySpaceFiller);
+				await user.rightClick(emptySpaceFiller);
 
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
@@ -335,10 +335,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
-				expect(createSpreadsheetAction).toBeCalledTimes(1);
+				expect(createSpreadsheetAction).toHaveBeenCalledTimes(1);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(emptySpaceFiller);
+				await user.rightClick(emptySpaceFiller);
 
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
@@ -346,7 +346,7 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).not.toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
-				expect(createPresentationAction).toBeCalledTimes(1);
+				expect(createPresentationAction).toHaveBeenCalledTimes(1);
 			});
 
 			test('when isCanCreateFolder and isCanCreateFolder are false', async () => {
@@ -410,7 +410,7 @@ describe('Contextual menu actions', () => {
 				const emptySpaceFiller = await screen.findByTestId(`emptyFolder`);
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(emptySpaceFiller);
+				await user.rightClick(emptySpaceFiller);
 
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
@@ -418,10 +418,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newFolderActionItem).toHaveAttribute('disabled', '');
 				await user.click(newFolderActionItem);
-				expect(createFolderAction).not.toBeCalled();
+				expect(createFolderAction).not.toHaveBeenCalled();
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(emptySpaceFiller);
+				await user.rightClick(emptySpaceFiller);
 
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
@@ -429,10 +429,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newDocumentActionItem).toHaveAttribute('disabled', '');
 				await user.click(newDocumentActionItem);
-				expect(createDocumentAction).not.toBeCalled();
+				expect(createDocumentAction).not.toHaveBeenCalled();
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(emptySpaceFiller);
+				await user.rightClick(emptySpaceFiller);
 
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
@@ -440,10 +440,10 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newSpreadsheetActionItem).toHaveAttribute('disabled', '');
 				await user.click(newSpreadsheetActionItem);
-				expect(createSpreadsheetAction).not.toBeCalled();
+				expect(createSpreadsheetAction).not.toHaveBeenCalled();
 
 				// open context menu and click on empty space
-				fireEvent.contextMenu(emptySpaceFiller);
+				await user.rightClick(emptySpaceFiller);
 
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
@@ -451,15 +451,15 @@ describe('Contextual menu actions', () => {
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(newPresentationActionItem).toHaveAttribute('disabled', '');
 				await user.click(newPresentationActionItem);
-				expect(createPresentationAction).not.toBeCalled();
+				expect(createPresentationAction).not.toHaveBeenCalled();
 			});
 		});
 	});
 
-	describe('Contextual menu actions with selection active', () => {
-		test('Contextual menu shown actions', async () => {
+	describe('with selection active', () => {
+		it('should show only actions that can be performed on multiple nodes when 2 nodes are selected', async () => {
 			const currentFolder = populateFolder(5);
-			// enable permission to Mfd
+			// enable permission to mark for deletion
 			forEach(currentFolder.children.nodes, (mockedNode) => {
 				if (mockedNode) {
 					mockedNode.permissions.can_write_file = true;
@@ -490,18 +490,18 @@ describe('Contextual menu actions', () => {
 
 			await screen.findByTextWithMarkup(currentFolder.name);
 			await selectNodes([element0.id, element1.id], user);
-			// right click to open contextual menu
 			await user.rightClick(screen.getByTestId(SELECTORS.nodeItem(element0.id)));
-			expect(await screen.findByText(ACTION_REGEXP.moveToTrash)).toBeVisible();
-			expect(await screen.findByText(ACTION_REGEXP.copy)).toBeVisible();
-			expect(await screen.findByText(ACTION_REGEXP.flag)).toBeVisible();
+			await screen.findByTestId(SELECTORS.dropdownList);
+			expect(screen.getByText(ACTION_REGEXP.moveToTrash)).toBeVisible();
+			expect(screen.getByText(ACTION_REGEXP.copy)).toBeVisible();
+			expect(screen.getByText(ACTION_REGEXP.flag)).toBeVisible();
 			expect(screen.queryByText(ACTION_REGEXP.openDocument)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.download)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.unflag)).not.toBeInTheDocument();
 		});
 
-		test('Contextual menu works only on selected nodes', async () => {
+		it('should not open on nodes that are not selected', async () => {
 			const currentFolder = populateFolder(5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
@@ -517,7 +517,6 @@ describe('Contextual menu actions', () => {
 			});
 			const element0 = currentFolder.children.nodes[0] as Node;
 			const element1 = currentFolder.children.nodes[1] as Node;
-			const element2 = currentFolder.children.nodes[2] as Node;
 
 			const mocks = {
 				Query: {
@@ -537,16 +536,13 @@ describe('Contextual menu actions', () => {
 			);
 
 			await screen.findByTextWithMarkup(currentFolder.name);
-			await selectNodes([element0.id, element1.id], user);
-			// right click to open contextual menu
-			await user.rightClick(screen.getByTestId(SELECTORS.nodeItem(element0.id)));
-			expect(await screen.findByTestId(SELECTORS.dropdownList)).toBeVisible();
+			await selectNodes([element0.id], user);
+			// right click on unSelected node close open contextual menu
+			await user.rightClick(screen.getByTestId(SELECTORS.nodeItem(element1.id)));
 			act(() => {
 				// run timers of dropdown
 				jest.runOnlyPendingTimers();
 			});
-			// right click on unSelected node close open contextual menu
-			await user.rightClick(screen.getByTestId(SELECTORS.nodeItem(element2.id)));
 			expect(screen.queryByTestId(SELECTORS.dropdownList)).not.toBeInTheDocument();
 		});
 	});
@@ -582,12 +578,12 @@ describe('Contextual menu actions', () => {
 		// right click to open contextual menu
 		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
 		const node2Item = screen.getByTestId(SELECTORS.nodeItem(node2.id));
-		fireEvent.contextMenu(node1Item);
+		await user.rightClick(node1Item);
 		// check that the flag action becomes visible (contextual menu of first node)
 		const flagAction = await screen.findByText(ACTION_REGEXP.flag);
 		expect(flagAction).toBeVisible();
 		// right click on second node
-		fireEvent.contextMenu(node2Item);
+		await user.rightClick(node2Item);
 		// check that the unflag action becomes visible (contextual menu of second node)
 		const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
 		expect(unflagAction).toBeVisible();

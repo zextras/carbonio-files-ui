@@ -33,13 +33,12 @@ export const AdvancedSearchButtonHeader: React.VFC = () => {
 			<Container orientation="horizontal" height="fit" padding={{ all: 'small' }}>
 				<Button
 					type={filterCount > 0 ? 'default' : 'outlined'}
-					label={
-						filterCount > 0
-							? t('search.advancedSearch.button.filters', '{{count}} advanced filter', {
-									count: filterCount
-								})
-							: t('search.advancedSearch.button.noFilter', 'Advanced filters')
-					}
+					label={t('search.advancedSearch.button.filters', {
+						count: filterCount,
+						defaultValue_zero: 'Advanced filters',
+						defaultValue_one: '{{count}} advanced filter',
+						defaultValue_other: '{{count}} advanced filters'
+					})}
 					icon="Options2Outline"
 					iconPlacement="right"
 					width="fill"

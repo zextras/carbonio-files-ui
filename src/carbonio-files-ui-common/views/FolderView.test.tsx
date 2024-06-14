@@ -11,9 +11,9 @@ import { find, map } from 'lodash';
 
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
+import { CreateOption } from '../../hooks/useCreateOptions';
 import * as actualNetworkModule from '../../network/network';
-import { ICON_REGEXP, SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -39,27 +39,23 @@ import {
 	mockMoveNodes,
 	mockUpdateShare
 } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, moveNode, screen, setup, within } from '../utils/testUtils';
+import {
+	buildBreadCrumbRegExp,
+	moveNode,
+	screen,
+	setup,
+	spyOnUseCreateOptions,
+	within
+} from '../utils/testUtils';
 
-let mockedCreateOptions: CreateOption[];
-
-beforeEach(() => {
-	mockedCreateOptions = [];
-});
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions', () => ({
-	useCreateOptions: (): CreateOptionsReturnType => ({
-		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
-			mockedCreateOptions = options;
-		},
-		removeCreateOptions: () => undefined
-	})
-}));
+jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 const mockedSoapFetch = jest.fn();
 
 jest.mock<typeof import('../../network/network')>('../../network/network', () => ({
-	soapFetch: <Req, Res>(): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
+	soapFetch: <Req, Res extends Record<string, unknown>>(): ReturnType<
+		typeof actualNetworkModule.soapFetch<Req, Res>
+	> =>
 		new Promise<Res>((resolve, reject) => {
 			const result = mockedSoapFetch();
 			result ? resolve(result) : reject(new Error('no result provided'));
@@ -73,6 +69,9 @@ describe('Folder View', () => {
 			currentFolder.permissions.can_write_folder = false;
 			currentFolder.permissions.can_write_file = false;
 
+			const createOptions: CreateOption[] = [];
+			spyOnUseCreateOptions(createOptions);
+
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -85,16 +84,16 @@ describe('Folder View', () => {
 			});
 			await screen.findByText(/nothing here/i);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
-			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
-				])
+			expect(map(createOptions, (createOption) => createOption.action({}))).toContainEqual(
+				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
 			);
 		});
 
 		test('Create folder option is active if current folder has can_write_folder permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = true;
+			const createOptions: CreateOption[] = [];
+			spyOnUseCreateOptions(createOptions);
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -107,10 +106,8 @@ describe('Folder View', () => {
 				mocks
 			});
 			await screen.findByText(/nothing here/i);
-			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: false })
-				])
+			expect(map(createOptions, (createOption) => createOption.action({}))).toContainEqual(
+				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: false })
 			);
 		});
 	});
@@ -190,64 +187,14 @@ describe('Folder View', () => {
 			fireEvent.contextMenu(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/item moved/i);
-			await screen.findByText(/view files and folders/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			expect(screen.queryByTestId(SELECTORS.nodeItem(node.id))).not.toBeInTheDocument();
 			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - 1
 			);
 			expect(screen.queryByText(/details/i)).not.toBeInTheDocument();
 			expect(within(displayer).queryByText(node.name)).not.toBeInTheDocument();
-			expect(
-				screen.getByText(/View files and folders, share them with your contacts/i)
-			).toBeVisible();
-		});
-	});
-
-	describe('Create docs files', () => {
-		test('Create file options are disabled if current folder has not can_write_file permission', async () => {
-			const currentFolder = populateFolder();
-			currentFolder.permissions.can_write_file = false;
-			const mocks = {
-				Query: {
-					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
-					getPath: mockGetPath([currentFolder])
-				}
-			} satisfies Partial<Resolvers>;
-			setup(<FolderView />, {
-				initialRouterEntries: [`/?folder=${currentFolder.id}`],
-				mocks
-			});
-			await screen.findByText(/nothing here/i);
-			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: true }),
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: true }),
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: true })
-				])
-			);
-		});
-
-		test('Create docs files options are active if current folder has can_write_file permission', async () => {
-			const currentFolder = populateFolder();
-			currentFolder.permissions.can_write_file = true;
-			const mocks = {
-				Query: {
-					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
-					getPath: mockGetPath([currentFolder])
-				}
-			} satisfies Partial<Resolvers>;
-			setup(<FolderView />, {
-				initialRouterEntries: [`/?folder=${currentFolder.id}`],
-				mocks
-			});
-			await screen.findByText(/nothing here/i);
-			expect(map(mockedCreateOptions, (createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: false }),
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: false }),
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: false })
-				])
-			);
+			expect(screen.getByText(DISPLAYER_EMPTY_MESSAGE)).toBeVisible();
 		});
 	});
 

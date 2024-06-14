@@ -2,66 +2,61 @@ MIT License (MIT) applies to:
 
 @apollo/client, Copyright (c) 2022 Apollo Graph, Inc. (Formerly Meteor Development Group, Inc.)
 @babel/core, Copyright (c) 2014-present Sebastian McKenzie and other contributors
-@babel/plugin-proposal-class-properties, Copyright (c) 2014-present Sebastian McKenzie and other contributors
-@babel/plugin-transform-runtime, Copyright (c) 2014-present Sebastian McKenzie and other contributors
 @babel/preset-env, Copyright (c) 2014-present Sebastian McKenzie and other contributors
 @babel/preset-react, Copyright (c) 2014-present Sebastian McKenzie and other contributors
 @babel/preset-typescript, Copyright (c) 2014-present Sebastian McKenzie and other contributors
 @commitlint/cli, Copyright (c) 2016 - present Mario Nebl
 @commitlint/config-conventional, Copyright (c) 2016 - present Mario Nebl
-@faker-js/faker, Copyright (c) 2022; faker.js - Copyright (c) 2020 Marak Squires
+@faker-js/faker, Faker - Copyright (c) 2022-2024; faker.js - Copyright (c) 2020 Marak Squires
 @graphql-codegen/add, Copyright (c) 2016 Dotan Simha;
-@graphql-codegen/cli,  Copyright (c) 2016 Dotan Simha;
-@graphql-codegen/client-preset,Copyright (c) 2016 Dotan Simha;
+@graphql-codegen/cli, Copyright (c) 2016 Dotan Simha;
 @graphql-codegen/fragment-matcher, Copyright (c) 2016 Dotan Simha;
-@graphql-codegen/import-types-preset, Copyright (c) 2016 Dotan Simha;
 @graphql-codegen/schema-ast, Copyright (c) 2016 Dotan Simha;
-@graphql-codegen/typescript-msw, Copyright (c) 2016 Dotan Simha;
+@graphql-codegen/typed-document-node, Copyright (c) 2016 Dotan Simha;
 @graphql-codegen/typescript-operations, Copyright (c) 2016 Dotan Simha;
 @graphql-codegen/typescript-resolvers, Copyright (c) 2016 Dotan Simha;
 @graphql-codegen/typescript, Copyright (c) 2016 Dotan Simha;
 @graphql-eslint/eslint-plugin, Copyright (c) 2022 Dimitri POSTOLOV
 @graphql-tools/jest-transform, Copyright (c) 2020 The Guild, Inc.
-@testing-library/jest-dom, Copyright (c) 2017 Kent C. Dodds;
-@testing-library/react-hooks, Copyright (c) 2019 Michael Peyper;
-@testing-library/react, Copyright (c) 2017 Kent C. Dodds;
-@testing-library/user-event, Copyright (c) 2020 Giorgio Polvara;
+@graphql-tools/mock, Copyright (c) 2020 The Guild, Inc.
+@graphql-tools/schema, Copyright (c) 2020 The Guild, Inc.
+@testing-library/dom, Copyright (c) 2017 Kent C. Dodds
+@testing-library/jest-dom, Copyright (c) 2017 Kent C. Dodds
+@testing-library/react-hooks, Copyright (c) 2019 Michael Peyper
+@testing-library/react, Copyright (c) 2017 Kent C. Dodds
+@testing-library/user-event,  Copyright (c) 2020 Giorgio Polvara
 @types/jest, Copyright (c) Microsoft Corporation.
 @types/lodash, Copyright (c) Microsoft Corporation.
+@types/node, Copyright (c) Microsoft Corporation.
 @types/react-dom, Copyright (c) Microsoft Corporation.
 @types/react-router-dom, Copyright (c) Microsoft Corporation.
 @types/react, Copyright (c) Microsoft Corporation.
 @types/styled-components, Copyright (c) Microsoft Corporation.
 @types/uuid, Copyright (c) Microsoft Corporation.
-@typescript-eslint/eslint-plugin, Copyright (c) 2019 typescript-eslint and other contributors
-babel-jest, Copyright (c) Meta Platforms, Inc. and affiliates.
 babel-plugin-i18next-extract, Copyright 2019 Gilbert Gilb's <gilbsgilbert@gmail.com>
 babel-plugin-styled-components, Copyright (c) 2016-present Vladimir Danchenkov and Maximilian Stoiber
-core-js, Copyright (c) 2014-2023 Denis Pushkarev
-eslint-plugin-jest-dom, Copyright (c) 2019 Ben Monro;
+core-js, Copyright (c) 2014-2024 Denis Pushkarev
+eslint-plugin-no-autofix, Copyright (c) 2018 薛定谔的猫
 eslint-plugin-notice, Copyright (c) 2017 Nick Deis
-eslint-plugin-testing-library, Copyright (c) 2019 Mario Beltrán Alarcón
-eslint-plugin-unused-imports,
-eslint, Copyright OpenJS Foundation and other contributors, <www.openjsf.org>
 graphql-tag, Copyright (c) 2021 Apollo Graph, Inc. (Formerly Meteor Development Group, Inc.)
 graphql, Copyright (c) GraphQL Contributors
+history, Copyright (c) React Training 2016-2020. Copyright (c) Remix Software 2020-2021
 husky, Copyright (c) 2021 typicode
+i18next, Copyright (c) 2022 i18next
 is-ci, Copyright (c) 2016-2021 Thomas Watson Steen
-jest-environment-jsdom, Copyright (c) Facebook, Inc. and its affiliates.
+jest-environment-jsdom, Copyright (c) Meta Platforms, Inc. and affiliates.
 jest-fail-on-console, Copyright (c) 2022 Valentin Hervieu
-jest-styled-components, Copyright (c) 2017 Michele Bertoli
-jest, Copyright (c) Facebook, Inc. and its affiliates.
+jest-styled-components, Copyright (c) 2017 - present Michele Bertoli
+jest, Copyright (c) Meta Platforms, Inc. and affiliates.
 lodash, Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
-moment-timezone, Copyright (c) JS Foundation and other contributors
-moment, Copyright (c) JS Foundation and other contributors
 msw, Copyright (c) 2018–present Artem Zakharchenko
-node-fetch, Copyright (c) 2016 David Frank
 react-dom, Copyright (c) Facebook, Inc. and its affiliates.
-react-i18next, Copyright (c) 2022 i18next
+react-i18next, Copyright (c) 2023 i18next
 react-router-dom, Copyright (c) React Training 2015-2019. Copyright (c) Remix Software 2020-2022
 react-test-renderer, Copyright (c) Facebook, Inc. and its affiliates.
 react, Copyright (c) Facebook, Inc. and its affiliates.
 styled-components, Copyright (c) 2016-present Glen Maddern and Maximilian Stoiber
+ts-node, Copyright (c) 2014 Blake Embrey (hello@blakeembrey.com)
 uuid, Copyright (c) 2010-2020 Robert Kieffer and other contributors
 
 MIT License
@@ -73,23 +68,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-
-BSD 2-Clause "Simplified" License (BSD-2-Clause) applies to:
-
-@typescript-eslint/parser, Copyright JS Foundation and other contributors, https://js.foundation
-
-Copyright (c) <year> <owner>
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
@@ -341,9 +319,27 @@ You should also get your employer (if you work as a programmer) or school, if an
 
 
 
+BSD 2-Clause "Simplified" License (BSD-2-Clause) applies to:
+
+dotenv, Copyright (c) 2015, Scott Motte. All rights reserved.
+
+Copyright (c) <year> <owner>
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+
 Apache License 2.0 (Apache-2.0) applies to:
 
 jest-junit, Copyright 2019 Jason Palmer
+npm-check-updates, Copyright 2013 Tomas Junnonen
 
 Apache License
 Version 2.0, January 2004
