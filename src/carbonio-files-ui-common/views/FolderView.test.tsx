@@ -143,7 +143,7 @@ describe('Folder View', () => {
 			).toBeVisible();
 		});
 
-		test.skip('Move action close the displayer if node is removed from the main list', async () => {
+		test('Move action close the displayer if node is removed from the main list', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;

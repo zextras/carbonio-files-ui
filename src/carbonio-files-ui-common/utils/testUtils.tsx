@@ -325,11 +325,11 @@ export async function triggerLoadMore(): Promise<void> {
 	);
 }
 
-export function triggerListLoadMore(): void {
+export function triggerListLoadMore(callsIndex?: number): void {
 	const { calls, instances } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>)
 		.mock;
 
-	const [onChange] = calls[calls.length - 1];
+	const [onChange] = calls[callsIndex ?? calls.length - 1];
 	const instance = instances[instances.length - 1];
 	// trigger the intersection on the observed element
 	act(() => {

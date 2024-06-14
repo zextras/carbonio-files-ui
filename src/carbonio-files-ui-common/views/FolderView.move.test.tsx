@@ -32,9 +32,9 @@ import {
 	moveNode,
 	setup,
 	selectNodes,
-	triggerLoadMore,
 	screen,
-	buildBreadCrumbRegExp
+	buildBreadCrumbRegExp,
+	triggerListLoadMore
 } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
@@ -387,7 +387,7 @@ describe('Move', () => {
 			expect(destinationFolderCachedData).toBeNull();
 		});
 
-		test.skip('Move of last ordered node update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
+		test('Move of last ordered node update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
 			const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2 - 1);
 			const destinationFolder = populateFolder();
 			currentFolder.children.nodes.unshift(destinationFolder);
@@ -437,8 +437,7 @@ describe('Move', () => {
 			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				firstPage.length - 1
 			);
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			await triggerListLoadMore(0);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(secondPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();

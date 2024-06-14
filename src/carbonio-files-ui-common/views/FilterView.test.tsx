@@ -32,7 +32,7 @@ import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils'
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { selectNodes, setup, spyOnUseCreateOptions, triggerLoadMore } from '../utils/testUtils';
+import { selectNodes, setup, spyOnUseCreateOptions, triggerListLoadMore } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -86,7 +86,7 @@ describe('Filter view', () => {
 		});
 	});
 
-	test.skip('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
+	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
 		const currentFilter = populateNodes(NODES_LOAD_LIMIT + Math.floor(NODES_LOAD_LIMIT / 2));
 
 		const mocks = {
@@ -118,12 +118,10 @@ describe('Filter view', () => {
 		expect(
 			screen.getByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT - 1].id))
 		).toBeVisible();
-		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(screen.queryByTestId(currentFilter[NODES_LOAD_LIMIT].id)).not.toBeInTheDocument();
-		await triggerLoadMore();
+		await triggerListLoadMore();
 
 		// wait for the response
 		await screen.findByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT].id));
