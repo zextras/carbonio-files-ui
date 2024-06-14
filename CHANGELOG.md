@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/zextras/carbonio-files-ui/compare/v2.7.1...v2.8.0) (2024-06-14)
+
+
+### Features
+
+* hide Docs and Preview features when not available ([7d64181](https://github.com/zextras/carbonio-files-ui/commit/7d64181c20ff3e2e2e7f7238bf40a594cddfedba)), closes [#335](https://github.com/zextras/carbonio-files-ui/issues/335)
+* refresh data on update view ([338b008](https://github.com/zextras/carbonio-files-ui/commit/338b00823df6f09e3fb03506bdb954497c2b961c)), closes [#343](https://github.com/zextras/carbonio-files-ui/issues/343)
+
+
+### Bug Fixes
+
+* add modal manager to integrations ([27d001e](https://github.com/zextras/carbonio-files-ui/commit/27d001ea8d262e21cff7782745e68cfcfbc8dd1c)), closes [#352](https://github.com/zextras/carbonio-files-ui/issues/352)
+* localize dates with user language and browser timezone ([a9dbf0c](https://github.com/zextras/carbonio-files-ui/commit/a9dbf0cb0c78457091f325cc5329a62a755fadf7)), closes [#351](https://github.com/zextras/carbonio-files-ui/issues/351)
+* update list item double click logic ([e51e4f9](https://github.com/zextras/carbonio-files-ui/commit/e51e4f9ed412756eb132e71e0b99f211bfc3658e)), closes [#358](https://github.com/zextras/carbonio-files-ui/issues/358)
+
 ### [2.7.1](https://github.com/zextras/carbonio-files-ui/compare/v2.7.0...v2.7.1) (2024-05-06)
 
 
