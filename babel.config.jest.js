@@ -10,11 +10,12 @@ module.exports = {
 			'@babel/preset-env',
 			{
 				useBuiltIns: 'usage',
-				corejs: 3.32
+				corejs: 3.32,
+				modules: 'commonjs'
 			}
 		],
 		'@babel/preset-react',
 		'@babel/preset-typescript'
 	],
-	plugins: ['babel-plugin-styled-components']
+	plugins: ['babel-plugin-styled-components', 'babel-plugin-transform-import-meta']
 };
