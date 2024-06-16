@@ -133,7 +133,8 @@ export const UPLOAD_STATUS_CODE = {
 } as const;
 
 export const ERROR_CODE = {
-	overQuotaReached: 'OVER_QUOTA_REACHED'
+	overQuotaReached: 'OVER_QUOTA_REACHED',
+	nodeWriteError: 'NODE_WRITE_ERROR'
 } as const;
 
 // endpoint

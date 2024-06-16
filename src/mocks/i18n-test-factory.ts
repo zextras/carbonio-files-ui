@@ -17,11 +17,19 @@ export default class I18nTestFactory {
 				lng: 'en',
 				fallbackLng: 'en',
 				debug: false,
-
 				interpolation: {
 					escapeValue: false // not needed for react as it escapes by default
 				},
-				resources: { en: { translation: {} } }
+				resources: {
+					en: {
+						translation: {
+							errorCode: {
+								code: 'Something went wrong',
+								code_OVER_QUOTA_REACHED: 'Error! Copy action failed'
+							}
+						}
+					}
+				}
 			});
 		return newI18n;
 	}

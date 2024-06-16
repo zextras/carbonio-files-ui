@@ -8,6 +8,7 @@ import { useEffect, useMemo } from 'react';
 
 import { ApolloError } from '@apollo/client';
 import { SnackbarProps, useSnackbar } from '@zextras/carbonio-design-system';
+import { first } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { captureException } from '../../utils/utils';
@@ -31,10 +32,7 @@ export function useErrorHandler(
 	const createSnackbar = useSnackbar();
 
 	const isOverQuotaReached = useMemo(
-		() =>
-			error?.graphQLErrors.some(
-				(err) => err?.extensions?.errorCode === ERROR_CODE.overQuotaReached
-			),
+		() => first(error?.graphQLErrors)?.extensions?.errorCode === ERROR_CODE.overQuotaReached,
 		[error?.graphQLErrors]
 	);
 
