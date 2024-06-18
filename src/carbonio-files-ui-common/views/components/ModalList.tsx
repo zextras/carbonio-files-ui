@@ -156,10 +156,8 @@ export const ModalList: React.VFC<ModalListProps> = ({
 						setActiveNode={setActiveNode}
 						compact
 						navigateTo={navigateTo}
-						loading={loading}
 						hasMore={hasMore}
 						loadMore={loadMore}
-						ref={listRef}
 					/>
 				) : (
 					!loading && (

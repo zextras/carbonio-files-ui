@@ -93,51 +93,11 @@ describe('Displayer', () => {
 				expect(screen.getByRole('button', { name: /save and leave/i })).toBeVisible();
 			});
 
-			// TODO: re-enable when custom message field will be available again
-			test.skip('on custom message field, click on other tab show dialog to warn user about unsaved changes not savable', async () => {
+			test('cancel action leaves fields valued and navigation is kept on sharing tab', async () => {
 				const node = populateNode();
 				node.permissions.can_share = true;
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
-				const customText = faker.lorem.words();
-				const mocks = {
-					Query: {
-						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
-						getLinks: mockGetLinks(node.links),
-						getCollaborationLinks: mockGetCollaborationLinks([])
-					}
-				} satisfies Partial<Resolvers>;
-
-				const { user } = setup(<Displayer translationKey="No.node" />, {
-					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
-					mocks
-				});
-
-				const input = await screen.findByRole('textbox', {
-					name: /add a custom message to this notification/i
-				});
-				await user.type(input, customText);
-				await user.click(screen.getByText(/details/i));
-				await screen.findByText(/some changes cannot be saved/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
-				});
-				expect(screen.getByText(/some changes cannot be saved/i)).toBeVisible();
-				expect(screen.getByText(/Do you want to leave the page without saving\?/i)).toBeVisible();
-				expect(screen.getByText(/All unsaved changes will be lost/i)).toBeVisible();
-				expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
-				expect(screen.getByRole('button', { name: /leave anyway/i })).toBeVisible();
-				expect(screen.queryByRole('button', { name: /save and leave/i })).not.toBeInTheDocument();
-			});
-
-			// TODO: re-enable when custom message field will be available again
-			test.skip('with both fields valued, click on other tab show dialog to warn user about unsaved changes', async () => {
-				const node = populateNode();
-				node.permissions.can_share = true;
-				node.permissions.can_write_folder = true;
-				node.permissions.can_write_file = true;
-				const customText = faker.lorem.words();
 				const userAccount = populateUser();
 				// set email to lowercase to be compatible with the contacts regexp
 				userAccount.email = userAccount.email.toLowerCase();
@@ -167,63 +127,6 @@ describe('Displayer', () => {
 					ICON_REGEXP.shareCanRead
 				);
 				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
-				await user.type(
-					screen.getByRole('textbox', { name: /add a custom message to this notification/i }),
-					customText
-				);
-				await user.click(screen.getByText(/details/i));
-				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
-				});
-				expect(screen.getByText(/you have unsaved changes/i)).toBeVisible();
-				expect(screen.getByText(/Do you want to leave the page without saving\?/i)).toBeVisible();
-				expect(screen.getByText(/All unsaved changes will be lost/i)).toBeVisible();
-				expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
-				expect(screen.getByRole('button', { name: /leave anyway/i })).toBeVisible();
-				expect(screen.getByRole('button', { name: /save and leave/i })).toBeVisible();
-			});
-
-			test.skip('cancel action leaves fields valued and navigation is kept on sharing tab', async () => {
-				const node = populateNode();
-				node.permissions.can_share = true;
-				node.permissions.can_write_folder = true;
-				node.permissions.can_write_file = true;
-				const customText = faker.lorem.words();
-				const userAccount = populateUser();
-				// set email to lowercase to be compatible with the contacts regexp
-				userAccount.email = userAccount.email.toLowerCase();
-				// mock soap fetch implementation
-				mockedSoapFetch.mockReturnValue({
-					match: [populateGalContact(userAccount.full_name, userAccount.email)]
-				});
-				const mocks = {
-					Query: {
-						getNode: mockGetNode({ getNode: [node], getShares: [node] }),
-						getLinks: mockGetLinks(node.links),
-						getCollaborationLinks: mockGetCollaborationLinks([]),
-						getAccountByEmail: mockGetAccountByEmail(userAccount)
-					}
-				} satisfies Partial<Resolvers>;
-
-				const { user } = setup(<Displayer translationKey="No.node" />, {
-					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
-					mocks
-				});
-
-				const chipInput = await screen.findByRole('textbox', { name: /add new people or group/i });
-				await user.type(chipInput, userAccount.full_name[0]);
-				await screen.findByText(userAccount.email);
-				await user.click(screen.getByText(userAccount.email));
-				await within(screen.getByTestId(SELECTORS.addShareInputContainer)).findByTestId(
-					ICON_REGEXP.shareCanRead
-				);
-				expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
-				await user.type(
-					screen.getByRole('textbox', { name: /add a custom message to this notification/i }),
-					customText
-				);
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
 				act(() => {
@@ -240,9 +143,6 @@ describe('Displayer', () => {
 						ICON_REGEXP.shareCanRead
 					)
 				).toBeVisible();
-				expect(
-					screen.getByRole('textbox', { name: /add a custom message to this notification/i })
-				).toHaveDisplayValue(customText);
 				expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 			});
 
