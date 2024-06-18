@@ -325,7 +325,7 @@ export async function triggerLoadMore(): Promise<void> {
 	);
 }
 
-export function triggerListLoadMore(callsIndex?: number): void {
+export function triggerListLoadMore(callsIndex?: number, isIntersecting = true): void {
 	const { calls, instances } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>)
 		.mock;
 
@@ -338,7 +338,7 @@ export function triggerListLoadMore(callsIndex?: number): void {
 				{
 					target: screen.getByTestId('list-bottom-element'),
 					intersectionRatio: 0.5,
-					isIntersecting: true
+					isIntersecting
 				} as unknown as IntersectionObserverEntry
 			],
 			instance

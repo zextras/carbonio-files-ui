@@ -18,7 +18,7 @@ import { Node } from '../types/common';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes, mockUpdateNode } from '../utils/resolverMocks';
-import { renameNode, setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
+import { renameNode, setup, selectNodes, triggerListLoadMore } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -160,7 +160,7 @@ describe('Rename', () => {
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 		});
 
-		test.skip('Rename a node to an unordered position does not change cursor for pagination', async () => {
+		test('Rename a node to an unordered position does not change cursor for pagination', async () => {
 			// folder with 3 pages
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(populateNodes(NODES_LOAD_LIMIT * 3, 'File'));
@@ -247,7 +247,8 @@ describe('Rename', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			const listHeader = screen.getByTestId(SELECTORS.listHeader);
+			await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
 
 			let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 1]);
@@ -269,7 +270,7 @@ describe('Rename', () => {
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 2]);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			await triggerListLoadMore();
 			// wait for the load to complete (last element of second page is loaded)
 			await screen.findByTestId(SELECTORS.nodeItem(secondPage[secondPage.length - 1].id));
 			// updated item is still last element
@@ -278,7 +279,8 @@ describe('Rename', () => {
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 			expect(screen.getByTestId(SELECTORS.nodeItem(secondCursor.id))).toBe(nodes[nodes.length - 2]);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			await triggerListLoadMore(undefined, false);
+			await triggerListLoadMore();
 			// wait for the load to complete (last element of third page is loaded)
 			await screen.findByTestId(SELECTORS.nodeItem((last(thirdPage) as Node).id));
 			nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
@@ -293,7 +295,8 @@ describe('Rename', () => {
 				nodes[nodes.length - 1]
 			);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			await triggerListLoadMore(undefined, false);
+			await triggerListLoadMore();
 			// wait for the load to complete (last element of children is loaded)
 			await screen.findByTestId(
 				SELECTORS.nodeItem(
@@ -307,7 +310,7 @@ describe('Rename', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 		});
 
-		test.skip('Rename of last ordered node to unordered update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
+		test('Rename of last ordered node to unordered update cursor to be last ordered node and trigger load of the next page with the new cursor', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(
 				sortNodes(populateNodes(NODES_LOAD_LIMIT * 2, 'File'), NODES_SORT_DEFAULT) as Node[]
@@ -359,8 +362,7 @@ describe('Rename', () => {
 			expect(screen.queryByText(nodeToRename.name)).not.toBeInTheDocument();
 			expect(screen.getByText(newName)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			await triggerListLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
@@ -370,7 +372,7 @@ describe('Rename', () => {
 			expect(screen.getByTestId(SELECTORS.nodeItem(nodeToRename.id))).toBe(last(nodeItems));
 		});
 
-		test.skip('Rename of last ordered node to unordered and move to trash of all remaining ordered nodes triggers load of next page', async () => {
+		test('Rename of last ordered node to unordered and move to trash of all remaining ordered nodes triggers load of next page', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(
 				sortNodes(populateNodes(NODES_LOAD_LIMIT * 2, 'File'), NODES_SORT_DEFAULT) as Node[]
@@ -435,8 +437,7 @@ describe('Rename', () => {
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			await triggerListLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument();

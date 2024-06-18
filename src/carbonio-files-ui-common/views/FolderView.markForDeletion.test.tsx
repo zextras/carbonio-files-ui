@@ -18,7 +18,7 @@ import { Node } from '../types/common';
 import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { NodeSort } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes } from '../utils/resolverMocks';
-import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
+import { setup, selectNodes, triggerListLoadMore } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -274,7 +274,7 @@ describe('Mark for deletion - trash', () => {
 			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(3);
 		});
 
-		test.skip('Mark for deletion of last ordered node trigger load of the new page with the new cursor', async () => {
+		test('Mark for deletion of last ordered node trigger load of the new page with the new cursor', async () => {
 			const currentFolder = populateFolder(NODES_LOAD_LIMIT * 2);
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;
@@ -318,7 +318,7 @@ describe('Mark for deletion - trash', () => {
 			await user.click(moveToTrashAction);
 			await screen.findByText(/Item moved to trash/i);
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
-			await triggerLoadMore();
+			await triggerListLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(secondPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();

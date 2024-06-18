@@ -41,7 +41,7 @@ import {
 } from '../mocks/mockUtils';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
-import { setup, spyOnUseCreateOptions, triggerLoadMore, UserEvent } from '../utils/testUtils';
+import { setup, spyOnUseCreateOptions, triggerListLoadMore, UserEvent } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -347,7 +347,7 @@ describe('Create docs file', () => {
 		expect(nodes[1]).toBe(nodeItem);
 	});
 
-	test.skip('Create docs file add file node as right sorted position of the list if neighbor is already loaded but unordered', async () => {
+	test('Create docs file add file node as right sorted position of the list if neighbor is already loaded but unordered', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.children = populateNodePage(populateNodes(NODES_LOAD_LIMIT, 'Folder'));
 		sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);
@@ -409,7 +409,8 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		const listHeader = screen.getByTestId(SELECTORS.listHeader);
+		await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
 		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 
@@ -449,7 +450,7 @@ describe('Create docs file', () => {
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(SELECTORS.nodeItem(node2.id)));
 		// trigger load more
-		await triggerLoadMore();
+		await triggerListLoadMore();
 		// wait for the load to be completed (node3 is now loaded)
 		await screen.findByTestId(SELECTORS.nodeItem(node3.id));
 		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
