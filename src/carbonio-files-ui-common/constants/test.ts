@@ -77,7 +77,9 @@ export const ICON_REGEXP = {
 	queryLoading: 'icon: Refresh',
 	revoke: 'icon: SlashOutline',
 	refreshQuota: 'icon: Refresh',
-	alertQuota: 'icon: CloseCircleOutline'
+	alertQuota: 'icon: CloseCircleOutline',
+	openedAdvancedFilters: 'icon: ChevronUp',
+	closedAdvancedFilters: 'icon: ChevronDown'
 } as const;
 
 export const SELECTORS = {

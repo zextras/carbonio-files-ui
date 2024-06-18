@@ -65,6 +65,7 @@ export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
 }) => {
 	const [t] = useTranslation();
 	const [filterValue, setFilterValue] = useState<string | null>(null);
+	const [icon, setIcon] = useState('ChevronDown');
 
 	const itemTypeOnType = useCallback<NonNullable<ChipInputProps['onInputType']>>((ev) => {
 		if (ev.key.length === 1 || ev.key === 'Delete' || ev.key === 'Backspace') {
@@ -135,10 +136,14 @@ export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
 		);
 	}, [itemTypeChipInputValue.length, filterValue, t]);
 
+	const onOptionsDisplayChange = useCallback((isVisible) => {
+		setIcon(isVisible ? 'ChevronUp' : 'ChevronDown');
+	}, []);
+
 	return (
 		<ChipInput
 			placeholder={t('search.advancedSearch.modal.itemType.label', 'Item type')}
-			background="gray5"
+			background={'gray5'}
 			confirmChipOnBlur={false}
 			value={itemTypeChipInputValue}
 			separators={[]}
@@ -147,9 +152,10 @@ export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
 			onChange={itemTypeOnChange}
 			onInputType={itemTypeOnType}
 			options={dropdownItems}
-			icon={'ChevronDown'}
+			icon={icon}
 			singleSelection
 			requireUniqueChips
+			onOptionsDisplayChange={onOptionsDisplayChange}
 		/>
 	);
 };

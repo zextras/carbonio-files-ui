@@ -40,8 +40,7 @@ describe('Advanced search modal content', () => {
 				filters={filters}
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
-			/>,
-			{ mocks: {} }
+			/>
 		);
 		expect(screen.getByText(/advanced filters/i)).toBeVisible();
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
@@ -116,8 +115,7 @@ describe('Advanced search modal content', () => {
 				filters={filters}
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
-			/>,
-			{ mocks: {} }
+			/>
 		);
 		expect(screen.getByText(/advanced filters/i)).toBeVisible();
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
@@ -205,8 +203,7 @@ describe('Advanced search modal content', () => {
 				filters={filters}
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
-			/>,
-			{ mocks: {} }
+			/>
 		);
 		// check values
 		// flag and shared switches are on
@@ -265,8 +262,7 @@ describe('Advanced search modal content', () => {
 				filters={filters}
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
-			/>,
-			{ mocks: {} }
+			/>
 		);
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
 		const searchButton = screen.getByRole('button', { name: /search/i });
@@ -289,8 +285,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
@@ -357,8 +352,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/^flagged/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -393,8 +387,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/^flagged/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -420,8 +413,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/^shared/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -456,8 +448,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/^shared/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -483,8 +474,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -510,8 +500,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -521,10 +510,10 @@ describe('Advanced search modal content', () => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByText(/home/i)).toBeInTheDocument();
-			expect(screen.getByText(/shared with me/i)).toBeInTheDocument();
-			expect(screen.getByText(/trash/i)).toBeInTheDocument();
-			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
+			expect(screen.getByText(/home/i)).toBeVisible();
+			expect(screen.getByText(/shared with me/i)).toBeVisible();
+			expect(screen.getByText(/trash/i)).toBeVisible();
+			expect(screen.getByText(/search also in contained folders/i)).toBeVisible();
 		});
 
 		test('selection of a folder inside modal creates a chip for the selected folder', async () => {
@@ -536,8 +525,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -579,8 +567,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -663,8 +650,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -707,8 +693,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -830,8 +815,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
@@ -878,8 +862,7 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>,
-				{ mocks: {} }
+				/>
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
@@ -938,6 +921,26 @@ describe('Advanced search modal content', () => {
 					avatarIcon: 'Folder'
 				})
 			});
+		});
+
+		test('should change icon when dropdown is visible', async () => {
+			const filters = {};
+			const closeAction = jest.fn();
+			const searchAdvancedFilters = jest.fn();
+			const { user } = setup(
+				<AdvancedSearchModalContent
+					filters={filters}
+					closeAction={closeAction}
+					searchAdvancedFilters={searchAdvancedFilters}
+				/>
+			);
+			const inputElement = screen.getByRole('textbox', {
+				name: /item type/i
+			});
+			expect(screen.getByTestId(ICON_REGEXP.closedAdvancedFilters));
+			await user.click(inputElement);
+			await screen.findByTestId(SELECTORS.dropdownList);
+			expect(screen.getByTestId(ICON_REGEXP.openedAdvancedFilters));
 		});
 	});
 });
