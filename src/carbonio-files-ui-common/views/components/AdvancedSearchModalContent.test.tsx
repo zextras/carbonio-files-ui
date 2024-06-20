@@ -40,7 +40,8 @@ describe('Advanced search modal content', () => {
 				filters={filters}
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
-			/>
+			/>,
+			{ mocks: {} }
 		);
 		expect(screen.getByText(/advanced filters/i)).toBeVisible();
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
@@ -115,7 +116,8 @@ describe('Advanced search modal content', () => {
 				filters={filters}
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
-			/>
+			/>,
+			{ mocks: {} }
 		);
 		expect(screen.getByText(/advanced filters/i)).toBeVisible();
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
@@ -203,7 +205,8 @@ describe('Advanced search modal content', () => {
 				filters={filters}
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
-			/>
+			/>,
+			{ mocks: {} }
 		);
 		// check values
 		// flag and shared switches are on
@@ -262,7 +265,8 @@ describe('Advanced search modal content', () => {
 				filters={filters}
 				closeAction={closeAction}
 				searchAdvancedFilters={searchAdvancedFilters}
-			/>
+			/>,
+			{ mocks: {} }
 		);
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
 		const searchButton = screen.getByRole('button', { name: /search/i });
@@ -285,7 +289,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
@@ -352,7 +357,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/^flagged/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -387,7 +393,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/^flagged/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -413,7 +420,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/^shared/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -448,7 +456,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/^shared/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
@@ -474,7 +483,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -500,7 +510,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -525,7 +536,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -567,7 +579,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -650,7 +663,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -693,7 +707,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			expect(screen.getByText(/select a folder/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
@@ -815,7 +830,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
@@ -862,7 +878,8 @@ describe('Advanced search modal content', () => {
 					filters={filters}
 					closeAction={closeAction}
 					searchAdvancedFilters={searchAdvancedFilters}
-				/>
+				/>,
+				{ mocks: {} }
 			);
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
@@ -937,10 +954,10 @@ describe('Advanced search modal content', () => {
 			const inputElement = screen.getByRole('textbox', {
 				name: /item type/i
 			});
-			expect(screen.getByTestId(ICON_REGEXP.closedAdvancedFilters));
+			expect(screen.getByTestId(ICON_REGEXP.closedAdvancedFilters)).toBeVisible();
 			await user.click(inputElement);
 			await screen.findByTestId(SELECTORS.dropdownList);
-			expect(screen.getByTestId(ICON_REGEXP.openedAdvancedFilters));
+			expect(screen.getByTestId(ICON_REGEXP.openedAdvancedFilters)).toBeVisible();
 		});
 	});
 });
