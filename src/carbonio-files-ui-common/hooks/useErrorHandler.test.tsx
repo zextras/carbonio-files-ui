@@ -42,7 +42,7 @@ describe('useErrorHandler', () => {
 			within(snackbar).getByText(
 				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
 			)
-		);
+		).toBeVisible();
 		expect(within(snackbar).getByText(/Ok/i));
 		act(() => {
 			jest.runOnlyPendingTimers();
@@ -51,7 +51,7 @@ describe('useErrorHandler', () => {
 			within(snackbar).getByText(
 				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
 			)
-		);
+		).toBeVisible();
 	});
 
 	it('should show a temporary snackbar if the error is not the over quota error', async () => {
@@ -61,7 +61,7 @@ describe('useErrorHandler', () => {
 		);
 		setup(<TestComponent err={err} />);
 		const snackbar = await screen.findByTestId('snackbar');
-		expect(within(snackbar).getByText(/Error! Copy permissions failed/i));
+		expect(within(snackbar).getByText(/Error! Copy permissions failed/i)).toBeVisible();
 		// close snackbar
 		act(() => {
 			jest.runOnlyPendingTimers();
