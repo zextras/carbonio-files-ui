@@ -25,7 +25,9 @@ export default class I18nTestFactory {
 						translation: {
 							errorCode: {
 								code: 'Something went wrong',
-								code_OVER_QUOTA_REACHED: 'Error! Copy action failed'
+								code_OVER_QUOTA_REACHED:
+									'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
+								code_NODE_WRITE_ERROR: 'Error! Copy permissions failed'
 							}
 						}
 					}

@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act, fireEvent, waitFor } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 import { map } from 'lodash';
 import { graphql, HttpResponse } from 'msw';
 
@@ -264,18 +264,23 @@ describe('Copy', () => {
 						data: {
 							copyNodes: [{ ...nodesToCopy[0], id: 'node1-copy', name: 'node copied' }]
 						},
-						errors: [generateError('Error! Copy action failed', ERROR_CODE.overQuotaReached)]
+						errors: [
+							generateError(
+								'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
+								ERROR_CODE.overQuotaReached
+							)
+						]
 					})
 				)
 			);
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${localRoot.id}`]
 			});
-			await waitFor(async () =>
-				selectNodes(
-					map(nodesToCopy, (node) => node.id),
-					user
-				)
+			await screen.findByText(nodesToCopy[0].name);
+			await screen.findByText(nodesToCopy[1].name);
+			await selectNodes(
+				map(nodesToCopy, (node) => node.id),
+				user
 			);
 			await user.rightClick(screen.getByText(nodesToCopy[0].name));
 			await screen.findByTestId(SELECTORS.dropdownList);
@@ -286,7 +291,11 @@ describe('Copy', () => {
 			});
 			await user.click(screen.getByRole('button', { name: /copy/i }));
 			const snackbar = await screen.findByTestId('snackbar');
-			expect(within(snackbar).getByText(/Error! Copy action failed/i)).toBeVisible();
+			expect(
+				within(snackbar).getByText(
+					'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
+				)
+			).toBeVisible();
 			const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByText(nodesToCopy[0].name)).toBeVisible();
 			expect(screen.getByText(nodesToCopy[1].name)).toBeVisible();

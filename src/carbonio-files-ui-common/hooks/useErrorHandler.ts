@@ -44,7 +44,7 @@ export function useErrorHandler(
 				createSnackbar({
 					disableAutoHide: isOverQuotaReached,
 					key: new Date().toLocaleString(),
-					type: isOverQuotaReached ? 'error' : type,
+					severity: isOverQuotaReached ? 'error' : type,
 					label:
 						decodeError(error, t) ??
 						t('errorCode.code', 'Something went wrong', { context: 'Generic' }),
