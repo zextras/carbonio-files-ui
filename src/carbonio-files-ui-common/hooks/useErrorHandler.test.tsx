@@ -43,7 +43,7 @@ describe('useErrorHandler', () => {
 				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
 			)
 		).toBeVisible();
-		expect(within(snackbar).getByText(/Ok/i));
+		expect(within(snackbar).getByText(/Ok/i)).toBeVisible();
 		act(() => {
 			jest.runOnlyPendingTimers();
 		});
