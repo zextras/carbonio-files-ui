@@ -17,7 +17,7 @@ import { populateFolder } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { generateError, setup, triggerLoadMore } from '../utils/testUtils';
+import { generateError, setup, triggerListLoadMore } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -116,8 +116,6 @@ describe('Get children', () => {
 				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT - 1] as Node).id)
 			)
 		).toBeVisible();
-		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(
@@ -126,14 +124,14 @@ describe('Get children', () => {
 			)
 		).not.toBeInTheDocument();
 
-		await triggerLoadMore();
+		triggerListLoadMore();
 
 		// wait for the response
 		await screen.findByTestId(
 			SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
 		);
 
-		// now all elements are loaded so last children should be visible and no loading icon should be rendered
+		// now all elements are loaded so last children should be visible
 		expect(
 			screen.getByTestId(
 				SELECTORS.nodeItem(
@@ -141,6 +139,5 @@ describe('Get children', () => {
 				)
 			)
 		).toBeVisible();
-		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 });

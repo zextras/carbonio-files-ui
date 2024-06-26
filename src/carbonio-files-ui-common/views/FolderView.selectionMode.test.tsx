@@ -18,7 +18,7 @@ import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
+import { setup, selectNodes, triggerListLoadMore } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -118,7 +118,7 @@ describe('Folder View Selection mode', () => {
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 		expect(screen.getByText(/deselect all/i)).toBeVisible();
 		expect(screen.queryByText(/\bselect all/i)).not.toBeInTheDocument();
-		await triggerLoadMore();
+		triggerListLoadMore();
 		await screen.findByText(secondPage[0].name);
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 		expect(screen.queryByText(/deselect all/i)).not.toBeInTheDocument();

@@ -27,7 +27,7 @@ import {
 	generateError,
 	setup,
 	spyOnUseCreateOptions,
-	triggerLoadMore,
+	triggerListLoadMore,
 	UserEvent
 } from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
@@ -206,7 +206,8 @@ describe('Create folder', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		const listHeader = screen.getByTestId(SELECTORS.listHeader);
+		await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
 		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 
@@ -247,7 +248,7 @@ describe('Create folder', () => {
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(SELECTORS.nodeItem(node2.id)));
 		// trigger load more
-		await triggerLoadMore();
+		triggerListLoadMore();
 		// wait for the load to be completed (node3 is now loaded)
 		await screen.findByTestId(SELECTORS.nodeItem(node3.id));
 		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
