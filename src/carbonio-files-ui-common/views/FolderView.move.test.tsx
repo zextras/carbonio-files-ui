@@ -32,9 +32,9 @@ import {
 	moveNode,
 	setup,
 	selectNodes,
-	triggerLoadMore,
 	screen,
-	buildBreadCrumbRegExp
+	buildBreadCrumbRegExp,
+	triggerListLoadMore
 } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
@@ -437,8 +437,7 @@ describe('Move', () => {
 			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				firstPage.length - 1
 			);
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			triggerListLoadMore(0);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(secondPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();

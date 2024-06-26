@@ -769,7 +769,6 @@ export const List: React.VFC<ListProps> = ({
 									activeNodes={activeNode}
 									setActiveNode={setActiveNodeHandler}
 									navigateTo={navigateToFolder}
-									loading={loading}
 									hasMore={hasMore}
 									loadMore={loadMore}
 									draggable

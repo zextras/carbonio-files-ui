@@ -32,7 +32,12 @@ import {
 	mockGetPath,
 	mockMoveNodes
 } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
+import {
+	buildBreadCrumbRegExp,
+	setup,
+	selectNodes,
+	triggerListLoadMore
+} from '../../utils/testUtils';
 
 describe('Move Nodes Modal', () => {
 	function resetToDefault(): void {
@@ -549,15 +554,12 @@ describe('Move Nodes Modal', () => {
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			NODES_LOAD_LIMIT
 		);
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeInTheDocument();
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-		await triggerLoadMore();
+		triggerListLoadMore();
 		await screen.findByText(
 			(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as File | Folder).name
 		);
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
-		expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 });
