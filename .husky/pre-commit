@@ -14,5 +14,6 @@ fi
 if [ "$JEST_RUN_ALL" ]; then
   npm test
 else
+  echo 'use JEST_RUN_ALL=true if you want to run all tests'
   npm test -- --changedSince=devel
 fi
