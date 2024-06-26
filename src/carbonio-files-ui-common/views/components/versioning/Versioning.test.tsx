@@ -1014,26 +1014,15 @@ describe('Versioning', () => {
 
 	it('should render the banner if the upload version fails for over quota', async () => {
 		const localRoot = populateLocalRoot();
-		const fileVersion1 = populateFile();
-		fileVersion1.parent = localRoot;
-		fileVersion1.permissions.can_write_file = true;
-		const fileVersion2 = incrementVersion(fileVersion1, true);
-		const dayOffset = 24 * 60 * 60 * 1000;
-		fileVersion1.updated_at = fileVersion2.updated_at - dayOffset;
-
-		fileVersion2.keep_forever = true;
-		fileVersion1.keep_forever = false;
-
-		const version1 = getVersionFromFile(fileVersion1);
-		const version2 = getVersionFromFile(fileVersion2);
-
-		const versions = [version2 as FilesFile, version1 as FilesFile];
+		const fileVersion = populateFile();
+		fileVersion.parent = localRoot;
+		fileVersion.permissions.can_write_file = true;
 
 		const mocks = {
 			Query: {
 				getNode: mockGetNode({ getBaseNode: [localRoot] }),
 				getConfigs: mockGetConfigs(),
-				getVersions: mockGetVersions(versions)
+				getVersions: mockGetVersions([fileVersion])
 			}
 		} satisfies Partial<Resolvers>;
 
@@ -1043,21 +1032,21 @@ describe('Versioning', () => {
 				() => HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.overQuota })
 			),
 			graphql.query<GetVersionsQuery, GetVersionsQueryVariables>(GetVersionsDocument, () =>
-				HttpResponse.json({ data: { getVersions: [...versions] } })
+				HttpResponse.json({ data: { getVersions: [...[fileVersion]] } })
 			)
 		);
 
 		const { user } = setup(
 			<>
-				<Versioning node={fileVersion1} />
+				<Versioning node={fileVersion} />
 				<UploadView />
 			</>,
 			{ mocks }
 		);
-		await screen.findByText(getChipLabel(fileVersion1.last_editor));
+		await screen.findByText(getChipLabel(fileVersion.last_editor));
 		const uploadButton = await screen.findByRole('button', { name: /upload version/i });
 		await user.click(uploadButton);
-		const file = new File(['(⌐□_□)'], fileVersion1.name, { type: fileVersion1.mime_type });
+		const file = new File(['(⌐□_□)'], fileVersion.name, { type: fileVersion.mime_type });
 		const input = await screen.findByAltText(/Hidden file input/i);
 		await user.upload(input, file);
 		expect(await screen.findByText(/Quota exceeded/i)).toBeVisible();
