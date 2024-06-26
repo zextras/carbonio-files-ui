@@ -151,6 +151,8 @@ export const OwnerChipInput: React.VFC<OwnerChipInputProps> = ({
 			onChange={ownerOnChange}
 			onInputType={ownerOnType}
 			options={dropdownItems}
+			dropdownWidth={'fit-content'}
+			dropdownMaxWidth={'100vh'}
 		/>
 	);
 };
