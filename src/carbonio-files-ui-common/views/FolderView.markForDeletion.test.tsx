@@ -18,7 +18,7 @@ import { Node } from '../types/common';
 import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { NodeSort } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes } from '../utils/resolverMocks';
-import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
+import { setup, selectNodes, triggerListLoadMore } from '../utils/testUtils';
 
 jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
@@ -318,7 +318,7 @@ describe('Mark for deletion - trash', () => {
 			await user.click(moveToTrashAction);
 			await screen.findByText(/Item moved to trash/i);
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
-			await triggerLoadMore();
+			triggerListLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(secondPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();

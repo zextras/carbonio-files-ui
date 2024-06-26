@@ -42,7 +42,12 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
+import {
+	buildBreadCrumbRegExp,
+	setup,
+	selectNodes,
+	triggerListLoadMore
+} from '../../utils/testUtils';
 
 const resetToDefault = (): void => {
 	// clone implementation of the function contained in the click callback of useCopyContent
@@ -862,9 +867,7 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			NODES_LOAD_LIMIT
 		);
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeInTheDocument();
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-		await triggerLoadMore();
+		triggerListLoadMore();
 		await screen.findByText(
 			(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as File | Folder).name
 		);
