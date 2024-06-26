@@ -17,13 +17,13 @@ import { ERROR_CODE } from '../constants';
 import { generateError, screen, setup, within } from '../utils/testUtils';
 
 type Props = {
-	err: GraphQLError;
+	errors: Array<GraphQLError>;
 };
 
-const TestComponent = ({ err }: Props): React.JSX.Element => {
+const TestComponent = ({ errors }: Props): React.JSX.Element => {
 	useErrorHandler(
 		new ApolloError({
-			graphQLErrors: [err]
+			graphQLErrors: errors
 		}),
 		'COPY_NODES'
 	);
@@ -36,7 +36,7 @@ describe('useErrorHandler', () => {
 			'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
 			ERROR_CODE.overQuotaReached
 		);
-		setup(<TestComponent err={err} />);
+		setup(<TestComponent errors={[err]} />);
 		const snackbar = await screen.findByTestId('snackbar');
 		expect(
 			within(snackbar).getByText(
@@ -59,9 +59,34 @@ describe('useErrorHandler', () => {
 			'Error! Copy permissions failed',
 			ERROR_CODE.nodeWriteError
 		);
-		setup(<TestComponent err={err} />);
+		setup(<TestComponent errors={[err]} />);
 		const snackbar = await screen.findByTestId('snackbar');
 		expect(within(snackbar).getByText(/Error! Copy permissions failed/i)).toBeVisible();
+		// close snackbar
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
+		expect(screen.queryByTestId('snackbar')).not.toBeInTheDocument();
+		expect(screen.queryByText(/Error! Copy permissions failed/i)).not.toBeInTheDocument();
+	});
+
+	it('should show the snackbar for the first error if there are multiple error codes', async () => {
+		const errors: Array<GraphQLError> = [
+			generateError('Error! Copy permissions failed', ERROR_CODE.nodeWriteError),
+			generateError(
+				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
+				ERROR_CODE.overQuotaReached
+			)
+		];
+		setup(<TestComponent errors={errors} />);
+		const snackbar = await screen.findByTestId('snackbar');
+		expect(within(snackbar).getByText(/Error! Copy permissions failed/i)).toBeVisible();
+		// second error is not shown
+		expect(
+			screen.queryByText(
+				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
+			)
+		).not.toBeInTheDocument();
 		// close snackbar
 		act(() => {
 			jest.runOnlyPendingTimers();
