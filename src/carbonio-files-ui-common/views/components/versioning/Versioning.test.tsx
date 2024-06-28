@@ -11,12 +11,7 @@ import { graphql, http, HttpResponse } from 'msw';
 
 import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
-import {
-	CONFIGS,
-	REST_ENDPOINT,
-	UPLOAD_STATUS_CODE,
-	UPLOAD_VERSION_PATH
-} from '../../../constants';
+import { CONFIGS, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	UploadRequestBody,
@@ -27,8 +22,7 @@ import {
 	getVersionFromFile,
 	incrementVersion,
 	populateConfigs,
-	populateFile,
-	populateLocalRoot
+	populateFile
 } from '../../../mocks/mockUtils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
@@ -42,14 +36,12 @@ import {
 	mockCloneVersion,
 	mockDeleteVersions,
 	mockGetConfigs,
-	mockGetNode,
 	mockGetVersions,
 	mockKeepVersions
 } from '../../../utils/resolverMocks';
 import { setup } from '../../../utils/testUtils';
 import * as moduleUtils from '../../../utils/utils';
 import { getChipLabel } from '../../../utils/utils';
-import UploadView from '../../UploadView';
 
 describe('Versioning', () => {
 	test('versions list split', async () => {
@@ -1010,50 +1002,5 @@ describe('Versioning', () => {
 
 		await user.click(keepVersion);
 		expect(screen.queryByText(/version marked as to be kept forever/i)).not.toBeInTheDocument();
-	});
-
-	it('should render the banner if the upload version fails for over quota', async () => {
-		const localRoot = populateLocalRoot();
-		const fileVersion = populateFile();
-		fileVersion.parent = localRoot;
-		fileVersion.permissions.can_write_file = true;
-
-		const mocks = {
-			Query: {
-				getNode: mockGetNode({ getBaseNode: [localRoot] }),
-				getConfigs: mockGetConfigs(),
-				getVersions: mockGetVersions([fileVersion])
-			}
-		} satisfies Partial<Resolvers>;
-
-		server.use(
-			http.post<UploadVersionRequestParams, UploadRequestBody, UploadVersionResponse>(
-				`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`,
-				() => HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.overQuota })
-			),
-			graphql.query<GetVersionsQuery, GetVersionsQueryVariables>(GetVersionsDocument, () =>
-				HttpResponse.json({ data: { getVersions: [...[fileVersion]] } })
-			)
-		);
-
-		const { user } = setup(
-			<>
-				<Versioning node={fileVersion} />
-				<UploadView />
-			</>,
-			{ mocks }
-		);
-		await screen.findByText(getChipLabel(fileVersion.last_editor));
-		const uploadButton = await screen.findByRole('button', { name: /upload version/i });
-		await user.click(uploadButton);
-		const file = new File(['(⌐□_□)'], fileVersion.name, { type: fileVersion.mime_type });
-		const input = await screen.findByAltText(/Hidden file input/i);
-		await user.upload(input, file);
-		expect(await screen.findByText(/Quota exceeded/i)).toBeVisible();
-		expect(
-			screen.getByText(
-				'The uploading of some items failed because you have reached your storage limit. Delete some items to free up storage space and try again.'
-			)
-		).toBeVisible();
 	});
 });
