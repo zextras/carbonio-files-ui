@@ -31,6 +31,8 @@ import {
 } from '../types/graphql/types';
 import {
 	ContactGroupMatch,
+	ContactInfo,
+	ContactInfoAttrs,
 	ContactInformation,
 	GalAccountMatch,
 	Match,
@@ -365,6 +367,23 @@ export function populateContactGroupMatch(name?: string): ContactGroupMatch {
 		type: 'contact',
 		isGroup: true,
 		display: name ?? `${faker.person.jobArea()} ${faker.person.jobDescriptor()}`
+	};
+}
+
+export function populateAutocompleteGalResult(
+	contact?: Partial<ContactInfoAttrs> & { id?: string }
+): ContactInfo {
+	return {
+		id: contact?.id ?? faker.string.uuid(),
+		ref: 'ref',
+		_attrs: {
+			email: faker.internet.email(),
+			zimbraId: faker.string.uuid(),
+			lastName: faker.person.lastName(),
+			fullName: faker.person.fullName(),
+			objectClass: [],
+			...contact
+		}
 	};
 }
 
