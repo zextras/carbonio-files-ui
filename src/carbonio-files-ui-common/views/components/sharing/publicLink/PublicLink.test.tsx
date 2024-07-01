@@ -39,9 +39,10 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 		const linkName = 'Link name';
 		const linkTitle = 'Link title';
 		const linkDescription = 'Link description';
+		const existingLink = populateLink(node);
 		const mocks = {
 			Query: {
-				getLinks: mockGetLinks([])
+				getLinks: mockGetLinks([existingLink])
 			}
 		} satisfies Partial<Resolvers>;
 		setup(
@@ -54,6 +55,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			/>,
 			{ mocks }
 		);
+		await screen.findByText(existingLink.url as string);
 		expect(screen.getByText(linkTitle)).toBeVisible();
 		expect(screen.getByText(linkDescription)).toBeVisible();
 		expect(screen.getByRole('button', { name: /add link/i })).toBeVisible();
