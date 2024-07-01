@@ -31,7 +31,7 @@ export type CopyNodesType = (
 ) => Promise<FetchResult<CopyNodesMutation>>;
 
 /**
- * Can return error: ErrorCode.NODE_WRITE_ERROR
+ * Can return error: ErrorCode.NODE_WRITE_ERROR, ErrorCode.OVER_QUOTA_REACHED
  */
 export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boolean } {
 	const [t] = useTranslation();
