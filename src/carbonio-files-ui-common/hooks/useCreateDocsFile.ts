@@ -103,10 +103,9 @@ export const useCreateDocsFile = (): UseCreateDocsFileReturnType => {
 			if (response.status === HTTP_STATUS_CODE.overQuota) {
 				const documentGenericType = getDocumentGenericType(type);
 				createSnackbar({
-					type: 'error',
+					severity: 'error',
 					disableAutoHide: true,
 					key: 'create-docs-over-quota',
-					// TODO: check translations key with Eugenia
 					label: t(`snackbar.createDocument.error.overQuota.${documentGenericType}`, {
 						defaultValue: `New ${documentGenericType} creation failed. You have reached your storage limit. Delete some items to free up storage space and try again.`
 					}),
