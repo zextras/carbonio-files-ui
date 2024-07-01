@@ -20,9 +20,9 @@ import {
 } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode, populateUser } from '../../mocks/mockUtils';
+import { setup } from '../../tests/utils';
 import { NodeType, User } from '../../types/graphql/types';
 import { getPermittedHoverBarActions } from '../../utils/ActionsFactory';
-import { setup } from '../../utils/testUtils';
 import { formatDate, humanFileSize } from '../../utils/utils';
 import 'jest-styled-components';
 

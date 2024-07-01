@@ -15,8 +15,8 @@ import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { healthCache } from '../../hooks/useHealthInfo';
 import { HealthResponse } from '../../mocks/handleHealthRequest';
 import { populateFile, populateFolder, populateNodePage } from '../../mocks/mockUtils';
+import { screen, setup } from '../../tests/utils';
 import { NodeType, User } from '../../types/graphql/types';
-import { screen, setup } from '../../utils/testUtils';
 
 describe('Displayer Actions', () => {
 	describe('preview action', () => {

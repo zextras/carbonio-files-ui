@@ -12,10 +12,10 @@ import { difference } from 'lodash';
 import { EditShareChip } from './EditShareChip';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
+import { setup } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import { Permissions, Share, SharePermission } from '../../../types/graphql/types';
 import { mockDeleteShare, mockUpdateShare } from '../../../utils/resolverMocks';
-import { setup } from '../../../utils/testUtils';
 
 describe('Edit Share Chip', () => {
 	const allIcons = [

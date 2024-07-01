@@ -24,6 +24,7 @@ import {
 	populateConfigs,
 	populateFile
 } from '../../../mocks/mockUtils';
+import { setup } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
@@ -39,7 +40,6 @@ import {
 	mockGetVersions,
 	mockKeepVersions
 } from '../../../utils/resolverMocks';
-import { setup } from '../../../utils/testUtils';
 import * as moduleUtils from '../../../utils/utils';
 import { getChipLabel } from '../../../utils/utils';
 

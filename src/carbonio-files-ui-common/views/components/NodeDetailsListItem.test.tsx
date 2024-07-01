@@ -13,8 +13,8 @@ import { DefaultTheme } from 'styled-components';
 import { NodeDetailsListItem } from './NodeDetailsListItem';
 import { SELECTORS } from '../../constants/test';
 import { populateNode, populateUser } from '../../mocks/mockUtils';
+import { setup } from '../../tests/utils';
 import { NodeType, User } from '../../types/graphql/types';
-import { setup } from '../../utils/testUtils';
 import { formatDate } from '../../utils/utils';
 import 'jest-styled-components';
 

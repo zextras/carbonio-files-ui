@@ -16,10 +16,10 @@ import {
 	populateUploadFolderItem,
 	populateUploadItem
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup } from '../../tests/utils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetNode } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
 
 const mockedUseUploadHook: ReturnType<UseUploadHook> = {

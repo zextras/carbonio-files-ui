@@ -27,10 +27,10 @@ import {
 	populateParents,
 	populateUser
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetPath, mockMoveNodes } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../utils/testUtils';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
 

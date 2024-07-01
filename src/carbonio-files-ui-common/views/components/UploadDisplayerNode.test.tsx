@@ -17,10 +17,10 @@ import {
 	populateUploadItem,
 	populateUploadItems
 } from '../../mocks/mockUtils';
+import { setup, screen, within } from '../../tests/utils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetNode } from '../../utils/resolverMocks';
-import { setup, screen, within } from '../../utils/testUtils';
 import { humanFileSize } from '../../utils/utils';
 
 describe('Upload Displayer Node', () => {

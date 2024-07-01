@@ -11,9 +11,9 @@ import { OwnerChipInput } from './OwnerChipInput';
 import * as network from '../../../network/network';
 import { SELECTORS } from '../../constants/test';
 import { populateAutocompleteGalResult } from '../../mocks/mockUtils';
+import { screen, setup, within } from '../../tests/utils';
 import { AdvancedFilters } from '../../types/common';
 import { AutocompleteGalResponse, ContactInfo } from '../../types/network';
-import { screen, setup, within } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
 describe('OwnerChipInput', () => {

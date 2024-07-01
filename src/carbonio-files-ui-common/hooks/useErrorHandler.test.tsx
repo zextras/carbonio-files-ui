@@ -14,7 +14,7 @@ import { act } from 'react-dom/test-utils';
 
 import { useErrorHandler } from './useErrorHandler';
 import { ERROR_CODE } from '../constants';
-import { generateError, screen, setup, within } from '../utils/testUtils';
+import { generateError, screen, setup, within } from '../tests/utils';
 
 type Props = {
 	errors: Array<GraphQLError>;

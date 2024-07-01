@@ -10,7 +10,7 @@ import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-l
 
 import { Dropzone } from './Dropzone';
 import { SELECTORS } from '../../constants/test';
-import { setup } from '../../utils/testUtils';
+import { setup } from '../../tests/utils';
 
 describe('Dropzone', () => {
 	test('Hide dropzone overlay if another target is reached even without a dragLeave event', async () => {

@@ -21,9 +21,9 @@ import {
 import { SELECTORS } from '../../constants/test';
 import { healthCache } from '../../hooks/useHealthInfo';
 import { HealthResponse } from '../../mocks/handleHealthRequest';
+import { setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
-import { setup } from '../../utils/testUtils';
 
 describe('Node List Item Avatar', () => {
 	test('should call getPreviewThumbnailSrc and use it as Avatar picture when preview is live', async () => {

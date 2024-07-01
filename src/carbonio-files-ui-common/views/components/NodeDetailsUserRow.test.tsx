@@ -10,7 +10,7 @@ import { screen } from '@testing-library/react';
 
 import { NodeDetailsUserRow } from './NodeDetailsUserRow';
 import { populateFile, populateUser } from '../../mocks/mockUtils';
-import { setup } from '../../utils/testUtils';
+import { setup } from '../../tests/utils';
 
 describe('Node Details User Row', () => {
 	test('click on email call clickAction', async () => {

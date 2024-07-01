@@ -22,6 +22,7 @@ import {
 import { ACTION_REGEXP, DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
+import { selectNodes, setup } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
@@ -30,9 +31,6 @@ import {
 	mockGetNode,
 	mockRestoreNodes
 } from '../utils/resolverMocks';
-import { selectNodes, setup } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter view', () => {
 	describe('Trash filter', () => {

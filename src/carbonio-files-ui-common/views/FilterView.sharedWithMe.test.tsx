@@ -21,6 +21,7 @@ import {
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes, populateShare, populateUser } from '../mocks/mockUtils';
+import { setup } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
@@ -30,9 +31,6 @@ import {
 	mockGetCollaborationLinks,
 	mockGetLinks
 } from '../utils/resolverMocks';
-import { setup } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter view', () => {
 	describe('Shared With Me filter', () => {

@@ -11,11 +11,11 @@ import { forEach, map } from 'lodash';
 import { List } from './List';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode, sortNodes } from '../../mocks/mockUtils';
+import { generateError, renameNode, setup, selectNodes } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeSort } from '../../types/graphql/types';
 import { mockErrorResolver } from '../../utils/resolverMocks';
-import { generateError, renameNode, setup, selectNodes } from '../../utils/testUtils';
 
 describe('Rename', () => {
 	describe('Selection mode', () => {

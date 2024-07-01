@@ -11,7 +11,7 @@ import { http, HttpResponse } from 'msw';
 import UploadVersionButton from './components/versioning/UploadVersionButton';
 import UploadView from './UploadView';
 import server from '../../mocks/server';
-import { REST_ENDPOINT, UPLOAD_PATH, UPLOAD_STATUS_CODE, UPLOAD_VERSION_PATH } from '../constants';
+import { REST_ENDPOINT, UPLOAD_PATH, HTTP_STATUS_CODE, UPLOAD_VERSION_PATH } from '../constants';
 import { ICON_REGEXP } from '../constants/test';
 import {
 	UploadRequestBody,
@@ -19,11 +19,9 @@ import {
 	UploadVersionResponse
 } from '../mocks/handleUploadVersionRequest';
 import { populateFile, populateLocalRoot } from '../mocks/mockUtils';
+import { createUploadDataTransfer, screen, setup, uploadWithDnD } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetConfigs, mockGetNode, mockGetVersions } from '../utils/resolverMocks';
-import { createUploadDataTransfer, screen, setup, uploadWithDnD } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload view quota', () => {
 	it('should render the banner if there is a failed item for over quota', async () => {
@@ -33,7 +31,7 @@ describe('Upload view quota', () => {
 		const dataTransferObj = createUploadDataTransfer([node]);
 		server.use(
 			http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, () =>
-				HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.overQuota })
+				HttpResponse.json(null, { status: HTTP_STATUS_CODE.overQuota })
 			)
 		);
 		setup(<UploadView />);
@@ -56,12 +54,12 @@ describe('Upload view quota', () => {
 		server.use(
 			http.post(
 				`${REST_ENDPOINT}${UPLOAD_PATH}`,
-				() => HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.overQuota }),
+				() => HttpResponse.json(null, { status: HTTP_STATUS_CODE.overQuota }),
 				{ once: true }
 			),
 			http.post(
 				`${REST_ENDPOINT}${UPLOAD_PATH}`,
-				() => HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.internalServerError }),
+				() => HttpResponse.json(null, { status: HTTP_STATUS_CODE.internalServerError }),
 				{ once: true }
 			)
 		);
@@ -91,7 +89,7 @@ describe('Upload view quota', () => {
 		server.use(
 			http.post<UploadVersionRequestParams, UploadRequestBody, UploadVersionResponse>(
 				`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`,
-				() => HttpResponse.json(null, { status: UPLOAD_STATUS_CODE.overQuota })
+				() => HttpResponse.json(null, { status: HTTP_STATUS_CODE.overQuota })
 			)
 		);
 

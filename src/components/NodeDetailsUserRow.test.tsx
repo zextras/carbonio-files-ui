@@ -11,7 +11,7 @@ import * as shell from '@zextras/carbonio-shell-ui';
 
 import { NodeDetailsUserRow } from './NodeDetailsUserRow';
 import { populateFile, populateUser } from '../carbonio-files-ui-common/mocks/mockUtils';
-import { screen, setup } from '../carbonio-files-ui-common/utils/testUtils';
+import { screen, setup } from '../carbonio-files-ui-common/tests/utils';
 
 describe('Node Details User Row', () => {
 	it('should open the composer with the email when click on the email', async () => {

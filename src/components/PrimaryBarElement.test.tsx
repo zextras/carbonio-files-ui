@@ -15,8 +15,8 @@ import { uploadVar } from '../carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
 import { ICON_REGEXP } from '../carbonio-files-ui-common/constants/test';
 import { populateUploadItems } from '../carbonio-files-ui-common/mocks/mockUtils';
+import { setup } from '../carbonio-files-ui-common/tests/utils';
 import { UploadStatus } from '../carbonio-files-ui-common/types/graphql/client-types';
-import { setup } from '../carbonio-files-ui-common/utils/testUtils';
 
 describe('PrimaryBarElement', () => {
 	test('should render an alert icon if an upload fails', () => {

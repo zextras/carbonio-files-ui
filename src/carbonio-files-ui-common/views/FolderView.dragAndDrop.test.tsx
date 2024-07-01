@@ -31,6 +31,12 @@ import {
 	populateParents,
 	populateUser
 } from '../mocks/mockUtils';
+import {
+	setup,
+	selectNodes,
+	createUploadDataTransfer,
+	createMoveDataTransfer
+} from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
@@ -41,14 +47,6 @@ import {
 	GetChildQueryVariables
 } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
-import {
-	setup,
-	selectNodes,
-	createUploadDataTransfer,
-	createMoveDataTransfer
-} from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (

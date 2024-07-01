@@ -26,6 +26,7 @@ import {
 	populateNodePage,
 	populateNodes
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, generateError, setup } from '../../tests/utils';
 import { Node, NodeWithMetadata } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -41,7 +42,6 @@ import {
 	mockGetPath,
 	mockGetRootsList
 } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, generateError, setup } from '../../utils/testUtils';
 import { isFile, isFolder } from '../../utils/utils';
 
 const resetToDefault = ({

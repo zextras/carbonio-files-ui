@@ -78,6 +78,7 @@ export const ICON_REGEXP = {
 	revoke: 'icon: SlashOutline',
 	refreshQuota: 'icon: Refresh',
 	alertQuota: 'icon: CloseCircleOutline',
+	errorSnackbar: 'icon: CloseCircleOutline',
 	openedAdvancedFilters: 'icon: ChevronUp',
 	closedAdvancedFilters: 'icon: ChevronDown'
 } as const;
@@ -149,6 +150,8 @@ export const COLORS = {
 };
 
 export const TIMERS = {
-	modalDelayOpen: 1
+	modalDelayOpen: 1,
+	snackbarHide: 4000
 };
 export const DISPLAYER_EMPTY_MESSAGE = 'View files and folders, share them with your contacts.';
+export const LIST_EMPTY_MESSAGE = "It looks like there's nothing here.";

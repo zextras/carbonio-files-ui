@@ -26,10 +26,10 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
 let confirmAction = jest.fn();
 let resetToDefault = jest.fn();

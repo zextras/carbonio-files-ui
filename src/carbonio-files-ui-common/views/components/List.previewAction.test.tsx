@@ -15,11 +15,11 @@ import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
 import { healthCache } from '../../hooks/useHealthInfo';
 import { HealthResponse } from '../../mocks/handleHealthRequest';
 import { populateFile, populateFolder, populateNodePage } from '../../mocks/mockUtils';
+import { screen, selectNodes, setup } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder, GetChildrenParentDocument, NodeType, User } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/resolverMocks';
-import { screen, selectNodes, setup } from '../../utils/testUtils';
 
 function prepareCache(folder: Folder): void {
 	global.apolloClient.writeQuery({

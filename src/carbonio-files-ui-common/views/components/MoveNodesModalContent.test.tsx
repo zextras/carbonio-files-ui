@@ -16,6 +16,7 @@ import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode, populateParents } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup, selectNodes, triggerListLoadMore } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -32,12 +33,6 @@ import {
 	mockGetPath,
 	mockMoveNodes
 } from '../../utils/resolverMocks';
-import {
-	buildBreadCrumbRegExp,
-	setup,
-	selectNodes,
-	triggerListLoadMore
-} from '../../utils/testUtils';
 
 describe('Move Nodes Modal', () => {
 	function resetToDefault(): void {

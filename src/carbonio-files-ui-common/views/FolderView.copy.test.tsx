@@ -17,6 +17,7 @@ import server from '../../mocks/server';
 import { ERROR_CODE } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateLocalRoot } from '../mocks/mockUtils';
+import { setup, selectNodes, screen, within, generateError } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
@@ -34,9 +35,6 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../utils/resolverMocks';
-import { setup, selectNodes, screen, within, generateError } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (

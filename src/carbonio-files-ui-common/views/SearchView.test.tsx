@@ -12,7 +12,6 @@ import { http, HttpResponse } from 'msw';
 
 import { SearchView } from './SearchView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOption } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { searchParamsVar } from '../apollo/searchVar';
 import { DOCS_SERVICE_NAME, HEALTH_PATH, INTERNAL_PATH, REST_ENDPOINT, ROOTS } from '../constants';
@@ -28,6 +27,13 @@ import {
 	populatePermissions,
 	populateShares
 } from '../mocks/mockUtils';
+import {
+	buildBreadCrumbRegExp,
+	buildChipsFromKeywords,
+	moveNode,
+	setup,
+	spyOnUseCreateOptions
+} from '../tests/utils';
 import { AdvancedFilters } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { BaseNodeFragment, Folder, NodeType } from '../types/graphql/types';
@@ -42,16 +48,7 @@ import {
 	mockRestoreNodes,
 	mockTrashNodes
 } from '../utils/resolverMocks';
-import {
-	buildBreadCrumbRegExp,
-	buildChipsFromKeywords,
-	moveNode,
-	setup,
-	spyOnUseCreateOptions
-} from '../utils/testUtils';
 import { getChipLabel } from '../utils/utils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Search view', () => {
 	describe('Shared by me param', () => {
@@ -554,8 +551,7 @@ describe('Search view', () => {
 
 	it('should show docs creation actions if docs is available', async () => {
 		healthCache.reset();
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
@@ -578,8 +574,7 @@ describe('Search view', () => {
 
 	it('should not show docs creation actions if docs is not available', async () => {
 		healthCache.reset();
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })

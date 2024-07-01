@@ -12,10 +12,10 @@ import { UploadList } from './UploadList';
 import { uploadVar } from '../../apollo/uploadVar';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateLocalRoot, populateUploadItems } from '../../mocks/mockUtils';
+import { selectNodes, setup, screen } from '../../tests/utils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetNode } from '../../utils/resolverMocks';
-import { selectNodes, setup, screen } from '../../utils/testUtils';
 
 describe('Upload List', () => {
 	describe('Go To Folder', () => {

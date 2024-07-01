@@ -14,12 +14,12 @@ import { INTERNAL_PATH, ROOTS } from '../carbonio-files-ui-common/constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP } from '../carbonio-files-ui-common/constants/test';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import { populateNodePage, populateNodes } from '../carbonio-files-ui-common/mocks/mockUtils';
+import { setup } from '../carbonio-files-ui-common/tests/utils';
 import {
 	FindNodesDocument,
 	FindNodesQuery,
 	FindNodesQueryVariables
 } from '../carbonio-files-ui-common/types/graphql/types';
-import { setup } from '../carbonio-files-ui-common/utils/testUtils';
 import server from '../mocks/server';
 
 jest.mock<typeof import('../hooks/useCreateOptions')>('../hooks/useCreateOptions');

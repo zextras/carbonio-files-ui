@@ -118,7 +118,7 @@ export const DATE_TIME_FORMAT = {
 	...DATE_FORMAT_SHORT,
 	...TIME_FORMAT
 } satisfies Intl.DateTimeFormatOptions;
-export const UPLOAD_STATUS_CODE = {
+export const HTTP_STATUS_CODE = {
 	success: 200,
 	internalServerError: 500,
 	/**

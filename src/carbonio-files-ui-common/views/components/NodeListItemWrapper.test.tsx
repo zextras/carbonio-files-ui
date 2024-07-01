@@ -13,8 +13,8 @@ import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import * as useHealthInfo from '../../hooks/useHealthInfo';
 import * as usePreview from '../../hooks/usePreview';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
+import { setup } from '../../tests/utils';
 import { PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS } from '../../utils/previewUtils';
-import { setup } from '../../utils/testUtils';
 import * as utils from '../../utils/utils';
 
 describe('NodeListItemWrapper', () => {

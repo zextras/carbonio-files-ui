@@ -14,7 +14,7 @@ import { FilesQuota, getPercentage } from './FilesQuota';
 import * as mySelfQuotaModule from '../../../network/mySelfQuota';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import * as useFilesQuotaInfo from '../../hooks/useFilesQuotaInfo';
-import { screen, setup } from '../../utils/testUtils';
+import { screen, setup } from '../../tests/utils';
 import { humanFileSize } from '../../utils/utils';
 
 const mockQuota = jest.fn().mockReturnValue(<div>mock Quota</div>);

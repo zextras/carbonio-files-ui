@@ -19,6 +19,7 @@ import {
 	populateNodes,
 	populateParents
 } from '../mocks/mockUtils';
+import { buildBreadCrumbRegExp, selectNodes, setup, screen, within } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	Folder,
@@ -33,9 +34,6 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, selectNodes, setup, screen, within } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Copy', () => {

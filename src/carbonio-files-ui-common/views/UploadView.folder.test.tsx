@@ -27,6 +27,13 @@ import {
 	populateNodePage,
 	populateNodes
 } from '../mocks/mockUtils';
+import {
+	createUploadDataTransfer,
+	delayUntil,
+	generateError,
+	setup,
+	uploadWithDnD
+} from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	CreateFolderDocument,
@@ -35,16 +42,7 @@ import {
 	Folder
 } from '../types/graphql/types';
 import { mockGetNode } from '../utils/resolverMocks';
-import {
-	createUploadDataTransfer,
-	delayUntil,
-	generateError,
-	setup,
-	uploadWithDnD
-} from '../utils/testUtils';
 import { UploadQueue } from '../utils/uploadUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload View', () => {
 	describe('Folder', () => {

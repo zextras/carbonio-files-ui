@@ -12,6 +12,7 @@ import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../mocks/mockUtils';
+import { generateError, setup } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { SharePermission } from '../../types/graphql/types';
 import {
@@ -21,7 +22,6 @@ import {
 	mockUpdateShare,
 	mockErrorResolver
 } from '../../utils/resolverMocks';
-import { generateError, setup } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
 describe('Displayer', () => {

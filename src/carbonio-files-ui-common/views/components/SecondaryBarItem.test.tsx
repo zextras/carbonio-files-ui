@@ -8,7 +8,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { SecondaryBarItem } from './SecondaryBarItem';
-import { setup } from '../../utils/testUtils';
+import { setup } from '../../tests/utils';
 
 describe('SecondaryBarItem', () => {
 	test('should render an upload badge with a fraction if expanded is true', () => {

@@ -16,6 +16,14 @@ import { searchParamsVar } from '../../apollo/searchVar';
 import { INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNodes } from '../../mocks/mockUtils';
+import {
+	buildChipsFromKeywords,
+	createMoveDataTransfer,
+	setup,
+	selectNodes,
+	screen,
+	within
+} from '../../tests/utils';
 import { AdvancedFilters } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -35,14 +43,6 @@ import {
 	mockRestoreNodes,
 	mockTrashNodes
 } from '../../utils/resolverMocks';
-import {
-	buildChipsFromKeywords,
-	createMoveDataTransfer,
-	setup,
-	selectNodes,
-	screen,
-	within
-} from '../../utils/testUtils';
 
 describe('Search list', () => {
 	describe('Drag and drop', () => {

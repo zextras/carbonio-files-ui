@@ -36,6 +36,15 @@ import {
 	populateNodes,
 	populateUploadItems
 } from '../../mocks/mockUtils';
+import {
+	buildBreadCrumbRegExp,
+	createMoveDataTransfer,
+	createUploadDataTransfer,
+	delayUntil,
+	selectNodes,
+	setup,
+	uploadWithDnD
+} from '../../tests/utils';
 import { Node } from '../../types/common';
 import { UploadItem, UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
@@ -48,15 +57,6 @@ import {
 	Maybe
 } from '../../types/graphql/types';
 import { getChildrenVariables, mockCreateFolder, mockGetNode } from '../../utils/resolverMocks';
-import {
-	buildBreadCrumbRegExp,
-	createMoveDataTransfer,
-	createUploadDataTransfer,
-	delayUntil,
-	selectNodes,
-	setup,
-	uploadWithDnD
-} from '../../utils/testUtils';
 import { UploadQueue } from '../../utils/uploadUtils';
 
 describe('Upload list', () => {

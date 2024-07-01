@@ -25,6 +25,7 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup, selectNodes, triggerListLoadMore } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -42,12 +43,6 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../../utils/resolverMocks';
-import {
-	buildBreadCrumbRegExp,
-	setup,
-	selectNodes,
-	triggerListLoadMore
-} from '../../utils/testUtils';
 
 const resetToDefault = (): void => {
 	// clone implementation of the function contained in the click callback of useCopyContent

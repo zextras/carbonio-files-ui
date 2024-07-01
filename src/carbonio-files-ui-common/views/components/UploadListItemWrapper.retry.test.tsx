@@ -10,10 +10,10 @@ import { fireEvent, screen } from '@testing-library/react';
 import { UploadListItemWrapper } from './UploadListItemWrapper';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateUploadItem } from '../../mocks/mockUtils';
+import { setup } from '../../tests/utils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetNode } from '../../utils/resolverMocks';
-import { setup } from '../../utils/testUtils';
 
 describe('Upload List Item Wrapper', () => {
 	describe('Retry action', () => {

@@ -17,6 +17,7 @@ import {
 	populateNodePage,
 	populateShares
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -35,7 +36,6 @@ import {
 	mockMoveNodes,
 	mockUpdateNode
 } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
 describe('Displayer', () => {

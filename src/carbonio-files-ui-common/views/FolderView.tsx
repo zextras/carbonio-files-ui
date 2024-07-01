@@ -7,7 +7,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Container, Responsive, Text } from '@zextras/carbonio-design-system';
-import { map, filter, last } from 'lodash';
+import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -33,9 +33,15 @@ import { DocsType, NodeListItemType, URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
-import { getNewDocumentActionLabel, inputElement, isFolder, takeIfNotEmpty } from '../utils/utils';
+import {
+	getDocumentGenericType,
+	getNewDocumentActionLabel,
+	inputElement,
+	isFolder,
+	takeIfNotEmpty
+} from '../utils/utils';
 
-const FolderView: React.VFC = () => {
+const FolderView = (): React.JSX.Element => {
 	const { rootId } = useParams<URLParams>();
 	const { setActiveNode } = useActiveNode();
 	const folderId = useQueryParam('folder');
@@ -127,11 +133,13 @@ const FolderView: React.VFC = () => {
 	const createDocsFile = useCreateDocsFile();
 
 	const createDocsFileAction = useCallback(
-		(_parentId, newName) => {
+		(_parentId: string, newName: string) => {
 			if (currentFolder?.getNode && isFolder(currentFolder.getNode) && newFile) {
 				return createDocsFile(currentFolder?.getNode, newName, newFile).then((result) => {
-					result?.data?.getNode && setActiveNode(result.data.getNode.id);
-					return result;
+					if (result?.data?.getNode) {
+						setActiveNode(result.data.getNode.id);
+					}
+					return result ?? {};
 				});
 			}
 			return Promise.reject(new Error('cannot create folder: invalid node or file type'));
@@ -143,17 +151,10 @@ const FolderView: React.VFC = () => {
 		setNewFile(undefined);
 	}, [setNewFile]);
 
-	const documentGenericType = useMemo(
-		() => (last(newFile?.split('_')) ?? 'document').toLowerCase(),
-		[newFile]
-	);
+	const documentGenericType = newFile ? getDocumentGenericType(newFile) : 'document';
 
 	const { openCreateModal: openCreateFileModal } = useCreateModal(
-		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
-		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.title.${documentGenericType}`, `Create new ${documentGenericType}`),
-		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
-		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
 		createDocsFileAction,
 		newFile ? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[newFile]}`}</Text> : undefined,

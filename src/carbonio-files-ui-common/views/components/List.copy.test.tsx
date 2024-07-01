@@ -12,9 +12,9 @@ import { List } from './List';
 import { ERROR_CODE } from '../../constants';
 import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateLocalRoot, populateNodePage } from '../../mocks/mockUtils';
+import { generateError, screen, setup, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockErrorResolver, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
-import { generateError, screen, setup, within } from '../../utils/testUtils';
 
 describe('Copy', () => {
 	describe('Failure for over quota', () => {

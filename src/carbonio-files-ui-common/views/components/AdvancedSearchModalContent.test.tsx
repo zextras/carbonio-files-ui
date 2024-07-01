@@ -12,12 +12,12 @@ import * as actualNetworkModule from '../../../network/network';
 import { ROOTS } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder } from '../../mocks/mockUtils';
+import { setup } from '../../tests/utils';
 import { AdvancedFilters } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeType } from '../../types/graphql/types';
 import { ContactInfo } from '../../types/network';
 import { mockGetPath } from '../../utils/resolverMocks';
-import { setup } from '../../utils/testUtils';
 
 const mockedSoapFetch = jest.fn();
 

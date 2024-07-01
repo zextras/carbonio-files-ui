@@ -9,8 +9,8 @@ import { screen } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
 import { DisplayerHeader } from './DisplayerHeader';
+import { setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
-import { setup } from '../../utils/testUtils';
 import 'jest-styled-components';
 
 describe('Displayer Header', () => {
