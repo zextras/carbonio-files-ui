@@ -39,6 +39,11 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 		const linkName = 'Link name';
 		const linkTitle = 'Link title';
 		const linkDescription = 'Link description';
+		const mocks = {
+			Query: {
+				getLinks: mockGetLinks([])
+			}
+		} satisfies Partial<Resolvers>;
 		setup(
 			<PublicLink
 				nodeId={node.id}
@@ -46,7 +51,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 				linkName={linkName}
 				linkTitle={linkTitle}
 				linkDescription={linkDescription}
-			/>
+			/>,
+			{ mocks }
 		);
 		expect(screen.getByText(linkTitle)).toBeVisible();
 		expect(screen.getByText(linkDescription)).toBeVisible();
@@ -57,6 +63,11 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 		it('should render the description and expiration date input fields', async () => {
 			const node = populateNode(nodeType);
 			const linkTitle = 'Link title';
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<PublicLink
 					nodeId={node.id}
@@ -64,7 +75,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					linkTitle={linkTitle}
 					linkName={'Link name'}
 					linkDescription={'Link description'}
-				/>
+				/>,
+				{ mocks }
 			);
 			const addLinkBtn = screen.getByRole('button', { name: /add link/i });
 			expect(addLinkBtn).toBeVisible();
@@ -186,6 +198,11 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			const linkName = 'Link name';
 			const linkTitle = 'Link title';
 			const linkDescription = 'Link description';
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<PublicLink
 					nodeId={node.id}
@@ -193,7 +210,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					linkName={linkName}
 					linkTitle={linkTitle}
 					linkDescription={linkDescription}
-				/>
+				/>,
+				{ mocks }
 			);
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByRole('textbox', { name: /link's description/i }));
@@ -237,6 +255,11 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			const linkName = 'Link name';
 			const linkTitle = 'Link title';
 			const linkDescription = 'Link description';
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<PublicLink
 					nodeId={node.id}
@@ -244,7 +267,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					linkName={linkName}
 					linkTitle={linkTitle}
 					linkDescription={linkDescription}
-				/>
+				/>,
+				{ mocks }
 			);
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByRole('button', { name: /undo/i }));
