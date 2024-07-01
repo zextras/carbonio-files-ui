@@ -216,7 +216,7 @@ describe('Folder View', () => {
 			);
 		});
 
-		test('Create docs files options are active if current folder has can_write_file permission', async () => {
+		test('Create docs files options are enabled if current folder has can_write_file permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = true;
 			const createOptions = spyOnUseCreateOptions();
