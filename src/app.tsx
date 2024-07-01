@@ -15,7 +15,8 @@ import {
 	registerActions,
 	ACTION_TYPES,
 	SecondaryBarComponentProps,
-	SearchViewProps
+	SearchViewProps,
+	upsertApp
 } from '@zextras/carbonio-shell-ui';
 import { filter, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -109,6 +110,11 @@ export default function App(): React.JSX.Element {
 			primaryBar: PrimaryBarElement,
 			secondaryBar: SidebarView,
 			appView: AppView
+		});
+		upsertApp({
+			name: FILES_APP_ID,
+			display: t('label.app_name', 'Files'),
+			description: t('label.app_description', 'Files module')
 		});
 		addSearchView({
 			route: FILES_ROUTE,

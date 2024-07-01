@@ -25,7 +25,7 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
-import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../tests/utils';
+import { buildBreadCrumbRegExp, setup, selectNodes, triggerListLoadMore } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -862,9 +862,7 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			NODES_LOAD_LIMIT
 		);
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeInTheDocument();
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-		await triggerLoadMore();
+		triggerListLoadMore();
 		await screen.findByText(
 			(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as File | Folder).name
 		);

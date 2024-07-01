@@ -41,7 +41,7 @@ import {
 	populateNodes,
 	sortNodes
 } from '../mocks/mockUtils';
-import { setup, spyOnUseCreateOptions, triggerLoadMore, UserEvent } from '../tests/utils';
+import { setup, spyOnUseCreateOptions, triggerListLoadMore, UserEvent } from '../tests/utils';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
 
@@ -394,7 +394,8 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		const listHeader = screen.getByTestId(SELECTORS.listHeader);
+		await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
 		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
@@ -427,7 +428,7 @@ describe('Create docs file', () => {
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(SELECTORS.nodeItem(node2.id)));
 		// trigger load more
-		await triggerLoadMore();
+		triggerListLoadMore();
 		// wait for the load to be completed (node3 is now loaded)
 		await screen.findByTestId(SELECTORS.nodeItem(node3.id));
 		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });

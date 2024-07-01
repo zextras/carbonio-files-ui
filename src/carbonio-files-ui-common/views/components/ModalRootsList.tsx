@@ -237,10 +237,8 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 							setActiveNode={setActiveNode}
 							compact
 							navigateTo={navigateTo}
-							loading={loading}
 							hasMore={hasMore}
 							loadMore={loadMore}
-							ref={listRef}
 						/>
 					) : (
 						!loading && (
@@ -261,7 +259,6 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 							navigateTo={rootNavigationHandler}
 							activeNodes={activeNodes}
 							setActiveNode={setActiveNode}
-							ref={listRef}
 						/>
 					) : (
 						<ScrollContainer>

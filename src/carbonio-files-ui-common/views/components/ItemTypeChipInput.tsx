@@ -9,6 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ChipInput, ChipInputProps, ChipItem } from '@zextras/carbonio-design-system';
 import { isEmpty, reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { DefaultTheme } from 'styled-components';
 
 import { AdvancedFilters } from '../../types/common';
 import { NodeType } from '../../types/graphql/types';
@@ -65,6 +66,7 @@ export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
 }) => {
 	const [t] = useTranslation();
 	const [filterValue, setFilterValue] = useState<string | null>(null);
+	const [icon, setIcon] = useState<keyof DefaultTheme['icons']>('ChevronDown');
 
 	const itemTypeOnType = useCallback<NonNullable<ChipInputProps['onInputType']>>((ev) => {
 		if (ev.key.length === 1 || ev.key === 'Delete' || ev.key === 'Backspace') {
@@ -135,10 +137,14 @@ export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
 		);
 	}, [itemTypeChipInputValue.length, filterValue, t]);
 
+	const onOptionsDisplayChange = useCallback((isVisible: boolean) => {
+		setIcon(isVisible ? 'ChevronUp' : 'ChevronDown');
+	}, []);
+
 	return (
 		<ChipInput
 			placeholder={t('search.advancedSearch.modal.itemType.label', 'Item type')}
-			background="gray5"
+			background={'gray5'}
 			confirmChipOnBlur={false}
 			value={itemTypeChipInputValue}
 			separators={[]}
@@ -147,9 +153,10 @@ export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
 			onChange={itemTypeOnChange}
 			onInputType={itemTypeOnType}
 			options={dropdownItems}
-			icon={'ChevronDown'}
+			icon={icon}
 			singleSelection
 			requireUniqueChips
+			onOptionsDisplayChange={onOptionsDisplayChange}
 		/>
 	);
 };

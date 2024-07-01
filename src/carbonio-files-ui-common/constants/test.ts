@@ -78,7 +78,9 @@ export const ICON_REGEXP = {
 	revoke: 'icon: SlashOutline',
 	refreshQuota: 'icon: Refresh',
 	alertQuota: 'icon: CloseCircleOutline',
-	errorSnackbar: 'icon: CloseCircleOutline'
+	errorSnackbar: 'icon: CloseCircleOutline',
+	openedAdvancedFilters: 'icon: ChevronUp',
+	closedAdvancedFilters: 'icon: ChevronDown'
 } as const;
 
 export const SELECTORS = {

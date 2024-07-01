@@ -14,7 +14,7 @@ import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
-import { renameNode, setup, selectNodes, triggerLoadMore } from '../tests/utils';
+import { renameNode, setup, selectNodes, triggerListLoadMore } from '../tests/utils';
 import { Node } from '../types/common';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
@@ -245,7 +245,8 @@ describe('Rename', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			const listHeader = screen.getByTestId(SELECTORS.listHeader);
+			await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
 
 			let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 1]);
@@ -267,7 +268,7 @@ describe('Rename', () => {
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 2]);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			triggerListLoadMore();
 			// wait for the load to complete (last element of second page is loaded)
 			await screen.findByTestId(SELECTORS.nodeItem(secondPage[secondPage.length - 1].id));
 			// updated item is still last element
@@ -276,7 +277,7 @@ describe('Rename', () => {
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 			expect(screen.getByTestId(SELECTORS.nodeItem(secondCursor.id))).toBe(nodes[nodes.length - 2]);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			triggerListLoadMore();
 			// wait for the load to complete (last element of third page is loaded)
 			await screen.findByTestId(SELECTORS.nodeItem((last(thirdPage) as Node).id));
 			nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
@@ -291,7 +292,7 @@ describe('Rename', () => {
 				nodes[nodes.length - 1]
 			);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			triggerListLoadMore();
 			// wait for the load to complete (last element of children is loaded)
 			await screen.findByTestId(
 				SELECTORS.nodeItem(
@@ -357,8 +358,7 @@ describe('Rename', () => {
 			expect(screen.queryByText(nodeToRename.name)).not.toBeInTheDocument();
 			expect(screen.getByText(newName)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			triggerListLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
@@ -433,8 +433,7 @@ describe('Rename', () => {
 			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			triggerListLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument();

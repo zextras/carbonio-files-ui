@@ -28,7 +28,7 @@ import { healthCache } from '../hooks/useHealthInfo';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { HealthResponse } from '../mocks/handleHealthRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
-import { selectNodes, setup, spyOnUseCreateOptions, triggerLoadMore } from '../tests/utils';
+import { selectNodes, setup, spyOnUseCreateOptions, triggerListLoadMore } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
@@ -114,12 +114,10 @@ describe('Filter view', () => {
 		expect(
 			screen.getByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT - 1].id))
 		).toBeVisible();
-		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(screen.queryByTestId(currentFilter[NODES_LOAD_LIMIT].id)).not.toBeInTheDocument();
-		await triggerLoadMore();
+		triggerListLoadMore();
 
 		// wait for the response
 		await screen.findByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT].id));
