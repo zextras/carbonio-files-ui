@@ -40,6 +40,7 @@ import { CreateOption } from '../../hooks/useCreateOptions';
 import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
+import { ERROR_CODE } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
@@ -184,8 +185,15 @@ export const buildBreadCrumbRegExp = (...nodesNames: string[]): RegExp => {
 	return RegExp(regExp, 'g');
 };
 
-export function generateError(message: string): GraphQLError {
-	return new GraphQLError(`Controlled error: ${message}`);
+export function generateError(
+	message: string,
+	code?: (typeof ERROR_CODE)[keyof typeof ERROR_CODE]
+): GraphQLError {
+	return new GraphQLError(`Controlled error: ${message}`, {
+		extensions: {
+			errorCode: code
+		}
+	});
 }
 
 interface WrapperProps {

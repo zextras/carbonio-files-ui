@@ -131,6 +131,12 @@ export const HTTP_STATUS_CODE = {
 	aborted: 0,
 	overQuota: 422
 } as const;
+
+export const ERROR_CODE = {
+	overQuotaReached: 'OVER_QUOTA_REACHED',
+	nodeWriteError: 'NODE_WRITE_ERROR'
+} as const;
+
 // endpoint
 // keep endpoint without trailing slash
 export const GRAPHQL_ENDPOINT = '/services/files/graphql';

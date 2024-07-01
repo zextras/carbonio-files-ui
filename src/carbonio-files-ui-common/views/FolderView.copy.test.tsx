@@ -9,15 +9,21 @@ import React from 'react';
 import { faker } from '@faker-js/faker';
 import { act, fireEvent } from '@testing-library/react';
 import { map } from 'lodash';
+import { graphql, HttpResponse } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
+import server from '../../mocks/server';
+import { ERROR_CODE } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
-import { populateFile, populateFolder } from '../mocks/mockUtils';
-import { setup, selectNodes, screen, within } from '../tests/utils';
+import { populateFile, populateFolder, populateLocalRoot } from '../mocks/mockUtils';
+import { setup, selectNodes, screen, within, generateError } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
+	CopyNodesDocument,
+	CopyNodesMutation,
+	CopyNodesMutationVariables,
 	Folder,
 	GetChildrenDocument,
 	GetChildrenQuery,
@@ -119,7 +125,7 @@ describe('Copy', () => {
 			// activate selection mode by selecting items
 			await selectNodes([nodeToCopy.id], user);
 			// check that all wanted items are selected
-			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
+			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeVisible();
 			let copyAction = screen.queryByTestId(ICON_REGEXP.copy);
 			if (!copyAction) {
 				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
@@ -225,6 +231,74 @@ describe('Copy', () => {
 			// each node is positioned after its original
 			expect(screen.getByTestId(SELECTORS.nodeItem(copiedNodes[0].id))).toBe(nodeItems[1]);
 			expect(screen.getByTestId(SELECTORS.nodeItem(copiedNodes[1].id))).toBe(nodeItems[3]);
+		});
+
+		it('should render the snackbar and copy only partial of nodes if the copy operation fails partially', async () => {
+			const localRoot = populateLocalRoot(2);
+			localRoot.permissions.can_write_folder = true;
+			localRoot.permissions.can_write_file = true;
+			const nodesToCopy = map(localRoot.children.nodes, (node) => ({
+				...node
+			})) as Node[];
+
+			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
+				query: GetChildrenDocument,
+				variables: getChildrenVariables(localRoot.id),
+				data: {
+					getNode: localRoot
+				}
+			});
+
+			server.use(
+				graphql.query<GetChildrenQuery, GetChildrenQueryVariables>(GetChildrenDocument, () =>
+					HttpResponse.json({
+						data: {
+							getNode: localRoot
+						}
+					})
+				),
+				graphql.mutation<CopyNodesMutation, CopyNodesMutationVariables>(CopyNodesDocument, () =>
+					HttpResponse.json({
+						data: {
+							copyNodes: [{ ...nodesToCopy[0], id: 'node1-copy', name: 'node copied' }]
+						},
+						errors: [
+							generateError(
+								'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
+								ERROR_CODE.overQuotaReached
+							)
+						]
+					})
+				)
+			);
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${localRoot.id}`]
+			});
+			await screen.findByText(nodesToCopy[0].name);
+			await screen.findByText(nodesToCopy[1].name);
+			await selectNodes(
+				map(nodesToCopy, (node) => node.id),
+				user
+			);
+			await user.rightClick(screen.getByText(nodesToCopy[0].name));
+			await screen.findByTestId(SELECTORS.dropdownList);
+			await user.click(screen.getByText(ACTION_REGEXP.copy));
+			act(() => {
+				// run timers of modal
+				jest.runOnlyPendingTimers();
+			});
+			await user.click(screen.getByRole('button', { name: /copy/i }));
+			const snackbar = await screen.findByTestId('snackbar');
+			expect(
+				within(snackbar).getByText(
+					'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
+				)
+			).toBeVisible();
+			const nodeItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
+			expect(screen.getByText(nodesToCopy[0].name)).toBeVisible();
+			expect(screen.getByText(nodesToCopy[1].name)).toBeVisible();
+			expect(screen.getByText(/node copied/i)).toBeVisible();
+			expect(nodeItems).toHaveLength(localRoot.children.nodes.length + 1);
 		});
 	});
 
