@@ -58,7 +58,7 @@ export const NodeDetailsUserRow = ({
 	dateTime,
 	clickAction,
 	loading
-}: NodeDetailsUserRowProps): React.JSX.Element => {
+}: NodeDetailsUserRowProps): React.JSX.Element | null => {
 	const { locale } = useUserInfo();
 
 	return (

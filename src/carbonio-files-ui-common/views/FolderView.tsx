@@ -6,7 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Container, Responsive, Text } from '@zextras/carbonio-design-system';
+import { ButtonProps, Container, Responsive, Text } from "@zextras/carbonio-design-system";
 import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';

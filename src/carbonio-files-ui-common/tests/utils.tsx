@@ -19,14 +19,14 @@ import {
 	queries,
 	queryHelpers,
 	render,
+	renderHook,
 	RenderOptions,
 	RenderResult,
 	screen as rtlScreen,
 	waitFor,
 	within as rtlWithin,
-	type Screen
-} from '@testing-library/react';
-import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
+	type Screen, RenderHookOptions, RenderHookResult
+} from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
@@ -307,8 +307,8 @@ export const setup = (
 export function setupHook<TProps, TResult>(
 	hook: (props: TProps) => TResult,
 	options?: Pick<WrapperProps, 'initialRouterEntries' | 'mocks'> & RenderHookOptions<TProps>
-): RenderHookResult<TProps, TResult> {
-	const view = renderHook<TProps, TResult>(hook, {
+): RenderHookResult<TResult, TProps> {
+	const view = renderHook<TResult, TProps>(hook, {
 		wrapper: ({ children }: Pick<WrapperProps, 'children'>) => (
 			<Wrapper {...options}>{children}</Wrapper>
 		)
