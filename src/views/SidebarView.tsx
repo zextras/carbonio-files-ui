@@ -19,7 +19,7 @@ interface SidebarViewProps {
 	expanded: boolean;
 }
 
-const SidebarView: React.VFC<SidebarViewProps> = (props) => (
+const SidebarView = (props: SidebarViewProps): React.JSX.Element => (
 	<PreventDefaultDropContainer>
 		<GlobalProvidersWrapper>
 			<ViewProvidersWrapper>

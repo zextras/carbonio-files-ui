@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearch } from '../../../hooks/useSearch';
 import { useAdvancedSearchModal } from '../../hooks/modals/useAdvancedSearchModal';
 
-export const AdvancedSearchButtonHeader: React.VFC = () => {
+export const AdvancedSearchButtonHeader = (): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { searchParams } = useSearch();
 	const { openAdvancedSearchModal } = useAdvancedSearchModal();

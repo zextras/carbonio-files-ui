@@ -23,7 +23,7 @@ interface DropzoneProps {
 	title?: string;
 	icons?: string[];
 	effect: 'link' | 'none' | 'copy' | 'move';
-	children: (dragging: boolean) => React.JSX.Element;
+	children: (dragging: boolean) => React.ReactNode | undefined;
 	types: string[];
 }
 
@@ -48,7 +48,7 @@ const DropzoneOverlay = styled(Container)<{ $borderSize: keyof DefaultTheme['siz
 	pointer-events: none;
 `;
 
-export const Dropzone: React.FC<DropzoneProps> = ({
+export const Dropzone = ({
 	children,
 	onDrop,
 	onDragEnter,
@@ -60,7 +60,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 	icons = [],
 	effect,
 	types
-}) => {
+}: DropzoneProps): React.JSX.Element => {
 	const [dragging, setDragging] = useState(false);
 	const dropzoneRef = useRef<HTMLDivElement>(null);
 	const showDropzoneTimer = useRef<NodeJS.Timeout | null>(null);

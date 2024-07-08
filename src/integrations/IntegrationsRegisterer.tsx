@@ -4,11 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React from 'react';
-
 import { useIntegrations } from './useIntegrations';
 
-export const IntegrationsRegisterer: React.VFC = () => {
+export const IntegrationsRegisterer = (): null => {
 	useIntegrations();
 	return null;
 };

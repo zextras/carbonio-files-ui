@@ -34,7 +34,7 @@ interface AddPublicLinkComponentProps {
 	linkDescription: string;
 }
 
-export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
+export const AddPublicLinkComponent = ({
 	status,
 	onAddLink,
 	onUndo,
@@ -42,7 +42,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 	limitReached,
 	linkTitle,
 	linkDescription
-}) => {
+}: AddPublicLinkComponentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const scrollToElementRef = useRef<HTMLElement>(null);
 

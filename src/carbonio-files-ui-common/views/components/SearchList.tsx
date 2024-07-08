@@ -18,7 +18,7 @@ import { useFindNodesQuery } from '../../hooks/graphql/queries/useFindNodesQuery
 import { NodeListItemType } from '../../types/common';
 import { NonNullableList, OneOrMany } from '../../types/utils';
 
-export const SearchList: React.VFC = () => {
+export const SearchList = (): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { searchParams } = useSearch();
 	const { queryCalled, setQueryCalled } = useContext(ListContext);

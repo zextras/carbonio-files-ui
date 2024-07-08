@@ -53,7 +53,7 @@ interface NodeListItemWrapperProps {
 	selectionContextualMenuActionsItems?: DSAction[];
 }
 
-export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
+export const NodeListItemWrapper = ({
 	node,
 	toggleFlag = (): void => undefined,
 	markNodesForDeletion = (): void => undefined,
@@ -73,7 +73,7 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 	compact = false,
 	navigateTo = (): void => undefined,
 	selectionContextualMenuActionsItems
-}) => {
+}: NodeListItemWrapperProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const draggedItems = useReactiveVar(draggedItemsVar);
 	const [dropzoneEnabled, setDropzoneEnabled] = useState(isFolder(node));

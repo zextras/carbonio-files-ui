@@ -51,14 +51,14 @@ type FilterQueryParams = Pick<
 	'flagged' | 'sharedWithMe' | 'folderId' | 'cascade' | 'directShare'
 >;
 
-export const ModalRootsList: React.VFC<RootsListProps> = ({
+export const ModalRootsList = ({
 	activeNodes,
 	setActiveNode,
 	navigateTo,
 	showTrash = false,
 	checkDisabled,
 	checkSelectable
-}) => {
+}: RootsListProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const [filterQueryParams, setFilterQueryParam] = useState<FilterQueryParams>({});
 	const {

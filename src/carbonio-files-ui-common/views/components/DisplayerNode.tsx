@@ -28,12 +28,12 @@ interface DisplayerNodeProps {
 	hasMore: boolean;
 }
 
-export const DisplayerNode: React.VFC<DisplayerNodeProps> = ({
+export const DisplayerNode = ({
 	node,
 	loading,
 	loadMore,
 	hasMore
-}) => {
+}: DisplayerNodeProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const {
 		setActiveNode,

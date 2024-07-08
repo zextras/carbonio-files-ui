@@ -101,7 +101,7 @@ interface NodeListItemProps {
 	version?: number;
 }
 
-const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
+const NodeListItemComponent = ({
 	id,
 	name,
 	type,
@@ -140,7 +140,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 	selectionContextualMenuActionsItems,
 	dragging = false,
 	version
-}) => {
+}: NodeListItemProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { openPreview } = usePreview();
 	const location = useLocation();

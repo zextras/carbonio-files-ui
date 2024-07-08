@@ -18,7 +18,7 @@ export interface DisplayerProps {
 	icons?: string[];
 }
 
-export const Displayer: React.VFC<DisplayerProps> = ({ translationKey, icons = [] }) => {
+export const Displayer = ({ translationKey, icons = [] }: DisplayerProps): React.JSX.Element => {
 	const { activeNodeId } = useActiveNode();
 	const {
 		data: nodeData,

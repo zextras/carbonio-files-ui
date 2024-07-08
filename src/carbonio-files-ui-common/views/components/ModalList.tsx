@@ -49,7 +49,7 @@ const ModalContainer = styled(Container)`
 	flex: 1 1 auto;
 `;
 
-export const ModalList: React.VFC<ModalListProps> = ({
+export const ModalList = ({
 	folderId,
 	nodes,
 	activeNodes,
@@ -62,7 +62,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 	writingFolder = false,
 	limitNavigation = false,
 	allowRootNavigation = false
-}) => {
+}: ModalListProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const listRef = useRef<HTMLDivElement | null>(null);
 

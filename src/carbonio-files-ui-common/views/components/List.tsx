@@ -125,7 +125,7 @@ interface ListProps {
 	fillerWithActions?: React.JSX.Element;
 }
 
-export const List: React.VFC<ListProps> = ({
+export const List = ({
 	nodes,
 	loading,
 	hasMore,
@@ -136,7 +136,7 @@ export const List: React.VFC<ListProps> = ({
 	emptyListMessage,
 	canUpload = true,
 	fillerWithActions
-}) => {
+}: ListProps): React.JSX.Element => {
 	const { navigateToFolder } = useNavigation();
 	const { activeNodeId: activeNode, setActiveNode } = useActiveNode();
 	const [t] = useTranslation();

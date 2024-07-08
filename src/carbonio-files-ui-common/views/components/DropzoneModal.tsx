@@ -58,12 +58,12 @@ interface DropzoneModalProps {
 	disabled?: boolean;
 }
 
-export const DropzoneModal: React.VFC<DropzoneModalProps> = ({
+export const DropzoneModal = ({
 	title,
 	message,
 	disabled,
 	icons
-}) => {
+}: DropzoneModalProps): React.JSX.Element => {
 	const color = useMemo(() => (disabled ? 'secondary' : 'primary'), [disabled]);
 
 	const iconItems = useMemo(

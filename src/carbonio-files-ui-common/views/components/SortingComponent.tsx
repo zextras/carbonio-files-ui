@@ -16,7 +16,7 @@ import { OrderTrend, OrderType } from '../../types/common';
 import { NodeSort } from '../../types/graphql/types';
 import { getInverseOrder, nodeSortGetter } from '../../utils/utils';
 
-export const SortingComponent: React.VFC = () => {
+export const SortingComponent = (): React.JSX.Element => {
 	const buttonRef = useRef<HTMLDivElement>(null);
 	const nodeSort = useReactiveVar(nodeSortVar);
 	const [t] = useTranslation();

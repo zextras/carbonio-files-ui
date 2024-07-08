@@ -26,7 +26,10 @@ const CustomIcon = styled(Icon)`
 	width: ${({ theme }): string => cssCalcBuilder(theme.sizes.icon.medium, ['*', 2])};
 `;
 
-export const EmptyDisplayer: React.VFC<EmptyDisplayerProps> = ({ icons, translationKey }) => {
+export const EmptyDisplayer = ({
+	icons,
+	translationKey
+}: EmptyDisplayerProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { isEmpty: listIsEmpty, queryCalled } = useContext(ListContext);
 	const [randomPlaceholder, setRandomPlaceholder] = useState<{ title: string; message?: string }>();

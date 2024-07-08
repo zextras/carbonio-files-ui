@@ -36,11 +36,11 @@ interface MoveNodesModalContentProps {
 	closeAction?: () => void;
 }
 
-export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
+export const MoveNodesModalContent = ({
 	closeAction,
 	nodesToMove,
 	folderId
-}) => {
+}: MoveNodesModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCurrent, setDefault } = useDestinationVarManager<string>();
 	const { currentValue } = useReactiveVar<DestinationVar<string>>(

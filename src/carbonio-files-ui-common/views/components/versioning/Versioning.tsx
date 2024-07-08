@@ -41,7 +41,7 @@ interface VersioningProps {
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
+export const Versioning = ({ node }: VersioningProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const deleteVersions = useDeleteVersionsMutation();

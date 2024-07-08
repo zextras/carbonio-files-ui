@@ -49,7 +49,7 @@ export interface ListHeaderProps {
 
 const MAX_ACTIONS_VISIBLE = 3;
 
-export const ListHeader: React.VFC<ListHeaderProps> = ({
+export const ListHeader = ({
 	isSelectionModeActive,
 	unSelectAll,
 	selectAll,
@@ -61,7 +61,7 @@ export const ListHeader: React.VFC<ListHeaderProps> = ({
 	secondCustomComponent,
 	headerEndComponent,
 	selectedCount
-}) => {
+}: ListHeaderProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	return !isSelectionModeActive ? (

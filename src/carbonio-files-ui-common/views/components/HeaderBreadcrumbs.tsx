@@ -33,7 +33,10 @@ export interface HeaderBreadcrumbsProps {
 	crumbs?: Crumb[];
 }
 
-export const HeaderBreadcrumbs: React.VFC<HeaderBreadcrumbsProps> = ({ folderId, crumbs }) => {
+export const HeaderBreadcrumbs = ({
+	folderId,
+	crumbs
+}: HeaderBreadcrumbsProps): React.JSX.Element => {
 	const { navigateToFolder } = useNavigation();
 	const [t] = useTranslation();
 

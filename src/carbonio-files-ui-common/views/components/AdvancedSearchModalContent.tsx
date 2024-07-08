@@ -46,11 +46,11 @@ interface AdvancedSearchModalContentProps {
 	searchAdvancedFilters: (advancedFilters: AdvancedFilters) => void;
 }
 
-export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentProps> = ({
+export const AdvancedSearchModalContent = ({
 	filters,
 	closeAction,
 	searchAdvancedFilters
-}) => {
+}: AdvancedSearchModalContentProps): React.JSX.Element => {
 	const { activeNodeId, removeActiveNode } = useActiveNode();
 	const [t] = useTranslation();
 	const [currentFilters, setCurrentFilters] = useState<AdvancedFilters>(filters);

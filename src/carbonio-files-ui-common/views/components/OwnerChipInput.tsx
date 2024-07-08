@@ -37,10 +37,10 @@ interface OwnerChipInputProps {
 	) => void;
 }
 
-export const OwnerChipInput: React.VFC<OwnerChipInputProps> = ({
+export const OwnerChipInput = ({
 	currentFilters,
 	updateFilter
-}) => {
+}: OwnerChipInputProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const [loading, setLoading] = useState(false);

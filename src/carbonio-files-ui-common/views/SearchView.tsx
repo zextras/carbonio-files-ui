@@ -29,11 +29,11 @@ interface SearchViewProps {
 	displayerWidth?: string;
 }
 
-export const SearchView: React.VFC<SearchViewProps> = ({
+export const SearchView = ({
 	resultsHeader,
 	listWidth = LIST_WIDTH,
 	displayerWidth = DISPLAYER_WIDTH
-}) => {
+}: SearchViewProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 	const { navigateToFolder } = useNavigation();

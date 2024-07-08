@@ -24,7 +24,7 @@ import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
-const UploadView: React.VFC = () => {
+const UploadView = (): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 	const { navigateToFolder } = useNavigation();

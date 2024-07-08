@@ -37,7 +37,7 @@ import { NonNullableListItem, Unwrap } from '../types/utils';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
-const FilterView: React.VFC = () => {
+const FilterView = (): React.JSX.Element => {
 	const { filter: filterParam } = useParams<URLParams>();
 	const isFlaggedFilter = `/${filterParam}` === FILTER_TYPE.flagged;
 	const isMyTrashFilter = `/${filterParam}` === FILTER_TYPE.myTrash;

@@ -34,7 +34,7 @@ const DateText = styled(Text)`
 	padding-left: ${({ theme }): string => theme.sizes.padding.extralarge};
 `;
 
-const Label: React.FC = ({ children }) => (
+const Label = ({ children }: React.PropsWithChildren): React.JSX.Element => (
 	<Padding bottom="small">
 		<Text color="secondary" size="small">
 			{children}
@@ -51,14 +51,14 @@ export interface NodeDetailsUserRowProps {
 	loading?: boolean;
 }
 
-export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
+export const NodeDetailsUserRow = ({
 	user,
 	label,
 	tooltip,
 	dateTime,
 	clickAction,
 	loading
-}) => {
+}: NodeDetailsUserRowProps): React.JSX.Element => {
 	const { locale } = useUserInfo();
 
 	return (

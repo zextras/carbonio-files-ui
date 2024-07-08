@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useEffect, useState, FC, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import { Modal, Button } from '@zextras/carbonio-design-system';
 import type { Location } from 'history';
@@ -12,11 +12,17 @@ import { filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Prompt, useHistory } from 'react-router-dom';
 
-export const RouteLeavingGuard: FC<{
+type RouteLeavingGuardProps = {
 	when?: boolean;
 	onSave: () => Promise<PromiseSettledResult<Awaited<unknown>>[]>;
 	dataHasError?: boolean;
-}> = ({ children, when, onSave, dataHasError = false }) => {
+};
+export const RouteLeavingGuard = ({
+	children,
+	when,
+	onSave,
+	dataHasError = false
+}: React.PropsWithChildren<RouteLeavingGuardProps>): React.JSX.Element => {
 	const history = useHistory();
 	const lastLocationInitial = useMemo(() => history.location, [history]);
 	const [modalVisible, setModalVisible] = useState(false);

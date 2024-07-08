@@ -58,7 +58,7 @@ const DropdownItemComponent = ({
 	</Tooltip>
 );
 
-export const VersionRow: React.VFC<{
+type VersionRowProps = {
 	background?: string;
 	canCloneVersion: boolean;
 	cloneVersionTooltip?: string;
@@ -80,7 +80,9 @@ export const VersionRow: React.VFC<{
 	size: number;
 	updatedAt: number;
 	version: number;
-}> = ({
+};
+
+export const VersionRow = ({
 	background,
 	canCloneVersion,
 	cloneVersionTooltip,
@@ -102,7 +104,7 @@ export const VersionRow: React.VFC<{
 	size,
 	updatedAt,
 	version
-}) => {
+}: VersionRowProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
@@ -341,10 +343,14 @@ export const VersionRow: React.VFC<{
 	);
 };
 
-export const SectionRow: React.FC<{
+export const SectionRow = ({
+	rowNumber,
+	background,
+	children
+}: React.PropsWithChildren<{
 	rowNumber: number;
 	background?: string;
-}> = ({ rowNumber, background, children }) => (
+}>): React.JSX.Element => (
 	<GridItem
 		mainAlignment={'flex-start'}
 		orientation={'horizontal'}

@@ -20,7 +20,7 @@ interface TransTextProps extends TextProps {
 	values?: Record<string, string>;
 }
 
-export const TransText: React.FC<TransTextProps> = ({
+export const TransText = ({
 	weight,
 	size,
 	color,
@@ -32,7 +32,7 @@ export const TransText: React.FC<TransTextProps> = ({
 	tOptions,
 	values,
 	children
-}) => {
+}: TransTextProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	return (

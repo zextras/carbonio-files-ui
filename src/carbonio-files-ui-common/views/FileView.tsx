@@ -24,7 +24,7 @@ import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
-const FileView: React.VFC = () => {
+const FileView = (): React.JSX.Element => {
 	const fileId = useQueryParam('file');
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
