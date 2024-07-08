@@ -86,6 +86,9 @@ export const useCreateDocsFile = (): UseCreateDocsFileReturnType => {
 			const url = `${DOCS_ENDPOINT}${CREATE_FILE_PATH}`;
 			const file = { name, type, parentId: parentFolder.id };
 			const response = await fetch(url, {
+				headers: {
+					'Content-Type': 'application/json'
+				},
 				method: 'POST',
 				body: JSON.stringify({
 					filename: file.name,
