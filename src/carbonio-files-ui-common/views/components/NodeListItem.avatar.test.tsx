@@ -85,7 +85,7 @@ describe('Node List Item Avatar', () => {
 			/>
 		);
 		expect(await screen.findByTestId(SELECTORS.nodeAvatar)).toBeVisible();
-		expect(healthCache.healthReceived).toBeTruthy();
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(getPreviewThumbnailSrcFn).not.toHaveBeenCalled();
 	});
 });
