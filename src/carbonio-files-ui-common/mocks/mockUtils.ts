@@ -154,7 +154,7 @@ function populateNodeFields(
 	return {
 		id: id ?? faker.string.uuid(),
 		creator: populateUser(),
-		owner: populateUser(LOGGED_USER.id, LOGGED_USER.name),
+		owner: populateUser(LOGGED_USER.id, LOGGED_USER.full_name, LOGGED_USER.email),
 		last_editor: populateUser(),
 		created_at: faker.date.past().getTime(),
 		updated_at: faker.date.recent().getTime(),

@@ -23,7 +23,7 @@ import { selectionModeVar } from './carbonio-files-ui-common/apollo/selectionVar
 import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
-import { LOGGED_USER } from './mocks/constants';
+import { LOGGED_USER_ACCOUNT } from './mocks/constants';
 import server from './mocks/server';
 
 dotenv.config();
@@ -136,7 +136,7 @@ beforeAll(() => {
 		value: noop
 	});
 
-	global.mockedUserLogged = LOGGED_USER;
+	global.mockedUserLogged = LOGGED_USER_ACCOUNT;
 
 	window.resizeTo = function resizeTo(width, height): void {
 		Object.assign(this, {
