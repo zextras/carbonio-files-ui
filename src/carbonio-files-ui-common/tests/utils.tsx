@@ -25,8 +25,10 @@ import {
 	screen as rtlScreen,
 	waitFor,
 	within as rtlWithin,
-	type Screen, RenderHookOptions, RenderHookResult
-} from "@testing-library/react";
+	type Screen,
+	RenderHookOptions,
+	RenderHookResult
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
