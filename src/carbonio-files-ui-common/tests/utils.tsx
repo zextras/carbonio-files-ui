@@ -60,7 +60,7 @@ export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
  */
 const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) =>
 	// eslint-disable-next-line testing-library/prefer-screen-queries
-	rtlScreen.queryAllByText((_content, element) => {
+	rtlWithin(container).queryAllByText((_content, element) => {
 		if (element && element instanceof HTMLElement) {
 			const hasText = (singleNode: Element): boolean => {
 				const regExp = RegExp(text);
@@ -76,11 +76,11 @@ const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) 
 const getByTextWithMarkupMultipleError = (
 	container: Element | null,
 	text: string | RegExp
-): string => `Found multiple elements with text: ${text}`;
+): string => `Found multiple elements with text: ${text} inside ${container}`;
 const getByTextWithMarkupMissingError = (
 	container: Element | null,
 	text: string | RegExp
-): string => `Unable to find an element with text: ${text}`;
+): string => `Unable to find an element with text: ${text} inside ${container}`;
 
 type ByRoleWithIconOptions = ByRoleOptions & {
 	icon: string | RegExp;
@@ -97,18 +97,18 @@ const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> =
 		rtlWithin(container).queryAllByRole(role, options),
 		(element) => rtlWithin(element).queryByTestId(icon) !== null
 	);
-const printRole = (role: ByRoleMatcher): string =>
-	typeof role === 'string' ? role : `unprintable matcher function ${JSON.stringify(role)}`;
 const getByRoleWithIconMultipleError = (
 	container: Element | null,
 	role: ByRoleMatcher,
 	options: ByRoleWithIconOptions
-): string => `Found multiple elements with role ${printRole(role)} and icon ${options.icon}`;
+): string =>
+	`Found multiple elements with role ${role} and icon ${options.icon} inside ${container}`;
 const getByRoleWithIconMissingError = (
 	container: Element | null,
 	role: ByRoleMatcher,
 	options: ByRoleWithIconOptions
-): string => `Unable to find an element with role ${printRole(role)} and icon ${options.icon}`;
+): string =>
+	`Unable to find an element with role ${role} and icon ${options.icon} inside ${container}`;
 
 const [
 	queryByTextWithMarkup,
@@ -393,8 +393,14 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 }
 
 export async function moveNode(destinationFolder: Folder, user: UserEvent): Promise<void> {
-	const moveAction = await screen.findByText('Move');
-	expect(moveAction).toBeVisible();
+	let moveAction = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.move });
+	if (!moveAction) {
+		const moreVertical = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.moreVertical });
+		if (moreVertical) {
+			await user.click(moreVertical);
+		}
+		moveAction = await screen.findByText('Move');
+	}
 	await user.click(moveAction);
 	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
@@ -481,7 +487,7 @@ function createFileSystemEntry(
 	node: Pick<Node, '__typename' | 'name'> &
 		(Pick<FilesFile, 'mime_type'> | Pick<Folder, '__typename'>),
 	file?: File
-): FileSystemEntry {
+): FileSystemDirectoryEntry | FileSystemFileEntry {
 	const baseEntry: FileSystemEntry = {
 		name: node.name,
 		fullPath: `/${node.name}`,
@@ -495,25 +501,23 @@ function createFileSystemEntry(
 	};
 	if (isFolder(node)) {
 		const reader = createFileSystemDirectoryEntryReader(node);
-		const directoryEntry: FileSystemDirectoryEntry = {
+		return {
 			...baseEntry,
 			createReader: () => reader,
 			getFile: noop,
 			getDirectory: noop
-		};
-		return directoryEntry;
+		} satisfies FileSystemDirectoryEntry;
 	}
-	const fileEntry: FileSystemFileEntry = {
+	return {
 		...baseEntry,
-		file(successCallback: FileCallback, errorCallback?: ErrorCallback) {
+		file(successCallback: FileCallback, errorCallback?: ErrorCallback): void {
 			if (file) {
 				successCallback(file);
 			} else if (errorCallback) {
 				errorCallback(new DOMException('no file provided', 'createFileSystemEntry'));
 			}
 		}
-	};
-	return fileEntry;
+	} satisfies FileSystemFileEntry;
 }
 
 export function createUploadDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
