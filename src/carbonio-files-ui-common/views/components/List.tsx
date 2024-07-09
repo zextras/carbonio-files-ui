@@ -31,19 +31,10 @@ import {
 	DeleteNodesType,
 	useDeleteNodesMutation
 } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
-import {
-	FlagNodesType,
-	useFlagNodesMutation
-} from '../../hooks/graphql/mutations/useFlagNodesMutation';
+import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
-import {
-	RestoreType,
-	useRestoreNodesMutation
-} from '../../hooks/graphql/mutations/useRestoreNodesMutation';
-import {
-	TrashNodesType,
-	useTrashNodesMutation
-} from '../../hooks/graphql/mutations/useTrashNodesMutation';
+import { useRestoreNodesMutation } from '../../hooks/graphql/mutations/useRestoreNodesMutation';
+import { useTrashNodesMutation } from '../../hooks/graphql/mutations/useTrashNodesMutation';
 import {
 	UpdateNodeType,
 	useUpdateNodeMutation
@@ -249,12 +240,13 @@ export const List = ({
 	 * Set flagValue for selected nodes.
 	 * @param {boolean} flagValue - value to set
 	 */
-	const toggleFlagSelection = useCallback<FlagNodesType>(
-		(flagValue) =>
+	const toggleFlagSelection = useCallback(
+		(flagValue: boolean) => {
 			toggleFlag(flagValue, ...selectedNodes).then((result) => {
 				exitSelectionMode();
 				return result;
-			}),
+			});
+		},
 		[toggleFlag, selectedNodes, exitSelectionMode]
 	);
 
@@ -267,23 +259,19 @@ export const List = ({
 	/** Mutation to delete permanently nodes */
 	const deletePermanently = useDeleteNodesMutation();
 
-	const markForDeletionSelection = useCallback<() => ReturnType<TrashNodesType>>(
-		() =>
-			markNodesForDeletion(...selectedNodes).then((result) => {
-				exitSelectionMode();
-				return result;
-			}),
-		[markNodesForDeletion, selectedNodes, exitSelectionMode]
-	);
+	const markForDeletionSelection = useCallback<() => void>(() => {
+		markNodesForDeletion(...selectedNodes).then((result) => {
+			exitSelectionMode();
+			return result;
+		});
+	}, [markNodesForDeletion, selectedNodes, exitSelectionMode]);
 
-	const restoreSelection = useCallback<() => ReturnType<RestoreType>>(
-		() =>
-			restore(...selectedNodes).then((result) => {
-				exitSelectionMode();
-				return result;
-			}),
-		[restore, selectedNodes, exitSelectionMode]
-	);
+	const restoreSelection = useCallback<() => void>(() => {
+		restore(...selectedNodes).then((result) => {
+			exitSelectionMode();
+			return result;
+		});
+	}, [restore, selectedNodes, exitSelectionMode]);
 
 	const deletePermanentlySelection = useCallback<DeleteNodesType>(
 		() => deletePermanently(...selectedNodes),
@@ -568,7 +556,7 @@ export const List = ({
 	const uploadWithDragAndDrop = useCallback<React.DragEventHandler>(
 		(event) => {
 			if (canUpload) {
-				add(getUploadAddType(event.dataTransfer), folderId || ROOTS.LOCAL_ROOT);
+				add(getUploadAddType(event.dataTransfer), folderId ?? ROOTS.LOCAL_ROOT);
 				if (!folderId) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
