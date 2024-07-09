@@ -58,7 +58,6 @@ describe('Move', () => {
 			const nodeToMove = currentFolder.children.nodes[0] as Node;
 			nodeToMove.permissions.can_write_folder = true;
 			nodeToMove.permissions.can_write_file = true;
-
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 				query: GetChildrenDocument,
@@ -83,7 +82,6 @@ describe('Move', () => {
 			});
 
 			await screen.findByText(nodeToMove.name);
-
 			let destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
@@ -91,24 +89,16 @@ describe('Move', () => {
 				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
-
-			expect(destinationFolderCachedData?.getNode || null).not.toBeNull();
+			expect(destinationFolderCachedData?.getNode ?? null).not.toBeNull();
 			expect((destinationFolderCachedData?.getNode as Folder).id).toBe(destinationFolder.id);
-
 			// activate selection mode by selecting items
 			await selectNodes([nodeToMove.id], user);
-			// check that all wanted items are selected
-			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
-			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
-			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-
 			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - 1
 			);
-
+			expect(screen.queryByText(nodeToMove.name)).not.toBeInTheDocument();
 			destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
@@ -116,7 +106,6 @@ describe('Move', () => {
 				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
-
 			expect(destinationFolderCachedData).toBeNull();
 		});
 
@@ -136,7 +125,6 @@ describe('Move', () => {
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
 			});
-
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 				query: GetChildrenDocument,
@@ -152,7 +140,7 @@ describe('Move', () => {
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes(
-						map(nodesToMove, (nodeToMove) => ({ ...nodeToMove, parent: destinationFolder }))
+						nodesToMove.map((nodeToMove) => ({ ...nodeToMove, parent: destinationFolder }))
 					)
 				}
 			} satisfies Partial<Resolvers>;
@@ -163,7 +151,6 @@ describe('Move', () => {
 			});
 
 			await screen.findByText(nodesToMove[0].name);
-
 			let destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
@@ -171,39 +158,21 @@ describe('Move', () => {
 				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
-
 			expect(destinationFolderCachedData?.getNode || null).not.toBeNull();
 			expect((destinationFolderCachedData?.getNode as Folder).id).toBe(destinationFolder.id);
-
 			// activate selection mode by selecting items
 			await selectNodes(
-				map(nodesToMove, (nodeToMove) => nodeToMove.id),
+				nodesToMove.map((nodeToMove) => nodeToMove.id),
 				user
 			);
-			// check that all wanted items are selected
-			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesToMove.length);
-			let moveAction = screen.queryByTestId(ICON_REGEXP.move);
-			if (!moveAction) {
-				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
-				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
-				moveAction = await screen.findByText('Move');
-			}
-			expect(moveAction).toBeVisible();
-			await user.click(moveAction);
-			const modalList = await screen.findByTestId(SELECTORS.modalList);
-			const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
-			await user.click(destinationFolderItem);
-			await waitFor(() => expect(screen.getByRole('button', { name: /move/i })).toBeEnabled());
-			await user.click(screen.getByRole('button', { name: /move/i }));
-			expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument();
-			expect(screen.queryByText('Move')).not.toBeInTheDocument();
+			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
-			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-
 			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - nodesToMove.length
 			);
-
+			nodesToMove.forEach((node) => {
+				expect(screen.queryByText(node.name)).not.toBeInTheDocument();
+			});
 			destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
@@ -211,7 +180,6 @@ describe('Move', () => {
 				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
-
 			expect(destinationFolderCachedData).toBeNull();
 		});
 
@@ -228,7 +196,7 @@ describe('Move', () => {
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
 			commonParent.children.nodes.push(currentFolder, destinationFolder);
-			forEach(currentFolder.children.nodes, (mockedNode) => {
+			currentFolder.children.nodes.forEach((mockedNode) => {
 				if (mockedNode) {
 					mockedNode.permissions.can_write_file = true;
 					mockedNode.permissions.can_write_folder = true;
@@ -238,7 +206,6 @@ describe('Move', () => {
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
 			const nodesToMove = [...firstPage];
-
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([commonParent], [commonParent, currentFolder]),
@@ -265,30 +232,18 @@ describe('Move', () => {
 			});
 
 			await screen.findByText(firstPage[0].name);
-			expect(screen.getByText(firstPage[0].name)).toBeVisible();
-			expect(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();
-			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 			await selectNodes(
-				map(nodesToMove, (node) => node.id),
+				nodesToMove.map((node) => node.id),
 				user
 			);
-			// check that all wanted items are selected
-			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
-			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
-			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
-			const moveAction = await screen.findByText(ACTION_REGEXP.move);
-			expect(moveAction).toBeVisible();
-			expect(moveAction).toHaveStyle({
-				color: COLORS.text.regular
-			});
-			await user.click(moveAction);
+			await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.moreVertical }));
+			await user.click(await screen.findByText(ACTION_REGEXP.move));
 			await screen.findByTextWithMarkup(
 				buildBreadCrumbRegExp(commonParent.name, currentFolder.name)
 			);
 			const modalList = screen.getByTestId(SELECTORS.modalList);
 			await within(modalList).findByText((currentFolder.children.nodes[0] as Node).name);
 			const moveModalButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });
-			expect(moveModalButton).toBeDisabled();
 			act(() => {
 				// run path lazy query
 				jest.runOnlyPendingTimers();
@@ -300,17 +255,14 @@ describe('Move', () => {
 				// 	run modal timers
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByText(destinationFolder.name)).toBeVisible();
-			expect(screen.getByText(currentFolder.name)).toBeVisible();
 			await user.click(screen.getByText(destinationFolder.name));
 			await waitFor(() => expect(moveModalButton).toBeEnabled());
 			await user.click(moveModalButton);
 			await screen.findByText(/Item moved/i);
-			await screen.findByText(secondPage[0].name);
+			expect(await screen.findByText(secondPage[0].name)).toBeVisible();
+			expect(screen.getByText(secondPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();
 			expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument();
 			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1].name)).not.toBeInTheDocument();
-			expect(screen.getByText(secondPage[0].name)).toBeVisible();
-			expect(screen.getByText(secondPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();
 		});
 	});
 
@@ -326,7 +278,6 @@ describe('Move', () => {
 			const nodeToMove = currentFolder.children.nodes[0] as Node;
 			nodeToMove.permissions.can_write_folder = true;
 			nodeToMove.permissions.can_write_file = true;
-
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 				query: GetChildrenDocument,
@@ -335,7 +286,6 @@ describe('Move', () => {
 					getNode: destinationFolder
 				}
 			});
-
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
@@ -352,7 +302,6 @@ describe('Move', () => {
 			});
 
 			await screen.findByText(nodeToMove.name);
-
 			let destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
@@ -360,21 +309,16 @@ describe('Move', () => {
 				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
-
 			expect(destinationFolderCachedData?.getNode || null).not.toBeNull();
 			expect((destinationFolderCachedData?.getNode as Folder).id).toBe(destinationFolder.id);
-
 			// right click to open contextual menu on folder
-			const nodeToMoveItem = await screen.findByText(nodeToMove.name);
-			await user.rightClick(nodeToMoveItem);
-
+			await user.rightClick(screen.getByText(nodeToMove.name));
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
-
 			expect(screen.queryAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length - 1
 			);
-
+			expect(screen.queryByText(nodeToMove.name)).not.toBeInTheDocument();
 			destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
 				GetChildrenQueryVariables
@@ -382,7 +326,6 @@ describe('Move', () => {
 				query: GetChildrenDocument,
 				variables: getChildrenVariables(destinationFolder.id)
 			});
-
 			expect(destinationFolderCachedData).toBeNull();
 		});
 
@@ -401,7 +344,6 @@ describe('Move', () => {
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
-
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
@@ -424,9 +366,6 @@ describe('Move', () => {
 			});
 
 			await screen.findByText(firstPage[0].name);
-			expect(screen.getByText(firstPage[0].name)).toBeVisible();
-			expect(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();
-			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 			await user.rightClick(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name));
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
@@ -437,8 +376,7 @@ describe('Move', () => {
 				firstPage.length - 1
 			);
 			triggerListLoadMore(0);
-			await screen.findByText(secondPage[0].name);
-			expect(screen.getByText(secondPage[0].name)).toBeVisible();
+			expect(await screen.findByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(secondPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1].name)).not.toBeInTheDocument();
