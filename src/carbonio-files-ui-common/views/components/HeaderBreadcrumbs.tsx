@@ -60,15 +60,15 @@ export const HeaderBreadcrumbs = ({
 	}, [expanded, toggleExpanded]);
 
 	const onDropdownOpen = useCallback(() => {
-		dropdownProps.onOpen && dropdownProps.onOpen();
+		dropdownProps.onOpen?.();
 		const collapser = document.querySelector('.breadcrumbCollapser');
-		collapser && collapser.classList.add('active');
+		collapser?.classList.add('active');
 	}, [dropdownProps]);
 
 	const onDropdownClose = useCallback(() => {
-		dropdownProps.onClose && dropdownProps.onClose();
+		dropdownProps.onClose?.();
 		const collapser = document.querySelector('.breadcrumbCollapser');
-		collapser && collapser.classList.remove('active');
+		collapser?.classList.remove('active');
 	}, [dropdownProps]);
 
 	return (
@@ -82,7 +82,6 @@ export const HeaderBreadcrumbs = ({
 		>
 			{folderId && expandable && (
 				<Tooltip
-					/* i18next-extract-disable-next-line */
 					label={t(
 						`breadcrumb.expander.${expanded ? 'hide' : 'show'}`,
 						expanded ? 'Hide previous folders' : 'Show previous folders'

@@ -98,7 +98,6 @@ export function useDroppableCrumbs(
 			apolloClient.readFragment({
 				fragment: ParentFragmentDoc,
 				fragmentName: 'Parent',
-				// FIXME: remove hardcoded typename
 				id: apolloClient.cache.identify({ __typename: 'Folder', id: crumb.id })
 			}),
 		[apolloClient]
