@@ -93,7 +93,10 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 
 	const [updateNode] = useUpdateNodeMutation();
 
-	const updateNodeAction = useCallback((id, name) => updateNode(id, name), [updateNode]);
+	const updateNodeAction = useCallback(
+		(id: string, name: string) => updateNode(id, name),
+		[updateNode]
+	);
 
 	const { openRenameModal } = useRenameModal(updateNodeAction);
 

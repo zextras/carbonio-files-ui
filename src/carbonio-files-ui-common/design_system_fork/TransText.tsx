@@ -37,7 +37,6 @@ export const TransText: React.FC<TransTextProps> = ({
 
 	return (
 		<Text weight={weight} size={size} color={color} overflow={overflow} disabled={disabled}>
-			{/* i18next-extract-disable-next-line */}
 			<Trans t={t} i18nKey={i18nKey} count={count} tOptions={tOptions} values={values}>
 				{children}
 			</Trans>

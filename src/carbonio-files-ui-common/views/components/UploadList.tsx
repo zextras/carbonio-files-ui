@@ -119,7 +119,7 @@ export const UploadList: React.VFC = () => {
 			add(getUploadAddType(event.dataTransfer), ROOTS.LOCAL_ROOT);
 			createSnackbar({
 				key: new Date().toLocaleString(),
-				type: 'info',
+				severity: 'info',
 				label: t('uploads.destination.home', "Upload occurred in Files' Home"),
 				actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
 				replace: false,

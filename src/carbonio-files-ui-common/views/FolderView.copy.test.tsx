@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act, fireEvent } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { map } from 'lodash';
 import { graphql, HttpResponse } from 'msw';
 
@@ -350,7 +350,7 @@ describe('Copy', () => {
 
 			// right click to open contextual menu on folder
 			const nodeToCopyItem = await screen.findByText(nodeToCopy.name);
-			fireEvent.contextMenu(nodeToCopyItem);
+			await user.rightClick(nodeToCopyItem);
 			const copyAction = await screen.findByText(ACTION_REGEXP.copy);
 			expect(copyAction).toBeVisible();
 			await user.click(copyAction);

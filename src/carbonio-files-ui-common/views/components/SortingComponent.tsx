@@ -87,7 +87,7 @@ export const SortingComponent: React.VFC = () => {
 	}, [ascendingOrDescending, orderType]);
 
 	const selectOrderType = useCallback(
-		(orderTypeValue) => {
+		(orderTypeValue: OrderType) => {
 			nodeSortVar(nodeSortGetter(ascendingOrDescending, orderTypeValue));
 		},
 		[ascendingOrDescending]

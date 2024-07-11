@@ -330,8 +330,8 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 	const search = useMemo(
 		() =>
 			throttle(
-				({ textContent }: React.KeyboardEvent & { textContent: string }) => {
-					if (textContent === '') {
+				({ textContent }: { textContent: string | null }) => {
+					if (!textContent || textContent.trim() === '') {
 						setSearchResult((h) => (h.length > 0 ? [] : h));
 						return;
 					}
@@ -373,7 +373,7 @@ export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
 		setChips(filterValidShares);
 	}, []);
 
-	const onType = useCallback(
+	const onType = useCallback<NonNullable<ChipInputProps['onInputType']>>(
 		(ev) => {
 			if (ev.key.length === 1 || ev.key === 'Delete' || ev.key === 'Backspace') {
 				search(ev);

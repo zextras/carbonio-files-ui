@@ -348,7 +348,7 @@ export const List: React.VFC<ListProps> = ({
 			exitSelectionMode();
 			createSnackbar({
 				key: new Date().toLocaleString(),
-				type: 'info',
+				severity: 'info',
 				label: t('snackbar.download.start', 'Your download will start soon'),
 				replace: true,
 				hideButton: true
@@ -572,7 +572,7 @@ export const List: React.VFC<ListProps> = ({
 				if (!folderId) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('uploads.destination.home', "Upload occurred in Files' Home"),
 						actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
 						onActionClick: () => {

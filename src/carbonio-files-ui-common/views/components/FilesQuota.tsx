@@ -5,11 +5,10 @@
  */
 import React, { useMemo } from 'react';
 
-import { Container, Icon, IconButton, Quota, Tooltip } from '@zextras/carbonio-design-system';
+import { Container, Icon, IconButton, Quota, Tooltip, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Text } from '../../design_system_fork/Text';
 import { useFilesQuotaInfo } from '../../hooks/useFilesQuotaInfo';
 import { humanFileSize } from '../../utils/utils';
 
@@ -66,7 +65,9 @@ const InnerFilesQuota = ({
 			gap={'0.5rem'}
 		>
 			<Container orientation={'row'} mainAlignment={'flex-end'} gap={'0.5rem'}>
-				<CustomText overflow={'break-word'}>{quotaString}</CustomText>
+				<CustomText overflow={'break-word'} lineHeight={1}>
+					{quotaString}
+				</CustomText>
 				{limit > 0 && fillProp >= 100 && (
 					<Tooltip
 						label={t(

@@ -4,32 +4,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act } from '@testing-library/react-hooks';
 
 import useSelection from './useSelection';
 import { populateFolder } from '../mocks/mockUtils';
+import { setupHook } from '../tests/utils';
 import { Node } from '../types/graphql/types';
-
-/**
- * Available hook fields:
- * selectedIDs,
- * selectedMap,
- * selectId,
- * isSelectionModeActive,
- * unSelectAll,
- * selectAll,
- * exitSelectionMode
- * */
 
 describe('useSelection tests', () => {
 	it('selectAll unSelectAll tests', () => {
 		const nodes: Node[] = [];
 
-		// eslint-disable-next-line no-plusplus
-		for (let i = 0; i < 10; i++) {
+		for (let i = 0; i < 10; i += 1) {
 			nodes.push(populateFolder());
 		}
-		const { result } = renderHook(() => useSelection(nodes));
+		const { result } = setupHook(() => useSelection(nodes));
 
 		expect(result.current.selectedIDs.length).toBe(0);
 		expect(result.current.isSelectionModeActive).toBeFalsy();
@@ -71,7 +60,7 @@ describe('useSelection tests', () => {
 			nodes.push(populateFolder());
 		}
 		const getOne = nodes[0];
-		const { result } = renderHook(() => useSelection(nodes));
+		const { result } = setupHook(() => useSelection(nodes));
 
 		expect(result.current.selectedIDs.length).toBe(0);
 		expect(result.current.isSelectionModeActive).toBeFalsy();

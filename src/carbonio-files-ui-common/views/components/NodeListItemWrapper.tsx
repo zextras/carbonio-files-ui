@@ -186,7 +186,7 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 		return canUploadFile(node);
 	}, [navigateTo, node]);
 
-	const dragEnterHandler = useCallback(
+	const dragEnterHandler = useCallback<React.DragEventHandler>(
 		(event) => {
 			// check if node is a valid destination for write inside action
 			setDropzoneEnabled((prevState) => {
@@ -207,7 +207,7 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 		navigationTimerRef.current && clearTimeout(navigationTimerRef.current);
 	}, []);
 
-	const moveNodesAction = useCallback(
+	const moveNodesAction = useCallback<React.DragEventHandler>(
 		(event) => {
 			const movingNodes = JSON.parse(event.dataTransfer.getData(DRAG_TYPES.move) || '{}');
 			if (movingNodes && isFolder(node)) {
@@ -224,7 +224,7 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 			add(getUploadAddType(event.dataTransfer), node.id);
 			createSnackbar({
 				key: new Date().toLocaleString(),
-				type: 'info',
+				severity: 'info',
 				label: t('snackbar.upload.success', 'Upload occurred in {{destination}}', {
 					/* i18next-extract-disable-next-line */
 					destination: t('node.alias.name', node.name, { context: node.id })
@@ -240,7 +240,7 @@ export const NodeListItemWrapper: React.VFC<NodeListItemWrapperProps> = ({
 		[add, createSnackbar, navigateTo, node.id, node.name, t]
 	);
 
-	const dropHandler = useCallback(
+	const dropHandler = useCallback<React.DragEventHandler>(
 		(event) => {
 			navigationTimerRef.current && clearTimeout(navigationTimerRef.current);
 			if (dropzoneEnabled) {

@@ -48,7 +48,7 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 			if (copyNodesResult) {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t('snackbar.copyNodes.success', 'Item copied'),
 					replace: true,
 					actionLabel: t('snackbar.copyNodes.action', 'Go to folder'),
@@ -59,7 +59,7 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 			} else {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'error',
+					severity: 'error',
 					label: t('snackbar.copyNodes.error', 'Something went wrong, try again'),
 					replace: true,
 					hideButton: true

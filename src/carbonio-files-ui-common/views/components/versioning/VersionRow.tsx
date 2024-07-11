@@ -117,7 +117,7 @@ export const VersionRow: React.VFC<{
 				if (keepVersionValue) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('snackbar.version.keepForeverRemoved', 'Keep forever removed'),
 						replace: true,
 						hideButton: true
@@ -125,7 +125,7 @@ export const VersionRow: React.VFC<{
 				} else {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('snackbar.version.keepForeverAdded', 'Version marked as to be kept forever'),
 						replace: true,
 						hideButton: true
@@ -140,7 +140,7 @@ export const VersionRow: React.VFC<{
 			if (data) {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t('snackbar.version.clone', 'Version cloned as the current one'),
 					replace: true,
 					hideButton: true

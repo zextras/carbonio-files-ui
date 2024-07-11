@@ -6,13 +6,13 @@
 
 import React from 'react';
 
-import { act, fireEvent, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodePage, sortNodes } from '../mocks/mockUtils';
 import { setup, selectNodes, triggerListLoadMore } from '../tests/utils';
 import { Node } from '../types/common';
@@ -73,8 +73,9 @@ describe('Mark for deletion - trash', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(trashAction.parentNode).not.toHaveAttribute('disabled');
+			expect(trashAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			await user.click(trashAction);
 
 			await screen.findByText(/item moved to trash/i);
@@ -93,8 +94,9 @@ describe('Mark for deletion - trash', () => {
 
 			// wait for copy action to check that popper is open
 			const copyAction = await screen.findByText(ACTION_REGEXP.copy);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(copyAction.parentNode).not.toHaveAttribute('disabled');
+			expect(copyAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
 		});
 
@@ -207,7 +209,7 @@ describe('Mark for deletion - trash', () => {
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 
 			await screen.findByText(ACTION_REGEXP.moveToTrash);
 			await user.click(screen.getByText(ACTION_REGEXP.moveToTrash));
@@ -260,7 +262,7 @@ describe('Mark for deletion - trash', () => {
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
 			// open context menu
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 
 			await screen.findByText(ACTION_REGEXP.moveToTrash);
 			await user.click(screen.getByText(ACTION_REGEXP.moveToTrash));
@@ -308,11 +310,12 @@ describe('Mark for deletion - trash', () => {
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();
-			fireEvent.contextMenu(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name));
+			await user.rightClick(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name));
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(moveToTrashAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(moveToTrashAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(moveToTrashAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			await user.click(moveToTrashAction);
 			await screen.findByText(/Item moved to trash/i);
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();

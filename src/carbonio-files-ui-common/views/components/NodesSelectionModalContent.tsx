@@ -13,6 +13,7 @@ import {
 	Container,
 	Divider,
 	Input,
+	InputProps,
 	ModalFooter,
 	ModalHeader,
 	Padding,
@@ -405,7 +406,7 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 		]
 	);
 
-	const onNewFolderInputChange = useCallback(
+	const onNewFolderInputChange = useCallback<NonNullable<InputProps['onChange']>>(
 		({ target: { value } }) => {
 			if (!createFolderPendingRequest) {
 				if (trim(value).length === 0) {

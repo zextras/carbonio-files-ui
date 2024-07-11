@@ -5,14 +5,13 @@
  */
 import React from 'react';
 
-import { screen, waitFor, within } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { waitFor, act } from '@testing-library/react';
 
 import { Displayer } from './Displayer';
 import { DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../mocks/mockUtils';
-import { generateError, setup } from '../../tests/utils';
+import { generateError, setup, screen, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { SharePermission } from '../../types/graphql/types';
 import {

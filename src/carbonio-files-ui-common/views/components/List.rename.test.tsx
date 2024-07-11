@@ -5,11 +5,11 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { List } from './List';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode, sortNodes } from '../../mocks/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../../tests/utils';
 import { Node } from '../../types/common';
@@ -127,7 +127,7 @@ describe('Rename', () => {
 			node.permissions.can_write_folder = false;
 			currentFolder.children.nodes.push(node);
 
-			setup(
+			const { user } = setup(
 				<List
 					nodes={currentFolder.children.nodes as Array<Node>}
 					mainList
@@ -137,7 +137,7 @@ describe('Rename', () => {
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			await screen.findByText(ACTION_REGEXP.manageShares);
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 		});
@@ -167,16 +167,17 @@ describe('Rename', () => {
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element0.id));
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			let renameAction = screen.queryByText(ACTION_REGEXP.rename);
 			expect(renameAction).not.toBeInTheDocument();
 			await selectNodes([element1.id], user);
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			renameAction = await screen.findByText(ACTION_REGEXP.rename);
 			expect(renameAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(renameAction).not.toHaveAttribute('disabled', '');
+			expect(renameAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 		});
 	});
 });

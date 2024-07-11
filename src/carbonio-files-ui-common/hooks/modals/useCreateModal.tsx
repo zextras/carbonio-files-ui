@@ -26,12 +26,12 @@ export function useCreateModal(
 ): {
 	openCreateModal: (parentFolderId: string) => void;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 	const [t] = useTranslation();
 	const modalOpenRef = useRef(false);
 
 	const confirmAction = useCallback(
-		(parentId, newName) => {
+		(parentId: string, newName: string) => {
 			if (newName) {
 				return createAction(parentId, newName);
 			}
@@ -43,11 +43,13 @@ export function useCreateModal(
 	const openCreateModal = useCallback(
 		(parentFolderId: string) => {
 			if (!modalOpenRef.current && parentFolderId) {
-				const closeModal = createModal(
+				const modalId = 'files-create-modal';
+				createModal(
 					{
+						id: modalId,
 						onClose: () => {
-							createActionCallback && createActionCallback();
-							closeModal();
+							createActionCallback?.();
+							closeModal(modalId);
 							modalOpenRef.current = false;
 						},
 						children: (
@@ -58,8 +60,8 @@ export function useCreateModal(
 								confirmLabel={t('folder.create.modal.button.confirm', 'Create')}
 								nodeId={parentFolderId}
 								closeAction={(): void => {
-									createActionCallback && createActionCallback();
-									closeModal();
+									createActionCallback?.();
+									closeModal(modalId);
 									modalOpenRef.current = false;
 								}}
 								title={title}
@@ -72,7 +74,16 @@ export function useCreateModal(
 				modalOpenRef.current = true;
 			}
 		},
-		[confirmAction, createActionCallback, createModal, inputCustomIcon, inputLabel, t, title]
+		[
+			closeModal,
+			confirmAction,
+			createActionCallback,
+			createModal,
+			inputCustomIcon,
+			inputLabel,
+			t,
+			title
+		]
 	);
 
 	return { openCreateModal };
