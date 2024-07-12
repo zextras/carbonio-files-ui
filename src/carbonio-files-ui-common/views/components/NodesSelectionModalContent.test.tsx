@@ -10,7 +10,7 @@ import React from 'react';
 
 import 'jest-styled-components';
 import { ReactiveVar } from '@apollo/client';
-import { act, waitFor } from '@testing-library/react';
+import { act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, noop, size } from 'lodash';
 import { find as findStyled } from 'styled-components/test-utils';
 
@@ -88,7 +88,6 @@ describe('Nodes Selection Modal Content', () => {
 			}
 		);
 
-		await screen.findByText(/home/i);
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
@@ -145,7 +144,6 @@ describe('Nodes Selection Modal Content', () => {
 				mocks
 			}
 		);
-		await screen.findByText(/home/i);
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
@@ -209,7 +207,6 @@ describe('Nodes Selection Modal Content', () => {
 				mocks
 			}
 		);
-		await screen.findByText(/home/i);
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
@@ -273,7 +270,6 @@ describe('Nodes Selection Modal Content', () => {
 				mocks
 			}
 		);
-		await screen.findByText(/home/i);
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
@@ -331,7 +327,6 @@ describe('Nodes Selection Modal Content', () => {
 				mocks
 			}
 		);
-		await screen.findByText(/home/i);
 		// wait for root list query to be executed
 		await waitFor(() =>
 			expect(
@@ -382,7 +377,6 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			);
 
-			await screen.findByText(/home/i);
 			// wait for root list query to be executed
 			await waitFor(() =>
 				expect(
@@ -424,7 +418,6 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -483,7 +476,6 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -553,7 +545,6 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -622,7 +613,6 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -682,7 +672,6 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -731,7 +720,6 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -795,7 +783,6 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -876,7 +863,6 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -939,7 +925,6 @@ describe('Nodes Selection Modal Content', () => {
 					}
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -997,7 +982,6 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/shared with me/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1061,7 +1045,6 @@ describe('Nodes Selection Modal Content', () => {
 					{ mocks }
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1134,7 +1117,6 @@ describe('Nodes Selection Modal Content', () => {
 					{ mocks }
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1226,7 +1208,6 @@ describe('Nodes Selection Modal Content', () => {
 					{ mocks }
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1340,7 +1321,6 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			);
 
-			await screen.findByText(/home/i);
 			// wait for root list query to be executed
 			await waitFor(() =>
 				expect(
@@ -1410,7 +1390,6 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			);
 
-			await screen.findByText(/home/i);
 			// wait for root list query to be executed
 			await waitFor(() =>
 				expect(
@@ -1484,7 +1463,7 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
+
 				act(() => {
 					jest.runOnlyPendingTimers();
 				});
@@ -1549,7 +1528,7 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
+
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1620,7 +1599,7 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
+
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1684,7 +1663,7 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
+
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1744,7 +1723,7 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
+
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1818,7 +1797,7 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
+
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1890,7 +1869,7 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
+
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -1958,7 +1937,7 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				await screen.findByText(/home/i);
+
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -2034,7 +2013,7 @@ describe('Nodes Selection Modal Content', () => {
 
 				// wait for root list query to be executed
 				jest.advanceTimersToNextTimer();
-				await screen.findByText(/home/i);
+
 				// navigate inside home
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
@@ -2127,7 +2106,6 @@ describe('Nodes Selection Modal Content', () => {
 					{ mocks }
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -2250,7 +2228,6 @@ describe('Nodes Selection Modal Content', () => {
 					{ mocks }
 				);
 
-				await screen.findByText(/home/i);
 				// wait for root list query to be executed
 				await waitFor(() =>
 					expect(
@@ -2397,7 +2374,7 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			// new folder button is hidden
 			expect(screen.queryByRole('button', { name: /new folder/i })).not.toBeInTheDocument();
 			await user.dblClick(screen.getByText(/home/i));
@@ -2453,7 +2430,7 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			// new folder button is hidden
 			expect(screen.queryByRole('button', { name: /new folder/i })).not.toBeInTheDocument();
 			await user.dblClick(screen.getByText(/home/i));
@@ -2512,7 +2489,7 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			await user.dblClick(screen.getByText(/shared with me/i));
 			await screen.findByText(sharedFolder.name);
 			// new folder button is hidden
@@ -2574,7 +2551,7 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			await user.dblClick(screen.getByText(/shared with me/i));
 			await screen.findByText(sharedFolder.name);
 			await user.dblClick(screen.getByText(sharedFolder.name));
@@ -2640,7 +2617,7 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
@@ -2712,7 +2689,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
@@ -2789,7 +2766,6 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
@@ -2799,8 +2775,8 @@ describe('Nodes Selection Modal Content', () => {
 			await user.type(inputElement, newFolder.name);
 			await waitFor(() => expect(createActionButton).toBeEnabled());
 			await user.click(createActionButton);
-			await screen.findByTestId(SELECTORS.nodeItem(newFolder.id));
-			expect(screen.queryByRole('button', { name: /create/i })).not.toBeInTheDocument();
+			await waitForElementToBeRemoved(screen.queryByRole('button', { name: /create/i }));
+			expect(screen.getByTestId(SELECTORS.nodeItem(newFolder.id))).toBeVisible();
 			expect(screen.queryByRole('textbox', { name: /new folder's name/i })).not.toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /new folder/i })).toBeVisible();
 			expect(screen.getByText(newFolder.name)).toBeVisible();
@@ -2863,7 +2839,7 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
@@ -2938,7 +2914,7 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			await user.click(screen.getByText(/home/i));
 			await waitFor(() => expect(screen.getByRole('button', { name: /select/i })).toBeEnabled());
 			const closeButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close });
@@ -2998,7 +2974,7 @@ describe('Nodes Selection Modal Content', () => {
 
 			// wait for root list query to be executed
 			jest.advanceTimersToNextTimer();
-			await screen.findByText(/home/i);
+
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));

@@ -20,7 +20,7 @@ import {
 	Text,
 	Tooltip
 } from '@zextras/carbonio-design-system';
-import { map, reduce, some, debounce, findIndex, trim } from 'lodash';
+import { reduce, some, debounce, findIndex, trim } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingIcon } from './LoadingIcon';
@@ -89,8 +89,8 @@ export const NodesSelectionModalContent = ({
 		destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>
 	);
 	const [openedFolder, setOpenedFolder] = useState<string>('');
-	const [selectedNodes, setSelectedNodes] = useState<NodeWithMetadata[]>([]);
-	const selectedNodesIds = useMemo(() => map(selectedNodes, (node) => node.id), [selectedNodes]);
+	const selectedNodes = useMemo(() => currentValue ?? [], [currentValue]);
+	const selectedNodesIds = useMemo(() => selectedNodes.map((node) => node.id), [selectedNodes]);
 	const navigationOccurredRef = useRef(false);
 	const [newFolderInputVisible, setNewFolderInputVisible] = useState(false);
 	const [newFolderName, setNewFolderName] = useState('');
@@ -123,10 +123,6 @@ export const NodesSelectionModalContent = ({
 		}
 		return null;
 	}, [apolloClient, currentFolderNode]);
-
-	useEffect(() => {
-		setSelectedNodes(currentValue || []);
-	}, [currentValue]);
 
 	const selectId = useCallback(
 		(node: NodeWithMetadata) => {
