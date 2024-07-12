@@ -414,7 +414,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	await waitFor(() =>
 		expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument()
 	);
-	expect(screen.queryByText('Move')).not.toBeInTheDocument();
+	expect(moveAction).not.toBeInTheDocument();
 }
 
 export function buildChipsFromKeywords(keywords: string[]): AdvancedFilters['keywords'] {
