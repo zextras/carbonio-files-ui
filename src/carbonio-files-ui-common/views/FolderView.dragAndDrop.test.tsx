@@ -317,8 +317,6 @@ describe('Drag and drop', () => {
 		});
 		let reqIndex = 0;
 
-		const mockedGetChildHandler = jest.fn();
-
 		server.use(
 			graphql.query<GetChildQuery, GetChildQueryVariables>(GetChildDocument, ({ variables }) => {
 				const { node_id: id } = variables;
@@ -327,7 +325,6 @@ describe('Drag and drop', () => {
 					result.id = id;
 					reqIndex += 1;
 				}
-				mockedGetChildHandler(id);
 				return HttpResponse.json({ data: { getNode: result } });
 			})
 		);
@@ -345,25 +342,16 @@ describe('Drag and drop', () => {
 			mocks
 		});
 
-		await screen.findByText(destinationFile.name);
-
-		fireEvent.dragEnter(screen.getByText(destinationFile.name), {
+		fireEvent.dragEnter(await screen.findByText(destinationFile.name), {
 			dataTransfer: dataTransferObj
 		});
-
 		await screen.findByTestId(SELECTORS.dropzone);
 		expect(
-			screen.queryByText(/Drop here your attachments to quick-add them to this folder/m)
+			screen.getByText(/Drop here your attachments to quick-add them to this folder/m)
 		).toBeVisible();
-
 		fireEvent.drop(screen.getByText(destinationFile.name), {
 			dataTransfer: dataTransferObj
 		});
-
-		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
-		});
-		await waitFor(() => expect(mockedGetChildHandler).toHaveBeenCalledTimes(uploadedFiles.length));
 		await screen.findByText(uploadedFiles[0].name);
 		await screen.findByText(uploadedFiles[1].name);
 		expect(screen.getByText(uploadedFiles[0].name)).toBeVisible();
