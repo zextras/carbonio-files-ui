@@ -190,10 +190,12 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 				},
 				[]
 			);
-			// show chips which creation went in error inside the chipInput
-			setChips(notCreatedChips);
-			// if at least one creation went in error, restore the custom message
-			setMailTextValue(notCreatedChips.length === 0 ? '' : customMessageText);
+			if (notCreatedChips.length > 0) {
+				// show chips which creation went in error inside the chipInput
+				setChips(notCreatedChips);
+				// if at least one creation went in error, restore the custom message
+				setMailTextValue(customMessageText);
+			}
 			return results;
 		});
 	}, [chips, createShare, mailTextValue, node]);
@@ -232,7 +234,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 							setChips((c) => [...c, contactWithId]);
 						}
 					})
-					.catch(() => null); // FIXME: this catch shouldn't be necessary but for some reason it is
+					.catch(console.error);
 			}
 		},
 		[chips, getAccountByEmailLazyQuery, node, updateChip]
