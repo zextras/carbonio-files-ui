@@ -93,7 +93,7 @@ export const UploadList = (): React.JSX.Element => {
 				<UploadListItemWrapper
 					key={item.id}
 					node={item}
-					isSelected={selectedMap && selectedMap[item.id]}
+					isSelected={selectedMap?.[item.id]}
 					isSelectionModeActive={isSelectionModeActive}
 					selectId={selectId}
 				/>
