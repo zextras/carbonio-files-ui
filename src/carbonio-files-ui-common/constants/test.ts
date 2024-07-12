@@ -127,7 +127,8 @@ export const SELECTORS = {
 	avatar: 'avatar',
 	customBreadcrumbs: 'customBreadcrumbs',
 	missingFilter: 'missing-filter',
-	popper: 'popper'
+	popper: 'popper',
+	snackbar: 'snackbar'
 };
 
 export const EMITTER_CODES = {
