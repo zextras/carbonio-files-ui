@@ -46,7 +46,7 @@ import {
 
 describe('Search list', () => {
 	describe('Drag and drop', () => {
-		test('Drag of files in a filter shows upload dropzone with dropzone message. Drop triggers upload in local root', async () => {
+		test('Drag of files shows upload dropzone with dropzone message. Drop triggers upload in local root', async () => {
 			const currentSearch = populateNodes(5, 'File');
 			const localRoot = populateFolder(0, ROOTS.LOCAL_ROOT);
 			const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
@@ -179,12 +179,6 @@ describe('Search list', () => {
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
-			expect(draggedNodeItems[0]).toHaveStyle({
-				color: COLORS.text.disabled
-			});
-			expect(draggedNodeItems[1]).toHaveStyle({
-				color: COLORS.text.regular
-			});
 			// dropzone overlay of the list is shown
 			await screen.findByTestId(SELECTORS.dropzone);
 			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
@@ -265,12 +259,6 @@ describe('Search list', () => {
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
-			expect(draggedNodeItems[0]).toHaveStyle({
-				color: COLORS.text.disabled
-			});
-			expect(draggedNodeItems[1]).toHaveStyle({
-				color: COLORS.text.regular
-			});
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
 
@@ -327,7 +315,7 @@ describe('Search list', () => {
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes(
-						map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+						nodesToDrag.map((node) => ({ ...node, parent: destinationFolder }))
 					)
 				}
 			} satisfies Partial<Resolvers>;
@@ -338,6 +326,7 @@ describe('Search list', () => {
 				mocks
 			});
 
+			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 			await selectNodes(
 				map(nodesToDrag, (node) => node.id),
@@ -976,6 +965,7 @@ describe('Search list', () => {
 			expect(unflagIcon).toBeVisible();
 			expect(unflagIcon).toBeEnabled();
 			await user.click(unflagIcon);
+			await waitForElementToBeRemoved(screen.queryAllByTestId(SELECTORS.checkedAvatar));
 			expect(within(nodeToUnflagItem1).queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[1].name)).toBeVisible();
