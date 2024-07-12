@@ -11,7 +11,7 @@ import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS, TIMERS } from '../constants';
-import { COLORS, SELECTORS } from '../constants/test';
+import { COLORS, DISPLAYER_EMPTY_MESSAGE, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodes } from '../mocks/mockUtils';
 import {
 	setup,
@@ -68,6 +68,7 @@ describe('Filter View', () => {
 			});
 
 			await screen.findByText(currentFilter[0].name);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 
 			fireEvent.dragEnter(screen.getByText(currentFilter[0].name), {
 				dataTransfer: dataTransferObj
