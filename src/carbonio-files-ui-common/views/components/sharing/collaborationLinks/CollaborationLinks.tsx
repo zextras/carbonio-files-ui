@@ -130,8 +130,9 @@ export const CollaborationLinks = ({
 
 	const openDeleteModal = useCallback(
 		(linkId: string) => {
+			const modalId = 'files-delete-collaboration-link-modal';
 			createModal({
-				id: linkId,
+				id: modalId,
 				title: t('modal.revokeCollaborationLink.header', 'Revoke {{nodeName}} collaboration link', {
 					replace: { nodeName }
 				}),
@@ -140,13 +141,13 @@ export const CollaborationLinks = ({
 				onConfirm: () => {
 					deleteCollaborationsLinks([linkId]).then(({ data }) => {
 						if (data) {
-							closeModal(linkId);
+							closeModal(modalId);
 						}
 					});
 				},
 				showCloseIcon: true,
 				onClose: () => {
-					closeModal(linkId);
+					closeModal(modalId);
 				},
 				children: (
 					<Container padding={{ vertical: 'large' }}>
