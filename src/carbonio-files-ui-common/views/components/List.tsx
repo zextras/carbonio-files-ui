@@ -8,11 +8,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
-import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
+import { PreviewItem, PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { HeaderAction } from '@zextras/carbonio-ui-preview/lib/preview/Header';
-import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
 import { TFunction } from 'i18next';
-import { isEmpty, find, filter, includes, reduce, size, some } from 'lodash';
+import { isEmpty, find, filter, includes, size, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -374,50 +373,46 @@ export const List = ({
 
 	const nodesForPreview = useMemo(
 		() =>
-			reduce(
-				nodes,
-				(accumulator: Parameters<PreviewManagerContextType['initPreview']>[0], node) => {
-					if (!isFile(node)) {
-						return accumulator;
-					}
-					const [$isSupportedByPreview, documentType] = isSupportedByPreview(
-						node.mime_type,
-						'preview'
-					);
-					if (!$isSupportedByPreview) {
-						return accumulator;
-					}
-					const item = {
-						filename: node.name,
-						extension: node.extension ?? undefined,
-						size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
-						actions: getHeaderActions(t, setActiveNode, node, canUseDocs),
-						closeAction: {
-							id: 'close-action',
-							icon: 'ArrowBackOutline',
-							tooltipLabel: t('preview.close.tooltip', 'Close')
-						},
-						src: getPreviewSrc(node, documentType),
-						id: node.id
-					};
-
-					if (documentType === PREVIEW_TYPE.IMAGE) {
-						accumulator.push({
-							...item,
-							previewType: 'image'
-						});
-					} else {
-						accumulator.push({
-							...item,
-							forceCache: false,
-							previewType: 'pdf',
-							useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE
-						});
-					}
+			nodes.reduce<PreviewItem[]>((accumulator, node) => {
+				if (!isFile(node)) {
 					return accumulator;
-				},
-				[]
-			),
+				}
+				const [$isSupportedByPreview, documentType] = isSupportedByPreview(
+					node.mime_type,
+					'preview'
+				);
+				if (!$isSupportedByPreview) {
+					return accumulator;
+				}
+				const item = {
+					filename: node.name,
+					extension: node.extension ?? undefined,
+					size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
+					actions: getHeaderActions(t, setActiveNode, node, canUseDocs),
+					closeAction: {
+						id: 'close-action',
+						icon: 'ArrowBackOutline',
+						tooltipLabel: t('preview.close.tooltip', 'Close')
+					},
+					src: getPreviewSrc(node, documentType),
+					id: node.id
+				};
+
+				if (documentType === PREVIEW_TYPE.IMAGE) {
+					accumulator.push({
+						...item,
+						previewType: 'image'
+					});
+				} else {
+					accumulator.push({
+						...item,
+						forceCache: false,
+						previewType: 'pdf',
+						useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE
+					});
+				}
+				return accumulator;
+			}, []),
 		[canUseDocs, nodes, setActiveNode, t]
 	);
 

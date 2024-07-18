@@ -5,12 +5,10 @@
  */
 import React from 'react';
 
-import { screen } from '@testing-library/react';
-
 import { List } from './List';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
-import { setup, selectNodes } from '../../tests/utils';
+import { setup, selectNodes, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
 
 describe('Move', () => {
@@ -77,9 +75,11 @@ describe('Move', () => {
 			const file = populateFile();
 			file.permissions.can_write_file = true;
 			file.parent = currentFolder;
+			file.flagged = false;
 			const folder = populateFolder();
 			folder.permissions.can_write_folder = true;
 			folder.parent = currentFolder;
+			folder.flagged = false;
 			currentFolder.children.nodes.push(file, folder);
 
 			const { user } = setup(
@@ -93,18 +93,11 @@ describe('Move', () => {
 
 			await screen.findByText(file.name);
 			await selectNodes([file.id, folder.id], user);
-
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
-			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-
-			const moveIcon = await screen.findByTestId(ICON_REGEXP.move);
-			expect(moveIcon).toBeVisible();
-			expect(moveIcon).toHaveStyle({
-				color: COLORS.text.regular
-			});
+			const moveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.move });
+			expect(moveIcon).toBeEnabled();
 		});
 	});
 

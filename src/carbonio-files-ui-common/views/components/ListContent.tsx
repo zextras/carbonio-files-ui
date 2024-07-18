@@ -172,7 +172,7 @@ export const ListContent = ({
 					moveNodes={moveNodes}
 					copyNodes={copyNodes}
 					manageShares={manageShares}
-					isSelected={selectedMap && selectedMap[node.id]}
+					isSelected={selectedMap?.[node.id]}
 					isSelectionModeActive={isSelectionModeActive}
 					selectId={selectId}
 					exitSelectionMode={exitSelectionMode}
@@ -185,7 +185,7 @@ export const ListContent = ({
 					compact={compact}
 					navigateTo={navigateTo}
 					selectionContextualMenuActionsItems={
-						selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
+						selectedMap?.[node.id] ? selectionContextualMenuActionsItems : undefined
 					}
 				/>
 			</Draggable>

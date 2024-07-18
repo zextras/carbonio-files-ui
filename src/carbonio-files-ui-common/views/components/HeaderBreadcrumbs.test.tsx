@@ -631,6 +631,8 @@ describe('Header Breadcrumbs', () => {
 			expect(destinationCrumb).not.toHaveStyle({
 				'background-color': COLORS.dropzone.disabled
 			});
+			// dropdown is closed
+			await waitForElementToBeRemoved(destinationItem);
 			// advance timers to allow mutation to eventually be executed
 			await jest.advanceTimersToNextTimerAsync();
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();

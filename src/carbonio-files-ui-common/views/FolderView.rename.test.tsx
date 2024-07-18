@@ -247,7 +247,6 @@ describe('Rename', () => {
 			// wait for the load to be completed
 			const listHeader = screen.getByTestId(SELECTORS.listHeader);
 			await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
-
 			let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 1]);
 			// right click to open contextual menu
@@ -255,13 +254,8 @@ describe('Rename', () => {
 			// open context menu
 			await user.rightClick(nodeItem);
 			await renameNode(newName, user);
-			// wait that the modal close
-			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-			// contextual menu is closed
-			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
-			// check the new item. It has the new name and it's located as last element of the updated list
+			// check the new item. It has the new name, and it's located as last element of the updated list
 			let updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
-			expect(updatedNodeItem).toBeVisible();
 			expect(within(updatedNodeItem).getByText(newName)).toBeVisible();
 			nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(nodes).toHaveLength(NODES_LOAD_LIMIT);

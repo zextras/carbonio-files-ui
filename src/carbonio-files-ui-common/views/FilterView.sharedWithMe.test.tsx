@@ -89,15 +89,14 @@ describe('Filter view', () => {
 				<Route path={`/:view/:filter?`}>
 					<FilterView />
 				</Route>,
-				{ initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}`], mocks }
+				{
+					initialRouterEntries: [
+						`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}/?node=${node.id}&tab=sharing`
+					],
+					mocks
+				}
 			);
-			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-			await screen.findByText(node.name);
-			// open displayer
-			await user.click(screen.getByText(node.name));
-			await screen.findByText(/sharing/i);
-			// go to share tab
-			await user.click(screen.getByText(/sharing/i));
+			await screen.findAllByText(node.name);
 			// logged user chip is shown
 			await screen.findByText(/you$/i);
 			const sharingContent = screen.getByTestId(SELECTORS.nodeSharing);
@@ -107,8 +106,7 @@ describe('Filter view', () => {
 			expect(within(sharingContent).getByTestId(ICON_REGEXP.close)).toBeVisible();
 			await user.click(within(sharingContent).getByTestId(ICON_REGEXP.close));
 			// confirmation modal
-			await screen.findByRole('button', { name: /remove/i });
-			await user.click(screen.getByRole('button', { name: /remove/i }));
+			await user.click(await screen.findByRole('button', { name: /remove/i }));
 			await screen.findByText(/success/i);
 			// node is removed from the list and displayer is closed
 			expect(screen.queryByText(node.name)).not.toBeInTheDocument();

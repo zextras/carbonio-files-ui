@@ -59,8 +59,7 @@ describe('Displayer', () => {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
 					mocks
 				});
-				await screen.findByText(title);
-				await user.click(screen.getByRole('button', { name: /add link/i }));
+				await user.click(await screen.findByRole('button', { name: /add link/i }));
 				const descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
 				});

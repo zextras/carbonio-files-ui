@@ -256,9 +256,7 @@ describe('Upload view', () => {
 			)
 		);
 		setup(<UploadView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);
@@ -279,9 +277,7 @@ describe('Upload view', () => {
 			)
 		);
 		setup(<UploadView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);

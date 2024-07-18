@@ -32,7 +32,7 @@ interface UploadDisplayerNodeProps {
 	uploadItem: UploadItem;
 }
 
-function UploadDisplayerNodeContent({ id }: { id: string }): React.JSX.Element {
+function UploadDisplayerNodeContent({ id }: Readonly<{ id: string }>): React.JSX.Element {
 	// reload children ids each time otherwise remove of sub-items is not detected
 	const ids = drop(flatUploadItemChildrenIds(id));
 	// then memoized with a deep equality the ids to check if they are changed or not
@@ -62,7 +62,7 @@ export const UploadDisplayerNode = ({
 	const actions = useUploadActions([uploadItem]);
 
 	const { data: parentData, loading: loadingParent } = useGetBaseNodeQuery(
-		uploadItem.parentNodeId || ''
+		uploadItem.parentNodeId ?? ''
 	);
 
 	const parentNode = useMemo<PathRowProps>(() => {
@@ -77,7 +77,7 @@ export const UploadDisplayerNode = ({
 						name: path[path.length - 2],
 						type: NodeType.Folder,
 						rootId: undefined,
-						id: uploadItem.parentId || `${uploadItem.id}-parent-${Date.now().toLocaleString()}`
+						id: uploadItem.parentId ?? `${uploadItem.id}-parent-${Date.now().toLocaleString()}`
 					};
 				}
 				return {
@@ -99,7 +99,7 @@ export const UploadDisplayerNode = ({
 	return (
 		<>
 			<DisplayerHeader
-				name={uploadItem.file?.name || ''}
+				name={uploadItem.file?.name ?? ''}
 				type={getUploadNodeType(uploadItem)}
 				closeAction={removeActiveNode}
 				mimeType={uploadItem.file?.type}

@@ -338,8 +338,7 @@ export async function triggerLoadMore(): Promise<void> {
 }
 
 export function triggerListLoadMore(callsIndex?: number, isIntersecting = true): void {
-	const { calls, instances } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>)
-		.mock;
+	const { calls, instances } = jest.mocked(window.IntersectionObserver).mock;
 
 	const [onChange] = calls[callsIndex ?? calls.length - 1];
 	const instance = instances[instances.length - 1];

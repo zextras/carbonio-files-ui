@@ -80,7 +80,7 @@ export function useDroppableCrumbs(
 				event.preventDefault();
 				closeDropdownTimer.current && clearTimeout(closeDropdownTimer.current);
 				closeDropdownTimer.current = setTimeout(() => {
-					containerRef.current && containerRef.current.click();
+					containerRef.current?.click();
 					openRef.current = false;
 				}, delay);
 			}

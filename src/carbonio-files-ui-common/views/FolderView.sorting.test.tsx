@@ -69,16 +69,12 @@ describe('Sorting', () => {
 		});
 
 		await screen.findByText(filename1);
-
 		const items = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(within(items[0]).getByText('a')).toBeVisible();
 		expect(within(items[1]).getByText('b')).toBeVisible();
-
 		const sortIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc });
 		expect(sortIcon).toBeVisible();
 		expect(sortIcon).toBeEnabled();
-		// register tooltip listeners
-		jest.advanceTimersToNextTimer();
 		await user.click(sortIcon);
 		const descendingOrderOption = await screen.findByText('Descending order');
 		await screen.findByText(/ascending order by name/i);
@@ -89,8 +85,6 @@ describe('Sorting', () => {
 			)
 		);
 		await user.hover(screen.getByTestId(ICON_REGEXP.sortAsc));
-		// run timers of tooltip
-		jest.advanceTimersToNextTimer();
 		await screen.findByText(/descending order by name/i);
 		const descItems = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(within(descItems[0]).getByText('b')).toBeVisible();

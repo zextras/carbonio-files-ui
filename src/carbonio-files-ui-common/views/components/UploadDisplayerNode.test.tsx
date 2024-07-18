@@ -39,12 +39,12 @@ describe('Upload Displayer Node', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
+			await screen.findByText(parentFolder.name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
 		});
 
 		test('Go to folder is visible for completed status', async () => {
@@ -61,12 +61,12 @@ describe('Upload Displayer Node', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
+			await screen.findByText(parentFolder.name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
 		});
 
 		test('Go to folder is visible for queued status', async () => {
@@ -83,12 +83,12 @@ describe('Upload Displayer Node', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
+			await screen.findByText(parentFolder.name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
 		});
 
 		test('Go to folder is visible for failed status', async () => {
@@ -104,12 +104,12 @@ describe('Upload Displayer Node', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
+			await screen.findByText(parentFolder.name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
 		});
 
 		test('Retry is visible when item status is failed', async () => {
@@ -125,12 +125,12 @@ describe('Upload Displayer Node', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { getByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
-			expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })).toBeVisible();
+			await screen.findByText(parentFolder.name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })).toBeVisible();
 		});
 
 		test('Retry is hidden when item status is completed', async () => {
@@ -146,13 +146,13 @@ describe('Upload Displayer Node', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
+			await screen.findByText(parentFolder.name);
 			expect(
-				queryByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })
 			).not.toBeInTheDocument();
 		});
 
@@ -169,13 +169,13 @@ describe('Upload Displayer Node', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
+			await screen.findByText(parentFolder.name);
 			expect(
-				queryByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })
 			).not.toBeInTheDocument();
 		});
 
@@ -192,13 +192,13 @@ describe('Upload Displayer Node', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { queryByRoleWithIcon } = setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />, {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
+			await screen.findByText(parentFolder.name);
 			expect(
-				queryByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload })
 			).not.toBeInTheDocument();
 		});
 
@@ -227,7 +227,7 @@ describe('Upload Displayer Node', () => {
 				mocks
 			});
 
-			await screen.findByText(uploadItem.name);
+			await screen.findByText(parentFolder.name);
 			expect(
 				within(screen.getByTestId(SELECTORS.displayerActionsHeader)).getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.retryUpload
@@ -244,7 +244,6 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		await screen.findAllByText(uploadItem.name);
 		expect(screen.getByText(/size/i)).toBeVisible();
 		expect(screen.getByText(humanFileSize(uploadItem.file?.size || 0))).toBeVisible();
 	});
@@ -257,7 +256,6 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		await screen.findAllByText(uploadItem.name);
 		expect(screen.queryByText(/size/i)).not.toBeInTheDocument();
 		expect(screen.queryByText(humanFileSize(uploadItem.file?.size || 0))).not.toBeInTheDocument();
 	});
@@ -270,7 +268,6 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		await screen.findAllByText(uploadItem.name);
 		expect(screen.queryByText(/content/i)).not.toBeInTheDocument();
 	});
 
@@ -285,7 +282,6 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		await screen.findAllByText(uploadItem.name);
 		expect(screen.getByText(/content/i)).toBeVisible();
 		expect(screen.getByText(children[0].name)).toBeVisible();
 		expect(screen.getByText(children[1].name)).toBeVisible();
@@ -299,7 +295,6 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		await screen.findByText(uploadItem.name);
 		expect(screen.getByText(/path/i)).toBeVisible();
 		expect(screen.getByText(/parent folder name/i)).toBeVisible();
 	});
@@ -312,7 +307,6 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		await screen.findByText(uploadItem.name);
 		expect(screen.getByText(/path/i)).toBeVisible();
 		expect(screen.getByText(/item name/i)).toBeVisible();
 	});
