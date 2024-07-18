@@ -75,7 +75,7 @@
 		"ts-node": "^10.9.2"
 	},
 	"dependencies": {
-		"@apollo/client": "3.9.10",
+		"@apollo/client": "3.10.8",
 		"@zextras/carbonio-design-system": "file:zextras-carbonio-design-system-0.0.0-semantically-released.tgz",
 		"@zextras/carbonio-shell-ui": ">=7.0.1-devel.1720609013362 <7.0.",
 		"@zextras/carbonio-ui-preview": "^3.0.0-next-24-12-0.1",
