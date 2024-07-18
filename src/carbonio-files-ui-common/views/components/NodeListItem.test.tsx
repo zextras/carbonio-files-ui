@@ -207,15 +207,7 @@ describe('Node List Item', () => {
 		const node = populateNode();
 		node.owner = populateUser();
 		node.last_editor = node.owner;
-		setup(
-			<NodeListItem
-				node={node}
-				isSelected={false}
-				isSelectionModeActive={false}
-				selectId={jest.fn()}
-				exitSelectionMode={jest.fn()}
-			/>
-		);
+		setup(<NodeListItem node={node} {...getMissingProps()} />);
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 	});
 
