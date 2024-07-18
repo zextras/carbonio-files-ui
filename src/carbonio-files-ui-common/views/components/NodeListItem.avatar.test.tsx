@@ -21,6 +21,7 @@ import {
 import { SELECTORS } from '../../constants/test';
 import { healthCache } from '../../hooks/useHealthInfo';
 import { HealthResponse } from '../../mocks/handleHealthRequest';
+import { populateFile } from '../../mocks/mockUtils';
 import { setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
@@ -41,15 +42,10 @@ describe('Node List Item Avatar', () => {
 		const getPreviewThumbnailSrcFn = jest.spyOn(previewUtils, 'getPreviewThumbnailSrc');
 		const NodeAvatarIconComponentFn = jest.spyOn(NodeAvatarIconModule, 'NodeAvatarIcon');
 
-		setup(
-			<NodeListItem
-				id={'id'}
-				name={'name'}
-				type={NodeType.Image}
-				mimeType={'image/gif'}
-				version={1}
-			/>
-		);
+		const node = populateFile();
+		node.type = NodeType.Image;
+		node.mime_type = 'image/gif';
+		setup(<NodeListItem node={node} />);
 		expect(await screen.findByTestId(SELECTORS.nodeAvatar)).toBeVisible();
 		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(getPreviewThumbnailSrcFn).toHaveBeenCalledTimes(1);
@@ -75,15 +71,10 @@ describe('Node List Item Avatar', () => {
 		);
 		const getPreviewThumbnailSrcFn = jest.spyOn(previewUtils, 'getPreviewThumbnailSrc');
 		expect(healthCache.healthReceived).toBeFalsy();
-		setup(
-			<NodeListItem
-				id={'id'}
-				name={'name'}
-				type={NodeType.Image}
-				mimeType={'image/gif'}
-				version={1}
-			/>
-		);
+		const node = populateFile();
+		node.type = NodeType.Image;
+		node.mime_type = 'image/gif';
+		setup(<NodeListItem node={node} />);
 		expect(await screen.findByTestId(SELECTORS.nodeAvatar)).toBeVisible();
 		expect(healthCache.healthReceived).toBeTruthy();
 		expect(getPreviewThumbnailSrcFn).not.toHaveBeenCalled();
