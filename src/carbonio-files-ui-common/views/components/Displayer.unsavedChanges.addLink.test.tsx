@@ -25,6 +25,8 @@ import {
 } from '../../utils/resolverMocks';
 import { formatDate, initExpirationDate } from '../../utils/utils';
 
+jest.mock('./DisplayerActions');
+
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {
 		describe.each<[Node['__typename'], string, string, string]>([

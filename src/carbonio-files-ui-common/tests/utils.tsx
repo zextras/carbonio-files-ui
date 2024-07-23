@@ -572,16 +572,16 @@ export async function uploadWithDnD(
 	fireEvent.dragEnter(dropzoneElement, {
 		dataTransfer: dataTransferObj
 	});
-
 	await screen.findByTestId(SELECTORS.dropzone);
 	expect(
 		screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 	).toBeVisible();
-
 	fireEvent.drop(dropzoneElement, {
 		dataTransfer: dataTransferObj
 	});
-
+	await act(async () => {
+		await jest.advanceTimersToNextTimerAsync();
+	});
 	if (dataTransferObj.files.length > 0) {
 		// use find all to make this work also when there is the displayer open
 		await screen.findAllByText(dataTransferObj.files[0].name);

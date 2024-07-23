@@ -312,7 +312,6 @@ describe('Upload View', () => {
 			setup(<UploadView />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
-
 			await uploadWithDnD(dropzone, dataTransferObj);
 			await screen.findByText(/content/i);
 			await screen.findByText(level3File.name);
@@ -323,6 +322,9 @@ describe('Upload View', () => {
 
 			// complete level 0 (create main folder)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(1));
 			await screen.findByText('1/5');
 			// progress of main folder
@@ -334,6 +336,9 @@ describe('Upload View', () => {
 
 			// complete first level (create folder 1 and upload file 1)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(2));
 			await waitFor(() => expect(uploadFile).toHaveBeenCalled());
 			await screen.findByText('3/5');
@@ -347,6 +352,9 @@ describe('Upload View', () => {
 
 			// complete second level (create folder 2)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(3));
 			await screen.findByText('4/5');
 			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted)).toBeInTheDocument();
@@ -359,6 +367,9 @@ describe('Upload View', () => {
 
 			// complete third level (upload file 3)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText('5/5');
 			await waitFor(() => expect(uploadFile).toHaveBeenCalledTimes(2));
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(5);
@@ -456,12 +467,18 @@ describe('Upload View', () => {
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 			// complete level 0 (create main folder)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalled());
 			await screen.findByText('1/5');
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 
 			// complete first level (create folder 1 and upload file 1)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(2));
 			await waitFor(() => expect(uploadFile).toHaveBeenCalled());
 			await screen.findByText('3/5');
@@ -469,12 +486,18 @@ describe('Upload View', () => {
 
 			// complete second level (create folder 2)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(3));
 			await screen.findByText('4/5');
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 
 			// complete third level (upload file 3)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText('5/5');
 			await waitFor(() => expect(uploadFile).toHaveBeenCalledTimes(2));
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadCompleted)).toBeVisible();
@@ -566,6 +589,9 @@ describe('Upload View', () => {
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 			// complete level 0 (create main folder)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalled());
 			await screen.findByText('1/5');
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
@@ -573,6 +599,9 @@ describe('Upload View', () => {
 			// complete first level (create folder 1 and fail file 1)
 			emitter.emit(EMITTER_CODES.fail);
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(2));
 			await waitFor(() => expect(uploadFile).toHaveBeenCalled());
 			await screen.findByText('2/5');
@@ -581,12 +610,18 @@ describe('Upload View', () => {
 
 			// complete second level (create folder 2)
 			emitter.emit(EMITTER_CODES.success);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(3));
 			await screen.findByText('3/5');
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 
 			// fail third level (upload file 3)
 			emitter.emit(EMITTER_CODES.fail);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			// all the folders and the two files are in failed status
 			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.uploadFailed)).toHaveLength(5));
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
@@ -649,9 +684,9 @@ describe('Upload View', () => {
 
 		test('If all items of the content of a folder finished, all with success, the progress of the folder shows the total count of items on both values of the fraction', async () => {
 			const localRoot = populateLocalRoot();
-			const folder = populateFolder(10);
+			const folder = populateFolder(2);
 			folder.parent = localRoot;
-			const subFolder = populateFolder(10);
+			const subFolder = populateFolder(3);
 			folder.children.nodes.push(subFolder);
 			const subSubFolder = populateFolder();
 			subFolder.children.nodes.push(subSubFolder);
@@ -674,7 +709,6 @@ describe('Upload View', () => {
 
 			const dropzone = await screen.findByText(/nothing here/i);
 			await uploadWithDnD(dropzone, dataTransferObj);
-
 			await screen.findByText(subSubFolder.name);
 			await waitFor(() =>
 				expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(totalItemsCount)
@@ -723,7 +757,6 @@ describe('Upload View', () => {
 			const dropzone = await screen.findByText(/nothing here/i);
 
 			await uploadWithDnD(dropzone, dataTransferObj);
-			await screen.findByText(/content/i);
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
 				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })

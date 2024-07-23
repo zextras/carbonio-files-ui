@@ -34,7 +34,7 @@ const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
 `;
 
 interface DropdownItemComponentProps {
-	label: string;
+	label?: string;
 	icon?: string;
 	disabled?: boolean;
 	selected?: boolean;

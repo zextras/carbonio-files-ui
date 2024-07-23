@@ -167,94 +167,92 @@ const FolderView = (): React.JSX.Element => {
 	const { canUseDocs } = useHealthInfo();
 
 	const actions = useMemo(
-		(): ContextualMenuProps['actions'] => [
-			{
-				id: ACTION_IDS.CREATE_FOLDER,
-				label: t('create.options.new.folder', 'New folder'),
-				icon: 'FolderOutline',
-				onClick: createFolderAction,
-				disabled: !isCanCreateFolder
-			},
-			...(canUseDocs
-				? [
-						{
-							id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-							label: t('create.options.new.document', 'New document'),
-							icon: 'FileTextOutline',
-							disabled: !isCanCreateFile,
-							items: [
-								{
-									id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
-									label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-									onClick: createDocsAction(DocsType.LIBRE_DOCUMENT),
-									disabled: !isCanCreateFile
-								},
-								{
-									id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
-									label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-									onClick: createDocsAction(DocsType.MS_DOCUMENT),
-									disabled: !isCanCreateFile
-								}
-							]
-						},
-						{
-							id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-							label: t('create.options.new.spreadsheet', 'New spreadsheet'),
-							icon: 'FileCalcOutline',
-							disabled: !isCanCreateFile,
-							items: [
-								{
-									id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
-									label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-									onClick: createDocsAction(DocsType.LIBRE_SPREADSHEET),
-									disabled: !isCanCreateFile
-								},
-								{
-									id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
-									label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-									onClick: createDocsAction(DocsType.MS_SPREADSHEET),
-									disabled: !isCanCreateFile
-								}
-							]
-						},
-						{
-							id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-							label: t('create.options.new.presentation', 'New presentation'),
-							icon: 'FilePresentationOutline',
-							disabled: !isCanCreateFile,
-							items: [
-								{
-									id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
-									label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-									onClick: createDocsAction(DocsType.LIBRE_PRESENTATION),
-									disabled: !isCanCreateFile
-								},
-								{
-									id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
-									label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-									onClick: createDocsAction(DocsType.MS_PRESENTATION),
-									disabled: !isCanCreateFile
-								}
-							]
-						}
-					]
-				: [])
-		],
+		() =>
+			[
+				{
+					id: ACTION_IDS.CREATE_FOLDER,
+					label: t('create.options.new.folder', 'New folder'),
+					icon: 'FolderOutline',
+					onClick: createFolderAction,
+					disabled: !isCanCreateFolder
+				},
+				...(canUseDocs
+					? [
+							{
+								id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
+								label: t('create.options.new.document', 'New document'),
+								icon: 'FileTextOutline',
+								disabled: !isCanCreateFile,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
+										onClick: createDocsAction(DocsType.LIBRE_DOCUMENT),
+										disabled: !isCanCreateFile
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
+										onClick: createDocsAction(DocsType.MS_DOCUMENT),
+										disabled: !isCanCreateFile
+									}
+								]
+							},
+							{
+								id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
+								label: t('create.options.new.spreadsheet', 'New spreadsheet'),
+								icon: 'FileCalcOutline',
+								disabled: !isCanCreateFile,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
+										onClick: createDocsAction(DocsType.LIBRE_SPREADSHEET),
+										disabled: !isCanCreateFile
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
+										onClick: createDocsAction(DocsType.MS_SPREADSHEET),
+										disabled: !isCanCreateFile
+									}
+								]
+							},
+							{
+								id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
+								label: t('create.options.new.presentation', 'New presentation'),
+								icon: 'FilePresentationOutline',
+								disabled: !isCanCreateFile,
+								items: [
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
+										label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
+										onClick: createDocsAction(DocsType.LIBRE_PRESENTATION),
+										disabled: !isCanCreateFile
+									},
+									{
+										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
+										label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
+										onClick: createDocsAction(DocsType.MS_PRESENTATION),
+										disabled: !isCanCreateFile
+									}
+								]
+							}
+						]
+					: [])
+			] satisfies ContextualMenuProps['actions'],
 		[canUseDocs, createDocsAction, createFolderAction, isCanCreateFile, isCanCreateFolder, t]
 	);
 
 	useEffect(() => {
-		const createActions = map<ContextualMenuProps['actions'][number], CreateOption>(
-			actions,
-			(action) => ({
-				type: ACTION_TYPES.NEW,
-				id: action.id,
-				action: () => ({
-					group: FILES_APP_ID,
-					...action
-				})
+		const createActions = actions.map<CreateOption>((action) => ({
+			type: ACTION_TYPES.NEW,
+			id: action.id,
+			action: () => ({
+				group: FILES_APP_ID,
+				...action
 			})
-		);
+		}));
 
 		setCreateOptions(
 			{
