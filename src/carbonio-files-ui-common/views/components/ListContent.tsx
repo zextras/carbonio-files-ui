@@ -6,7 +6,7 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
+import { List, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
 import { forEach, map, filter, includes } from 'lodash';
 import styled from 'styled-components';
 
@@ -229,7 +229,7 @@ export const ListContent = ({
 
 	return (
 		<>
-			<ListV2
+			<List
 				maxHeight={'100%'}
 				height={'auto'}
 				data-testid="main-list"
@@ -238,7 +238,7 @@ export const ListContent = ({
 				intersectionObserverInitOptions={intersectionObserverInitOptions}
 			>
 				{items}
-			</ListV2>
+			</List>
 			<DragImageContainer ref={dragImageRef}>{dragImage}</DragImageContainer>
 		</>
 	);
