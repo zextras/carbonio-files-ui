@@ -40,7 +40,7 @@ interface CompactNodeListItemProps {
 	version?: number;
 }
 
-const CompactNodeListItemComponent: React.VFC<CompactNodeListItemProps> = ({
+const CompactNodeListItemComponent = ({
 	node,
 	isActive,
 	setActive = (): void => undefined,
@@ -49,7 +49,7 @@ const CompactNodeListItemComponent: React.VFC<CompactNodeListItemProps> = ({
 	selectable = true,
 	trashed,
 	version
-}) => {
+}: CompactNodeListItemProps): React.JSX.Element => {
 	const theme = useTheme();
 
 	const isNavigable = useMemo(

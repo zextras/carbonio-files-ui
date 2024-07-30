@@ -50,7 +50,7 @@ interface NodeListItemProps {
 	size?: number;
 }
 
-export const NodeListItemUI: React.VFC<NodeListItemProps> = ({
+export const NodeListItemUI = ({
 	id,
 	flagActive,
 	disabled,
@@ -73,7 +73,7 @@ export const NodeListItemUI: React.VFC<NodeListItemProps> = ({
 	nodeAvatarIcon,
 	nodeHoverBar,
 	size
-}) => {
+}: NodeListItemProps): React.JSX.Element => {
 	const preventTextSelection = useCallback<React.MouseEventHandler>((e: React.MouseEvent): void => {
 		if (e.detail > 1) {
 			e.preventDefault();

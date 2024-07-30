@@ -30,7 +30,7 @@ interface NodeListItemProps {
 	node: NodeListItemType;
 }
 
-export const SimplyNodeListItem: React.VFC<NodeListItemProps> = ({ node }) => {
+export const SimplyNodeListItem = ({ node }: NodeListItemProps): React.JSX.Element => {
 	const { me, locale } = useUserInfo();
 
 	const draggedItems = useReactiveVar(draggedItemsVar);

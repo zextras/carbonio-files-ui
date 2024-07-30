@@ -48,7 +48,7 @@ export function useRenameModal(renameActionCallback?: (nodeId: string) => void):
 							confirmLabel={t('node.rename.modal.button.confirm', 'Rename')}
 							nodeId={node.id}
 							closeAction={(): void => {
-								renameActionCallback && renameActionCallback(node.id);
+								renameActionCallback?.(node.id);
 								closeModal();
 							}}
 							title={t('node.rename.modal.title', 'Rename item')}

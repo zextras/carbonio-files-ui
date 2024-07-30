@@ -122,7 +122,7 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 		() => me === node.owner?.id && node.shares && node.shares.length > 0,
 		[me, node.owner?.id, node.shares]
 	);
-	const disabled = useMemo(() => nodeDisabled || isDragged, [nodeDisabled, isDragged]);
+	const disabled = useMemo(() => nodeDisabled ?? isDragged, [nodeDisabled, isDragged]);
 
 	const { add } = useUpload();
 	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
@@ -485,7 +485,6 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 				key: new Date().toLocaleString(),
 				type: 'info',
 				label: t('snackbar.upload.success', 'Upload occurred in {{destination}}', {
-					/* i18next-extract-disable-next-line */
 					destination: t('node.alias.name', node.name, { context: node.id })
 				}),
 				actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
@@ -498,7 +497,7 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 		},
 		[add, createSnackbar, navigateTo, node.id, node.name, t]
 	);
-	const dropHandler = useCallback(
+	const dropHandler = useCallback<React.DragEventHandler>(
 		(event) => {
 			navigationTimerRef.current && clearTimeout(navigationTimerRef.current);
 			if (dropzoneEnabled) {
@@ -558,7 +557,7 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 					contextualMenuOnOpen={openContextualMenuHandler}
 					contextualMenuOnClose={closeContextualMenuHandler}
 					contextualMenuActions={
-						selectionContextualMenuActionsItems || permittedContextualMenuActionsItems
+						selectionContextualMenuActionsItems ?? permittedContextualMenuActionsItems
 					}
 					listItemContainerOnClick={setActiveDebounced}
 					listItemContainerOnDoubleClick={doubleClickHandler}
