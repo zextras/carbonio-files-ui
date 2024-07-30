@@ -37,7 +37,7 @@ export function useRenameModal(renameActionCallback?: (nodeId: string) => void):
 			const closeModal = createModal(
 				{
 					onClose: () => {
-						renameActionCallback && renameActionCallback(node.id);
+						renameActionCallback?.(node.id);
 						closeModal();
 					},
 					children: (
