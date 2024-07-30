@@ -25,7 +25,7 @@ const CustomText = styled(Text)`
 	text-transform: uppercase;
 `;
 
-interface NodeListItemProps {
+export interface NodeListItemUIProps {
 	id: string;
 	flagActive: boolean;
 	disabled: boolean;
@@ -73,7 +73,7 @@ export const NodeListItemUI = ({
 	nodeAvatarIcon,
 	nodeHoverBar,
 	size
-}: NodeListItemProps): React.JSX.Element => {
+}: NodeListItemUIProps): React.JSX.Element => {
 	const preventTextSelection = useCallback<React.MouseEventHandler>((e: React.MouseEvent): void => {
 		if (e.detail > 1) {
 			e.preventDefault();

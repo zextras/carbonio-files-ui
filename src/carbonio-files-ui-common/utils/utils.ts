@@ -8,7 +8,7 @@ import React from 'react';
 
 import { ApolloError } from '@apollo/client';
 import type { Location } from 'history';
-import type { TFunction } from 'i18next';
+import { TFunction } from 'i18next';
 import {
 	chain,
 	debounce,
@@ -40,6 +40,7 @@ import {
 	Crumb,
 	CrumbNode,
 	DocsType,
+	NodeListItemType,
 	OrderTrend,
 	OrderType,
 	Role,
@@ -56,6 +57,7 @@ import {
 	SharePermission
 } from '../types/graphql/types';
 import { MakeRequiredNonNull } from '../types/utils';
+import type { NodeListItemUIProps } from '../views/components/NodeListItemUI';
 
 /**
  * Format a size in byte as human-readable
@@ -793,4 +795,49 @@ export function getDocumentGenericType(
 		default:
 			return 'document';
 	}
+}
+
+export function nodeToNodeListItemUIProps(
+	node: Pick<
+		NodeListItemType,
+		| 'id'
+		| 'name'
+		| 'flagged'
+		| 'owner'
+		| 'shares'
+		| 'last_editor'
+		| 'type'
+		| 'rootId'
+		| '__typename'
+	> &
+		(Pick<{ __typename: 'File' } & NodeListItemType, 'size' | 'extension'> | Record<never, never>),
+	t: TFunction,
+	me: string
+): Pick<
+	NodeListItemUIProps,
+	| 'id'
+	| 'name'
+	| 'flagActive'
+	| 'incomingShare'
+	| 'outgoingShare'
+	| 'extensionOrType'
+	| 'displayName'
+	| 'size'
+	| 'trashed'
+> {
+	return {
+		id: node.id,
+		name: node.name,
+		flagActive: node.flagged,
+		incomingShare: me !== node.owner?.id,
+		outgoingShare: me === node.owner?.id && node.shares && node.shares.length > 0,
+		extensionOrType:
+			(isFile(node) && node.extension) || t(`node.type.${node.type.toLowerCase()}`, node.type),
+		displayName:
+			(node.last_editor?.id !== node.owner?.id && node.last_editor?.full_name) ||
+			(node.owner?.id !== me && node.owner?.full_name) ||
+			'',
+		size: (isFile(node) && node.size) || undefined,
+		trashed: node.rootId === ROOTS.TRASH
+	};
 }

@@ -12,7 +12,7 @@ import styled from 'styled-components';
 
 import { Draggable } from './Draggable';
 import { NodeListItem } from './NodeListItem';
-import { SimplyNodeListItem } from './SimplyNodeListItem';
+import { NodeListItemDragImage } from './NodeListItemDragImage';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, LIST_ITEM_HEIGHT } from '../../constants';
@@ -80,7 +80,7 @@ export const ListContent = ({
 				);
 				forEach(nodesToDrag, (nodeToDrag) => {
 					draggedItemsTmp.push(
-						<SimplyNodeListItem node={nodeToDrag} key={`dragged-${nodeToDrag.id}`} />
+						<NodeListItemDragImage node={nodeToDrag} key={`dragged-${nodeToDrag.id}`} />
 					);
 				});
 				setDragImage(draggedItemsTmp);

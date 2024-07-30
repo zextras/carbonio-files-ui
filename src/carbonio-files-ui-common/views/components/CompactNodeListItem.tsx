@@ -40,7 +40,7 @@ interface CompactNodeListItemProps {
 	version?: number;
 }
 
-const CompactNodeListItemComponent = ({
+export const CompactNodeListItem = ({
 	node,
 	isActive,
 	setActive = (): void => undefined,
@@ -179,5 +179,3 @@ const CompactNodeListItemComponent = ({
 		</Container>
 	);
 };
-
-export const CompactNodeListItem = React.memo(CompactNodeListItemComponent);

@@ -68,11 +68,12 @@ import {
 	getIconByFileType,
 	getIconColorByFileType,
 	isFolder,
-	isTrashView
+	isTrashView,
+	nodeToNodeListItemUIProps
 } from '../../utils/utils';
 
 interface NodeListItemProps {
-	node: NodeListItemType;
+	node: Omit<NodeListItemType, 'disabled' | 'selectable'>;
 	// Selection props
 	isSelected?: boolean;
 	isSelectionModeActive?: boolean;
@@ -80,14 +81,14 @@ interface NodeListItemProps {
 	selectionContextualMenuActionsItems?: DSAction[];
 }
 
-export const NodeListItem: React.VFC<NodeListItemProps> = ({
+export const NodeListItem = ({
 	node,
 	// Selection props
 	isSelected,
 	isSelectionModeActive,
 	selectId,
 	selectionContextualMenuActionsItems
-}) => {
+}: NodeListItemProps): React.JSX.Element => {
 	const { me, locale } = useUserInfo();
 
 	const params = useParams<URLParams>();
@@ -101,28 +102,14 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 		() => [!isEmpty(draggedItems), !!draggedItems && some(draggedItems, ['id', node.id])],
 		[draggedItems, node]
 	);
+	const [t] = useTranslation();
 
-	const {
-		id,
-		name,
-		type,
-		updated_at: updatedAt,
-		owner,
-		flagged: flagActive,
-		last_editor: lastEditor,
-		disabled: nodeDisabled
-	} = node;
-	const extension = useMemo(() => (isFile(node) && node.extension) || undefined, [node]);
+	const props = nodeToNodeListItemUIProps(node, t, me);
+
 	const mimeType = useMemo(() => (isFile(node) && node.mime_type) || undefined, [node]);
 	const size = useMemo(() => (isFile(node) && node.size) || undefined, [node]);
 	const version = useMemo(() => (isFile(node) && node.version) || undefined, [node]);
 	const trashed = useMemo(() => node.rootId === ROOTS.TRASH, [node.rootId]);
-	const incomingShare = useMemo(() => me !== node.owner?.id, [me, node.owner?.id]);
-	const outgoingShare = useMemo(
-		() => me === node.owner?.id && node.shares && node.shares.length > 0,
-		[me, node.owner?.id, node.shares]
-	);
-	const disabled = useMemo(() => nodeDisabled ?? isDragged, [nodeDisabled, isDragged]);
 
 	const { add } = useUpload();
 	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
@@ -140,7 +127,6 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 	);
 	const { openDeletePermanentlyModal } = useDeletePermanentlyModal(deletePermanentlyCallback);
 
-	const [t] = useTranslation();
 	const { openPreview } = usePreview();
 	const location = useLocation();
 	const [isContextualMenuActive, setIsContextualMenuActive] = useState(false);
@@ -148,10 +134,10 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 		(event: React.SyntheticEvent) => {
 			if (selectId) {
 				event.preventDefault();
-				selectId(id);
+				selectId(node.id);
 			}
 		},
-		[id, selectId]
+		[node.id, selectId]
 	);
 
 	const theme = useTheme();
@@ -161,13 +147,15 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 	const { sendViaMail } = useSendViaMail();
 
 	const sendViaMailCallback = useCallback(() => {
-		sendViaMail(id);
-	}, [id, sendViaMail]);
+		sendViaMail(node.id);
+	}, [node.id, sendViaMail]);
 
 	const isNavigable = useMemo(
 		() =>
-			type === NodeType.Folder || type === NodeType.Root || some(ROOTS, (rootId) => rootId === id),
-		[id, type]
+			node.type === NodeType.Folder ||
+			node.type === NodeType.Root ||
+			some(ROOTS, (rootId) => rootId === node.id),
+		[node.id, node.type]
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
@@ -215,28 +203,28 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 			selection && selection.removeAllRanges();
 		}
 
-		if (!isSelectionModeActive && !disabled && !trashed) {
+		if (!isSelectionModeActive && !isDragged && !trashed) {
 			if (isNavigable) {
-				navigateTo(id);
+				navigateTo(node.id);
 			} else if (includes(permittedContextualMenuActions, Action.Edit)) {
 				// if node can be opened with docs on edit mode, open editor
-				openNodeWithDocs(id);
+				openNodeWithDocs(node.id);
 			} else if ($isSupportedByPreview) {
-				openPreview(id);
+				openPreview(node.id);
 			} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
 				// if preview is not supported and document can be opened with docs, open editor
-				openNodeWithDocs(id);
+				openNodeWithDocs(node.id);
 			}
 		}
 	}, [
 		isSelectionModeActive,
-		disabled,
+		isDragged,
 		trashed,
 		isNavigable,
 		permittedContextualMenuActions,
 		$isSupportedByPreview,
 		navigateTo,
-		id,
+		node.id,
 		openPreview
 	]);
 
@@ -247,7 +235,7 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 				icon: 'Edit2Outline',
 				label: t('actions.edit', 'Edit'),
 				onClick: (): void => {
-					openNodeWithDocs(id);
+					openNodeWithDocs(node.id);
 				}
 			},
 			[Action.Preview]: {
@@ -255,7 +243,7 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 				icon: 'MaximizeOutline',
 				label: t('actions.preview', 'Preview'),
 				onClick: (): void => {
-					openPreview(id);
+					openPreview(node.id);
 				}
 			},
 			[Action.SendViaMail]: {
@@ -270,7 +258,7 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 				label: t('actions.download', 'Download'),
 				onClick: (): void => {
 					// download node without version to be sure last version is downloaded
-					downloadNode(id);
+					downloadNode(node.id);
 					createSnackbar({
 						key: new Date().toLocaleString(),
 						type: 'info',
@@ -309,7 +297,7 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 				icon: 'BookOpenOutline',
 				label: t('actions.openWithDocs', 'Open document'),
 				onClick: (): void => {
-					openNodeWithDocs(id);
+					openNodeWithDocs(node.id);
 				}
 			},
 			[Action.Copy]: {
@@ -364,7 +352,6 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 		[
 			t,
 			sendViaMailCallback,
-			id,
 			openPreview,
 			createSnackbar,
 			setActiveNode,
@@ -407,16 +394,6 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 		setActiveDebounced.cancel();
 		openNode();
 	}, [openNode, setActiveDebounced]);
-
-	const displayName = useMemo(() => {
-		if (lastEditor && lastEditor.id !== owner?.id) {
-			return lastEditor.full_name;
-		}
-		if (owner && owner.id !== me) {
-			return owner.full_name;
-		}
-		return '';
-	}, [lastEditor, owner, me]);
 
 	const openContextualMenuHandler = useCallback(() => {
 		setIsContextualMenuActive(true);
@@ -541,18 +518,13 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 		>
 			{(): React.JSX.Element => (
 				<NodeListItemUI
-					id={id}
-					flagActive={flagActive}
-					disabled={disabled}
-					incomingShare={incomingShare}
-					outgoingShare={outgoingShare}
-					displayName={displayName}
-					name={name}
+					{...props}
+					disabled={isDragged}
 					trashed={trashed && isSearchView(location)}
-					updatedAt={formatDate(updatedAt, locale, DATE_FORMAT_SHORT)}
-					extensionOrType={extension ?? t(`node.type.${type.toLowerCase()}`, type)}
+					updatedAt={formatDate(node.updated_at, locale, DATE_FORMAT_SHORT)}
 					contextualMenuDisabled={
-						(disabled || isSelectionModeActive) && selectionContextualMenuActionsItems === undefined
+						(isDragged || isSelectionModeActive) &&
+						selectionContextualMenuActionsItems === undefined
 					}
 					contextualMenuOnOpen={openContextualMenuHandler}
 					contextualMenuOnClose={closeContextualMenuHandler}
@@ -561,25 +533,25 @@ export const NodeListItem: React.VFC<NodeListItemProps> = ({
 					}
 					listItemContainerOnClick={setActiveDebounced}
 					listItemContainerOnDoubleClick={doubleClickHandler}
-					hoverContainerBackground={activeNodeId === id ? 'highlight' : 'gray6'}
+					hoverContainerBackground={activeNodeId === node.id ? 'highlight' : 'gray6'}
 					listItemContainerContextualMenuActive={isContextualMenuActive}
-					listItemContainerDisableHover={isContextualMenuActive || dragging || disabled}
+					listItemContainerDisableHover={isContextualMenuActive || dragging}
 					nodeAvatarIcon={
 						<NodeAvatarIcon
 							selectionModeActive={isSelectionModeActive}
 							selected={isSelected}
 							onClick={selectIdCallback}
 							compact={false}
-							disabled={disabled}
+							disabled={isDragged}
 							selectable
-							icon={getIconByFileType(type, mimeType ?? id)}
-							color={getIconColorByFileType(type, mimeType ?? id, theme)}
+							icon={getIconByFileType(node.type, mimeType ?? node.id)}
+							color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
 							picture={
 								canUsePreview
 									? getPreviewThumbnailSrc(
-											id,
+											node.id,
 											version,
-											type,
+											node.type,
 											mimeType,
 											{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
 											'thumbnail'
