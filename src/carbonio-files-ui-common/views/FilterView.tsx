@@ -15,6 +15,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Displayer } from './components/Displayer';
 import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
+import { ViewModeComponent } from './components/ViewModeComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -310,7 +311,12 @@ const FilterView: React.VFC = () => {
 	);
 
 	const ActionComponent = useMemo(
-		() => !isRecentsFilter && <SortingComponent />,
+		() => (
+			<>
+				{!isRecentsFilter && <SortingComponent />}
+				<ViewModeComponent />
+			</>
+		),
 		[isRecentsFilter]
 	);
 

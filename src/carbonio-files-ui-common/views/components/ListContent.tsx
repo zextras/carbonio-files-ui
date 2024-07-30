@@ -6,7 +6,8 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
+import { useReactiveVar } from '@apollo/client';
+import { ListV2, type Action as DSAction, Row, Container } from '@zextras/carbonio-design-system';
 import { forEach, map, filter, includes } from 'lodash';
 import styled from 'styled-components';
 
@@ -15,7 +16,8 @@ import { NodeListItem } from './NodeListItem';
 import { NodeListItemDragImage } from './NodeListItemDragImage';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { DRAG_TYPES, LIST_ITEM_HEIGHT } from '../../constants';
+import { viewModeVar } from '../../apollo/viewModeVar';
+import { DRAG_TYPES, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
 import { Action, NodeListItemType } from '../../types/common';
 import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
 import { cssCalcBuilder } from '../../utils/utils';
@@ -26,6 +28,16 @@ const DragImageContainer = styled.div`
 	left: -5000px;
 	transform: translate(-100%, -100%);
 	width: 100%;
+`;
+
+const Grid = styled(Container)`
+	height: auto;
+	display: grid;
+	grid-gap: 1rem;
+	grid-template-columns: repeat(auto-fill, minmax(13.4375rem, 1fr));
+	padding-left: 1rem;
+	padding-right: 1rem;
+	padding-top: 1rem;
 `;
 
 interface ListContentProps {
@@ -53,6 +65,8 @@ export const ListContent = ({
 	selectionContextualMenuActionsItems,
 	fillerWithActions
 }: ListContentProps): React.JSX.Element => {
+	const viewMode = useReactiveVar(viewModeVar);
+
 	const dragImageRef = useRef<HTMLDivElement>(null);
 
 	const { me } = useUserInfo();
@@ -151,16 +165,20 @@ export const ListContent = ({
 
 	return (
 		<>
-			<ListV2
-				maxHeight={'100%'}
-				height={'auto'}
-				data-testid="main-list"
-				background={'gray6'}
-				onListBottom={hasMore ? loadMore : undefined}
-				intersectionObserverInitOptions={intersectionObserverInitOptions}
-			>
-				{items}
-			</ListV2>
+			{viewMode === VIEW_MODE.grid ? (
+				<Grid data-testid={'main-grid'}>{items}</Grid>
+			) : (
+				<ListV2
+					maxHeight={'100%'}
+					height={'auto'}
+					data-testid="main-list"
+					background={'gray6'}
+					onListBottom={hasMore ? loadMore : undefined}
+					intersectionObserverInitOptions={intersectionObserverInitOptions}
+				>
+					{items}
+				</ListV2>
+			)}
 			<DragImageContainer ref={dragImageRef}>{dragImage}</DragImageContainer>
 		</>
 	);

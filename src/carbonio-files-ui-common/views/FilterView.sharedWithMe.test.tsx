@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, screen, within } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
@@ -21,7 +21,7 @@ import {
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes, populateShare, populateUser } from '../mocks/mockUtils';
-import { setup } from '../tests/utils';
+import { setup, within, screen } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
@@ -34,6 +34,23 @@ import {
 
 describe('Filter view', () => {
 	describe('Shared With Me filter', () => {
+		it('should show sorting component', async () => {
+			const nodes = populateNodes(10);
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
+
+			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}`],
+				mocks
+			});
+
+			await screen.findByText(nodes[0].name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc })).toBeVisible();
+		});
+
 		test('Shared with me filter has sharedWithMe=true and excludes trashed nodes', async () => {
 			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
 			server.use(

@@ -16,6 +16,7 @@ import { Displayer } from './components/Displayer';
 import { EmptySpaceFiller } from './components/EmptySpaceFiller';
 import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
+import { ViewModeComponent } from './components/ViewModeComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
@@ -321,7 +322,12 @@ const FolderView = (): React.JSX.Element => {
 	}, [currentFolder]);
 
 	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
-		() => <SortingComponent />,
+		() => (
+			<>
+				<SortingComponent />
+				<ViewModeComponent />
+			</>
+		),
 		[]
 	);
 

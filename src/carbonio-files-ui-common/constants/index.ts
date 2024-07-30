@@ -9,6 +9,8 @@ import { NodeSort } from '../types/graphql/types';
 
 export const NODES_LOAD_LIMIT = 25;
 export const NODES_SORT_DEFAULT = NodeSort.NameAsc;
+export const VIEW_MODE = { grid: 'GRID', list: 'LIST' } as const;
+export const VIEW_MODE_DEFAULT = VIEW_MODE.list;
 export const LIST_ITEM_HEIGHT = '4rem';
 export const LIST_ITEM_HEIGHT_COMPACT = '3.25rem';
 export const LIST_ITEM_HEIGHT_DETAILS = '3.25rem';
@@ -167,14 +169,14 @@ export const INTERNAL_PATH: {
 	SEARCH: '/search',
 	FILTER: '/filter'
 } as const;
-export const FILTER_TYPE: { [K in URLParams['filter']]: `/${K}` } = {
+export const FILTER_TYPE = {
 	flagged: '/flagged',
 	sharedByMe: '/sharedByMe',
 	sharedWithMe: '/sharedWithMe',
 	myTrash: '/myTrash',
 	sharedTrash: '/sharedTrash',
 	recents: '/recents'
-} as const;
+} as const satisfies { [K in URLParams['filter']]: `/${K}` };
 
 export const FILES_ROUTE = 'files';
 export const FILES_APP_ID = 'carbonio-files-ui';

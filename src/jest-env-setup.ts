@@ -19,7 +19,8 @@ import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
 import { selectionModeVar } from './carbonio-files-ui-common/apollo/selectionVar';
 import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
-import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
+import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
+import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
 import { LOGGED_USER } from './mocks/constants';
 import server from './mocks/server';
@@ -68,6 +69,7 @@ beforeEach(() => {
 	uploadVar({});
 	uploadFunctionsVar({});
 	nodeSortVar(NODES_SORT_DEFAULT);
+	viewModeVar(VIEW_MODE_DEFAULT);
 	draggedItemsVar(null);
 	destinationVar({ defaultValue: undefined, currentValue: undefined });
 	window.localStorage.clear();

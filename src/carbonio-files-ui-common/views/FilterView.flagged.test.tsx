@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, screen } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
 
@@ -18,10 +18,10 @@ import {
 	ROOTS,
 	SHARES_LOAD_LIMIT
 } from '../constants';
-import { DISPLAYER_EMPTY_MESSAGE, SELECTORS } from '../constants/test';
+import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateNodes } from '../mocks/mockUtils';
-import { buildBreadCrumbRegExp, setup } from '../tests/utils';
+import { buildBreadCrumbRegExp, setup, screen } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import { mockFindNodes } from '../utils/resolverMocks';
@@ -38,6 +38,23 @@ beforeEach(() => {
 
 describe('Filter view', () => {
 	describe('Flagged filter', () => {
+		it('should show sorting component', async () => {
+			const nodes = populateNodes(10);
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
+
+			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
+				mocks
+			});
+
+			await screen.findByText(nodes[0].name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc })).toBeVisible();
+		});
+
 		test('Flagged filter has flagged=true and excludes trashed nodes', async () => {
 			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
