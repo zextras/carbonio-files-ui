@@ -9,7 +9,7 @@ import React from 'react';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeListItem, NodeListItemProps } from './NodeListItem';
-import { UseNavigationHook } from '../../../hooks/useNavigation';
+import * as useNavigation from '../../../hooks/useNavigation';
 import {
 	DATE_FORMAT_SHORT,
 	INTERNAL_PATH,
@@ -43,23 +43,9 @@ export function getMissingProps(): Pick<
 }
 
 let mockedUserLogged: User;
-let mockedHistory: string[];
-let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
-
-jest.mock<typeof import('../../../hooks/useNavigation')>('../../../hooks/useNavigation', () => ({
-	useNavigation: (): ReturnType<UseNavigationHook> => mockedUseNavigationHook
-}));
 
 beforeEach(() => {
 	mockedUserLogged = populateUser(global.mockedUserLogged.id, global.mockedUserLogged.name);
-	mockedHistory = [];
-	mockedUseNavigationHook = {
-		navigateToFolder: jest.fn((path) => {
-			mockedHistory.push(path);
-		}),
-		navigateTo: jest.fn(),
-		navigateBack: jest.fn
-	};
 });
 
 describe('Node List Item', () => {
@@ -240,6 +226,16 @@ describe('Node List Item', () => {
 	});
 
 	test('double click on a folder activates navigation', async () => {
+		const mockedHistory: Array<string> = [];
+		const mockedUseNavigationHook = {
+			navigateToFolder: jest.fn((path) => {
+				mockedHistory.push(path);
+			}),
+			navigateTo: jest.fn(),
+			navigateBack: jest.fn()
+		};
+		jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
+
 		const node = populateFolder(0);
 		const { user } = setup(<NodeListItem node={node} {...getMissingProps()} />);
 		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
@@ -249,6 +245,12 @@ describe('Node List Item', () => {
 	});
 
 	test('double click on a folder with selection mode active does nothing', async () => {
+		const mockedUseNavigationHook = {
+			navigateToFolder: jest.fn(),
+			navigateTo: jest.fn(),
+			navigateBack: jest.fn()
+		};
+		jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 		const node = populateFolder(0);
 		const { user } = setup(
 			<NodeListItem node={node} {...getMissingProps()} isSelectionModeActive />
@@ -258,6 +260,12 @@ describe('Node List Item', () => {
 	});
 
 	test('double click on a folder marked for deletion does nothing', async () => {
+		const mockedUseNavigationHook = {
+			navigateToFolder: jest.fn(),
+			navigateTo: jest.fn(),
+			navigateBack: jest.fn()
+		};
+		jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 		const node = populateFolder(0);
 		node.rootId = ROOTS.TRASH;
 		const { user } = setup(<NodeListItem node={node} {...getMissingProps()} />);
@@ -266,6 +274,12 @@ describe('Node List Item', () => {
 	});
 
 	test('double click on a folder disabled does nothing', async () => {
+		const mockedUseNavigationHook = {
+			navigateToFolder: jest.fn(),
+			navigateTo: jest.fn(),
+			navigateBack: jest.fn()
+		};
+		jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 		const node = populateFolder(0);
 		const { user } = setup(<NodeListItem node={node} {...getMissingProps()} />);
 		await user.dblClick(screen.getByTestId(SELECTORS.nodeItem(node.id)));
