@@ -11,6 +11,7 @@ import { http, HttpResponse } from 'msw';
 
 import * as NodeAvatarIconModule from './NodeAvatarIcon';
 import { NodeListItem } from './NodeListItem';
+import { getMissingProps } from './NodeListItem.test';
 import server from '../../../mocks/server';
 import {
 	DOCS_SERVICE_NAME,
@@ -45,7 +46,7 @@ describe('Node List Item Avatar', () => {
 		const node = populateFile();
 		node.type = NodeType.Image;
 		node.mime_type = 'image/gif';
-		setup(<NodeListItem node={node} />);
+		setup(<NodeListItem node={node} {...getMissingProps()} />);
 		expect(await screen.findByTestId(SELECTORS.nodeAvatar)).toBeVisible();
 		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(getPreviewThumbnailSrcFn).toHaveBeenCalledTimes(1);
@@ -74,7 +75,7 @@ describe('Node List Item Avatar', () => {
 		const node = populateFile();
 		node.type = NodeType.Image;
 		node.mime_type = 'image/gif';
-		setup(<NodeListItem node={node} />);
+		setup(<NodeListItem node={node} {...getMissingProps()} />);
 		expect(await screen.findByTestId(SELECTORS.nodeAvatar)).toBeVisible();
 		expect(healthCache.healthReceived).toBeTruthy();
 		expect(getPreviewThumbnailSrcFn).not.toHaveBeenCalled();

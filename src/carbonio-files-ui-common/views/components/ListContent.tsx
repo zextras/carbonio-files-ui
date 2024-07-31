@@ -30,9 +30,10 @@ const DragImageContainer = styled.div`
 
 interface ListContentProps {
 	nodes: NodeListItemType[];
-	selectedMap?: Record<string, boolean>;
-	selectId?: (id: string) => void;
-	isSelectionModeActive?: boolean;
+	selectedMap: Record<string, boolean>;
+	selectId: (id: string) => void;
+	isSelectionModeActive: boolean;
+	exitSelectionMode: () => void;
 	hasMore?: boolean;
 	loadMore?: () => void;
 	customCheckers?: ActionsFactoryCheckerMap;
@@ -42,9 +43,10 @@ interface ListContentProps {
 
 export const ListContent = ({
 	nodes,
-	selectedMap = {},
+	selectedMap,
 	selectId,
 	isSelectionModeActive,
+	exitSelectionMode,
 	hasMore = false,
 	loadMore = (): void => undefined,
 	customCheckers,
@@ -116,6 +118,7 @@ export const ListContent = ({
 					isSelected={selectedMap && selectedMap[node.id]}
 					isSelectionModeActive={isSelectionModeActive}
 					selectId={selectId}
+					exitSelectionMode={exitSelectionMode}
 					selectionContextualMenuActionsItems={
 						selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
 					}
@@ -142,6 +145,7 @@ export const ListContent = ({
 		selectedMap,
 		isSelectionModeActive,
 		selectId,
+		exitSelectionMode,
 		selectionContextualMenuActionsItems
 	]);
 

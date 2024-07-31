@@ -22,7 +22,6 @@ import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { selectionModeVar } from '../../apollo/selectionVar';
 import {
 	DATE_FORMAT_SHORT,
 	DISPLAYER_TABS,
@@ -72,12 +71,13 @@ import {
 	nodeToNodeListItemUIProps
 } from '../../utils/utils';
 
-interface NodeListItemProps {
+export interface NodeListItemProps {
 	node: Omit<NodeListItemType, 'disabled' | 'selectable'>;
 	// Selection props
-	isSelected?: boolean;
-	isSelectionModeActive?: boolean;
-	selectId?: (id: string) => void;
+	isSelected: boolean;
+	isSelectionModeActive: boolean;
+	selectId: (id: string) => void;
+	exitSelectionMode: () => void;
 	selectionContextualMenuActionsItems?: DSAction[];
 }
 
@@ -87,6 +87,7 @@ export const NodeListItem = ({
 	isSelected,
 	isSelectionModeActive,
 	selectId,
+	exitSelectionMode,
 	selectionContextualMenuActionsItems
 }: NodeListItemProps): React.JSX.Element => {
 	const { me, locale } = useUserInfo();
@@ -94,7 +95,7 @@ export const NodeListItem = ({
 	const params = useParams<URLParams>();
 	const isATrashFilter = useMemo(() => isTrashView(params), [params]);
 
-	const { navigateToFolder: navigateTo } = useNavigation();
+	const { navigateToFolder } = useNavigation();
 
 	const draggedItems = useReactiveVar(draggedItemsVar);
 
@@ -205,7 +206,7 @@ export const NodeListItem = ({
 
 		if (!isSelectionModeActive && !isDragged && !trashed) {
 			if (isNavigable) {
-				navigateTo(node.id);
+				navigateToFolder(node.id);
 			} else if (includes(permittedContextualMenuActions, Action.Edit)) {
 				// if node can be opened with docs on edit mode, open editor
 				openNodeWithDocs(node.id);
@@ -223,7 +224,7 @@ export const NodeListItem = ({
 		isNavigable,
 		permittedContextualMenuActions,
 		$isSupportedByPreview,
-		navigateTo,
+		navigateToFolder,
 		node.id,
 		openPreview
 	]);
@@ -409,19 +410,19 @@ export const NodeListItem = ({
 		const draggedNodes = draggedItemsVar();
 		if (draggedNodes && draggedNodes.length > 0 && canBeMoveDestination(node, draggedNodes, me)) {
 			navigationTimerRef.current = setTimeout(() => {
-				navigateTo(node.id);
+				navigateToFolder(node.id);
 			}, TIMERS.DRAG_NAVIGATION_TRIGGER);
 			return true;
 		}
 		return false;
-	}, [me, navigateTo, node]);
+	}, [me, navigateToFolder, node]);
 
 	const dragUploadHandler = useCallback(() => {
 		navigationTimerRef.current = setTimeout(() => {
-			navigateTo(node.id);
+			navigateToFolder(node.id);
 		}, TIMERS.DRAG_NAVIGATION_TRIGGER);
 		return canUploadFile(node);
-	}, [navigateTo, node]);
+	}, [navigateToFolder, node]);
 
 	const dragEnterHandler = useCallback(
 		(event) => {
@@ -448,11 +449,11 @@ export const NodeListItem = ({
 			const movingNodes = JSON.parse(event.dataTransfer.getData(DRAG_TYPES.move) || '{}');
 			if (movingNodes && isFolder(node)) {
 				moveNodesMutation(node, ...movingNodes).then(() => {
-					selectionModeVar(false);
+					exitSelectionMode();
 				});
 			}
 		},
-		[moveNodesMutation, node]
+		[exitSelectionMode, moveNodesMutation, node]
 	);
 
 	const uploadAction = useCallback<React.DragEventHandler>(
@@ -466,13 +467,13 @@ export const NodeListItem = ({
 				}),
 				actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
 				onActionClick: () => {
-					navigateTo(ROOTS.LOCAL_ROOT);
+					navigateToFolder(ROOTS.LOCAL_ROOT);
 				},
 				replace: false,
 				hideButton: true
 			});
 		},
-		[add, createSnackbar, navigateTo, node.id, node.name, t]
+		[add, createSnackbar, navigateToFolder, node.id, node.name, t]
 	);
 	const dropHandler = useCallback<React.DragEventHandler>(
 		(event) => {

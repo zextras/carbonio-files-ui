@@ -725,6 +725,7 @@ export const List: React.VFC<ListProps> = ({
 									selectedMap={selectedMap}
 									selectId={selectId}
 									isSelectionModeActive={isSelectionModeActive}
+									exitSelectionMode={exitSelectionMode}
 									hasMore={hasMore}
 									loadMore={loadMore}
 									customCheckers={actionCheckers}
