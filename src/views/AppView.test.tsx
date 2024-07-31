@@ -417,11 +417,10 @@ describe('AppView', () => {
 			setup(<AppView />, {
 				initialRouterEntries: [`/?folder=${folder.id}&node=${node1.id}`]
 			});
-			await screen.findByTestId(SELECTORS.listHeader);
-			await screen.findByTestId(SELECTORS.displayer);
-			await screen.findAllByText(node1.name);
-			await screen.findAllByText(folder.name);
-			await screen.findByText(/details/i);
+			await act(async () => {
+				// run network queries
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries

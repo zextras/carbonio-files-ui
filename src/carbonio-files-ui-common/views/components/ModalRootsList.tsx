@@ -11,8 +11,8 @@ import { forEach, isEmpty, reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { CompactListContent } from './CompactListContent';
 import { EmptyFolder } from './EmptyFolder';
-import { ListContent } from './ListContent';
 import { LoadingIcon } from './LoadingIcon';
 import { ScrollContainer } from './ScrollContainer';
 import { OverFlowHiddenRow } from './StyledComponents';
@@ -231,11 +231,10 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 			<Container mainAlignment="flex-start" minHeight="0" maxHeight="100%">
 				{nodes &&
 					(nodes.length > 0 ? (
-						<ListContent
+						<CompactListContent
 							nodes={nodes}
 							activeNodes={activeNodes}
 							setActiveNode={setActiveNode}
-							compact
 							navigateTo={navigateTo}
 							hasMore={hasMore}
 							loadMore={loadMore}
@@ -253,9 +252,8 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 					!nodes &&
 					rootNodes &&
 					(rootNodes.length > 0 ? (
-						<ListContent
+						<CompactListContent
 							nodes={rootNodes}
-							compact
 							navigateTo={rootNavigationHandler}
 							activeNodes={activeNodes}
 							setActiveNode={setActiveNode}

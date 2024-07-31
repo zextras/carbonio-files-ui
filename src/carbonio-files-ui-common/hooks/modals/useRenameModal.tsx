@@ -6,23 +6,21 @@
 
 import React, { useCallback } from 'react';
 
-import { FetchResult } from '@apollo/client';
 import { useModal } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { Node, UpdateNodeMutation } from '../../types/graphql/types';
+import { Node } from '../../types/graphql/types';
 import { UpdateNodeNameModalContent } from '../../views/components/UpdateNodeNameModalContent';
+import { useUpdateNodeMutation } from '../graphql/mutations/useUpdateNodeMutation';
 
 export type OpenRenameModal = (node: Pick<Node, 'id' | 'name'>) => void;
 
-export function useRenameModal(
-	renameAction: (nodeId: string, newName: string) => Promise<FetchResult<UpdateNodeMutation>>,
-	renameActionCallback?: () => void
-): {
+export function useRenameModal(renameActionCallback?: (nodeId: string) => void): {
 	openRenameModal: OpenRenameModal;
 } {
 	const createModal = useModal();
 	const [t] = useTranslation();
+	const [renameAction] = useUpdateNodeMutation();
 
 	const confirmAction = useCallback(
 		(nodeId, newName) => {
@@ -39,7 +37,7 @@ export function useRenameModal(
 			const closeModal = createModal(
 				{
 					onClose: () => {
-						renameActionCallback && renameActionCallback();
+						renameActionCallback?.(node.id);
 						closeModal();
 					},
 					children: (
@@ -50,7 +48,7 @@ export function useRenameModal(
 							confirmLabel={t('node.rename.modal.button.confirm', 'Rename')}
 							nodeId={node.id}
 							closeAction={(): void => {
-								renameActionCallback && renameActionCallback();
+								renameActionCallback?.(node.id);
 								closeModal();
 							}}
 							title={t('node.rename.modal.title', 'Rename item')}
