@@ -223,15 +223,15 @@ export const Loader: React.VFC = () => (
 );
 
 export const GridItem = styled(Container)<{
-	$columnStart: number;
-	$columnEnd: number;
-	$rowStart: number;
-	$rowEnd: number;
+	$columnStart?: number;
+	$columnEnd?: number;
+	$rowStart?: number;
+	$rowEnd?: number;
 	$alignSelf?: CSSProperties['alignSelf'];
 }>`
-	grid-column-start: ${({ $columnStart }): number => $columnStart};
-	grid-column-end: ${({ $columnEnd }): number => $columnEnd};
-	grid-row-start: ${({ $rowStart }): number => $rowStart};
-	grid-row-end: ${({ $rowEnd }): number => $rowEnd};
+	grid-column-start: ${({ $columnStart }): number | undefined => $columnStart};
+	grid-column-end: ${({ $columnEnd }): number | undefined => $columnEnd};
+	grid-row-start: ${({ $rowStart }): number | undefined => $rowStart};
+	grid-row-end: ${({ $rowEnd }): number | undefined => $rowEnd};
 	align-self: ${({ $alignSelf }): typeof $alignSelf => $alignSelf};
 `;

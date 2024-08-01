@@ -8,12 +8,13 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { ListV2, type Action as DSAction, Row, Container } from '@zextras/carbonio-design-system';
-import { forEach, map, filter, includes } from 'lodash';
+import { forEach, filter, includes } from 'lodash';
 import styled from 'styled-components';
 
 import { Draggable } from './Draggable';
 import { NodeListItem } from './NodeListItem';
 import { NodeListItemDragImage } from './NodeListItemDragImage';
+import { GridItem } from './StyledComponents';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { viewModeVar } from '../../apollo/viewModeVar';
@@ -120,25 +121,35 @@ export const ListContent = ({
 	const intersectionObserverInitOptions = useMemo(() => ({ threshold: 0.5 }), []);
 
 	const items = useMemo(() => {
-		const nodeElements = map(nodes, (node) => (
-			<Draggable
-				onDragStart={dragStartHandler(node)}
-				onDragEnd={dragEndHandler}
-				key={node.id}
-				effect="move"
-			>
-				<NodeListItem
-					node={node}
-					isSelected={selectedMap && selectedMap[node.id]}
-					isSelectionModeActive={isSelectionModeActive}
-					selectId={selectId}
-					exitSelectionMode={exitSelectionMode}
-					selectionContextualMenuActionsItems={
-						selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
-					}
-				/>
-			</Draggable>
-		));
+		const nodeElements = nodes.reduce<React.JSX.Element[]>((accumulator, node, currentIndex) => {
+			if (
+				currentIndex > 0 &&
+				((node.__typename === 'File' && nodes[currentIndex - 1].__typename === 'Folder') ||
+					(node.__typename === 'Folder' && nodes[currentIndex - 1].__typename === 'File'))
+			) {
+				accumulator.push(<GridItem height={0} $columnStart={1} $columnEnd={-1} />);
+			}
+			accumulator.push(
+				<Draggable
+					onDragStart={dragStartHandler(node)}
+					onDragEnd={dragEndHandler}
+					key={node.id}
+					effect="move"
+				>
+					<NodeListItem
+						node={node}
+						isSelected={selectedMap && selectedMap[node.id]}
+						isSelectionModeActive={isSelectionModeActive}
+						selectId={selectId}
+						exitSelectionMode={exitSelectionMode}
+						selectionContextualMenuActionsItems={
+							selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
+						}
+					/>
+				</Draggable>
+			);
+			return accumulator;
+		}, []);
 
 		if (fillerWithActions && !hasMore) {
 			nodeElements.push(
