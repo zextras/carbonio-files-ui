@@ -25,6 +25,10 @@ import {
 } from '../../constants';
 import { cssCalcBuilder } from '../../utils/utils';
 
+export const UppercaseText = styled(Text)`
+	text-transform: uppercase;
+`;
+
 export const DisplayerContentContainer = styled(Container)`
 	padding-bottom: 2rem;
 	overflow-y: auto;

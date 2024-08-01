@@ -13,20 +13,16 @@ import {
 	getColor,
 	Icon,
 	IconButton,
-	Padding,
 	Row,
 	Text
 } from '@zextras/carbonio-design-system';
 import styled, { css, SimpleInterpolation } from 'styled-components';
 
 import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
+import { UppercaseText } from './StyledComponents';
 import { humanFileSize } from '../../utils/utils';
 
 export const HoverContainer = styled(Container)``;
-
-const CustomText = styled(Text)`
-	text-transform: uppercase;
-`;
 
 const ContainerCell = styled(Container).attrs<
 	{ $contextualMenuActive?: boolean; $disabled?: boolean; $disableHover?: boolean },
@@ -151,44 +147,36 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 							<Text overflow="ellipsis" disabled={disabled} size="extrasmall">
 								{name}
 							</Text>
-							<Row>
-								<CustomText color="gray1" disabled={disabled} size="extrasmall">
+							<Row gap={'0.25rem'}>
+								<UppercaseText color="gray1" disabled={disabled} size="extrasmall">
 									{extensionOrType}
-								</CustomText>
+								</UppercaseText>
 								{size && (
-									<Padding left="extrasmall">
-										<CustomText color="gray1" disabled={disabled} size="extrasmall">
-											{humanFileSize(size)}
-										</CustomText>
-									</Padding>
+									<UppercaseText color="gray1" disabled={disabled} size="extrasmall">
+										{humanFileSize(size)}
+									</UppercaseText>
 								)}
 							</Row>
 							<Text size="extrasmall" color="gray1" disabled={disabled}>
 								{updatedAt}
 							</Text>
 						</Container>
-						<Container width={'fit'} mainAlignment={'flex-end'} orientation={'horizontal'}>
-							{flagActive && (
-								<Padding left="extrasmall">
-									<Icon icon="Flag" color="error" disabled={disabled} />
-								</Padding>
-							)}
-							{incomingShare && (
-								<Padding left="extrasmall">
+						<Container crossAlignment={'flex-end'} width={'fit'} gap={'0.5rem'}>
+							<Container
+								width={'fit'}
+								mainAlignment={'flex-end'}
+								orientation={'horizontal'}
+								gap={'0.25rem'}
+								height={'fit'}
+							>
+								{flagActive && <Icon icon="Flag" color="error" disabled={disabled} />}
+								{incomingShare && (
 									<Icon icon="ArrowCircleLeft" color={'linked'} disabled={disabled} />
-								</Padding>
-							)}
-							{outgoingShare && (
-								<Padding left="extrasmall">
+								)}
+								{outgoingShare && (
 									<Icon icon="ArrowCircleRight" color="shared" disabled={disabled} />
-								</Padding>
-							)}
-							{trashed && (
-								<Padding left="extrasmall">
-									<Icon icon="Trash2Outline" disabled={disabled} />
-								</Padding>
-							)}
-							<Padding left="extrasmall">
+								)}
+								{trashed && <Icon icon="Trash2Outline" disabled={disabled} />}
 								<Dropdown items={contextualMenuActions}>
 									<IconButton
 										size={'small'}
@@ -197,7 +185,12 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 										onClick={() => undefined}
 									/>
 								</Dropdown>
-							</Padding>
+							</Container>
+							{displayName && (
+								<Text size="extrasmall" overflow="ellipsis">
+									{displayName}
+								</Text>
+							)}
 						</Container>
 					</HoverContainer>
 				</Container>
