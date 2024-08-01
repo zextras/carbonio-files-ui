@@ -26,16 +26,32 @@ export const HoverContainer = styled(Container)``;
 
 const FooterGrid = styled(Container)`
 	display: grid;
-	grid-template-columns: auto auto auto;
-	grid-template-rows: auto;
-	grid-template-areas:
-		'name name icons'
-		'name name icons'
-		'meta . icons'
-		'meta displayName displayName'
-		'date displayName displayName';
-		'date displayName displayName';
 	justify-content: space-between;
+`;
+
+const NameCells = styled(Text)`
+	grid-column: 1 / span 2;
+	grid-row: 1 / span 2;
+`;
+
+const MetaCells = styled(Row)`
+	grid-column: 1;
+	grid-row: 3 / span 2;
+`;
+
+const DateCells = styled(Text)`
+	grid-column: 1;
+	grid-row: 5 / span 2;
+`;
+
+const DisplayNameCells = styled(Text)`
+	grid-column: 2 / span 2;
+	grid-row: 4 / span 3;
+`;
+
+const IconsCells = styled(Container)<{ $gridRowSpan: number }>`
+	grid-column: 3;
+	grid-row: 1 / span ${({ $gridRowSpan }): number => $gridRowSpan};
 `;
 
 const ContainerCell = styled(Container).attrs<
@@ -158,15 +174,10 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 					>
 						{nodeAvatarIcon}
 						<FooterGrid>
-							<Text
-								style={{ gridArea: 'name' }}
-								overflow="ellipsis"
-								disabled={disabled}
-								size="extrasmall"
-							>
+							<NameCells overflow="ellipsis" disabled={disabled} size="extrasmall">
 								{name}
-							</Text>
-							<Row mainAlignment={'flex-start'} gap={'0.25rem'} style={{ gridArea: 'meta' }}>
+							</NameCells>
+							<MetaCells mainAlignment={'flex-start'} gap={'0.25rem'}>
 								<UppercaseText color="gray1" disabled={disabled} size="extrasmall">
 									{extensionOrType}
 								</UppercaseText>
@@ -175,17 +186,12 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 										{humanFileSize(size)}
 									</UppercaseText>
 								)}
-							</Row>
-							<Text
-								size="extrasmall"
-								color="gray1"
-								disabled={disabled}
-								style={{ gridArea: 'date' }}
-							>
+							</MetaCells>
+							<DateCells size="extrasmall" color="gray1" disabled={disabled}>
 								{updatedAt}
-							</Text>
-							<Container
-								style={{ gridArea: 'icons' }}
+							</DateCells>
+							<IconsCells
+								$gridRowSpan={displayName ? 3 : 6}
 								width={'fit'}
 								mainAlignment={'flex-end'}
 								orientation={'horizontal'}
@@ -208,16 +214,11 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 										onClick={() => undefined}
 									/>
 								</Dropdown>
-							</Container>
+							</IconsCells>
 							{displayName && (
-								<Text
-									textAlign={'end'}
-									style={{ gridArea: 'displayName' }}
-									size="extrasmall"
-									overflow="ellipsis"
-								>
+								<DisplayNameCells textAlign={'end'} size="extrasmall" overflow="ellipsis">
 									{displayName}
-								</Text>
+								</DisplayNameCells>
 							)}
 						</FooterGrid>
 					</HoverContainer>
