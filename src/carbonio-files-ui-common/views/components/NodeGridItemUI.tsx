@@ -13,13 +13,12 @@ import {
 	getColor,
 	Icon,
 	IconButton,
-	Row,
 	Text
 } from '@zextras/carbonio-design-system';
 import styled, { css, SimpleInterpolation } from 'styled-components';
 
 import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
-import { UppercaseText } from './StyledComponents';
+import { GridItem, UppercaseText } from './StyledComponents';
 import { humanFileSize } from '../../utils/utils';
 
 export const HoverContainer = styled(Container)``;
@@ -27,31 +26,6 @@ export const HoverContainer = styled(Container)``;
 const FooterGrid = styled(Container)`
 	display: grid;
 	justify-content: space-between;
-`;
-
-const NameCells = styled(Text)`
-	grid-column: 1 / span 2;
-	grid-row: 1 / span 2;
-`;
-
-const MetaCells = styled(Row)`
-	grid-column: 1;
-	grid-row: 3 / span 2;
-`;
-
-const DateCells = styled(Text)`
-	grid-column: 1;
-	grid-row: 5 / span 2;
-`;
-
-const DisplayNameCells = styled(Text)`
-	grid-column: 2 / span 2;
-	grid-row: 4 / span 3;
-`;
-
-const IconsCells = styled(Container)<{ $gridRowSpan: number }>`
-	grid-column: 3;
-	grid-row: 1 / span ${({ $gridRowSpan }): number => $gridRowSpan};
 `;
 
 const ContainerCell = styled(Container).attrs<
@@ -165,6 +139,7 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 						<img src={imgSrc} alt={''} />
 					</Preview>
 					<HoverContainer
+						maxWidth={'100%'}
 						background={hoverContainerBackground}
 						padding={{ vertical: 'small', horizontal: 'medium' }}
 						minHeight={'4.625rem'}
@@ -174,29 +149,75 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 					>
 						{nodeAvatarIcon}
 						<FooterGrid>
-							<NameCells overflow="ellipsis" disabled={disabled} size="extrasmall">
-								{name}
-							</NameCells>
-							<MetaCells mainAlignment={'flex-start'} gap={'0.25rem'}>
-								<UppercaseText color="gray1" disabled={disabled} size="extrasmall">
+							<GridItem
+								$alignSelf={'end'}
+								crossAlignment={'flex-start'}
+								minWidth={0}
+								width={'auto'}
+								height={'fit'}
+								$rowStart={1}
+								$rowEnd={3}
+								$columnStart={1}
+								$columnEnd={3}
+							>
+								<Text overflow="ellipsis" disabled={disabled} size="small">
+									{name}
+								</Text>
+							</GridItem>
+							<GridItem
+								mainAlignment={'flex-start'}
+								minWidth={0}
+								orientation={'horizontal'}
+								gap={'0.25rem'}
+								width={'fit'}
+								height={'fit'}
+								$rowStart={3}
+								$rowEnd={5}
+								$columnStart={1}
+								$columnEnd={2}
+							>
+								<UppercaseText lineHeight={1.5} color="gray1" disabled={disabled} size="extrasmall">
 									{extensionOrType}
 								</UppercaseText>
 								{size && (
-									<UppercaseText color="gray1" disabled={disabled} size="extrasmall">
+									<UppercaseText
+										lineHeight={1.5}
+										color="gray1"
+										disabled={disabled}
+										size="extrasmall"
+									>
 										{humanFileSize(size)}
 									</UppercaseText>
 								)}
-							</MetaCells>
-							<DateCells size="extrasmall" color="gray1" disabled={disabled}>
-								{updatedAt}
-							</DateCells>
-							<IconsCells
-								$gridRowSpan={displayName ? 3 : 6}
-								width={'fit'}
+							</GridItem>
+							<GridItem
+								$alignSelf={'start'}
+								minWidth={0}
+								width={'auto'}
+								crossAlignment={'flex-start'}
+								height={'fit'}
+								$rowStart={5}
+								$rowEnd={7}
+								$columnStart={1}
+								$columnEnd={2}
+							>
+								<Text lineHeight={1.5} size="extrasmall" color="gray1" disabled={disabled}>
+									{updatedAt}
+								</Text>
+							</GridItem>
+							<GridItem
+								$alignSelf={displayName ? 'end' : 'center'}
+								padding={{ bottom: displayName ? '0.25rem' : 0 }}
+								width={'auto'}
+								minWidth={0}
+								$rowStart={1}
+								$rowEnd={displayName ? 4 : 7}
+								$columnStart={3}
+								$columnEnd={4}
+								height={'fit'}
 								mainAlignment={'flex-end'}
 								orientation={'horizontal'}
 								gap={'0.25rem'}
-								height={'fit'}
 							>
 								{flagActive && <Icon icon="Flag" color="error" disabled={disabled} />}
 								{incomingShare && (
@@ -214,11 +235,30 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 										onClick={() => undefined}
 									/>
 								</Dropdown>
-							</IconsCells>
+							</GridItem>
 							{displayName && (
-								<DisplayNameCells textAlign={'end'} size="extrasmall" overflow="ellipsis">
-									{displayName}
-								</DisplayNameCells>
+								<GridItem
+									padding={{ top: '0.25rem' }}
+									$alignSelf={'start'}
+									crossAlignment={'flex-end'}
+									width={'auto'}
+									minWidth={0}
+									height={'fit'}
+									$rowStart={4}
+									$rowEnd={7}
+									$columnStart={2}
+									$columnEnd={4}
+								>
+									<Text
+										color={'secondary'}
+										lineHeight={1.5}
+										textAlign={'end'}
+										size="extrasmall"
+										overflow="ellipsis"
+									>
+										{displayName}
+									</Text>
+								</GridItem>
 							)}
 						</FooterGrid>
 					</HoverContainer>

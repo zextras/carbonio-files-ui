@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import {
 	Avatar,
 	Container,
-	Row,
-	Text,
 	getColor,
+	ModalBody,
+	Row,
 	Shimmer,
-	ModalBody
+	Text
 } from '@zextras/carbonio-design-system';
 import styled, { css, SimpleInterpolation } from 'styled-components';
 
@@ -221,3 +221,17 @@ export const Loader: React.VFC = () => (
 		</Container>
 	</Container>
 );
+
+export const GridItem = styled(Container)<{
+	$columnStart: number;
+	$columnEnd: number;
+	$rowStart: number;
+	$rowEnd: number;
+	$alignSelf?: CSSProperties['alignSelf'];
+}>`
+	grid-column-start: ${({ $columnStart }): number => $columnStart};
+	grid-column-end: ${({ $columnEnd }): number => $columnEnd};
+	grid-row-start: ${({ $rowStart }): number => $rowStart};
+	grid-row-end: ${({ $rowEnd }): number => $rowEnd};
+	align-self: ${({ $alignSelf }): typeof $alignSelf => $alignSelf};
+`;
