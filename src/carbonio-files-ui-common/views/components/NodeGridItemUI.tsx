@@ -24,6 +24,20 @@ import { humanFileSize } from '../../utils/utils';
 
 export const HoverContainer = styled(Container)``;
 
+const FooterGrid = styled(Container)`
+	display: grid;
+	grid-template-columns: auto auto auto;
+	grid-template-rows: auto;
+	grid-template-areas:
+		'name name icons'
+		'name name icons'
+		'meta . icons'
+		'meta displayName displayName'
+		'date displayName displayName';
+		'date displayName displayName';
+	justify-content: space-between;
+`;
+
 const ContainerCell = styled(Container).attrs<
 	{ $contextualMenuActive?: boolean; $disabled?: boolean; $disableHover?: boolean },
 	{ backgroundColor?: string }
@@ -143,11 +157,16 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 						gap={'0.5rem'}
 					>
 						{nodeAvatarIcon}
-						<Container crossAlignment={'flex-start'} minWidth={0}>
-							<Text overflow="ellipsis" disabled={disabled} size="extrasmall">
+						<FooterGrid>
+							<Text
+								style={{ gridArea: 'name' }}
+								overflow="ellipsis"
+								disabled={disabled}
+								size="extrasmall"
+							>
 								{name}
 							</Text>
-							<Row gap={'0.25rem'}>
+							<Row mainAlignment={'flex-start'} gap={'0.25rem'} style={{ gridArea: 'meta' }}>
 								<UppercaseText color="gray1" disabled={disabled} size="extrasmall">
 									{extensionOrType}
 								</UppercaseText>
@@ -157,12 +176,16 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 									</UppercaseText>
 								)}
 							</Row>
-							<Text size="extrasmall" color="gray1" disabled={disabled}>
+							<Text
+								size="extrasmall"
+								color="gray1"
+								disabled={disabled}
+								style={{ gridArea: 'date' }}
+							>
 								{updatedAt}
 							</Text>
-						</Container>
-						<Container crossAlignment={'flex-end'} width={'fit'} gap={'0.5rem'}>
 							<Container
+								style={{ gridArea: 'icons' }}
 								width={'fit'}
 								mainAlignment={'flex-end'}
 								orientation={'horizontal'}
@@ -187,11 +210,16 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 								</Dropdown>
 							</Container>
 							{displayName && (
-								<Text size="extrasmall" overflow="ellipsis">
+								<Text
+									textAlign={'end'}
+									style={{ gridArea: 'displayName' }}
+									size="extrasmall"
+									overflow="ellipsis"
+								>
 									{displayName}
 								</Text>
 							)}
-						</Container>
+						</FooterGrid>
 					</HoverContainer>
 				</Container>
 			</ContextualMenu>
