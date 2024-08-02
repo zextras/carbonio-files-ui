@@ -54,7 +54,7 @@
 		"@types/styled-components": "^5.1.34",
 		"@types/uuid": "^10.0.0",
 		"@zextras/carbonio-ui-configs": "^1.0.1",
-		"@zextras/carbonio-ui-sdk": "^1.7.5",
+		"@zextras/carbonio-ui-sdk": "^1.7.6",
 		"babel-plugin-styled-components": "^2.1.4",
 		"babel-plugin-transform-import-meta": "^2.2.1",
 		"dotenv": "^16.4.5",
