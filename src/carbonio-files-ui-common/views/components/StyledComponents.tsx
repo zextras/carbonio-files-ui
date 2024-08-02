@@ -235,3 +235,9 @@ export const GridItem = styled(Container)<{
 	grid-row-end: ${({ $rowEnd }): number | undefined => $rowEnd};
 	align-self: ${({ $alignSelf }): typeof $alignSelf => $alignSelf};
 `;
+
+export const DisplayerContainer = styled(Container)`
+	&:empty {
+		width: 0;
+	}
+`;

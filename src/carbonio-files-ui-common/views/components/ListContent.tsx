@@ -127,7 +127,9 @@ export const ListContent = ({
 				((node.__typename === 'File' && nodes[currentIndex - 1].__typename === 'Folder') ||
 					(node.__typename === 'Folder' && nodes[currentIndex - 1].__typename === 'File'))
 			) {
-				accumulator.push(<GridItem height={0} $columnStart={1} $columnEnd={-1} />);
+				accumulator.push(
+					<GridItem key={'grid-row-filler'} height={0} $columnStart={1} $columnEnd={-1} />
+				);
 			}
 			accumulator.push(
 				<Draggable

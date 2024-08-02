@@ -15,18 +15,22 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Displayer } from './components/Displayer';
 import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
+import { DisplayerContainer } from './components/StyledComponents';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
+import { useActiveNode } from '../../hooks/useActiveNode';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
 import { nodeSortVar } from '../apollo/nodeSortVar';
+import { viewModeVar } from '../apollo/viewModeVar';
 import {
 	DISPLAYER_WIDTH,
 	FILES_APP_ID,
 	FILTER_PARAMS,
 	FILTER_TYPE,
 	LIST_WIDTH,
-	ROOTS
+	ROOTS,
+	VIEW_MODE
 } from '../constants';
 import { ListContext, ListHeaderActionContext } from '../contexts';
 import { useFindNodesQuery } from '../hooks/graphql/queries/useFindNodesQuery';
@@ -39,6 +43,8 @@ import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
 const FilterView: React.VFC = () => {
+	const { activeNodeId } = useActiveNode();
+	const viewMode = useReactiveVar(viewModeVar);
 	const { filter: filterParam } = useParams<URLParams>();
 	const isFlaggedFilter = `/${filterParam}` === FILTER_TYPE.flagged;
 	const isMyTrashFilter = `/${filterParam}` === FILTER_TYPE.myTrash;
@@ -391,6 +397,7 @@ const FilterView: React.VFC = () => {
 			>
 				<Responsive mode="desktop">
 					<Container
+						flexGrow={1}
 						width={LIST_WIDTH}
 						mainAlignment="flex-start"
 						crossAlignment="unset"
@@ -399,15 +406,17 @@ const FilterView: React.VFC = () => {
 					>
 						{ListComponent}
 					</Container>
-					<Container
+					<DisplayerContainer
 						width={DISPLAYER_WIDTH}
 						mainAlignment="flex-start"
 						crossAlignment="flex-start"
 						borderRadius="none"
-						style={{ maxHeight: '100%' }}
+						maxHeight={'fill'}
 					>
-						<Displayer translationKey={displayerPlaceholdersKey} />
-					</Container>
+						{(activeNodeId || viewMode === VIEW_MODE.list) && (
+							<Displayer translationKey={displayerPlaceholdersKey} />
+						)}
+					</DisplayerContainer>
 				</Responsive>
 				<Responsive mode="mobile">{ListComponent}</Responsive>
 			</Container>

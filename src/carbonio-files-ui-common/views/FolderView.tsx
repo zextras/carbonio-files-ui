@@ -6,8 +6,9 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { useReactiveVar } from '@apollo/client';
 import { Container, Responsive, Text } from '@zextras/carbonio-design-system';
-import { map, filter } from 'lodash';
+import { filter, map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -16,11 +17,20 @@ import { Displayer } from './components/Displayer';
 import { EmptySpaceFiller } from './components/EmptySpaceFiller';
 import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
+import { DisplayerContainer } from './components/StyledComponents';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
-import { DISPLAYER_WIDTH, DOCS_EXTENSIONS, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
+import { viewModeVar } from '../apollo/viewModeVar';
+import {
+	DISPLAYER_WIDTH,
+	DOCS_EXTENSIONS,
+	FILES_APP_ID,
+	LIST_WIDTH,
+	ROOTS,
+	VIEW_MODE
+} from '../constants';
 import { ListContext, ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
 import { useGetChildrenQuery } from '../hooks/graphql/queries/useGetChildrenQuery';
@@ -44,7 +54,8 @@ import {
 
 const FolderView = (): React.JSX.Element => {
 	const { rootId } = useParams<URLParams>();
-	const { setActiveNode } = useActiveNode();
+	const { setActiveNode, activeNodeId } = useActiveNode();
+	const viewMode = useReactiveVar(viewModeVar);
 	const folderId = useQueryParam('folder');
 	const [newFile, setNewFile] = useState<DocsType | undefined>();
 	const [t] = useTranslation();
@@ -376,6 +387,7 @@ const FolderView = (): React.JSX.Element => {
 			>
 				<Responsive mode="desktop">
 					<Container
+						flexGrow={1}
 						width={LIST_WIDTH}
 						mainAlignment="flex-start"
 						crossAlignment="unset"
@@ -384,15 +396,17 @@ const FolderView = (): React.JSX.Element => {
 					>
 						{ListComponent}
 					</Container>
-					<Container
+					<DisplayerContainer
 						width={DISPLAYER_WIDTH}
 						mainAlignment="flex-start"
 						crossAlignment="flex-start"
 						borderRadius="none"
-						style={{ maxHeight: '100%' }}
+						maxHeight={'fill'}
 					>
-						<Displayer translationKey="displayer.folder" />
-					</Container>
+						{(activeNodeId || viewMode === VIEW_MODE.list) && (
+							<Displayer translationKey="displayer.folder" />
+						)}
+					</DisplayerContainer>
 				</Responsive>
 				<Responsive mode="mobile">{ListComponent}</Responsive>
 			</Container>
