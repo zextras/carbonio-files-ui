@@ -21,7 +21,13 @@ import {
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import * as useHealthInfo from '../../hooks/useHealthInfo';
 import * as usePreview from '../../hooks/usePreview';
-import { populateFile, populateFolder, populateNode, populateUser } from '../../mocks/mockUtils';
+import {
+	populateFile,
+	populateFolder,
+	populateNode,
+	populateShares,
+	populateUser
+} from '../../mocks/mockUtils';
 import { setup, screen } from '../../tests/utils';
 import { NodeListItemType } from '../../types/common';
 import { NodeType, User } from '../../types/graphql/types';
@@ -141,6 +147,7 @@ describe('Node List Item', () => {
 
 	test('ArrowCircleRight icon is visible if node is shared by me', () => {
 		const node = populateNode();
+		node.shares = populateShares(node);
 		setup(<NodeListItem node={node} {...getMissingProps()} />);
 		expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeInTheDocument();
 		expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeVisible();

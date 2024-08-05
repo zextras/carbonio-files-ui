@@ -140,7 +140,7 @@ export const VersionRow: React.VFC<{
 			if (data) {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t('snackbar.version.clone', 'Version cloned as the current one'),
 					replace: true,
 					hideButton: true

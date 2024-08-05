@@ -239,7 +239,15 @@ export const decodeError = (error: ApolloError, t: TFunction): string | null => 
 	if (error.graphQLErrors && size(error.graphQLErrors) > 0) {
 		const err = first(error.graphQLErrors);
 		if (err?.extensions?.errorCode) {
-			return t('errorCode.code', 'Something went wrong', { context: err.extensions.errorCode });
+			const operationName = (err.path && err.path.length > 0 && err.path[0]) || undefined;
+			const operationErrorMessage = t('errorCode.operation', {
+				context: operationName,
+				defaultValue: ''
+			});
+			const errorCodeMessage = t('errorCode.code', 'Something went wrong', {
+				context: err.extensions.errorCode
+			});
+			return `${operationErrorMessage} ${errorCodeMessage}`.trim();
 		}
 		if (err?.message) {
 			errorMsg = err?.message;

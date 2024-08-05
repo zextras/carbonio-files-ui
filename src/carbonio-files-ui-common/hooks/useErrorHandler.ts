@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import { ApolloError } from '@apollo/client';
 import { SnackbarProps, useSnackbar } from '@zextras/carbonio-design-system';
@@ -16,7 +16,7 @@ import { ERROR_CODE } from '../constants';
 import { decodeError } from '../utils/utils';
 
 export type ErrorHandlerOptions = {
-	type?: SnackbarProps['type'];
+	type?: SnackbarProps['severity'];
 	showSnackbar?: boolean;
 };
 
@@ -31,13 +31,10 @@ export function useErrorHandler(
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 
-	const isOverQuotaReached = useMemo(
-		() => first(error?.graphQLErrors)?.extensions?.errorCode === ERROR_CODE.overQuotaReached,
-		[error?.graphQLErrors]
-	);
-
 	useEffect(() => {
 		if (error) {
+			const isOverQuotaReached =
+				first(error.graphQLErrors)?.extensions?.errorCode === ERROR_CODE.overQuotaReached;
 			captureException(new Error(`Failure on ${consoleErrorName}`));
 			console.error(`${consoleErrorName}: `, { ...error });
 			if (showSnackbar) {
@@ -51,10 +48,10 @@ export function useErrorHandler(
 					replace: true,
 					hideButton: !isOverQuotaReached,
 					actionLabel: isOverQuotaReached
-						? t('snackbar.copyDocument.error.overQuota.actionLabel', 'Ok')
+						? t('snackbar.error.overQuota.actionLabel', 'Ok')
 						: undefined
 				});
 			}
 		}
-	}, [consoleErrorName, createSnackbar, error, isOverQuotaReached, showSnackbar, t, type]);
+	}, [consoleErrorName, createSnackbar, error, showSnackbar, t, type]);
 }
