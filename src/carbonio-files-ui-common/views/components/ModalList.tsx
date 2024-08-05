@@ -12,8 +12,8 @@ import { takeRightWhile } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { CompactListContent } from './CompactListContent';
 import { EmptyFolder } from './EmptyFolder';
-import { ListContent } from './ListContent';
 import { LoadingIcon } from './LoadingIcon';
 import { ScrollContainer } from './ScrollContainer';
 import { OverFlowHiddenRow } from './StyledComponents';
@@ -150,11 +150,10 @@ export const ModalList: React.VFC<ModalListProps> = ({
 			</OverFlowHiddenRow>
 			<Container mainAlignment="flex-start" minHeight="0">
 				{nodes.length > 0 ? (
-					<ListContent
+					<CompactListContent
 						nodes={nodes}
 						activeNodes={activeNodes}
 						setActiveNode={setActiveNode}
-						compact
 						navigateTo={navigateTo}
 						hasMore={hasMore}
 						loadMore={loadMore}

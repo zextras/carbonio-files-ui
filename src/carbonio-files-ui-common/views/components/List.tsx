@@ -44,10 +44,6 @@ import {
 	TrashNodesType,
 	useTrashNodesMutation
 } from '../../hooks/graphql/mutations/useTrashNodesMutation';
-import {
-	UpdateNodeType,
-	useUpdateNodeMutation
-} from '../../hooks/graphql/mutations/useUpdateNodeMutation';
 import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
@@ -138,7 +134,7 @@ export const List: React.VFC<ListProps> = ({
 	fillerWithActions
 }) => {
 	const { navigateToFolder } = useNavigation();
-	const { activeNodeId: activeNode, setActiveNode } = useActiveNode();
+	const { setActiveNode } = useActiveNode();
 	const [t] = useTranslation();
 	const { data: getChildrenParentData, loading: getChildrenParentLoading } = useQuery(
 		GetChildrenParentDocument,
@@ -235,16 +231,15 @@ export const List: React.VFC<ListProps> = ({
 		[setActiveNode]
 	);
 
-	const manageShares = useCallback<(nodeId: string) => void>(
-		(nodeId) => {
-			setActiveNode(nodeId, DISPLAYER_TABS.sharing);
-		},
-		[setActiveNode]
-	);
-
+	// mutation hooks:
 	/** Mutation to update the flag status */
 	const toggleFlag = useFlagNodesMutation();
-
+	/** Mutation to mark nodes for deletion */
+	const markNodesForDeletion = useTrashNodesMutation();
+	/** Mutation to restore nodes */
+	const restore = useRestoreNodesMutation();
+	/** Mutation to delete permanently nodes */
+	const deletePermanently = useDeleteNodesMutation();
 	/**
 	 * Set flagValue for selected nodes.
 	 * @param {boolean} flagValue - value to set
@@ -257,15 +252,6 @@ export const List: React.VFC<ListProps> = ({
 			}),
 		[toggleFlag, selectedNodes, exitSelectionMode]
 	);
-
-	/** Mutation to mark nodes for deletion */
-	const markNodesForDeletion = useTrashNodesMutation();
-
-	/** Mutation to restore nodes */
-	const restore = useRestoreNodesMutation();
-
-	/** Mutation to delete permanently nodes */
-	const deletePermanently = useDeleteNodesMutation();
 
 	const markForDeletionSelection = useCallback<() => ReturnType<TrashNodesType>>(
 		() =>
@@ -290,47 +276,29 @@ export const List: React.VFC<ListProps> = ({
 		[deletePermanently, selectedNodes]
 	);
 
-	const openMoveNodesModalAction = useCallback<
-		(...nodesToMove: Parameters<OpenMoveModal>[0]) => ReturnType<OpenMoveModal>
-	>((...nodesToMove) => openMoveNodesModal(nodesToMove, folderId), [folderId, openMoveNodesModal]);
-
 	const openMoveNodesModalSelection = useCallback<() => ReturnType<OpenMoveModal>>(
-		() => openMoveNodesModalAction(...selectedNodes),
-		[openMoveNodesModalAction, selectedNodes]
+		() => openMoveNodesModal(selectedNodes, folderId),
+		[folderId, openMoveNodesModal, selectedNodes]
 	);
-
-	const openCopyNodesModalAction = useCallback<
-		(...nodesToCopy: Parameters<OpenCopyModal>[0]) => ReturnType<OpenCopyModal>
-	>((...nodesToCopy) => openCopyNodesModal(nodesToCopy, folderId), [folderId, openCopyNodesModal]);
 
 	const openCopyNodesModalSelection = useCallback<() => ReturnType<OpenCopyModal>>(
-		() => openCopyNodesModalAction(...selectedNodes),
-		[openCopyNodesModalAction, selectedNodes]
+		() => openCopyNodesModal(selectedNodes, folderId),
+		[folderId, openCopyNodesModal, selectedNodes]
 	);
 
-	const [updateNode] = useUpdateNodeMutation();
-
-	const renameNodeAction = useCallback<UpdateNodeType>(
-		(nodeId, newName) =>
-			updateNode(nodeId, newName).then((result) => {
-				if (result.data?.updateNode) {
-					setActiveNodeHandler(result.data.updateNode);
-				}
-				return result;
-			}),
-		[setActiveNodeHandler, updateNode]
+	const renameActionCallback = useCallback(
+		(nodeId: string) => {
+			exitSelectionMode();
+			setActiveNodeHandler({ id: nodeId });
+		},
+		[exitSelectionMode, setActiveNodeHandler]
 	);
 
-	const { openRenameModal } = useRenameModal(renameNodeAction, exitSelectionMode);
-
-	const openRenameModalAction = useCallback<OpenRenameModal>(
-		(node) => openRenameModal(node),
-		[openRenameModal]
-	);
+	const { openRenameModal } = useRenameModal(renameActionCallback);
 
 	const openRenameModalSelection = useCallback<() => ReturnType<OpenRenameModal>>(
-		() => openRenameModalAction(selectedNodes[0]),
-		[openRenameModalAction, selectedNodes]
+		() => openRenameModal(selectedNodes[0]),
+		[openRenameModal, selectedNodes]
 	);
 
 	const { openDeletePermanentlyModal } = useDeletePermanentlyModal(
@@ -370,9 +338,9 @@ export const List: React.VFC<ListProps> = ({
 		exitSelectionMode();
 		const nodeToShare = find(nodes, (node) => node.id === selectedIDs[0]);
 		if (nodeToShare) {
-			manageShares(nodeToShare.id);
+			setActiveNode(nodeToShare.id, DISPLAYER_TABS.sharing);
 		}
-	}, [exitSelectionMode, manageShares, nodes, selectedIDs]);
+	}, [exitSelectionMode, nodes, selectedIDs, setActiveNode]);
 
 	const openWithDocsSelection = useCallback(() => {
 		const nodeToOpen = find(nodes, (node) => node.id === selectedIDs[0]);
@@ -758,20 +726,8 @@ export const List: React.VFC<ListProps> = ({
 									selectId={selectId}
 									isSelectionModeActive={isSelectionModeActive}
 									exitSelectionMode={exitSelectionMode}
-									toggleFlag={toggleFlag}
-									manageShares={manageShares}
-									renameNode={openRenameModalAction}
-									markNodesForDeletion={markNodesForDeletion}
-									restore={restore}
-									deletePermanently={deletePermanently}
-									moveNodes={openMoveNodesModalAction}
-									copyNodes={openCopyNodesModalAction}
-									activeNodes={activeNode}
-									setActiveNode={setActiveNodeHandler}
-									navigateTo={navigateToFolder}
 									hasMore={hasMore}
 									loadMore={loadMore}
-									draggable
 									customCheckers={actionCheckers}
 									selectionContextualMenuActionsItems={permittedSelectionModeActionsItems}
 									fillerWithActions={fillerWithActions}
