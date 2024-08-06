@@ -6,7 +6,8 @@
 
 import React from 'react';
 
-import { ApolloError, ServerError } from '@apollo/client';
+import { ApolloError } from '@apollo/client';
+import { NetworkError } from '@apollo/client/errors';
 import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
@@ -243,15 +244,18 @@ function decodeGraphQLErrorWithCode(error: GraphQLError, t: TFunction): string |
 	return `${operationErrorMessage} ${errorCodeMessage}`.trim();
 }
 
-function decodeServerError(error: ServerError): string | undefined {
-	return typeof error.result === 'string'
-		? error.result
-		: error.result
-				.map(
-					(err: { message: string; extensions?: { code: string } }) =>
-						err.extensions?.code ?? err.message
-				)
-				.join('\n');
+function decodeServerError(error: NetworkError): string | undefined {
+	if (error && 'result' in error) {
+		return typeof error.result === 'string'
+			? error.result
+			: error.result
+					.map(
+						(err: { message: string; extensions?: { code: string } }) =>
+							err.extensions?.code ?? err.message
+					)
+					.join('\n');
+	}
+	return undefined;
 }
 
 /**
@@ -261,24 +265,20 @@ export const decodeError = (error: ApolloError, t: TFunction): string | null => 
 	if (!error) {
 		return null;
 	}
-	const errors: string[] = [];
+	const errors: (string | undefined)[] = [];
 	if (error.graphQLErrors && error.graphQLErrors.length > 0) {
 		const firstGraphQLError = error.graphQLErrors[0];
 		const decodedGraphQLErrorWithCode = decodeGraphQLErrorWithCode(firstGraphQLError, t);
 		if (decodedGraphQLErrorWithCode) {
 			return decodedGraphQLErrorWithCode;
 		}
-		if (firstGraphQLError?.message) {
-			errors.push(firstGraphQLError.message);
-		}
+		errors.push(firstGraphQLError.message);
 	}
-	if (error.networkError && 'result' in error.networkError) {
-		const serverError = decodeServerError(error.networkError);
-		if (serverError) {
-			errors.push(serverError);
-		}
-	}
-	return errors.length > 0 ? errors.join('\n') : error.message;
+
+	const networkError = decodeServerError(error.networkError);
+	errors.push(networkError);
+	const errorMessages = errors.filter((err) => err !== undefined && err.length > 0);
+	return errorMessages.length > 0 ? errorMessages.join('\n') : error.message;
 };
 
 export const getChipLabel = (contact: Contact | null | undefined): string => {
