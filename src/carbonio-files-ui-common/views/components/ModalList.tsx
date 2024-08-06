@@ -144,7 +144,7 @@ export const ModalList: React.VFC<ModalListProps> = ({
 				{crumbs && <InteractiveBreadcrumbs crumbs={crumbs} />}
 				{(loading || loadingPath) && (
 					<Row mainAlignment="flex-end" wrap="nowrap" flexGrow={1}>
-						<LoadingIcon icon="Refresh" iconColor="primary" type="ghost" />
+						<LoadingIcon icon="Refresh" color="primary" />
 					</Row>
 				)}
 			</OverFlowHiddenRow>

@@ -461,7 +461,7 @@ export const NodeListItem = ({
 			add(getUploadAddType(event.dataTransfer), node.id);
 			createSnackbar({
 				key: new Date().toLocaleString(),
-				type: 'info',
+				severity: 'info',
 				label: t('snackbar.upload.success', 'Upload occurred in {{destination}}', {
 					destination: t('node.alias.name', node.name, { context: node.id })
 				}),

@@ -483,7 +483,7 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 								flexGrow={1}
 								flexBasis="100%"
 							>
-								<LoadingIcon icon="Refresh" iconColor="primary" />
+								<LoadingIcon icon="Refresh" color="primary" />
 							</OverFlowHiddenRow>
 						)
 					)}

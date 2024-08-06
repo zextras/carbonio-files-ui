@@ -5,7 +5,7 @@
  */
 import React, { useMemo } from 'react';
 
-import { Container, Icon, IconButton, Quota, Tooltip, Text } from '@zextras/carbonio-design-system';
+import { Container, Icon, Quota, Tooltip, Text, Button } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -81,7 +81,13 @@ const InnerFilesQuota = ({
 					</Tooltip>
 				)}
 				<Tooltip label={t('quota.refresh.tooltip.label', 'Refresh')}>
-					<IconButton icon={'Refresh'} size={'large'} type={'ghost'} onClick={refreshData} />
+					<Button
+						icon={'Refresh'}
+						size={'large'}
+						type={'ghost'}
+						color={'text'}
+						onClick={refreshData}
+					/>
 				</Tooltip>
 			</Container>
 			{limit > 0 && <Quota fill={fillProp} fillBackground={fillProp < 100 ? 'info' : 'error'} />}

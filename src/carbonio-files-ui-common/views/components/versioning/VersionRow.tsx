@@ -7,7 +7,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import {
 	Icon,
-	IconButton,
+	Button,
 	Padding,
 	Text,
 	Dropdown,
@@ -334,7 +334,13 @@ export const VersionRow: React.VFC<{
 					</Tooltip>
 				)}
 				<Dropdown placement="bottom-end" items={items}>
-					<IconButton size="small" icon="MoreVertical" onClick={(): void => undefined} />
+					<Button
+						type={'ghost'}
+						color={'text'}
+						size="small"
+						icon="MoreVertical"
+						onClick={(): void => undefined}
+					/>
 				</Dropdown>
 			</GridItem>
 		</>
