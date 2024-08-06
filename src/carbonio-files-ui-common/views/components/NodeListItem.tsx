@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
@@ -23,7 +23,6 @@ import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { viewModeVar } from '../../apollo/viewModeVar';
 import {
 	DATE_FORMAT_SHORT,
 	DISPLAYER_TABS,
@@ -33,6 +32,7 @@ import {
 	TIMERS,
 	VIEW_MODE
 } from '../../constants';
+import { ListContext } from '../../contexts';
 import { useDeleteNodesMutation } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
 import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
@@ -93,7 +93,7 @@ export const NodeListItem = ({
 	exitSelectionMode,
 	selectionContextualMenuActionsItems
 }: NodeListItemProps): React.JSX.Element => {
-	const viewMode = useReactiveVar(viewModeVar);
+	const { viewMode } = useContext(ListContext);
 	const { me, locale } = useUserInfo();
 
 	const params = useParams<URLParams>();

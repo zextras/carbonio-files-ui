@@ -7,7 +7,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system';
+import { Container, Snackbar } from '@zextras/carbonio-design-system';
 import { filter, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
@@ -15,24 +15,14 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Displayer } from './components/Displayer';
 import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
-import { DisplayerContainer } from './components/StyledComponents';
 import { ViewModeComponent } from './components/ViewModeComponent';
+import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
-import { useActiveNode } from '../../hooks/useActiveNode';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
 import { nodeSortVar } from '../apollo/nodeSortVar';
-import { viewModeVar } from '../apollo/viewModeVar';
-import {
-	DISPLAYER_WIDTH,
-	FILES_APP_ID,
-	FILTER_PARAMS,
-	FILTER_TYPE,
-	LIST_WIDTH,
-	ROOTS,
-	VIEW_MODE
-} from '../constants';
-import { ListContext, ListHeaderActionContext } from '../contexts';
+import { FILES_APP_ID, FILTER_PARAMS, FILTER_TYPE, ROOTS } from '../constants';
+import { ListHeaderActionContext } from '../contexts';
 import { useFindNodesQuery } from '../hooks/graphql/queries/useFindNodesQuery';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import { useUpload } from '../hooks/useUpload';
@@ -43,8 +33,6 @@ import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
 const FilterView: React.VFC = () => {
-	const { activeNodeId } = useActiveNode();
-	const viewMode = useReactiveVar(viewModeVar);
 	const { filter: filterParam } = useParams<URLParams>();
 	const isFlaggedFilter = `/${filterParam}` === FILTER_TYPE.flagged;
 	const isMyTrashFilter = `/${filterParam}` === FILTER_TYPE.myTrash;
@@ -61,7 +49,6 @@ const FilterView: React.VFC = () => {
 	const { add } = useUpload();
 	const { navigateToFolder } = useNavigation();
 	const [showUploadSnackbar, setShowUploadSnackbar] = useState(false);
-	const [isEmpty, setIsEmpty] = useState(false);
 
 	const closeUploadSnackbar = useCallback(() => {
 		setShowUploadSnackbar(false);
@@ -378,48 +365,12 @@ const FilterView: React.VFC = () => {
 		]
 	);
 
-	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
-		() => ({ isEmpty, setIsEmpty }),
-		[isEmpty]
-	);
-
 	return (
-		<ListContext.Provider value={listContextValue}>
-			<Container
-				orientation="row"
-				crossAlignment="flex-start"
-				mainAlignment="flex-start"
-				width="fill"
-				height="fill"
-				background={'gray5'}
-				borderRadius="none"
-				maxHeight="100%"
-			>
-				<Responsive mode="desktop">
-					<Container
-						flexGrow={1}
-						width={LIST_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="unset"
-						borderRadius="none"
-						background={'gray6'}
-					>
-						{ListComponent}
-					</Container>
-					<DisplayerContainer
-						width={DISPLAYER_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="flex-start"
-						borderRadius="none"
-						maxHeight={'fill'}
-					>
-						{(activeNodeId || viewMode === VIEW_MODE.list) && (
-							<Displayer translationKey={displayerPlaceholdersKey} />
-						)}
-					</DisplayerContainer>
-				</Responsive>
-				<Responsive mode="mobile">{ListComponent}</Responsive>
-			</Container>
+		<>
+			<ViewLayout
+				listComponent={ListComponent}
+				displayerComponent={<Displayer translationKey={displayerPlaceholdersKey} />}
+			/>
 			<Snackbar
 				open={showUploadSnackbar}
 				onClose={closeUploadSnackbar}
@@ -428,7 +379,7 @@ const FilterView: React.VFC = () => {
 				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
 				onActionClick={uploadSnackbarAction}
 			/>
-		</ListContext.Provider>
+		</>
 	);
 };
 

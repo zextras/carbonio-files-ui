@@ -6,16 +6,17 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system';
+import { Container, Snackbar } from '@zextras/carbonio-design-system';
 import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { Displayer } from './components/Displayer';
 import { SearchList } from './components/SearchList';
+import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
-import { DISPLAYER_WIDTH, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
+import { FILES_APP_ID, ROOTS, VIEW_MODE } from '../constants';
 import { ListContext } from '../contexts';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import { useUpload } from '../hooks/useUpload';
@@ -25,15 +26,9 @@ import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
 interface SearchViewProps {
 	resultsHeader?: React.ReactNode;
-	listWidth?: string;
-	displayerWidth?: string;
 }
 
-export const SearchView: React.VFC<SearchViewProps> = ({
-	resultsHeader,
-	listWidth = LIST_WIDTH,
-	displayerWidth = DISPLAYER_WIDTH
-}) => {
+export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 	const { navigateToFolder } = useNavigation();
@@ -41,7 +36,6 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 	const { add } = useUpload();
 
 	const [showUploadSnackbar, setShowUploadSnackbar] = useState(false);
-	const [isEmpty, setIsEmpty] = useState(false);
 	const [searchExecuted, setSearchExecuted] = useState(false);
 
 	const closeUploadSnackbar = useCallback(() => {
@@ -198,64 +192,35 @@ export const SearchView: React.VFC<SearchViewProps> = ({
 		t
 	]);
 
-	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
+	const listContextValue = useMemo<Partial<React.ContextType<typeof ListContext>>>(
 		() => ({
-			isEmpty,
-			setIsEmpty,
 			queryCalled: searchExecuted,
-			setQueryCalled: setSearchExecuted
+			setQueryCalled: setSearchExecuted,
+			viewMode: VIEW_MODE.list
 		}),
-		[isEmpty, searchExecuted]
+		[searchExecuted]
 	);
 
 	return (
-		<ListContext.Provider value={listContextValue}>
-			<Container minHeight={0} maxHeight="100%" mainAlignment="flex-start">
-				{resultsHeader}
-				<Container
-					orientation="horizontal"
-					crossAlignment="flex-start"
-					mainAlignment="flex-start"
-					width="fill"
-					height="fill"
-					background={'gray5'}
-					borderRadius="none"
-					maxHeight="100%"
-					minHeight={0}
-				>
-					<Responsive mode="desktop">
-						<Container
-							width={listWidth}
-							mainAlignment="flex-start"
-							crossAlignment="unset"
-							borderRadius="none"
-							background={'gray6'}
-						>
-							<SearchList />
-						</Container>
-						<Container
-							width={displayerWidth}
-							mainAlignment="flex-start"
-							crossAlignment="flex-start"
-							borderRadius="none"
-							style={{ maxHeight: '100%' }}
-						>
-							<Displayer translationKey="displayer.search" icons={['SearchOutline']} />
-						</Container>
-					</Responsive>
-					<Responsive mode="mobile">
-						<SearchList />
-					</Responsive>
-				</Container>
-				<Snackbar
-					open={showUploadSnackbar}
-					onClose={closeUploadSnackbar}
-					type="info"
-					label={t('uploads.destination.home', "Upload occurred in Files' Home")}
-					actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
-					onActionClick={uploadSnackbarAction}
-				/>
-			</Container>
-		</ListContext.Provider>
+		<Container minHeight={0} maxHeight="100%" mainAlignment="flex-start">
+			{resultsHeader}
+			<ViewLayout
+				listComponent={<SearchList />}
+				displayerComponent={
+					<Displayer translationKey="displayer.search" icons={['SearchOutline']} />
+				}
+				listContextValue={listContextValue}
+				listWidth={'25%'}
+				displayerWidth={'75%'}
+			/>
+			<Snackbar
+				open={showUploadSnackbar}
+				onClose={closeUploadSnackbar}
+				type="info"
+				label={t('uploads.destination.home', "Upload occurred in Files' Home")}
+				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
+				onActionClick={uploadSnackbarAction}
+			/>
+		</Container>
 	);
 };

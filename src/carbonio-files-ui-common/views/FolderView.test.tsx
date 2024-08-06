@@ -323,7 +323,7 @@ describe('Folder View', () => {
 
 	test('should show the list of valid nodes even if the children include some invalid node', async () => {
 		const folder = populateFolder(2);
-		const node = populateNode();
+		const node = populateFile();
 		folder.children.nodes.push(null, node);
 		const mocks = {
 			Query: {

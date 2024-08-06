@@ -5,6 +5,8 @@
  */
 import React, { createContext } from 'react';
 
+import { ViewMode, viewModeVar } from '../apollo/viewModeVar';
+
 export const ListContext = createContext<{
 	isEmpty: boolean;
 	setIsEmpty: (empty: boolean) => void;
@@ -12,7 +14,9 @@ export const ListContext = createContext<{
 	// Should be false only when no data should be shown because no query has been executed
 	queryCalled?: boolean;
 	setQueryCalled?: (queryCalled: boolean) => void;
+	viewMode: ViewMode;
 }>({
+	viewMode: viewModeVar(),
 	isEmpty: true,
 	setIsEmpty: () => {
 		// not implemented

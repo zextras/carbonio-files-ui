@@ -73,10 +73,10 @@ describe('Filter View', () => {
 				const destinationFolder = populateFolder();
 				destinationFolder.permissions.can_write_folder = true;
 				destinationFolder.permissions.can_write_file = true;
-				currentFilter.push(destinationFolder);
-				const { node: nodeToCopy, path } = populateParents(currentFilter[0], 2, true);
+				currentFilter.unshift(destinationFolder);
+				const { node: nodeToCopy, path } = populateParents(currentFilter[1], 2, true);
 				const parentFolder = nodeToCopy.parent as Folder;
-				parentFolder.children = populateNodePage([nodeToCopy, destinationFolder]);
+				parentFolder.children = populateNodePage([destinationFolder, nodeToCopy]);
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -379,8 +379,8 @@ describe('Filter View', () => {
 				const destinationFolder = populateFolder();
 				destinationFolder.permissions.can_write_folder = true;
 				destinationFolder.permissions.can_write_file = true;
-				currentFilter.push(destinationFolder);
-				const { node: nodeToCopy, path } = populateParents(currentFilter[0], 2, true);
+				currentFilter.unshift(destinationFolder);
+				const { node: nodeToCopy, path } = populateParents(currentFilter[1], 2, true);
 				const parentFolder = nodeToCopy.parent as Folder;
 				parentFolder.children = populateNodePage([nodeToCopy, destinationFolder]);
 

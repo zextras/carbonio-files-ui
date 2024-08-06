@@ -145,11 +145,11 @@ describe('Search list', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentSearch.push(destinationFolder);
+			currentSearch.unshift(destinationFolder);
 			const folderWithoutPermission = populateFolder();
 			folderWithoutPermission.permissions.can_write_folder = false;
 			folderWithoutPermission.permissions.can_write_file = false;
-			currentSearch.push(folderWithoutPermission);
+			currentSearch.unshift(folderWithoutPermission);
 
 			const keywords = ['keyword1', 'keyword2'];
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
@@ -236,11 +236,11 @@ describe('Search list', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentSearch.push(destinationFolder);
+			currentSearch.unshift(destinationFolder);
 			const folderWithoutPermission = populateFolder();
 			folderWithoutPermission.permissions.can_write_folder = false;
 			folderWithoutPermission.permissions.can_write_file = false;
-			currentSearch.push(folderWithoutPermission);
+			currentSearch.unshift(folderWithoutPermission);
 
 			const keywords = ['keyword1', 'keyword2'];
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };
@@ -324,7 +324,7 @@ describe('Search list', () => {
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
 			destinationFolder.parent = parent;
-			currentFilter.push(destinationFolder);
+			currentFilter.unshift(destinationFolder);
 
 			const keywords = ['keyword1', 'keyword2'];
 			const searchParams: AdvancedFilters = { keywords: buildChipsFromKeywords(keywords) };

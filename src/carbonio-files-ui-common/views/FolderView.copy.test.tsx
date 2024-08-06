@@ -83,8 +83,8 @@ describe('Copy', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFolder.children.nodes.push(destinationFolder);
-			const nodeToCopy = currentFolder.children.nodes[0] as Node;
+			currentFolder.children.nodes.unshift(destinationFolder);
+			const nodeToCopy = currentFolder.children.nodes[1] as Node;
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -308,8 +308,8 @@ describe('Copy', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFolder.children.nodes.push(destinationFolder);
-			const nodeToCopy = currentFolder.children.nodes[0] as Node;
+			currentFolder.children.nodes.unshift(destinationFolder);
+			const nodeToCopy = currentFolder.children.nodes[1] as Node;
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({

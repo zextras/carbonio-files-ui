@@ -54,8 +54,8 @@ describe('Move', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFolder.children.nodes.push(destinationFolder);
-			const nodeToMove = currentFolder.children.nodes[0] as Node;
+			currentFolder.children.nodes.unshift(destinationFolder);
+			const nodeToMove = currentFolder.children.nodes[1] as Node;
 			nodeToMove.permissions.can_write_folder = true;
 			nodeToMove.permissions.can_write_file = true;
 
@@ -127,10 +127,10 @@ describe('Move', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFolder.children.nodes.push(destinationFolder);
+			currentFolder.children.nodes.unshift(destinationFolder);
 			const nodesToMove = [
-				currentFolder.children.nodes[0],
-				currentFolder.children.nodes[1]
+				currentFolder.children.nodes[1],
+				currentFolder.children.nodes[2]
 			] as Node[];
 			forEach(nodesToMove, (mockedNode) => {
 				mockedNode.permissions.can_write_folder = true;
@@ -321,8 +321,8 @@ describe('Move', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFolder.children.nodes.push(destinationFolder);
-			const nodeToMove = currentFolder.children.nodes[0] as Node;
+			currentFolder.children.nodes.unshift(destinationFolder);
+			const nodeToMove = currentFolder.children.nodes[1] as Node;
 			nodeToMove.permissions.can_write_folder = true;
 			nodeToMove.permissions.can_write_file = true;
 

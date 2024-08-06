@@ -6,8 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useReactiveVar } from '@apollo/client';
-import { Container, Responsive, Text } from '@zextras/carbonio-design-system';
+import { Text } from '@zextras/carbonio-design-system';
 import { filter, map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -17,21 +16,13 @@ import { Displayer } from './components/Displayer';
 import { EmptySpaceFiller } from './components/EmptySpaceFiller';
 import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
-import { DisplayerContainer } from './components/StyledComponents';
 import { ViewModeComponent } from './components/ViewModeComponent';
+import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
-import { viewModeVar } from '../apollo/viewModeVar';
-import {
-	DISPLAYER_WIDTH,
-	DOCS_EXTENSIONS,
-	FILES_APP_ID,
-	LIST_WIDTH,
-	ROOTS,
-	VIEW_MODE
-} from '../constants';
-import { ListContext, ListHeaderActionContext } from '../contexts';
+import { DOCS_EXTENSIONS, FILES_APP_ID, ROOTS } from '../constants';
+import { ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
 import { useGetChildrenQuery } from '../hooks/graphql/queries/useGetChildrenQuery';
 import { useGetPermissionsQuery } from '../hooks/graphql/queries/useGetPermissionsQuery';
@@ -54,13 +45,11 @@ import {
 
 const FolderView = (): React.JSX.Element => {
 	const { rootId } = useParams<URLParams>();
-	const { setActiveNode, activeNodeId } = useActiveNode();
-	const viewMode = useReactiveVar(viewModeVar);
+	const { setActiveNode } = useActiveNode();
 	const folderId = useQueryParam('folder');
 	const [newFile, setNewFile] = useState<DocsType | undefined>();
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
-	const [isEmpty, setIsEmpty] = useState(false);
 
 	const { add } = useUpload();
 
@@ -371,46 +360,11 @@ const FolderView = (): React.JSX.Element => {
 		]
 	);
 
-	const listContextValue = useMemo(() => ({ isEmpty, setIsEmpty }), [isEmpty]);
-
 	return (
-		<ListContext.Provider value={listContextValue}>
-			<Container
-				orientation="row"
-				crossAlignment="flex-start"
-				mainAlignment="flex-start"
-				width="fill"
-				height="fill"
-				background="gray5"
-				borderRadius="none"
-				maxHeight="100%"
-			>
-				<Responsive mode="desktop">
-					<Container
-						flexGrow={1}
-						width={LIST_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="unset"
-						borderRadius="none"
-						background="gray6"
-					>
-						{ListComponent}
-					</Container>
-					<DisplayerContainer
-						width={DISPLAYER_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="flex-start"
-						borderRadius="none"
-						maxHeight={'fill'}
-					>
-						{(activeNodeId || viewMode === VIEW_MODE.list) && (
-							<Displayer translationKey="displayer.folder" />
-						)}
-					</DisplayerContainer>
-				</Responsive>
-				<Responsive mode="mobile">{ListComponent}</Responsive>
-			</Container>
-		</ListContext.Provider>
+		<ViewLayout
+			listComponent={ListComponent}
+			displayerComponent={<Displayer translationKey="displayer.folder" />}
+		/>
 	);
 };
 

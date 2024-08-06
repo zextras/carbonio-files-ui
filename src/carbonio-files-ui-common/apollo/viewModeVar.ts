@@ -8,4 +8,6 @@ import { makeVar } from '@apollo/client';
 
 import { VIEW_MODE, VIEW_MODE_DEFAULT } from '../constants';
 
-export const viewModeVar = makeVar<(typeof VIEW_MODE)[keyof typeof VIEW_MODE]>(VIEW_MODE_DEFAULT);
+export type ViewMode = (typeof VIEW_MODE)[keyof typeof VIEW_MODE];
+
+export const viewModeVar = makeVar<ViewMode>(VIEW_MODE_DEFAULT);

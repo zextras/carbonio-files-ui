@@ -55,7 +55,7 @@ describe('Filter View', () => {
 				node.parent = populateFolder();
 				node.parent.permissions.can_write_folder = true;
 				node.parent.permissions.can_write_file = true;
-				currentFilter.push(file, folder, node);
+				currentFilter.push(folder, node, file);
 
 				const mocks = {
 					Query: {
@@ -144,7 +144,7 @@ describe('Filter View', () => {
 				node.permissions.can_write_folder = true;
 				node.permissions.can_write_file = true;
 				node.parent = null;
-				currentFilter.push(file, folder, node);
+				currentFilter.push(folder, node, file);
 
 				const mocks = {
 					Query: {
@@ -196,8 +196,8 @@ describe('Filter View', () => {
 				const destinationFolder = populateFolder();
 				destinationFolder.permissions.can_write_folder = true;
 				destinationFolder.permissions.can_write_file = true;
-				currentFilter.push(destinationFolder);
-				const { node: nodeToMove, path } = populateParents(currentFilter[0], 2, true);
+				currentFilter.unshift(destinationFolder);
+				const { node: nodeToMove, path } = populateParents(currentFilter[1], 2, true);
 				forEach(path, (mockedNode) => {
 					mockedNode.permissions.can_write_folder = true;
 					mockedNode.permissions.can_write_file = true;
@@ -309,7 +309,7 @@ describe('Filter View', () => {
 				node.parent = populateFolder();
 				node.parent.permissions.can_write_folder = true;
 				node.parent.permissions.can_write_file = true;
-				currentFilter.push(file, folder, node);
+				currentFilter.push(folder, node, file);
 
 				const mocks = {
 					Query: {
@@ -351,8 +351,8 @@ describe('Filter View', () => {
 				const destinationFolder = populateFolder();
 				destinationFolder.permissions.can_write_folder = true;
 				destinationFolder.permissions.can_write_file = true;
-				currentFilter.push(destinationFolder);
-				const { node: nodeToMove, path } = populateParents(currentFilter[0], 2, true);
+				currentFilter.unshift(destinationFolder);
+				const { node: nodeToMove, path } = populateParents(currentFilter[1], 2, true);
 				forEach(path, (mockedNode) => {
 					mockedNode.permissions.can_write_file = true;
 					mockedNode.permissions.can_write_folder = true;

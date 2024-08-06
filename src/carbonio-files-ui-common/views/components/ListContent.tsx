@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import { useReactiveVar } from '@apollo/client';
 import { ListV2, type Action as DSAction, Row, Container } from '@zextras/carbonio-design-system';
 import { forEach, filter, includes } from 'lodash';
 import styled from 'styled-components';
@@ -17,8 +16,8 @@ import { NodeListItemDragImage } from './NodeListItemDragImage';
 import { GridItem } from './StyledComponents';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { viewModeVar } from '../../apollo/viewModeVar';
 import { DRAG_TYPES, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
+import { ListContext } from '../../contexts';
 import { Action, NodeListItemType } from '../../types/common';
 import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
 import { cssCalcBuilder } from '../../utils/utils';
@@ -66,7 +65,7 @@ export const ListContent = ({
 	selectionContextualMenuActionsItems,
 	fillerWithActions
 }: ListContentProps): React.JSX.Element => {
-	const viewMode = useReactiveVar(viewModeVar);
+	const { viewMode } = useContext(ListContext);
 
 	const dragImageRef = useRef<HTMLDivElement>(null);
 

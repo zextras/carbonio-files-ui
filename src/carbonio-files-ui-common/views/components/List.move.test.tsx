@@ -29,7 +29,7 @@ describe('Move', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.parent = currentFolder;
-			currentFolder.children.nodes.push(file, folder, node);
+			currentFolder.children.nodes.push(folder, file, node);
 
 			const { user } = setup(
 				<List
@@ -121,7 +121,7 @@ describe('Move', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.parent = currentFolder;
-			currentFolder.children.nodes.push(file, folder, node);
+			currentFolder.children.nodes.push(folder, node, file);
 
 			setup(
 				<List

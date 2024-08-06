@@ -21,7 +21,7 @@ import {
 } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
-import { populateNode, populateNodes, populateShares } from '../mocks/mockUtils';
+import { populateFile, populateNodes, populateShares } from '../mocks/mockUtils';
 import { setup, within, screen } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
@@ -84,7 +84,7 @@ describe('Filter view', () => {
 
 		test('Deletion of all collaborators remove node from list. Displayer is closed', async () => {
 			const nodes = populateNodes(2);
-			const nodeWithShares = populateNode();
+			const nodeWithShares = populateFile();
 			const shares = populateShares(nodeWithShares, 2);
 			nodeWithShares.shares = shares;
 			nodeWithShares.permissions.can_share = true;
