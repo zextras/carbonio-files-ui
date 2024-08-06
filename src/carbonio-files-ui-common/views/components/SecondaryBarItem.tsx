@@ -199,7 +199,7 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 								<Button
 									size={'extralarge'}
 									icon={item.icon}
-									onClick={item.onClick || ((): void => undefined)}
+									onClick={item.onClick ?? ((): void => undefined)}
 									backgroundColor={(item.active && 'highlight') || 'transparent'}
 									labelColor={item.iconColor ?? 'text'}
 								/>
