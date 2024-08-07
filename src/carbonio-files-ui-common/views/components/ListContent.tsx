@@ -6,7 +6,7 @@
 
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import { ListV2, type Action as DSAction, Row, Container } from '@zextras/carbonio-design-system';
+import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
 import { forEach, filter, includes } from 'lodash';
 import styled from 'styled-components';
 
@@ -30,14 +30,15 @@ const DragImageContainer = styled.div`
 	width: 100%;
 `;
 
-const Grid = styled(Container)`
-	height: auto;
-	display: grid;
-	grid-gap: 1rem;
-	grid-template-columns: repeat(auto-fill, minmax(13.4375rem, 1fr));
-	padding-left: 1rem;
-	padding-right: 1rem;
-	padding-top: 1rem;
+const Grid = styled(ListV2)`
+	& > div {
+		padding-left: 1rem;
+		padding-right: 1rem;
+		padding-top: 1rem;
+		display: grid;
+		grid-gap: 1rem;
+		grid-template-columns: repeat(auto-fill, minmax(13.4375rem, 1fr));
+	}
 `;
 
 interface ListContentProps {
@@ -178,7 +179,15 @@ export const ListContent = ({
 	return (
 		<>
 			{viewMode === VIEW_MODE.grid ? (
-				<Grid data-testid={'main-grid'}>{items}</Grid>
+				<Grid
+					height={'auto'}
+					maxHeight={'100%'}
+					data-testid={'main-grid'}
+					onListBottom={hasMore ? loadMore : undefined}
+					intersectionObserverInitOptions={intersectionObserverInitOptions}
+				>
+					{items}
+				</Grid>
 			) : (
 				<ListV2
 					maxHeight={'100%'}
