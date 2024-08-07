@@ -16,7 +16,7 @@ import { NodeListItemDragImage } from './NodeListItemDragImage';
 import { GridItem } from './StyledComponents';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { DRAG_TYPES, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
+import { DRAG_TYPES, GRID_ITEM_MIN_WIDTH, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
 import { ListContext } from '../../contexts';
 import { Action, NodeListItemType } from '../../types/common';
 import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
@@ -37,7 +37,7 @@ const Grid = styled(ListV2)`
 		padding-top: 1rem;
 		display: grid;
 		grid-gap: 1rem;
-		grid-template-columns: repeat(auto-fill, minmax(13.4375rem, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(${GRID_ITEM_MIN_WIDTH}, 1fr));
 	}
 `;
 

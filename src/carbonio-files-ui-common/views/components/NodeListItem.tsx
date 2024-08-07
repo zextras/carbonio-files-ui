@@ -536,6 +536,8 @@ export const NodeListItem = ({
 				viewMode === VIEW_MODE.grid ? (
 					<NodeGridItemUI
 						{...props}
+						icon={getIconByFileType(node.type, mimeType ?? node.id)}
+						showPreview={isFile(node)}
 						disabled={isDragged}
 						trashed={trashed && isSearchView(location)}
 						updatedAt={formatDate(node.updated_at, locale, DATE_FORMAT_SHORT)}

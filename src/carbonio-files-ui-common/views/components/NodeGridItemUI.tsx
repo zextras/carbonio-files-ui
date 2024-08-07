@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import {
 	Container,
@@ -15,6 +15,7 @@ import {
 	IconButton,
 	Text
 } from '@zextras/carbonio-design-system';
+import { useTranslation } from 'react-i18next';
 import styled, { css, SimpleInterpolation } from 'styled-components';
 
 import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
@@ -29,14 +30,24 @@ const FooterGrid = styled(Container)`
 `;
 
 const ContainerCell = styled(Container).attrs<
-	{ $contextualMenuActive?: boolean; $disabled?: boolean; $disableHover?: boolean },
+	{
+		$contextualMenuActive?: boolean;
+		$disabled?: boolean;
+		$disableHover?: boolean;
+		$showPreview?: boolean;
+	},
 	{ backgroundColor?: string }
 >(({ $contextualMenuActive, $disabled, theme }) => ({
 	backgroundColor:
 		($disabled && getColor('gray6.disabled', theme)) ||
 		($contextualMenuActive && getColor('gray6.hover', theme)) ||
 		undefined
-}))<{ $contextualMenuActive?: boolean; $disabled?: boolean; $disableHover?: boolean }>`
+}))<{
+	$contextualMenuActive?: boolean;
+	$disabled?: boolean;
+	$disableHover?: boolean;
+	$showPreview?: boolean;
+}>`
 	${HoverContainer} {
 		background-color: ${({ backgroundColor }): SimpleInterpolation => backgroundColor};
 	}
@@ -54,7 +65,11 @@ const ContainerCell = styled(Container).attrs<
 		css`
 			cursor: pointer;
 		`};
-	aspect-ratio: 1/1;
+	${({ $showPreview }): SimpleInterpolation =>
+		$showPreview &&
+		css`
+			aspect-ratio: 1/1;
+		`};
 	overflow: hidden;
 	border-radius: 5px;
 	border: ${({ theme }): SimpleInterpolation => theme.palette.gray2.disabled}, 1px, solid;
@@ -64,8 +79,15 @@ const Preview = styled(Container)`
 	overflow: hidden;
 `;
 
+const PreviewIcon = styled(Icon)`
+	height: 3.75rem;
+	width: 3.75rem;
+`;
+
 interface NodeGridItemProps {
 	id: string;
+	showPreview?: boolean;
+	icon: string;
 	flagActive?: boolean;
 	disabled?: boolean;
 	incomingShare?: boolean;
@@ -91,6 +113,8 @@ interface NodeGridItemProps {
 
 export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 	id,
+	showPreview,
+	icon,
 	flagActive,
 	disabled,
 	incomingShare,
@@ -119,8 +143,18 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 		}
 	}, []);
 
+	const [previewFailed, setPreviewFailed] = useState(false);
+
+	const onPreviewError = useCallback(() => {
+		setPreviewFailed(true);
+	}, []);
+
+	const [t] = useTranslation();
+
 	return (
 		<ContainerCell
+			$showPreview={showPreview}
+			height={showPreview ? 'fill' : 'fit'}
 			data-testid={id}
 			$contextualMenuActive={listItemContainerContextualMenuActive}
 			$disableHover={listItemContainerDisableHover}
@@ -135,9 +169,18 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 				actions={contextualMenuActions}
 			>
 				<Container background={'gray5'}>
-					<Preview minHeight={0} orientation={'horizontal'}>
-						<img src={imgSrc} alt={''} />
-					</Preview>
+					{showPreview && (
+						<Preview data-testid={'grid-cell-thumbnail'} minHeight={0} orientation={'horizontal'}>
+							{(imgSrc && !previewFailed && (
+								<img src={imgSrc} alt={''} onError={onPreviewError} />
+							)) ||
+								(imgSrc && previewFailed && (
+									<Text size={'extrasmall'} color={'secondary'}>
+										{t('node.preview.failed', 'Preview not available')}
+									</Text>
+								)) || <PreviewIcon icon={icon} color={'secondary'} />}
+						</Preview>
+					)}
 					<HoverContainer
 						maxWidth={'100%'}
 						background={hoverContainerBackground}

@@ -6,11 +6,11 @@
 
 import React from 'react';
 
+import { fireEvent } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
 import { NodeListItem, NodeListItemProps } from './NodeListItem';
 import * as useNavigation from '../../../hooks/useNavigation';
-import { viewModeVar } from '../../apollo/viewModeVar';
 import {
 	DATE_FORMAT_SHORT,
 	INTERNAL_PATH,
@@ -21,6 +21,7 @@ import {
 	VIEW_MODE
 } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { ListContext } from '../../contexts';
 import * as useHealthInfo from '../../hooks/useHealthInfo';
 import * as usePreview from '../../hooks/usePreview';
 import {
@@ -30,10 +31,13 @@ import {
 	populateShares,
 	populateUser
 } from '../../mocks/mockUtils';
-import { setup, screen } from '../../tests/utils';
+import { setup, screen, within } from '../../tests/utils';
 import { NodeListItemType } from '../../types/common';
 import { NodeType, User } from '../../types/graphql/types';
-import { PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS } from '../../utils/previewUtils';
+import {
+	MIME_TYPE_PREVIEW_SUPPORT,
+	PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS
+} from '../../utils/previewUtils';
 import { formatDate, humanFileSize } from '../../utils/utils';
 import 'jest-styled-components';
 import * as utils from '../../utils/utils';
@@ -56,11 +60,16 @@ beforeEach(() => {
 	mockedUserLogged = populateUser(global.mockedUserLogged.id, global.mockedUserLogged.name);
 });
 
+const mimeTypesWithThumbnailSupport = Object.keys(MIME_TYPE_PREVIEW_SUPPORT).filter(
+	(mimeType) => MIME_TYPE_PREVIEW_SUPPORT[mimeType].thumbnail
+);
+
+const mimeTypesWithThumbnailNotSupported = Object.keys(MIME_TYPE_PREVIEW_SUPPORT).filter(
+	(mimeType) => !MIME_TYPE_PREVIEW_SUPPORT[mimeType].thumbnail
+);
+
 describe('Node List Item', () => {
 	describe.each([VIEW_MODE.list, VIEW_MODE.grid])('%s mode', (viewMode) => {
-		beforeEach(() => {
-			viewModeVar(viewMode);
-		});
 		describe('double click behaviour', () => {
 			it.each([
 				['open with docs', true, true, true, PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS[0]],
@@ -109,7 +118,11 @@ describe('Node List Item', () => {
 					node.permissions.can_write_file = canWriteFile;
 					node.mime_type = mimeType;
 
-					const { user } = setup(<NodeListItem node={node} {...getMissingProps()} />);
+					const { user } = setup(
+						<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+							<NodeListItem node={node} {...getMissingProps()} />
+						</ListContext.Provider>
+					);
 
 					await user.dblClick(screen.getByText(node.name));
 					if (action === 'open with docs') {
@@ -132,7 +145,11 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.owner = mockedUserLogged;
 			node.last_editor = mockedUserLogged;
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 
 			expect(screen.getByText(node.name)).toBeVisible();
 			expect(
@@ -143,7 +160,11 @@ describe('Node List Item', () => {
 
 		test('render a folder item in the list', () => {
 			const node = populateFolder();
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByText(/folder/i)).toBeInTheDocument();
 			expect(screen.getByText(/folder/i)).toBeVisible();
 		});
@@ -151,7 +172,11 @@ describe('Node List Item', () => {
 		test('ArrowCircleRight icon is visible if node is shared by me', () => {
 			const node = populateNode();
 			node.shares = populateShares(node, 1);
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeVisible();
 			expect(screen.queryByTestId(ICON_REGEXP.sharedWithMe)).not.toBeInTheDocument();
@@ -160,7 +185,11 @@ describe('Node List Item', () => {
 		test('ArrowCircleLeft icon is visible if node is shared with me', () => {
 			const node = populateNode();
 			node.owner = populateUser();
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeVisible();
 			expect(screen.queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
@@ -169,7 +198,11 @@ describe('Node List Item', () => {
 		test('incoming and outgoing share icons are not visible if node is not shared', () => {
 			const node = populateNode();
 			node.shares = [];
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.queryByTestId(ICON_REGEXP.sharedWithMe)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
 		});
@@ -177,7 +210,11 @@ describe('Node List Item', () => {
 		test('flag icon is visible if node is flagged', () => {
 			const node = populateNode();
 			node.flagged = true;
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeVisible();
 		});
@@ -185,13 +222,21 @@ describe('Node List Item', () => {
 		test('flag icon is not visible if node is not flagged', () => {
 			const node = populateNode();
 			node.flagged = false;
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 		});
 
 		test('render a file item in the list', () => {
 			const node = populateFile();
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByText(node.extension as string)).toBeVisible();
 			expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
 		});
@@ -200,13 +245,21 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.owner = populateUser();
 			node.last_editor = node.owner;
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		});
 
 		test('last modifier is visible if node is shared', () => {
 			const node = populateNode();
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByText((node.last_editor as User).full_name)).toBeVisible();
 		});
 
@@ -222,7 +275,11 @@ describe('Node List Item', () => {
 			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 
 			const node = populateFolder(0);
-			const { user } = setup(<NodeListItem node={node} {...getMissingProps()} />);
+			const { user } = setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(mockedUseNavigationHook.navigateToFolder).toHaveBeenCalledTimes(1);
 			expect(mockedHistory).toContain(node.id);
@@ -238,7 +295,9 @@ describe('Node List Item', () => {
 			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 			const node = populateFolder(0);
 			const { user } = setup(
-				<NodeListItem node={node} {...getMissingProps()} isSelectionModeActive />
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} isSelectionModeActive />
+				</ListContext.Provider>
 			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(mockedUseNavigationHook.navigateTo).not.toHaveBeenCalled();
@@ -253,7 +312,11 @@ describe('Node List Item', () => {
 			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 			const node = populateFolder(0);
 			node.rootId = ROOTS.TRASH;
-			const { user } = setup(<NodeListItem node={node} {...getMissingProps()} />);
+			const { user } = setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(mockedUseNavigationHook.navigateTo).not.toHaveBeenCalled();
 		});
@@ -266,7 +329,11 @@ describe('Node List Item', () => {
 			};
 			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 			const node = populateFolder(0);
-			const { user } = setup(<NodeListItem node={node} {...getMissingProps()} />);
+			const { user } = setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(mockedUseNavigationHook.navigateTo).not.toHaveBeenCalled();
 		});
@@ -274,9 +341,14 @@ describe('Node List Item', () => {
 		test('Trash icon is visible if node is trashed and is search view', () => {
 			const node = populateNode();
 			node.rootId = ROOTS.TRASH;
-			setup(<NodeListItem node={node} {...getMissingProps()} />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH]
-			});
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>,
+				{
+					initialRouterEntries: [INTERNAL_PATH.SEARCH]
+				}
+			);
 			expect(screen.getByText(node.name)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.trash)).toBeVisible();
 		});
@@ -284,16 +356,25 @@ describe('Node List Item', () => {
 		test('Trash icon is not visible if node is trashed but is not search view', () => {
 			const node = populateNode();
 			node.rootId = ROOTS.TRASH;
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByText(node.name)).toBeVisible();
 			expect(screen.queryByTestId(ICON_REGEXP.trash)).not.toBeInTheDocument();
 		});
 
 		test('Trash icon is not visible if node is not trashed and is search view', () => {
 			const node = populateNode();
-			setup(<NodeListItem node={node} {...getMissingProps()} />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH]
-			});
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>,
+				{
+					initialRouterEntries: [INTERNAL_PATH.SEARCH]
+				}
+			);
 			expect(screen.getByText(node.name)).toBeVisible();
 			expect(screen.queryByTestId(ICON_REGEXP.trash)).not.toBeInTheDocument();
 		});
@@ -323,7 +404,11 @@ describe('Node List Item', () => {
 				const node = populateFile('id', 'name');
 				node.type = type;
 				node.mime_type = mimeType ?? '';
-				setup(<NodeListItem node={node} {...getMissingProps()} />);
+				setup(
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} {...getMissingProps()} />
+					</ListContext.Provider>
+				);
 				expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
 				expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
 			}
@@ -333,7 +418,11 @@ describe('Node List Item', () => {
 			const node = populateFile('id', 'name');
 			node.type = NodeType.Image;
 			node.mime_type = 'image/gif';
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByTestId(SELECTORS.nodeAvatar)).toHaveStyle({
 				background: expect.stringContaining(
 					`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/id/1/80x80/thumbnail/?shape=rectangular&quality=high&output_format=gif`
@@ -347,7 +436,11 @@ describe('Node List Item', () => {
 		])('node with root type %s show icon %s with color %s', (rootType, icon, color) => {
 			const node: NodeListItemType = { ...populateFolder(undefined, rootType) };
 			node.type = NodeType.Root;
-			setup(<NodeListItem node={node} {...getMissingProps()} />);
+			setup(
+				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<NodeListItem node={node} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
 			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
 			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
 		});
@@ -356,7 +449,13 @@ describe('Node List Item', () => {
 		const node = populateNode();
 		node.flagged = true;
 
-		setup(<NodeListItem node={node} {...getMissingProps()} />);
+		setup(
+			<ListContext.Provider
+				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
+			>
+				<NodeListItem node={node} {...getMissingProps()} />
+			</ListContext.Provider>
+		);
 		expect(screen.getByTestId(ICON_REGEXP.unflag)).toBeInTheDocument();
 		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 	});
@@ -364,8 +463,102 @@ describe('Node List Item', () => {
 	test('flag action on hover is visible if node is not flagged ', async () => {
 		const node = populateNode();
 		node.flagged = false;
-		setup(<NodeListItem node={node} {...getMissingProps()} />);
+		setup(
+			<ListContext.Provider
+				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
+			>
+				<NodeListItem node={node} {...getMissingProps()} />
+			</ListContext.Provider>
+		);
 		expect(screen.getByTestId(ICON_REGEXP.flag)).toBeInTheDocument();
 		expect(screen.queryByTestId(ICON_REGEXP.unflag)).not.toBeInTheDocument();
+	});
+
+	it('should not show preview image when node is a folder', () => {
+		const folder = populateFolder();
+		setup(
+			<ListContext.Provider
+				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+			>
+				<NodeListItem node={folder} {...getMissingProps()} />
+			</ListContext.Provider>
+		);
+		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+	});
+
+	it.each(mimeTypesWithThumbnailSupport)(
+		'should show preview image when node is a file and mime type is %s',
+		(mimeType) => {
+			const file = populateFile();
+			file.mime_type = mimeType;
+			setup(
+				<ListContext.Provider
+					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+				>
+					<NodeListItem node={file} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
+			expect(screen.getByRole('img')).toBeVisible();
+		}
+	);
+
+	it.each(mimeTypesWithThumbnailNotSupported)(
+		'should not show preview image when node is a file and thumbnail for mime type %s is disabled',
+		(mimeType) => {
+			const file = populateFile();
+			file.mime_type = mimeType;
+			setup(
+				<ListContext.Provider
+					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+				>
+					<NodeListItem node={file} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
+			expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		}
+	);
+
+	test.each<[type: NodeType, mimeType: string, icon: keyof DefaultTheme['icons']]>([
+		[NodeType.Text, 'application/pdf', 'FilePdf'],
+		[NodeType.Text, 'any', 'FileText'],
+		[NodeType.Video, 'any', 'Video'],
+		[NodeType.Audio, 'any', 'Music'],
+		[NodeType.Image, 'any', 'Image'],
+		[NodeType.Message, 'any', 'Email'],
+		[NodeType.Presentation, 'any', 'FilePresentation'],
+		[NodeType.Spreadsheet, 'any', 'FileCalc'],
+		[NodeType.Application, 'any', 'Code'],
+		[NodeType.Other, 'any', 'File']
+	])(
+		'should show icon instead of preview for files with type %s and mimetype %s',
+		(type, mimeType, icon) => {
+			const file = populateFile();
+			file.mime_type = mimeType;
+			file.type = type;
+			setup(
+				<ListContext.Provider
+					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+				>
+					<NodeListItem node={file} {...getMissingProps()} />
+				</ListContext.Provider>
+			);
+			expect(
+				within(screen.getByTestId(SELECTORS.gridCellThumbnail)).getByTestId(`icon: ${icon}`)
+			).toBeVisible();
+		}
+	);
+
+	it('should show error message when preview request fails', async () => {
+		const file = populateFile();
+		file.mime_type = 'image/jpeg';
+		setup(
+			<ListContext.Provider
+				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+			>
+				<NodeListItem node={file} {...getMissingProps()} />
+			</ListContext.Provider>
+		);
+		fireEvent.error(screen.getByRole('img'));
+		expect(await screen.findByText('Preview not available')).toBeVisible();
 	});
 });

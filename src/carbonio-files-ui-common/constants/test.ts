@@ -131,7 +131,8 @@ export const SELECTORS = {
 	missingFilter: 'missing-filter',
 	popper: 'popper',
 	mainList: 'main-list',
-	mainGrid: 'main-grid'
+	mainGrid: 'main-grid',
+	gridCellThumbnail: 'grid-cell-thumbnail'
 };
 
 export const EMITTER_CODES = {
