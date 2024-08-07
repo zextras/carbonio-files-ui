@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useMemo, useRef, useState } from 'react
 
 import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
 import { forEach, filter, includes } from 'lodash';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
 import { NodeListItem } from './NodeListItem';
@@ -22,12 +22,19 @@ import { Action, NodeListItemType } from '../../types/common';
 import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
 import { cssCalcBuilder } from '../../utils/utils';
 
-const DragImageContainer = styled.div`
+const DragImageContainer = styled.div<{ $isGrid: boolean }>`
 	position: absolute;
 	top: -5000px;
 	left: -5000px;
 	transform: translate(-100%, -100%);
 	width: 100%;
+	${({ $isGrid }): false | ReturnType<typeof css> =>
+		$isGrid &&
+		css`
+			display: grid;
+			grid-gap: 1rem;
+			grid-template-columns: repeat(auto-fill, minmax(${GRID_ITEM_MIN_WIDTH}, 1fr));
+		`};
 `;
 
 const Grid = styled(ListV2)`
@@ -86,7 +93,6 @@ export const ListContent = ({
 				} else {
 					nodesToDrag.push(node);
 				}
-				const draggedItemsTmp: React.JSX.Element[] = [];
 				const permittedActions = getPermittedActions(
 					nodesToDrag,
 					[Action.Move, Action.MoveToTrash],
@@ -95,11 +101,28 @@ export const ListContent = ({
 					undefined,
 					customCheckers
 				);
-				forEach(nodesToDrag, (nodeToDrag) => {
-					draggedItemsTmp.push(
-						<NodeListItemDragImage node={nodeToDrag} key={`dragged-${nodeToDrag.id}`} />
-					);
-				});
+
+				const draggedItemsTmp = nodesToDrag.reduce<React.JSX.Element[]>(
+					(accumulator, nodeToDrag, currentIndex) => {
+						if (
+							currentIndex > 0 &&
+							((nodeToDrag.__typename === 'File' &&
+								nodesToDrag[currentIndex - 1].__typename === 'Folder') ||
+								(nodeToDrag.__typename === 'Folder' &&
+									nodesToDrag[currentIndex - 1].__typename === 'File'))
+						) {
+							accumulator.push(
+								<GridItem key={'grid-row-filler'} height={0} $columnStart={1} $columnEnd={-1} />
+							);
+						}
+						accumulator.push(
+							<NodeListItemDragImage node={nodeToDrag} key={`dragged-${nodeToDrag.id}`} />
+						);
+						return accumulator;
+					},
+					[]
+				);
+
 				setDragImage(draggedItemsTmp);
 				dragImageRef.current && event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
 				draggedItemsVar(nodesToDrag);
@@ -200,7 +223,9 @@ export const ListContent = ({
 					{items}
 				</ListV2>
 			)}
-			<DragImageContainer ref={dragImageRef}>{dragImage}</DragImageContainer>
+			<DragImageContainer $isGrid={viewMode === VIEW_MODE.grid} ref={dragImageRef}>
+				{dragImage}
+			</DragImageContainer>
 		</>
 	);
 };

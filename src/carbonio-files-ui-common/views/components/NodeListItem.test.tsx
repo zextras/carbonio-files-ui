@@ -409,8 +409,12 @@ describe('Node List Item', () => {
 						<NodeListItem node={node} {...getMissingProps()} />
 					</ListContext.Provider>
 				);
-				expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
-				expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
+				expect(
+					within(screen.getByTestId(SELECTORS.nodeAvatar)).getByTestId(`icon: ${icon}`)
+				).toBeVisible();
+				expect(
+					within(screen.getByTestId(SELECTORS.nodeAvatar)).getByTestId(`icon: ${icon}`)
+				).toHaveStyleRule('color', color);
 			}
 		);
 

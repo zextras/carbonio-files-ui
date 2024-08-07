@@ -72,7 +72,7 @@ const ContainerCell = styled(Container).attrs<
 		`};
 	overflow: hidden;
 	border-radius: 5px;
-	border: ${({ theme }): SimpleInterpolation => theme.palette.gray2.disabled}, 1px, solid;
+	border: 1px solid ${({ theme }): SimpleInterpolation => theme.palette.gray2.disabled};
 `;
 
 const Preview = styled(Container)`
@@ -191,7 +191,7 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 						gap={'0.5rem'}
 					>
 						{nodeAvatarIcon}
-						<FooterGrid>
+						<FooterGrid minWidth={0}>
 							<GridItem
 								$alignSelf={'end'}
 								crossAlignment={'flex-start'}
