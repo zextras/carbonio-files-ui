@@ -6,7 +6,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { IconButton } from '@zextras/carbonio-design-system';
+import { Button } from '@zextras/carbonio-design-system';
 import { BadgeInfo, PrimaryBarComponentProps } from '@zextras/carbonio-shell-ui';
 import { find } from 'lodash';
 import { useLocation } from 'react-router-dom';
@@ -49,10 +49,10 @@ export const PrimaryBarElement = ({ active }: PrimaryBarComponentProps): React.J
 
 	return (
 		<BadgeWrap badge={badge}>
-			<IconButton
+			<Button
 				icon={'DriveOutline'}
 				backgroundColor={active ? 'gray4' : 'gray6'}
-				iconColor={active ? 'primary' : 'text'}
+				labelColor={active ? 'primary' : 'text'}
 				onClick={navigateToFiles}
 				size={'large'}
 				data-isselected={active}

@@ -11,9 +11,9 @@ import {
 	Padding,
 	Row,
 	Text,
-	IconButton,
 	Input,
-	Tooltip
+	Tooltip,
+	Button
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -37,7 +37,7 @@ const Label: React.FC = ({ children }) => (
 	</Padding>
 );
 
-const CustomIconButton = styled(IconButton)`
+const CustomIconButton = styled(Button)`
 	outline: none;
 `;
 
@@ -139,14 +139,21 @@ export const NodeDetailsDescription: React.VFC<NodeDetailsDescriptionProps> = ({
 									'Close without saving'
 								)}
 							>
-								<IconButton iconColor="secondary" size="small" icon="Close" onClick={closeEdit} />
+								<Button
+									type={'ghost'}
+									color="secondary"
+									size="small"
+									icon="Close"
+									onClick={closeEdit}
+								/>
 							</Tooltip>
 							<Tooltip
 								disabled={!isDescriptionChanged || moreThan4096Characters}
 								label={t('displayer.details.editDescription.saveIconTooltip', 'Save edits')}
 							>
 								<CustomIconButton
-									iconColor="secondary"
+									color="secondary"
+									type={'ghost'}
 									size="small"
 									icon="SaveOutline"
 									onClick={save}
@@ -186,8 +193,9 @@ export const NodeDetailsDescription: React.VFC<NodeDetailsDescriptionProps> = ({
 						<Tooltip
 							label={t('displayer.details.editDescription.editIconTooltip', 'Edit description')}
 						>
-							<IconButton
-								iconColor="secondary"
+							<Button
+								type={'ghost'}
+								color="secondary"
 								size="small"
 								icon="Edit2Outline"
 								onClick={openEdit}

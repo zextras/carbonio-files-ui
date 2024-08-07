@@ -18,7 +18,6 @@ import {
 	SearchViewProps,
 	upsertApp
 } from '@zextras/carbonio-shell-ui';
-import { filter, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import buildClient from './carbonio-files-ui-common/apollo';
@@ -69,12 +68,12 @@ const SearchView = (props: SearchViewProps): React.JSX.Element => (
 export default function App(): React.JSX.Element {
 	const [t] = useTranslation();
 
-	const beforeunloadCallback = useCallback((e) => {
-		if (size(filter(uploadVar(), (value) => value.status === UploadStatus.LOADING)) > 0) {
+	const beforeunloadCallback = useCallback((e: Event) => {
+		if (
+			Object.values(uploadVar()).filter((value) => value.status === UploadStatus.LOADING).length > 0
+		) {
 			// Cancel the event
 			e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-			// Chrome requires returnValue to be set
-			e.returnValue = '';
 		}
 	}, []);
 

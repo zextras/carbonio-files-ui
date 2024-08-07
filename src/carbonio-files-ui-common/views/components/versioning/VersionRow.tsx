@@ -7,7 +7,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import {
 	Icon,
-	IconButton,
+	Button,
 	Padding,
 	Text,
 	Dropdown,
@@ -34,7 +34,7 @@ const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
 `;
 
 interface DropdownItemComponentProps {
-	label: string;
+	label?: string;
 	icon?: string;
 	disabled?: boolean;
 	selected?: boolean;
@@ -117,7 +117,7 @@ export const VersionRow: React.VFC<{
 				if (keepVersionValue) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('snackbar.version.keepForeverRemoved', 'Keep forever removed'),
 						replace: true,
 						hideButton: true
@@ -125,7 +125,7 @@ export const VersionRow: React.VFC<{
 				} else {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('snackbar.version.keepForeverAdded', 'Version marked as to be kept forever'),
 						replace: true,
 						hideButton: true
@@ -334,7 +334,13 @@ export const VersionRow: React.VFC<{
 					</Tooltip>
 				)}
 				<Dropdown placement="bottom-end" items={items}>
-					<IconButton size="small" icon="MoreVertical" onClick={(): void => undefined} />
+					<Button
+						type={'ghost'}
+						color={'text'}
+						size="small"
+						icon="MoreVertical"
+						onClick={(): void => undefined}
+					/>
 				</Dropdown>
 			</GridItem>
 		</>

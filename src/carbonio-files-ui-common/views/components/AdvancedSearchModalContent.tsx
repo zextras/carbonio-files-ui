@@ -150,7 +150,7 @@ export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentPro
 	);
 
 	const flaggedOnChange = useCallback(
-		(newValue) => {
+		(newValue: boolean) => {
 			updateFilter(
 				'flagged',
 				newValue
@@ -167,7 +167,7 @@ export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentPro
 	);
 
 	const sharedOnChange = useCallback(
-		(newValue) => {
+		(newValue: boolean) => {
 			updateFilter(
 				'sharedByMe',
 				newValue

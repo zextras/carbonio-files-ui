@@ -222,7 +222,7 @@ export function useDroppableCrumbs(
 				add(getUploadAddType(event.dataTransfer), node.id);
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t('snackbar.upload.success', 'Upload occurred in {{destination}}', {
 						/* i18next-extract-disable-next-line */
 						destination: t('node.alias.name', node.name, { context: node.id })

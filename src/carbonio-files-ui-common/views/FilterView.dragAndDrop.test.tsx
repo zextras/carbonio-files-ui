@@ -11,7 +11,7 @@ import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS, TIMERS } from '../constants';
-import { SELECTORS } from '../constants/test';
+import { COLORS, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodes } from '../mocks/mockUtils';
 import {
 	setup,
@@ -326,10 +326,12 @@ describe('Filter View', () => {
 			forEach(nodesToDrag, (node) => {
 				const draggedImage = screen.getAllByText(node.name);
 				expect(draggedImage).toHaveLength(2);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(draggedImage[0]).toHaveAttribute('disabled', '');
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(draggedImage[1]).not.toHaveAttribute('disabled', '');
+				expect(draggedImage[0]).toHaveStyle({
+					color: COLORS.text.disabled
+				});
+				expect(draggedImage[1]).toHaveStyle({
+					color: COLORS.text.regular
+				});
 			});
 
 			// dropzone is not shown
@@ -387,10 +389,12 @@ describe('Filter View', () => {
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
+			expect(draggedNodeItems[0]).toHaveStyle({
+				color: COLORS.text.disabled
+			});
+			expect(draggedNodeItems[1]).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			// dropzone overlay of the list is shown
 			await screen.findByTestId(SELECTORS.dropzone);
 			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
@@ -409,9 +413,9 @@ describe('Filter View', () => {
 
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(itemToDrag).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(itemToDrag).not.toHaveAttribute('disabled', '');
-
+			expect(itemToDrag).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			// drag and drop on folder with permissions
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -425,8 +429,9 @@ describe('Filter View', () => {
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(screen.getByText(nodesToDrag[0].name)).not.toHaveAttribute('disabled', '');
+			expect(screen.getByText(nodesToDrag[0].name)).toHaveStyle({
+				color: COLORS.text.regular
+			});
 		});
 
 		test('Drag of a node without move permissions cause no dropzone to be shown', async () => {
@@ -468,13 +473,14 @@ describe('Filter View', () => {
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
+			expect(draggedNodeItems[0]).toHaveStyle({
+				color: COLORS.text.disabled
+			});
+			expect(draggedNodeItems[1]).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
-
 			// drag and drop on folder without permissions. Overlay is not shown.
 			const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 			fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
@@ -483,9 +489,9 @@ describe('Filter View', () => {
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(itemToDrag).not.toHaveAttribute('disabled', '');
-
+			expect(itemToDrag).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			// drag and drop on folder with permissions. Overlay is not shown.
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -495,8 +501,9 @@ describe('Filter View', () => {
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(itemToDrag).not.toHaveAttribute('disabled', '');
+			expect(itemToDrag).toHaveStyle({
+				color: COLORS.text.regular
+			});
 		});
 
 		test('Drag of multiple nodes is not permitted', async () => {
@@ -546,10 +553,8 @@ describe('Filter View', () => {
 			forEach(nodesToDrag, (node) => {
 				const draggedImage = screen.getAllByText(node.name);
 				expect(draggedImage).toHaveLength(2);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(draggedImage[0]).toHaveAttribute('disabled', '');
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(draggedImage[1]).not.toHaveAttribute('disabled', '');
+				expect(draggedImage[0]).toHaveStyle({ color: COLORS.text.disabled });
+				expect(draggedImage[1]).toHaveStyle({ color: COLORS.text.regular });
 			});
 
 			// dropzone is not shown
@@ -597,10 +602,8 @@ describe('Filter View', () => {
 			await waitFor(() => expect(screen.getAllByText(nodesToDrag[0].name)).toHaveLength(2));
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
+			expect(draggedNodeItems[0]).toHaveStyle({ color: COLORS.text.disabled });
+			expect(draggedNodeItems[1]).toHaveStyle({ color: COLORS.text.regular });
 			// dropzone overlay of the list is shown
 			await screen.findByTestId(SELECTORS.dropzone);
 			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();

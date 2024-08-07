@@ -14,7 +14,7 @@ import { forEach, map } from 'lodash';
 import { MoveNodesModalContent } from './MoveNodesModalContent';
 import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode, populateParents } from '../../mocks/mockUtils';
 import { buildBreadCrumbRegExp, setup, selectNodes, triggerListLoadMore } from '../../tests/utils';
 import { Node } from '../../types/common';
@@ -91,8 +91,9 @@ describe('Move Nodes Modal', () => {
 				);
 				await screen.findByText(file.name);
 				const nodeItem = screen.getByText(file.name);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(nodeItem).toHaveAttribute('disabled', '');
+				expect(nodeItem).toHaveStyle({
+					color: COLORS.text.disabled
+				});
 			});
 
 			test(`folders without can_write_${typename.toLowerCase()} permissions are disabled in the list`, async () => {
@@ -121,8 +122,9 @@ describe('Move Nodes Modal', () => {
 				);
 				await screen.findByText(folder.name);
 				const nodeItem = screen.getByText(folder.name);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(nodeItem).toHaveAttribute('disabled', '');
+				expect(nodeItem).toHaveStyle({
+					color: COLORS.text.disabled
+				});
 				await user.dblClick(nodeItem);
 				expect(nodeItem).toBeVisible();
 			});
@@ -151,7 +153,9 @@ describe('Move Nodes Modal', () => {
 				await screen.findByText(folder.name);
 				const nodeItem = screen.getByText(folder.name);
 				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(nodeItem).not.toHaveAttribute('disabled', '');
+				expect(nodeItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.dblClick(nodeItem);
 				await screen.findByText(/it looks like there's nothing here/i);
 			});
@@ -174,8 +178,9 @@ describe('Move Nodes Modal', () => {
 				);
 				await screen.findByText(nodeToMove.name);
 				const nodeItem = screen.getByText(nodeToMove.name);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(nodeItem).toHaveAttribute('disabled', '');
+				expect(nodeItem).toHaveStyle({
+					color: COLORS.text.disabled
+				});
 			});
 		}
 	);

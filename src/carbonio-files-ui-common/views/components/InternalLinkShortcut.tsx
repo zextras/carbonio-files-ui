@@ -32,7 +32,7 @@ export const InternalLinkShortcut = ({
 			copyToClipboard(internalLink).then(() => {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t('snackbar.clipboard.itemShortcutCopied', 'Item shortcut copied'),
 					replace: true,
 					hideButton: true

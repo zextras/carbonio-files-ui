@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { Container, Divider, Icon, IconButton, Row, Text } from '@zextras/carbonio-design-system';
+import { Button, Container, Divider, Icon, Row, Text } from '@zextras/carbonio-design-system';
 import { useTheme } from 'styled-components';
 
 import { Maybe, NodeType } from '../../types/graphql/types';
@@ -43,7 +43,7 @@ export const DisplayerHeader = React.memo<DisplayerHeaderParams>(
 					<Row mainAlignment="flex-start" padding={{ left: 'large' }} takeAvailableSpace>
 						<Text>{name}</Text>
 					</Row>
-					<IconButton icon="Close" onClick={closeAction} />
+					<Button icon="Close" onClick={closeAction} type={'ghost'} color={'text'} />
 				</Container>
 				<Divider color="gray3" />
 			</>

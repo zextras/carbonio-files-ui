@@ -12,7 +12,7 @@ import { graphql, http, HttpResponse } from 'msw';
 import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
 import { CONFIGS, ERROR_CODE, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	UploadRequestBody,
 	UploadVersionRequestParams,
@@ -527,8 +527,9 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(ACTION_REGEXP.cloneVersion);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(cloneAsCurrentItem).toHaveAttribute('disabled', '');
+		expect(cloneAsCurrentItem).toHaveStyle({
+			color: COLORS.dropdownItem.disabled
+		});
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
 		// hover on action shows a tooltip
@@ -589,8 +590,9 @@ describe('Versioning', () => {
 		await user.click(versionWithoutKeepMoreButton);
 
 		const keepVersionItem = await screen.findByText(/keep this version forever/i);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(keepVersionItem).toHaveAttribute('disabled', '');
+		expect(keepVersionItem).toHaveStyle({
+			color: COLORS.dropdownItem.disabled
+		});
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
 
@@ -714,8 +716,9 @@ describe('Versioning', () => {
 		await user.click(versionMoreButton);
 
 		const keepVersionItem = await screen.findByText(/remove keep forever/i);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(keepVersionItem.parentElement).not.toHaveAttribute('disabled', '');
+		expect(keepVersionItem).toHaveStyle({
+			color: COLORS.text.regular
+		});
 		await user.click(keepVersionItem);
 
 		await screen.findByText(/Keep forever removed/i);
@@ -763,8 +766,9 @@ describe('Versioning', () => {
 		await user.click(version2MoreButton);
 
 		const deleteVersionItem = await screen.findByText(/delete version/i);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(deleteVersionItem).not.toHaveAttribute('disabled', '');
+		expect(deleteVersionItem).toHaveStyle({
+			color: COLORS.text.regular
+		});
 		await user.click(deleteVersionItem);
 		await waitFor(() => expect(screen.getAllByText(/Version \d/i)).toHaveLength(maxVersions - 1));
 		expect(screen.getAllByText(/Version \d/)).toHaveLength(maxVersions - 1);
@@ -853,8 +857,9 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const cloneAsCurrentItem = await screen.findByText(ACTION_REGEXP.cloneVersion);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(cloneAsCurrentItem).toHaveAttribute('disabled', '');
+		expect(cloneAsCurrentItem).toHaveStyle({
+			color: COLORS.dropdownItem.disabled
+		});
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
 		// hover on action shows a tooltip
@@ -903,8 +908,9 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const deleteVersion = await screen.findByText(/delete version/i);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(deleteVersion).toHaveAttribute('disabled', '');
+		expect(deleteVersion).toHaveStyle({
+			color: COLORS.dropdownItem.disabled
+		});
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
 
@@ -950,8 +956,9 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const openDocumentVersion = await screen.findByText(/open document version/i);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(openDocumentVersion).toHaveAttribute('disabled', '');
+		expect(openDocumentVersion).toHaveStyle({
+			color: COLORS.dropdownItem.disabled
+		});
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
 
@@ -989,8 +996,9 @@ describe('Versioning', () => {
 		await user.click(versions1MoreButton);
 
 		const keepVersion = await screen.findByText(/(keep this version forever|remove keep forever)/i);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(keepVersion).toHaveAttribute('disabled', '');
+		expect(keepVersion).toHaveStyle({
+			color: COLORS.dropdownItem.disabled
+		});
 		// register tooltip listeners
 		jest.advanceTimersToNextTimer();
 

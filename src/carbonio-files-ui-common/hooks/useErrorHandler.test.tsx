@@ -9,8 +9,8 @@ import React from 'react';
 import '@testing-library/jest-dom';
 
 import { ApolloError } from '@apollo/client';
+import { act } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
-import { act } from 'react-dom/test-utils';
 
 import { useErrorHandler } from './useErrorHandler';
 import { ERROR_CODE } from '../constants';

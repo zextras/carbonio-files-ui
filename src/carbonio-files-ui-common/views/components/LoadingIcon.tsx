@@ -5,8 +5,7 @@
  */
 import React from 'react';
 
-import { IconButton, IconButtonProps } from '@zextras/carbonio-design-system';
-import { noop } from 'lodash';
+import { Button, ButtonProps } from '@zextras/carbonio-design-system';
 import styled, { keyframes } from 'styled-components';
 
 const rotate = keyframes`
@@ -18,18 +17,15 @@ const rotate = keyframes`
   }
 `;
 
-const StyledIconButton = styled(IconButton)`
+const StyledButton = styled(Button)`
 	animation: ${rotate} 1s linear infinite;
 `;
 
-interface LoadingIconButtonProps extends Omit<IconButtonProps, 'onClick'> {
-	onClick?: IconButtonProps['onClick'];
-}
-
-export const LoadingIcon = React.forwardRef<HTMLDivElement, LoadingIconButtonProps>(
-	function LoadingIconFn({ onClick, type = 'ghost', shape = 'round', ...rest }, ref) {
-		return (
-			<StyledIconButton onClick={onClick || noop} type={type} shape={shape} {...rest} ref={ref} />
-		);
+export const LoadingIcon = React.forwardRef<HTMLDivElement, Partial<ButtonProps>>(
+	function LoadingIconFn(
+		{ onClick = (): void => undefined, type = 'ghost', shape = 'round', color = 'text', ...rest },
+		ref
+	) {
+		return <StyledButton onClick={onClick} type={type} shape={shape} {...rest} ref={ref} />;
 	}
 );

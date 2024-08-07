@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -148,7 +148,7 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 				});
@@ -158,7 +158,7 @@ describe('Filter View', () => {
 
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				const renameAction = await screen.findByText(ACTION_REGEXP.rename);
 				expect(renameAction).toBeVisible();
 				const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
