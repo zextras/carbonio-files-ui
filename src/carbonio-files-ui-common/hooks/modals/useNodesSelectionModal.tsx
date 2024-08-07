@@ -25,20 +25,22 @@ const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeWithM
 export function useNodesSelectionModal(): {
 	openNodesSelectionModal: OpenNodesSelectionModal;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 	const apolloClient = buildClient();
 
 	const { resetAll, resetCurrent } = useDestinationVarManager<NodeWithMetadata[]>();
 
 	const openModal = useCallback<OpenNodesSelectionModal>(
 		(props) => {
-			const closeModal = createModal(
+			const modalId = 'files-nodes-selection-modal';
+			createModal(
 				{
+					id: modalId,
 					minHeight: '25rem',
 					maxHeight: '60vh',
 					onClose: () => {
 						resetAll();
-						closeModal();
+						closeModal(modalId);
 					},
 					onClick: () => {
 						if (props.maxSelection === 1 || size(getDestinationVar().currentValue) === 0) {
@@ -54,7 +56,7 @@ export function useNodesSelectionModal(): {
 							<NodesSelectionModalContent
 								closeAction={(): void => {
 									resetAll();
-									closeModal();
+									closeModal(modalId);
 								}}
 								{...props}
 							/>
@@ -64,7 +66,7 @@ export function useNodesSelectionModal(): {
 				true
 			);
 		},
-		[apolloClient, createModal, resetAll, resetCurrent]
+		[apolloClient, closeModal, createModal, resetAll, resetCurrent]
 	);
 
 	return { openNodesSelectionModal: openModal };

@@ -88,7 +88,7 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 			}).then((value) => {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'success',
+					severity: 'success',
 					label: t('snackbar.deletePermanently.success', 'Success'),
 					replace: true,
 					hideButton: true

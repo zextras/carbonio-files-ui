@@ -7,7 +7,7 @@ import React from 'react';
 
 import { ApolloError } from '@apollo/client';
 import { faker } from '@faker-js/faker';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { forEach, keyBy } from 'lodash';
 import { graphql, http, HttpResponse, HttpResponseResolver, StrictResponse } from 'msw';
@@ -255,7 +255,7 @@ describe('Upload List', () => {
 					await screen.findByText(folder.name);
 
 					expect(screen.getByText(/queued/i)).toBeVisible();
-					fireEvent.contextMenu(screen.getByText(folder.name));
+					await user.rightClick(screen.getByText(folder.name));
 					const removeAction = await screen.findByText(ACTION_REGEXP.removeUpload);
 					await user.click(removeAction);
 					expect(screen.queryByText(/queued/i)).not.toBeInTheDocument();
@@ -329,7 +329,7 @@ describe('Upload List', () => {
 					// wait creation of the folder
 					await screen.findByText(/1\/4/);
 
-					fireEvent.contextMenu(screen.getByText(folder.name));
+					await user.rightClick(screen.getByText(folder.name));
 					const removeAction = await screen.findByText(ACTION_REGEXP.removeUpload);
 					await user.click(removeAction);
 					expect(screen.queryByText(folder.name)).not.toBeInTheDocument();
@@ -409,7 +409,7 @@ describe('Upload List', () => {
 
 					await screen.findByTestId(ICON_REGEXP.uploadFailed);
 					expect(screen.getByText(/0\/3/)).toBeVisible();
-					fireEvent.contextMenu(screen.getByText(folder.name));
+					await user.rightClick(screen.getByText(folder.name));
 					const removeAction = await screen.findByText(ACTION_REGEXP.removeUpload);
 					await user.click(removeAction);
 					expect(screen.queryByText(folder.name)).not.toBeInTheDocument();
@@ -474,7 +474,7 @@ describe('Upload List', () => {
 					await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 					expect(screen.getByText(/4\/4/)).toBeVisible();
 
-					fireEvent.contextMenu(screen.getByText(folder.name));
+					await user.rightClick(screen.getByText(folder.name));
 					const removeAction = await screen.findByText(ACTION_REGEXP.removeUpload);
 					await user.click(removeAction);
 					expect(screen.queryByText(folder.name)).not.toBeInTheDocument();

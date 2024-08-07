@@ -13,8 +13,8 @@ import { graphql, HttpResponse } from 'msw';
 import { SearchList } from './SearchList';
 import server from '../../../mocks/server';
 import { searchParamsVar } from '../../apollo/searchVar';
-import { INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS, TIMERS } from '../../constants';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNodes } from '../../mocks/mockUtils';
 import {
 	buildChipsFromKeywords,
@@ -173,19 +173,18 @@ describe('Search list', () => {
 			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(itemToDrag, { dataTransfer: dataTransfer() });
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 100);
-					})
-			);
+			act(() => {
+				jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
+			});
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
+			expect(draggedNodeItems[0]).toHaveStyle({
+				color: COLORS.text.disabled
+			});
+			expect(draggedNodeItems[1]).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			// dropzone overlay of the list is shown
 			await screen.findByTestId(SELECTORS.dropzone);
 			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
@@ -203,8 +202,9 @@ describe('Search list', () => {
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			expect(itemToDrag).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(itemToDrag).not.toHaveAttribute('disabled', '');
+			expect(itemToDrag).toHaveStyle({
+				color: COLORS.text.regular
+			});
 
 			// drag and drop on folder with permissions
 			const destinationItem = screen.getByText(destinationFolder.name);
@@ -220,7 +220,9 @@ describe('Search list', () => {
 			expect(screen.getByText(nodesToDrag[0].name)).toBeInTheDocument();
 			expect(screen.getByText(nodesToDrag[0].name)).toBeVisible();
 			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(screen.getByText(nodesToDrag[0].name)).not.toHaveAttribute('disabled', '');
+			expect(screen.getByText(nodesToDrag[0].name)).toHaveStyle({
+				color: COLORS.text.regular
+			});
 		});
 
 		test('Drag of a node without move permissions cause no dropzone to be shown', async () => {
@@ -259,54 +261,43 @@ describe('Search list', () => {
 			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(itemToDrag, { dataTransfer: dataTransfer() });
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 100);
-					})
-			);
+			await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
+			expect(draggedNodeItems[0]).toHaveStyle({
+				color: COLORS.text.disabled
+			});
+			expect(draggedNodeItems[1]).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
 
 			// drag and drop on folder without permissions. Overlay is not shown.
 			const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 			fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 100);
-					})
-			);
+			await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(itemToDrag).not.toHaveAttribute('disabled', '');
+			expect(itemToDrag).toHaveStyle({
+				color: COLORS.text.regular
+			});
 
 			// drag and drop on folder with permissions. Overlay is not shown.
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 100);
-					})
-			);
+			await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(itemToDrag).not.toHaveAttribute('disabled', '');
+			expect(itemToDrag).toHaveStyle({
+				color: COLORS.text.regular
+			});
 		});
 
 		test('Drag of multiple nodes is not permitted', async () => {
@@ -361,21 +352,18 @@ describe('Search list', () => {
 			forEach(nodesToDrag, (node) => {
 				const draggedImage = screen.getAllByText(node.name);
 				expect(draggedImage).toHaveLength(2);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(draggedImage[0]).toHaveAttribute('disabled', '');
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(draggedImage[1]).not.toHaveAttribute('disabled', '');
+				expect(draggedImage[0]).toHaveStyle({
+					color: COLORS.text.disabled
+				});
+				expect(draggedImage[1]).toHaveStyle({
+					color: COLORS.text.regular
+				});
 			});
 
 			// dropzone is not shown
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 100);
-					})
-			);
+			await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
@@ -421,8 +409,9 @@ describe('Search list', () => {
 				expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
 				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(trashAction.parentNode).not.toHaveAttribute('disabled');
+				expect(trashAction).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(trashAction);
 				await screen.findByText(/item moved to trash/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
@@ -863,10 +852,9 @@ describe('Search list', () => {
 
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 
-			const restoreAction = screen.getByTestId(ICON_REGEXP.restore);
+			const restoreAction = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.restore });
 			expect(restoreAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(restoreAction).not.toHaveAttribute('disabled', '');
+			expect(restoreAction).toBeEnabled();
 			await user.click(restoreAction);
 			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/^success$/i);
@@ -918,10 +906,11 @@ describe('Search list', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
-			const deletePermanentlyAction = screen.getByTestId(ICON_REGEXP.deletePermanently);
+			const deletePermanentlyAction = screen.getByRoleWithIcon('button', {
+				icon: ICON_REGEXP.deletePermanently
+			});
 			expect(deletePermanentlyAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(deletePermanentlyAction).not.toHaveAttribute('disabled', '');
+			expect(deletePermanentlyAction).toBeEnabled();
 			await user.click(deletePermanentlyAction);
 			const modalConfirmButton = await screen.findByRole('button', {
 				name: ACTION_REGEXP.deletePermanently
@@ -983,10 +972,9 @@ describe('Search list', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesToUnflag.length);
 			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
-			const unflagIcon = await screen.findByTestId(ICON_REGEXP.unflag);
+			const unflagIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.unflag });
 			expect(unflagIcon).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(unflagIcon).not.toHaveAttribute('disabled', '');
+			expect(unflagIcon).toBeEnabled();
 			await user.click(unflagIcon);
 			expect(within(nodeToUnflagItem1).queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();

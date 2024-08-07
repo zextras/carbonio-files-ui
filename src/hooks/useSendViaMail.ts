@@ -33,7 +33,7 @@ export function useSendViaMail(): {
 					console.error(reason);
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'warning',
+						severity: 'warning',
 						label: t('errorCode.code', 'Something went wrong', { context: 'Generic' }),
 						replace: true,
 						hideButton: true

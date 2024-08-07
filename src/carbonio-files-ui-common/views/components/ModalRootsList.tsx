@@ -224,7 +224,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 				{crumbs && <InteractiveBreadcrumbs crumbs={crumbs} />}
 				{loading && (
 					<Row mainAlignment="flex-end" wrap="nowrap" flexGrow={1}>
-						<LoadingIcon icon="Refresh" iconColor="primary" type="ghost" />
+						<LoadingIcon icon="Refresh" color="primary" />
 					</Row>
 				)}
 			</OverFlowHiddenRow>

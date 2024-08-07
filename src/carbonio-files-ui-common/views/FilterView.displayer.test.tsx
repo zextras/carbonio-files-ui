@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { map } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -120,7 +120,7 @@ describe('Filter View', () => {
 			expect(getByTextWithMarkup(fullPathOriginalRegexp)).toBeVisible();
 			// right click to open contextual menu
 			const nodeToMoveItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeToMoveItem);
+			await user.rightClick(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/item moved/i);
 			const fullPathUpdatedItem = await findByTextWithMarkup(

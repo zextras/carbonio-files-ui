@@ -5,7 +5,7 @@
  */
 import React, { useCallback, useRef } from 'react';
 
-import { Button } from '@zextras/carbonio-design-system';
+import { Button, ButtonProps } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { useUpload } from '../../../hooks/useUpload';
@@ -35,9 +35,9 @@ const UploadVersionButton: React.VFC<UploadVersionButtonProps> = ({ node, disabl
 		[node, update]
 	);
 
-	const uploadVersionHandler = useCallback(
+	const uploadVersionHandler = useCallback<ButtonProps['onClick']>(
 		(event) => {
-			event && event.stopPropagation();
+			event?.stopPropagation();
 			if (inputRef.current) {
 				inputRef.current.click();
 				inputRef.current.onchange = inputElementOnchange;

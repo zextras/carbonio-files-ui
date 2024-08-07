@@ -14,7 +14,8 @@ import {
 	Padding,
 	Text,
 	Row,
-	DateTimePickerProps
+	DateTimePickerProps,
+	InputProps
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
@@ -52,7 +53,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 		[linkDescriptionValue]
 	);
 
-	const linkDescriptionOnChange = useCallback((ev) => {
+	const linkDescriptionOnChange = useCallback<NonNullable<InputProps['onChange']>>((ev) => {
 		setLinkDescriptionValue(ev.target.value);
 	}, []);
 
@@ -65,11 +66,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 
 	const handleChange = useCallback<NonNullable<DateTimePickerProps['onChange']>>(
 		(newDate: Date | null) => {
-			if (newDate instanceof Date) {
-				setDate(newDate);
-			} else {
-				setDate(undefined);
-			}
+			setDate(newDate ?? undefined);
 		},
 		[]
 	);
