@@ -9,6 +9,7 @@ import React, { useCallback, useMemo } from 'react';
 import {
 	Button,
 	Chip,
+	ChipProps,
 	Container,
 	Icon,
 	Padding,
@@ -21,7 +22,10 @@ import {
 import { find } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { useCreateCollaborationLinkMutation } from '../../../../hooks/graphql/mutations/useCreateCollaborationLinkMutation';
+import {
+	CreateCollaborationLinkType,
+	useCreateCollaborationLinkMutation
+} from '../../../../hooks/graphql/mutations/useCreateCollaborationLinkMutation';
 import { useDeleteCollaborationLinksMutation } from '../../../../hooks/graphql/mutations/useDeleteCollaborationLinksMutation';
 import { useGetCollaborationLinksQuery } from '../../../../hooks/graphql/queries/useGetCollaborationLinksQuery';
 import { SharePermission } from '../../../../types/graphql/types';
@@ -41,7 +45,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 }) => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 
 	const { data: getCollaborationLinksQueryData, loading } = useGetCollaborationLinksQuery(nodeId);
 
@@ -76,7 +80,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 			copyToClipboard(link).then(() => {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t('snackbar.collaborationLink.copyCollaborationLink', 'Collaboration link copied'),
 					replace: true,
 					hideButton: true
@@ -87,11 +91,11 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 	);
 
 	const createCallback = useCallback(
-		({ data }) => {
+		({ data }: Awaited<ReturnType<CreateCollaborationLinkType>>) => {
 			if (data) {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t(
 						'snackbar.collaborationLink.newCollaborationLinkGenerated.label',
 						'New Collaboration link generated'
@@ -115,16 +119,19 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 		createCollaborationLink(SharePermission.ReadWriteAndShare).then(createCallback);
 	}, [createCallback, createCollaborationLink]);
 
-	const copyCollaborationUrl = useCallback(
+	const copyCollaborationUrl = useCallback<NonNullable<ChipProps['onClick']>>(
 		(event) => {
-			copyLinkToClipboard(event.target.textContent);
+			if (event.target instanceof HTMLElement && event.target.textContent) {
+				copyLinkToClipboard(event.target.textContent);
+			}
 		},
 		[copyLinkToClipboard]
 	);
 
 	const openDeleteModal = useCallback(
 		(linkId: string) => {
-			const closeModal = createModal({
+			createModal({
+				id: linkId,
 				title: t('modal.revokeCollaborationLink.header', 'Revoke {{nodeName}} collaboration link', {
 					replace: { nodeName }
 				}),
@@ -133,13 +140,13 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 				onConfirm: () => {
 					deleteCollaborationsLinks([linkId]).then(({ data }) => {
 						if (data) {
-							closeModal();
+							closeModal(linkId);
 						}
 					});
 				},
 				showCloseIcon: true,
 				onClose: () => {
-					closeModal();
+					closeModal(linkId);
 				},
 				children: (
 					<Container padding={{ vertical: 'large' }}>
@@ -156,7 +163,7 @@ export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
 				)
 			});
 		},
-		[createModal, deleteCollaborationsLinks, nodeName, t]
+		[closeModal, createModal, deleteCollaborationsLinks, nodeName, t]
 	);
 
 	const deleteReadAndShareCollaborationLinkCallback = useCallback(() => {

@@ -77,7 +77,7 @@ export const UploadListItem = React.memo<UploadListItemProps>(
 		}, []);
 
 		const selectIdCallback = useCallback(
-			(event) => {
+			(event: React.SyntheticEvent) => {
 				event.stopPropagation();
 				selectId(id);
 			},

@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
+import { waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -120,7 +120,7 @@ describe('Flag', () => {
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			// open context menu and click on flag action
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			const flagAction = await screen.findByText(ACTION_REGEXP.flag);
 			expect(flagAction).toBeVisible();
 			await user.click(flagAction);
@@ -128,7 +128,7 @@ describe('Flag', () => {
 			expect(flagAction).not.toBeInTheDocument();
 			expect(within(nodeItem).getByTestId(ICON_REGEXP.flagged)).toBeVisible();
 			// open context menu and click on unflag action
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
 			expect(unflagAction).toBeVisible();
 			await user.click(unflagAction);

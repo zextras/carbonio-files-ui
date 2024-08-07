@@ -18,12 +18,12 @@ export type OpenRenameModal = (node: Pick<Node, 'id' | 'name'>) => void;
 export function useRenameModal(renameActionCallback?: (nodeId: string) => void): {
 	openRenameModal: OpenRenameModal;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 	const [t] = useTranslation();
 	const [renameAction] = useUpdateNodeMutation();
 
 	const confirmAction = useCallback(
-		(nodeId, newName) => {
+		(nodeId: string, newName: string) => {
 			if (newName) {
 				return renameAction(nodeId, newName);
 			}
@@ -34,11 +34,13 @@ export function useRenameModal(renameActionCallback?: (nodeId: string) => void):
 
 	const openRenameModal = useCallback<OpenRenameModal>(
 		(node) => {
-			const closeModal = createModal(
+			const modalId = 'files-rename-node-modal';
+			createModal(
 				{
+					id: modalId,
 					onClose: () => {
 						renameActionCallback?.(node.id);
-						closeModal();
+						closeModal(modalId);
 					},
 					children: (
 						<UpdateNodeNameModalContent
@@ -49,7 +51,7 @@ export function useRenameModal(renameActionCallback?: (nodeId: string) => void):
 							nodeId={node.id}
 							closeAction={(): void => {
 								renameActionCallback?.(node.id);
-								closeModal();
+								closeModal(modalId);
 							}}
 							title={t('node.rename.modal.title', 'Rename item')}
 						/>
@@ -58,7 +60,7 @@ export function useRenameModal(renameActionCallback?: (nodeId: string) => void):
 				true
 			);
 		},
-		[confirmAction, createModal, renameActionCallback, t]
+		[closeModal, confirmAction, createModal, renameActionCallback, t]
 	);
 
 	return { openRenameModal };

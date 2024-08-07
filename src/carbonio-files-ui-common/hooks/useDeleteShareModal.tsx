@@ -22,22 +22,24 @@ export function useDeleteShareModal(
 ): {
 	openDeleteShareModal: () => void;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 	const [t] = useTranslation();
 	const openDeleteShareModal = useCallback(() => {
-		const closeModal = createModal({
+		const modalId = 'files-delete-share-modal';
+		createModal({
+			id: modalId,
 			title: t('modal.deleteShare.header', 'Remove share'),
 			confirmLabel: t('modal.deleteShare.button.confirm', 'Remove'),
 			confirmColor: 'error',
 			onConfirm: () => {
 				deleteShareAction().then(() => {
 					deleteShareActionCallback?.();
-					closeModal();
+					closeModal(modalId);
 				});
 			},
 			showCloseIcon: true,
 			onClose: () => {
-				closeModal();
+				closeModal(modalId);
 			},
 			children: (
 				<Container padding={{ vertical: 'large' }}>
@@ -79,7 +81,15 @@ export function useDeleteShareModal(
 				</Container>
 			)
 		});
-	}, [createModal, deleteShareAction, deleteShareActionCallback, isYourShare, shareTarget, t]);
+	}, [
+		closeModal,
+		createModal,
+		deleteShareAction,
+		deleteShareActionCallback,
+		isYourShare,
+		shareTarget,
+		t
+	]);
 
 	return { openDeleteShareModal };
 }

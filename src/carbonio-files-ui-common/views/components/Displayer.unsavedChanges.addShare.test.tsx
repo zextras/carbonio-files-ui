@@ -6,8 +6,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { screen, within } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { act } from '@testing-library/react';
 
 import { Displayer } from './Displayer';
 import * as actualNetworkModule from '../../../network/network';
@@ -19,7 +18,7 @@ import {
 	populateShare,
 	populateUser
 } from '../../mocks/mockUtils';
-import { generateError, setup } from '../../tests/utils';
+import { generateError, setup, screen, within } from '../../tests/utils';
 import { MutationResolvers, Resolvers } from '../../types/graphql/resolvers-types';
 import { SharePermission } from '../../types/graphql/types';
 import {

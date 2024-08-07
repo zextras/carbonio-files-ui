@@ -323,7 +323,7 @@ export const openNodeWithDocs = (id: string, version?: number): void => {
 		const url = `${DOCS_ENDPOINT}${OPEN_FILE_PATH}/${encodeURIComponent(id)}${
 			version ? `?version=${version}` : ''
 		}`;
-		if (docsTabMap[url] == null || (docsTabMap[url] != null && docsTabMap[url].closed)) {
+		if (docsTabMap[url] == null || docsTabMap[url]?.closed) {
 			docsTabMap[url] = window.open(url, url) as Window;
 		} else {
 			docsTabMap[url].focus();
@@ -545,7 +545,7 @@ export function encodeBase64(str: string): string {
 	// window.btoa is not enough for cyrillic
 	// see also https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem
 	return window.btoa(
-		encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) =>
+		encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_match, p1) =>
 			String.fromCharCode(parseInt(p1, 16))
 		)
 	);

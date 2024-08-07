@@ -6,8 +6,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { waitFor } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { waitFor, act } from '@testing-library/react';
 
 import { Displayer } from './Displayer';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';

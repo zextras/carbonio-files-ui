@@ -146,6 +146,18 @@ export const COLORS = {
 	dropzone: {
 		enabled: 'rgba(43, 115, 210, 0.4)',
 		disabled: 'rgba(130, 130, 130, 0.4)'
+	},
+	text: {
+		regular: '#333333',
+		disabled: '#cccccc'
+	},
+	dropdownItem: {
+		disabled: '#828282' // secondary.regular
+	},
+	shareChipPopover: {
+		disabled: '#828282', // secondary.regular
+		enabled: '#333333', // text.regular
+		active: '#2b73d2' // primary.regular
 	}
 };
 

@@ -20,22 +20,24 @@ export function useDeletePermanentlyModal(
 ): {
 	openDeletePermanentlyModal: () => void;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 	const [t] = useTranslation();
 	const openDeletePermanentlyModal = useCallback(() => {
-		const closeModal = createModal({
+		const modalId = 'files-delete-permanently-modal';
+		createModal({
+			id: modalId,
 			title: t('modal.deletePermanently.header', 'This action is irreversible'),
 			confirmLabel: t('modal.deletePermanently.button.confirm', 'Delete permanently'),
 			confirmColor: 'error',
 			onConfirm: () => {
 				deletePermanentlyAction().then(() => {
-					deletePermanentlyActionCallback && deletePermanentlyActionCallback();
-					closeModal();
+					deletePermanentlyActionCallback?.();
+					closeModal(modalId);
 				});
 			},
 			showCloseIcon: true,
 			onClose: () => {
-				closeModal();
+				closeModal(modalId);
 			},
 			children: (
 				<Container padding={{ vertical: 'large' }}>
@@ -48,7 +50,7 @@ export function useDeletePermanentlyModal(
 				</Container>
 			)
 		});
-	}, [createModal, deletePermanentlyAction, deletePermanentlyActionCallback, t]);
+	}, [closeModal, createModal, deletePermanentlyAction, deletePermanentlyActionCallback, t]);
 
 	return { openDeletePermanentlyModal };
 }

@@ -10,7 +10,7 @@ import { Icon, Padding, Text, Container, Theme } from '@zextras/carbonio-design-
 
 interface ListItemContentProps {
 	icon?: string;
-	label: string;
+	label?: string;
 	selected?: boolean;
 	disabled?: boolean;
 	itemIconSize?: React.ComponentPropsWithRef<typeof Icon>['size'];

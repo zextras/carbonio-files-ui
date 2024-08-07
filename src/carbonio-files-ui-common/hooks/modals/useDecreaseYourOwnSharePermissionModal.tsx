@@ -20,22 +20,24 @@ export function useDecreaseYourOwnSharePermissionModal(
 ): {
 	openDecreaseYourOwnSharePermissionModal: () => void;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 	const [t] = useTranslation();
 	const openDecreaseYourOwnSharePermissionModal = useCallback(() => {
-		const closeModal = createModal({
+		const modalId = 'files-decrease-share-permissions-modal';
+		createModal({
+			id: modalId,
 			title: t('modal.decreaseYourOwnSharePermissions.header', 'Decrease your current rights'),
 			confirmLabel: t('modal.decreaseYourOwnSharePermissions.button.confirm', 'Confirm'),
 			confirmColor: 'error',
 			onConfirm: () => {
 				updateShareAction().then(() => {
-					updateShareActionCallback && updateShareActionCallback();
-					closeModal();
+					updateShareActionCallback?.();
+					closeModal(modalId);
 				});
 			},
 			showCloseIcon: true,
 			onClose: () => {
-				closeModal();
+				closeModal(modalId);
 			},
 			children: (
 				<Container padding={{ vertical: 'large' }}>
@@ -48,7 +50,7 @@ export function useDecreaseYourOwnSharePermissionModal(
 				</Container>
 			)
 		});
-	}, [createModal, t, updateShareAction, updateShareActionCallback]);
+	}, [closeModal, createModal, t, updateShareAction, updateShareActionCallback]);
 
 	return { openDecreaseYourOwnSharePermissionModal };
 }

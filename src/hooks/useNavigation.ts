@@ -25,7 +25,7 @@ export const useNavigation: UseNavigationHook = () => {
 	const replaceHistory = useReplaceHistoryCallback();
 	const goBackHistory = useGoBackHistoryCallback();
 
-	const navigateToFolder: (id: string) => void = useCallback(
+	const navigateToFolder = useCallback<(id: string) => void>(
 		(id) => {
 			pushHistory({
 				route: FILES_ROUTE,
@@ -35,7 +35,7 @@ export const useNavigation: UseNavigationHook = () => {
 		[pushHistory]
 	);
 
-	const navigateTo: (location: string, replace?: boolean) => void = useCallback(
+	const navigateTo = useCallback<(location: string, replace?: boolean) => void>(
 		(location, replace = false) => {
 			replace
 				? replaceHistory({
@@ -50,7 +50,7 @@ export const useNavigation: UseNavigationHook = () => {
 		[pushHistory, replaceHistory]
 	);
 
-	const navigateBack: () => void = useCallback(() => {
+	const navigateBack = useCallback<() => void>(() => {
 		goBackHistory();
 	}, [goBackHistory]);
 

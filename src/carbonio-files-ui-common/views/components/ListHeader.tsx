@@ -10,7 +10,6 @@ import {
 	Action as DSAction,
 	Button,
 	Divider,
-	IconButton,
 	Row,
 	Tooltip,
 	Badge,
@@ -106,10 +105,11 @@ export const ListHeader: React.VFC<ListHeaderProps> = ({
 			>
 				<Row mainAlignment="flex-start" wrap="nowrap" flexShrink={0} flexBasis="auto">
 					<Tooltip label={t('selectionMode.header.exit', 'Exit selection mode')}>
-						<IconButton
+						<Button
+							type={'ghost'}
 							icon="ArrowBackOutline"
 							size="large"
-							iconColor="primary"
+							color="primary"
 							onClick={exitSelectionMode}
 						/>
 					</Tooltip>

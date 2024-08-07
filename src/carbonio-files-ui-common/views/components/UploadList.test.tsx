@@ -23,7 +23,7 @@ import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
-import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { COLORS, EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import handleUploadFileRequest, {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -163,8 +163,9 @@ describe('Upload list', () => {
 			// drag image item is not shown
 			const draggedNodeItem = screen.getByText(nodesToDrag[0].name);
 			expect(draggedNodeItem).toBeInTheDocument();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItem).not.toHaveAttribute('disabled', '');
+			expect(draggedNodeItem).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		});
 

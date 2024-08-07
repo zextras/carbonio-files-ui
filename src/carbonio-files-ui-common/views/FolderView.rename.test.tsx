@@ -6,13 +6,13 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { forEach, map, findIndex, last } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { renameNode, setup, selectNodes, triggerListLoadMore } from '../tests/utils';
 import { Node } from '../types/common';
@@ -143,7 +143,7 @@ describe('Rename', () => {
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			await renameNode(newName, user);
 			// wait for the modal to be closed
 			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
@@ -253,7 +253,7 @@ describe('Rename', () => {
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			await renameNode(newName, user);
 			// wait that the modal close
 			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
@@ -351,7 +351,7 @@ describe('Rename', () => {
 			expect(screen.getByText(nodeToRename.name)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 			// rename node to put it in the unordered list
-			fireEvent.contextMenu(screen.getByText(nodeToRename.name));
+			await user.rightClick(screen.getByText(nodeToRename.name));
 			await renameNode(newName, user);
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.rename })).not.toBeInTheDocument();
 			await screen.findByText(newName);
@@ -416,7 +416,7 @@ describe('Rename', () => {
 			expect(screen.getByText(nodeToRename.name)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 			// rename node to put it in the unordered list
-			fireEvent.contextMenu(screen.getByText(nodeToRename.name));
+			await user.rightClick(screen.getByText(nodeToRename.name));
 			await renameNode(newName, user);
 			await screen.findByText(newName);
 			expect(screen.getByText(newName)).toBeVisible();
@@ -429,8 +429,9 @@ describe('Rename', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(trashAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);
 			triggerListLoadMore();
