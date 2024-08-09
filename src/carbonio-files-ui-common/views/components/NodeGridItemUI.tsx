@@ -22,6 +22,12 @@ import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
 import { GridItem, UppercaseText } from './StyledComponents';
 import { humanFileSize } from '../../utils/utils';
 
+const Image = styled.img`
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+`;
+
 export const HoverContainer = styled(Container)``;
 
 const FooterGrid = styled(Container)`
@@ -108,7 +114,7 @@ interface NodeGridItemProps {
 	listItemContainerDisableHover?: boolean;
 	nodeAvatarIcon?: React.JSX.Element;
 	size?: number;
-	imgSrc?: string;
+	createImgSrc?: (args: { width: number; height: number }) => string | undefined;
 }
 
 export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
@@ -135,8 +141,27 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 	listItemContainerDisableHover,
 	nodeAvatarIcon,
 	size,
-	imgSrc
+	createImgSrc
 }) => {
+	const [imgSrc, setImgSrc] = useState<string>();
+
+	const previewRef = useCallback<React.RefCallback<HTMLDivElement>>(
+		(node) => {
+			if (node) {
+				setImgSrc((prevState) => {
+					if (prevState) {
+						return prevState;
+					}
+					return createImgSrc?.({
+						width: Math.floor(node.clientWidth * 1.5),
+						height: Math.floor(node.clientHeight * 1.5)
+					});
+				});
+			}
+		},
+		[createImgSrc]
+	);
+
 	const preventTextSelection = useCallback<React.MouseEventHandler>((e: React.MouseEvent): void => {
 		if (e.detail > 1) {
 			e.preventDefault();
@@ -170,9 +195,14 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 			>
 				<Container background={'gray5'}>
 					{showPreview && (
-						<Preview data-testid={'grid-cell-thumbnail'} minHeight={0} orientation={'horizontal'}>
+						<Preview
+							ref={previewRef}
+							data-testid={'grid-cell-thumbnail'}
+							minHeight={0}
+							orientation={'horizontal'}
+						>
 							{(imgSrc && !previewFailed && (
-								<img src={imgSrc} alt={''} onError={onPreviewError} />
+								<Image src={imgSrc} alt={''} onError={onPreviewError} />
 							)) ||
 								(imgSrc && previewFailed && (
 									<Text size={'extrasmall'} color={'secondary'}>

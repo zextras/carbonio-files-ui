@@ -512,16 +512,20 @@ export const NodeListItem = ({
 		return 'none';
 	}, [dragging, isDragged]);
 
-	const nodeAvatarIconPicture = canUsePreview
-		? getPreviewThumbnailSrc(
-				node.id,
-				version,
-				node.type,
-				mimeType,
-				{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
-				'thumbnail'
-			)
-		: undefined;
+	const createImgSrc = useCallback(
+		(args: { width: number; height: number }) =>
+			canUsePreview
+				? getPreviewThumbnailSrc(
+						node.id,
+						version,
+						node.type,
+						mimeType,
+						{ ...args, outputFormat: getPreviewOutputFormat(mimeType) },
+						'thumbnail'
+					)
+				: undefined,
+		[canUsePreview, mimeType, node.id, node.type, version]
+	);
 
 	return (
 		<Dropzone
@@ -555,14 +559,7 @@ export const NodeListItem = ({
 						listItemContainerOnClick={setActiveDebounced}
 						listItemContainerOnDoubleClick={doubleClickHandler}
 						listItemContainerDisableHover={isContextualMenuActive || dragging}
-						imgSrc={getPreviewThumbnailSrc(
-							node.id,
-							version,
-							node.type,
-							mimeType,
-							{ width: 215, height: 215, outputFormat: getPreviewOutputFormat(mimeType) },
-							'thumbnail'
-						)}
+						createImgSrc={createImgSrc}
 						nodeAvatarIcon={
 							<NodeAvatarIcon
 								selectionModeActive={isSelectionModeActive}
@@ -606,7 +603,7 @@ export const NodeListItem = ({
 								selectable
 								icon={getIconByFileType(node.type, mimeType ?? node.id)}
 								color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
-								picture={nodeAvatarIconPicture}
+								picture={createImgSrc({ width: 80, height: 80 })}
 							/>
 						}
 						nodeHoverBar={
