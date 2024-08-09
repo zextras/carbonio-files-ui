@@ -4,14 +4,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useMemo } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 
 import { Container } from '@zextras/carbonio-design-system';
 
 import { DisplayerNode } from './DisplayerNode';
 import { EmptyDisplayer } from './EmptyDisplayer';
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { TIMERS } from '../../constants';
+import { ListContext } from '../../contexts';
 import { useGetNodeQuery } from '../../hooks/graphql/queries/useGetNodeQuery';
+import { scrollToNodeItem } from '../../utils/utils';
 
 export interface DisplayerProps {
 	translationKey: string;
@@ -19,6 +22,7 @@ export interface DisplayerProps {
 }
 
 export const Displayer: React.VFC<DisplayerProps> = ({ translationKey, icons = [] }) => {
+	const { viewMode } = useContext(ListContext);
 	const { activeNodeId } = useActiveNode();
 	const {
 		data: nodeData,
@@ -28,6 +32,32 @@ export const Displayer: React.VFC<DisplayerProps> = ({ translationKey, icons = [
 	} = useGetNodeQuery(activeNodeId, undefined, { returnPartialData: true });
 
 	const node = useMemo(() => nodeData?.getNode ?? null, [nodeData]);
+
+	useEffect(() => {
+		function scrollToItemIfNotVisible(element: HTMLElement | null, nodeId: string): void {
+			const main = document.querySelector<HTMLElement>(`[data-testid="main-${viewMode}"]`);
+			if (element && main) {
+				const { top: itemTop, bottom: itemBottom } = element.getBoundingClientRect();
+				const { bottom: mainBottom, top: mainTop } = main.getBoundingClientRect();
+				if (
+					(itemTop > mainTop && itemBottom > mainBottom) ||
+					(itemTop < mainTop && itemBottom < mainBottom)
+				) {
+					scrollToNodeItem(nodeId, undefined);
+				}
+			}
+		}
+		if (activeNodeId) {
+			const element = document.getElementById(activeNodeId);
+			if (element) {
+				scrollToItemIfNotVisible(element, activeNodeId);
+			} else {
+				setTimeout(() => {
+					scrollToItemIfNotVisible(document.getElementById(activeNodeId), activeNodeId);
+				}, TIMERS.DELAY_WAIT_RENDER_AND_HOPE);
+			}
+		}
+	}, [activeNodeId, viewMode]);
 
 	return (
 		<Container

@@ -75,7 +75,8 @@ export const NodeListItemUI = ({
 		}
 	}, []);
 	return (
-		<Container data-testid={id}>
+		// id required for scrollToNodeItem function
+		<Container id={id}>
 			<ContextualMenu
 				disabled={contextualMenuDisabled}
 				onOpen={contextualMenuOnOpen}

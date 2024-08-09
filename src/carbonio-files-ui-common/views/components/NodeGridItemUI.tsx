@@ -180,7 +180,8 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 		<ContainerCell
 			$showPreview={showPreview}
 			height={showPreview ? 'fill' : 'fit'}
-			data-testid={id}
+			// id required for scrollToNodeItem function
+			id={id}
 			$contextualMenuActive={listItemContainerContextualMenuActive}
 			$disableHover={listItemContainerDisableHover}
 			$disabled={disabled}

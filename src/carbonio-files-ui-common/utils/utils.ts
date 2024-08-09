@@ -11,7 +11,6 @@ import type { Location } from 'history';
 import { TFunction } from 'i18next';
 import {
 	chain,
-	debounce,
 	findIndex,
 	first,
 	forEach,
@@ -33,6 +32,7 @@ import {
 	OPEN_FILE_PATH,
 	REST_ENDPOINT,
 	ROOTS,
+	TIMERS,
 	UPLOAD_TO_PATH
 } from '../constants';
 import {
@@ -341,19 +341,31 @@ export const inputElement = ((): HTMLInputElement => {
 	return input;
 })();
 
-export const scrollToNodeItem = debounce((nodeId: string, isLast = false) => {
-	if (nodeId) {
-		const element = window.document.getElementById(nodeId);
-		if (element) {
-			let options: ScrollIntoViewOptions = { block: 'center' };
-			// if last element, leave it at the end of the screen to not trigger loadMore
-			if (isLast) {
-				options = { ...options, block: 'end' };
-			}
-			element.scrollIntoView(options);
+const scrollIntoView = (element: HTMLElement | null, isLast: boolean): void => {
+	if (element) {
+		let options: ScrollIntoViewOptions = { block: 'center' };
+		// if last element, leave it at the end of the screen to not trigger loadMore
+		if (isLast) {
+			options = { ...options, block: 'end' };
 		}
+		element.scrollIntoView(options);
 	}
-}, 500);
+};
+
+export const scrollToNodeItem = (
+	nodeId: string,
+	isLast = false,
+	timeout: number = TIMERS.DELAY_WAIT_RENDER_AND_HOPE
+): void => {
+	const element = window.document.getElementById(nodeId);
+	if (element) {
+		scrollIntoView(element, isLast);
+	} else {
+		setTimeout(() => {
+			scrollIntoView(window.document.getElementById(nodeId), isLast);
+		}, timeout);
+	}
+};
 
 export function propertyComparator<T extends SortableNode[keyof SortableNode]>(
 	nodeA: Maybe<SortableNode> | undefined,
