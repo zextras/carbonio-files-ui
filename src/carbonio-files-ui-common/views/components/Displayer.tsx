@@ -54,7 +54,7 @@ export const Displayer: React.VFC<DisplayerProps> = ({ translationKey, icons = [
 			} else {
 				setTimeout(() => {
 					scrollToItemIfNotVisible(document.getElementById(activeNodeId), activeNodeId);
-				}, TIMERS.DELAY_WAIT_RENDER_AND_HOPE);
+				}, TIMERS.DELAY_WAIT_RENDER_AND_PRAY);
 			}
 		}
 	}, [activeNodeId, viewMode]);

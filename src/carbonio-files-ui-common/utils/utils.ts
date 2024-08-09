@@ -355,7 +355,7 @@ const scrollIntoView = (element: HTMLElement | null, isLast: boolean): void => {
 export const scrollToNodeItem = (
 	nodeId: string,
 	isLast = false,
-	timeout: number = TIMERS.DELAY_WAIT_RENDER_AND_HOPE
+	timeout: number = TIMERS.DELAY_WAIT_RENDER_AND_PRAY
 ): void => {
 	const element = window.document.getElementById(nodeId);
 	if (element) {
