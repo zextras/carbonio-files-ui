@@ -146,7 +146,14 @@ export function getDocumentPreviewSrc(id: string, version?: number): string {
 export function getPreviewOutputFormat(
 	mimeType: string | undefined
 ): PreviewOptions['outputFormat'] {
-	return mimeType === 'image/gif' ? 'gif' : 'jpeg';
+	switch (mimeType) {
+		case 'image/gif':
+			return 'gif';
+		case 'image/png':
+			return 'png';
+		default:
+			return 'jpeg';
+	}
 }
 
 export function getPreviewSrc(
