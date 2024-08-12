@@ -5,14 +5,14 @@
  */
 import React from 'react';
 
-import { screen, waitFor, within } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { map, find } from 'lodash';
 import { graphql, http, HttpResponse } from 'msw';
 
 import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
-import { CONFIGS, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
-import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
+import { CONFIGS, ERROR_CODE, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	UploadRequestBody,
 	UploadVersionRequestParams,
@@ -24,7 +24,7 @@ import {
 	populateConfigs,
 	populateFile
 } from '../../../mocks/mockUtils';
-import { setup } from '../../../tests/utils';
+import { generateError, setup, screen, within } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
 	File as FilesFile,
@@ -36,6 +36,7 @@ import {
 import {
 	mockCloneVersion,
 	mockDeleteVersions,
+	mockErrorResolver,
 	mockGetConfigs,
 	mockGetVersions,
 	mockKeepVersions
@@ -331,7 +332,7 @@ describe('Versioning', () => {
 		const versionMoreButton = within(versionIcons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versionMoreButton);
 
-		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		const cloneAsCurrentItem = await screen.findByText(ACTION_REGEXP.cloneVersion);
 		await user.click(cloneAsCurrentItem);
 
 		await screen.findByText(/Version cloned as the current one/i);
@@ -525,7 +526,7 @@ describe('Versioning', () => {
 		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
-		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		const cloneAsCurrentItem = await screen.findByText(ACTION_REGEXP.cloneVersion);
 		expect(cloneAsCurrentItem).toHaveStyle({
 			color: COLORS.dropdownItem.disabled
 		});
@@ -542,7 +543,7 @@ describe('Versioning', () => {
 		expect(screen.queryByText(/Version cloned as the current one/i)).not.toBeInTheDocument();
 		// number of version is not changed
 		expect(screen.getAllByText(/Version \d/)).toHaveLength(maxVersions);
-		expect(screen.getByText(/clone as current/i)).toBeVisible();
+		expect(screen.getByText(ACTION_REGEXP.cloneVersion)).toBeVisible();
 	});
 
 	test('keep forever action is disabled if max number of keep is reached', async () => {
@@ -855,7 +856,7 @@ describe('Versioning', () => {
 		const versions1MoreButton = within(versions1Icons).getByTestId(ICON_REGEXP.moreVertical);
 		await user.click(versions1MoreButton);
 
-		const cloneAsCurrentItem = await screen.findByText(/clone as current/i);
+		const cloneAsCurrentItem = await screen.findByText(ACTION_REGEXP.cloneVersion);
 		expect(cloneAsCurrentItem).toHaveStyle({
 			color: COLORS.dropdownItem.disabled
 		});
@@ -1010,5 +1011,30 @@ describe('Versioning', () => {
 
 		await user.click(keepVersion);
 		expect(screen.queryByText(/version marked as to be kept forever/i)).not.toBeInTheDocument();
+	});
+
+	it('should show the over quota error snackbar if clone action fails for over quota', async () => {
+		const fileVersion1 = populateFile();
+		fileVersion1.permissions.can_write_file = true;
+		const version1 = getVersionFromFile(fileVersion1);
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(),
+				getVersions: mockGetVersions([version1] as FilesFile[])
+			},
+			Mutation: {
+				cloneVersion: mockErrorResolver(
+					generateError('Clone action failed', { code: ERROR_CODE.overQuotaReached })
+				)
+			}
+		} satisfies Partial<Resolvers>;
+
+		const { user } = setup(<Versioning node={fileVersion1} />, { mocks });
+		await screen.findByText(getChipLabel(fileVersion1.last_editor));
+		await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.moreVertical }));
+		await user.click(screen.getByText(ACTION_REGEXP.cloneVersion));
+		await screen.findByText(
+			'Clone action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
+		);
 	});
 });

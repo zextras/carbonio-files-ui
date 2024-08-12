@@ -187,12 +187,16 @@ export const buildBreadCrumbRegExp = (...nodesNames: string[]): RegExp => {
 
 export function generateError(
 	message: string,
-	code?: (typeof ERROR_CODE)[keyof typeof ERROR_CODE]
+	options?: {
+		code?: (typeof ERROR_CODE)[keyof typeof ERROR_CODE];
+		operationName?: string;
+	}
 ): GraphQLError {
 	return new GraphQLError(`Controlled error: ${message}`, {
 		extensions: {
-			errorCode: code
-		}
+			errorCode: options?.code
+		},
+		path: options?.operationName ? [options.operationName] : undefined
 	});
 }
 

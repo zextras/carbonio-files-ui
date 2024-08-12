@@ -7,13 +7,14 @@
 import React from 'react';
 
 import { ApolloError } from '@apollo/client';
+import { NetworkError } from '@apollo/client/errors';
+import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
 import {
 	chain,
 	debounce,
 	findIndex,
-	first,
 	forEach,
 	isEmpty,
 	map,
@@ -228,6 +229,35 @@ export function takeIfNotEmpty(value: string | undefined): string | undefined {
 	return value !== undefined && !isEmpty(value) ? value : undefined;
 }
 
+function decodeGraphQLErrorWithCode(error: GraphQLError, t: TFunction): string | undefined {
+	if (!error?.extensions?.errorCode) {
+		return undefined;
+	}
+	const operationName = (error.path && error.path.length > 0 && error.path[0]) || undefined;
+	const operationErrorMessage = t('errorCode.operation', {
+		context: operationName,
+		defaultValue: ''
+	});
+	const errorCodeMessage = t('errorCode.code', 'Something went wrong', {
+		context: error.extensions.errorCode
+	});
+	return `${operationErrorMessage} ${errorCodeMessage}`.trim();
+}
+
+function decodeServerError(error: NetworkError): string | undefined {
+	if (error && 'result' in error) {
+		return typeof error.result === 'string'
+			? error.result
+			: error.result
+					.map(
+						(err: { message: string; extensions?: { code: string } }) =>
+							err.extensions?.code ?? err.message
+					)
+					.join('\n');
+	}
+	return undefined;
+}
+
 /**
  * Decode an Apollo Error in a string message
  */
@@ -235,24 +265,20 @@ export const decodeError = (error: ApolloError, t: TFunction): string | null => 
 	if (!error) {
 		return null;
 	}
-	let errorMsg;
-	if (error.graphQLErrors && size(error.graphQLErrors) > 0) {
-		const err = first(error.graphQLErrors);
-		if (err?.extensions?.errorCode) {
-			return t('errorCode.code', 'Something went wrong', { context: err.extensions.errorCode });
+	const errors: (string | undefined)[] = [];
+	if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+		const firstGraphQLError = error.graphQLErrors[0];
+		const decodedGraphQLErrorWithCode = decodeGraphQLErrorWithCode(firstGraphQLError, t);
+		if (decodedGraphQLErrorWithCode) {
+			return decodedGraphQLErrorWithCode;
 		}
-		if (err?.message) {
-			errorMsg = err?.message;
-		}
+		errors.push(firstGraphQLError.message);
 	}
-	if (error.networkError && 'result' in error.networkError) {
-		const netError =
-			typeof error.networkError.result === 'string'
-				? error.networkError.result
-				: map(error.networkError.result, (err) => err.extensions?.code || err.message).join('\n');
-		errorMsg = errorMsg ? errorMsg + netError : netError;
-	}
-	return takeIfNotEmpty(errorMsg) ?? error.message;
+
+	const networkError = decodeServerError(error.networkError);
+	errors.push(networkError);
+	const errorMessages = errors.filter((err) => err !== undefined && err.length > 0);
+	return errorMessages.length > 0 ? errorMessages.join('\n') : error.message;
 };
 
 export const getChipLabel = (contact: Contact | null | undefined): string => {

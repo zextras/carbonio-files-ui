@@ -22,7 +22,8 @@ export const ACTION_REGEXP = {
 	goToFolder: /^go to destination folder$/i,
 	newDocument: /^new document$/i,
 	newPresentation: /^new presentation$/i,
-	newSpreadsheet: /^new spreadsheet$/i
+	newSpreadsheet: /^new spreadsheet$/i,
+	cloneVersion: /^clone as current$/i
 } as const;
 
 export const ICON_REGEXP = {

@@ -263,10 +263,10 @@ describe('Copy', () => {
 							copyNodes: [{ ...nodesToCopy[0], id: 'node1-copy', name: 'node copied' }]
 						},
 						errors: [
-							generateError(
-								'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
-								ERROR_CODE.overQuotaReached
-							)
+							generateError('Copy error', {
+								code: ERROR_CODE.overQuotaReached,
+								operationName: 'copyNodes'
+							})
 						]
 					})
 				)
