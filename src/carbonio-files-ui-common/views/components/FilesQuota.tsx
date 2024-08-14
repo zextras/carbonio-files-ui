@@ -42,14 +42,14 @@ const InnerFilesQuota = ({
 		if (limit === 0) {
 			return t('quota.unlimitedSpace', '{{used}} of unlimited space', {
 				replace: {
-					used: humanFileSize(used)
+					used: humanFileSize(used, t)
 				}
 			});
 		}
 		return t('quota.limitedSpace', '{{used}} of {{limit}} used', {
 			replace: {
-				used: humanFileSize(used),
-				limit: humanFileSize(limit)
+				used: humanFileSize(used, t),
+				limit: humanFileSize(limit, t)
 			}
 		});
 	}, [limit, used, t]);

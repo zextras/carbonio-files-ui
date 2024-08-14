@@ -14,6 +14,7 @@ import {
 	Row,
 	Text
 } from '@zextras/carbonio-design-system';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
@@ -74,6 +75,7 @@ export const NodeListItemUI = ({
 	nodeHoverBar,
 	size
 }: NodeListItemUIProps): React.JSX.Element => {
+	const [t] = useTranslation();
 	const preventTextSelection = useCallback<React.MouseEventHandler>((e: React.MouseEvent): void => {
 		if (e.detail > 1) {
 			e.preventDefault();
@@ -174,7 +176,7 @@ export const NodeListItemUI = ({
 									{size && (
 										<Padding left="small">
 											<CustomText color="gray1" disabled={disabled} size="small">
-												{humanFileSize(size)}
+												{humanFileSize(size, t)}
 											</CustomText>
 										</Padding>
 									)}

@@ -63,7 +63,7 @@ import type { NodeListItemUIProps } from '../views/components/NodeListItemUI';
 /**
  * Format a size in byte as human-readable
  */
-export const humanFileSize = (inputSize: number): string => {
+export const humanFileSize = (inputSize: number, t: TFunction | undefined): string => {
 	if (inputSize === 0) {
 		return '0 B';
 	}
@@ -72,7 +72,8 @@ export const humanFileSize = (inputSize: number): string => {
 	if (i >= units.length) {
 		throw new Error('Unsupported inputSize');
 	}
-	return `${(inputSize / 1024 ** i).toFixed(2).toString()} ${units[i]}`;
+	const unit = units[i];
+	return `${(inputSize / 1024 ** i).toFixed(2).toString()} ${t ? t('size.unitMeasure', { context: unit, defaultValue: unit }) : unit}`;
 };
 
 function getIconByRootId(rootId: Maybe<string> | undefined): keyof DefaultTheme['icons'] {

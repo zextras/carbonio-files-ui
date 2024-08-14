@@ -246,7 +246,7 @@ describe('Upload Displayer Node', () => {
 
 		await screen.findAllByText(uploadItem.name);
 		expect(screen.getByText(/size/i)).toBeVisible();
-		expect(screen.getByText(humanFileSize(uploadItem.file?.size || 0))).toBeVisible();
+		expect(screen.getByText(humanFileSize(uploadItem.file?.size || 0, undefined))).toBeVisible();
 	});
 
 	test('Size is hidden for folders', async () => {
@@ -259,7 +259,9 @@ describe('Upload Displayer Node', () => {
 
 		await screen.findAllByText(uploadItem.name);
 		expect(screen.queryByText(/size/i)).not.toBeInTheDocument();
-		expect(screen.queryByText(humanFileSize(uploadItem.file?.size || 0))).not.toBeInTheDocument();
+		expect(
+			screen.queryByText(humanFileSize(uploadItem.file?.size || 0, undefined))
+		).not.toBeInTheDocument();
 	});
 
 	test('Content is hidden for files', async () => {
