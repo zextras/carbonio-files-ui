@@ -541,6 +541,7 @@ export const NodeListItem = ({
 					<NodeGridItemUI
 						{...props}
 						icon={getIconByFileType(node.type, mimeType ?? node.id)}
+						color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
 						showPreview={isFile(node)}
 						disabled={isDragged}
 						trashed={trashed && isSearchView(location)}

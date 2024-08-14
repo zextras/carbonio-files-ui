@@ -42,6 +42,7 @@ export const NodeListItemDragImage = ({ node }: { node: NodeListItemType }): Rea
 		<NodeGridItemUI
 			{...props}
 			icon={getIconByFileType(node.type, mimeType ?? node.id)}
+			color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
 			showPreview={isFile(node)}
 			disabled={false}
 			trashed={props.trashed && isSearchView(location)}

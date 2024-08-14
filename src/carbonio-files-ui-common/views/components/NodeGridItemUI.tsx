@@ -94,6 +94,7 @@ interface NodeGridItemProps {
 	id: string;
 	showPreview?: boolean;
 	icon: string;
+	color: string;
 	flagActive?: boolean;
 	disabled?: boolean;
 	incomingShare?: boolean;
@@ -121,6 +122,7 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 	id,
 	showPreview,
 	icon,
+	color,
 	flagActive,
 	disabled,
 	incomingShare,
@@ -206,16 +208,21 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 								<Image src={imgSrc} alt={''} onError={onPreviewError} />
 							)) ||
 								(imgSrc && previewFailed && (
-									<Text size={'extrasmall'} color={'secondary'}>
-										{t('node.preview.failed', 'Preview not available')}
+									<Text
+										size={'extrasmall'}
+										color={'secondary'}
+										overflow={'break-word'}
+										textAlign={'center'}
+									>
+										{t('node.preview.failed', 'Failed to load image')}
 									</Text>
-								)) || <PreviewIcon icon={icon} color={'secondary'} />}
+								)) || <PreviewIcon icon={icon} color={color} />}
 						</Preview>
 					)}
 					<HoverContainer
 						maxWidth={'100%'}
 						background={hoverContainerBackground}
-						padding={{ vertical: 'small', horizontal: 'medium' }}
+						padding={'small'}
 						minHeight={'4.625rem'}
 						height={'4.625rem'}
 						orientation={'horizontal'}
@@ -303,7 +310,7 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 								{trashed && <Icon icon="Trash2Outline" disabled={disabled} />}
 								<Dropdown items={contextualMenuActions}>
 									<IconButton
-										size={'small'}
+										size={'medium'}
 										icon="MoreVertical"
 										disabled={disabled}
 										onClick={() => undefined}

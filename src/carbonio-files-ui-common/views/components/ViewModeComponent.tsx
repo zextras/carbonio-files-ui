@@ -25,9 +25,9 @@ export const ViewModeComponent = (): React.JSX.Element => {
 
 	const tooltipLabel = useMemo(() => {
 		if (VIEW_MODE.list === viewMode) {
-			return t('sortingDropdown.icon.tooltip.OrderSizeAscending', 'Ascending order by size');
+			return t('header.iconTooltip.GridLayout', 'Grid layout');
 		}
-		return t('sortingDropdown.icon.tooltip.OrderSizeAscending', 'Ascending order by size');
+		return t('header.iconTooltip.ListLayout', 'List layout');
 	}, [viewMode, t]);
 
 	const switchViewMode = useCallback(() => {
@@ -35,7 +35,7 @@ export const ViewModeComponent = (): React.JSX.Element => {
 	}, []);
 
 	return (
-		<Tooltip label={tooltipLabel} placement="top">
+		<Tooltip key={`${tooltipLabel}-tooltip`} label={tooltipLabel} placement="top">
 			<IconButton icon={iconButtonIconProps} size="large" onClick={switchViewMode} />
 		</Tooltip>
 	);

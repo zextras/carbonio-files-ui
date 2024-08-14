@@ -306,8 +306,8 @@ const FilterView: React.VFC = () => {
 	const ActionComponent = useMemo(
 		() => (
 			<>
-				{!isRecentsFilter && <SortingComponent />}
 				<ViewModeComponent />
+				{!isRecentsFilter && <SortingComponent />}
 			</>
 		),
 		[isRecentsFilter]

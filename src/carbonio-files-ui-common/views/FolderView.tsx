@@ -324,8 +324,8 @@ const FolderView = (): React.JSX.Element => {
 	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
 		() => (
 			<>
-				<SortingComponent />
 				<ViewModeComponent />
+				<SortingComponent />
 			</>
 		),
 		[]

@@ -563,6 +563,6 @@ describe('Node List Item', () => {
 			</ListContext.Provider>
 		);
 		fireEvent.error(screen.getByRole('img'));
-		expect(await screen.findByText('Preview not available')).toBeVisible();
+		expect(await screen.findByText('Failed to load image')).toBeVisible();
 	});
 });
