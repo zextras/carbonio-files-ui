@@ -7,7 +7,7 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { IconButton, Tooltip } from '@zextras/carbonio-design-system';
+import { Button, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import { DefaultTheme } from 'styled-components';
 
@@ -18,7 +18,7 @@ export const ViewModeComponent = (): React.JSX.Element => {
 	const viewMode = useReactiveVar(viewModeVar);
 	const [t] = useTranslation();
 
-	const iconButtonIconProps = useMemo<keyof DefaultTheme['icons']>(
+	const icon = useMemo<keyof DefaultTheme['icons']>(
 		() => (viewMode === VIEW_MODE.list ? 'GridOutline' : 'ListOutline'),
 		[viewMode]
 	);
@@ -36,7 +36,7 @@ export const ViewModeComponent = (): React.JSX.Element => {
 
 	return (
 		<Tooltip key={`${tooltipLabel}-tooltip`} label={tooltipLabel} placement="top">
-			<IconButton icon={iconButtonIconProps} size="large" onClick={switchViewMode} />
+			<Button icon={icon} size="large" onClick={switchViewMode} type={'ghost'} color={'text'} />
 		</Tooltip>
 	);
 };

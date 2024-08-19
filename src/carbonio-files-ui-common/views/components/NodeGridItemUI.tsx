@@ -7,12 +7,12 @@
 import React, { useCallback, useState } from 'react';
 
 import {
+	Button,
 	Container,
 	ContainerProps,
 	Dropdown,
 	getColor,
 	Icon,
-	IconButton,
 	Text
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
@@ -309,11 +309,13 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 								)}
 								{trashed && <Icon icon="Trash2Outline" disabled={disabled} />}
 								<Dropdown items={contextualMenuActions}>
-									<IconButton
+									<Button
 										size={'medium'}
 										icon="MoreVertical"
 										disabled={disabled}
 										onClick={() => undefined}
+										type={'ghost'}
+										color={'text'}
 									/>
 								</Dropdown>
 							</GridItem>
