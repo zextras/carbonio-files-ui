@@ -5,9 +5,8 @@
  */
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { keyBy } from 'lodash';
-import { act } from 'react-dom/test-utils';
 import { Link, Switch, Route, useLocation } from 'react-router-dom';
 
 import { PrimaryBarElement } from './PrimaryBarElement';
@@ -15,7 +14,7 @@ import { uploadVar } from '../carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
 import { ICON_REGEXP } from '../carbonio-files-ui-common/constants/test';
 import { populateUploadItems } from '../carbonio-files-ui-common/mocks/mockUtils';
-import { setup } from '../carbonio-files-ui-common/tests/utils';
+import { setup, screen } from '../carbonio-files-ui-common/tests/utils';
 import { UploadStatus } from '../carbonio-files-ui-common/types/graphql/client-types';
 
 describe('PrimaryBarElement', () => {

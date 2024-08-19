@@ -30,10 +30,9 @@ describe('Copy', () => {
 				},
 				Mutation: {
 					copyNodes: mockErrorResolver(
-						generateError(
-							'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
-							ERROR_CODE.overQuotaReached
-						)
+						generateError('Copy error', {
+							code: ERROR_CODE.overQuotaReached
+						})
 					)
 				}
 			} satisfies Partial<Resolvers>;

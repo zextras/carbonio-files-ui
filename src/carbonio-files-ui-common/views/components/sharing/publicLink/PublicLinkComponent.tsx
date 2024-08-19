@@ -17,7 +17,8 @@ import {
 	Text,
 	Tooltip,
 	Row,
-	useSnackbar
+	useSnackbar,
+	InputProps
 } from '@zextras/carbonio-design-system';
 import { size } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -67,14 +68,14 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 
 	const isExpired = useMemo(() => (expiresAt ? Date.now() > expiresAt : false), [expiresAt]);
 
-	const [linkDescriptionValue, setLinkDescriptionValue] = useState<string>(description || '');
+	const [linkDescriptionValue, setLinkDescriptionValue] = useState<string>(description ?? '');
 
 	const moreThan300Characters = useMemo(
 		() => linkDescriptionValue != null && linkDescriptionValue.length > 300,
 		[linkDescriptionValue]
 	);
 
-	const linkDescriptionOnChange = useCallback((ev) => {
+	const linkDescriptionOnChange = useCallback<NonNullable<InputProps['onChange']>>((ev) => {
 		setLinkDescriptionValue(ev.target.value);
 	}, []);
 
@@ -127,7 +128,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 		copyToClipboard(url as string).then(() => {
 			createSnackbar({
 				key: new Date().toLocaleString(),
-				type: 'info',
+				severity: 'info',
 				label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', { replace: { linkName } }),
 				replace: true,
 				hideButton: true

@@ -12,12 +12,12 @@ import {
 	Badge,
 	getColor,
 	Icon,
-	IconButton,
+	Button,
 	Padding,
 	Row,
 	Tooltip
 } from '@zextras/carbonio-design-system';
-import { map, uniq, find, noop, every } from 'lodash';
+import { map, uniq, find, every } from 'lodash';
 import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
@@ -196,12 +196,12 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 					<Row mainAlignment="flex-start" takeAvailableSpace>
 						<Tooltip label={item.label} placement="right">
 							<Padding all="extrasmall">
-								<IconButton
-									customSize={{ iconSize: 'large', paddingSize: 'small' }}
-									icon={item.icon || ''}
-									onClick={item.onClick || noop}
-									backgroundColor={(item.active && 'highlight') || undefined}
-									iconColor={item.iconColor}
+								<Button
+									size={'extralarge'}
+									icon={item.icon}
+									onClick={item.onClick ?? ((): void => undefined)}
+									backgroundColor={(item.active && 'highlight') || 'transparent'}
+									labelColor={item.iconColor ?? 'text'}
 								/>
 							</Padding>
 						</Tooltip>

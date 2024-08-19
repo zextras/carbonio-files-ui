@@ -148,7 +148,7 @@ export function useDeleteShareMutation(): (
 				if (result.data?.deleteShare) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'success',
+						severity: 'success',
 						label: t('snackbar.deleteShare.success', 'Success'),
 						replace: true,
 						hideButton: true

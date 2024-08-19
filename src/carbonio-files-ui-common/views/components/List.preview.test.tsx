@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
 import { List } from './List';
 import { PREVIEW_MAX_SIZE } from '../../constants';
@@ -25,7 +25,7 @@ describe('Preview action', () => {
 		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(file.name);
-		fireEvent.contextMenu(screen.getByText(file.name));
+		await user.rightClick(screen.getByText(file.name));
 		await screen.findByText(ACTION_REGEXP.preview);
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
 		// fallback is shown
@@ -44,7 +44,7 @@ describe('Preview action', () => {
 		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(file.name);
-		fireEvent.contextMenu(screen.getByText(file.name));
+		await user.rightClick(screen.getByText(file.name));
 		await screen.findByText(ACTION_REGEXP.preview);
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
 		// fallback is not shown
@@ -62,7 +62,7 @@ describe('Preview action', () => {
 		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(file.name);
-		fireEvent.contextMenu(screen.getByText(file.name));
+		await user.rightClick(screen.getByText(file.name));
 		await screen.findByText(ACTION_REGEXP.preview);
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
 		// fallback is not shown
@@ -84,10 +84,10 @@ describe('Preview action', () => {
 		const file = populateFile();
 		file.mime_type = mimeType;
 
-		setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(file.name);
-		fireEvent.contextMenu(screen.getByText(file.name));
+		await user.rightClick(screen.getByText(file.name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 	});
 
@@ -97,10 +97,12 @@ describe('Preview action', () => {
 			const file = populateFile();
 			file.mime_type = mimeType;
 
-			setup(<List nodes={[file]} mainList={false} emptyListMessage="empty list" />);
+			const { user } = setup(
+				<List nodes={[file]} mainList={false} emptyListMessage="empty list" />
+			);
 
 			await screen.findByText(file.name);
-			fireEvent.contextMenu(screen.getByText(file.name));
+			await user.rightClick(screen.getByText(file.name));
 			act(() => {
 				jest.runOnlyPendingTimers();
 			});

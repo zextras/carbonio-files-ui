@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { UploadListItemWrapper } from './UploadListItemWrapper';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
@@ -30,7 +30,7 @@ describe('Upload List Item Wrapper', () => {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
-				setup(
+				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
@@ -42,7 +42,7 @@ describe('Upload List Item Wrapper', () => {
 
 				const item = screen.getByText(file.name);
 				expect(item).toBeVisible();
-				fireEvent.contextMenu(item);
+				await user.rightClick(item);
 				await screen.findByTestId(SELECTORS.dropdownList);
 				expect(screen.queryByText(ACTION_REGEXP.retryUpload)).not.toBeInTheDocument();
 			});
@@ -59,7 +59,7 @@ describe('Upload List Item Wrapper', () => {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
-				setup(
+				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
@@ -71,7 +71,7 @@ describe('Upload List Item Wrapper', () => {
 
 				const item = screen.getByText(file.name);
 				expect(item).toBeVisible();
-				fireEvent.contextMenu(item);
+				await user.rightClick(item);
 				await screen.findByTestId(SELECTORS.dropdownList);
 				expect(screen.queryByText(ACTION_REGEXP.retryUpload)).not.toBeInTheDocument();
 			});
@@ -88,7 +88,7 @@ describe('Upload List Item Wrapper', () => {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
-				setup(
+				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
@@ -100,7 +100,7 @@ describe('Upload List Item Wrapper', () => {
 
 				const item = screen.getByText(file.name);
 				expect(item).toBeVisible();
-				fireEvent.contextMenu(item);
+				await user.rightClick(item);
 				await screen.findByTestId(SELECTORS.dropdownList);
 				expect(screen.queryByText(ACTION_REGEXP.retryUpload)).not.toBeInTheDocument();
 			});
@@ -117,7 +117,7 @@ describe('Upload List Item Wrapper', () => {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
-				setup(
+				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
@@ -129,7 +129,7 @@ describe('Upload List Item Wrapper', () => {
 
 				const item = screen.getByText(file.name);
 				expect(item).toBeVisible();
-				fireEvent.contextMenu(item);
+				await user.rightClick(item);
 				await screen.findByTestId(SELECTORS.dropdownList);
 				expect(screen.getByText(ACTION_REGEXP.retryUpload)).toBeVisible();
 			});

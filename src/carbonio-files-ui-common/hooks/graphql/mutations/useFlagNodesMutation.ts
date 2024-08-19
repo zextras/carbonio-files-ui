@@ -104,7 +104,7 @@ export function useFlagNodesMutation(): FlagNodesType {
 							// if there is some node that is removed from the list show a success snackbar
 							createSnackbar({
 								key: new Date().toLocaleString(),
-								type: 'info',
+								severity: 'info',
 								label: t('snackbar.unflag.success', 'Item unflagged successfully'),
 								replace: true,
 								hideButton: true

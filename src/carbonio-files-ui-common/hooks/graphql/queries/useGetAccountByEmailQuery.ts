@@ -3,25 +3,24 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { useLazyQuery } from '@apollo/client';
-import { LazyQueryResult, QueryLazyOptions } from '@apollo/client/react/types/types';
+import { useLazyQuery, LazyQueryExecFunction } from '@apollo/client';
 
-import GET_ACCOUNT_BY_EMAIL from '../../../graphql/queries/getAccountByEmail.graphql';
 import {
+	GetAccountByEmailDocument,
 	GetAccountByEmailQuery,
 	GetAccountByEmailQueryVariables
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
-type UseGetAccountByEmailQueryReturnType = (
-	options?: QueryLazyOptions<GetAccountByEmailQueryVariables>
-) => Promise<LazyQueryResult<GetAccountByEmailQuery, GetAccountByEmailQueryVariables>>;
+type UseGetAccountByEmailQueryReturnType = LazyQueryExecFunction<
+	GetAccountByEmailQuery,
+	GetAccountByEmailQueryVariables
+>;
 
 export function useGetAccountByEmailQuery(): UseGetAccountByEmailQueryReturnType {
-	const [getAccountByEmailLazyQuery, { error }] = useLazyQuery<
-		GetAccountByEmailQuery,
-		GetAccountByEmailQueryVariables
-	>(GET_ACCOUNT_BY_EMAIL, { fetchPolicy: 'no-cache' });
+	const [getAccountByEmailLazyQuery, { error }] = useLazyQuery(GetAccountByEmailDocument, {
+		fetchPolicy: 'no-cache'
+	});
 
 	useErrorHandler(error, 'GET_ACCOUNT_BY_EMAIL');
 

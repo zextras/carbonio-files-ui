@@ -96,7 +96,7 @@ const FolderView = (): React.JSX.Element => {
 	const { createFolder } = useCreateFolderMutation();
 
 	const createFolderCallback = useCallback(
-		(_parentId, newName) => {
+		(_parentId: string, newName: string) => {
 			if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
 				return createFolder(currentFolder.getNode, newName).then((result) => {
 					result.data && setActiveNode(result.data.createFolder.id);
@@ -126,7 +126,7 @@ const FolderView = (): React.JSX.Element => {
 		}
 	}, [currentFolderId, newFolder, openCreateFolderModal]);
 
-	const createFolderAction = useCallback((event) => {
+	const createFolderAction = useCallback((event: React.SyntheticEvent | KeyboardEvent) => {
 		event?.stopPropagation();
 		setNewFolder(true);
 	}, []);

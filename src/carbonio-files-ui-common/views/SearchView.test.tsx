@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { map, find } from 'lodash';
 import { http, HttpResponse } from 'msw';
 
@@ -15,7 +15,13 @@ import { ACTION_IDS } from '../../constants';
 import server from '../../mocks/server';
 import { searchParamsVar } from '../apollo/searchVar';
 import { DOCS_SERVICE_NAME, HEALTH_PATH, INTERNAL_PATH, REST_ENDPOINT, ROOTS } from '../constants';
-import { ACTION_REGEXP, DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
+import {
+	ACTION_REGEXP,
+	COLORS,
+	DISPLAYER_EMPTY_MESSAGE,
+	ICON_REGEXP,
+	SELECTORS
+} from '../constants/test';
 import BaseNodeFragmentDoc from '../graphql/fragments/baseNode.graphql';
 import { healthCache } from '../hooks/useHealthInfo';
 import { HealthResponse } from '../mocks/handleHealthRequest';
@@ -232,7 +238,7 @@ describe('Search view', () => {
 			expect(fullPathOrig).toBeVisible();
 			// right click to open contextual menu
 			const nodeToMoveItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeToMoveItem);
+			await user.rightClick(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			jest.advanceTimersToNextTimer();
 			const fullPath = await findByTextWithMarkup(
@@ -300,7 +306,7 @@ describe('Search view', () => {
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
 			const nodeToTrashItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeToTrashItem);
+			await user.rightClick(nodeToTrashItem);
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(moveToTrashAction).toBeVisible();
 			await user.click(moveToTrashAction);
@@ -313,7 +319,7 @@ describe('Search view', () => {
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			const trashedNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(trashedNodeItem).toBeVisible();
-			fireEvent.contextMenu(trashedNodeItem);
+			await user.rightClick(trashedNodeItem);
 			await screen.findByText(ACTION_REGEXP.restore);
 			expect(screen.getByText(ACTION_REGEXP.restore)).toBeVisible();
 			expect(screen.getByText(ACTION_REGEXP.deletePermanently)).toBeVisible();
@@ -363,7 +369,7 @@ describe('Search view', () => {
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
 			const nodeToTrashItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeToTrashItem);
+			await user.rightClick(nodeToTrashItem);
 			const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(moveToTrashAction).toBeVisible();
 			await user.click(moveToTrashAction);
@@ -376,7 +382,7 @@ describe('Search view', () => {
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			const trashedNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(trashedNodeItem).toBeVisible();
-			fireEvent.contextMenu(trashedNodeItem);
+			await user.rightClick(trashedNodeItem);
 			await screen.findByText(ACTION_REGEXP.restore);
 			expect(screen.getByText(ACTION_REGEXP.restore)).toBeVisible();
 			expect(screen.getByText(ACTION_REGEXP.deletePermanently)).toBeVisible();
@@ -443,11 +449,12 @@ describe('Search view', () => {
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
 			const nodeToRestoreItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeToRestoreItem);
+			await user.rightClick(nodeToRestoreItem);
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(restoreAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(restoreAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			await user.click(restoreAction);
 			// await snackbar to be shown
 			await screen.findByText(/^success$/i);
@@ -460,7 +467,7 @@ describe('Search view', () => {
 			);
 			const restoredNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(restoredNodeItem).toBeVisible();
-			fireEvent.contextMenu(restoredNodeItem);
+			await user.rightClick(restoredNodeItem);
 			await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(screen.getByText(ACTION_REGEXP.moveToTrash)).toBeVisible();
 			expect(screen.queryByText(ACTION_REGEXP.deletePermanently)).not.toBeInTheDocument();
@@ -524,11 +531,12 @@ describe('Search view', () => {
 			expect(within(displayer).getAllByText(node.name)).toHaveLength(2);
 			// right click to open contextual menu
 			const nodeToRestoreItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeToRestoreItem);
+			await user.rightClick(nodeToRestoreItem);
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(restoreAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(restoreAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			await user.click(restoreAction);
 			// await snackbar to be shown
 			await screen.findByText(/^success$/i);
@@ -541,7 +549,7 @@ describe('Search view', () => {
 			);
 			const restoredNodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			expect(restoredNodeItem).toBeVisible();
-			fireEvent.contextMenu(restoredNodeItem);
+			await user.rightClick(restoredNodeItem);
 			await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(screen.getByText(ACTION_REGEXP.moveToTrash)).toBeVisible();
 			expect(screen.queryByText(ACTION_REGEXP.deletePermanently)).not.toBeInTheDocument();

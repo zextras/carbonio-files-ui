@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { forEach } from 'lodash';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
@@ -158,7 +158,7 @@ describe('Filter view', () => {
 			// right click to open contextual menu
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const nodeItem = await screen.findByText(node.name);
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			// check that restore action becomes visible
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();

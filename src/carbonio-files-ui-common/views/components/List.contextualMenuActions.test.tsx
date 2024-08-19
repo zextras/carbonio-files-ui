@@ -12,7 +12,7 @@ import { ContextualMenuProps } from './ContextualMenu';
 import { EmptySpaceFiller } from './EmptySpaceFiller';
 import { List } from './List';
 import { ACTION_IDS } from '../../../constants';
-import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, COLORS, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
@@ -93,8 +93,9 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newFolderActionItem).not.toHaveAttribute('disabled', '');
+				expect(newFolderActionItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).toHaveBeenCalledTimes(1);
 
@@ -104,8 +105,9 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newDocumentActionItem).not.toHaveAttribute('disabled', '');
+				expect(newDocumentActionItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).toHaveBeenCalledTimes(1);
 
@@ -115,8 +117,9 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newSpreadsheetActionItem).not.toHaveAttribute('disabled', '');
+				expect(newSpreadsheetActionItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).toHaveBeenCalledTimes(1);
 
@@ -126,8 +129,9 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newPresentationActionItem).not.toHaveAttribute('disabled', '');
+				expect(newPresentationActionItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).toHaveBeenCalledTimes(1);
 			});
@@ -203,8 +207,9 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newFolderActionItem).toHaveAttribute('disabled', '');
+				expect(newFolderActionItem).toHaveStyle({
+					color: COLORS.dropdownItem.disabled
+				});
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).not.toHaveBeenCalled();
 
@@ -214,8 +219,9 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newDocumentActionItem).toHaveAttribute('disabled', '');
+				expect(newDocumentActionItem).toHaveStyle({
+					color: COLORS.dropdownItem.disabled
+				});
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).not.toHaveBeenCalled();
 
@@ -225,8 +231,9 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newSpreadsheetActionItem).toHaveAttribute('disabled', '');
+				expect(newSpreadsheetActionItem).toHaveStyle({
+					color: COLORS.dropdownItem.disabled
+				});
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).not.toHaveBeenCalled();
 
@@ -236,8 +243,9 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newPresentationActionItem).toHaveAttribute('disabled', '');
+				expect(newPresentationActionItem).toHaveStyle({
+					color: COLORS.dropdownItem.disabled
+				});
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).not.toHaveBeenCalled();
 			});
@@ -310,8 +318,9 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newFolderActionItem).not.toHaveAttribute('disabled', '');
+				expect(newFolderActionItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).toHaveBeenCalledTimes(1);
 
@@ -321,8 +330,9 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newDocumentActionItem).not.toHaveAttribute('disabled', '');
+				expect(newDocumentActionItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).toHaveBeenCalledTimes(1);
 
@@ -332,8 +342,9 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newSpreadsheetActionItem).not.toHaveAttribute('disabled', '');
+				expect(newSpreadsheetActionItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).toHaveBeenCalledTimes(1);
 
@@ -343,8 +354,9 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newPresentationActionItem).not.toHaveAttribute('disabled', '');
+				expect(newPresentationActionItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).toHaveBeenCalledTimes(1);
 			});
@@ -415,8 +427,9 @@ describe('Contextual menu actions', () => {
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newFolderActionItem).toHaveAttribute('disabled', '');
+				expect(newFolderActionItem).toHaveStyle({
+					color: COLORS.dropdownItem.disabled
+				});
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).not.toHaveBeenCalled();
 
@@ -426,8 +439,9 @@ describe('Contextual menu actions', () => {
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newDocumentActionItem).toHaveAttribute('disabled', '');
+				expect(newDocumentActionItem).toHaveStyle({
+					color: COLORS.dropdownItem.disabled
+				});
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).not.toHaveBeenCalled();
 
@@ -437,8 +451,9 @@ describe('Contextual menu actions', () => {
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newSpreadsheetActionItem).toHaveAttribute('disabled', '');
+				expect(newSpreadsheetActionItem).toHaveStyle({
+					color: COLORS.dropdownItem.disabled
+				});
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).not.toHaveBeenCalled();
 
@@ -448,8 +463,9 @@ describe('Contextual menu actions', () => {
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(newPresentationActionItem).toHaveAttribute('disabled', '');
+				expect(newPresentationActionItem).toHaveStyle({
+					color: COLORS.dropdownItem.disabled
+				});
 				await user.click(newPresentationActionItem);
 				expect(createPresentationAction).not.toHaveBeenCalled();
 			});

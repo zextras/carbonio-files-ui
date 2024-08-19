@@ -9,8 +9,8 @@ import React from 'react';
 import '@testing-library/jest-dom';
 
 import { ApolloError } from '@apollo/client';
+import { act } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
-import { act } from 'react-dom/test-utils';
 
 import { useErrorHandler } from './useErrorHandler';
 import { ERROR_CODE } from '../constants';
@@ -32,15 +32,12 @@ const TestComponent = ({ errors }: Props): React.JSX.Element => {
 
 describe('useErrorHandler', () => {
 	it('should show a permanent snackbar if the error is the over quota error', async () => {
-		const err: GraphQLError = generateError(
-			'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
-			ERROR_CODE.overQuotaReached
-		);
+		const err: GraphQLError = generateError('Copy error', { code: ERROR_CODE.overQuotaReached });
 		setup(<TestComponent errors={[err]} />);
 		const snackbar = await screen.findByTestId('snackbar');
 		expect(
 			within(snackbar).getByText(
-				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
+				'You have reached your storage limit. Delete some items to free up storage space and try again'
 			)
 		).toBeVisible();
 		expect(within(snackbar).getByText(/Ok/i)).toBeVisible();
@@ -49,16 +46,15 @@ describe('useErrorHandler', () => {
 		});
 		expect(
 			within(snackbar).getByText(
-				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
+				'You have reached your storage limit. Delete some items to free up storage space and try again'
 			)
 		).toBeVisible();
 	});
 
 	it('should show a temporary snackbar if the error is not the over quota error', async () => {
-		const err: GraphQLError = generateError(
-			'Error! Copy permissions failed',
-			ERROR_CODE.nodeWriteError
-		);
+		const err: GraphQLError = generateError('Error! Copy permissions failed', {
+			code: ERROR_CODE.nodeWriteError
+		});
 		setup(<TestComponent errors={[err]} />);
 		const snackbar = await screen.findByTestId('snackbar');
 		expect(within(snackbar).getByText(/Error! Copy permissions failed/i)).toBeVisible();
@@ -72,11 +68,8 @@ describe('useErrorHandler', () => {
 
 	it('should show the snackbar for the first error if there are multiple error codes', async () => {
 		const errors: Array<GraphQLError> = [
-			generateError('Error! Copy permissions failed', ERROR_CODE.nodeWriteError),
-			generateError(
-				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
-				ERROR_CODE.overQuotaReached
-			)
+			generateError('Error! Copy permissions failed', { code: ERROR_CODE.nodeWriteError }),
+			generateError('Copy error', { code: ERROR_CODE.overQuotaReached })
 		];
 		setup(<TestComponent errors={errors} />);
 		const snackbar = await screen.findByTestId('snackbar');
@@ -84,7 +77,7 @@ describe('useErrorHandler', () => {
 		// second error is not shown
 		expect(
 			screen.queryByText(
-				'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again'
+				'You have reached your storage limit. Delete some items to free up storage space and try again'
 			)
 		).not.toBeInTheDocument();
 		// close snackbar

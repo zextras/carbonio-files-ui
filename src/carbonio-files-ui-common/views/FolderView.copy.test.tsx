@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act, fireEvent } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { map } from 'lodash';
 import { graphql, HttpResponse } from 'msw';
 
@@ -263,10 +263,10 @@ describe('Copy', () => {
 							copyNodes: [{ ...nodesToCopy[0], id: 'node1-copy', name: 'node copied' }]
 						},
 						errors: [
-							generateError(
-								'Copy action failed. You have reached your storage limit. Delete some items to free up storage space and try again',
-								ERROR_CODE.overQuotaReached
-							)
+							generateError('Copy error', {
+								code: ERROR_CODE.overQuotaReached,
+								operationName: 'copyNodes'
+							})
 						]
 					})
 				)
@@ -350,7 +350,7 @@ describe('Copy', () => {
 
 			// right click to open contextual menu on folder
 			const nodeToCopyItem = await screen.findByText(nodeToCopy.name);
-			fireEvent.contextMenu(nodeToCopyItem);
+			await user.rightClick(nodeToCopyItem);
 			const copyAction = await screen.findByText(ACTION_REGEXP.copy);
 			expect(copyAction).toBeVisible();
 			await user.click(copyAction);

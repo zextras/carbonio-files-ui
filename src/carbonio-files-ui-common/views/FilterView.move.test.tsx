@@ -5,13 +5,13 @@
  */
 import React from 'react';
 
-import { act, fireEvent, screen, within } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	populateFile,
 	populateFolder,
@@ -317,21 +317,21 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 				});
 
 				// right click to open contextual menu on file without permission
 				const fileItem = await screen.findByText(file.name);
-				fireEvent.contextMenu(fileItem);
+				await user.rightClick(fileItem);
 				await screen.findByText(ACTION_REGEXP.manageShares);
 
 				expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 
 				// right click to open contextual menu on folder without permission
 				const folderItem = await screen.findByText(folder.name);
-				fireEvent.contextMenu(folderItem);
+				await user.rightClick(folderItem);
 
 				await screen.findByText(ACTION_REGEXP.manageShares);
 
@@ -339,11 +339,12 @@ describe('Filter View', () => {
 
 				// right click to open the contextual menu on node with permission
 				const nodeItem = await screen.findByText(node.name);
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				const moveAction = await screen.findByText(ACTION_REGEXP.move);
 				expect(moveAction).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(moveAction).not.toHaveAttribute('disabled', '');
+				expect(moveAction).toHaveStyle({
+					color: COLORS.text.regular
+				});
 			});
 
 			test('Move open modal showing parent folder content. Confirm action close the modal, leave moved items in filter list and clear cached data for destination folder', async () => {
@@ -402,7 +403,7 @@ describe('Filter View', () => {
 
 				// right click to open contextual menu on folder
 				const nodeToMoveItem = await screen.findByText(nodeToMove.name);
-				fireEvent.contextMenu(nodeToMoveItem);
+				await user.rightClick(nodeToMoveItem);
 				const moveAction = await screen.findByText(ACTION_REGEXP.move);
 				expect(moveAction).toBeVisible();
 				await user.click(moveAction);

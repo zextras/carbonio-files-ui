@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { isSupportedByPreview } from './previewUtils';
+import { getPreviewOutputFormat, isSupportedByPreview } from './previewUtils';
 import { PREVIEW_TYPE } from '../constants';
 
 jest.mock<typeof import('./previewUtils')>('./previewUtils', () => {
@@ -56,5 +56,25 @@ describe('Preview utils', () => {
 			expect(result[0]).toBe(false);
 			expect(result[1]).toBe(undefined);
 		});
+	});
+
+	describe('getPreviewOutputFormat', () => {
+		it('should return gif if mime type is image/gif', () => {
+			const result = getPreviewOutputFormat('image/gif');
+			expect(result).toBe('gif');
+		});
+
+		it('should return png if mime type is image/png', () => {
+			const result = getPreviewOutputFormat('image/png');
+			expect(result).toBe('png');
+		});
+
+		it.each(['image/jpg', 'image/jpeg', 'any/other', 'image/svg'])(
+			'should return jpeg if mime type is not image/gif or image/png',
+			(mimeType) => {
+				const result = getPreviewOutputFormat(mimeType);
+				expect(result).toBe('jpeg');
+			}
+		);
 	});
 });

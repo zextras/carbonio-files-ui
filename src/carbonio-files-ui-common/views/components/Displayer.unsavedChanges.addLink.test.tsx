@@ -6,9 +6,8 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { screen } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { format } from 'date-fns';
-import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { DATE_TIME_FORMAT, DISPLAYER_TABS } from '../../constants';

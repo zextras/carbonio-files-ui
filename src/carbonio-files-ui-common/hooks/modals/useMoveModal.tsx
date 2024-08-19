@@ -21,7 +21,7 @@ export type OpenMoveModal = (
 export function useMoveModal(moveNodesActionCallback?: () => void): {
 	openMoveNodesModal: OpenMoveModal;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
@@ -46,26 +46,28 @@ export function useMoveModal(moveNodesActionCallback?: () => void): {
 						'You cannot move multiple items from a filter or a search'
 					),
 					replace: true,
-					type: 'error',
+					severity: 'error',
 					hideButton: true
 				});
 			}
 			if (folderToOpen) {
-				const closeModal = createModal(
+				const modalId = 'files-move-nodes-modal';
+				createModal(
 					{
+						id: modalId,
 						minHeight: '25rem',
 						maxHeight: '60vh',
 						onClose: () => {
 							resetAll();
-							closeModal();
+							closeModal(modalId);
 						},
 						onClick: resetCurrent,
 						children: (
 							<MoveNodesModalContent
 								closeAction={(): void => {
-									moveNodesActionCallback && moveNodesActionCallback();
+									moveNodesActionCallback?.();
 									resetAll();
-									closeModal();
+									closeModal(modalId);
 								}}
 								nodesToMove={nodes}
 								folderId={folderToOpen}
@@ -76,7 +78,7 @@ export function useMoveModal(moveNodesActionCallback?: () => void): {
 				);
 			}
 		},
-		[createModal, createSnackbar, moveNodesActionCallback, resetAll, resetCurrent, t]
+		[closeModal, createModal, createSnackbar, moveNodesActionCallback, resetAll, resetCurrent, t]
 	);
 
 	return { openMoveNodesModal };

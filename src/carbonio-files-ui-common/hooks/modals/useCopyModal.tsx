@@ -20,19 +20,21 @@ export type OpenCopyModal = (
 export function useCopyModal(copyNodesActionCallback?: () => void): {
 	openCopyNodesModal: OpenCopyModal;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 
 	const { resetAll, resetCurrent } = useDestinationVarManager<string>();
 
 	const openCopyNodesModal = useCallback<OpenCopyModal>(
 		(nodes, fromFolder) => {
-			const closeModal = createModal(
+			const modalId = 'files-copy-nodes-modal';
+			createModal(
 				{
+					id: modalId,
 					minHeight: '25rem',
 					maxHeight: '60vh',
 					onClose: () => {
 						resetAll();
-						closeModal();
+						closeModal(modalId);
 					},
 					onClick: resetCurrent,
 					children: (
@@ -40,7 +42,7 @@ export function useCopyModal(copyNodesActionCallback?: () => void): {
 							closeAction={(): void => {
 								copyNodesActionCallback && copyNodesActionCallback();
 								resetAll();
-								closeModal();
+								closeModal(modalId);
 							}}
 							nodesToCopy={nodes}
 							folderId={fromFolder}
@@ -50,7 +52,7 @@ export function useCopyModal(copyNodesActionCallback?: () => void): {
 				true
 			);
 		},
-		[createModal, resetCurrent, resetAll, copyNodesActionCallback]
+		[createModal, resetCurrent, resetAll, closeModal, copyNodesActionCallback]
 	);
 
 	return { openCopyNodesModal };

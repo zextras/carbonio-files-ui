@@ -24,7 +24,7 @@ const ActiveChip = styled(Chip)<{ $active: boolean }>`
 		getColor(`${background}.${$active ? 'active' : 'regular'}`, theme)};
 `;
 
-export interface ChipWithPopoverProps extends ChipProps {
+export interface ChipWithPopoverProps extends Omit<ChipProps, 'children'> {
 	onClose?: (event?: React.SyntheticEvent | KeyboardEvent) => void;
 	openPopoverOnClick?: boolean;
 	popoverOpen?: boolean;
@@ -64,7 +64,7 @@ export const ChipWithPopover = React.forwardRef<HTMLDivElement, ChipWithPopoverP
 
 		const onCloseChip = useCallback(
 			(ev: React.MouseEvent<HTMLButtonElement> | KeyboardEvent) => {
-				if (innerRef && innerRef.current) {
+				if (innerRef?.current) {
 					// required to close all opened popover
 					innerRef.current.click();
 				}

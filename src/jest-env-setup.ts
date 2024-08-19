@@ -11,6 +11,8 @@ import { Account } from '@zextras/carbonio-shell-ui';
 import dotenv from 'dotenv';
 import failOnConsole from 'jest-fail-on-console';
 import { noop } from 'lodash';
+// this can be removed once migrated to Node 22 (https://github.com/wojtekmaj/react-pdf/wiki/Upgrade-guide-from-version-8.x-to-9.x#dropped-support-for-older-browsers-and-nodejs-versions)
+import 'core-js/proposals/promise-with-resolvers';
 
 import buildClient from './carbonio-files-ui-common/apollo';
 import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar';
@@ -121,12 +123,10 @@ beforeAll(() => {
 	// https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 	Object.defineProperty(window, 'matchMedia', {
 		writable: true,
-		value: (query: string): MediaQueryList => ({
+		value: (query: string): Partial<MediaQueryList> => ({
 			matches: false,
 			media: query,
 			onchange: null,
-			addListener: noop, // Deprecated
-			removeListener: noop, // Deprecated
 			addEventListener: noop,
 			removeEventListener: noop,
 			dispatchEvent: () => true

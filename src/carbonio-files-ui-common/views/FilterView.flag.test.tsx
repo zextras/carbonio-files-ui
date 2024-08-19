@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -101,7 +101,7 @@ describe('Filter View', () => {
 				// right click to open contextual menu on first node
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodes[0].id));
 				// open context menu and click on unflag action
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
 				expect(unflagAction).toBeVisible();
 				await user.click(unflagAction);

@@ -5,20 +5,13 @@
  */
 import React from 'react';
 
-import {
-	act,
-	fireEvent,
-	screen,
-	waitFor,
-	waitForElementToBeRemoved,
-	within
-} from '@testing-library/react';
+import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { forEach, map, find } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../tests/utils';
 import { Node } from '../types/common';
@@ -79,8 +72,9 @@ describe('Filter View', () => {
 					await user.click(moreIconButton);
 					// wait for trash action to check that popper is open
 					const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
-					// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-					expect(trashAction).not.toHaveAttribute('disabled');
+					expect(trashAction).toHaveStyle({
+						color: COLORS.text.regular
+					});
 					expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
 				}
 			});
@@ -251,7 +245,7 @@ describe('Filter View', () => {
 				// right click to open contextual menu
 				const node1Item = screen.getByTestId(SELECTORS.nodeItem(nodes[0].id));
 				const node2Item = screen.getByTestId(SELECTORS.nodeItem(nodes[1].id));
-				fireEvent.contextMenu(node1Item);
+				await user.rightClick(node1Item);
 				// check that the flag action becomes visible (contextual menu of first node)
 				const flagAction1 = await screen.findByText(ACTION_REGEXP.flag);
 				act(() => {
@@ -260,7 +254,7 @@ describe('Filter View', () => {
 				});
 				expect(flagAction1).toBeVisible();
 				// right click on second node
-				fireEvent.contextMenu(node2Item);
+				await user.rightClick(node2Item);
 				// check that the unflag action becomes visible (contextual menu of second node)
 				const unflagAction2 = await screen.findByText(ACTION_REGEXP.unflag);
 				act(() => {
@@ -286,7 +280,7 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 				});
@@ -296,7 +290,7 @@ describe('Filter View', () => {
 
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				// wait for copy action to check that popper is open
 				await screen.findByText(ACTION_REGEXP.copy);
 				expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
@@ -338,7 +332,7 @@ describe('Filter View', () => {
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name, and it's located at same position
 				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
@@ -422,7 +416,7 @@ describe('Filter View', () => {
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name, and it is at same position in the filter list
 				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
@@ -522,7 +516,7 @@ describe('Filter View', () => {
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				await renameNode(newName, user);
 				// check the new item. It has the new name and its located at same position
 				const updatedNodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));

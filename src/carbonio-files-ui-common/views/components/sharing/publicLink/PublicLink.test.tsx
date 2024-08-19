@@ -578,7 +578,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			);
 			const urlElement = await screen.findByText(link.url as string);
 			await user.click(urlElement);
-			expect(copyToClipboardFn).not.toBeCalledWith(link.url);
+			expect(copyToClipboardFn).not.toHaveBeenCalledWith(link.url);
 		});
 
 		it('should copy the link when click on "COPY LINK" button on the snackbar', async () => {

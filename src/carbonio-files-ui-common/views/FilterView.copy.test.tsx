@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -424,7 +424,7 @@ describe('Filter View', () => {
 
 				// right click to open the contextual menu on folder
 				const nodeToCopyItem = await screen.findByText(nodeToCopy.name);
-				fireEvent.contextMenu(nodeToCopyItem);
+				await user.rightClick(nodeToCopyItem);
 				const copyAction = await screen.findByText(ACTION_REGEXP.copy);
 				expect(copyAction).toBeVisible();
 				await user.click(copyAction);

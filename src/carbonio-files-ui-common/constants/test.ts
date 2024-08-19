@@ -22,7 +22,8 @@ export const ACTION_REGEXP = {
 	goToFolder: /^go to destination folder$/i,
 	newDocument: /^new document$/i,
 	newPresentation: /^new presentation$/i,
-	newSpreadsheet: /^new spreadsheet$/i
+	newSpreadsheet: /^new spreadsheet$/i,
+	cloneVersion: /^clone as current$/i
 } as const;
 
 export const ICON_REGEXP = {
@@ -151,6 +152,18 @@ export const COLORS = {
 	dropzone: {
 		enabled: 'rgba(43, 115, 210, 0.4)',
 		disabled: 'rgba(130, 130, 130, 0.4)'
+	},
+	text: {
+		regular: '#333333',
+		disabled: '#cccccc'
+	},
+	dropdownItem: {
+		disabled: '#828282' // secondary.regular
+	},
+	shareChipPopover: {
+		disabled: '#828282', // secondary.regular
+		enabled: '#333333', // text.regular
+		active: '#2b73d2' // primary.regular
 	}
 };
 

@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { find, map } from 'lodash';
 
 import FolderView from './FolderView';
@@ -257,7 +257,7 @@ describe('Folder View', () => {
 			const nodeToMoveItem = within(screen.getByTestId(SELECTORS.list(currentFolder.id))).getByText(
 				node.name
 			);
-			fireEvent.contextMenu(nodeToMoveItem);
+			await user.rightClick(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/item moved/i);
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
