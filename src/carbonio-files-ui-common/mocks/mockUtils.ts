@@ -327,7 +327,7 @@ export function populateFile(id?: string, name?: string): MakeRequiredNonNull<Fi
 	const file: MakeRequiredNonNull<FilesFile, 'owner'> = {
 		...populateNodeFields(faker.helpers.arrayElement(types), id, name),
 		mime_type: mimeType,
-		size: faker.number.float(),
+		size: faker.number.int(),
 		extension: faker.system.commonFileExt(),
 		version: 1,
 		parent: populateFolder(),
