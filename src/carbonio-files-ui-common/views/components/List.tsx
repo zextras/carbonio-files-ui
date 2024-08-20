@@ -370,7 +370,7 @@ export const List: React.VFC<ListProps> = ({
 					const item = {
 						filename: node.name,
 						extension: node.extension ?? undefined,
-						size: (node.size !== undefined && humanFileSize(node.size)) || undefined,
+						size: (node.size !== undefined && humanFileSize(node.size, t)) || undefined,
 						actions: getHeaderActions(t, setActiveNode, node, canUseDocs),
 						closeAction: {
 							id: 'close-action',

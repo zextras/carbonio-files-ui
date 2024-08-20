@@ -238,7 +238,7 @@ describe('Node List Item', () => {
 				</ListContext.Provider>
 			);
 			expect(screen.getByText(node.extension as string)).toBeVisible();
-			expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
+			expect(screen.getByText(humanFileSize(node.size, undefined))).toBeVisible();
 		});
 
 		test('owner is visible if different from logged user', () => {

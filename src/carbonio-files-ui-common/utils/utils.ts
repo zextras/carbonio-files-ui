@@ -11,7 +11,7 @@ import { NetworkError } from '@apollo/client/errors';
 import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
-import { chain, findIndex, forEach, isEmpty, map, reduce, size, toLower, trim } from 'lodash';
+import { chain, findIndex, forEach, isEmpty, map, reduce, toLower, trim } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
 import {
@@ -53,16 +53,21 @@ import type { NodeListItemUIProps } from '../views/components/NodeListItemUI';
 /**
  * Format a size in byte as human-readable
  */
-export const humanFileSize = (inputSize: number): string => {
+export const humanFileSize = (inputSize: number, t: TFunction | undefined): string => {
+	const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 	if (inputSize === 0) {
-		return '0 B';
+		const unit = units[0];
+		const unitTranslated = t ? t('size.unitMeasure', { context: unit, defaultValue: unit }) : unit;
+		return `0 ${unitTranslated}`;
 	}
 	const i = Math.floor(Math.log(inputSize) / Math.log(1024));
-	const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 	if (i >= units.length) {
 		throw new Error('Unsupported inputSize');
 	}
-	return `${(inputSize / 1024 ** i).toFixed(2).toString()} ${units[i]}`;
+	const unit = units[i >= 0 ? i : 0];
+	const unitTranslated = t ? t('size.unitMeasure', { context: unit, defaultValue: unit }) : unit;
+	const size = (inputSize / 1024 ** i).toFixed(2).toString();
+	return `${size} ${unitTranslated}`;
 };
 
 function getIconByRootId(rootId: Maybe<string> | undefined): keyof DefaultTheme['icons'] {
@@ -682,7 +687,7 @@ export async function scan(item: FileSystemEntry): Promise<TreeNode> {
 			// https://eslint.org/docs/latest/rules/no-await-in-loop#:~:text=In%20many%20cases%20the%20iterations%20of%20a%20loop%20are%20not%20actually%20independent%20of%20each%2Dother.%20For%20example%2C%20the%20output%20of%20one%20iteration%20might%20be%20used%20as%20the%20input%20to%20another
 			// eslint-disable-next-line no-await-in-loop
 			const newEntries = await readEntries(directoryReader);
-			if (size(newEntries) === 0) {
+			if (newEntries.length === 0) {
 				flag = false;
 			} else {
 				entries.push(...newEntries);

@@ -261,7 +261,7 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 										disabled={disabled}
 										size="extrasmall"
 									>
-										{humanFileSize(size)}
+										{humanFileSize(size, t)}
 									</UppercaseText>
 								)}
 							</GridItem>

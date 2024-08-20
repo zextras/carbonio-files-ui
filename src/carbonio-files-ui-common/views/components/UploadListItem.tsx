@@ -149,7 +149,7 @@ export const UploadListItem = React.memo<UploadListItemProps>(
 							>
 								{size !== undefined && (
 									<UppercaseText size="extrasmall" overflow="ellipsis" color="gray1">
-										{humanFileSize(size)}
+										{humanFileSize(size, t)}
 									</UppercaseText>
 								)}
 							</Container>

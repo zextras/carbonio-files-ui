@@ -67,7 +67,7 @@ describe('Upload List Item Wrapper', () => {
 		);
 		expect(destinationFolderItem).toBeVisible();
 		if (file.file) {
-			expect(screen.getByText(humanFileSize(file.file.size))).toBeVisible();
+			expect(screen.getByText(humanFileSize(file.file.size, undefined))).toBeVisible();
 		}
 		expect(screen.getByText(new RegExp(`${file.progress}\\s*%`, 'm'))).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();

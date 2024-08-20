@@ -283,7 +283,7 @@ export const VersionRow: React.VFC<{
 				$columnStart={4}
 				$columnEnd={5}
 			>
-				<CustomText>{humanFileSize(size)}</CustomText>
+				<CustomText>{humanFileSize(size, t)}</CustomText>
 			</GridItem>
 			<GridItem
 				data-testid={`version${version}-icons`}

@@ -140,7 +140,7 @@ export const UploadDisplayerNode = ({
 							<TextRowWithShim
 								loading={false}
 								label={t('displayer.details.size', 'Size')}
-								content={humanFileSize(uploadItem.file.size ?? 0)}
+								content={humanFileSize(uploadItem.file.size ?? 0, t)}
 								shimmerWidth="5rem"
 							/>
 						)}
