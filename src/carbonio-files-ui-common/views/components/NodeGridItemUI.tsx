@@ -164,12 +164,6 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 		[createImgSrc]
 	);
 
-	const preventTextSelection = useCallback<React.MouseEventHandler>((e: React.MouseEvent): void => {
-		if (e.detail > 1) {
-			e.preventDefault();
-		}
-	}, []);
-
 	const [previewFailed, setPreviewFailed] = useState(false);
 
 	const onPreviewError = useCallback(() => {
@@ -179,22 +173,22 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 	const [t] = useTranslation();
 
 	return (
-		<ContainerCell
-			$showPreview={showPreview}
-			height={showPreview ? 'fill' : 'fit'}
-			// id required for scrollToNodeItem function
-			id={id}
-			$contextualMenuActive={listItemContainerContextualMenuActive}
-			$disableHover={listItemContainerDisableHover}
-			$disabled={disabled}
-			onClick={listItemContainerOnClick}
-			onDoubleClick={listItemContainerOnDoubleClick}
+		<ContextualMenu
+			disabled={contextualMenuDisabled}
+			onOpen={contextualMenuOnOpen}
+			onClose={contextualMenuOnClose}
+			actions={contextualMenuActions}
 		>
-			<ContextualMenu
-				disabled={contextualMenuDisabled}
-				onOpen={contextualMenuOnOpen}
-				onClose={contextualMenuOnClose}
-				actions={contextualMenuActions}
+			<ContainerCell
+				$showPreview={showPreview}
+				height={showPreview ? 'fill' : 'fit'}
+				// id required for scrollToNodeItem function
+				id={id}
+				$contextualMenuActive={listItemContainerContextualMenuActive}
+				$disableHover={listItemContainerDisableHover}
+				$disabled={disabled}
+				onClick={listItemContainerOnClick}
+				onDoubleClick={listItemContainerOnDoubleClick}
 			>
 				<Container background={'gray5'}>
 					{showPreview && (
@@ -346,7 +340,7 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 						</FooterGrid>
 					</HoverContainer>
 				</Container>
-			</ContextualMenu>
-		</ContainerCell>
+			</ContainerCell>
+		</ContextualMenu>
 	);
 };

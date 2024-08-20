@@ -108,6 +108,7 @@ export const NodeListItem = ({
 		[draggedItems, node]
 	);
 	const [t] = useTranslation();
+	const theme = useTheme();
 
 	const props = nodeToNodeListItemUIProps(node, t, me);
 
@@ -115,6 +116,14 @@ export const NodeListItem = ({
 	const size = useMemo(() => (isFile(node) && node.size) || undefined, [node]);
 	const version = useMemo(() => (isFile(node) && node.version) || undefined, [node]);
 	const trashed = useMemo(() => node.rootId === ROOTS.TRASH, [node.rootId]);
+	const icon = useMemo(
+		() => getIconByFileType(node.type, mimeType ?? node.id),
+		[mimeType, node.id, node.type]
+	);
+	const color = useMemo(
+		() => getIconColorByFileType(node.type, mimeType ?? node.id, theme),
+		[mimeType, node.id, node.type, theme]
+	);
 
 	const { add } = useUpload();
 	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
@@ -144,8 +153,6 @@ export const NodeListItem = ({
 		},
 		[node.id, selectId]
 	);
-
-	const theme = useTheme();
 
 	const createSnackbar = useSnackbar();
 
@@ -540,8 +547,8 @@ export const NodeListItem = ({
 				viewMode === VIEW_MODE.grid ? (
 					<NodeGridItemUI
 						{...props}
-						icon={getIconByFileType(node.type, mimeType ?? node.id)}
-						color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
+						icon={icon}
+						color={color}
 						showPreview={isFile(node)}
 						disabled={isDragged}
 						trashed={trashed && isSearchView(location)}
@@ -569,8 +576,8 @@ export const NodeListItem = ({
 								compact={false}
 								disabled={isDragged}
 								selectable
-								icon={getIconByFileType(node.type, mimeType ?? node.id)}
-								color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
+								icon={icon}
+								color={color}
 							/>
 						}
 					/>
@@ -602,8 +609,8 @@ export const NodeListItem = ({
 								compact={false}
 								disabled={isDragged}
 								selectable
-								icon={getIconByFileType(node.type, mimeType ?? node.id)}
-								color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
+								icon={icon}
+								color={color}
 								picture={createImgSrc({ width: 80, height: 80 })}
 							/>
 						}

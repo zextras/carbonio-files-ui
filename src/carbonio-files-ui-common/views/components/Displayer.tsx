@@ -43,7 +43,7 @@ export const Displayer: React.VFC<DisplayerProps> = ({ translationKey, icons = [
 					(itemTop > mainTop && itemBottom > mainBottom) ||
 					(itemTop < mainTop && itemBottom < mainBottom)
 				) {
-					scrollToNodeItem(nodeId, undefined);
+					scrollToNodeItem(nodeId);
 				}
 			}
 		}
