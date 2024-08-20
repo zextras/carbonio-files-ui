@@ -27,7 +27,7 @@ import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-ty
 import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uploadUtils';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
-import { PrimaryBarElement } from './components/PrimaryBarElement';
+import { PrimaryBadgeUpdater } from './components/PrimaryBadgeUpdater';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
@@ -105,7 +105,7 @@ export default function App(): React.JSX.Element {
 			position: 500,
 			visible: true,
 			label: t('label.app_name', 'Files'),
-			primaryBar: PrimaryBarElement,
+			primaryBar: 'DriveOutline',
 			secondaryBar: SidebarView,
 			appView: AppView
 		});
@@ -135,6 +135,7 @@ export default function App(): React.JSX.Element {
 		<ApolloProvider client={apolloClient}>
 			<ModalManager>
 				<IntegrationsRegisterer />
+				<PrimaryBadgeUpdater />
 			</ModalManager>
 		</ApolloProvider>
 	);
