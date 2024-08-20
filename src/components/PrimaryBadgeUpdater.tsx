@@ -7,7 +7,6 @@ import { useEffect, useMemo } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { updatePrimaryBadge } from '@zextras/carbonio-shell-ui';
-import { find } from 'lodash';
 
 import { uploadVar } from '../carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
@@ -16,7 +15,7 @@ import { UploadStatus } from '../carbonio-files-ui-common/types/graphql/client-t
 export const PrimaryBadgeUpdater = (): null => {
 	const uploadStatus = useReactiveVar(uploadVar);
 	const isUploadFailed = useMemo(
-		() => find(uploadStatus, (item) => item.status === UploadStatus.FAILED) !== undefined,
+		() => Object.values(uploadStatus).some((item) => item.status === UploadStatus.FAILED),
 		[uploadStatus]
 	);
 
