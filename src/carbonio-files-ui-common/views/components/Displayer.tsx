@@ -39,11 +39,10 @@ export const Displayer: React.VFC<DisplayerProps> = ({ translationKey, icons = [
 			if (element && main) {
 				const { top: itemTop, bottom: itemBottom } = element.getBoundingClientRect();
 				const { bottom: mainBottom, top: mainTop } = main.getBoundingClientRect();
-				if (
-					(itemTop > mainTop && itemBottom > mainBottom) ||
-					(itemTop < mainTop && itemBottom < mainBottom)
-				) {
+				if (itemTop > mainBottom || itemBottom <= mainTop) {
 					scrollToNodeItem(nodeId);
+				} else if (itemTop > mainTop && itemBottom > mainBottom) {
+					scrollToNodeItem(nodeId, 'end');
 				}
 			}
 		}

@@ -66,7 +66,7 @@ export const useCreateDocsFile = (): UseCreateDocsFileReturnType => {
 				.then((result) => {
 					if (result.data.getNode?.parent && isFolder(result.data.getNode.parent)) {
 						const { isLast } = addNodeToFolder(result.data.getNode.parent, result.data.getNode);
-						scrollToNodeItem(result.data.getNode.id, isLast);
+						scrollToNodeItem(result.data.getNode.id, isLast ? 'end' : 'center');
 					}
 					return result;
 				})

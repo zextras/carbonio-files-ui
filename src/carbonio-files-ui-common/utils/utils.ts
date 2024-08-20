@@ -357,28 +357,26 @@ export const inputElement = ((): HTMLInputElement => {
 	return input;
 })();
 
-const scrollIntoView = (element: HTMLElement | null, isLast: boolean): void => {
+const scrollIntoView = (
+	element: HTMLElement | null,
+	scrollLogicalPosition: ScrollLogicalPosition
+): void => {
 	if (element) {
-		let options: ScrollIntoViewOptions = { block: 'center' };
-		// if last element, leave it at the end of the screen to not trigger loadMore
-		if (isLast) {
-			options = { ...options, block: 'end' };
-		}
-		element.scrollIntoView(options);
+		element.scrollIntoView({ block: scrollLogicalPosition });
 	}
 };
 
 export const scrollToNodeItem = (
 	nodeId: string,
-	isLast = false,
+	scrollLogicalPosition: ScrollLogicalPosition = 'center',
 	timeout: number = TIMERS.DELAY_WAIT_RENDER_AND_PRAY
 ): void => {
 	const element = window.document.getElementById(nodeId);
 	if (element) {
-		scrollIntoView(element, isLast);
+		scrollIntoView(element, scrollLogicalPosition);
 	} else {
 		setTimeout(() => {
-			scrollIntoView(window.document.getElementById(nodeId), isLast);
+			scrollIntoView(window.document.getElementById(nodeId), scrollLogicalPosition);
 		}, timeout);
 	}
 };
