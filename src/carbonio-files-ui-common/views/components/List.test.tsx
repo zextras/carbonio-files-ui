@@ -69,6 +69,7 @@ describe('List', () => {
 			node.mime_type = 'application/pdf';
 			node.type = NodeType.Application;
 			node.extension = 'pdf';
+			node.size = 5000;
 
 			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
 			await user.dblClick(screen.getByText(node.name));
@@ -105,6 +106,7 @@ describe('List', () => {
 			node.mime_type = 'application/vnd.oasis.opendocument.text';
 			node.type = NodeType.Text;
 			node.extension = 'odt';
+			node.size = 5000;
 
 			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
 			await user.dblClick(screen.getByText(node.name));

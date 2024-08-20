@@ -83,7 +83,7 @@ describe('Node Details', () => {
 			screen.getByText(formatDate(node.created_at, undefined, DATE_TIME_FORMAT))
 		).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
-		expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
+		expect(screen.getByText(humanFileSize(node.size, undefined))).toBeVisible();
 	});
 
 	test('Show folder info', () => {

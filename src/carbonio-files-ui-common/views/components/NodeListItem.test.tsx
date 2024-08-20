@@ -207,7 +207,7 @@ describe('Node List Item', () => {
 		const node = populateFile();
 		setup(<NodeListItem node={node} {...getMissingProps()} />);
 		expect(screen.getByText(node.extension as string)).toBeVisible();
-		expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
+		expect(screen.getByText(humanFileSize(node.size, undefined))).toBeVisible();
 	});
 
 	test('owner is visible if different from logged user', () => {
