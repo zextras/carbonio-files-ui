@@ -359,8 +359,6 @@ describe('AppView', () => {
 			const folder = populateFolder();
 			const node1 = populateNode();
 			folder.children = populateNodePage([node1]);
-			const node1Updated = { ...node1, name: 'the new name' };
-			const folderUpdated = { ...folder, children: populateNodePage([node1Updated]) };
 			const emitter = new EventEmitter();
 			server.use(
 				graphql.query(
@@ -377,7 +375,7 @@ describe('AppView', () => {
 					await delayUntil(emitter, EMITTER_CODES.never);
 					return HttpResponse.json({
 						data: {
-							getNode: folderUpdated
+							getNode: folder
 						}
 					});
 				}),
@@ -409,7 +407,7 @@ describe('AppView', () => {
 					await delayUntil(emitter, EMITTER_CODES.never);
 					return HttpResponse.json({
 						data: {
-							getNode: node1Updated
+							getNode: node1
 						}
 					});
 				})

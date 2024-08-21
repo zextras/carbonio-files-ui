@@ -12,6 +12,8 @@ import { find, map } from 'lodash';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
 import * as actualNetworkModule from '../../network/network';
+import { viewModeVar } from '../apollo/viewModeVar';
+import { VIEW_MODE } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	populateFile,
@@ -106,6 +108,84 @@ describe('Folder View', () => {
 	});
 
 	describe('Displayer', () => {
+		it('should not show displayer in grid mode if there is no active node', async () => {
+			viewModeVar(VIEW_MODE.grid);
+			const currentFolder = populateFolder(2);
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder]
+					}),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
+			});
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			expect(screen.queryByTestId(SELECTORS.displayer)).not.toBeInTheDocument();
+		});
+
+		it('should show displayer details in grid mode when click on a node', async () => {
+			viewModeVar(VIEW_MODE.grid);
+			const currentFolder = populateFolder(2);
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder],
+						getNode: [currentFolder.children.nodes[0] as Node]
+					}),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
+			});
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(screen.getByText((currentFolder.children.nodes[0] as Node).name));
+			expect(
+				within(await screen.findByTestId(SELECTORS.displayer)).getByText(/details/i)
+			).toBeVisible();
+		});
+
+		it('should hide the displayer in grid mode when closed', async () => {
+			viewModeVar(VIEW_MODE.grid);
+			const currentFolder = populateFolder(2);
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder],
+						getNode: [currentFolder.children.nodes[0] as Node]
+					}),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [
+					`/?folder=${currentFolder.id}&node=${(currentFolder.children.nodes[0] as Node).id}`
+				],
+				mocks
+			});
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(
+				within(screen.getByTestId(SELECTORS.displayer)).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.close
+				})
+			);
+			expect(screen.queryByTestId(SELECTORS.displayer)).not.toBeInTheDocument();
+		});
+
 		test('Single click on a node opens the details tab on displayer', async () => {
 			const currentFolder = populateFolder(2);
 			const mocks = {
@@ -243,7 +323,7 @@ describe('Folder View', () => {
 
 	test('should show the list of valid nodes even if the children include some invalid node', async () => {
 		const folder = populateFolder(2);
-		const node = populateNode();
+		const node = populateFile();
 		folder.children.nodes.push(null, node);
 		const mocks = {
 			Query: {

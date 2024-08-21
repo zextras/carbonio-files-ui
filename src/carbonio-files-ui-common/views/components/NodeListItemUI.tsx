@@ -15,16 +15,11 @@ import {
 	Text
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
-import { HoverContainer, ListItemContainer } from './StyledComponents';
+import { HoverContainer, ListItemContainer, UppercaseText } from './StyledComponents';
 import { LIST_ITEM_AVATAR_HEIGHT, LIST_ITEM_HEIGHT } from '../../constants';
 import { humanFileSize, cssCalcBuilder } from '../../utils/utils';
-
-const CustomText = styled(Text)`
-	text-transform: uppercase;
-`;
 
 export interface NodeListItemUIProps {
 	id: string;
@@ -82,7 +77,8 @@ export const NodeListItemUI = ({
 		}
 	}, []);
 	return (
-		<Container data-testid={id}>
+		// id required for scrollToNodeItem function
+		<Container id={id}>
 			<ContextualMenu
 				disabled={contextualMenuDisabled}
 				onOpen={contextualMenuOnOpen}
@@ -170,14 +166,14 @@ export const NodeListItemUI = ({
 									orientation="horizontal"
 									width="fit"
 								>
-									<CustomText color="gray1" disabled={disabled} size="small">
+									<UppercaseText color="gray1" disabled={disabled} size="small">
 										{extensionOrType}
-									</CustomText>
+									</UppercaseText>
 									{size && (
 										<Padding left="small">
-											<CustomText color="gray1" disabled={disabled} size="small">
+											<UppercaseText color="gray1" disabled={disabled} size="small">
 												{humanFileSize(size, t)}
-											</CustomText>
+											</UppercaseText>
 										</Padding>
 									)}
 								</Container>

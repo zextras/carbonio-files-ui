@@ -81,7 +81,9 @@ export const ICON_REGEXP = {
 	alertQuota: 'icon: CloseCircleOutline',
 	errorSnackbar: 'icon: CloseCircleOutline',
 	openedAdvancedFilters: 'icon: ChevronUp',
-	closedAdvancedFilters: 'icon: ChevronDown'
+	closedAdvancedFilters: 'icon: ChevronDown',
+	listViewMode: 'icon: ListOutline',
+	gridViewMode: 'icon: GridOutline'
 } as const;
 
 export const SELECTORS = {
@@ -128,7 +130,10 @@ export const SELECTORS = {
 	avatar: 'avatar',
 	customBreadcrumbs: 'customBreadcrumbs',
 	missingFilter: 'missing-filter',
-	popper: 'popper'
+	popper: 'popper',
+	mainList: 'main-list',
+	mainGrid: 'main-grid',
+	gridCellThumbnail: 'grid-cell-thumbnail'
 };
 
 export const EMITTER_CODES = {

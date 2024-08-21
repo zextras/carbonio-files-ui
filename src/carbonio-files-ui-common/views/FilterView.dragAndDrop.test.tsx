@@ -171,7 +171,7 @@ describe('Filter View', () => {
 			const currentFilter = populateNodes(2);
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_file = true;
-			currentFilter.push(destinationFolder);
+			currentFilter.unshift(destinationFolder);
 			const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 			forEach(uploadedFiles, (file) => {
 				file.parent = destinationFolder;
@@ -212,7 +212,7 @@ describe('Filter View', () => {
 			const currentFilter = populateNodes(2);
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_file = false;
-			currentFilter.push(destinationFolder);
+			currentFilter.unshift(destinationFolder);
 			const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 			forEach(uploadedFiles, (file) => {
 				file.parent = destinationFolder;
@@ -254,7 +254,7 @@ describe('Filter View', () => {
 			const currentFilter = populateNodes(2);
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_file = true;
-			currentFilter.push(destinationFolder);
+			currentFilter.unshift(destinationFolder);
 			const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 			forEach(uploadedFiles, (file) => {
 				file.parent = destinationFolder;
@@ -305,7 +305,7 @@ describe('Filter View', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFilter.push(destinationFolder);
+			currentFilter.unshift(destinationFolder);
 
 			const mocks = {
 				Query: {
@@ -320,7 +320,7 @@ describe('Filter View', () => {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
 			});
 
-			const itemToDrag = await screen.findByText(currentFilter[0].name);
+			const itemToDrag = await screen.findByText(currentFilter[1].name);
 
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			forEach(nodesToDrag, (node) => {
@@ -356,11 +356,11 @@ describe('Filter View', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFilter.push(destinationFolder);
+			currentFilter.unshift(destinationFolder);
 			const folderWithoutPermission = populateFolder();
 			folderWithoutPermission.permissions.can_write_folder = false;
 			folderWithoutPermission.permissions.can_write_file = false;
-			currentFilter.push(folderWithoutPermission);
+			currentFilter.unshift(folderWithoutPermission);
 
 			const mocks = {
 				Query: {
@@ -447,11 +447,11 @@ describe('Filter View', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFilter.push(destinationFolder);
+			currentFilter.unshift(destinationFolder);
 			const folderWithoutPermission = populateFolder();
 			folderWithoutPermission.permissions.can_write_folder = false;
 			folderWithoutPermission.permissions.can_write_file = false;
-			currentFilter.push(folderWithoutPermission);
+			currentFilter.unshift(folderWithoutPermission);
 
 			const mocks = {
 				Query: {
@@ -521,7 +521,7 @@ describe('Filter View', () => {
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
 			destinationFolder.parent = parent;
-			currentFilter.push(destinationFolder);
+			currentFilter.unshift(destinationFolder);
 
 			const mocks = {
 				Query: {
@@ -541,7 +541,7 @@ describe('Filter View', () => {
 				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 			});
 
-			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
+			const itemToDrag = await screen.findByText(nodesToDrag[1].name);
 			await selectNodes(
 				map(nodesToDrag, (node) => node.id),
 				user

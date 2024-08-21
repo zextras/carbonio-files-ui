@@ -189,7 +189,7 @@ describe('Drag and drop', () => {
 		const destinationFolder = populateFolder();
 		destinationFolder.permissions.can_write_file = true;
 		destinationFolder.parent = { ...currentFolder, children: { nodes: [] } } as Folder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 		const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 		forEach(uploadedFiles, (file) => {
 			file.parent = destinationFolder;
@@ -249,7 +249,7 @@ describe('Drag and drop', () => {
 		const destinationFolder = populateFolder();
 		destinationFolder.permissions.can_write_file = false;
 		destinationFolder.parent = { ...currentFolder, children: { nodes: [] } } as Folder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 		const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 		forEach(uploadedFiles, (file) => {
 			file.parent = destinationFolder;
@@ -389,12 +389,12 @@ describe('Drag and drop', () => {
 		destinationFolder.permissions.can_write_folder = true;
 		destinationFolder.permissions.can_write_file = true;
 		destinationFolder.parent = currentFolder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 		const folderWithoutPermission = populateFolder();
 		folderWithoutPermission.permissions.can_write_folder = false;
 		folderWithoutPermission.permissions.can_write_file = false;
 		folderWithoutPermission.parent = currentFolder;
-		currentFolder.children.nodes.push(folderWithoutPermission);
+		currentFolder.children.nodes.unshift(folderWithoutPermission);
 
 		const mocks = {
 			Query: {
@@ -473,12 +473,12 @@ describe('Drag and drop', () => {
 		destinationFolder.permissions.can_write_folder = true;
 		destinationFolder.permissions.can_write_file = true;
 		destinationFolder.parent = currentFolder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 		const folderWithoutPermission = populateFolder();
 		folderWithoutPermission.permissions.can_write_folder = false;
 		folderWithoutPermission.permissions.can_write_file = false;
 		folderWithoutPermission.parent = currentFolder;
-		currentFolder.children.nodes.push(folderWithoutPermission);
+		currentFolder.children.nodes.unshift(folderWithoutPermission);
 
 		const mocks = {
 			Query: {
@@ -541,7 +541,7 @@ describe('Drag and drop', () => {
 		destinationFolder.permissions.can_write_folder = true;
 		destinationFolder.permissions.can_write_file = true;
 		destinationFolder.parent = currentFolder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 
 		const mocks = {
 			Query: {

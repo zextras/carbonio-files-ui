@@ -4,28 +4,48 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
-import { forEach, map, filter, includes } from 'lodash';
-import styled from 'styled-components';
+import { forEach, filter, includes } from 'lodash';
+import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
 import { NodeListItem } from './NodeListItem';
 import { NodeListItemDragImage } from './NodeListItemDragImage';
+import { GridItem } from './StyledComponents';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { DRAG_TYPES, LIST_ITEM_HEIGHT } from '../../constants';
+import { DRAG_TYPES, GRID_ITEM_MIN_WIDTH, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
+import { ListContext } from '../../contexts';
 import { Action, NodeListItemType } from '../../types/common';
 import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
 import { cssCalcBuilder } from '../../utils/utils';
 
-const DragImageContainer = styled.div`
+const DragImageContainer = styled.div<{ $isGrid: boolean }>`
 	position: absolute;
 	top: -5000px;
 	left: -5000px;
 	transform: translate(-100%, -100%);
 	width: 100%;
+	${({ $isGrid }): false | ReturnType<typeof css> =>
+		$isGrid &&
+		css`
+			display: grid;
+			grid-gap: 1rem;
+			grid-template-columns: repeat(auto-fill, minmax(${GRID_ITEM_MIN_WIDTH}, 1fr));
+		`};
+`;
+
+const Grid = styled(ListV2)`
+	& > div {
+		padding-left: 1rem;
+		padding-right: 1rem;
+		padding-top: 1rem;
+		display: grid;
+		grid-gap: 1rem;
+		grid-template-columns: repeat(auto-fill, minmax(${GRID_ITEM_MIN_WIDTH}, 1fr));
+	}
 `;
 
 interface ListContentProps {
@@ -53,6 +73,8 @@ export const ListContent = ({
 	selectionContextualMenuActionsItems,
 	fillerWithActions
 }: ListContentProps): React.JSX.Element => {
+	const { viewMode } = useContext(ListContext);
+
 	const dragImageRef = useRef<HTMLDivElement>(null);
 
 	const { me } = useUserInfo();
@@ -71,7 +93,6 @@ export const ListContent = ({
 				} else {
 					nodesToDrag.push(node);
 				}
-				const draggedItemsTmp: React.JSX.Element[] = [];
 				const permittedActions = getPermittedActions(
 					nodesToDrag,
 					[Action.Move, Action.MoveToTrash],
@@ -80,11 +101,28 @@ export const ListContent = ({
 					undefined,
 					customCheckers
 				);
-				forEach(nodesToDrag, (nodeToDrag) => {
-					draggedItemsTmp.push(
-						<NodeListItemDragImage node={nodeToDrag} key={`dragged-${nodeToDrag.id}`} />
-					);
-				});
+
+				const draggedItemsTmp = nodesToDrag.reduce<React.JSX.Element[]>(
+					(accumulator, nodeToDrag, currentIndex) => {
+						if (
+							currentIndex > 0 &&
+							((nodeToDrag.__typename === 'File' &&
+								nodesToDrag[currentIndex - 1].__typename === 'Folder') ||
+								(nodeToDrag.__typename === 'Folder' &&
+									nodesToDrag[currentIndex - 1].__typename === 'File'))
+						) {
+							accumulator.push(
+								<GridItem key={'grid-row-filler'} height={0} $columnStart={1} $columnEnd={-1} />
+							);
+						}
+						accumulator.push(
+							<NodeListItemDragImage node={nodeToDrag} key={`dragged-${nodeToDrag.id}`} />
+						);
+						return accumulator;
+					},
+					[]
+				);
+
 				setDragImage(draggedItemsTmp);
 				dragImageRef.current && event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
 				draggedItemsVar(nodesToDrag);
@@ -106,25 +144,37 @@ export const ListContent = ({
 	const intersectionObserverInitOptions = useMemo(() => ({ threshold: 0.5 }), []);
 
 	const items = useMemo(() => {
-		const nodeElements = map(nodes, (node) => (
-			<Draggable
-				onDragStart={dragStartHandler(node)}
-				onDragEnd={dragEndHandler}
-				key={node.id}
-				effect="move"
-			>
-				<NodeListItem
-					node={node}
-					isSelected={selectedMap && selectedMap[node.id]}
-					isSelectionModeActive={isSelectionModeActive}
-					selectId={selectId}
-					exitSelectionMode={exitSelectionMode}
-					selectionContextualMenuActionsItems={
-						selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
-					}
-				/>
-			</Draggable>
-		));
+		const nodeElements = nodes.reduce<React.JSX.Element[]>((accumulator, node, currentIndex) => {
+			if (
+				currentIndex > 0 &&
+				((node.__typename === 'File' && nodes[currentIndex - 1].__typename === 'Folder') ||
+					(node.__typename === 'Folder' && nodes[currentIndex - 1].__typename === 'File'))
+			) {
+				accumulator.push(
+					<GridItem key={'grid-row-filler'} height={0} $columnStart={1} $columnEnd={-1} />
+				);
+			}
+			accumulator.push(
+				<Draggable
+					onDragStart={dragStartHandler(node)}
+					onDragEnd={dragEndHandler}
+					key={node.id}
+					effect="move"
+				>
+					<NodeListItem
+						node={node}
+						isSelected={selectedMap && selectedMap[node.id]}
+						isSelectionModeActive={isSelectionModeActive}
+						selectId={selectId}
+						exitSelectionMode={exitSelectionMode}
+						selectionContextualMenuActionsItems={
+							selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
+						}
+					/>
+				</Draggable>
+			);
+			return accumulator;
+		}, []);
 
 		if (fillerWithActions && !hasMore) {
 			nodeElements.push(
@@ -151,17 +201,31 @@ export const ListContent = ({
 
 	return (
 		<>
-			<ListV2
-				maxHeight={'100%'}
-				height={'auto'}
-				data-testid="main-list"
-				background={'gray6'}
-				onListBottom={hasMore ? loadMore : undefined}
-				intersectionObserverInitOptions={intersectionObserverInitOptions}
-			>
-				{items}
-			</ListV2>
-			<DragImageContainer ref={dragImageRef}>{dragImage}</DragImageContainer>
+			{viewMode === VIEW_MODE.grid ? (
+				<Grid
+					height={'auto'}
+					maxHeight={'100%'}
+					data-testid={'main-grid'}
+					onListBottom={hasMore ? loadMore : undefined}
+					intersectionObserverInitOptions={intersectionObserverInitOptions}
+				>
+					{items}
+				</Grid>
+			) : (
+				<ListV2
+					maxHeight={'100%'}
+					height={'auto'}
+					data-testid="main-list"
+					background={'gray6'}
+					onListBottom={hasMore ? loadMore : undefined}
+					intersectionObserverInitOptions={intersectionObserverInitOptions}
+				>
+					{items}
+				</ListV2>
+			)}
+			<DragImageContainer $isGrid={viewMode === VIEW_MODE.grid} ref={dragImageRef}>
+				{dragImage}
+			</DragImageContainer>
 		</>
 	);
 };

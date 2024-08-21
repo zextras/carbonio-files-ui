@@ -12,6 +12,7 @@ import { Displayer } from './Displayer';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
+	populateFile,
 	populateFolder,
 	populateNode,
 	populateNodePage,
@@ -40,7 +41,7 @@ import { getChipLabel } from '../../utils/utils';
 
 describe('Displayer', () => {
 	test('Copy action open copy modal', async () => {
-		const node = populateNode();
+		const node = populateFile();
 		const parent = populateFolder(1);
 		parent.permissions.can_write_file = true;
 		parent.permissions.can_write_folder = true;

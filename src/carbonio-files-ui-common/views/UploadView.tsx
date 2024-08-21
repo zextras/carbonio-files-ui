@@ -6,17 +6,18 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system';
+import { Snackbar } from '@zextras/carbonio-design-system';
 import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { OverQuotaBanner } from './components/OverQuotaBanner';
 import { UploadDisplayer } from './components/UploadDisplayer';
 import { UploadList } from './components/UploadList';
+import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
-import { DISPLAYER_WIDTH, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
+import { FILES_APP_ID, ROOTS, VIEW_MODE } from '../constants';
 import { ListContext } from '../contexts';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import { useUpload } from '../hooks/useUpload';
@@ -32,8 +33,6 @@ const UploadView: React.VFC = () => {
 	const { add } = useUpload();
 
 	const [showUploadSnackbar, setShowUploadSnackbar] = useState(false);
-
-	const [isEmpty, setIsEmpty] = useState(true);
 
 	const closeUploadSnackbar = useCallback(() => {
 		setShowUploadSnackbar(false);
@@ -189,51 +188,26 @@ const UploadView: React.VFC = () => {
 		t
 	]);
 
-	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
-		() => ({ isEmpty, setIsEmpty }),
-		[isEmpty]
+	const listContextValue = useMemo<Partial<React.ContextType<typeof ListContext>>>(
+		() => ({
+			viewMode: VIEW_MODE.list
+		}),
+		[]
 	);
 
 	return (
-		<ListContext.Provider value={listContextValue}>
+		<>
 			<OverQuotaBanner />
-			<Container
-				orientation="row"
-				crossAlignment="flex-start"
-				mainAlignment="flex-start"
-				width="fill"
-				height="fill"
-				background={'gray5'}
-				borderRadius="none"
-				maxHeight="100%"
-			>
-				<Responsive mode="desktop">
-					<Container
-						width={LIST_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="unset"
-						borderRadius="none"
-						background={'gray6'}
-					>
-						<UploadList />
-					</Container>
-					<Container
-						width={DISPLAYER_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="flex-start"
-						borderRadius="none"
-						style={{ maxHeight: '100%' }}
-					>
-						<UploadDisplayer
-							translationKey="displayer.uploads"
-							icons={['ImageOutline', 'FileAddOutline', 'FilmOutline']}
-						/>
-					</Container>
-				</Responsive>
-				<Responsive mode="mobile">
-					<UploadList />
-				</Responsive>
-			</Container>
+			<ViewLayout
+				listComponent={<UploadList />}
+				displayerComponent={
+					<UploadDisplayer
+						translationKey="displayer.uploads"
+						icons={['ImageOutline', 'FileAddOutline', 'FilmOutline']}
+					/>
+				}
+				listContextValue={listContextValue}
+			/>
 			<Snackbar
 				open={showUploadSnackbar}
 				onClose={closeUploadSnackbar}
@@ -242,7 +216,7 @@ const UploadView: React.VFC = () => {
 				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
 				onActionClick={uploadSnackbarAction}
 			/>
-		</ListContext.Provider>
+		</>
 	);
 };
 

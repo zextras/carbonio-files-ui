@@ -26,8 +26,8 @@ import BaseNodeFragmentDoc from '../graphql/fragments/baseNode.graphql';
 import { healthCache } from '../hooks/useHealthInfo';
 import { HealthResponse } from '../mocks/handleHealthRequest';
 import {
+	populateFile,
 	populateFolder,
-	populateNode,
 	populateNodes,
 	populateParents,
 	populatePermissions,
@@ -62,7 +62,7 @@ describe('Search view', () => {
 			const searchParams: AdvancedFilters = { sharedByMe: { label: 'shared', value: true } };
 			searchParamsVar(searchParams);
 			const nodes = populateNodes(2);
-			const nodeWithShares = populateNode();
+			const nodeWithShares = populateFile();
 			const shares = populateShares(nodeWithShares, 2);
 			nodeWithShares.shares = shares;
 			nodeWithShares.permissions.can_share = true;

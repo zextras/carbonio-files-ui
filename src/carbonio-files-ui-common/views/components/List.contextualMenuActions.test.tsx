@@ -13,7 +13,7 @@ import { EmptySpaceFiller } from './EmptySpaceFiller';
 import { List } from './List';
 import { ACTION_IDS } from '../../../constants';
 import { ACTION_REGEXP, COLORS, SELECTORS } from '../../constants/test';
-import { populateFolder, populateNode } from '../../mocks/mockUtils';
+import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
@@ -24,9 +24,9 @@ describe('Contextual menu actions', () => {
 		describe('in a folder with few nodes', () => {
 			test('when isCanCreateFolder and isCanCreateFolder are true', async () => {
 				const currentFolder = populateFolder();
-				const node1 = populateNode();
-				const node2 = populateNode();
-				const node3 = populateNode();
+				const node1 = populateFile();
+				const node2 = populateFile();
+				const node3 = populateFile();
 
 				currentFolder.children.nodes.push(node1, node2, node3);
 
@@ -138,9 +138,9 @@ describe('Contextual menu actions', () => {
 
 			test('when isCanCreateFolder and isCanCreateFolder are false', async () => {
 				const currentFolder = populateFolder();
-				const node1 = populateNode();
-				const node2 = populateNode();
-				const node3 = populateNode();
+				const node1 = populateFile();
+				const node2 = populateFile();
+				const node3 = populateFile();
 
 				currentFolder.children.nodes.push(node1, node2, node3);
 

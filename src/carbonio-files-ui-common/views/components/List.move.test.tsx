@@ -5,12 +5,10 @@
  */
 import React from 'react';
 
-import { screen } from '@testing-library/react';
-
 import { List } from './List';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
-import { setup, selectNodes } from '../../tests/utils';
+import { setup, selectNodes, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
 
 describe('Move', () => {
@@ -29,7 +27,7 @@ describe('Move', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.parent = currentFolder;
-			currentFolder.children.nodes.push(file, folder, node);
+			currentFolder.children.nodes.push(folder, node, file);
 
 			const { user } = setup(
 				<List
@@ -77,10 +75,12 @@ describe('Move', () => {
 			const file = populateFile();
 			file.permissions.can_write_file = true;
 			file.parent = currentFolder;
+			file.flagged = true;
 			const folder = populateFolder();
 			folder.permissions.can_write_folder = true;
 			folder.parent = currentFolder;
-			currentFolder.children.nodes.push(file, folder);
+			folder.flagged = true;
+			currentFolder.children.nodes.push(folder, file);
 
 			const { user } = setup(
 				<List
@@ -92,6 +92,7 @@ describe('Move', () => {
 			);
 
 			await screen.findByText(file.name);
+			await screen.findByTestId(SELECTORS.customBreadcrumbs);
 			await selectNodes([file.id, folder.id], user);
 
 			// check that all wanted items are selected
@@ -103,7 +104,7 @@ describe('Move', () => {
 			const moveIcon = await screen.findByTestId(ICON_REGEXP.move);
 			expect(moveIcon).toBeVisible();
 			expect(moveIcon).toHaveStyle({
-				color: COLORS.text.regular
+				color: 'currentColor'
 			});
 		});
 	});
@@ -123,7 +124,7 @@ describe('Move', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.parent = currentFolder;
-			currentFolder.children.nodes.push(file, folder, node);
+			currentFolder.children.nodes.push(folder, node, file);
 
 			const { user } = setup(
 				<List

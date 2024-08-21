@@ -40,7 +40,7 @@ import {
 } from '../types/network';
 import { MakeRequired, MakeRequiredNonNull } from '../types/utils';
 import { ActionsFactoryNodeType } from '../utils/ActionsFactory';
-import { nodeSortComparator } from '../utils/utils';
+import { isFile, nodeSortComparator } from '../utils/utils';
 
 type NodeTypename = FilesFile['__typename'] | Folder['__typename'];
 
@@ -212,12 +212,16 @@ export function populateNode(type?: NodeTypename, id?: string, name?: string): F
 }
 
 export function populateNodes(limit?: number, type?: NodeTypename): Array<FilesFile | Folder> {
-	const nodesLength = limit ?? 100;
+	const nodesLength = limit ?? 6;
 	const nodes: Array<FilesFile | Folder> = [];
 	for (let i = 0; i < nodesLength; i += 1) {
 		const node = populateNode(type);
 		node.name = `n${i} - ${node.name}`;
-		nodes.push(node);
+		if (isFile(node)) {
+			nodes.push(node);
+		} else {
+			nodes.unshift(node);
+		}
 	}
 	return nodes;
 }

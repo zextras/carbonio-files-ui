@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import {
 	Avatar,
 	Container,
-	Row,
-	Text,
 	getColor,
+	ModalBody,
+	Row,
 	Shimmer,
-	ModalBody
+	Text
 } from '@zextras/carbonio-design-system';
 import styled, { css, SimpleInterpolation } from 'styled-components';
 
@@ -24,6 +24,10 @@ import {
 	LIST_ITEM_AVATAR_ICON_HEIGHT_COMPACT
 } from '../../constants';
 import { cssCalcBuilder } from '../../utils/utils';
+
+export const UppercaseText = styled(Text)`
+	text-transform: uppercase;
+`;
 
 export const DisplayerContentContainer = styled(Container)`
 	padding-bottom: 2rem;
@@ -217,3 +221,23 @@ export const Loader: React.VFC = () => (
 		</Container>
 	</Container>
 );
+
+export const GridItem = styled(Container)<{
+	$columnStart?: number;
+	$columnEnd?: number;
+	$rowStart?: number;
+	$rowEnd?: number;
+	$alignSelf?: CSSProperties['alignSelf'];
+}>`
+	grid-column-start: ${({ $columnStart }): number | undefined => $columnStart};
+	grid-column-end: ${({ $columnEnd }): number | undefined => $columnEnd};
+	grid-row-start: ${({ $rowStart }): number | undefined => $rowStart};
+	grid-row-end: ${({ $rowEnd }): number | undefined => $rowEnd};
+	align-self: ${({ $alignSelf }): typeof $alignSelf => $alignSelf};
+`;
+
+export const DisplayerContainer = styled(Container)`
+	&:empty {
+		width: 0;
+	}
+`;

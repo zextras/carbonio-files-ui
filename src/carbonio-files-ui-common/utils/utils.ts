@@ -11,7 +11,7 @@ import { NetworkError } from '@apollo/client/errors';
 import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
-import { chain, debounce, findIndex, forEach, isEmpty, map, reduce, toLower, trim } from 'lodash';
+import { chain, findIndex, forEach, isEmpty, map, reduce, toLower, trim } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
 import {
@@ -23,6 +23,7 @@ import {
 	OPEN_FILE_PATH,
 	REST_ENDPOINT,
 	ROOTS,
+	TIMERS,
 	UPLOAD_TO_PATH
 } from '../constants';
 import {
@@ -361,19 +362,29 @@ export const inputElement = ((): HTMLInputElement => {
 	return input;
 })();
 
-export const scrollToNodeItem = debounce((nodeId: string, isLast = false) => {
-	if (nodeId) {
-		const element = window.document.getElementById(nodeId);
-		if (element) {
-			let options: ScrollIntoViewOptions = { block: 'center' };
-			// if last element, leave it at the end of the screen to not trigger loadMore
-			if (isLast) {
-				options = { ...options, block: 'end' };
-			}
-			element.scrollIntoView(options);
-		}
+const scrollIntoView = (
+	element: HTMLElement | null,
+	scrollLogicalPosition: ScrollLogicalPosition
+): void => {
+	if (element) {
+		element.scrollIntoView({ block: scrollLogicalPosition });
 	}
-}, 500);
+};
+
+export const scrollToNodeItem = (
+	nodeId: string,
+	scrollLogicalPosition: ScrollLogicalPosition = 'center',
+	timeout: number = TIMERS.DELAY_WAIT_RENDER_AND_PRAY
+): void => {
+	const element = window.document.getElementById(nodeId);
+	if (element) {
+		scrollIntoView(element, scrollLogicalPosition);
+	} else {
+		setTimeout(() => {
+			scrollIntoView(window.document.getElementById(nodeId), scrollLogicalPosition);
+		}, timeout);
+	}
+};
 
 export function propertyComparator<T extends SortableNode[keyof SortableNode]>(
 	nodeA: Maybe<SortableNode> | undefined,

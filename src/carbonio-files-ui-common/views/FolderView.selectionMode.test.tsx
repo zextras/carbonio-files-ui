@@ -82,7 +82,7 @@ describe('Folder View Selection mode', () => {
 	test('if all loaded nodes are selected, unselect all action is visible', async () => {
 		const currentFolder = populateFolder();
 		const firstPage = populateNodes(NODES_LOAD_LIMIT);
-		const secondPage = populateNodes(10);
+		const secondPage = populateNodes(10, 'File');
 		currentFolder.children = populateNodePage([...firstPage, ...secondPage]);
 		forEach(currentFolder.children.nodes, (node) => {
 			if (node) {

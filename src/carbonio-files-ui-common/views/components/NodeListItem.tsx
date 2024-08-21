@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
@@ -15,6 +15,7 @@ import { useTheme } from 'styled-components';
 
 import { Dropzone } from './Dropzone';
 import { NodeAvatarIcon } from './NodeAvatarIcon';
+import { NodeGridItemUI } from './NodeGridItemUI';
 import { NodeHoverBar } from './NodeHoverBar';
 import { NodeListItemUI } from './NodeListItemUI';
 import { useActiveNode } from '../../../hooks/useActiveNode';
@@ -28,8 +29,10 @@ import {
 	DOUBLE_CLICK_DELAY,
 	DRAG_TYPES,
 	ROOTS,
-	TIMERS
+	TIMERS,
+	VIEW_MODE
 } from '../../constants';
+import { ListContext } from '../../contexts';
 import { useDeleteNodesMutation } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
 import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
@@ -90,6 +93,7 @@ export const NodeListItem = ({
 	exitSelectionMode,
 	selectionContextualMenuActionsItems
 }: NodeListItemProps): React.JSX.Element => {
+	const { viewMode } = useContext(ListContext);
 	const { me, locale } = useUserInfo();
 
 	const params = useParams<URLParams>();
@@ -104,6 +108,7 @@ export const NodeListItem = ({
 		[draggedItems, node]
 	);
 	const [t] = useTranslation();
+	const theme = useTheme();
 
 	const props = nodeToNodeListItemUIProps(node, t, me);
 
@@ -111,6 +116,14 @@ export const NodeListItem = ({
 	const size = useMemo(() => (isFile(node) && node.size) || undefined, [node]);
 	const version = useMemo(() => (isFile(node) && node.version) || undefined, [node]);
 	const trashed = useMemo(() => node.rootId === ROOTS.TRASH, [node.rootId]);
+	const icon = useMemo(
+		() => getIconByFileType(node.type, mimeType ?? node.id),
+		[mimeType, node.id, node.type]
+	);
+	const color = useMemo(
+		() => getIconColorByFileType(node.type, mimeType ?? node.id, theme),
+		[mimeType, node.id, node.type, theme]
+	);
 
 	const { add } = useUpload();
 	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
@@ -140,8 +153,6 @@ export const NodeListItem = ({
 		},
 		[node.id, selectId]
 	);
-
-	const theme = useTheme();
 
 	const createSnackbar = useSnackbar();
 
@@ -508,6 +519,21 @@ export const NodeListItem = ({
 		return 'none';
 	}, [dragging, isDragged]);
 
+	const createImgSrc = useCallback(
+		(args: { width: number; height: number }) =>
+			canUsePreview
+				? getPreviewThumbnailSrc(
+						node.id,
+						version,
+						node.type,
+						mimeType,
+						{ ...args, outputFormat: getPreviewOutputFormat(mimeType) },
+						'thumbnail'
+					)
+				: undefined,
+		[canUsePreview, mimeType, node.id, node.type, version]
+	);
+
 	return (
 		<Dropzone
 			onDrop={dropHandler}
@@ -517,58 +543,86 @@ export const NodeListItem = ({
 			effect={dropEffect}
 			types={dropTypes}
 		>
-			{(): React.JSX.Element => (
-				<NodeListItemUI
-					{...props}
-					disabled={isDragged}
-					trashed={trashed && isSearchView(location)}
-					updatedAt={formatDate(node.updated_at, locale, DATE_FORMAT_SHORT)}
-					contextualMenuDisabled={
-						(isDragged || isSelectionModeActive) &&
-						selectionContextualMenuActionsItems === undefined
-					}
-					contextualMenuOnOpen={openContextualMenuHandler}
-					contextualMenuOnClose={closeContextualMenuHandler}
-					contextualMenuActions={
-						selectionContextualMenuActionsItems ?? permittedContextualMenuActionsItems
-					}
-					listItemContainerOnClick={setActiveDebounced}
-					listItemContainerOnDoubleClick={doubleClickHandler}
-					hoverContainerBackground={activeNodeId === node.id ? 'highlight' : 'gray6'}
-					listItemContainerContextualMenuActive={isContextualMenuActive}
-					listItemContainerDisableHover={isContextualMenuActive || dragging}
-					nodeAvatarIcon={
-						<NodeAvatarIcon
-							selectionModeActive={isSelectionModeActive}
-							selected={isSelected}
-							onClick={selectIdCallback}
-							compact={false}
-							disabled={isDragged}
-							selectable
-							icon={getIconByFileType(node.type, mimeType ?? node.id)}
-							color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
-							picture={
-								canUsePreview
-									? getPreviewThumbnailSrc(
-											node.id,
-											version,
-											node.type,
-											mimeType,
-											{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
-											'thumbnail'
-										)
-									: undefined
-							}
-						/>
-					}
-					nodeHoverBar={
-						!isSelectionModeActive && !dragging ? (
-							<NodeHoverBar actions={permittedHoverBarActionsItems} />
-						) : undefined
-					}
-					size={size}
-				/>
-			)}
+			{(): React.JSX.Element =>
+				viewMode === VIEW_MODE.grid ? (
+					<NodeGridItemUI
+						{...props}
+						icon={icon}
+						color={color}
+						showPreview={isFile(node)}
+						disabled={isDragged}
+						trashed={trashed && isSearchView(location)}
+						updatedAt={formatDate(node.updated_at, locale, DATE_FORMAT_SHORT)}
+						contextualMenuDisabled={
+							(isDragged || isSelectionModeActive) &&
+							selectionContextualMenuActionsItems === undefined
+						}
+						contextualMenuOnOpen={openContextualMenuHandler}
+						contextualMenuOnClose={closeContextualMenuHandler}
+						contextualMenuActions={
+							selectionContextualMenuActionsItems || permittedContextualMenuActionsItems
+						}
+						hoverContainerBackground={activeNodeId === node.id ? 'highlight' : 'gray6'}
+						listItemContainerContextualMenuActive={isContextualMenuActive}
+						listItemContainerOnClick={setActiveDebounced}
+						listItemContainerOnDoubleClick={doubleClickHandler}
+						listItemContainerDisableHover={isContextualMenuActive || dragging}
+						createImgSrc={createImgSrc}
+						nodeAvatarIcon={
+							<NodeAvatarIcon
+								selectionModeActive={isSelectionModeActive}
+								selected={isSelected}
+								onClick={selectIdCallback}
+								compact={false}
+								disabled={isDragged}
+								selectable
+								icon={icon}
+								color={color}
+							/>
+						}
+					/>
+				) : (
+					<NodeListItemUI
+						{...props}
+						disabled={isDragged}
+						trashed={trashed && isSearchView(location)}
+						updatedAt={formatDate(node.updated_at, locale, DATE_FORMAT_SHORT)}
+						contextualMenuDisabled={
+							(isDragged || isSelectionModeActive) &&
+							selectionContextualMenuActionsItems === undefined
+						}
+						contextualMenuOnOpen={openContextualMenuHandler}
+						contextualMenuOnClose={closeContextualMenuHandler}
+						contextualMenuActions={
+							selectionContextualMenuActionsItems ?? permittedContextualMenuActionsItems
+						}
+						listItemContainerOnClick={setActiveDebounced}
+						listItemContainerOnDoubleClick={doubleClickHandler}
+						hoverContainerBackground={activeNodeId === node.id ? 'highlight' : 'gray6'}
+						listItemContainerContextualMenuActive={isContextualMenuActive}
+						listItemContainerDisableHover={isContextualMenuActive || dragging}
+						nodeAvatarIcon={
+							<NodeAvatarIcon
+								selectionModeActive={isSelectionModeActive}
+								selected={isSelected}
+								onClick={selectIdCallback}
+								compact={false}
+								disabled={isDragged}
+								selectable
+								icon={icon}
+								color={color}
+								picture={createImgSrc({ width: 80, height: 80 })}
+							/>
+						}
+						nodeHoverBar={
+							!isSelectionModeActive && !dragging ? (
+								<NodeHoverBar actions={permittedHoverBarActionsItems} />
+							) : undefined
+						}
+						size={size}
+					/>
+				)
+			}
 		</Dropzone>
 	);
 };

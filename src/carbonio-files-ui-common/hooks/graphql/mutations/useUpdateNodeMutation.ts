@@ -80,7 +80,7 @@ export function useUpdateNodeMutation(): [
 								const { isLast } = addNodeToFolder(parentNode, updatedNode);
 								const currentFolder = folderId || rootId;
 								if (parentNode.id === currentFolder) {
-									scrollToNodeItem(updatedNode.id, isLast);
+									scrollToNodeItem(updatedNode.id, isLast ? 'end' : 'center');
 								}
 							}
 						}
