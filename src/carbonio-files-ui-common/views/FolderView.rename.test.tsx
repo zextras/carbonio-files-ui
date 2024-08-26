@@ -6,21 +6,19 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { forEach, map, findIndex, last } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
+import { renameNode, setup, selectNodes, triggerListLoadMore } from '../tests/utils';
 import { Node } from '../types/common';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes, mockUpdateNode } from '../utils/resolverMocks';
-import { renameNode, setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
@@ -145,7 +143,7 @@ describe('Rename', () => {
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			await renameNode(newName, user);
 			// wait for the modal to be closed
 			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
@@ -247,14 +245,15 @@ describe('Rename', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			const listHeader = screen.getByTestId(SELECTORS.listHeader);
+			await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
 
 			let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 1]);
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			await renameNode(newName, user);
 			// wait that the modal close
 			expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
@@ -269,7 +268,7 @@ describe('Rename', () => {
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 2]);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			triggerListLoadMore();
 			// wait for the load to complete (last element of second page is loaded)
 			await screen.findByTestId(SELECTORS.nodeItem(secondPage[secondPage.length - 1].id));
 			// updated item is still last element
@@ -278,7 +277,7 @@ describe('Rename', () => {
 			expect(nodes[nodes.length - 1]).toBe(updatedNodeItem);
 			expect(screen.getByTestId(SELECTORS.nodeItem(secondCursor.id))).toBe(nodes[nodes.length - 2]);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			triggerListLoadMore();
 			// wait for the load to complete (last element of third page is loaded)
 			await screen.findByTestId(SELECTORS.nodeItem((last(thirdPage) as Node).id));
 			nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
@@ -293,7 +292,7 @@ describe('Rename', () => {
 				nodes[nodes.length - 1]
 			);
 			// trigger the load of a new page
-			await triggerLoadMore();
+			triggerListLoadMore();
 			// wait for the load to complete (last element of children is loaded)
 			await screen.findByTestId(
 				SELECTORS.nodeItem(
@@ -352,15 +351,14 @@ describe('Rename', () => {
 			expect(screen.getByText(nodeToRename.name)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 			// rename node to put it in the unordered list
-			fireEvent.contextMenu(screen.getByText(nodeToRename.name));
+			await user.rightClick(screen.getByText(nodeToRename.name));
 			await renameNode(newName, user);
 			expect(screen.queryByRole('button', { name: ACTION_REGEXP.rename })).not.toBeInTheDocument();
 			await screen.findByText(newName);
 			expect(screen.queryByText(nodeToRename.name)).not.toBeInTheDocument();
 			expect(screen.getByText(newName)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			triggerListLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
@@ -418,7 +416,7 @@ describe('Rename', () => {
 			expect(screen.getByText(nodeToRename.name)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 			// rename node to put it in the unordered list
-			fireEvent.contextMenu(screen.getByText(nodeToRename.name));
+			await user.rightClick(screen.getByText(nodeToRename.name));
 			await renameNode(newName, user);
 			await screen.findByText(newName);
 			expect(screen.getByText(newName)).toBeVisible();
@@ -431,12 +429,12 @@ describe('Rename', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(trashAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			triggerListLoadMore();
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument();

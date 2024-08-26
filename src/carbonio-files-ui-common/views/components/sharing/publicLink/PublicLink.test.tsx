@@ -13,6 +13,7 @@ import { PublicLink } from './PublicLink';
 import { DATE_TIME_FORMAT } from '../../../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateLinks, populateNode } from '../../../../mocks/mockUtils';
+import { generateError, getFirstOfNextMonth, screen, setup, within } from '../../../../tests/utils';
 import { Node } from '../../../../types/common';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import {
@@ -22,13 +23,6 @@ import {
 	mockGetLinks,
 	mockUpdateLink
 } from '../../../../utils/resolverMocks';
-import {
-	generateError,
-	getFirstOfNextMonth,
-	screen,
-	setup,
-	within
-} from '../../../../utils/testUtils';
 import { formatDate, initExpirationDate } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 
@@ -45,6 +39,12 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 		const linkName = 'Link name';
 		const linkTitle = 'Link title';
 		const linkDescription = 'Link description';
+		const existingLink = populateLink(node);
+		const mocks = {
+			Query: {
+				getLinks: mockGetLinks([existingLink])
+			}
+		} satisfies Partial<Resolvers>;
 		setup(
 			<PublicLink
 				nodeId={node.id}
@@ -52,8 +52,10 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 				linkName={linkName}
 				linkTitle={linkTitle}
 				linkDescription={linkDescription}
-			/>
+			/>,
+			{ mocks }
 		);
+		await screen.findByText(existingLink.url as string);
 		expect(screen.getByText(linkTitle)).toBeVisible();
 		expect(screen.getByText(linkDescription)).toBeVisible();
 		expect(screen.getByRole('button', { name: /add link/i })).toBeVisible();
@@ -63,6 +65,11 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 		it('should render the description and expiration date input fields', async () => {
 			const node = populateNode(nodeType);
 			const linkTitle = 'Link title';
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<PublicLink
 					nodeId={node.id}
@@ -70,7 +77,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					linkTitle={linkTitle}
 					linkName={'Link name'}
 					linkDescription={'Link description'}
-				/>
+				/>,
+				{ mocks }
 			);
 			const addLinkBtn = screen.getByRole('button', { name: /add link/i });
 			expect(addLinkBtn).toBeVisible();
@@ -192,6 +200,11 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			const linkName = 'Link name';
 			const linkTitle = 'Link title';
 			const linkDescription = 'Link description';
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<PublicLink
 					nodeId={node.id}
@@ -199,7 +212,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					linkName={linkName}
 					linkTitle={linkTitle}
 					linkDescription={linkDescription}
-				/>
+				/>,
+				{ mocks }
 			);
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByRole('textbox', { name: /link's description/i }));
@@ -243,6 +257,11 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			const linkName = 'Link name';
 			const linkTitle = 'Link title';
 			const linkDescription = 'Link description';
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([])
+				}
+			} satisfies Partial<Resolvers>;
 			const { user } = setup(
 				<PublicLink
 					nodeId={node.id}
@@ -250,7 +269,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 					linkName={linkName}
 					linkTitle={linkTitle}
 					linkDescription={linkDescription}
-				/>
+				/>,
+				{ mocks }
 			);
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByRole('button', { name: /undo/i }));
@@ -558,7 +578,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			);
 			const urlElement = await screen.findByText(link.url as string);
 			await user.click(urlElement);
-			expect(copyToClipboardFn).not.toBeCalledWith(link.url);
+			expect(copyToClipboardFn).not.toHaveBeenCalledWith(link.url);
 		});
 
 		it('should copy the link when click on "COPY LINK" button on the snackbar', async () => {

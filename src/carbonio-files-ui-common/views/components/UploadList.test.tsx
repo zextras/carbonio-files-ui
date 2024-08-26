@@ -23,7 +23,7 @@ import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
-import { EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { COLORS, EMITTER_CODES, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import handleUploadFileRequest, {
 	UploadRequestBody,
 	UploadRequestParams,
@@ -36,6 +36,15 @@ import {
 	populateNodes,
 	populateUploadItems
 } from '../../mocks/mockUtils';
+import {
+	buildBreadCrumbRegExp,
+	createMoveDataTransfer,
+	createUploadDataTransfer,
+	delayUntil,
+	selectNodes,
+	setup,
+	uploadWithDnD
+} from '../../tests/utils';
 import { Node } from '../../types/common';
 import { UploadItem, UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
@@ -48,15 +57,6 @@ import {
 	Maybe
 } from '../../types/graphql/types';
 import { getChildrenVariables, mockCreateFolder, mockGetNode } from '../../utils/resolverMocks';
-import {
-	buildBreadCrumbRegExp,
-	createMoveDataTransfer,
-	createUploadDataTransfer,
-	delayUntil,
-	selectNodes,
-	setup,
-	uploadWithDnD
-} from '../../utils/testUtils';
 import { UploadQueue } from '../../utils/uploadUtils';
 
 describe('Upload list', () => {
@@ -163,8 +163,9 @@ describe('Upload list', () => {
 			// drag image item is not shown
 			const draggedNodeItem = screen.getByText(nodesToDrag[0].name);
 			expect(draggedNodeItem).toBeInTheDocument();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedNodeItem).not.toHaveAttribute('disabled', '');
+			expect(draggedNodeItem).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		});
 

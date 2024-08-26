@@ -5,14 +5,13 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 
 import { List } from './List';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
+import { setup, selectNodes, screen, within } from '../../tests/utils';
 import { Node } from '../../types/common';
-import { setup, selectNodes } from '../../utils/testUtils';
 
 describe('Mark for deletion - trash', () => {
 	describe('Selection mode', () => {
@@ -48,10 +47,12 @@ describe('Mark for deletion - trash', () => {
 
 			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
-			const trashIcon = within(selectionModeActiveListHeader).getByTestId(ICON_REGEXP.moveToTrash);
+			const trashIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
+				icon: ICON_REGEXP.moveToTrash
+			});
 
 			expect(trashIcon).toBeVisible();
-			expect(trashIcon.parentElement).not.toHaveAttribute('disable');
+			expect(trashIcon).toBeEnabled();
 
 			await selectNodes(
 				map(currentFolder.children.nodes, (node) => node?.id || ''),
@@ -94,9 +95,9 @@ describe('Mark for deletion - trash', () => {
 
 			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
 
-			const trashIcon = within(selectionModeActiveListHeader).queryByTestId(
-				ICON_REGEXP.moveToTrash
-			);
+			const trashIcon = within(selectionModeActiveListHeader).queryByRoleWithIcon('button', {
+				icon: ICON_REGEXP.moveToTrash
+			});
 
 			expect(trashIcon).not.toBeInTheDocument();
 
@@ -116,7 +117,7 @@ describe('Mark for deletion - trash', () => {
 			node.permissions.can_write_folder = false;
 			currentFolder.children.nodes.push(node);
 
-			setup(
+			const { user } = setup(
 				<List
 					nodes={currentFolder.children.nodes as Array<Node>}
 					mainList
@@ -126,7 +127,7 @@ describe('Mark for deletion - trash', () => {
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			expect(screen.queryByText(ACTION_REGEXP.moveToTrash)).not.toBeInTheDocument();
 		});

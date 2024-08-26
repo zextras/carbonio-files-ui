@@ -7,7 +7,6 @@
 import React from 'react';
 
 import { act, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
-import { DropdownItem } from '@zextras/carbonio-design-system';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -16,6 +15,13 @@ import { CreateOption } from '../../hooks/useCreateOptions';
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes, sortNodes } from '../mocks/mockUtils';
+import {
+	generateError,
+	setup,
+	spyOnUseCreateOptions,
+	triggerListLoadMore,
+	UserEvent
+} from '../tests/utils';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import {
 	mockCreateFolder,
@@ -23,13 +29,6 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../utils/resolverMocks';
-import {
-	generateError,
-	setup,
-	spyOnUseCreateOptions,
-	triggerLoadMore,
-	UserEvent
-} from '../utils/testUtils';
 import { addNodeInSortedList } from '../utils/utils';
 
 const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
@@ -42,6 +41,13 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
+function clickOnCreateFolderAction(createOptions: CreateOption[]): void {
+	const createFolder = createOptions.find((option) => option.id === ACTION_IDS.CREATE_FOLDER);
+	act(() => {
+		createFolder?.action(undefined).onClick?.(new KeyboardEvent(''));
+	});
+}
+
 async function createNode(newNode: { name: string }, user: UserEvent): Promise<void> {
 	// wait for the creation modal to be opened
 	const inputField = screen.getByRole('textbox');
@@ -50,10 +56,6 @@ async function createNode(newNode: { name: string }, user: UserEvent): Promise<v
 	expect(inputField).toHaveValue(newNode.name);
 	const button = screen.getByRole('button', { name: /^create$/i });
 	await user.click(button);
-}
-
-function findCreateFolderOption(createOptions: CreateOption[]): DropdownItem | undefined {
-	return createOptions.find((option) => option.id === ACTION_IDS.CREATE_FOLDER)?.action(undefined);
 }
 
 describe('Create folder', () => {
@@ -65,8 +67,7 @@ describe('Create folder', () => {
 		const node3 = populateFolder(0, 'n3', 'third');
 		currentFolder.children.nodes.push(node1, node2, node3);
 		const newName = node2.name;
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
@@ -90,10 +91,7 @@ describe('Create folder', () => {
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
-		const createFolder = findCreateFolderOption(createOptions);
-		act(() => {
-			createFolder?.onClick?.(new KeyboardEvent('keyup'));
-		});
+		clickOnCreateFolderAction(createOptions);
 		await createNode(node2, user);
 		await within(screen.getByTestId(SELECTORS.modal)).findByText(/Error! Name already assigned/i);
 		const error = within(screen.getByTestId(SELECTORS.modal)).getByText(
@@ -120,8 +118,7 @@ describe('Create folder', () => {
 		const node3 = populateFolder(0, 'n3', 'third');
 		// add node 1 and 3 as children, node 2 is the new folder
 		currentFolder.children.nodes.push(node1, node3);
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
@@ -145,10 +142,7 @@ describe('Create folder', () => {
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
-		const createFolder = findCreateFolderOption(createOptions);
-		act(() => {
-			createFolder?.onClick?.(new KeyboardEvent('keyup'));
-		});
+		clickOnCreateFolderAction(createOptions);
 		// create action
 		await createNode(node2, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
@@ -170,8 +164,7 @@ describe('Create folder', () => {
 		const node1 = populateFolder(0, 'n1', `zzzz-new-folder-n1`);
 		const node2 = populateFolder(0, 'n2', `zzzz-new-folder-n2`);
 		const node3 = populateFolder(0, 'n3', `zzzz-new-folder-n3`);
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		// 1) folder with more pages, just 1 loaded
 		// 2) create node2 as unordered node3 (not loaded) as neighbor)
 		// --> node2 should be last element of the list
@@ -206,15 +199,11 @@ describe('Create folder', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		const listHeader = screen.getByTestId(SELECTORS.listHeader);
+		await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
 		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
-
-		const createFolder = findCreateFolderOption(createOptions);
-		act(() => {
-			createFolder?.onClick?.(new KeyboardEvent('keyup'));
-		});
-
+		clickOnCreateFolderAction(createOptions);
 		// create action
 		await createNode(node2, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
@@ -229,9 +218,7 @@ describe('Create folder', () => {
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 1);
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(node2Item);
-		act(() => {
-			createFolder?.onClick?.(new KeyboardEvent('keyup'));
-		});
+		clickOnCreateFolderAction(createOptions);
 		// create action
 		await createNode(node1, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node1.id));
@@ -247,7 +234,7 @@ describe('Create folder', () => {
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(SELECTORS.nodeItem(node2.id)));
 		// trigger load more
-		await triggerLoadMore();
+		triggerListLoadMore();
 		// wait for the load to be completed (node3 is now loaded)
 		await screen.findByTestId(SELECTORS.nodeItem(node3.id));
 		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
@@ -264,8 +251,7 @@ describe('Create folder', () => {
 		const newNode = populateFolder();
 		let newPos = addNodeInSortedList(currentFolder.children.nodes, newNode, NODES_SORT_DEFAULT);
 		newPos = newPos > -1 ? newPos : currentFolder.children.nodes.length;
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
@@ -286,10 +272,7 @@ describe('Create folder', () => {
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
-		const createFolder = findCreateFolderOption(createOptions);
-		act(() => {
-			createFolder?.onClick?.(new KeyboardEvent('keyup'));
-		});
+		clickOnCreateFolderAction(createOptions);
 		// create action
 		await createNode(newNode, user);
 		await screen.findByTestId(SELECTORS.nodeItem(newNode.id));

@@ -5,11 +5,10 @@
  */
 import React, { useMemo } from 'react';
 
-import { Container, Icon, IconButton, Quota, Tooltip } from '@zextras/carbonio-design-system';
+import { Container, Icon, Quota, Tooltip, Text, Button } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Text } from '../../design_system_fork/Text';
 import { useFilesQuotaInfo } from '../../hooks/useFilesQuotaInfo';
 import { humanFileSize } from '../../utils/utils';
 
@@ -43,14 +42,14 @@ const InnerFilesQuota = ({
 		if (limit === 0) {
 			return t('quota.unlimitedSpace', '{{used}} of unlimited space', {
 				replace: {
-					used: humanFileSize(used)
+					used: humanFileSize(used, t)
 				}
 			});
 		}
 		return t('quota.limitedSpace', '{{used}} of {{limit}} used', {
 			replace: {
-				used: humanFileSize(used),
-				limit: humanFileSize(limit)
+				used: humanFileSize(used, t),
+				limit: humanFileSize(limit, t)
 			}
 		});
 	}, [limit, used, t]);
@@ -66,7 +65,9 @@ const InnerFilesQuota = ({
 			gap={'0.5rem'}
 		>
 			<Container orientation={'row'} mainAlignment={'flex-end'} gap={'0.5rem'}>
-				<CustomText overflow={'break-word'}>{quotaString}</CustomText>
+				<CustomText overflow={'break-word'} lineHeight={1}>
+					{quotaString}
+				</CustomText>
 				{limit > 0 && fillProp >= 100 && (
 					<Tooltip
 						label={t(
@@ -80,7 +81,13 @@ const InnerFilesQuota = ({
 					</Tooltip>
 				)}
 				<Tooltip label={t('quota.refresh.tooltip.label', 'Refresh')}>
-					<IconButton icon={'Refresh'} size={'large'} type={'ghost'} onClick={refreshData} />
+					<Button
+						icon={'Refresh'}
+						size={'large'}
+						type={'ghost'}
+						color={'text'}
+						onClick={refreshData}
+					/>
 				</Tooltip>
 			</Container>
 			{limit > 0 && <Quota fill={fillProp} fillBackground={fillProp < 100 ? 'info' : 'error'} />}

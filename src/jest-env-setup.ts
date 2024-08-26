@@ -11,6 +11,8 @@ import { Account } from '@zextras/carbonio-shell-ui';
 import dotenv from 'dotenv';
 import failOnConsole from 'jest-fail-on-console';
 import { noop } from 'lodash';
+// this can be removed once migrated to Node 22 (https://github.com/wojtekmaj/react-pdf/wiki/Upgrade-guide-from-version-8.x-to-9.x#dropped-support-for-older-browsers-and-nodejs-versions)
+import 'core-js/proposals/promise-with-resolvers';
 
 import buildClient from './carbonio-files-ui-common/apollo';
 import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar';
@@ -19,7 +21,8 @@ import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
 import { selectionModeVar } from './carbonio-files-ui-common/apollo/selectionVar';
 import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
-import { NODES_SORT_DEFAULT } from './carbonio-files-ui-common/constants';
+import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
+import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
 import { LOGGED_USER } from './mocks/constants';
 import server from './mocks/server';
@@ -68,6 +71,7 @@ beforeEach(() => {
 	uploadVar({});
 	uploadFunctionsVar({});
 	nodeSortVar(NODES_SORT_DEFAULT);
+	viewModeVar(VIEW_MODE_DEFAULT);
 	draggedItemsVar(null);
 	destinationVar({ defaultValue: undefined, currentValue: undefined });
 	window.localStorage.clear();
@@ -119,12 +123,10 @@ beforeAll(() => {
 	// https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 	Object.defineProperty(window, 'matchMedia', {
 		writable: true,
-		value: (query: string): MediaQueryList => ({
+		value: (query: string): Partial<MediaQueryList> => ({
 			matches: false,
 			media: query,
 			onchange: null,
-			addListener: noop, // Deprecated
-			removeListener: noop, // Deprecated
 			addEventListener: noop,
 			removeEventListener: noop,
 			dispatchEvent: () => true

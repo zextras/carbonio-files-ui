@@ -6,16 +6,17 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Container, Responsive, Snackbar } from '@zextras/carbonio-design-system';
+import { Snackbar } from '@zextras/carbonio-design-system';
 import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { Displayer } from './components/Displayer';
 import FileList from './components/FileList';
+import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
-import { DISPLAYER_WIDTH, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
+import { FILES_APP_ID, ROOTS, VIEW_MODE } from '../constants';
 import { ListContext } from '../contexts';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import useQueryParam from '../hooks/useQueryParam';
@@ -28,7 +29,6 @@ const FileView: React.VFC = () => {
 	const fileId = useQueryParam('file');
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
-	const [isEmpty, setIsEmpty] = useState(false);
 	const { add } = useUpload();
 	const { navigateToFolder } = useNavigation();
 
@@ -197,47 +197,19 @@ const FileView: React.VFC = () => {
 		};
 	}, [canUseDocs, inputElementOnchange, removeCreateOptions, setCreateOptions, t]);
 
-	const listContextValue = useMemo<React.ContextType<typeof ListContext>>(
-		() => ({ isEmpty, setIsEmpty }),
-		[isEmpty]
+	const listContextValue = useMemo<Partial<React.ContextType<typeof ListContext>>>(
+		() => ({
+			viewMode: VIEW_MODE.list
+		}),
+		[]
 	);
-
 	return (
-		<ListContext.Provider value={listContextValue}>
-			<Container
-				orientation="row"
-				crossAlignment="flex-start"
-				mainAlignment="flex-start"
-				width="fill"
-				height="fill"
-				background="gray5"
-				borderRadius="none"
-				maxHeight="100%"
-			>
-				<Responsive mode="desktop">
-					<Container
-						width={LIST_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="unset"
-						borderRadius="none"
-						background="gray6"
-					>
-						<FileList fileId={fileId ?? ''} canUploadFile={false} />
-					</Container>
-					<Container
-						width={DISPLAYER_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="flex-start"
-						borderRadius="none"
-						style={{ maxHeight: '100%' }}
-					>
-						<Displayer translationKey="displayer.generic" />
-					</Container>
-				</Responsive>
-				<Responsive mode="mobile">
-					<FileList fileId={fileId ?? ''} canUploadFile={false} />
-				</Responsive>
-			</Container>
+		<>
+			<ViewLayout
+				listComponent={<FileList fileId={fileId ?? ''} canUploadFile={false} />}
+				displayerComponent={<Displayer translationKey="displayer.generic" />}
+				listContextValue={listContextValue}
+			/>
 			<Snackbar
 				open={showUploadSnackbar}
 				onClose={closeUploadSnackbar}
@@ -246,7 +218,7 @@ const FileView: React.VFC = () => {
 				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
 				onActionClick={uploadSnackbarAction}
 			/>
-		</ListContext.Provider>
+		</>
 	);
 };
 

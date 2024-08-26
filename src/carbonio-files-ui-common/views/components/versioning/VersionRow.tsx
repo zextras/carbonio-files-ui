@@ -7,7 +7,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import {
 	Icon,
-	IconButton,
+	Button,
 	Padding,
 	Text,
 	Dropdown,
@@ -20,7 +20,6 @@ import { forEach } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { GridItem } from './GridElements';
 import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { DATE_TIME_FORMAT } from '../../../constants';
 import { DropdownListItemContent } from '../../../design_system_fork/DropdownListItemComponent';
@@ -28,13 +27,14 @@ import { CloneVersionType } from '../../../hooks/graphql/mutations/useCloneVersi
 import { DeleteVersionsType } from '../../../hooks/graphql/mutations/useDeleteVersionsMutation';
 import { KeepVersionsType } from '../../../hooks/graphql/mutations/useKeepVersionsMutation';
 import { downloadNode, formatDate, humanFileSize, openNodeWithDocs } from '../../../utils/utils';
+import { GridItem } from '../StyledComponents';
 
 const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
 	line-height: 1.5;
 `;
 
 interface DropdownItemComponentProps {
-	label: string;
+	label?: string;
 	icon?: string;
 	disabled?: boolean;
 	selected?: boolean;
@@ -117,7 +117,7 @@ export const VersionRow: React.VFC<{
 				if (keepVersionValue) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('snackbar.version.keepForeverRemoved', 'Keep forever removed'),
 						replace: true,
 						hideButton: true
@@ -125,7 +125,7 @@ export const VersionRow: React.VFC<{
 				} else {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('snackbar.version.keepForeverAdded', 'Version marked as to be kept forever'),
 						replace: true,
 						hideButton: true
@@ -140,7 +140,7 @@ export const VersionRow: React.VFC<{
 			if (data) {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t('snackbar.version.clone', 'Version cloned as the current one'),
 					replace: true,
 					hideButton: true
@@ -239,10 +239,10 @@ export const VersionRow: React.VFC<{
 				mainAlignment={'flex-start'}
 				orientation={'horizontal'}
 				background={background}
-				rowStart={rowNumber}
-				rowEnd={rowNumber + 1}
-				columnStart={1}
-				columnEnd={2}
+				$rowStart={rowNumber}
+				$rowEnd={rowNumber + 1}
+				$columnStart={1}
+				$columnEnd={2}
 			>
 				<CustomText>{formatDate(updatedAt, locale, DATE_TIME_FORMAT)}</CustomText>
 			</GridItem>
@@ -251,10 +251,10 @@ export const VersionRow: React.VFC<{
 				mainAlignment={'flex-start'}
 				orientation={'horizontal'}
 				background={background}
-				rowStart={rowNumber}
-				rowEnd={rowNumber + 1}
-				columnStart={2}
-				columnEnd={3}
+				$rowStart={rowNumber}
+				$rowEnd={rowNumber + 1}
+				$columnStart={2}
+				$columnEnd={3}
 			>
 				<CustomText>
 					{t('displayer.version.row.versionNumber', 'Version {{versionNumber}}', {
@@ -267,10 +267,10 @@ export const VersionRow: React.VFC<{
 				mainAlignment={'flex-start'}
 				orientation={'horizontal'}
 				background={background}
-				rowStart={rowNumber}
-				rowEnd={rowNumber + 1}
-				columnStart={3}
-				columnEnd={4}
+				$rowStart={rowNumber}
+				$rowEnd={rowNumber + 1}
+				$columnStart={3}
+				$columnEnd={4}
 			>
 				<CustomText>{lastEditor}</CustomText>
 			</GridItem>
@@ -278,12 +278,12 @@ export const VersionRow: React.VFC<{
 				mainAlignment={'flex-start'}
 				orientation={'horizontal'}
 				background={background}
-				rowStart={rowNumber}
-				rowEnd={rowNumber + 1}
-				columnStart={4}
-				columnEnd={5}
+				$rowStart={rowNumber}
+				$rowEnd={rowNumber + 1}
+				$columnStart={4}
+				$columnEnd={5}
 			>
-				<CustomText>{humanFileSize(size)}</CustomText>
+				<CustomText>{humanFileSize(size, t)}</CustomText>
 			</GridItem>
 			<GridItem
 				data-testid={`version${version}-icons`}
@@ -291,10 +291,10 @@ export const VersionRow: React.VFC<{
 				mainAlignment={'flex-end'}
 				orientation={'horizontal'}
 				background={background}
-				rowStart={rowNumber}
-				rowEnd={rowNumber + 1}
-				columnStart={5}
-				columnEnd={6}
+				$rowStart={rowNumber}
+				$rowEnd={rowNumber + 1}
+				$columnStart={5}
+				$columnEnd={6}
 			>
 				{keepVersionValue && (
 					<Padding right="medium">
@@ -334,7 +334,13 @@ export const VersionRow: React.VFC<{
 					</Tooltip>
 				)}
 				<Dropdown placement="bottom-end" items={items}>
-					<IconButton size="small" icon="MoreVertical" onClick={(): void => undefined} />
+					<Button
+						type={'ghost'}
+						color={'text'}
+						size="small"
+						icon="MoreVertical"
+						onClick={(): void => undefined}
+					/>
 				</Dropdown>
 			</GridItem>
 		</>
@@ -348,10 +354,10 @@ export const SectionRow: React.FC<{
 	<GridItem
 		mainAlignment={'flex-start'}
 		orientation={'horizontal'}
-		rowStart={rowNumber}
-		rowEnd={rowNumber + 1}
-		columnStart={1}
-		columnEnd={6}
+		$rowStart={rowNumber}
+		$rowEnd={rowNumber + 1}
+		$columnStart={1}
+		$columnEnd={6}
 		background={background}
 	>
 		{children}

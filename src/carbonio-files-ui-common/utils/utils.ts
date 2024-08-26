@@ -7,21 +7,11 @@
 import React from 'react';
 
 import { ApolloError } from '@apollo/client';
+import { NetworkError } from '@apollo/client/errors';
+import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
-import type { TFunction } from 'i18next';
-import {
-	chain,
-	debounce,
-	findIndex,
-	first,
-	forEach,
-	isEmpty,
-	map,
-	reduce,
-	size,
-	toLower,
-	trim
-} from 'lodash';
+import { TFunction } from 'i18next';
+import { chain, findIndex, forEach, isEmpty, map, reduce, toLower, trim } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
 import {
@@ -33,6 +23,7 @@ import {
 	OPEN_FILE_PATH,
 	REST_ENDPOINT,
 	ROOTS,
+	TIMERS,
 	UPLOAD_TO_PATH
 } from '../constants';
 import {
@@ -40,6 +31,7 @@ import {
 	Crumb,
 	CrumbNode,
 	DocsType,
+	NodeListItemType,
 	OrderTrend,
 	OrderType,
 	Role,
@@ -56,20 +48,26 @@ import {
 	SharePermission
 } from '../types/graphql/types';
 import { MakeRequiredNonNull } from '../types/utils';
+import type { NodeListItemUIProps } from '../views/components/NodeListItemUI';
 
 /**
  * Format a size in byte as human-readable
  */
-export const humanFileSize = (inputSize: number): string => {
+export const humanFileSize = (inputSize: number, t: TFunction | undefined): string => {
+	const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 	if (inputSize === 0) {
-		return '0 B';
+		const unit = units[0];
+		const unitTranslated = t ? t('size.unitMeasure', { context: unit, defaultValue: unit }) : unit;
+		return `0 ${unitTranslated}`;
 	}
 	const i = Math.floor(Math.log(inputSize) / Math.log(1024));
-	const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 	if (i >= units.length) {
 		throw new Error('Unsupported inputSize');
 	}
-	return `${(inputSize / 1024 ** i).toFixed(2).toString()} ${units[i]}`;
+	const unit = units[i >= 0 ? i : 0];
+	const unitTranslated = t ? t('size.unitMeasure', { context: unit, defaultValue: unit }) : unit;
+	const size = (inputSize / 1024 ** i).toFixed(2).toString();
+	return `${size} ${unitTranslated}`;
 };
 
 function getIconByRootId(rootId: Maybe<string> | undefined): keyof DefaultTheme['icons'] {
@@ -226,6 +224,35 @@ export function takeIfNotEmpty(value: string | undefined): string | undefined {
 	return value !== undefined && !isEmpty(value) ? value : undefined;
 }
 
+function decodeGraphQLErrorWithCode(error: GraphQLError, t: TFunction): string | undefined {
+	if (!error?.extensions?.errorCode) {
+		return undefined;
+	}
+	const operationName = (error.path && error.path.length > 0 && error.path[0]) || undefined;
+	const operationErrorMessage = t('errorCode.operation', {
+		context: operationName,
+		defaultValue: ''
+	});
+	const errorCodeMessage = t('errorCode.code', 'Something went wrong', {
+		context: error.extensions.errorCode
+	});
+	return `${operationErrorMessage} ${errorCodeMessage}`.trim();
+}
+
+function decodeServerError(error: NetworkError): string | undefined {
+	if (error && 'result' in error) {
+		return typeof error.result === 'string'
+			? error.result
+			: error.result
+					.map(
+						(err: { message: string; extensions?: { code: string } }) =>
+							err.extensions?.code ?? err.message
+					)
+					.join('\n');
+	}
+	return undefined;
+}
+
 /**
  * Decode an Apollo Error in a string message
  */
@@ -233,24 +260,20 @@ export const decodeError = (error: ApolloError, t: TFunction): string | null => 
 	if (!error) {
 		return null;
 	}
-	let errorMsg;
-	if (error.graphQLErrors && size(error.graphQLErrors) > 0) {
-		const err = first(error.graphQLErrors);
-		if (err?.extensions?.errorCode) {
-			return t('errorCode.code', 'Something went wrong', { context: err.extensions.errorCode });
+	const errors: (string | undefined)[] = [];
+	if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+		const firstGraphQLError = error.graphQLErrors[0];
+		const decodedGraphQLErrorWithCode = decodeGraphQLErrorWithCode(firstGraphQLError, t);
+		if (decodedGraphQLErrorWithCode) {
+			return decodedGraphQLErrorWithCode;
 		}
-		if (err?.message) {
-			errorMsg = err?.message;
-		}
+		errors.push(firstGraphQLError.message);
 	}
-	if (error.networkError && 'result' in error.networkError) {
-		const netError =
-			typeof error.networkError.result === 'string'
-				? error.networkError.result
-				: map(error.networkError.result, (err) => err.extensions?.code || err.message).join('\n');
-		errorMsg = errorMsg ? errorMsg + netError : netError;
-	}
-	return takeIfNotEmpty(errorMsg) ?? error.message;
+
+	const networkError = decodeServerError(error.networkError);
+	errors.push(networkError);
+	const errorMessages = errors.filter((err) => err !== undefined && err.length > 0);
+	return errorMessages.length > 0 ? errorMessages.join('\n') : error.message;
 };
 
 export const getChipLabel = (contact: Contact | null | undefined): string => {
@@ -321,7 +344,7 @@ export const openNodeWithDocs = (id: string, version?: number): void => {
 		const url = `${DOCS_ENDPOINT}${OPEN_FILE_PATH}/${encodeURIComponent(id)}${
 			version ? `?version=${version}` : ''
 		}`;
-		if (docsTabMap[url] == null || (docsTabMap[url] != null && docsTabMap[url].closed)) {
+		if (docsTabMap[url] == null || docsTabMap[url]?.closed) {
 			docsTabMap[url] = window.open(url, url) as Window;
 		} else {
 			docsTabMap[url].focus();
@@ -339,19 +362,29 @@ export const inputElement = ((): HTMLInputElement => {
 	return input;
 })();
 
-export const scrollToNodeItem = debounce((nodeId: string, isLast = false) => {
-	if (nodeId) {
-		const element = window.document.getElementById(nodeId);
-		if (element) {
-			let options: ScrollIntoViewOptions = { block: 'center' };
-			// if last element, leave it at the end of the screen to not trigger loadMore
-			if (isLast) {
-				options = { ...options, block: 'end' };
-			}
-			element.scrollIntoView(options);
-		}
+const scrollIntoView = (
+	element: HTMLElement | null,
+	scrollLogicalPosition: ScrollLogicalPosition
+): void => {
+	if (element) {
+		element.scrollIntoView({ block: scrollLogicalPosition });
 	}
-}, 500);
+};
+
+export const scrollToNodeItem = (
+	nodeId: string,
+	scrollLogicalPosition: ScrollLogicalPosition = 'center',
+	timeout: number = TIMERS.DELAY_WAIT_RENDER_AND_PRAY
+): void => {
+	const element = window.document.getElementById(nodeId);
+	if (element) {
+		scrollIntoView(element, scrollLogicalPosition);
+	} else {
+		setTimeout(() => {
+			scrollIntoView(window.document.getElementById(nodeId), scrollLogicalPosition);
+		}, timeout);
+	}
+};
 
 export function propertyComparator<T extends SortableNode[keyof SortableNode]>(
 	nodeA: Maybe<SortableNode> | undefined,
@@ -543,7 +576,7 @@ export function encodeBase64(str: string): string {
 	// window.btoa is not enough for cyrillic
 	// see also https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem
 	return window.btoa(
-		encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) =>
+		encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_match, p1) =>
 			String.fromCharCode(parseInt(p1, 16))
 		)
 	);
@@ -654,7 +687,7 @@ export async function scan(item: FileSystemEntry): Promise<TreeNode> {
 			// https://eslint.org/docs/latest/rules/no-await-in-loop#:~:text=In%20many%20cases%20the%20iterations%20of%20a%20loop%20are%20not%20actually%20independent%20of%20each%2Dother.%20For%20example%2C%20the%20output%20of%20one%20iteration%20might%20be%20used%20as%20the%20input%20to%20another
 			// eslint-disable-next-line no-await-in-loop
 			const newEntries = await readEntries(directoryReader);
-			if (size(newEntries) === 0) {
+			if (newEntries.length === 0) {
 				flag = false;
 			} else {
 				entries.push(...newEntries);
@@ -775,4 +808,67 @@ export async function asyncForEach<T>(
 		// Process this item
 		await callback(item);
 	}, Promise.resolve());
+}
+
+export function getDocumentGenericType(
+	specificType: DocsType
+): 'document' | 'spreadsheet' | 'presentation' {
+	switch (specificType) {
+		case DocsType.LIBRE_DOCUMENT:
+		case DocsType.MS_DOCUMENT:
+			return 'document';
+		case DocsType.LIBRE_SPREADSHEET:
+		case DocsType.MS_SPREADSHEET:
+			return 'spreadsheet';
+		case DocsType.LIBRE_PRESENTATION:
+		case DocsType.MS_PRESENTATION:
+			return 'presentation';
+		default:
+			return 'document';
+	}
+}
+
+export function nodeToNodeListItemUIProps(
+	node: Pick<
+		NodeListItemType,
+		| 'id'
+		| 'name'
+		| 'flagged'
+		| 'owner'
+		| 'shares'
+		| 'last_editor'
+		| 'type'
+		| 'rootId'
+		| '__typename'
+	> &
+		(Pick<{ __typename: 'File' } & NodeListItemType, 'size' | 'extension'> | Record<never, never>),
+	t: TFunction,
+	me: string
+): Pick<
+	NodeListItemUIProps,
+	| 'id'
+	| 'name'
+	| 'flagActive'
+	| 'incomingShare'
+	| 'outgoingShare'
+	| 'extensionOrType'
+	| 'displayName'
+	| 'size'
+	| 'trashed'
+> {
+	return {
+		id: node.id,
+		name: node.name,
+		flagActive: node.flagged,
+		incomingShare: me !== node.owner?.id,
+		outgoingShare: me === node.owner?.id && node.shares && node.shares.length > 0,
+		extensionOrType:
+			(isFile(node) && node.extension) || t(`node.type.${node.type.toLowerCase()}`, node.type),
+		displayName:
+			(node.last_editor?.id !== node.owner?.id && node.last_editor?.full_name) ||
+			(node.owner?.id !== me && node.owner?.full_name) ||
+			'',
+		size: (isFile(node) && node.size) || undefined,
+		trashed: node.rootId === ROOTS.TRASH
+	};
 }

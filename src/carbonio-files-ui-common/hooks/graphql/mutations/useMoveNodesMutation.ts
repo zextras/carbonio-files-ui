@@ -61,7 +61,7 @@ export function useMoveNodesMutation(): { moveNodes: MoveNodesType; loading: boo
 			if (moveNodesResult) {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'info',
+					severity: 'info',
 					label: t('snackbar.moveNodes.success', 'Item moved'),
 					replace: true,
 					actionLabel: t('snackbar.moveNodes.action', 'Go to folder'),
@@ -72,7 +72,7 @@ export function useMoveNodesMutation(): { moveNodes: MoveNodesType; loading: boo
 			} else {
 				createSnackbar({
 					key: new Date().toLocaleString(),
-					type: 'error',
+					severity: 'error',
 					label: t('snackbar.moveNodes.error', 'Something went wrong, try again'),
 					replace: true,
 					hideButton: true

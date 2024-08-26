@@ -12,11 +12,11 @@ import { waitFor } from '@testing-library/react';
 import { NodeDetailsDescription } from './NodeDetailsDescription';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
+import { generateError, setup, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockErrorResolver, mockUpdateNode } from '../../utils/resolverMocks';
-import { generateError, setup, screen } from '../../utils/testUtils';
 
 describe('NodeDetailsDescription component', () => {
 	test('Missing description show missing description label', () => {

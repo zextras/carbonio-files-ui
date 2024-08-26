@@ -36,17 +36,18 @@ import { forEach, map, filter, reduce, merge, noop } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
-import { resolvers } from './resolvers';
-import { asyncForEach, isFile, isFolder } from './utils';
-import { CreateOption, CreateOptionsReturnType } from '../../hooks/useCreateOptions';
+import { CreateOption } from '../../hooks/useCreateOptions';
 import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
+import { ERROR_CODE } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../types/graphql/types';
+import { resolvers } from '../utils/resolvers';
+import { asyncForEach, isFile, isFolder } from '../utils/utils';
 
 export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
 	readonly rightClick: (target: Element) => Promise<void>;
@@ -56,12 +57,14 @@ export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
  * Matcher function to search a string in more html elements and not just in a single element.
  */
 const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) =>
+	// eslint-disable-next-line testing-library/prefer-screen-queries
 	rtlScreen.queryAllByText((_content, element) => {
 		if (element && element instanceof HTMLElement) {
 			const hasText = (singleNode: Element): boolean => {
 				const regExp = RegExp(text);
 				return singleNode.textContent != null && regExp.test(singleNode.textContent);
 			};
+			// eslint-disable-next-line testing-library/no-node-access
 			const childrenDontHaveText = Array.from(element.children).every((child) => !hasText(child));
 			return hasText(element) && childrenDontHaveText;
 		}
@@ -182,8 +185,19 @@ export const buildBreadCrumbRegExp = (...nodesNames: string[]): RegExp => {
 	return RegExp(regExp, 'g');
 };
 
-export function generateError(message: string): GraphQLError {
-	return new GraphQLError(`Controlled error: ${message}`);
+export function generateError(
+	message: string,
+	options?: {
+		code?: (typeof ERROR_CODE)[keyof typeof ERROR_CODE];
+		operationName?: string;
+	}
+): GraphQLError {
+	return new GraphQLError(`Controlled error: ${message}`, {
+		extensions: {
+			errorCode: options?.code
+		},
+		path: options?.operationName ? [options.operationName] : undefined
+	});
 }
 
 interface WrapperProps {
@@ -298,15 +312,15 @@ export function setupHook<TProps, TResult>(
 	hook: (props: TProps) => TResult,
 	options?: Pick<WrapperProps, 'initialRouterEntries' | 'mocks'> & RenderHookOptions<TProps>
 ): RenderHookResult<TProps, TResult> {
-	const renderHookResult = renderHook<TProps, TResult>(hook, {
+	const view = renderHook<TProps, TResult>(hook, {
 		wrapper: ({ children }: Pick<WrapperProps, 'children'>) => (
 			<Wrapper {...options}>{children}</Wrapper>
 		)
 	});
 
-	const hookFn = renderHookResult.result.current;
+	const hookFn = view.result.current;
 	expect(hookFn).toBeDefined();
-	return renderHookResult;
+	return view;
 }
 
 export async function triggerLoadMore(): Promise<void> {
@@ -323,6 +337,27 @@ export async function triggerLoadMore(): Promise<void> {
 			}
 		])
 	);
+}
+
+export function triggerListLoadMore(callsIndex?: number, isIntersecting = true): void {
+	const { calls, instances } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>)
+		.mock;
+
+	const [onChange] = calls[callsIndex ?? calls.length - 1];
+	const instance = instances[instances.length - 1];
+	// trigger the intersection on the observed element
+	act(() => {
+		onChange(
+			[
+				{
+					target: screen.getByTestId('list-bottom-element'),
+					intersectionRatio: 0.5,
+					isIntersecting
+				} as unknown as IntersectionObserverEntry
+			],
+			instance
+		);
+	});
 }
 
 export async function selectNodes(nodesToSelect: string[], user: UserEvent): Promise<void> {
@@ -408,14 +443,15 @@ type DataTransferUploadStub = {
 };
 
 function createFileSystemDirectoryEntryReader(
-	node: Pick<Folder, '__typename' | 'name' | 'children'>
+	folder: Pick<Folder, '__typename' | 'name' | 'children'>
 ): ReturnType<FileSystemDirectoryEntry['createReader']> {
 	// clone array to mutate with the splice in order to simulate the readEntries called until it returns an empty array (or undefined)
-	const children = [...node.children.nodes];
+	// eslint-disable-next-line testing-library/no-node-access
+	const children = [...folder.children.nodes];
 	const readEntries = (
 		successCallback: FileSystemEntriesCallback
 	): ReturnType<FileSystemDirectoryReader['readEntries']> => {
-		const childrenEntries = reduce<(typeof node.children.nodes)[number], FileSystemEntry[]>(
+		const childrenEntries = reduce<(typeof folder.children.nodes)[number], FileSystemEntry[]>(
 			children.splice(0, Math.min(children.length, 10)),
 			(accumulator, childNode) => {
 				if (childNode) {
@@ -552,11 +588,15 @@ export async function uploadWithDnD(
 	expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 }
 
-export function spyOnUseCreateOptions(createOptionsCollector: CreateOption[]): void {
+export function spyOnUseCreateOptions(): CreateOption[] {
+	const createOptionsCollector: CreateOption[] = [];
 	jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
-		setCreateOptions: (...options): ReturnType<CreateOptionsReturnType['setCreateOptions']> => {
+		setCreateOptions: (...options: CreateOption[]): void => {
 			createOptionsCollector.splice(0, createOptionsCollector.length, ...options);
 		},
-		removeCreateOptions: () => undefined
+		removeCreateOptions: (...ids: string[]): void => {
+			createOptionsCollector.filter((option) => !ids.includes(option.id));
+		}
 	});
+	return createOptionsCollector;
 }

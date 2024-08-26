@@ -6,12 +6,12 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { waitFor } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { waitFor, act } from '@testing-library/react';
 
 import { Displayer } from './Displayer';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateNode } from '../../mocks/mockUtils';
+import { generateError, setup, screen, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeType } from '../../types/graphql/types';
 import {
@@ -21,7 +21,6 @@ import {
 	mockUpdateNode,
 	mockErrorResolver
 } from '../../utils/resolverMocks';
-import { generateError, setup, screen, within } from '../../utils/testUtils';
 
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {

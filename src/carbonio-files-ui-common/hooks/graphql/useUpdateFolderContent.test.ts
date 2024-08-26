@@ -17,6 +17,7 @@ import {
 	populateNodes,
 	sortNodes
 } from '../../mocks/mockUtils';
+import { setupHook } from '../../tests/utils';
 import {
 	Folder,
 	GetChildrenQuery,
@@ -25,7 +26,6 @@ import {
 	Node
 } from '../../types/graphql/types';
 import { getChildrenVariables } from '../../utils/resolverMocks';
-import { setupHook } from '../../utils/testUtils';
 import { addNodeInSortedList } from '../../utils/utils';
 
 describe('useUpdateFolderContent', () => {

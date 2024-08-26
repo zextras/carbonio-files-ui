@@ -9,6 +9,9 @@ import { NodeSort } from '../types/graphql/types';
 
 export const NODES_LOAD_LIMIT = 25;
 export const NODES_SORT_DEFAULT = NodeSort.NameAsc;
+export const VIEW_MODE = { grid: 'grid', list: 'list' } as const;
+export const VIEW_MODE_DEFAULT = VIEW_MODE.list;
+export const GRID_ITEM_MIN_WIDTH = '13.4375rem';
 export const LIST_ITEM_HEIGHT = '4rem';
 export const LIST_ITEM_HEIGHT_COMPACT = '3.25rem';
 export const LIST_ITEM_HEIGHT_DETAILS = '3.25rem';
@@ -88,7 +91,8 @@ export const TIMERS = {
 	DRAG_THROTTLE: 100,
 	DRAG_PREVENT_HOVER_DROPDOWN: 10,
 	DRAG_DELAY_CLOSE_DROPDOWN: 150,
-	DISPLAYER_SHOW_MESSAGE: 250
+	DISPLAYER_SHOW_MESSAGE: 250,
+	DELAY_WAIT_RENDER_AND_PRAY: 500
 } as const;
 export const DOCS_EXTENSIONS: Record<DocsType, string> = {
 	[DocsType.LIBRE_DOCUMENT]: 'odt',
@@ -118,7 +122,7 @@ export const DATE_TIME_FORMAT = {
 	...DATE_FORMAT_SHORT,
 	...TIME_FORMAT
 } satisfies Intl.DateTimeFormatOptions;
-export const UPLOAD_STATUS_CODE = {
+export const HTTP_STATUS_CODE = {
 	success: 200,
 	internalServerError: 500,
 	/**
@@ -131,6 +135,12 @@ export const UPLOAD_STATUS_CODE = {
 	aborted: 0,
 	overQuota: 422
 } as const;
+
+export const ERROR_CODE = {
+	overQuotaReached: 'OVER_QUOTA_REACHED',
+	nodeWriteError: 'NODE_WRITE_ERROR'
+} as const;
+
 // endpoint
 // keep endpoint without trailing slash
 export const GRAPHQL_ENDPOINT = '/services/files/graphql';
@@ -161,14 +171,14 @@ export const INTERNAL_PATH: {
 	SEARCH: '/search',
 	FILTER: '/filter'
 } as const;
-export const FILTER_TYPE: { [K in URLParams['filter']]: `/${K}` } = {
+export const FILTER_TYPE = {
 	flagged: '/flagged',
 	sharedByMe: '/sharedByMe',
 	sharedWithMe: '/sharedWithMe',
 	myTrash: '/myTrash',
 	sharedTrash: '/sharedTrash',
 	recents: '/recents'
-} as const;
+} as const satisfies { [K in URLParams['filter']]: `/${K}` };
 
 export const FILES_ROUTE = 'files';
 export const FILES_APP_ID = 'carbonio-files-ui';

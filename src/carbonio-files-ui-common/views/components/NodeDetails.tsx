@@ -138,7 +138,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 						<TextRowWithShim
 							loading={loading}
 							label={t('displayer.details.size', 'Size')}
-							content={(size !== undefined && humanFileSize(size)) || undefined}
+							content={(size !== undefined && humanFileSize(size, t)) || undefined}
 							shimmerWidth="5rem"
 						/>
 					)}

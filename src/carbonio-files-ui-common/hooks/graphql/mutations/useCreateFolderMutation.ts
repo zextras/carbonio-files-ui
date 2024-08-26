@@ -57,7 +57,7 @@ export function useCreateFolderMutation(
 				update(cache, { data }) {
 					if (data?.createFolder) {
 						const { isLast } = addNodeToFolder(parentFolder, data.createFolder);
-						scrollToNodeItem(data.createFolder.id, isLast);
+						scrollToNodeItem(data.createFolder.id, isLast ? 'end' : 'center');
 					}
 				}
 			}),

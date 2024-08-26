@@ -5,20 +5,18 @@
  */
 import React from 'react';
 
-import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateNodes } from '../mocks/mockUtils';
+import { setup, selectNodes, screen, within } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes, mockTrashNodes } from '../utils/resolverMocks';
-import { setup, selectNodes, screen, within } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Mark for deletion', () => {
@@ -58,17 +56,14 @@ describe('Filter View', () => {
 				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
 				const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
-				expect(trashAction).toBeInTheDocument();
 				expect(trashAction).toBeVisible();
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(trashAction).not.toHaveAttribute('disabled', '');
-
+				expect(trashAction).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(trashAction);
-
 				// wait for the snackbar to appear and disappear
 				await screen.findByText(/item moved to trash/i);
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-
 				expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(2);
 			});
 
@@ -126,7 +121,7 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 				});
@@ -136,7 +131,7 @@ describe('Filter View', () => {
 
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 				expect(restoreAction).toBeVisible();
 				const moveToTrashAction = screen.queryByText(ACTION_REGEXP.moveToTrash);
@@ -184,8 +179,9 @@ describe('Filter View', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
 			expect(trashAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(trashAction.parentNode).not.toHaveAttribute('disabled', '');
+			expect(trashAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			await user.click(trashAction);
 			await waitFor(() => expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument());
 			await screen.findByText(/item moved to trash/i);

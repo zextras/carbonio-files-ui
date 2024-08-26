@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { isSupportedByPreview } from './previewUtils';
+import { getPreviewOutputFormat, isSupportedByPreview } from './previewUtils';
 import { PREVIEW_TYPE } from '../constants';
 
 jest.mock<typeof import('./previewUtils')>('./previewUtils', () => {
@@ -13,9 +13,9 @@ jest.mock<typeof import('./previewUtils')>('./previewUtils', () => {
 		...actual,
 		MIME_TYPE_PREVIEW_SUPPORT: {
 			'image/svg+xml': {
-				preview: false,
-				thumbnail: false,
-				thumbnail_detail: false
+				preview: true,
+				thumbnail: true,
+				thumbnail_detail: true
 			},
 			image: {
 				preview: true,
@@ -35,8 +35,8 @@ describe('Preview utils', () => {
 	describe('isSupportedByPreview', () => {
 		test('should return support and type for mime type entry if both specific and general are present', () => {
 			const result = isSupportedByPreview('image/svg+xml', 'thumbnail');
-			expect(result[0]).toBe(false);
-			expect(result[1]).toBe(undefined);
+			expect(result[0]).toBe(true);
+			expect(result[1]).toBe(PREVIEW_TYPE.IMAGE);
 		});
 
 		test('should return support and type for general type entry if no entry for mime type is present', () => {
@@ -56,5 +56,25 @@ describe('Preview utils', () => {
 			expect(result[0]).toBe(false);
 			expect(result[1]).toBe(undefined);
 		});
+	});
+
+	describe('getPreviewOutputFormat', () => {
+		it('should return gif if mime type is image/gif', () => {
+			const result = getPreviewOutputFormat('image/gif');
+			expect(result).toBe('gif');
+		});
+
+		it('should return png if mime type is image/png', () => {
+			const result = getPreviewOutputFormat('image/png');
+			expect(result).toBe('png');
+		});
+
+		it.each(['image/jpg', 'image/jpeg', 'any/other', 'image/svg'])(
+			'should return jpeg if mime type is not image/gif or image/png',
+			(mimeType) => {
+				const result = getPreviewOutputFormat(mimeType);
+				expect(result).toBe('jpeg');
+			}
+		);
 	});
 });

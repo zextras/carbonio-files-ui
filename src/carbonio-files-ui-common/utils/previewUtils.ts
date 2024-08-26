@@ -88,9 +88,9 @@ export const MIME_TYPE_PREVIEW_SUPPORT: Record<
 		preview: true
 	},
 	'image/svg+xml': {
-		thumbnail: false,
-		thumbnail_detail: false,
-		preview: false
+		thumbnail: true,
+		thumbnail_detail: true,
+		preview: true
 	},
 	image: {
 		thumbnail: true,
@@ -146,7 +146,15 @@ export function getDocumentPreviewSrc(id: string, version?: number): string {
 export function getPreviewOutputFormat(
 	mimeType: string | undefined
 ): PreviewOptions['outputFormat'] {
-	return mimeType === 'image/gif' ? 'gif' : 'jpeg';
+	switch (mimeType) {
+		case 'image/gif':
+			return 'gif';
+		case 'image/png':
+		case 'image/svg+xml':
+			return 'png';
+		default:
+			return 'jpeg';
+	}
 }
 
 export function getPreviewSrc(

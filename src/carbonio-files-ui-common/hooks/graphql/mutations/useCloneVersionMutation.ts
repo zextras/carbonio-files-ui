@@ -9,13 +9,10 @@ import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 
-import CLONE_VERSION from '../../../graphql/mutations/cloneVersion.graphql';
-import GET_VERSIONS from '../../../graphql/queries/getVersions.graphql';
 import {
+	CloneVersionDocument,
 	CloneVersionMutation,
-	CloneVersionMutationVariables,
-	GetVersionsQuery,
-	GetVersionsQueryVariables
+	GetVersionsDocument
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
@@ -28,12 +25,12 @@ export type CloneVersionType = (
  * Can return error:
  * VERSIONS_LIMIT_REACHED: limit of creatable versions reached
  * FILE_VERSION_NOT_FOUND: version not found
+ * OVER_QUOTA_REACHED: over quota
  */
 export function useCloneVersionMutation(): CloneVersionType {
-	const [cloneVersionMutation, { error: cloneVersionError }] = useMutation<
-		CloneVersionMutation,
-		CloneVersionMutationVariables
-	>(CLONE_VERSION);
+	const [cloneVersionMutation, { error: cloneVersionError }] = useMutation(CloneVersionDocument, {
+		errorPolicy: 'all'
+	});
 
 	const cloneVersion: CloneVersionType = useCallback(
 		(nodeId: string, version: number) => {
@@ -44,8 +41,8 @@ export function useCloneVersionMutation(): CloneVersionType {
 				},
 				update(cache, { data }) {
 					if (data?.cloneVersion) {
-						cache.updateQuery<GetVersionsQuery, GetVersionsQueryVariables>(
-							{ query: GET_VERSIONS, variables: { node_id: nodeId }, overwrite: true },
+						cache.updateQuery(
+							{ query: GetVersionsDocument, variables: { node_id: nodeId }, overwrite: true },
 							(existingVersions) => ({
 								getVersions: [data.cloneVersion, ...(existingVersions?.getVersions || [])]
 							})
@@ -56,7 +53,7 @@ export function useCloneVersionMutation(): CloneVersionType {
 		},
 		[cloneVersionMutation]
 	);
-	useErrorHandler(cloneVersionError, 'KEEP_VERSIONS');
+	useErrorHandler(cloneVersionError, 'CLONE_VERSION');
 
 	return cloneVersion;
 }

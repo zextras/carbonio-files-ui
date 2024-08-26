@@ -7,14 +7,13 @@
 import React from 'react';
 
 import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
-import { forEach, map } from 'lodash';
+import { forEach } from 'lodash';
 import { graphql, http, HttpResponse } from 'msw';
 import { Link, Route, Switch } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOption } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
 	DOCS_SERVICE_NAME,
@@ -29,12 +28,10 @@ import { healthCache } from '../hooks/useHealthInfo';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { HealthResponse } from '../mocks/handleHealthRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
+import { selectNodes, setup, spyOnUseCreateOptions, triggerListLoadMore } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { selectNodes, setup, spyOnUseCreateOptions, triggerLoadMore } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter view', () => {
 	test('No url param render a "Missing filter" message', async () => {
@@ -51,13 +48,12 @@ describe('Filter view', () => {
 	});
 
 	test('Create folder option is always disabled', async () => {
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 		});
 		await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-		expect(map(createOptions, (createOption) => createOption.action({}))).toContainEqual(
+		expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
 		);
 	});
@@ -118,12 +114,10 @@ describe('Filter view', () => {
 		expect(
 			screen.getByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT - 1].id))
 		).toBeVisible();
-		// the loading icon should be still visible at the bottom of the list because we have load the max limit of items per page
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(screen.queryByTestId(currentFilter[NODES_LOAD_LIMIT].id)).not.toBeInTheDocument();
-		await triggerLoadMore();
+		triggerListLoadMore();
 
 		// wait for the response
 		await screen.findByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT].id));
@@ -202,8 +196,7 @@ describe('Filter view', () => {
 
 	it('should show docs creation actions if docs is available', async () => {
 		healthCache.reset();
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
@@ -226,8 +219,7 @@ describe('Filter view', () => {
 
 	it('should not show docs creation actions if docs is not available', async () => {
 		healthCache.reset();
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })

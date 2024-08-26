@@ -31,6 +31,12 @@ import {
 	populateParents,
 	populateUser
 } from '../mocks/mockUtils';
+import {
+	setup,
+	selectNodes,
+	createUploadDataTransfer,
+	createMoveDataTransfer
+} from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
@@ -41,14 +47,6 @@ import {
 	GetChildQueryVariables
 } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
-import {
-	setup,
-	selectNodes,
-	createUploadDataTransfer,
-	createMoveDataTransfer
-} from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
@@ -191,7 +189,7 @@ describe('Drag and drop', () => {
 		const destinationFolder = populateFolder();
 		destinationFolder.permissions.can_write_file = true;
 		destinationFolder.parent = { ...currentFolder, children: { nodes: [] } } as Folder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 		const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 		forEach(uploadedFiles, (file) => {
 			file.parent = destinationFolder;
@@ -251,7 +249,7 @@ describe('Drag and drop', () => {
 		const destinationFolder = populateFolder();
 		destinationFolder.permissions.can_write_file = false;
 		destinationFolder.parent = { ...currentFolder, children: { nodes: [] } } as Folder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 		const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 		forEach(uploadedFiles, (file) => {
 			file.parent = destinationFolder;
@@ -391,12 +389,12 @@ describe('Drag and drop', () => {
 		destinationFolder.permissions.can_write_folder = true;
 		destinationFolder.permissions.can_write_file = true;
 		destinationFolder.parent = currentFolder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 		const folderWithoutPermission = populateFolder();
 		folderWithoutPermission.permissions.can_write_folder = false;
 		folderWithoutPermission.permissions.can_write_file = false;
 		folderWithoutPermission.parent = currentFolder;
-		currentFolder.children.nodes.push(folderWithoutPermission);
+		currentFolder.children.nodes.unshift(folderWithoutPermission);
 
 		const mocks = {
 			Query: {
@@ -424,10 +422,8 @@ describe('Drag and drop', () => {
 		// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 		const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 		expect(draggedNodeItems).toHaveLength(2);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
+		expect(draggedNodeItems[0]).toHaveStyle({ color: COLORS.text.disabled });
+		expect(draggedNodeItems[1]).toHaveStyle({ color: COLORS.text.regular });
 		// dropzone of the folder is shown
 		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 		expect(screen.getByText(/drag&drop mode/i)).toBeVisible();
@@ -447,8 +443,7 @@ describe('Drag and drop', () => {
 		jest.advanceTimersByTime(TIMERS.HIDE_DROPZONE);
 		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		expect(itemToDrag).toBeVisible();
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(itemToDrag).not.toHaveAttribute('disabled', '');
+		expect(itemToDrag).toHaveStyle({ color: COLORS.text.regular });
 
 		// drag and drop on folder with permissions
 		const destinationItem = screen.getByText(destinationFolder.name);
@@ -478,12 +473,12 @@ describe('Drag and drop', () => {
 		destinationFolder.permissions.can_write_folder = true;
 		destinationFolder.permissions.can_write_file = true;
 		destinationFolder.parent = currentFolder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 		const folderWithoutPermission = populateFolder();
 		folderWithoutPermission.permissions.can_write_folder = false;
 		folderWithoutPermission.permissions.can_write_file = false;
 		folderWithoutPermission.parent = currentFolder;
-		currentFolder.children.nodes.push(folderWithoutPermission);
+		currentFolder.children.nodes.unshift(folderWithoutPermission);
 
 		const mocks = {
 			Query: {
@@ -506,10 +501,8 @@ describe('Drag and drop', () => {
 		// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 		const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 		expect(draggedNodeItems).toHaveLength(2);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(draggedNodeItems[0]).toHaveAttribute('disabled', '');
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(draggedNodeItems[1]).not.toHaveAttribute('disabled', '');
+		expect(draggedNodeItems[0]).toHaveStyle({ color: COLORS.text.disabled });
+		expect(draggedNodeItems[1]).toHaveStyle({ color: COLORS.text.regular });
 		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
 
@@ -521,8 +514,7 @@ describe('Drag and drop', () => {
 		fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(itemToDrag).not.toHaveAttribute('disabled', '');
+		expect(itemToDrag).toHaveStyle({ color: COLORS.text.regular });
 
 		// drag and drop on folder with permissions. Overlay is not shown.
 		const destinationItem = screen.getByText(destinationFolder.name);
@@ -533,8 +525,7 @@ describe('Drag and drop', () => {
 		fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(itemToDrag).not.toHaveAttribute('disabled', '');
+		expect(itemToDrag).toHaveStyle({ color: COLORS.text.regular });
 	});
 
 	test('Drag of multiple nodes create a list of dragged nodes images', async () => {
@@ -550,7 +541,7 @@ describe('Drag and drop', () => {
 		destinationFolder.permissions.can_write_folder = true;
 		destinationFolder.permissions.can_write_file = true;
 		destinationFolder.parent = currentFolder;
-		currentFolder.children.nodes.push(destinationFolder);
+		currentFolder.children.nodes.unshift(destinationFolder);
 
 		const mocks = {
 			Query: {
@@ -583,10 +574,8 @@ describe('Drag and drop', () => {
 		forEach(nodesToDrag, (node) => {
 			const draggedImage = screen.getAllByText(node.name);
 			expect(draggedImage).toHaveLength(2);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedImage[0]).toHaveAttribute('disabled', '');
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(draggedImage[1]).not.toHaveAttribute('disabled', '');
+			expect(draggedImage[0]).toHaveStyle({ color: COLORS.text.disabled });
+			expect(draggedImage[1]).toHaveStyle({ color: COLORS.text.regular });
 		});
 
 		const destinationItem = screen.getByText(destinationFolder.name);
@@ -669,8 +658,7 @@ describe('Drag and drop', () => {
 		fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 		expect(itemToDrag).toBeVisible();
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(itemToDrag).not.toHaveAttribute('disabled', '');
+		expect(itemToDrag).toHaveStyle({ color: COLORS.text.regular });
 
 		expect(folderWithoutPermissionsCrumb).toHaveStyle({
 			background: ''

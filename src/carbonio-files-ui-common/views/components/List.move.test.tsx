@@ -5,13 +5,11 @@
  */
 import React from 'react';
 
-import { fireEvent, screen } from '@testing-library/react';
-
 import { List } from './List';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
+import { setup, selectNodes, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
-import { setup, selectNodes } from '../../utils/testUtils';
 
 describe('Move', () => {
 	describe('Selection mode', () => {
@@ -29,7 +27,7 @@ describe('Move', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.parent = currentFolder;
-			currentFolder.children.nodes.push(file, folder, node);
+			currentFolder.children.nodes.push(folder, node, file);
 
 			const { user } = setup(
 				<List
@@ -65,8 +63,9 @@ describe('Move', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			moveAction = await screen.findByText(ACTION_REGEXP.move);
 			expect(moveAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(moveAction).not.toHaveAttribute('disabled', '');
+			expect(moveAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 		});
 
 		test('Move is enabled when multiple files are selected', async () => {
@@ -76,10 +75,12 @@ describe('Move', () => {
 			const file = populateFile();
 			file.permissions.can_write_file = true;
 			file.parent = currentFolder;
+			file.flagged = true;
 			const folder = populateFolder();
 			folder.permissions.can_write_folder = true;
 			folder.parent = currentFolder;
-			currentFolder.children.nodes.push(file, folder);
+			folder.flagged = true;
+			currentFolder.children.nodes.push(folder, file);
 
 			const { user } = setup(
 				<List
@@ -91,6 +92,7 @@ describe('Move', () => {
 			);
 
 			await screen.findByText(file.name);
+			await screen.findByTestId(SELECTORS.customBreadcrumbs);
 			await selectNodes([file.id, folder.id], user);
 
 			// check that all wanted items are selected
@@ -101,8 +103,9 @@ describe('Move', () => {
 
 			const moveIcon = await screen.findByTestId(ICON_REGEXP.move);
 			expect(moveIcon).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(moveIcon.parentElement).not.toHaveAttribute('disabled', '');
+			expect(moveIcon).toHaveStyle({
+				color: 'currentColor'
+			});
 		});
 	});
 
@@ -121,9 +124,9 @@ describe('Move', () => {
 			node.permissions.can_write_folder = true;
 			node.permissions.can_write_file = true;
 			node.parent = currentFolder;
-			currentFolder.children.nodes.push(file, folder, node);
+			currentFolder.children.nodes.push(folder, node, file);
 
-			setup(
+			const { user } = setup(
 				<List
 					nodes={currentFolder.children.nodes as Array<Node>}
 					mainList
@@ -133,17 +136,17 @@ describe('Move', () => {
 
 			// right click to open contextual menu on file without permission
 			const fileItem = await screen.findByText(file.name);
-			fireEvent.contextMenu(fileItem);
+			await user.rightClick(fileItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 			// right click to open contextual menu on folder without permission
 			const folderItem = await screen.findByText(folder.name);
-			fireEvent.contextMenu(folderItem);
+			await user.rightClick(folderItem);
 			await screen.findByText(ACTION_REGEXP.copy);
 			expect(screen.queryByText(ACTION_REGEXP.move)).not.toBeInTheDocument();
 			// right click to open contextual menu on node with permission
 			const nodeItem = await screen.findByText(node.name);
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			expect(await screen.findByText(ACTION_REGEXP.move)).toBeInTheDocument();
 		});
 	});

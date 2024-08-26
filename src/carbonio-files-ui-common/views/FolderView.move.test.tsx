@@ -6,14 +6,22 @@
 
 import React from 'react';
 
-import { act, fireEvent, waitFor, within } from '@testing-library/react';
+import { act, waitFor, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
+import {
+	moveNode,
+	setup,
+	selectNodes,
+	triggerListLoadMore,
+	screen,
+	buildBreadCrumbRegExp
+} from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
@@ -28,16 +36,6 @@ import {
 	mockGetPath,
 	mockMoveNodes
 } from '../utils/resolverMocks';
-import {
-	moveNode,
-	setup,
-	selectNodes,
-	triggerLoadMore,
-	screen,
-	buildBreadCrumbRegExp
-} from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
@@ -56,8 +54,8 @@ describe('Move', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFolder.children.nodes.push(destinationFolder);
-			const nodeToMove = currentFolder.children.nodes[0] as Node;
+			currentFolder.children.nodes.unshift(destinationFolder);
+			const nodeToMove = currentFolder.children.nodes[1] as Node;
 			nodeToMove.permissions.can_write_folder = true;
 			nodeToMove.permissions.can_write_file = true;
 
@@ -129,10 +127,10 @@ describe('Move', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFolder.children.nodes.push(destinationFolder);
+			currentFolder.children.nodes.unshift(destinationFolder);
 			const nodesToMove = [
-				currentFolder.children.nodes[0],
-				currentFolder.children.nodes[1]
+				currentFolder.children.nodes[1],
+				currentFolder.children.nodes[2]
 			] as Node[];
 			forEach(nodesToMove, (mockedNode) => {
 				mockedNode.permissions.can_write_folder = true;
@@ -280,8 +278,9 @@ describe('Move', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			const moveAction = await screen.findByText(ACTION_REGEXP.move);
 			expect(moveAction).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(moveAction).not.toHaveAttribute('disabled', '');
+			expect(moveAction).toHaveStyle({
+				color: COLORS.text.regular
+			});
 			await user.click(moveAction);
 			await screen.findByTextWithMarkup(
 				buildBreadCrumbRegExp(commonParent.name, currentFolder.name)
@@ -323,8 +322,8 @@ describe('Move', () => {
 			const destinationFolder = populateFolder();
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
-			currentFolder.children.nodes.push(destinationFolder);
-			const nodeToMove = currentFolder.children.nodes[0] as Node;
+			currentFolder.children.nodes.unshift(destinationFolder);
+			const nodeToMove = currentFolder.children.nodes[1] as Node;
 			nodeToMove.permissions.can_write_folder = true;
 			nodeToMove.permissions.can_write_file = true;
 
@@ -367,7 +366,7 @@ describe('Move', () => {
 
 			// right click to open contextual menu on folder
 			const nodeToMoveItem = await screen.findByText(nodeToMove.name);
-			fireEvent.contextMenu(nodeToMoveItem);
+			await user.rightClick(nodeToMoveItem);
 
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
@@ -428,7 +427,7 @@ describe('Move', () => {
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
-			fireEvent.contextMenu(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name));
+			await user.rightClick(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name));
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/Item moved/i);
 			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1].name)).not.toBeInTheDocument();
@@ -437,8 +436,7 @@ describe('Move', () => {
 			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				firstPage.length - 1
 			);
-			expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-			await triggerLoadMore();
+			triggerListLoadMore(0);
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.getByText(secondPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();

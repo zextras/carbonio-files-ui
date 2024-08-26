@@ -14,7 +14,7 @@ import { FilesQuota, getPercentage } from './FilesQuota';
 import * as mySelfQuotaModule from '../../../network/mySelfQuota';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import * as useFilesQuotaInfo from '../../hooks/useFilesQuotaInfo';
-import { screen, setup } from '../../utils/testUtils';
+import { screen, setup } from '../../tests/utils';
 import { humanFileSize } from '../../utils/utils';
 
 const mockQuota = jest.fn().mockReturnValue(<div>mock Quota</div>);
@@ -35,7 +35,7 @@ describe('Files Quota', () => {
 				responseReceived: true,
 				refreshData: jest.fn()
 			});
-			const quotaString = `${humanFileSize(used)} of unlimited space`;
+			const quotaString = `${humanFileSize(used, undefined)} of unlimited space`;
 
 			setup(<FilesQuota />);
 
@@ -85,7 +85,7 @@ describe('Files Quota', () => {
 				responseReceived: true,
 				refreshData: jest.fn()
 			});
-			const quotaString = `${humanFileSize(used)} of ${humanFileSize(limit)} used`;
+			const quotaString = `${humanFileSize(used, undefined)} of ${humanFileSize(limit, undefined)} used`;
 
 			setup(<FilesQuota />);
 
@@ -287,9 +287,10 @@ describe('Files Quota', () => {
 			const limit = 100;
 			const quotaUsed = 50;
 			const updatedQuotaUsed = 99;
-			const quotaString = `${humanFileSize(quotaUsed)} of ${humanFileSize(limit)} used`;
-			const updatedQuotaString = `${humanFileSize(updatedQuotaUsed)} of ${humanFileSize(
-				limit
+			const quotaString = `${humanFileSize(quotaUsed, undefined)} of ${humanFileSize(limit, undefined)} used`;
+			const updatedQuotaString = `${humanFileSize(updatedQuotaUsed, undefined)} of ${humanFileSize(
+				limit,
+				undefined
 			)} used`;
 			const mockMySelfQuota = jest
 				.spyOn(mySelfQuotaModule, 'mySelfQuota')
@@ -308,14 +309,14 @@ describe('Files Quota', () => {
 
 		it.each([
 			[0, 'unlimited space'],
-			[100, `${humanFileSize(100)} used`]
+			[100, `${humanFileSize(100, undefined)} used`]
 		])(
 			'should refresh the quota data when the user clicks on the refresh button (limit: %s)',
 			async (limit, description) => {
 				const quotaUsed = 50;
 				const updatedQuotaUsed = 99;
-				const quotaString = `${humanFileSize(quotaUsed)} of ${description}`;
-				const updatedQuotaString = `${humanFileSize(updatedQuotaUsed)} of ${description}`;
+				const quotaString = `${humanFileSize(quotaUsed, undefined)} of ${description}`;
+				const updatedQuotaString = `${humanFileSize(updatedQuotaUsed, undefined)} of ${description}`;
 				const mockMySelfQuota = jest
 					.spyOn(mySelfQuotaModule, 'mySelfQuota')
 					.mockResolvedValueOnce({ limit, used: quotaUsed })

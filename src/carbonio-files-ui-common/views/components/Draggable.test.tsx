@@ -9,8 +9,8 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { Draggable } from './Draggable';
-import { DRAG_TYPES } from '../../constants';
-import { setup } from '../../utils/testUtils';
+import { DRAG_TYPES, TIMERS } from '../../constants';
+import { setup } from '../../tests/utils';
 
 describe('Draggable', () => {
 	test('Force drag end on mouse move after user release drag but no drag end is fired', async () => {
@@ -29,12 +29,7 @@ describe('Draggable', () => {
 		expect(dragStartFn).toHaveBeenCalled();
 
 		// wait a second to allow draggable to register listener
-		await waitFor(
-			() =>
-				new Promise((resolve) => {
-					setTimeout(resolve, 1000);
-				})
-		);
+		await jest.advanceTimersToNextTimerAsync(TIMERS.DRAG_THROTTLE);
 
 		fireEvent.dragEnter(window, { dataTransfer: { types: [DRAG_TYPES.move] } });
 		fireEvent.dragOver(window, { dataTransfer: { types: [DRAG_TYPES.move] } });

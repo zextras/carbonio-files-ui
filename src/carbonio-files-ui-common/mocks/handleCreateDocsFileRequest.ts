@@ -7,17 +7,7 @@
 import { faker } from '@faker-js/faker';
 import { HttpResponse, HttpResponseResolver } from 'msw';
 
-import { DocsType } from '../types/common';
-
-export interface CreateDocsFileResponse {
-	nodeId: string | null;
-}
-
-export interface CreateDocsFileRequestBody {
-	filename: string;
-	destinationFolderId: string;
-	type: DocsType;
-}
+import { CreateDocsFileRequestBody, CreateDocsFileResponse } from '../hooks/useCreateDocsFile';
 
 const handleCreateDocsFileRequest: HttpResponseResolver<
 	never,

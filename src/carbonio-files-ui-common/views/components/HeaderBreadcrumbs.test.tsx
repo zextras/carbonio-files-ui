@@ -27,10 +27,10 @@ import {
 	populateParents,
 	populateUser
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetPath, mockMoveNodes } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../utils/testUtils';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
 
@@ -229,12 +229,7 @@ describe('Header Breadcrumbs', () => {
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
 			// wait a tick to let mutation be called
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 1);
-					})
-			);
+			await jest.advanceTimersToNextTimerAsync();
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 
@@ -574,21 +569,11 @@ describe('Header Breadcrumbs', () => {
 			expect(screen.getByText(path[0].name)).toBeVisible();
 			fireEvent.dragLeave(collapserItem, { dataTransfer: dataTransfer() });
 			// wait less than the timeout to be sure that when mouse is over the dropdown of the breadcrumbs, it will not be closed by another event
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 100);
-					})
-			);
+			await jest.advanceTimersByTimeAsync(TIMERS.HIDE_DROPZONE - 1);
 			fireEvent.dragEnter(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			// now wait the default timeout to be sure the dropdown remains opened
-			await waitFor(
-				() =>
-					new Promise((resolve) => {
-						setTimeout(resolve, 150);
-					})
-			);
+			await jest.advanceTimersByTimeAsync(TIMERS.HIDE_DROPZONE);
 			expect(screen.getByText(path[0].name)).toBeVisible();
 			fireEvent.dragLeave(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(screen.getByText('draggable element mock'), {

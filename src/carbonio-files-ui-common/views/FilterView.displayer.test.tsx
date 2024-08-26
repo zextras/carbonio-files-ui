@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { map } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -13,12 +13,10 @@ import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodes, populateParents } from '../mocks/mockUtils';
+import { buildBreadCrumbRegExp, moveNode, setup } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockFindNodes, mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, moveNode, setup } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Displayer', () => {
@@ -122,7 +120,7 @@ describe('Filter View', () => {
 			expect(getByTextWithMarkup(fullPathOriginalRegexp)).toBeVisible();
 			// right click to open contextual menu
 			const nodeToMoveItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-			fireEvent.contextMenu(nodeToMoveItem);
+			await user.rightClick(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/item moved/i);
 			const fullPathUpdatedItem = await findByTextWithMarkup(

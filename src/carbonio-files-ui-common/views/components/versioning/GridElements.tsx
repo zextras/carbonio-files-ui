@@ -4,21 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Container } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
-
-export const GridItem = styled(Container)<{
-	columnStart: number;
-	columnEnd: number;
-	rowStart: number;
-	rowEnd: number;
-}>`
-	grid-column-start: ${({ columnStart }): number => columnStart};
-	grid-column-end: ${({ columnEnd }): number => columnEnd};
-	grid-row-start: ${({ rowStart }): number => rowStart};
-	grid-row-end: ${({ rowEnd }): number => rowEnd};
-`;
 
 export const GridContainer = styled.div<{ sectionsRows: Array<number> }>`
 	display: grid;

@@ -7,8 +7,7 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { Dropdown, DropdownItem, IconButton, Tooltip } from '@zextras/carbonio-design-system';
-import { noop } from 'lodash';
+import { Dropdown, DropdownItem, Button, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { nodeSortVar } from '../../apollo/nodeSortVar';
@@ -87,7 +86,7 @@ export const SortingComponent: React.VFC = () => {
 	}, [ascendingOrDescending, orderType]);
 
 	const selectOrderType = useCallback(
-		(orderTypeValue) => {
+		(orderTypeValue: OrderType) => {
 			nodeSortVar(nodeSortGetter(ascendingOrDescending, orderTypeValue));
 		},
 		[ascendingOrDescending]
@@ -147,7 +146,14 @@ export const SortingComponent: React.VFC = () => {
 				itemIconSize="large"
 				selectedBackgroundColor="highlight"
 			>
-				<IconButton icon={iconButtonIconProps} size="large" ref={buttonRef} onClick={noop} />
+				<Button
+					icon={iconButtonIconProps}
+					size="large"
+					ref={buttonRef}
+					onClick={(): void => undefined}
+					type={'ghost'}
+					color={'text'}
+				/>
 			</Dropdown>
 		</Tooltip>
 	);

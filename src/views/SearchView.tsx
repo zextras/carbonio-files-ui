@@ -42,8 +42,6 @@ const SearchView: React.VFC<SearchViewProps> = ({ useQuery, ResultsHeader }) => 
 					<UpdateQueryContext.Provider value={updateQuery as (args: QueryChip[]) => void}>
 						<CommonSearchView
 							resultsHeader={<ResultsHeader label={t('search.resultsFor', 'Results for:')} />}
-							listWidth="25%"
-							displayerWidth="75%"
 						/>
 					</UpdateQueryContext.Provider>
 				</ViewProvidersWrapper>

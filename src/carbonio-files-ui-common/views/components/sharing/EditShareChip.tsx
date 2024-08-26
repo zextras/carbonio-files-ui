@@ -94,7 +94,7 @@ export const EditShareChip: React.FC<EditShareChipProps> = ({
 		getPermissionsLazy();
 		createSnackbar({
 			key: new Date().toLocaleString(),
-			type: 'info',
+			severity: 'info',
 			label: t('snackbar.decreaseYourOwnShare.success', 'Rights updated successfully'),
 			replace: true,
 			hideButton: true

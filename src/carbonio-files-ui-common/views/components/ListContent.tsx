@@ -4,238 +4,228 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import type { Action as DSAction } from '@zextras/carbonio-design-system';
-import { forEach, map, filter, includes } from 'lodash';
-import styled from 'styled-components';
+import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
+import { forEach, filter, includes } from 'lodash';
+import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
 import { NodeListItem } from './NodeListItem';
-import { NodeListItemWrapper } from './NodeListItemWrapper';
-import { ScrollContainer } from './ScrollContainer';
+import { NodeListItemDragImage } from './NodeListItemDragImage';
+import { GridItem } from './StyledComponents';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { DRAG_TYPES } from '../../constants';
-import { DeleteNodesType } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
-import { Action, GetNodeParentType, NodeListItemType, PickIdNodeType } from '../../types/common';
-import { Node } from '../../types/graphql/types';
-import { DeepPick, OneOrMany } from '../../types/utils';
+import { DRAG_TYPES, GRID_ITEM_MIN_WIDTH, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
+import { ListContext } from '../../contexts';
+import { Action, NodeListItemType } from '../../types/common';
 import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
-import { isFile } from '../../utils/utils';
+import { cssCalcBuilder } from '../../utils/utils';
 
-const DragImageContainer = styled.div`
+const DragImageContainer = styled.div<{ $isGrid: boolean }>`
 	position: absolute;
 	top: -5000px;
 	left: -5000px;
 	transform: translate(-100%, -100%);
 	width: 100%;
+	${({ $isGrid }): false | ReturnType<typeof css> =>
+		$isGrid &&
+		css`
+			display: grid;
+			grid-gap: 1rem;
+			grid-template-columns: repeat(auto-fill, minmax(${GRID_ITEM_MIN_WIDTH}, 1fr));
+		`};
+`;
+
+const Grid = styled(ListV2)`
+	& > div {
+		padding-left: 1rem;
+		padding-right: 1rem;
+		padding-top: 1rem;
+		display: grid;
+		grid-gap: 1rem;
+		grid-template-columns: repeat(auto-fill, minmax(${GRID_ITEM_MIN_WIDTH}, 1fr));
+	}
 `;
 
 interface ListContentProps {
 	nodes: NodeListItemType[];
-	selectedMap?: Record<string, boolean>;
-	selectId?: (id: string) => void;
-	isSelectionModeActive?: boolean;
-	exitSelectionMode?: () => void;
-	toggleFlag?: (flagValue: boolean, ...nodes: PickIdNodeType[]) => void;
-	renameNode?: (node: Pick<Node, 'id' | 'name'>) => void;
-	markNodesForDeletion?: (
-		...nodes: Array<Pick<NodeListItemType, 'id'> & DeepPick<NodeListItemType, 'owner', 'id'>>
-	) => void;
-	restore?: (
-		...nodes: Array<Pick<NodeListItemType, '__typename' | 'id'> & GetNodeParentType>
-	) => void;
-	deletePermanently?: DeleteNodesType;
-	moveNodes?: (...nodes: Array<Pick<NodeListItemType, '__typename' | 'id' | 'owner'>>) => void;
-	copyNodes?: (...nodes: Array<Pick<NodeListItemType, '__typename' | 'id'>>) => void;
-	activeNodes?: OneOrMany<string>;
-	setActiveNode?: (node: NodeListItemType, event: React.SyntheticEvent) => void;
-	manageShares?: (nodeId: string) => void;
-	compact?: boolean;
-	navigateTo?: (id: string, event?: React.SyntheticEvent | Event) => void;
-	loading?: boolean;
+	selectedMap: Record<string, boolean>;
+	selectId: (id: string) => void;
+	isSelectionModeActive: boolean;
+	exitSelectionMode: () => void;
 	hasMore?: boolean;
 	loadMore?: () => void;
-	draggable?: boolean;
 	customCheckers?: ActionsFactoryCheckerMap;
 	selectionContextualMenuActionsItems?: DSAction[];
 	fillerWithActions?: React.JSX.Element;
 }
 
-export const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
-	function ListContentFn(
-		{
-			nodes,
-			selectedMap = {},
-			selectId,
-			isSelectionModeActive,
-			exitSelectionMode,
-			toggleFlag,
-			renameNode,
-			markNodesForDeletion,
-			restore,
-			deletePermanently,
-			moveNodes,
-			copyNodes,
-			activeNodes,
-			setActiveNode,
-			compact,
-			navigateTo,
-			loading = false,
-			hasMore = false,
-			loadMore = (): void => undefined,
-			draggable = false,
-			customCheckers,
-			selectionContextualMenuActionsItems,
-			fillerWithActions,
-			manageShares
-		},
-		ref
-	) {
-		const dragImageRef = useRef<HTMLDivElement>(null);
+export const ListContent = ({
+	nodes,
+	selectedMap,
+	selectId,
+	isSelectionModeActive,
+	exitSelectionMode,
+	hasMore = false,
+	loadMore = (): void => undefined,
+	customCheckers,
+	selectionContextualMenuActionsItems,
+	fillerWithActions
+}: ListContentProps): React.JSX.Element => {
+	const { viewMode } = useContext(ListContext);
 
-		const { me } = useUserInfo();
+	const dragImageRef = useRef<HTMLDivElement>(null);
 
-		const [dragImage, setDragImage] = useState<React.JSX.Element[]>([]);
+	const { me } = useUserInfo();
 
-		const dragStartHandler = useCallback<
-			(node: NodeListItemType) => React.DragEventHandler<HTMLElement>
-		>(
-			(node) =>
-				(event): void => {
-					forEach(DRAG_TYPES, (dragType) => event.dataTransfer.clearData(dragType));
-					const nodesToDrag: NodeListItemType[] = [];
-					if (isSelectionModeActive) {
-						nodesToDrag.push(...filter(nodes, ({ id }) => !!selectedMap[id]));
-					} else {
-						nodesToDrag.push(node);
-					}
-					const draggedItemsTmp: React.JSX.Element[] = [];
-					const permittedActions = getPermittedActions(
-						nodesToDrag,
-						[Action.Move, Action.MoveToTrash],
-						me,
-						undefined,
-						undefined,
-						customCheckers
-					);
-					forEach(nodesToDrag, (nodeToDrag) => {
-						draggedItemsTmp.push(
-							<NodeListItem
-								key={`dragged-${nodeToDrag.id}`}
-								id={`dragged-${nodeToDrag.id}`}
-								name={nodeToDrag.name}
-								type={nodeToDrag.type}
-								extension={(isFile(nodeToDrag) && nodeToDrag.extension) || undefined}
-								mimeType={(isFile(nodeToDrag) && nodeToDrag.mime_type) || undefined}
-								updatedAt={nodeToDrag.updated_at}
-								owner={nodeToDrag.owner}
-								lastEditor={nodeToDrag.last_editor}
-								incomingShare={me !== nodeToDrag.owner?.id}
-								outgoingShare={
-									me === nodeToDrag.owner?.id && nodeToDrag.shares && nodeToDrag.shares.length > 0
-								}
-								size={isFile(nodeToDrag) ? nodeToDrag.size : undefined}
-								flagActive={nodeToDrag.flagged}
-							/>
+	const [dragImage, setDragImage] = useState<React.JSX.Element[]>([]);
+
+	const dragStartHandler = useCallback<
+		(node: NodeListItemType) => React.DragEventHandler<HTMLElement>
+	>(
+		(node) =>
+			(event): void => {
+				forEach(DRAG_TYPES, (dragType) => event.dataTransfer.clearData(dragType));
+				const nodesToDrag: NodeListItemType[] = [];
+				if (isSelectionModeActive) {
+					nodesToDrag.push(...filter(nodes, ({ id }) => !!selectedMap[id]));
+				} else {
+					nodesToDrag.push(node);
+				}
+				const permittedActions = getPermittedActions(
+					nodesToDrag,
+					[Action.Move, Action.MoveToTrash],
+					me,
+					undefined,
+					undefined,
+					customCheckers
+				);
+
+				const draggedItemsTmp = nodesToDrag.reduce<React.JSX.Element[]>(
+					(accumulator, nodeToDrag, currentIndex) => {
+						if (
+							currentIndex > 0 &&
+							((nodeToDrag.__typename === 'File' &&
+								nodesToDrag[currentIndex - 1].__typename === 'Folder') ||
+								(nodeToDrag.__typename === 'Folder' &&
+									nodesToDrag[currentIndex - 1].__typename === 'File'))
+						) {
+							accumulator.push(
+								<GridItem key={'grid-row-filler'} height={0} $columnStart={1} $columnEnd={-1} />
+							);
+						}
+						accumulator.push(
+							<NodeListItemDragImage node={nodeToDrag} key={`dragged-${nodeToDrag.id}`} />
 						);
-					});
-					setDragImage(draggedItemsTmp);
-					dragImageRef.current && event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
-					draggedItemsVar(nodesToDrag);
-					if (includes(permittedActions, Action.Move)) {
-						event.dataTransfer.setData(DRAG_TYPES.move, JSON.stringify(nodesToDrag));
-					}
-					if (includes(permittedActions, Action.MoveToTrash)) {
-						event.dataTransfer.setData(DRAG_TYPES.markForDeletion, JSON.stringify(nodesToDrag));
-					}
-				},
-			[customCheckers, isSelectionModeActive, me, nodes, selectedMap]
-		);
+						return accumulator;
+					},
+					[]
+				);
 
-		const dragEndHandler = useCallback(() => {
-			setDragImage([]);
-			draggedItemsVar(null);
+				setDragImage(draggedItemsTmp);
+				dragImageRef.current && event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
+				draggedItemsVar(nodesToDrag);
+				if (includes(permittedActions, Action.Move)) {
+					event.dataTransfer.setData(DRAG_TYPES.move, JSON.stringify(nodesToDrag));
+				}
+				if (includes(permittedActions, Action.MoveToTrash)) {
+					event.dataTransfer.setData(DRAG_TYPES.markForDeletion, JSON.stringify(nodesToDrag));
+				}
+			},
+		[customCheckers, isSelectionModeActive, me, nodes, selectedMap]
+	);
+
+	const dragEndHandler = useCallback(() => {
+		setDragImage([]);
+		draggedItemsVar(null);
+	}, []);
+
+	const intersectionObserverInitOptions = useMemo(() => ({ threshold: 0.5 }), []);
+
+	const items = useMemo(() => {
+		const nodeElements = nodes.reduce<React.JSX.Element[]>((accumulator, node, currentIndex) => {
+			if (
+				currentIndex > 0 &&
+				((node.__typename === 'File' && nodes[currentIndex - 1].__typename === 'Folder') ||
+					(node.__typename === 'Folder' && nodes[currentIndex - 1].__typename === 'File'))
+			) {
+				accumulator.push(
+					<GridItem key={'grid-row-filler'} height={0} $columnStart={1} $columnEnd={-1} />
+				);
+			}
+			accumulator.push(
+				<Draggable
+					onDragStart={dragStartHandler(node)}
+					onDragEnd={dragEndHandler}
+					key={node.id}
+					effect="move"
+				>
+					<NodeListItem
+						node={node}
+						isSelected={selectedMap && selectedMap[node.id]}
+						isSelectionModeActive={isSelectionModeActive}
+						selectId={selectId}
+						exitSelectionMode={exitSelectionMode}
+						selectionContextualMenuActionsItems={
+							selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
+						}
+					/>
+				</Draggable>
+			);
+			return accumulator;
 		}, []);
 
-		const items = useMemo(
-			() =>
-				map(nodes, (node) => (
-					<Draggable
-						draggable={draggable}
-						onDragStart={dragStartHandler(node)}
-						onDragEnd={dragEndHandler}
-						key={node.id}
-						effect="move"
-					>
-						<NodeListItemWrapper
-							node={node}
-							toggleFlag={toggleFlag}
-							markNodesForDeletion={markNodesForDeletion}
-							restore={restore}
-							deletePermanently={deletePermanently}
-							moveNodes={moveNodes}
-							copyNodes={copyNodes}
-							manageShares={manageShares}
-							isSelected={selectedMap && selectedMap[node.id]}
-							isSelectionModeActive={isSelectionModeActive}
-							selectId={selectId}
-							exitSelectionMode={exitSelectionMode}
-							renameNode={renameNode}
-							isActive={
-								activeNodes === node.id ||
-								(activeNodes instanceof Array && activeNodes.includes(node.id))
-							}
-							setActive={setActiveNode}
-							compact={compact}
-							navigateTo={navigateTo}
-							selectionContextualMenuActionsItems={
-								selectedMap && selectedMap[node.id]
-									? selectionContextualMenuActionsItems
-									: undefined
-							}
-						/>
-					</Draggable>
-				)),
-			[
-				nodes,
-				draggable,
-				dragStartHandler,
-				dragEndHandler,
-				toggleFlag,
-				markNodesForDeletion,
-				restore,
-				deletePermanently,
-				moveNodes,
-				copyNodes,
-				manageShares,
-				selectedMap,
-				isSelectionModeActive,
-				selectId,
-				exitSelectionMode,
-				renameNode,
-				activeNodes,
-				setActiveNode,
-				compact,
-				navigateTo,
-				selectionContextualMenuActionsItems
-			]
-		);
+		if (fillerWithActions && !hasMore) {
+			nodeElements.push(
+				React.cloneElement(fillerWithActions, {
+					key: 'fillerWithActions',
+					children: <Row height={cssCalcBuilder(LIST_ITEM_HEIGHT, ['/', 2])} />
+				})
+			);
+		}
 
-		return (
-			<>
-				<ScrollContainer
-					loading={loading}
-					hasMore={hasMore}
-					loadMore={loadMore}
-					ref={ref}
-					fillerWithActions={fillerWithActions}
+		return nodeElements;
+	}, [
+		nodes,
+		fillerWithActions,
+		hasMore,
+		dragStartHandler,
+		dragEndHandler,
+		selectedMap,
+		isSelectionModeActive,
+		selectId,
+		exitSelectionMode,
+		selectionContextualMenuActionsItems
+	]);
+
+	return (
+		<>
+			{viewMode === VIEW_MODE.grid ? (
+				<Grid
+					height={'auto'}
+					maxHeight={'100%'}
+					data-testid={'main-grid'}
+					onListBottom={hasMore ? loadMore : undefined}
+					intersectionObserverInitOptions={intersectionObserverInitOptions}
 				>
 					{items}
-				</ScrollContainer>
-				<DragImageContainer ref={dragImageRef}>{dragImage}</DragImageContainer>
-			</>
-		);
-	}
-);
+				</Grid>
+			) : (
+				<ListV2
+					maxHeight={'100%'}
+					height={'auto'}
+					data-testid="main-list"
+					background={'gray6'}
+					onListBottom={hasMore ? loadMore : undefined}
+					intersectionObserverInitOptions={intersectionObserverInitOptions}
+				>
+					{items}
+				</ListV2>
+			)}
+			<DragImageContainer $isGrid={viewMode === VIEW_MODE.grid} ref={dragImageRef}>
+				{dragImage}
+			</DragImageContainer>
+		</>
+	);
+};

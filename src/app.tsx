@@ -17,7 +17,6 @@ import {
 	SecondaryBarComponentProps,
 	SearchViewProps
 } from '@zextras/carbonio-shell-ui';
-import { filter, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import buildClient from './carbonio-files-ui-common/apollo';
@@ -28,7 +27,7 @@ import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-ty
 import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uploadUtils';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
-import { PrimaryBarElement } from './components/PrimaryBarElement';
+import { PrimaryBadgeUpdater } from './components/PrimaryBadgeUpdater';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
@@ -68,12 +67,12 @@ const SearchView = (props: SearchViewProps): React.JSX.Element => (
 export default function App(): React.JSX.Element {
 	const [t] = useTranslation();
 
-	const beforeunloadCallback = useCallback((e) => {
-		if (size(filter(uploadVar(), (value) => value.status === UploadStatus.LOADING)) > 0) {
+	const beforeunloadCallback = useCallback((e: Event) => {
+		if (
+			Object.values(uploadVar()).filter((value) => value.status === UploadStatus.LOADING).length > 0
+		) {
 			// Cancel the event
 			e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-			// Chrome requires returnValue to be set
-			e.returnValue = '';
 		}
 	}, []);
 
@@ -106,7 +105,7 @@ export default function App(): React.JSX.Element {
 			position: 500,
 			visible: true,
 			label: t('label.app_name', 'Files'),
-			primaryBar: PrimaryBarElement,
+			primaryBar: 'DriveOutline',
 			secondaryBar: SidebarView,
 			appView: AppView
 		});
@@ -136,6 +135,7 @@ export default function App(): React.JSX.Element {
 		<ApolloProvider client={apolloClient}>
 			<ModalManager>
 				<IntegrationsRegisterer />
+				<PrimaryBadgeUpdater />
 			</ModalManager>
 		</ApolloProvider>
 	);

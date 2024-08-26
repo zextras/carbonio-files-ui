@@ -6,19 +6,17 @@
 
 import React from 'react';
 
-import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
+import { waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode } from '../mocks/mockUtils';
+import { setup, selectNodes, screen, within } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { setup, selectNodes, screen, within } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
@@ -122,7 +120,7 @@ describe('Flag', () => {
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			// open context menu and click on flag action
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			const flagAction = await screen.findByText(ACTION_REGEXP.flag);
 			expect(flagAction).toBeVisible();
 			await user.click(flagAction);
@@ -130,7 +128,7 @@ describe('Flag', () => {
 			expect(flagAction).not.toBeInTheDocument();
 			expect(within(nodeItem).getByTestId(ICON_REGEXP.flagged)).toBeVisible();
 			// open context menu and click on unflag action
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
 			expect(unflagAction).toBeVisible();
 			await user.click(unflagAction);

@@ -6,8 +6,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Container, Responsive, Text } from '@zextras/carbonio-design-system';
-import { map, filter, last } from 'lodash';
+import { Text } from '@zextras/carbonio-design-system';
+import { filter, map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -16,11 +16,13 @@ import { Displayer } from './components/Displayer';
 import { EmptySpaceFiller } from './components/EmptySpaceFiller';
 import { List } from './components/List';
 import { SortingComponent } from './components/SortingComponent';
+import { ViewModeComponent } from './components/ViewModeComponent';
+import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
-import { DISPLAYER_WIDTH, DOCS_EXTENSIONS, FILES_APP_ID, LIST_WIDTH, ROOTS } from '../constants';
-import { ListContext, ListHeaderActionContext } from '../contexts';
+import { DOCS_EXTENSIONS, FILES_APP_ID, ROOTS } from '../constants';
+import { ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
 import { useGetChildrenQuery } from '../hooks/graphql/queries/useGetChildrenQuery';
 import { useGetPermissionsQuery } from '../hooks/graphql/queries/useGetPermissionsQuery';
@@ -33,16 +35,21 @@ import { DocsType, NodeListItemType, URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
-import { getNewDocumentActionLabel, inputElement, isFolder, takeIfNotEmpty } from '../utils/utils';
+import {
+	getDocumentGenericType,
+	getNewDocumentActionLabel,
+	inputElement,
+	isFolder,
+	takeIfNotEmpty
+} from '../utils/utils';
 
-const FolderView: React.VFC = () => {
+const FolderView = (): React.JSX.Element => {
 	const { rootId } = useParams<URLParams>();
 	const { setActiveNode } = useActiveNode();
 	const folderId = useQueryParam('folder');
 	const [newFile, setNewFile] = useState<DocsType | undefined>();
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
-	const [isEmpty, setIsEmpty] = useState(false);
 
 	const { add } = useUpload();
 
@@ -89,7 +96,7 @@ const FolderView: React.VFC = () => {
 	const { createFolder } = useCreateFolderMutation();
 
 	const createFolderCallback = useCallback(
-		(_parentId, newName) => {
+		(_parentId: string, newName: string) => {
 			if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
 				return createFolder(currentFolder.getNode, newName).then((result) => {
 					result.data && setActiveNode(result.data.createFolder.id);
@@ -119,7 +126,7 @@ const FolderView: React.VFC = () => {
 		}
 	}, [currentFolderId, newFolder, openCreateFolderModal]);
 
-	const createFolderAction = useCallback((event) => {
+	const createFolderAction = useCallback((event: React.SyntheticEvent | KeyboardEvent) => {
 		event?.stopPropagation();
 		setNewFolder(true);
 	}, []);
@@ -127,11 +134,13 @@ const FolderView: React.VFC = () => {
 	const createDocsFile = useCreateDocsFile();
 
 	const createDocsFileAction = useCallback(
-		(_parentId, newName) => {
+		(_parentId: string, newName: string) => {
 			if (currentFolder?.getNode && isFolder(currentFolder.getNode) && newFile) {
 				return createDocsFile(currentFolder?.getNode, newName, newFile).then((result) => {
-					result?.data?.getNode && setActiveNode(result.data.getNode.id);
-					return result;
+					if (result?.data?.getNode) {
+						setActiveNode(result.data.getNode.id);
+					}
+					return result ?? {};
 				});
 			}
 			return Promise.reject(new Error('cannot create folder: invalid node or file type'));
@@ -143,17 +152,10 @@ const FolderView: React.VFC = () => {
 		setNewFile(undefined);
 	}, [setNewFile]);
 
-	const documentGenericType = useMemo(
-		() => (last(newFile?.split('_')) ?? 'document').toLowerCase(),
-		[newFile]
-	);
+	const documentGenericType = newFile ? getDocumentGenericType(newFile) : 'document';
 
 	const { openCreateModal: openCreateFileModal } = useCreateModal(
-		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
-		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.title.${documentGenericType}`, `Create new ${documentGenericType}`),
-		// be careful: the following key is not parsed by i18next-extract, it must be added manually to the en.json file
-		/* i18next-extract-disable-next-line */
 		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
 		createDocsFileAction,
 		newFile ? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[newFile]}`}</Text> : undefined,
@@ -320,7 +322,12 @@ const FolderView: React.VFC = () => {
 	}, [currentFolder]);
 
 	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
-		() => <SortingComponent />,
+		() => (
+			<>
+				<ViewModeComponent />
+				<SortingComponent />
+			</>
+		),
 		[]
 	);
 
@@ -353,43 +360,11 @@ const FolderView: React.VFC = () => {
 		]
 	);
 
-	const listContextValue = useMemo(() => ({ isEmpty, setIsEmpty }), [isEmpty]);
-
 	return (
-		<ListContext.Provider value={listContextValue}>
-			<Container
-				orientation="row"
-				crossAlignment="flex-start"
-				mainAlignment="flex-start"
-				width="fill"
-				height="fill"
-				background="gray5"
-				borderRadius="none"
-				maxHeight="100%"
-			>
-				<Responsive mode="desktop">
-					<Container
-						width={LIST_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="unset"
-						borderRadius="none"
-						background="gray6"
-					>
-						{ListComponent}
-					</Container>
-					<Container
-						width={DISPLAYER_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="flex-start"
-						borderRadius="none"
-						style={{ maxHeight: '100%' }}
-					>
-						<Displayer translationKey="displayer.folder" />
-					</Container>
-				</Responsive>
-				<Responsive mode="mobile">{ListComponent}</Responsive>
-			</Container>
-		</ListContext.Provider>
+		<ViewLayout
+			listComponent={ListComponent}
+			displayerComponent={<Displayer translationKey="displayer.folder" />}
+		/>
 	);
 };
 

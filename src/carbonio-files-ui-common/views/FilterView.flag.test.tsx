@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -13,12 +13,10 @@ import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateNodes } from '../mocks/mockUtils';
+import { setup, selectNodes } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes, mockFlagNodes } from '../utils/resolverMocks';
-import { setup, selectNodes } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Flag', () => {
@@ -103,7 +101,7 @@ describe('Filter View', () => {
 				// right click to open contextual menu on first node
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodes[0].id));
 				// open context menu and click on unflag action
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				const unflagAction = await screen.findByText(ACTION_REGEXP.unflag);
 				expect(unflagAction).toBeVisible();
 				await user.click(unflagAction);

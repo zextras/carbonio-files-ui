@@ -11,6 +11,7 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import { CollaborationLinks } from './CollaborationLinks';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateCollaborationLink, populateNode } from '../../../../mocks/mockUtils';
+import { setup } from '../../../../tests/utils';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { SharePermission } from '../../../../types/graphql/types';
 import {
@@ -18,7 +19,6 @@ import {
 	mockDeleteCollaborationLinks,
 	mockGetCollaborationLinks
 } from '../../../../utils/resolverMocks';
-import { setup } from '../../../../utils/testUtils';
 import * as moduleUtils from '../../../../utils/utils';
 import { isFile } from '../../../../utils/utils';
 

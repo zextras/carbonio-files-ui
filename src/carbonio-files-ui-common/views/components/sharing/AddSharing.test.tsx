@@ -17,6 +17,7 @@ import {
 	populateShare,
 	populateUser
 } from '../../../mocks/mockUtils';
+import { generateError, setup, within } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
 	GetNodeDocument,
@@ -31,7 +32,6 @@ import {
 	mockErrorResolver,
 	mockGetAccountByEmail
 } from '../../../utils/resolverMocks';
-import { generateError, setup, within } from '../../../utils/testUtils';
 
 const mockedSoapFetch = jest.fn();
 

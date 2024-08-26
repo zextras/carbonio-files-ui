@@ -7,8 +7,6 @@
 import React from 'react';
 
 import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
-import { DropdownItem } from '@zextras/carbonio-design-system';
-import { map } from 'lodash';
 import { http, HttpResponse } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
@@ -21,16 +19,20 @@ import {
 	DOCS_ENDPOINT,
 	DOCS_SERVICE_NAME,
 	HEALTH_PATH,
+	HTTP_STATUS_CODE,
 	NODES_LOAD_LIMIT,
 	NODES_SORT_DEFAULT,
 	REST_ENDPOINT
 } from '../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS, TIMERS } from '../constants/test';
-import { healthCache } from '../hooks/useHealthInfo';
 import {
-	CreateDocsFileRequestBody,
-	CreateDocsFileResponse
-} from '../mocks/handleCreateDocsFileRequest';
+	ACTION_REGEXP,
+	ICON_REGEXP,
+	LIST_EMPTY_MESSAGE,
+	SELECTORS,
+	TIMERS
+} from '../constants/test';
+import { CreateDocsFileRequestBody, CreateDocsFileResponse } from '../hooks/useCreateDocsFile';
+import { healthCache } from '../hooks/useHealthInfo';
 import { HealthResponse } from '../mocks/handleHealthRequest';
 import {
 	populateFile,
@@ -39,11 +41,9 @@ import {
 	populateNodes,
 	sortNodes
 } from '../mocks/mockUtils';
+import { setup, spyOnUseCreateOptions, triggerListLoadMore, UserEvent } from '../tests/utils';
 import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetPath, mockGetNode } from '../utils/resolverMocks';
-import { setup, spyOnUseCreateOptions, triggerLoadMore, UserEvent } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
 	<div>
@@ -55,6 +55,24 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
+function clickOnCreateDocsAction(
+	createOptions: CreateOption[],
+	type: (typeof ACTION_IDS)[keyof Pick<
+		typeof ACTION_IDS,
+		'CREATE_DOCS_DOCUMENT' | 'CREATE_DOCS_PRESENTATION' | 'CREATE_DOCS_SPREADSHEET'
+	>],
+	subType: 'libre' | 'ms' = 'libre'
+): void {
+	const createDocsDocument = createOptions
+		.find((option) => option.id === type)
+		?.action(undefined)
+		.items?.find((subOption) => subOption.id === `${type}-${subType}`);
+	expect(createDocsDocument).toBeDefined();
+	act(() => {
+		createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
+	});
+}
+
 async function createNode(newNode: { name: string }, user: UserEvent): Promise<void> {
 	// wait for the creation modal to be opened
 	const inputField = screen.getByRole('textbox');
@@ -65,25 +83,10 @@ async function createNode(newNode: { name: string }, user: UserEvent): Promise<v
 	await user.click(button);
 }
 
-function findCreateDocsOption(
-	createOptions: CreateOption[],
-	type: (typeof ACTION_IDS)[keyof Pick<
-		typeof ACTION_IDS,
-		'CREATE_DOCS_DOCUMENT' | 'CREATE_DOCS_PRESENTATION' | 'CREATE_DOCS_SPREADSHEET'
-	>],
-	subType: 'libre' | 'ms' = 'libre'
-): DropdownItem | undefined {
-	return createOptions
-		.find((option) => option.id === type)
-		?.action(undefined)
-		.items?.find((subOption) => subOption.id === `${type}-${subType}`);
-}
-
 describe('Create docs file', () => {
 	it('should show docs creation actions if docs is available', async () => {
 		healthCache.reset();
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
@@ -106,8 +109,7 @@ describe('Create docs file', () => {
 
 	it('should not show docs creation actions if docs is not available', async () => {
 		healthCache.reset();
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
@@ -181,8 +183,7 @@ describe('Create docs file', () => {
 	test('Create file options are disabled if current folder has not can_write_file permission', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = false;
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -194,7 +195,7 @@ describe('Create docs file', () => {
 			mocks
 		});
 		await screen.findByText(/nothing here/i);
-		expect(map(createOptions, (createOption) => createOption.action({}))).toEqual(
+		expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: true }),
 				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: true }),
@@ -206,8 +207,7 @@ describe('Create docs file', () => {
 	test('Create docs files options are active if current folder has can_write_file permission', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -219,7 +219,7 @@ describe('Create docs file', () => {
 			mocks
 		});
 		await screen.findByText(/nothing here/i);
-		expect(map(createOptions, (createOption) => createOption.action({}))).toEqual(
+		expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: false }),
 				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: false }),
@@ -236,8 +236,7 @@ describe('Create docs file', () => {
 		const node3 = populateFile('n3', 'third');
 		currentFolder.children.nodes.push(node1, node2, node3);
 		const newName = node2.name;
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 
 		const mocks = {
 			Query: {
@@ -266,14 +265,7 @@ describe('Create docs file', () => {
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
-
-		const createDocsDocument = findCreateDocsOption(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT);
-		expect(createDocsDocument).toBeDefined();
-
-		act(() => {
-			createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
-		});
-
+		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 		await createNode(node2, user);
 		const error = await within(screen.getByTestId(SELECTORS.modal)).findByText(
 			/Error! Name already assigned/
@@ -296,8 +288,7 @@ describe('Create docs file', () => {
 		const node3 = populateFile('n3', 'third');
 		// add node 1 and 3 as children, node 2 is the new file
 		currentFolder.children.nodes.push(node1, node3);
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
@@ -328,12 +319,7 @@ describe('Create docs file', () => {
 			currentFolder.children.nodes.length
 		);
 
-		const createDocsDocument = findCreateDocsOption(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT);
-		expect(createDocsDocument).toBeDefined();
-		act(() => {
-			createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
-		});
-
+		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 		// create action
 		await createNode(node2, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
@@ -358,8 +344,7 @@ describe('Create docs file', () => {
 		node2.parent = currentFolder;
 		const node3 = populateFile('n3', `zzzz-new-file-n3`);
 		node3.parent = currentFolder;
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		// 1) folder with more pages, just 1 loaded
 		// 2) create node2 as unordered node3 (not loaded) as neighbor)
 		// --> node2 should be last element of the list
@@ -409,15 +394,11 @@ describe('Create docs file', () => {
 		});
 
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		const listHeader = screen.getByTestId(SELECTORS.listHeader);
+		await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
 		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
-
-		const createDocsDocument = findCreateDocsOption(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT);
-		expect(createDocsDocument).toBeDefined();
-		act(() => {
-			createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
-		});
+		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 		// create action
 		await createNode(node2, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
@@ -431,10 +412,8 @@ describe('Create docs file', () => {
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length + 1);
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(node2Item);
-		act(() => {
-			createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
-		});
 		// create action
+		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 		await createNode(node1, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node1.id));
 		expect(screen.getByText(node1.name)).toBeVisible();
@@ -449,7 +428,7 @@ describe('Create docs file', () => {
 		// node2 is last element of the list
 		expect(nodes[nodes.length - 1]).toBe(screen.getByTestId(SELECTORS.nodeItem(node2.id)));
 		// trigger load more
-		await triggerLoadMore();
+		triggerListLoadMore();
 		// wait for the load to be completed (node3 is now loaded)
 		await screen.findByTestId(SELECTORS.nodeItem(node3.id));
 		nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
@@ -462,18 +441,9 @@ describe('Create docs file', () => {
 
 	describe('Extension new item', () => {
 		test('should render .ods extension when click createLibreDocument button', async () => {
-			const createOptions: CreateOption[] = [];
-			spyOnUseCreateOptions(createOptions);
+			const createOptions = spyOnUseCreateOptions();
 			setup(<FolderView />);
-			const createDocsDocument = findCreateDocsOption(
-				createOptions,
-				ACTION_IDS.CREATE_DOCS_DOCUMENT,
-				'libre'
-			);
-			expect(createDocsDocument).toBeDefined();
-			act(() => {
-				createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
-			});
+			clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 			act(() => {
 				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
 			});
@@ -481,22 +451,100 @@ describe('Create docs file', () => {
 		});
 
 		test('should render .docx extension when click createMsDocument button', async () => {
-			const createOptions: CreateOption[] = [];
-			spyOnUseCreateOptions(createOptions);
+			const createOptions = spyOnUseCreateOptions();
 			setup(<FolderView />);
-			const createDocsDocument = findCreateDocsOption(
-				createOptions,
-				ACTION_IDS.CREATE_DOCS_DOCUMENT,
-				'ms'
-			);
-			expect(createDocsDocument).toBeDefined();
-			act(() => {
-				createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));
-			});
+			clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'ms');
 			act(() => {
 				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
 			});
 			expect(await screen.findByText('.docx')).toBeVisible();
 		});
 	});
+
+	it('should show a permanent error snackbar if the creation of a document fails because of the over quota', async () => {
+		const currentFolder = populateFolder();
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder]
+				})
+			}
+		} satisfies Partial<Resolvers>;
+
+		server.use(
+			http.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, () =>
+				HttpResponse.json(null, {
+					status: HTTP_STATUS_CODE.overQuota
+				})
+			)
+		);
+		const createOptions = spyOnUseCreateOptions();
+		const { user } = setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+		await screen.findByText(LIST_EMPTY_MESSAGE);
+		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
+		await createNode({ name: 'over quota' }, user);
+		const snackbar = await screen.findByText(
+			'New document creation failed. You have reached your storage limit. Delete some items to free up storage space and try again.'
+		);
+		expect(snackbar).toBeVisible();
+		expect(screen.getByRole('button', { name: /ok/i })).toBeVisible();
+		expect(screen.getByTestId(ICON_REGEXP.errorSnackbar)).toBeVisible();
+		jest.advanceTimersByTime(TIMERS.snackbarHide);
+		expect(snackbar).toBeVisible();
+	});
+
+	it.each<
+		[
+			string,
+			Parameters<typeof clickOnCreateDocsAction>[2],
+			Parameters<typeof clickOnCreateDocsAction>[1]
+		]
+	>([
+		['document', 'libre', ACTION_IDS.CREATE_DOCS_DOCUMENT],
+		['document', 'ms', ACTION_IDS.CREATE_DOCS_DOCUMENT],
+		['spreadsheet', 'libre', ACTION_IDS.CREATE_DOCS_SPREADSHEET],
+		['spreadsheet', 'ms', ACTION_IDS.CREATE_DOCS_SPREADSHEET],
+		['presentation', 'libre', ACTION_IDS.CREATE_DOCS_PRESENTATION],
+		['presentation', 'ms', ACTION_IDS.CREATE_DOCS_PRESENTATION]
+	])(
+		'should show specific over quota message if creating a %s %s',
+		async (expectedString, docType, action) => {
+			const currentFolder = populateFolder();
+			const mocks = {
+				Query: {
+					getPath: mockGetPath([currentFolder]),
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder]
+					})
+				}
+			} satisfies Partial<Resolvers>;
+
+			server.use(
+				http.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, () =>
+					HttpResponse.json(null, {
+						status: HTTP_STATUS_CODE.overQuota
+					})
+				)
+			);
+			const createOptions = spyOnUseCreateOptions();
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
+			});
+			await screen.findByText(LIST_EMPTY_MESSAGE);
+			clickOnCreateDocsAction(createOptions, action, docType);
+			await createNode({ name: 'over quota' }, user);
+			expect(
+				await screen.findByText(
+					`New ${expectedString} creation failed. You have reached your storage limit. Delete some items to free up storage space and try again.`
+				)
+			).toBeVisible();
+		}
+	);
 });

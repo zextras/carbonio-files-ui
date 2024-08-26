@@ -27,21 +27,23 @@ export function useConfirmationModal<T>({
 }: ConfirmationModalProps<T>): {
 	openModal: () => void;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 	const openModal = useCallback(() => {
-		const closeModal = createModal({
+		const modalId = 'files-confirmation-modal';
+		createModal({
+			id: modalId,
 			title,
 			confirmLabel,
 			confirmColor,
 			onConfirm: () => {
 				action().then(() => {
 					onConfirmCallback && onConfirmCallback();
-					closeModal();
+					closeModal(modalId);
 				});
 			},
 			showCloseIcon: true,
 			onClose: () => {
-				closeModal();
+				closeModal(modalId);
 			},
 			children: (
 				<Container padding={{ vertical: 'large' }}>
@@ -51,7 +53,16 @@ export function useConfirmationModal<T>({
 				</Container>
 			)
 		});
-	}, [action, confirmColor, confirmLabel, createModal, message, onConfirmCallback, title]);
+	}, [
+		action,
+		closeModal,
+		confirmColor,
+		confirmLabel,
+		createModal,
+		message,
+		onConfirmCallback,
+		title
+	]);
 
 	return { openModal };
 }

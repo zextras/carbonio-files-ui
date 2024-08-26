@@ -14,13 +14,11 @@ import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes } from '../mocks/mockUtils';
+import { setup, selectNodes, triggerListLoadMore } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
-import { setup, selectNodes, triggerLoadMore } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
@@ -84,7 +82,7 @@ describe('Folder View Selection mode', () => {
 	test('if all loaded nodes are selected, unselect all action is visible', async () => {
 		const currentFolder = populateFolder();
 		const firstPage = populateNodes(NODES_LOAD_LIMIT);
-		const secondPage = populateNodes(10);
+		const secondPage = populateNodes(10, 'File');
 		currentFolder.children = populateNodePage([...firstPage, ...secondPage]);
 		forEach(currentFolder.children.nodes, (node) => {
 			if (node) {
@@ -118,7 +116,7 @@ describe('Folder View Selection mode', () => {
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 		expect(screen.getByText(/deselect all/i)).toBeVisible();
 		expect(screen.queryByText(/\bselect all/i)).not.toBeInTheDocument();
-		await triggerLoadMore();
+		triggerListLoadMore();
 		await screen.findByText(secondPage[0].name);
 		expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
 		expect(screen.queryByText(/deselect all/i)).not.toBeInTheDocument();

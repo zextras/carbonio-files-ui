@@ -6,14 +6,14 @@
 
 import React from 'react';
 
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
 import { List } from './List';
 import { PREVIEW_MAX_SIZE } from '../../constants';
 import { ACTION_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
+import { setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
-import { setup } from '../../utils/testUtils';
 
 describe('Preview action', () => {
 	test('Pdf with size greater than PREVIEW_MAX_SIZE are not previewed and fallback is shown', async () => {
@@ -25,7 +25,7 @@ describe('Preview action', () => {
 		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(file.name);
-		fireEvent.contextMenu(screen.getByText(file.name));
+		await user.rightClick(screen.getByText(file.name));
 		await screen.findByText(ACTION_REGEXP.preview);
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
 		// fallback is shown
@@ -44,7 +44,7 @@ describe('Preview action', () => {
 		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(file.name);
-		fireEvent.contextMenu(screen.getByText(file.name));
+		await user.rightClick(screen.getByText(file.name));
 		await screen.findByText(ACTION_REGEXP.preview);
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
 		// fallback is not shown
@@ -62,7 +62,7 @@ describe('Preview action', () => {
 		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(file.name);
-		fireEvent.contextMenu(screen.getByText(file.name));
+		await user.rightClick(screen.getByText(file.name));
 		await screen.findByText(ACTION_REGEXP.preview);
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
 		// fallback is not shown
@@ -79,28 +79,31 @@ describe('Preview action', () => {
 		['application/vnd.oasis.opendocument.text'],
 		['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
 		['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-		['application/pdf']
+		['application/pdf'],
+		['image/svg+xml']
 	])('context preview action is supported by mime type %s', async (mimeType) => {
 		const file = populateFile();
 		file.mime_type = mimeType;
 
-		setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
 
 		await screen.findByText(file.name);
-		fireEvent.contextMenu(screen.getByText(file.name));
+		await user.rightClick(screen.getByText(file.name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 	});
 
-	test.each([['video/quicktime'], ['text/html'], ['image/svg+xml'], ['text/plain']])(
+	test.each([['video/quicktime'], ['text/html'], ['text/plain']])(
 		'mime types %s does not support preview action',
 		async (mimeType) => {
 			const file = populateFile();
 			file.mime_type = mimeType;
 
-			setup(<List nodes={[file]} mainList={false} emptyListMessage="empty list" />);
+			const { user } = setup(
+				<List nodes={[file]} mainList={false} emptyListMessage="empty list" />
+			);
 
 			await screen.findByText(file.name);
-			fireEvent.contextMenu(screen.getByText(file.name));
+			await user.rightClick(screen.getByText(file.name));
 			act(() => {
 				jest.runOnlyPendingTimers();
 			});

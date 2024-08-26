@@ -31,6 +31,8 @@ import {
 } from '../types/graphql/types';
 import {
 	ContactGroupMatch,
+	ContactInfo,
+	ContactInfoAttrs,
 	ContactInformation,
 	GalAccountMatch,
 	Match,
@@ -38,7 +40,7 @@ import {
 } from '../types/network';
 import { MakeRequired, MakeRequiredNonNull } from '../types/utils';
 import { ActionsFactoryNodeType } from '../utils/ActionsFactory';
-import { nodeSortComparator } from '../utils/utils';
+import { isFile, nodeSortComparator } from '../utils/utils';
 
 type NodeTypename = FilesFile['__typename'] | Folder['__typename'];
 
@@ -210,12 +212,16 @@ export function populateNode(type?: NodeTypename, id?: string, name?: string): F
 }
 
 export function populateNodes(limit?: number, type?: NodeTypename): Array<FilesFile | Folder> {
-	const nodesLength = limit ?? 100;
+	const nodesLength = limit ?? 6;
 	const nodes: Array<FilesFile | Folder> = [];
 	for (let i = 0; i < nodesLength; i += 1) {
 		const node = populateNode(type);
 		node.name = `n${i} - ${node.name}`;
-		nodes.push(node);
+		if (isFile(node)) {
+			nodes.push(node);
+		} else {
+			nodes.unshift(node);
+		}
 	}
 	return nodes;
 }
@@ -325,7 +331,7 @@ export function populateFile(id?: string, name?: string): MakeRequiredNonNull<Fi
 	const file: MakeRequiredNonNull<FilesFile, 'owner'> = {
 		...populateNodeFields(faker.helpers.arrayElement(types), id, name),
 		mime_type: mimeType,
-		size: faker.number.float(),
+		size: faker.number.int(),
 		extension: faker.system.commonFileExt(),
 		version: 1,
 		parent: populateFolder(),
@@ -365,6 +371,23 @@ export function populateContactGroupMatch(name?: string): ContactGroupMatch {
 		type: 'contact',
 		isGroup: true,
 		display: name ?? `${faker.person.jobArea()} ${faker.person.jobDescriptor()}`
+	};
+}
+
+export function populateAutocompleteGalResult(
+	contact?: Partial<ContactInfoAttrs> & { id?: string }
+): ContactInfo {
+	return {
+		id: contact?.id ?? faker.string.uuid(),
+		ref: 'ref',
+		_attrs: {
+			email: faker.internet.email(),
+			zimbraId: faker.string.uuid(),
+			lastName: faker.person.lastName(),
+			fullName: faker.person.fullName(),
+			objectClass: [],
+			...contact
+		}
 	};
 }
 

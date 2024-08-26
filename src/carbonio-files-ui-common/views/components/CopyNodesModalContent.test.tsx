@@ -14,7 +14,7 @@ import { forEach, map } from 'lodash';
 import { CopyNodesModalContent } from './CopyNodesModalContent';
 import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT, ROOTS } from '../../constants';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
 	populateFile,
@@ -25,6 +25,7 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup, selectNodes, triggerListLoadMore } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -42,7 +43,6 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup, selectNodes, triggerLoadMore } from '../../utils/testUtils';
 
 const resetToDefault = (): void => {
 	// clone implementation of the function contained in the click callback of useCopyContent
@@ -187,8 +187,9 @@ describe('Copy Nodes Modal', () => {
 				);
 				await screen.findByText(file.name);
 				const nodeItem = screen.getByText(file.name);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(nodeItem).toHaveAttribute('disabled', '');
+				expect(nodeItem).toHaveStyle({
+					color: COLORS.text.disabled
+				});
 			});
 
 			test(`folders without can_write_${typename.toLowerCase()} permission are disabled in the list`, async () => {
@@ -217,8 +218,9 @@ describe('Copy Nodes Modal', () => {
 				);
 				await screen.findByText(folder.name);
 				const nodeItem = screen.getByText(folder.name);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(nodeItem).toHaveAttribute('disabled', '');
+				expect(nodeItem).toHaveStyle({
+					color: COLORS.text.disabled
+				});
 				await user.dblClick(nodeItem);
 				expect(nodeItem).toBeVisible();
 			});
@@ -245,8 +247,9 @@ describe('Copy Nodes Modal', () => {
 				);
 				await screen.findByText(folder.name);
 				const nodeItem = screen.getByText(folder.name);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(nodeItem).not.toHaveAttribute('disabled', '');
+				expect(nodeItem).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.dblClick(nodeItem);
 				await screen.findByText(/it looks like there's nothing here/i);
 			});
@@ -269,8 +272,9 @@ describe('Copy Nodes Modal', () => {
 				);
 				await screen.findByText(nodeToCopy.name);
 				const nodeItem = screen.getByText(nodeToCopy.name);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(nodeItem).toHaveAttribute('disabled', '');
+				expect(nodeItem).toHaveStyle({
+					color: COLORS.text.disabled
+				});
 			});
 		}
 	);
@@ -862,9 +866,7 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			NODES_LOAD_LIMIT
 		);
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeInTheDocument();
-		expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-		await triggerLoadMore();
+		triggerListLoadMore();
 		await screen.findByText(
 			(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as File | Folder).name
 		);

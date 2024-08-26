@@ -6,13 +6,14 @@
 
 import React from 'react';
 
-import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { find, map } from 'lodash';
 
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOption } from '../../hooks/useCreateOptions';
 import * as actualNetworkModule from '../../network/network';
+import { viewModeVar } from '../apollo/viewModeVar';
+import { VIEW_MODE } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import {
 	populateFile,
@@ -25,6 +26,14 @@ import {
 	populateShare,
 	populateUser
 } from '../mocks/mockUtils';
+import {
+	buildBreadCrumbRegExp,
+	moveNode,
+	screen,
+	setup,
+	spyOnUseCreateOptions,
+	within
+} from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, Share, SharePermission } from '../types/graphql/types';
@@ -39,16 +48,6 @@ import {
 	mockMoveNodes,
 	mockUpdateShare
 } from '../utils/resolverMocks';
-import {
-	buildBreadCrumbRegExp,
-	moveNode,
-	screen,
-	setup,
-	spyOnUseCreateOptions,
-	within
-} from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 const mockedSoapFetch = jest.fn();
 
@@ -68,10 +67,7 @@ describe('Folder View', () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = false;
 			currentFolder.permissions.can_write_file = false;
-
-			const createOptions: CreateOption[] = [];
-			spyOnUseCreateOptions(createOptions);
-
+			const createOptions = spyOnUseCreateOptions();
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -84,7 +80,7 @@ describe('Folder View', () => {
 			});
 			await screen.findByText(/nothing here/i);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
-			expect(map(createOptions, (createOption) => createOption.action({}))).toContainEqual(
+			expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
 				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
 			);
 		});
@@ -92,8 +88,7 @@ describe('Folder View', () => {
 		test('Create folder option is active if current folder has can_write_folder permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = true;
-			const createOptions: CreateOption[] = [];
-			spyOnUseCreateOptions(createOptions);
+			const createOptions = spyOnUseCreateOptions();
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -106,13 +101,91 @@ describe('Folder View', () => {
 				mocks
 			});
 			await screen.findByText(/nothing here/i);
-			expect(map(createOptions, (createOption) => createOption.action({}))).toContainEqual(
+			expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
 				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: false })
 			);
 		});
 	});
 
 	describe('Displayer', () => {
+		it('should not show displayer in grid mode if there is no active node', async () => {
+			viewModeVar(VIEW_MODE.grid);
+			const currentFolder = populateFolder(2);
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder]
+					}),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
+			});
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			expect(screen.queryByTestId(SELECTORS.displayer)).not.toBeInTheDocument();
+		});
+
+		it('should show displayer details in grid mode when click on a node', async () => {
+			viewModeVar(VIEW_MODE.grid);
+			const currentFolder = populateFolder(2);
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder],
+						getNode: [currentFolder.children.nodes[0] as Node]
+					}),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
+			});
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(screen.getByText((currentFolder.children.nodes[0] as Node).name));
+			expect(
+				within(await screen.findByTestId(SELECTORS.displayer)).getByText(/details/i)
+			).toBeVisible();
+		});
+
+		it('should hide the displayer in grid mode when closed', async () => {
+			viewModeVar(VIEW_MODE.grid);
+			const currentFolder = populateFolder(2);
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({
+						getChildren: [currentFolder],
+						getPermissions: [currentFolder],
+						getNode: [currentFolder.children.nodes[0] as Node]
+					}),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [
+					`/?folder=${currentFolder.id}&node=${(currentFolder.children.nodes[0] as Node).id}`
+				],
+				mocks
+			});
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(
+				within(screen.getByTestId(SELECTORS.displayer)).getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.close
+				})
+			);
+			expect(screen.queryByTestId(SELECTORS.displayer)).not.toBeInTheDocument();
+		});
+
 		test('Single click on a node opens the details tab on displayer', async () => {
 			const currentFolder = populateFolder(2);
 			const mocks = {
@@ -184,7 +257,7 @@ describe('Folder View', () => {
 			const nodeToMoveItem = within(screen.getByTestId(SELECTORS.list(currentFolder.id))).getByText(
 				node.name
 			);
-			fireEvent.contextMenu(nodeToMoveItem);
+			await user.rightClick(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
 			await screen.findByText(/item moved/i);
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
@@ -198,9 +271,59 @@ describe('Folder View', () => {
 		});
 	});
 
+	describe('Create docs files', () => {
+		test('Create file options are disabled if current folder has not can_write_file permission', async () => {
+			const currentFolder = populateFolder();
+			currentFolder.permissions.can_write_file = false;
+			const createOptions = spyOnUseCreateOptions();
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
+			});
+			await screen.findByText(/nothing here/i);
+			expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: true }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: true }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: true })
+				])
+			);
+		});
+
+		test('Create docs files options are enabled if current folder has can_write_file permission', async () => {
+			const currentFolder = populateFolder();
+			currentFolder.permissions.can_write_file = true;
+			const createOptions = spyOnUseCreateOptions();
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
+			});
+			await screen.findByText(/nothing here/i);
+			expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: false }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: false }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: false })
+				])
+			);
+		});
+	});
+
 	test('should show the list of valid nodes even if the children include some invalid node', async () => {
 		const folder = populateFolder(2);
-		const node = populateNode();
+		const node = populateFile();
 		folder.children.nodes.push(null, node);
 		const mocks = {
 			Query: {

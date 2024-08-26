@@ -4,172 +4,170 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-	Action as DSAction,
-	Container,
-	Icon,
-	Padding,
-	Row,
-	Text,
-	useSnackbar
-} from '@zextras/carbonio-design-system';
-import { includes, some, debounce } from 'lodash';
+import { useReactiveVar } from '@apollo/client';
+import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
+import { includes, some, debounce, isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
-import styled, { useTheme } from 'styled-components';
+import { useLocation, useParams } from 'react-router-dom';
+import { useTheme } from 'styled-components';
 
-import { ContextualMenu } from './ContextualMenu';
+import { Dropzone } from './Dropzone';
 import { NodeAvatarIcon } from './NodeAvatarIcon';
+import { NodeGridItemUI } from './NodeGridItemUI';
 import { NodeHoverBar } from './NodeHoverBar';
-import { HoverContainer, ListItemContainer } from './StyledComponents';
+import { NodeListItemUI } from './NodeListItemUI';
+import { useActiveNode } from '../../../hooks/useActiveNode';
+import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { useUserInfo } from '../../../hooks/useUserInfo';
+import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import {
 	DATE_FORMAT_SHORT,
+	DISPLAYER_TABS,
 	DOUBLE_CLICK_DELAY,
-	LIST_ITEM_AVATAR_HEIGHT,
-	LIST_ITEM_HEIGHT,
-	LIST_ITEM_HEIGHT_COMPACT,
-	ROOTS
+	DRAG_TYPES,
+	ROOTS,
+	TIMERS,
+	VIEW_MODE
 } from '../../constants';
+import { ListContext } from '../../contexts';
+import { useDeleteNodesMutation } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
+import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
+import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
+import { useRestoreNodesMutation } from '../../hooks/graphql/mutations/useRestoreNodesMutation';
+import { useTrashNodesMutation } from '../../hooks/graphql/mutations/useTrashNodesMutation';
+import { useCopyModal } from '../../hooks/modals/useCopyModal';
+import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
+import { useMoveModal } from '../../hooks/modals/useMoveModal';
+import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { usePreview } from '../../hooks/usePreview';
-import { Action } from '../../types/common';
-import { Maybe, NodeType, User } from '../../types/graphql/types';
-import { buildActionItems } from '../../utils/ActionsFactory';
+import { useUpload } from '../../hooks/useUpload';
+import { Action, NodeListItemType, URLParams } from '../../types/common';
+import { NodeType } from '../../types/graphql/types';
+import {
+	buildActionItems,
+	canBeMoveDestination,
+	canUploadFile,
+	getAllPermittedActions,
+	getPermittedHoverBarActions
+} from '../../utils/ActionsFactory';
 import {
 	getPreviewOutputFormat,
 	getPreviewThumbnailSrc,
 	isPreviewDependantOnDocs,
 	isSupportedByPreview
 } from '../../utils/previewUtils';
+import { getUploadAddType } from '../../utils/uploadUtils';
 import {
 	downloadNode,
+	openNodeWithDocs,
+	isFile,
+	isSearchView,
 	formatDate,
 	getIconByFileType,
-	humanFileSize,
-	openNodeWithDocs,
-	isSearchView,
-	cssCalcBuilder,
-	getIconColorByFileType
+	getIconColorByFileType,
+	isFolder,
+	isTrashView,
+	nodeToNodeListItemUIProps
 } from '../../utils/utils';
 
-const CustomText = styled(Text)`
-	text-transform: uppercase;
-`;
-
-interface NodeListItemProps {
-	id: string;
-	name: string;
-	type: NodeType;
-	extension?: string | null;
-	mimeType?: string;
-	updatedAt?: number;
-	size?: number;
-	owner?: Maybe<User>;
-	lastEditor?: User | null;
-	incomingShare?: boolean;
-	outgoingShare?: boolean;
-	linkActive?: boolean;
-	flagActive?: boolean;
-	toggleFlagTrue?: () => void;
-	toggleFlagFalse?: () => void;
-	markNodesForDeletionCallback?: () => void;
-	restoreNodeCallback?: () => void;
-	moveNodesCallback?: () => void;
-	copyNodesCallback?: () => void;
-	manageSharesCallback?: () => void;
+export interface NodeListItemProps {
+	node: Omit<NodeListItemType, 'disabled' | 'selectable'>;
 	// Selection props
-	isSelected?: boolean;
-	isSelectionModeActive?: boolean;
-	selectId?: (id: string) => void;
-	permittedHoverBarActions?: Action[];
-	permittedContextualMenuActions?: Action[];
-	renameNode?: () => void;
-	isActive?: boolean;
-	setActive?: (event: React.SyntheticEvent) => void;
-	compact?: boolean;
-	navigateTo?: (id: string, event?: React.SyntheticEvent | Event) => void;
-	disabled?: boolean;
-	selectable?: boolean;
-	trashed?: boolean;
-	deletePermanentlyCallback?: () => void;
+	isSelected: boolean;
+	isSelectionModeActive: boolean;
+	selectId: (id: string) => void;
+	exitSelectionMode: () => void;
 	selectionContextualMenuActionsItems?: DSAction[];
-	dragging?: boolean;
-	version?: number;
 }
 
-const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
-	id,
-	name,
-	type,
-	extension,
-	mimeType,
-	updatedAt,
-	size,
-	owner,
-	lastEditor,
-	incomingShare = false,
-	outgoingShare = false,
-	linkActive = false,
-	flagActive = false,
-	toggleFlagTrue,
-	toggleFlagFalse,
-	markNodesForDeletionCallback,
-	restoreNodeCallback,
-	moveNodesCallback,
-	copyNodesCallback,
-	manageSharesCallback,
+export const NodeListItem = ({
+	node,
 	// Selection props
 	isSelected,
 	isSelectionModeActive,
 	selectId,
-	permittedHoverBarActions = [],
-	permittedContextualMenuActions = [],
-	renameNode,
-	isActive,
-	setActive = (): void => undefined,
-	compact,
-	navigateTo = (): void => undefined,
-	disabled = false,
-	selectable = true,
-	trashed,
-	deletePermanentlyCallback,
-	selectionContextualMenuActionsItems,
-	dragging = false,
-	version
-}) => {
+	exitSelectionMode,
+	selectionContextualMenuActionsItems
+}: NodeListItemProps): React.JSX.Element => {
+	const { viewMode } = useContext(ListContext);
+	const { me, locale } = useUserInfo();
+
+	const params = useParams<URLParams>();
+	const isATrashFilter = useMemo(() => isTrashView(params), [params]);
+
+	const { navigateToFolder } = useNavigation();
+
+	const draggedItems = useReactiveVar(draggedItemsVar);
+
+	const [dragging, isDragged] = useMemo(
+		() => [!isEmpty(draggedItems), !!draggedItems && some(draggedItems, ['id', node.id])],
+		[draggedItems, node]
+	);
 	const [t] = useTranslation();
+	const theme = useTheme();
+
+	const props = nodeToNodeListItemUIProps(node, t, me);
+
+	const mimeType = useMemo(() => (isFile(node) && node.mime_type) || undefined, [node]);
+	const size = useMemo(() => (isFile(node) && node.size) || undefined, [node]);
+	const version = useMemo(() => (isFile(node) && node.version) || undefined, [node]);
+	const trashed = useMemo(() => node.rootId === ROOTS.TRASH, [node.rootId]);
+	const icon = useMemo(
+		() => getIconByFileType(node.type, mimeType ?? node.id),
+		[mimeType, node.id, node.type]
+	);
+	const color = useMemo(
+		() => getIconColorByFileType(node.type, mimeType ?? node.id, theme),
+		[mimeType, node.id, node.type, theme]
+	);
+
+	const { add } = useUpload();
+	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
+	const { openMoveNodesModal } = useMoveModal();
+	const { openCopyNodesModal } = useCopyModal();
+	const { openRenameModal } = useRenameModal();
+	const { setActiveNode, activeNodeId } = useActiveNode();
+	const toggleFlag = useFlagNodesMutation();
+	const markNodesForDeletion = useTrashNodesMutation();
+	const restore = useRestoreNodesMutation();
+	const deletePermanently = useDeleteNodesMutation();
+	const deletePermanentlyCallback = useCallback(
+		() => deletePermanently(node),
+		[node, deletePermanently]
+	);
+	const { openDeletePermanentlyModal } = useDeletePermanentlyModal(deletePermanentlyCallback);
+
 	const { openPreview } = usePreview();
 	const location = useLocation();
-	const { me, locale } = useUserInfo();
 	const [isContextualMenuActive, setIsContextualMenuActive] = useState(false);
 	const selectIdCallback = useCallback(
 		(event: React.SyntheticEvent) => {
 			if (selectId) {
 				event.preventDefault();
-				selectId(id);
+				selectId(node.id);
 			}
 		},
-		[id, selectId]
+		[node.id, selectId]
 	);
-
-	const theme = useTheme();
 
 	const createSnackbar = useSnackbar();
 
 	const { sendViaMail } = useSendViaMail();
 
 	const sendViaMailCallback = useCallback(() => {
-		sendViaMail(id);
-	}, [id, sendViaMail]);
+		sendViaMail(node.id);
+	}, [node.id, sendViaMail]);
 
 	const isNavigable = useMemo(
 		() =>
-			type === NodeType.Folder || type === NodeType.Root || some(ROOTS, (rootId) => rootId === id),
-		[id, type]
+			node.type === NodeType.Folder ||
+			node.type === NodeType.Root ||
+			some(ROOTS, (rootId) => rootId === node.id),
+		[node.id, node.type]
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
@@ -181,40 +179,66 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		[canUseDocs, canUsePreview, mimeType]
 	);
 
-	const openNode = useCallback(
-		(event: React.SyntheticEvent | KeyboardEvent) => {
-			// remove text selection on double click
-			if (window.getSelection) {
-				const selection = window.getSelection();
-				selection && selection.removeAllRanges();
-			}
+	// timer to start navigation
+	const navigationTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-			if (!isSelectionModeActive && !disabled && !trashed) {
-				if (isNavigable) {
-					navigateTo(id, event);
-				} else if (includes(permittedContextualMenuActions, Action.Edit)) {
-					// if node can be opened with docs on edit mode, open editor
-					openNodeWithDocs(id);
-				} else if ($isSupportedByPreview) {
-					openPreview(id);
-				} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
-					// if preview is not supported and document can be opened with docs, open editor
-					openNodeWithDocs(id);
-				}
-			}
+	useEffect(
+		() => (): void => {
+			// clear timers on component unmount
+			navigationTimerRef.current && clearTimeout(navigationTimerRef.current);
 		},
-		[
-			isSelectionModeActive,
-			disabled,
-			trashed,
-			isNavigable,
-			permittedContextualMenuActions,
-			$isSupportedByPreview,
-			navigateTo,
-			id,
-			openPreview
-		]
+		[]
 	);
+
+	const permittedHoverBarActions = useMemo<Action[]>(
+		() => node.permissions && getPermittedHoverBarActions(node),
+		[node]
+	);
+
+	const permittedContextualMenuActions = useMemo(
+		() =>
+			node.permissions &&
+			getAllPermittedActions(
+				[node],
+				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
+				me,
+				canUsePreview,
+				canUseDocs
+			),
+		[canUseDocs, canUsePreview, me, node]
+	);
+
+	const openNode = useCallback(() => {
+		// remove text selection on double click
+		if (window.getSelection) {
+			const selection = window.getSelection();
+			selection && selection.removeAllRanges();
+		}
+
+		if (!isSelectionModeActive && !isDragged && !trashed) {
+			if (isNavigable) {
+				navigateToFolder(node.id);
+			} else if (includes(permittedContextualMenuActions, Action.Edit)) {
+				// if node can be opened with docs on edit mode, open editor
+				openNodeWithDocs(node.id);
+			} else if ($isSupportedByPreview) {
+				openPreview(node.id);
+			} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
+				// if preview is not supported and document can be opened with docs, open editor
+				openNodeWithDocs(node.id);
+			}
+		}
+	}, [
+		isSelectionModeActive,
+		isDragged,
+		trashed,
+		isNavigable,
+		permittedContextualMenuActions,
+		$isSupportedByPreview,
+		navigateToFolder,
+		node.id,
+		openPreview
+	]);
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
@@ -223,7 +247,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'Edit2Outline',
 				label: t('actions.edit', 'Edit'),
 				onClick: (): void => {
-					openNodeWithDocs(id);
+					openNodeWithDocs(node.id);
 				}
 			},
 			[Action.Preview]: {
@@ -231,7 +255,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'MaximizeOutline',
 				label: t('actions.preview', 'Preview'),
 				onClick: (): void => {
-					openPreview(id);
+					openPreview(node.id);
 				}
 			},
 			[Action.SendViaMail]: {
@@ -246,10 +270,10 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				label: t('actions.download', 'Download'),
 				onClick: (): void => {
 					// download node without version to be sure last version is downloaded
-					downloadNode(id);
+					downloadNode(node.id);
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('snackbar.download.start', 'Your download will start soon'),
 						replace: true,
 						hideButton: true
@@ -261,7 +285,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'ShareOutline',
 				label: t('actions.manageShares', 'Manage shares'),
 				onClick: (): void => {
-					manageSharesCallback && manageSharesCallback();
+					setActiveNode(node.id, DISPLAYER_TABS.sharing);
 				}
 			},
 			[Action.Flag]: {
@@ -269,7 +293,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'FlagOutline',
 				label: t('actions.flag', 'Flag'),
 				onClick: (): void => {
-					toggleFlagTrue && toggleFlagTrue();
+					toggleFlag(true, node);
 				}
 			},
 			[Action.UnFlag]: {
@@ -277,7 +301,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'UnflagOutline',
 				label: t('actions.unflag', 'Unflag'),
 				onClick: (): void => {
-					toggleFlagFalse && toggleFlagFalse();
+					toggleFlag(false, node);
 				}
 			},
 			[Action.OpenWithDocs]: {
@@ -285,7 +309,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'BookOpenOutline',
 				label: t('actions.openWithDocs', 'Open document'),
 				onClick: (): void => {
-					openNodeWithDocs(id);
+					openNodeWithDocs(node.id);
 				}
 			},
 			[Action.Copy]: {
@@ -293,7 +317,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'Copy',
 				label: t('actions.copy', 'Copy'),
 				onClick: (): void => {
-					copyNodesCallback && copyNodesCallback();
+					openCopyNodesModal([node], node.parent?.id);
 				}
 			},
 			[Action.Move]: {
@@ -301,7 +325,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'MoveOutline',
 				label: t('actions.move', 'Move'),
 				onClick: (): void => {
-					moveNodesCallback && moveNodesCallback();
+					openMoveNodesModal([node], node.parent?.id);
 				}
 			},
 			[Action.Rename]: {
@@ -309,7 +333,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'Edit2Outline',
 				label: t('actions.rename', 'Rename'),
 				onClick: (): void => {
-					renameNode && renameNode();
+					openRenameModal(node);
 				}
 			},
 			[Action.MoveToTrash]: {
@@ -317,7 +341,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'Trash2Outline',
 				label: t('actions.moveToTrash', 'Move to Trash'),
 				onClick: (): void => {
-					markNodesForDeletionCallback && markNodesForDeletionCallback();
+					markNodesForDeletion(node);
 				}
 			},
 			[Action.Restore]: {
@@ -325,7 +349,7 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'RestoreOutline',
 				label: t('actions.restore', 'Restore'),
 				onClick: (): void => {
-					restoreNodeCallback && restoreNodeCallback();
+					restore(node);
 				}
 			},
 			[Action.DeletePermanently]: {
@@ -333,25 +357,24 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 				icon: 'DeletePermanentlyOutline',
 				label: t('actions.deletePermanently', 'Delete permanently'),
 				onClick: (): void => {
-					deletePermanentlyCallback && deletePermanentlyCallback();
+					openDeletePermanentlyModal();
 				}
 			}
 		}),
 		[
 			t,
-			openPreview,
 			sendViaMailCallback,
-			manageSharesCallback,
-			toggleFlagTrue,
-			toggleFlagFalse,
-			copyNodesCallback,
-			moveNodesCallback,
-			renameNode,
-			markNodesForDeletionCallback,
-			restoreNodeCallback,
-			deletePermanentlyCallback,
-			id,
-			createSnackbar
+			openPreview,
+			createSnackbar,
+			setActiveNode,
+			node,
+			toggleFlag,
+			openCopyNodesModal,
+			openMoveNodesModal,
+			openRenameModal,
+			markNodesForDeletion,
+			restore,
+			openDeletePermanentlyModal
 		]
 	);
 
@@ -369,31 +392,20 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		() =>
 			debounce(
 				(event: React.SyntheticEvent) => {
-					setActive(event);
+					if (!event?.defaultPrevented) {
+						setActiveNode(node.id);
+					}
 				},
 				DOUBLE_CLICK_DELAY,
 				{ leading: false, trailing: true }
 			),
-		[setActive]
+		[node.id, setActiveNode]
 	);
 
-	const doubleClickHandler = useCallback(
-		(event: React.SyntheticEvent) => {
-			setActiveDebounced.cancel();
-			openNode(event);
-		},
-		[openNode, setActiveDebounced]
-	);
-
-	const displayName = useMemo(() => {
-		if (lastEditor && lastEditor.id !== owner?.id) {
-			return lastEditor.full_name;
-		}
-		if (owner && owner.id !== me) {
-			return owner.full_name;
-		}
-		return '';
-	}, [lastEditor, owner, me]);
+	const doubleClickHandler = useCallback(() => {
+		setActiveDebounced.cancel();
+		openNode();
+	}, [openNode, setActiveDebounced]);
 
 	const openContextualMenuHandler = useCallback(() => {
 		setIsContextualMenuActive(true);
@@ -403,171 +415,214 @@ const NodeListItemComponent: React.VFC<NodeListItemProps> = ({
 		setIsContextualMenuActive(false);
 	}, []);
 
-	const preventTextSelection = useCallback<React.MouseEventHandler>((e: React.MouseEvent): void => {
-		if (e.detail > 1) {
-			e.preventDefault();
+	const [dropzoneEnabled, setDropzoneEnabled] = useState(isFolder(node));
+
+	const dragMoveHandler = useCallback(() => {
+		const draggedNodes = draggedItemsVar();
+		if (draggedNodes && draggedNodes.length > 0 && canBeMoveDestination(node, draggedNodes, me)) {
+			navigationTimerRef.current = setTimeout(() => {
+				navigateToFolder(node.id);
+			}, TIMERS.DRAG_NAVIGATION_TRIGGER);
+			return true;
 		}
+		return false;
+	}, [me, navigateToFolder, node]);
+
+	const dragUploadHandler = useCallback(() => {
+		navigationTimerRef.current = setTimeout(() => {
+			navigateToFolder(node.id);
+		}, TIMERS.DRAG_NAVIGATION_TRIGGER);
+		return canUploadFile(node);
+	}, [navigateToFolder, node]);
+
+	const dragEnterHandler = useCallback(
+		(event) => {
+			// check if node is a valid destination for write inside action
+			setDropzoneEnabled((prevState) => {
+				navigationTimerRef.current && clearTimeout(navigationTimerRef.current);
+				if (prevState && event.dataTransfer.types.includes(DRAG_TYPES.move)) {
+					return dragMoveHandler();
+				}
+				if (event.dataTransfer.types.includes(DRAG_TYPES.upload)) {
+					return dragUploadHandler();
+				}
+				return false;
+			});
+		},
+		[dragMoveHandler, dragUploadHandler]
+	);
+	const dragLeaveHandler = useCallback(() => {
+		navigationTimerRef.current && clearTimeout(navigationTimerRef.current);
 	}, []);
 
-	return (
-		<Container data-testid={id}>
-			<ContextualMenu
-				disabled={
-					(disabled || isSelectionModeActive || compact) &&
-					selectionContextualMenuActionsItems === undefined
+	const moveNodesAction = useCallback(
+		(event) => {
+			const movingNodes = JSON.parse(event.dataTransfer.getData(DRAG_TYPES.move) || '{}');
+			if (movingNodes && isFolder(node)) {
+				moveNodesMutation(node, ...movingNodes).then(() => {
+					exitSelectionMode();
+				});
+			}
+		},
+		[exitSelectionMode, moveNodesMutation, node]
+	);
+
+	const uploadAction = useCallback<React.DragEventHandler>(
+		(event) => {
+			add(getUploadAddType(event.dataTransfer), node.id);
+			createSnackbar({
+				key: new Date().toLocaleString(),
+				severity: 'info',
+				label: t('snackbar.upload.success', 'Upload occurred in {{destination}}', {
+					destination: t('node.alias.name', node.name, { context: node.id })
+				}),
+				actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
+				onActionClick: () => {
+					navigateToFolder(ROOTS.LOCAL_ROOT);
+				},
+				replace: false,
+				hideButton: true
+			});
+		},
+		[add, createSnackbar, navigateToFolder, node.id, node.name, t]
+	);
+	const dropHandler = useCallback<React.DragEventHandler>(
+		(event) => {
+			navigationTimerRef.current && clearTimeout(navigationTimerRef.current);
+			if (dropzoneEnabled) {
+				if (event.dataTransfer.types.includes(DRAG_TYPES.move)) {
+					moveNodesAction(event);
+				} else if (event.dataTransfer.types.includes(DRAG_TYPES.upload)) {
+					uploadAction(event);
 				}
-				onOpen={openContextualMenuHandler}
-				onClose={closeContextualMenuHandler}
-				actions={selectionContextualMenuActionsItems || permittedContextualMenuActionsItems}
-			>
-				<ListItemContainer
-					height={'fit'}
-					onClick={compact ? setActive : setActiveDebounced}
-					onDoubleClick={doubleClickHandler}
-					data-testid={`node-item-${id}`}
-					crossAlignment={'flex-end'}
-					$contextualMenuActive={isContextualMenuActive}
-					$disableHover={isContextualMenuActive || dragging || disabled}
-					$disabled={disabled}
-					onMouseDown={preventTextSelection}
-				>
-					<HoverContainer
-						height={compact ? LIST_ITEM_HEIGHT_COMPACT : LIST_ITEM_HEIGHT}
-						wrap="nowrap"
-						mainAlignment="flex-start"
-						crossAlignment="center"
-						padding={{ all: 'small' }}
-						width="fill"
-						background={isActive ? 'highlight' : 'gray6'}
-					>
-						<NodeAvatarIcon
-							selectionModeActive={isSelectionModeActive}
-							selected={isSelected}
-							onClick={selectIdCallback}
-							compact={compact}
-							disabled={disabled}
-							selectable={selectable}
-							icon={getIconByFileType(type, mimeType ?? id)}
-							color={getIconColorByFileType(type, mimeType ?? id, theme)}
-							picture={
-								canUsePreview
-									? getPreviewThumbnailSrc(
-											id,
-											version,
-											type,
-											mimeType,
-											{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
-											'thumbnail'
-										)
-									: undefined
-							}
-						/>
-						<Container
-							orientation="vertical"
-							crossAlignment="flex-start"
-							mainAlignment="space-around"
-							padding={{ left: 'large' }}
-							minWidth="auto"
-							width="fill"
-							maxWidth={cssCalcBuilder('100%', ['-', LIST_ITEM_AVATAR_HEIGHT])}
-						>
-							<Row
-								padding={{ vertical: 'extrasmall' }}
-								width="fill"
-								wrap="nowrap"
-								mainAlignment="space-between"
-							>
-								<Text overflow="ellipsis" disabled={disabled} size="medium">
-									{name}
-								</Text>
-								{!compact && (
-									<Container orientation="horizontal" mainAlignment="flex-end" width="fit">
-										{flagActive && (
-											<Padding left="extrasmall">
-												<Icon icon="Flag" color="error" disabled={disabled} />
-											</Padding>
-										)}
-										{linkActive && (
-											<Padding left="extrasmall">
-												<Icon icon="Link2" disabled={disabled} />
-											</Padding>
-										)}
-										{incomingShare && (
-											<Padding left="extrasmall">
-												<Icon icon="ArrowCircleLeft" color={'linked'} disabled={disabled} />
-											</Padding>
-										)}
-										{outgoingShare && (
-											<Padding left="extrasmall">
-												<Icon icon="ArrowCircleRight" color="shared" disabled={disabled} />
-											</Padding>
-										)}
-										{trashed && isSearchView(location) && (
-											<Padding left="extrasmall">
-												<Icon icon="Trash2Outline" disabled={disabled} />
-											</Padding>
-										)}
-										<Padding left="extrasmall">
-											<Text size="extrasmall" color="gray1" disabled={disabled}>
-												{formatDate(updatedAt, locale, DATE_FORMAT_SHORT)}
-											</Text>
-										</Padding>
-									</Container>
-								)}
-							</Row>
-							{!compact && (
-								<Row
-									padding={{ vertical: 'extrasmall' }}
-									width="fill"
-									wrap="nowrap"
-									mainAlignment="flex-start"
-								>
-									<Container
-										flexShrink={0}
-										flexGrow={1}
-										flexBasis="auto"
-										mainAlignment="flex-start"
-										orientation="horizontal"
-										width="fit"
-									>
-										<CustomText color="gray1" disabled={disabled} size="small">
-											{extension ?? t(`node.type.${type.toLowerCase()}`, type)}
-										</CustomText>
-										{size != null && (
-											<Padding left="small">
-												<CustomText color="gray1" disabled={disabled} size="small">
-													{humanFileSize(size)}
-												</CustomText>
-											</Padding>
-										)}
-									</Container>
-									{displayName && (
-										<Container
-											width="fit"
-											minWidth={0}
-											flexShrink={1}
-											flexGrow={1}
-											flexBasis="auto"
-											orientation="horizontal"
-											mainAlignment="flex-end"
-											padding={{ left: 'small' }}
-										>
-											<Text size="extrasmall" overflow="ellipsis">
-												{displayName}
-											</Text>
-										</Container>
-									)}
-								</Row>
-							)}
-						</Container>
-					</HoverContainer>
-					{!compact && !isSelectionModeActive && !dragging && (
-						<NodeHoverBar actions={permittedHoverBarActionsItems} />
-					)}
-				</ListItemContainer>
-			</ContextualMenu>
-		</Container>
+			}
+		},
+		[dropzoneEnabled, moveNodesAction, uploadAction]
+	);
+
+	const dropTypes = useMemo(() => {
+		const types = [];
+		if (!isDragged) {
+			types.push(DRAG_TYPES.move);
+			if (isFolder(node) && !isATrashFilter) {
+				// upload is handled only for folder items and
+				types.push(DRAG_TYPES.upload);
+			}
+		}
+		return types;
+	}, [isATrashFilter, isDragged, node]);
+
+	const dropEffect = useMemo(() => {
+		if (!isDragged) {
+			return dragging ? 'move' : 'copy';
+		}
+		return 'none';
+	}, [dragging, isDragged]);
+
+	const createImgSrc = useCallback(
+		(args: { width: number; height: number }) =>
+			canUsePreview
+				? getPreviewThumbnailSrc(
+						node.id,
+						version,
+						node.type,
+						mimeType,
+						{ ...args, outputFormat: getPreviewOutputFormat(mimeType) },
+						'thumbnail'
+					)
+				: undefined,
+		[canUsePreview, mimeType, node.id, node.type, version]
+	);
+
+	return (
+		<Dropzone
+			onDrop={dropHandler}
+			onDragEnter={dragEnterHandler}
+			onDragLeave={dragLeaveHandler}
+			disabled={isDragged || !dropzoneEnabled}
+			effect={dropEffect}
+			types={dropTypes}
+		>
+			{(): React.JSX.Element =>
+				viewMode === VIEW_MODE.grid ? (
+					<NodeGridItemUI
+						{...props}
+						icon={icon}
+						color={color}
+						showPreview={isFile(node)}
+						disabled={isDragged}
+						trashed={trashed && isSearchView(location)}
+						updatedAt={formatDate(node.updated_at, locale, DATE_FORMAT_SHORT)}
+						contextualMenuDisabled={
+							(isDragged || isSelectionModeActive) &&
+							selectionContextualMenuActionsItems === undefined
+						}
+						contextualMenuOnOpen={openContextualMenuHandler}
+						contextualMenuOnClose={closeContextualMenuHandler}
+						contextualMenuActions={
+							selectionContextualMenuActionsItems || permittedContextualMenuActionsItems
+						}
+						hoverContainerBackground={activeNodeId === node.id ? 'highlight' : 'gray6'}
+						listItemContainerContextualMenuActive={isContextualMenuActive}
+						listItemContainerOnClick={setActiveDebounced}
+						listItemContainerOnDoubleClick={doubleClickHandler}
+						listItemContainerDisableHover={isContextualMenuActive || dragging}
+						createImgSrc={createImgSrc}
+						nodeAvatarIcon={
+							<NodeAvatarIcon
+								selectionModeActive={isSelectionModeActive}
+								selected={isSelected}
+								onClick={selectIdCallback}
+								compact={false}
+								disabled={isDragged}
+								selectable
+								icon={icon}
+								color={color}
+							/>
+						}
+					/>
+				) : (
+					<NodeListItemUI
+						{...props}
+						disabled={isDragged}
+						trashed={trashed && isSearchView(location)}
+						updatedAt={formatDate(node.updated_at, locale, DATE_FORMAT_SHORT)}
+						contextualMenuDisabled={
+							(isDragged || isSelectionModeActive) &&
+							selectionContextualMenuActionsItems === undefined
+						}
+						contextualMenuOnOpen={openContextualMenuHandler}
+						contextualMenuOnClose={closeContextualMenuHandler}
+						contextualMenuActions={
+							selectionContextualMenuActionsItems ?? permittedContextualMenuActionsItems
+						}
+						listItemContainerOnClick={setActiveDebounced}
+						listItemContainerOnDoubleClick={doubleClickHandler}
+						hoverContainerBackground={activeNodeId === node.id ? 'highlight' : 'gray6'}
+						listItemContainerContextualMenuActive={isContextualMenuActive}
+						listItemContainerDisableHover={isContextualMenuActive || dragging}
+						nodeAvatarIcon={
+							<NodeAvatarIcon
+								selectionModeActive={isSelectionModeActive}
+								selected={isSelected}
+								onClick={selectIdCallback}
+								compact={false}
+								disabled={isDragged}
+								selectable
+								icon={icon}
+								color={color}
+								picture={createImgSrc({ width: 80, height: 80 })}
+							/>
+						}
+						nodeHoverBar={
+							!isSelectionModeActive && !dragging ? (
+								<NodeHoverBar actions={permittedHoverBarActionsItems} />
+							) : undefined
+						}
+						size={size}
+					/>
+				)
+			}
+		</Dropzone>
 	);
 };
-
-export const NodeListItem = React.memo(NodeListItemComponent);

@@ -44,7 +44,7 @@ export const PublicLink = ({
 }: PublicLinkProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 
 	const { data: getLinksQueryData } = useGetLinksQuery(nodeId);
 
@@ -84,7 +84,7 @@ export const PublicLink = ({
 					if (data) {
 						createSnackbar({
 							key: new Date().toLocaleString(),
-							type: 'info',
+							severity: 'info',
 							label: t(
 								'snackbar.publicLink.newPublicLinkGenerated.label',
 								`New {{linkName}} generated`,
@@ -97,7 +97,7 @@ export const PublicLink = ({
 								copyToClipboard(data.createLink.url as string).then(() => {
 									createSnackbar({
 										key: new Date().toLocaleString(),
-										type: 'info',
+										severity: 'info',
 										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
 											replace: { linkName }
 										}),
@@ -133,7 +133,9 @@ export const PublicLink = ({
 
 	const onRevokeOrRemove = useCallback(
 		(linkId: string, isRevoke: boolean) => {
-			const closeModal = createModal({
+			const modalId = 'files-revoke-link-modal';
+			createModal({
+				id: modalId,
 				title: isRevoke
 					? t('modal.revokeLink.header', 'Revoke {{nodeName}} {{linkName}}', {
 							replace: { nodeName, linkName }
@@ -147,11 +149,11 @@ export const PublicLink = ({
 				confirmColor: 'error',
 				onConfirm: () => {
 					deleteLinks([linkId]);
-					closeModal();
+					closeModal(modalId);
 				},
 				showCloseIcon: true,
 				onClose: () => {
-					closeModal();
+					closeModal(modalId);
 				},
 				children: (
 					<Container padding={{ vertical: 'large' }}>
@@ -173,7 +175,7 @@ export const PublicLink = ({
 				)
 			});
 		},
-		[createModal, deleteLinks, nodeName, t, linkName]
+		[createModal, t, nodeName, linkName, deleteLinks, closeModal]
 	);
 
 	const onEditConfirm = useCallback(
@@ -185,7 +187,7 @@ export const PublicLink = ({
 					if (data) {
 						createSnackbar({
 							key: new Date().toLocaleString(),
-							type: 'info',
+							severity: 'info',
 							label: t('snackbar.publicLink.linkUpdated.label', '{{linkName}} updated', {
 								replace: { linkName }
 							}),
@@ -194,7 +196,7 @@ export const PublicLink = ({
 								copyToClipboard(data.updateLink?.url as string).then(() => {
 									createSnackbar({
 										key: new Date().toLocaleString(),
-										type: 'info',
+										severity: 'info',
 										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
 											replace: { linkName }
 										}),

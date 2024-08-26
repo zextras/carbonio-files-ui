@@ -9,14 +9,16 @@ import React from 'react';
 import { waitFor } from '@testing-library/react';
 
 import { Displayer } from './Displayer';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import {
+	populateFile,
 	populateFolder,
 	populateNode,
 	populateNodePage,
 	populateShares
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -35,12 +37,11 @@ import {
 	mockMoveNodes,
 	mockUpdateNode
 } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../utils/testUtils';
 import { getChipLabel } from '../../utils/utils';
 
 describe('Displayer', () => {
 	test('Copy action open copy modal', async () => {
-		const node = populateNode();
+		const node = populateFile();
 		const parent = populateFolder(1);
 		parent.permissions.can_write_file = true;
 		parent.permissions.can_write_folder = true;
@@ -87,8 +88,9 @@ describe('Displayer', () => {
 			if (moreVertical) {
 				await user.click(moreVertical);
 				const copyAction = await screen.findByText(ACTION_REGEXP.copy);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-				expect(copyAction.parentNode).not.toHaveAttribute('disabled');
+				expect(copyAction).toHaveStyle({
+					color: COLORS.text.regular
+				});
 				await user.click(copyAction);
 			} else {
 				fail();
@@ -156,8 +158,9 @@ describe('Displayer', () => {
 		expect(moreVertical).toBeVisible();
 		await user.click(moreVertical);
 		const moveAction = await screen.findByText(ACTION_REGEXP.move);
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(moveAction.parentNode).not.toHaveAttribute('disabled');
+		expect(moveAction).toHaveStyle({
+			color: COLORS.text.regular
+		});
 		await user.click(moveAction);
 		// modal opening
 		const moveButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });

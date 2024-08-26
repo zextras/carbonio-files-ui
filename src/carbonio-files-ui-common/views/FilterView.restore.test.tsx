@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -13,12 +13,10 @@ import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
+import { setup, selectNodes, screen, within } from '../tests/utils';
 import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes, mockRestoreNodes } from '../utils/resolverMocks';
-import { setup, selectNodes, screen, within } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Restore', () => {
@@ -140,7 +138,7 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 					mocks,
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 				});
@@ -150,7 +148,7 @@ describe('Filter View', () => {
 
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
-				fireEvent.contextMenu(nodeItem);
+				await user.rightClick(nodeItem);
 				const renameAction = await screen.findByText(ACTION_REGEXP.rename);
 				expect(renameAction).toBeVisible();
 				const moveToTrashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);

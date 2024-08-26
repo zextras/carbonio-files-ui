@@ -20,6 +20,7 @@ import {
 	populateMembers,
 	populateShare
 } from '../../../mocks/mockUtils';
+import { setup } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import { User } from '../../../types/graphql/types';
 import {
@@ -29,7 +30,6 @@ import {
 	Member
 } from '../../../types/network';
 import { mockGetAccountsByEmail } from '../../../utils/resolverMocks';
-import { setup } from '../../../utils/testUtils';
 import { getChipLabel } from '../../../utils/utils';
 
 let mockedSoapFetch = jest.fn();

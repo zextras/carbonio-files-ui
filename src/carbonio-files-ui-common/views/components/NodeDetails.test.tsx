@@ -36,12 +36,12 @@ import {
 	populateShares,
 	populateUser
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder, NodeType, QueryGetPathArgs } from '../../types/graphql/types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
 import * as previewUtils from '../../utils/previewUtils';
 import { mockGetPath } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../utils/testUtils';
 import { formatDate, humanFileSize } from '../../utils/utils';
 
 describe('Node Details', () => {
@@ -83,7 +83,7 @@ describe('Node Details', () => {
 			screen.getByText(formatDate(node.created_at, undefined, DATE_TIME_FORMAT))
 		).toBeVisible();
 		expect(screen.getByText(node.description)).toBeVisible();
-		expect(screen.getByText(humanFileSize(node.size))).toBeVisible();
+		expect(screen.getByText(humanFileSize(node.size, undefined))).toBeVisible();
 	});
 
 	test('Show folder info', () => {

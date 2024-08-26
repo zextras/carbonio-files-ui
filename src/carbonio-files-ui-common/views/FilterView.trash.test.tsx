@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { forEach } from 'lodash';
 import { graphql } from 'msw';
 import { Route } from 'react-router-dom';
@@ -22,6 +22,7 @@ import {
 import { ACTION_REGEXP, DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateLocalRoot, populateNode, populateNodes } from '../mocks/mockUtils';
+import { selectNodes, setup, screen, within } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
@@ -30,9 +31,6 @@ import {
 	mockGetNode,
 	mockRestoreNodes
 } from '../utils/resolverMocks';
-import { selectNodes, setup } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter view', () => {
 	describe('Trash filter', () => {
@@ -160,7 +158,7 @@ describe('Filter view', () => {
 			// right click to open contextual menu
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const nodeItem = await screen.findByText(node.name);
-			fireEvent.contextMenu(nodeItem);
+			await user.rightClick(nodeItem);
 			// check that restore action becomes visible
 			const restoreAction = await screen.findByText(ACTION_REGEXP.restore);
 			expect(restoreAction).toBeVisible();
@@ -264,6 +262,23 @@ describe('Filter view', () => {
 	});
 
 	describe('My Trash filter', () => {
+		it('should show sorting component', async () => {
+			const nodes = populateNodes(10);
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
+
+			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`],
+				mocks
+			});
+
+			await screen.findByText(nodes[0].name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc })).toBeVisible();
+		});
+
 		test('My Trash filter sharedWithMe=false and includes only trashed nodes', async () => {
 			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
 			server.use(
@@ -294,6 +309,22 @@ describe('Filter view', () => {
 	});
 
 	describe('Shared Trash filter', () => {
+		it('should show sorting component', async () => {
+			const nodes = populateNodes(10);
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				}
+			} satisfies Partial<Resolvers>;
+
+			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
+				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`],
+				mocks
+			});
+
+			await screen.findByText(nodes[0].name);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc })).toBeVisible();
+		});
 		test('Shared trash filter has sharedWithMe=true and includes only trashed nodes', async () => {
 			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
 			server.use(

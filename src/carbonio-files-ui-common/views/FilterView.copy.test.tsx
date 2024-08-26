@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { act, fireEvent } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { Route } from 'react-router-dom';
 
@@ -19,6 +19,7 @@ import {
 	populateNodes,
 	populateParents
 } from '../mocks/mockUtils';
+import { buildBreadCrumbRegExp, selectNodes, setup, screen, within } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	Folder,
@@ -33,9 +34,6 @@ import {
 	mockGetNode,
 	mockGetPath
 } from '../utils/resolverMocks';
-import { buildBreadCrumbRegExp, selectNodes, setup, screen, within } from '../utils/testUtils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Filter View', () => {
 	describe('Copy', () => {
@@ -75,10 +73,10 @@ describe('Filter View', () => {
 				const destinationFolder = populateFolder();
 				destinationFolder.permissions.can_write_folder = true;
 				destinationFolder.permissions.can_write_file = true;
-				currentFilter.push(destinationFolder);
-				const { node: nodeToCopy, path } = populateParents(currentFilter[0], 2, true);
+				currentFilter.unshift(destinationFolder);
+				const { node: nodeToCopy, path } = populateParents(currentFilter[1], 2, true);
 				const parentFolder = nodeToCopy.parent as Folder;
-				parentFolder.children = populateNodePage([nodeToCopy, destinationFolder]);
+				parentFolder.children = populateNodePage([destinationFolder, nodeToCopy]);
 
 				// write destination folder in cache as if it was already loaded
 				global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -381,8 +379,8 @@ describe('Filter View', () => {
 				const destinationFolder = populateFolder();
 				destinationFolder.permissions.can_write_folder = true;
 				destinationFolder.permissions.can_write_file = true;
-				currentFilter.push(destinationFolder);
-				const { node: nodeToCopy, path } = populateParents(currentFilter[0], 2, true);
+				currentFilter.unshift(destinationFolder);
+				const { node: nodeToCopy, path } = populateParents(currentFilter[1], 2, true);
 				const parentFolder = nodeToCopy.parent as Folder;
 				parentFolder.children = populateNodePage([nodeToCopy, destinationFolder]);
 
@@ -426,7 +424,7 @@ describe('Filter View', () => {
 
 				// right click to open the contextual menu on folder
 				const nodeToCopyItem = await screen.findByText(nodeToCopy.name);
-				fireEvent.contextMenu(nodeToCopyItem);
+				await user.rightClick(nodeToCopyItem);
 				const copyAction = await screen.findByText(ACTION_REGEXP.copy);
 				expect(copyAction).toBeVisible();
 				await user.click(copyAction);

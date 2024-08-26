@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { ContextualMenu } from './ContextualMenu';
 import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { NodeHoverBar } from './NodeHoverBar';
-import { HoverContainer, ListItemContainer } from './StyledComponents';
+import { HoverContainer, ListItemContainer, UppercaseText } from './StyledComponents';
 import { UploadStatusComponent } from './UploadStatusComponent';
 import { LIST_ITEM_HEIGHT } from '../../constants';
 import { Breadcrumbs } from '../../design_system_fork/Breadcrumbs';
@@ -39,10 +39,6 @@ interface UploadListItemProps {
 	isActive: boolean;
 	setActive: (event: React.SyntheticEvent | KeyboardEvent) => void;
 }
-
-const CustomText = styled(Text)`
-	text-transform: uppercase;
-`;
 
 const CustomBreadcrumbs = styled(Breadcrumbs)`
 	width: auto;
@@ -77,7 +73,7 @@ export const UploadListItem = React.memo<UploadListItemProps>(
 		}, []);
 
 		const selectIdCallback = useCallback(
-			(event) => {
+			(event: React.SyntheticEvent) => {
 				event.stopPropagation();
 				selectId(id);
 			},
@@ -152,9 +148,9 @@ export const UploadListItem = React.memo<UploadListItemProps>(
 								mainAlignment="flex-end"
 							>
 								{size !== undefined && (
-									<CustomText size="extrasmall" overflow="ellipsis" color="gray1">
-										{humanFileSize(size)}
-									</CustomText>
+									<UppercaseText size="extrasmall" overflow="ellipsis" color="gray1">
+										{humanFileSize(size, t)}
+									</UppercaseText>
 								)}
 							</Container>
 						</Container>

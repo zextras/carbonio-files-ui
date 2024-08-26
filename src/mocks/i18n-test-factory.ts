@@ -17,11 +17,23 @@ export default class I18nTestFactory {
 				lng: 'en',
 				fallbackLng: 'en',
 				debug: false,
-
 				interpolation: {
 					escapeValue: false // not needed for react as it escapes by default
 				},
-				resources: { en: { translation: {} } }
+				resources: {
+					en: {
+						translation: {
+							errorCode: {
+								code: 'Something went wrong',
+								code_OVER_QUOTA_REACHED:
+									'You have reached your storage limit. Delete some items to free up storage space and try again',
+								code_NODE_WRITE_ERROR: 'Error! Copy permissions failed',
+								operation_copyNodes: 'Copy action failed.',
+								operation_cloneVersion: 'Clone action failed.'
+							}
+						}
+					}
+				}
 			});
 		return newI18n;
 	}

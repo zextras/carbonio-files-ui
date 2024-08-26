@@ -6,15 +6,15 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { UploadListItemWrapper } from './UploadListItemWrapper';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateUploadItem } from '../../mocks/mockUtils';
+import { setup } from '../../tests/utils';
 import { UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetNode } from '../../utils/resolverMocks';
-import { setup } from '../../utils/testUtils';
 
 describe('Upload List Item Wrapper', () => {
 	describe('Go to folder action', () => {
@@ -31,7 +31,7 @@ describe('Upload List Item Wrapper', () => {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
-				setup(
+				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
@@ -43,7 +43,7 @@ describe('Upload List Item Wrapper', () => {
 
 				const item = screen.getByText(file.name);
 				expect(item).toBeVisible();
-				fireEvent.contextMenu(item);
+				await user.rightClick(item);
 				await screen.findByTestId(SELECTORS.dropdownList);
 				expect(screen.getByText(ACTION_REGEXP.goToFolder)).toBeVisible();
 			});
@@ -60,7 +60,7 @@ describe('Upload List Item Wrapper', () => {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
 					}
 				} satisfies Partial<Resolvers>;
-				setup(
+				const { user } = setup(
 					<UploadListItemWrapper
 						node={file}
 						isSelected={false}
@@ -72,7 +72,7 @@ describe('Upload List Item Wrapper', () => {
 
 				const item = screen.getByText(file.name);
 				expect(item).toBeVisible();
-				fireEvent.contextMenu(item);
+				await user.rightClick(item);
 				await screen.findByTestId(SELECTORS.dropdownList);
 				expect(screen.queryByText(ACTION_REGEXP.goToFolder)).not.toBeInTheDocument();
 			});

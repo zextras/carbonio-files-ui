@@ -22,7 +22,8 @@ export const ACTION_REGEXP = {
 	goToFolder: /^go to destination folder$/i,
 	newDocument: /^new document$/i,
 	newPresentation: /^new presentation$/i,
-	newSpreadsheet: /^new spreadsheet$/i
+	newSpreadsheet: /^new spreadsheet$/i,
+	cloneVersion: /^clone as current$/i
 } as const;
 
 export const ICON_REGEXP = {
@@ -77,7 +78,12 @@ export const ICON_REGEXP = {
 	queryLoading: 'icon: Refresh',
 	revoke: 'icon: SlashOutline',
 	refreshQuota: 'icon: Refresh',
-	alertQuota: 'icon: CloseCircleOutline'
+	alertQuota: 'icon: CloseCircleOutline',
+	errorSnackbar: 'icon: CloseCircleOutline',
+	openedAdvancedFilters: 'icon: ChevronUp',
+	closedAdvancedFilters: 'icon: ChevronDown',
+	listViewMode: 'icon: ListOutline',
+	gridViewMode: 'icon: GridOutline'
 } as const;
 
 export const SELECTORS = {
@@ -124,7 +130,10 @@ export const SELECTORS = {
 	avatar: 'avatar',
 	customBreadcrumbs: 'customBreadcrumbs',
 	missingFilter: 'missing-filter',
-	popper: 'popper'
+	popper: 'popper',
+	mainList: 'main-list',
+	mainGrid: 'main-grid',
+	gridCellThumbnail: 'grid-cell-thumbnail'
 };
 
 export const EMITTER_CODES = {
@@ -143,10 +152,24 @@ export const COLORS = {
 	dropzone: {
 		enabled: 'rgba(43, 115, 210, 0.4)',
 		disabled: 'rgba(130, 130, 130, 0.4)'
+	},
+	text: {
+		regular: '#333333',
+		disabled: '#cccccc'
+	},
+	dropdownItem: {
+		disabled: '#828282' // secondary.regular
+	},
+	shareChipPopover: {
+		disabled: '#828282', // secondary.regular
+		enabled: '#333333', // text.regular
+		active: '#2b73d2' // primary.regular
 	}
 };
 
 export const TIMERS = {
-	modalDelayOpen: 1
+	modalDelayOpen: 1,
+	snackbarHide: 4000
 };
 export const DISPLAYER_EMPTY_MESSAGE = 'View files and folders, share them with your contacts.';
+export const LIST_EMPTY_MESSAGE = "It looks like there's nothing here.";

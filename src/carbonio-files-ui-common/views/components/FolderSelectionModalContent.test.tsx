@@ -26,10 +26,10 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
+import { buildBreadCrumbRegExp, setup } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
-import { buildBreadCrumbRegExp, setup } from '../../utils/testUtils';
 
 let confirmAction = jest.fn();
 let resetToDefault = jest.fn();
@@ -102,12 +102,15 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText(folder2.name)).toBeVisible();
 		expect(screen.getByText(file.name)).toBeVisible();
 		// file nodes are disabled
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(screen.getByText(file.name)).toHaveAttribute('disabled', '');
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(screen.getByText(folder.name)).not.toHaveAttribute('disabled', '');
-		// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-		expect(screen.getByText(folder2.name)).not.toHaveAttribute('disabled', '');
+		expect(screen.getByText(file.name)).toHaveStyle({
+			color: COLORS.text.disabled
+		});
+		expect(screen.getByText(folder.name)).toHaveStyle({
+			color: COLORS.text.regular
+		});
+		expect(screen.getByText(folder2.name)).toHaveStyle({
+			color: COLORS.text.regular
+		});
 		// choose button is disabled because active folder is same as set one
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
@@ -333,14 +336,6 @@ describe('Folder Selection Modal Content', () => {
 			{
 				mocks
 			}
-		);
-
-		// wait a tick to let getPath query to be executed
-		await waitFor(
-			() =>
-				new Promise((resolve) => {
-					setTimeout(resolve, 0);
-				})
 		);
 		await screen.findByText(/home/i);
 		const checkboxLabel = screen.getByText('search also in contained folders');

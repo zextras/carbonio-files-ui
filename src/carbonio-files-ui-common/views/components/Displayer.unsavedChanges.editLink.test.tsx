@@ -6,14 +6,14 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { screen } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { format } from 'date-fns';
-import { act } from 'react-dom/test-utils';
 
 import { Displayer } from './Displayer';
 import { DATE_TIME_FORMAT, DISPLAYER_TABS } from '../../constants';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateLinks, populateNode } from '../../mocks/mockUtils';
+import { generateError, getFirstOfNextMonth, setup, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Link } from '../../types/graphql/types';
@@ -24,7 +24,6 @@ import {
 	mockUpdateLink,
 	mockErrorResolver
 } from '../../utils/resolverMocks';
-import { generateError, getFirstOfNextMonth, setup } from '../../utils/testUtils';
 import { formatDate, initExpirationDate } from '../../utils/utils';
 
 describe('Displayer', () => {

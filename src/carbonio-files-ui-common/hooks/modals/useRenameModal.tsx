@@ -6,26 +6,24 @@
 
 import React, { useCallback } from 'react';
 
-import { FetchResult } from '@apollo/client';
 import { useModal } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { Node, UpdateNodeMutation } from '../../types/graphql/types';
+import { Node } from '../../types/graphql/types';
 import { UpdateNodeNameModalContent } from '../../views/components/UpdateNodeNameModalContent';
+import { useUpdateNodeMutation } from '../graphql/mutations/useUpdateNodeMutation';
 
 export type OpenRenameModal = (node: Pick<Node, 'id' | 'name'>) => void;
 
-export function useRenameModal(
-	renameAction: (nodeId: string, newName: string) => Promise<FetchResult<UpdateNodeMutation>>,
-	renameActionCallback?: () => void
-): {
+export function useRenameModal(renameActionCallback?: (nodeId: string) => void): {
 	openRenameModal: OpenRenameModal;
 } {
-	const createModal = useModal();
+	const { createModal, closeModal } = useModal();
 	const [t] = useTranslation();
+	const [renameAction] = useUpdateNodeMutation();
 
 	const confirmAction = useCallback(
-		(nodeId, newName) => {
+		(nodeId: string, newName: string) => {
 			if (newName) {
 				return renameAction(nodeId, newName);
 			}
@@ -36,11 +34,13 @@ export function useRenameModal(
 
 	const openRenameModal = useCallback<OpenRenameModal>(
 		(node) => {
-			const closeModal = createModal(
+			const modalId = 'files-rename-node-modal';
+			createModal(
 				{
+					id: modalId,
 					onClose: () => {
-						renameActionCallback && renameActionCallback();
-						closeModal();
+						renameActionCallback?.(node.id);
+						closeModal(modalId);
 					},
 					children: (
 						<UpdateNodeNameModalContent
@@ -50,8 +50,8 @@ export function useRenameModal(
 							confirmLabel={t('node.rename.modal.button.confirm', 'Rename')}
 							nodeId={node.id}
 							closeAction={(): void => {
-								renameActionCallback && renameActionCallback();
-								closeModal();
+								renameActionCallback?.(node.id);
+								closeModal(modalId);
 							}}
 							title={t('node.rename.modal.title', 'Rename item')}
 						/>
@@ -60,7 +60,7 @@ export function useRenameModal(
 				true
 			);
 		},
-		[confirmAction, createModal, renameActionCallback, t]
+		[closeModal, confirmAction, createModal, renameActionCallback, t]
 	);
 
 	return { openRenameModal };

@@ -10,12 +10,12 @@ import { act, screen, waitFor } from '@testing-library/react';
 import { difference } from 'lodash';
 
 import { EditShareChip } from './EditShareChip';
-import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
+import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
+import { setup } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import { Permissions, Share, SharePermission } from '../../../types/graphql/types';
 import { mockDeleteShare, mockUpdateShare } from '../../../utils/resolverMocks';
-import { setup } from '../../../utils/testUtils';
 
 describe('Edit Share Chip', () => {
 	const allIcons = [
@@ -195,17 +195,13 @@ describe('Edit Share Chip', () => {
 			expect(screen.getByText('Viewer')).toBeVisible();
 			expect(screen.getByText('Editor')).toBeVisible();
 			expect(screen.getByText('Sharing allowed')).toBeVisible();
-
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
-
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(screen.getByTestId(SELECTORS.exclusiveSelectionViewer)).not.toHaveAttribute(
-				'disabled'
-			);
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
-				'disabled'
-			);
+			expect(screen.getByText('Viewer')).toHaveStyle({
+				color: COLORS.shareChipPopover.active
+			});
+			expect(screen.getByText('Editor')).toHaveStyle({
+				color: COLORS.shareChipPopover.enabled
+			});
 		});
 	});
 
@@ -338,15 +334,13 @@ describe('Edit Share Chip', () => {
 			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
 			expect(screen.getByText(/viewer/i)).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(screen.getByTestId(SELECTORS.exclusiveSelectionViewer)).not.toHaveAttribute(
-				'disabled'
-			);
+			expect(screen.getByText('Viewer')).toHaveStyle({
+				color: COLORS.shareChipPopover.active
+			});
 			expect(screen.getByText(/editor/i)).toBeVisible();
-			// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
-			expect(screen.getByTestId(SELECTORS.exclusiveSelectionEditor)).not.toHaveAttribute(
-				'disabled'
-			);
+			expect(screen.getByText('Editor')).toHaveStyle({
+				color: COLORS.shareChipPopover.enabled
+			});
 			await user.click(screen.getByText(/editor/i));
 			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();

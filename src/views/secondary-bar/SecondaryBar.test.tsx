@@ -16,8 +16,8 @@ import {
 	populateUploadItem,
 	populateUploadItems
 } from '../../carbonio-files-ui-common/mocks/mockUtils';
+import { setup } from '../../carbonio-files-ui-common/tests/utils';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
-import { setup } from '../../carbonio-files-ui-common/utils/testUtils';
 
 jest.mock('../../carbonio-files-ui-common/views/components/FilesQuota', () => ({
 	FilesQuota: (): React.JSX.Element => <div data-testid="quota-test-id"></div>

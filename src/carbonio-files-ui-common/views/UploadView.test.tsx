@@ -11,8 +11,6 @@ import { http, HttpResponse } from 'msw';
 
 import UploadView from './UploadView';
 import { ACTION_IDS } from '../../constants';
-import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
-import { CreateOption } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { uploadVar } from '../apollo/uploadVar';
 import {
@@ -32,11 +30,6 @@ import {
 	populateNodes,
 	populateUploadItems
 } from '../mocks/mockUtils';
-import { Node } from '../types/common';
-import { UploadStatus } from '../types/graphql/client-types';
-import { Resolvers } from '../types/graphql/resolvers-types';
-import { Folder, GetChildrenDocument } from '../types/graphql/types';
-import { mockGetNode } from '../utils/resolverMocks';
 import {
 	createUploadDataTransfer,
 	setup,
@@ -44,10 +37,13 @@ import {
 	screen,
 	within,
 	spyOnUseCreateOptions
-} from '../utils/testUtils';
+} from '../tests/utils';
+import { Node } from '../types/common';
+import { UploadStatus } from '../types/graphql/client-types';
+import { Resolvers } from '../types/graphql/resolvers-types';
+import { Folder, GetChildrenDocument } from '../types/graphql/types';
+import { mockGetNode } from '../utils/resolverMocks';
 import { inputElement } from '../utils/utils';
-
-jest.mock<typeof import('../../hooks/useCreateOptions')>('../../hooks/useCreateOptions');
 
 describe('Upload view', () => {
 	test('Click on an item open the displayer', async () => {
@@ -190,8 +186,7 @@ describe('Upload view', () => {
 
 	it('should show all actions disabled, except the upload', async () => {
 		const actionIds = Object.values(ACTION_IDS);
-		const actions: CreateOption[] = [];
-		spyOnUseCreateOptions(actions);
+		const actions = spyOnUseCreateOptions();
 		setup(<UploadView />);
 		await screen.findByText(/nothing here/i);
 		await waitFor(() => {
@@ -204,17 +199,11 @@ describe('Upload view', () => {
 	});
 
 	it('should show snackbar on upload through new action', async () => {
-		let uploadAction: CreateOption | undefined;
-		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
-			setCreateOptions: (...options): void => {
-				uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
-			},
-			removeCreateOptions: (): void => undefined
-		});
-
+		const options = spyOnUseCreateOptions();
 		const file = new File(['(⌐□_□)'], 'a file');
 		const { user } = setup(<UploadView />);
 		await screen.findByText(/nothing here/i);
+		const uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
 		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
 		await user.upload(inputElement, file);
 		expect(await screen.findByText(/Upload occurred in Files' Home/i)).toBeVisible();
@@ -233,14 +222,7 @@ describe('Upload view', () => {
 				getNode: localRoot
 			}
 		});
-		let uploadAction: CreateOption | undefined;
-		jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
-			setCreateOptions: (...options): void => {
-				uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
-			},
-			removeCreateOptions: (): void => undefined
-		});
-
+		const options = spyOnUseCreateOptions();
 		const file = new File(['(⌐□_□)'], 'a file');
 		const mocks = {
 			Query: {
@@ -249,6 +231,7 @@ describe('Upload view', () => {
 		} satisfies Partial<Resolvers>;
 		const { user } = setup(<UploadView />, { mocks });
 		await screen.findByText(/nothing here/i);
+		const uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
 		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
 		await user.upload(inputElement, file);
 		await waitFor(() => {
@@ -266,8 +249,7 @@ describe('Upload view', () => {
 
 	it('should show docs creation actions if docs is available', async () => {
 		healthCache.reset();
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
@@ -290,8 +272,7 @@ describe('Upload view', () => {
 
 	it('should not show docs creation actions if docs is not available', async () => {
 		healthCache.reset();
-		const createOptions: CreateOption[] = [];
-		spyOnUseCreateOptions(createOptions);
+		const createOptions = spyOnUseCreateOptions();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })

@@ -21,13 +21,13 @@ import {
 	populateNode,
 	populateNodePage
 } from '../carbonio-files-ui-common/mocks/mockUtils';
+import { delayUntil, screen, setup, within } from '../carbonio-files-ui-common/tests/utils';
 import {
 	GetChildrenDocument,
 	GetNodeDocument,
 	GetPathDocument,
 	GetPermissionsDocument
 } from '../carbonio-files-ui-common/types/graphql/types';
-import { delayUntil, screen, setup, within } from '../carbonio-files-ui-common/utils/testUtils';
 import { UPDATE_VIEW_EVENT } from '../constants';
 import server from '../mocks/server';
 
@@ -359,8 +359,6 @@ describe('AppView', () => {
 			const folder = populateFolder();
 			const node1 = populateNode();
 			folder.children = populateNodePage([node1]);
-			const node1Updated = { ...node1, name: 'the new name' };
-			const folderUpdated = { ...folder, children: populateNodePage([node1Updated]) };
 			const emitter = new EventEmitter();
 			server.use(
 				graphql.query(
@@ -377,7 +375,7 @@ describe('AppView', () => {
 					await delayUntil(emitter, EMITTER_CODES.never);
 					return HttpResponse.json({
 						data: {
-							getNode: folderUpdated
+							getNode: folder
 						}
 					});
 				}),
@@ -409,7 +407,7 @@ describe('AppView', () => {
 					await delayUntil(emitter, EMITTER_CODES.never);
 					return HttpResponse.json({
 						data: {
-							getNode: node1Updated
+							getNode: node1
 						}
 					});
 				})
@@ -417,11 +415,10 @@ describe('AppView', () => {
 			setup(<AppView />, {
 				initialRouterEntries: [`/?folder=${folder.id}&node=${node1.id}`]
 			});
-			await screen.findByTestId(SELECTORS.listHeader);
-			await screen.findByTestId(SELECTORS.displayer);
-			await screen.findAllByText(node1.name);
-			await screen.findAllByText(folder.name);
-			await screen.findByText(/details/i);
+			await act(async () => {
+				// run network queries
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries

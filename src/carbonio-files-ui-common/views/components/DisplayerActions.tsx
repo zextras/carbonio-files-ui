@@ -19,7 +19,6 @@ import { useDeleteNodesMutation } from '../../hooks/graphql/mutations/useDeleteN
 import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
 import { useRestoreNodesMutation } from '../../hooks/graphql/mutations/useRestoreNodesMutation';
 import { useTrashNodesMutation } from '../../hooks/graphql/mutations/useTrashNodesMutation';
-import { useUpdateNodeMutation } from '../../hooks/graphql/mutations/useUpdateNodeMutation';
 import { useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
@@ -91,11 +90,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 
 	const { openCopyNodesModal } = useCopyModal();
 
-	const [updateNode] = useUpdateNodeMutation();
-
-	const updateNodeAction = useCallback((id, name) => updateNode(id, name), [updateNode]);
-
-	const { openRenameModal } = useRenameModal(updateNodeAction);
+	const { openRenameModal } = useRenameModal();
 
 	const { sendViaMail } = useSendViaMail();
 

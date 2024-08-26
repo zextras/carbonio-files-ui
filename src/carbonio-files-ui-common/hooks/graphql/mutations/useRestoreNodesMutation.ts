@@ -124,7 +124,7 @@ export function useRestoreNodesMutation(): RestoreType {
 					);
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						type: 'info',
+						severity: 'info',
 						label: t('snackbar.restore.success', 'Success'),
 						replace: true,
 						onActionClick: () => {
