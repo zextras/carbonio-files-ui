@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/zextras/carbonio-files-ui/compare/v2.8.0...v2.9.0) (2024-08-26)
+
+
+### Features
+
+* add svg preview support ([c4ea394](https://github.com/zextras/carbonio-files-ui/commit/c4ea39436e0387663ff4d0f7aca49069a257d6c1)), closes [#388](https://github.com/zextras/carbonio-files-ui/issues/388)
+* handle over quota error on clone version action ([295c30d](https://github.com/zextras/carbonio-files-ui/commit/295c30db4bd29c3bc7ad0eaadad6f55ea02db74a)), closes [#381](https://github.com/zextras/carbonio-files-ui/issues/381)
+* handle over quota error on copy operation ([93760de](https://github.com/zextras/carbonio-files-ui/commit/93760de22bab98eeb47324d14859663d4d49fd13)), closes [#361](https://github.com/zextras/carbonio-files-ui/issues/361)
+* handle over quota error on new document action ([10b88d5](https://github.com/zextras/carbonio-files-ui/commit/10b88d5ab050a4b02f1cebe9a4c7b22a04e202f5)), closes [#353](https://github.com/zextras/carbonio-files-ui/issues/353)
+* implement grid layout  ([abcd7f9](https://github.com/zextras/carbonio-files-ui/commit/abcd7f91cbf8163285af1bd4a5c11f0d71ec5e0b)), closes [#384](https://github.com/zextras/carbonio-files-ui/issues/384)
+* request png output for png images ([af6ccb1](https://github.com/zextras/carbonio-files-ui/commit/af6ccb1ba084cb819ee864ebfeddc5d57664a147)), closes [#382](https://github.com/zextras/carbonio-files-ui/issues/382)
+* update icon when click on chip input ([bce569d](https://github.com/zextras/carbonio-files-ui/commit/bce569d4e5d3495d4e81f756c92be763640bbf93)), closes [#365](https://github.com/zextras/carbonio-files-ui/issues/365)
+
+
+### Bug Fixes
+
+* expand width of dropdown for owner advanced filter ([743e3b8](https://github.com/zextras/carbonio-files-ui/commit/743e3b8cd2e7bca43f8400588c4d4a1938018632)), closes [#370](https://github.com/zextras/carbonio-files-ui/issues/370)
+* set content-type header on create docs request ([acefa11](https://github.com/zextras/carbonio-files-ui/commit/acefa11509a73d01a9a9bba78219df1de9fbbf5c)), closes [#373](https://github.com/zextras/carbonio-files-ui/issues/373)
+* translate unit measures for size ([1c0b74d](https://github.com/zextras/carbonio-files-ui/commit/1c0b74d6b04690b2b3f56f5f7dae67cc3a039c2e)), closes [#385](https://github.com/zextras/carbonio-files-ui/issues/385)
+
 ## [2.8.0](https://github.com/zextras/carbonio-files-ui/compare/v2.7.1...v2.8.0) (2024-06-14)
 
 
