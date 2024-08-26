@@ -44,7 +44,8 @@ describe('List', () => {
 		test.each([
 			['image/jpeg', 'jpeg'],
 			['image/png', 'png'],
-			['image/gif', 'gif']
+			['image/gif', 'gif'],
+			['image/svg+xml', 'png']
 		])(
 			'Double click on node of type image with mime type %s open preview to show image with original dimensions and format %s',
 			async (mimeType, outputFormat) => {

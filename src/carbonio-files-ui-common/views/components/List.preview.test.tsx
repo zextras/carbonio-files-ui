@@ -79,7 +79,8 @@ describe('Preview action', () => {
 		['application/vnd.oasis.opendocument.text'],
 		['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
 		['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-		['application/pdf']
+		['application/pdf'],
+		['image/svg+xml']
 	])('context preview action is supported by mime type %s', async (mimeType) => {
 		const file = populateFile();
 		file.mime_type = mimeType;
@@ -91,7 +92,7 @@ describe('Preview action', () => {
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 	});
 
-	test.each([['video/quicktime'], ['text/html'], ['image/svg+xml'], ['text/plain']])(
+	test.each([['video/quicktime'], ['text/html'], ['text/plain']])(
 		'mime types %s does not support preview action',
 		async (mimeType) => {
 			const file = populateFile();
