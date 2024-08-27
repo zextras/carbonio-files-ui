@@ -35,6 +35,10 @@ import {
 	mockMoveNodes
 } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter View', () => {
 	describe('Drag and drop', () => {
 		test('Drag of files in a filter shows upload dropzone with dropzone message. Drop triggers upload in local root', async () => {

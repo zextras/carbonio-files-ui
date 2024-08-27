@@ -28,6 +28,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Rename', () => {
 	describe('Selection mode', () => {
 		test('Rename change node name and update the content of the folder, showing the element at its new position', async () => {

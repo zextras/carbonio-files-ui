@@ -12,12 +12,7 @@ import { addMocksToSchema } from '@graphql-tools/mock';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
 	act,
-	ByRoleMatcher,
-	ByRoleOptions,
 	fireEvent,
-	GetAllBy,
-	queries,
-	queryHelpers,
 	render,
 	RenderOptions,
 	RenderResult,
@@ -32,10 +27,11 @@ import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
 import { EventEmitter } from 'events';
 import { GraphQLError } from 'graphql';
-import { forEach, map, filter, reduce, merge, noop } from 'lodash';
+import { forEach, map, reduce, merge, noop } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
+import { queriesExtended } from './queries';
 import { CreateOption } from '../../hooks/useCreateOptions';
 import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
 import I18nFactory from '../../mocks/i18n-test-factory';
@@ -52,102 +48,6 @@ import { asyncForEach, isFile, isFolder } from '../utils/utils';
 export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
 	readonly rightClick: (target: Element) => Promise<void>;
 };
-
-/**
- * Matcher function to search a string in more html elements and not just in a single element.
- */
-const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) =>
-	// eslint-disable-next-line testing-library/prefer-screen-queries
-	rtlScreen.queryAllByText((_content, element) => {
-		if (element && element instanceof HTMLElement) {
-			const hasText = (singleNode: Element): boolean => {
-				const regExp = RegExp(text);
-				return singleNode.textContent != null && regExp.test(singleNode.textContent);
-			};
-			// eslint-disable-next-line testing-library/no-node-access
-			const childrenDontHaveText = Array.from(element.children).every((child) => !hasText(child));
-			return hasText(element) && childrenDontHaveText;
-		}
-		return false;
-	});
-
-const getByTextWithMarkupMultipleError = (
-	container: Element | null,
-	text: string | RegExp
-): string => `Found multiple elements with text: ${text}`;
-const getByTextWithMarkupMissingError = (
-	container: Element | null,
-	text: string | RegExp
-): string => `Unable to find an element with text: ${text}`;
-
-type ByRoleWithIconOptions = ByRoleOptions & {
-	icon: string | RegExp;
-};
-/**
- * Matcher function to search an icon button through the icon data-testid
- */
-const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> = (
-	container,
-	role,
-	{ icon, ...options }
-) =>
-	filter(
-		rtlWithin(container).queryAllByRole(role, options),
-		(element) => rtlWithin(element).queryByTestId(icon) !== null
-	);
-const printRole = (role: ByRoleMatcher): string =>
-	typeof role === 'string' ? role : `unprintable matcher function ${JSON.stringify(role)}`;
-const getByRoleWithIconMultipleError = (
-	container: Element | null,
-	role: ByRoleMatcher,
-	options: ByRoleWithIconOptions
-): string => `Found multiple elements with role ${printRole(role)} and icon ${options.icon}`;
-const getByRoleWithIconMissingError = (
-	container: Element | null,
-	role: ByRoleMatcher,
-	options: ByRoleWithIconOptions
-): string => `Unable to find an element with role ${printRole(role)} and icon ${options.icon}`;
-
-const [
-	queryByTextWithMarkup,
-	getAllByTextWithMarkup,
-	getByTextWithMarkup,
-	findAllByTextWithMarkup,
-	findByTextWithMarkup
-] = queryHelpers.buildQueries<[string | RegExp]>(
-	queryAllByTextWithMarkup,
-	getByTextWithMarkupMultipleError,
-	getByTextWithMarkupMissingError
-);
-
-const [
-	queryByRoleWithIcon,
-	getAllByRoleWithIcon,
-	getByRoleWithIcon,
-	findAllByRoleWithIcon,
-	findByRoleWithIcon
-] = queryHelpers.buildQueries<[ByRoleMatcher, ByRoleWithIconOptions]>(
-	queryAllByRoleWithIcon,
-	getByRoleWithIconMultipleError,
-	getByRoleWithIconMissingError
-);
-
-const customQueries = {
-	// byTextWithMarkup
-	queryByTextWithMarkup,
-	getAllByTextWithMarkup,
-	getByTextWithMarkup,
-	findAllByTextWithMarkup,
-	findByTextWithMarkup,
-	// byRoleWithIcon
-	queryByRoleWithIcon,
-	getAllByRoleWithIcon,
-	getByRoleWithIcon,
-	findAllByRoleWithIcon,
-	findByRoleWithIcon
-};
-
-const queriesExtended = { ...queries, ...customQueries };
 
 export function within(
 	element: Parameters<typeof rtlWithin<typeof queriesExtended>>[0]
@@ -273,7 +173,7 @@ function customRender(
 				{children}
 			</Wrapper>
 		),
-		queries: { ...queries, ...customQueries },
+		queries: queriesExtended,
 		...options
 	});
 }
@@ -323,40 +223,115 @@ export function setupHook<TProps, TResult>(
 	return view;
 }
 
-export async function triggerLoadMore(): Promise<void> {
-	expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-	const { calls } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>).mock;
-	const [onChange] = calls[calls.length - 1];
-	// trigger the intersection on the observed element
-	await waitFor(() =>
-		onChange([
-			{
-				target: screen.getByTestId(ICON_REGEXP.queryLoading),
-				intersectionRatio: 0,
-				isIntersecting: true
-			}
-		])
-	);
-}
-
-export function triggerListLoadMore(callsIndex?: number, isIntersecting = true): void {
-	const { calls, instances } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>)
-		.mock;
-
+export function triggerLoadMore(
+	{
+		target = screen.getByTestId(ICON_REGEXP.queryLoading),
+		...intersectionOptions
+	}: Partial<IntersectionObserverEntry> = {},
+	callsIndex: number = 0
+): void {
+	const { calls, instances } = jest.mocked(window.IntersectionObserver).mock;
 	const [onChange] = calls[callsIndex ?? calls.length - 1];
-	const instance = instances[instances.length - 1];
 	// trigger the intersection on the observed element
 	act(() => {
 		onChange(
 			[
 				{
-					target: screen.getByTestId('list-bottom-element'),
-					intersectionRatio: 0.5,
-					isIntersecting
-				} as unknown as IntersectionObserverEntry
+					target,
+					intersectionRatio: 0,
+					isIntersecting: true,
+					boundingClientRect: {
+						bottom: 0,
+						height: 0,
+						left: 0,
+						right: 0,
+						top: 0,
+						width: 0,
+						x: 0,
+						y: 0,
+						toJSON: (): string => {
+							throw new Error('Function not implemented.');
+						}
+					},
+					intersectionRect: {
+						bottom: 0,
+						height: 0,
+						left: 0,
+						right: 0,
+						top: 0,
+						width: 0,
+						x: 0,
+						y: 0,
+						toJSON: (): string => {
+							throw new Error('Function not implemented.');
+						}
+					},
+					rootBounds: null,
+					time: 0,
+					...intersectionOptions
+				}
 			],
-			instance
+			instances[instances.length - 1]
 		);
+	});
+}
+
+export function triggerListLoadMore(callsIndex?: number, isIntersecting = true): void {
+	triggerLoadMore(
+		{
+			target: screen.getByTestId('list-bottom-element'),
+			intersectionRatio: 0.5,
+			isIntersecting
+		},
+		callsIndex
+	);
+}
+
+export function makeListItemsVisible(): void {
+	const { calls, instances } = jest.mocked(window.IntersectionObserver).mock;
+	calls.forEach((call, index) => {
+		const [onChange] = call;
+		// trigger the intersection on the observed element
+		act(() => {
+			onChange(
+				[
+					{
+						intersectionRatio: 0,
+						isIntersecting: true,
+						boundingClientRect: {
+							bottom: 0,
+							height: 0,
+							left: 0,
+							right: 0,
+							top: 0,
+							width: 0,
+							x: 0,
+							y: 0,
+							toJSON: (): string => {
+								throw new Error('Function not implemented.');
+							}
+						},
+						intersectionRect: {
+							bottom: 0,
+							height: 0,
+							left: 0,
+							right: 0,
+							top: 0,
+							width: 0,
+							x: 0,
+							y: 0,
+							toJSON: (): string => {
+								throw new Error('Function not implemented.');
+							}
+						},
+						rootBounds: null,
+						target: document.documentElement,
+						time: 0
+					}
+				],
+				instances[index]
+			);
+		});
 	});
 }
 

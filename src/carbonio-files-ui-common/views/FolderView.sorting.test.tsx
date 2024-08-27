@@ -24,6 +24,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Sorting', () => {
 	test('Switch from name ascending to name descending order', async () => {
 		const currentFolder = populateFolder(0, 'currentFolderId');

@@ -34,6 +34,10 @@ import {
 } from '../utils/resolverMocks';
 import { getChipLabel } from '../utils/utils';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter view', () => {
 	describe('Shared By Me filter', () => {
 		it('should show sorting component', async () => {

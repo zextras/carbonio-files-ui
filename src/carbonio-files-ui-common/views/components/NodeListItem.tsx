@@ -212,7 +212,7 @@ export const NodeListItem = ({
 		// remove text selection on double click
 		if (window.getSelection) {
 			const selection = window.getSelection();
-			selection && selection.removeAllRanges();
+			selection?.removeAllRanges();
 		}
 
 		if (!isSelectionModeActive && !isDragged && !trashed) {

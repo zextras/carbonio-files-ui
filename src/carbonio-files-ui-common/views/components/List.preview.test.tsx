@@ -15,6 +15,8 @@ import { populateFile } from '../../mocks/mockUtils';
 import { setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('Preview action', () => {
 	test('Pdf with size greater than PREVIEW_MAX_SIZE are not previewed and fallback is shown', async () => {
 		const file = populateFile();

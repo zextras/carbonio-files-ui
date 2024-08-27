@@ -31,6 +31,10 @@ import {
 } from '../utils/resolverMocks';
 import { addNodeInSortedList } from '../utils/utils';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter View', () => {
 	describe('Rename', () => {
 		describe('Selection Mode', () => {

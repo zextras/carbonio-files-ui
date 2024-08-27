@@ -35,6 +35,10 @@ import {
 	mockGetPath
 } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter View', () => {
 	describe('Copy', () => {
 		describe('Selection Mode', () => {

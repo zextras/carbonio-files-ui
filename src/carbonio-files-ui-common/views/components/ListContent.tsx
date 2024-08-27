@@ -14,6 +14,7 @@ import { Draggable } from './Draggable';
 import { NodeListItem } from './NodeListItem';
 import { NodeListItemDragImage } from './NodeListItemDragImage';
 import { GridItem } from './StyledComponents';
+import { VirtualizedNodeListItem } from './VirtualizedNodeListItem';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, GRID_ITEM_MIN_WIDTH, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
@@ -74,6 +75,7 @@ export const ListContent = ({
 	fillerWithActions
 }: ListContentProps): React.JSX.Element => {
 	const { viewMode } = useContext(ListContext);
+	const listRef = useRef<HTMLDivElement>(null);
 
 	const dragImageRef = useRef<HTMLDivElement>(null);
 
@@ -89,7 +91,7 @@ export const ListContent = ({
 				forEach(DRAG_TYPES, (dragType) => event.dataTransfer.clearData(dragType));
 				const nodesToDrag: NodeListItemType[] = [];
 				if (isSelectionModeActive) {
-					nodesToDrag.push(...filter(nodes, ({ id }) => !!selectedMap[id]));
+					nodesToDrag.push(...filter(nodes, ({ id }) => selectedMap[id]));
 				} else {
 					nodesToDrag.push(node);
 				}
@@ -155,23 +157,32 @@ export const ListContent = ({
 				);
 			}
 			accumulator.push(
-				<Draggable
-					onDragStart={dragStartHandler(node)}
-					onDragEnd={dragEndHandler}
+				// id required for scrollToNodeItem function
+				<VirtualizedNodeListItem
 					key={node.id}
-					effect="move"
+					listRef={listRef}
+					id={node.id}
+					type={node.type}
+					data-testid={'virtualized-node-list-item'}
 				>
-					<NodeListItem
-						node={node}
-						isSelected={selectedMap && selectedMap[node.id]}
-						isSelectionModeActive={isSelectionModeActive}
-						selectId={selectId}
-						exitSelectionMode={exitSelectionMode}
-						selectionContextualMenuActionsItems={
-							selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
-						}
-					/>
-				</Draggable>
+					<Draggable
+						onDragStart={dragStartHandler(node)}
+						onDragEnd={dragEndHandler}
+						key={node.id}
+						effect="move"
+					>
+						<NodeListItem
+							node={node}
+							isSelected={selectedMap?.[node.id]}
+							isSelectionModeActive={isSelectionModeActive}
+							selectId={selectId}
+							exitSelectionMode={exitSelectionMode}
+							selectionContextualMenuActionsItems={
+								selectedMap?.[node.id] ? selectionContextualMenuActionsItems : undefined
+							}
+						/>
+					</Draggable>
+				</VirtualizedNodeListItem>
 			);
 			return accumulator;
 		}, []);
@@ -208,6 +219,7 @@ export const ListContent = ({
 					data-testid={'main-grid'}
 					onListBottom={hasMore ? loadMore : undefined}
 					intersectionObserverInitOptions={intersectionObserverInitOptions}
+					ref={listRef}
 				>
 					{items}
 				</Grid>
@@ -219,6 +231,7 @@ export const ListContent = ({
 					background={'gray6'}
 					onListBottom={hasMore ? loadMore : undefined}
 					intersectionObserverInitOptions={intersectionObserverInitOptions}
+					ref={listRef}
 				>
 					{items}
 				</ListV2>
