@@ -31,7 +31,7 @@ import { canBeMoveDestination } from '../../utils/ActionsFactory';
 import { isFile, isFolder } from '../../utils/utils';
 
 interface MoveNodesModalContentProps {
-	nodesToMove: Array<Pick<Node, '__typename' | 'id' | 'owner'>>;
+	nodesToMove: Array<Pick<Node, '__typename' | 'id' | 'owner' | 'permissions'>>;
 	folderId: string;
 	closeAction?: () => void;
 }
@@ -98,7 +98,7 @@ export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
 					if (node) {
 						// in move modal, if a node cannot be a move destination, then it is fully disabled
 						// and cannot be navigated if it is a folder (out of workspace)
-						const isSelectable = canBeMoveDestination(node, nodesToMove, me);
+						const isSelectable = canBeMoveDestination(node, nodesToMove);
 						result.push({
 							...node,
 							disabled: !isSelectable,
@@ -111,7 +111,7 @@ export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
 			);
 		}
 		return [];
-	}, [currentFolder, me, nodesToMove]);
+	}, [currentFolder, nodesToMove]);
 
 	const closeHandler = useCallback(() => {
 		closeAction && closeAction();

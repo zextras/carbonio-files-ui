@@ -152,7 +152,6 @@ describe('Move Nodes Modal', () => {
 				);
 				await screen.findByText(folder.name);
 				const nodeItem = screen.getByText(folder.name);
-				// eslint-disable-next-line no-autofix/jest-dom/prefer-enabled-disabled
 				expect(nodeItem).toHaveStyle({
 					color: COLORS.text.regular
 				});

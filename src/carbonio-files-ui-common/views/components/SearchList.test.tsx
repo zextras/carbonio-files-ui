@@ -225,7 +225,7 @@ describe('Search list', () => {
 			});
 		});
 
-		test('Drag of a node without move permissions cause no dropzone to be shown', async () => {
+		test('Drag of a node without move permissions shows disabled dropzone', async () => {
 			const currentSearch = populateNodes(5);
 			const nodesToDrag = [currentSearch[0]];
 			forEach(nodesToDrag, (mockedNode) => {
@@ -261,7 +261,9 @@ describe('Search list', () => {
 			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(itemToDrag, { dataTransfer: dataTransfer() });
-			await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
+			await act(async () => {
+				await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
+			});
 			// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 			const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
 			expect(draggedNodeItems).toHaveLength(2);
@@ -271,14 +273,20 @@ describe('Search list', () => {
 			expect(draggedNodeItems[1]).toHaveStyle({
 				color: COLORS.text.regular
 			});
-			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
+			expect(screen.getByText('You cannot drop your items in this area.')).toBeVisible();
 			fireEvent.dragLeave(itemToDrag, { dataTransfer: dataTransfer() });
 
-			// drag and drop on folder without permissions. Overlay is not shown.
+			// drag and drop on folder without permissions
 			const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
 			fireEvent.dragEnter(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
-			await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
-			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
+			await act(async () => {
+				await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
+			});
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
+			expect(
+				screen.queryByText('You cannot drop your items in this area.')
+			).not.toBeInTheDocument();
 			fireEvent.drop(folderWithoutPermissionsItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
@@ -286,12 +294,14 @@ describe('Search list', () => {
 				color: COLORS.text.regular
 			});
 
-			// drag and drop on folder with permissions. Overlay is not shown.
+			// drag and drop on folder with permissions
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-			await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
-			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
+			await act(async () => {
+				await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
+			});
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 			expect(itemToDrag).toBeVisible();
@@ -300,7 +310,7 @@ describe('Search list', () => {
 			});
 		});
 
-		test('Drag of multiple nodes is not permitted', async () => {
+		test('Drag of multiple nodes is permitted', async () => {
 			const currentFilter = populateNodes(5);
 			const nodesToDrag = [...currentFilter];
 			const parent = populateFolder();
@@ -327,7 +337,7 @@ describe('Search list', () => {
 				},
 				Mutation: {
 					moveNodes: mockMoveNodes(
-						map(nodesToDrag, (node) => ({ ...node, parent: destinationFolder }))
+						nodesToDrag.map((node) => ({ ...node, parent: destinationFolder }))
 					)
 				}
 			} satisfies Partial<Resolvers>;
@@ -340,7 +350,7 @@ describe('Search list', () => {
 
 			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 			await selectNodes(
-				map(nodesToDrag, (node) => node.id),
+				nodesToDrag.map((node) => node.id),
 				user
 			);
 			// check that all wanted items are selected
@@ -360,16 +370,19 @@ describe('Search list', () => {
 				});
 			});
 
-			// dropzone is not shown
+			// dropzone is shown
 			const destinationItem = screen.getByText(destinationFolder.name);
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
-			await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
-			expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
+			await act(async () => {
+				await jest.advanceTimersByTimeAsync(TIMERS.SHOW_DROPZONE);
+			});
+			expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 			fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
 
-			// selection mode stays active
-			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesToDrag.length);
+			expect(await screen.findByText(/item moved/i)).toBeVisible();
+			// exit selection mode
+			expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 		});
 	});
 
