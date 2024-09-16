@@ -20,6 +20,7 @@ import styled, { css, SimpleInterpolation } from 'styled-components';
 
 import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
 import { GridItem, UppercaseText } from './StyledComponents';
+import { GRID_ITEM_MIN_HEIGHT } from '../../constants';
 import { humanFileSize } from '../../utils/utils';
 
 const Image = styled.img`
@@ -35,7 +36,7 @@ const FooterGrid = styled(Container)`
 	justify-content: space-between;
 `;
 
-const ContainerCell = styled(Container).attrs<
+export const ContainerCell = styled(Container).attrs<
 	{
 		$contextualMenuActive?: boolean;
 		$disabled?: boolean;
@@ -91,7 +92,6 @@ const PreviewIcon = styled(Icon)`
 `;
 
 interface NodeGridItemProps {
-	id: string;
 	showPreview?: boolean;
 	icon: string;
 	color: string;
@@ -119,7 +119,6 @@ interface NodeGridItemProps {
 }
 
 export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
-	id,
 	showPreview,
 	icon,
 	color,
@@ -182,8 +181,6 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 			<ContainerCell
 				$showPreview={showPreview}
 				height={showPreview ? 'fill' : 'fit'}
-				// id required for scrollToNodeItem function
-				id={id}
 				$contextualMenuActive={listItemContainerContextualMenuActive}
 				$disableHover={listItemContainerDisableHover}
 				$disabled={disabled}
@@ -217,8 +214,8 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 						maxWidth={'100%'}
 						background={hoverContainerBackground}
 						padding={'small'}
-						minHeight={'4.625rem'}
-						height={'4.625rem'}
+						minHeight={GRID_ITEM_MIN_HEIGHT}
+						height={GRID_ITEM_MIN_HEIGHT}
 						orientation={'horizontal'}
 						gap={'0.5rem'}
 					>

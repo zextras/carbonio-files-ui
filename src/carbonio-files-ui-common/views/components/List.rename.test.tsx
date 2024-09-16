@@ -17,6 +17,8 @@ import { Resolvers } from '../../types/graphql/resolvers-types';
 import { NodeSort } from '../../types/graphql/types';
 import { mockErrorResolver } from '../../utils/resolverMocks';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('Rename', () => {
 	describe('Selection mode', () => {
 		test('Rename is hidden when multiple files are selected', async () => {

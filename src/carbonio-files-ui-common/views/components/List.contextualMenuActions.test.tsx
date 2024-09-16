@@ -19,6 +19,8 @@ import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetPath } from '../../utils/resolverMocks';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('Contextual menu actions', () => {
 	describe('on empty space', () => {
 		describe('in a folder with few nodes', () => {

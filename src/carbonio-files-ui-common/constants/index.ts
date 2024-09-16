@@ -12,6 +12,7 @@ export const NODES_SORT_DEFAULT = NodeSort.NameAsc;
 export const VIEW_MODE = { grid: 'grid', list: 'list' } as const;
 export const VIEW_MODE_DEFAULT = VIEW_MODE.list;
 export const GRID_ITEM_MIN_WIDTH = '13.4375rem';
+export const GRID_ITEM_MIN_HEIGHT = '4.625rem';
 export const LIST_ITEM_HEIGHT = '4rem';
 export const LIST_ITEM_HEIGHT_COMPACT = '3.25rem';
 export const LIST_ITEM_HEIGHT_DETAILS = '3.25rem';
