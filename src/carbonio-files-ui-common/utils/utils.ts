@@ -16,11 +16,9 @@ import { DefaultTheme } from 'styled-components';
 
 import {
 	DATE_FORMAT,
-	DOCS_ENDPOINT,
 	DOCS_EXTENSIONS,
 	DOWNLOAD_PATH,
 	INTERNAL_PATH,
-	OPEN_FILE_PATH,
 	REST_ENDPOINT,
 	ROOTS,
 	TIMERS,
@@ -330,24 +328,6 @@ export const downloadNode = (id: string, version?: number): void => {
 			a.target = '_blank';
 			a.type = 'hidden';
 			a.click();
-		}
-	}
-};
-
-const docsTabMap: { [url: string]: Window } = {};
-
-/**
- * Open with docs
- */
-export const openNodeWithDocs = (id: string, version?: number): void => {
-	if (id) {
-		const url = `${DOCS_ENDPOINT}${OPEN_FILE_PATH}/${encodeURIComponent(id)}${
-			version ? `?version=${version}` : ''
-		}`;
-		if (docsTabMap[url] == null || docsTabMap[url]?.closed) {
-			docsTabMap[url] = window.open(url, url) as Window;
-		} else {
-			docsTabMap[url].focus();
 		}
 	}
 };

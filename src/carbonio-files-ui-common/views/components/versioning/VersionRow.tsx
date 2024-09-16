@@ -26,7 +26,8 @@ import { DropdownListItemContent } from '../../../design_system_fork/DropdownLis
 import { CloneVersionType } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
 import { DeleteVersionsType } from '../../../hooks/graphql/mutations/useDeleteVersionsMutation';
 import { KeepVersionsType } from '../../../hooks/graphql/mutations/useKeepVersionsMutation';
-import { downloadNode, formatDate, humanFileSize, openNodeWithDocs } from '../../../utils/utils';
+import { useOpenWithDocs } from '../../../hooks/useOpenWithDocs';
+import { downloadNode, formatDate, humanFileSize } from '../../../utils/utils';
 import { GridItem } from '../StyledComponents';
 
 const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
@@ -106,6 +107,7 @@ export const VersionRow: React.VFC<{
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
+	const openNodeWithDocs = useOpenWithDocs();
 
 	const deleteVersionCallback = useCallback(() => {
 		deleteVersions(nodeId, [version]);
@@ -155,7 +157,7 @@ export const VersionRow: React.VFC<{
 
 	const openVersionWithDocsCallback = useCallback(() => {
 		openNodeWithDocs(nodeId, version);
-	}, [nodeId, version]);
+	}, [nodeId, openNodeWithDocs, version]);
 
 	const items = useMemo<DropdownItem[]>(() => {
 		const actions: DropdownItem[] = [

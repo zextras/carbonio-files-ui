@@ -43,6 +43,7 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { usePreview } from '../../hooks/usePreview';
 import { useUpload } from '../../hooks/useUpload';
 import { Action, NodeListItemType, URLParams } from '../../types/common';
@@ -63,7 +64,6 @@ import {
 import { getUploadAddType } from '../../utils/uploadUtils';
 import {
 	downloadNode,
-	openNodeWithDocs,
 	isFile,
 	isSearchView,
 	formatDate,
@@ -170,6 +170,7 @@ export const NodeListItem = ({
 		[node.id, node.type]
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
+	const openNodeWithDocs = useOpenWithDocs();
 
 	const $isSupportedByPreview = useMemo(
 		() =>
@@ -237,6 +238,7 @@ export const NodeListItem = ({
 		$isSupportedByPreview,
 		navigateToFolder,
 		node.id,
+		openNodeWithDocs,
 		openPreview
 	]);
 
@@ -364,10 +366,11 @@ export const NodeListItem = ({
 		[
 			t,
 			sendViaMailCallback,
+			openNodeWithDocs,
+			node,
 			openPreview,
 			createSnackbar,
 			setActiveNode,
-			node,
 			toggleFlag,
 			openCopyNodesModal,
 			openMoveNodesModal,

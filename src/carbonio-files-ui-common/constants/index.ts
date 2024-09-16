@@ -133,7 +133,8 @@ export const HTTP_STATUS_CODE = {
 	maxVersionReached: 405,
 	/** aborted or blocked request */
 	aborted: 0,
-	overQuota: 422
+	overQuota: 422,
+	docsFileSizeExceeded: 413
 } as const;
 
 export const ERROR_CODE = {

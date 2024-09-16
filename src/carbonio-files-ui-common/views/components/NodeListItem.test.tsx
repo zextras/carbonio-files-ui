@@ -23,6 +23,7 @@ import {
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { ListContext } from '../../contexts';
 import * as useHealthInfo from '../../hooks/useHealthInfo';
+import * as useOpenWithDocs from '../../hooks/useOpenWithDocs';
 import * as usePreview from '../../hooks/usePreview';
 import {
 	populateFile,
@@ -40,7 +41,6 @@ import {
 } from '../../utils/previewUtils';
 import { formatDate, humanFileSize } from '../../utils/utils';
 import 'jest-styled-components';
-import * as utils from '../../utils/utils';
 
 export function getMissingProps(): Pick<
 	NodeListItemProps,
@@ -99,7 +99,8 @@ describe('Node List Item', () => {
 			])(
 				`should %s when canUsePreview is %s, canUseDocs is %s, canWriteFile is %s, mime_type is %s `,
 				async (action, canUsePreview, canUseDocs, canWriteFile, mimeType) => {
-					const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
+					const openWithDocsFn = jest.fn();
+					jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
 					const openPreview = jest.fn();
 
 					jest.spyOn(usePreview, 'usePreview').mockReturnValue({
