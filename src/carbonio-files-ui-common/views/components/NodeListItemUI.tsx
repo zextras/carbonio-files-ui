@@ -77,128 +77,125 @@ export const NodeListItemUI = ({
 		}
 	}, []);
 	return (
-		// id required for scrollToNodeItem function
-		<Container id={id}>
-			<ContextualMenu
-				disabled={contextualMenuDisabled}
-				onOpen={contextualMenuOnOpen}
-				onClose={contextualMenuOnClose}
-				actions={contextualMenuActions}
+		<ContextualMenu
+			disabled={contextualMenuDisabled}
+			onOpen={contextualMenuOnOpen}
+			onClose={contextualMenuOnClose}
+			actions={contextualMenuActions}
+		>
+			<ListItemContainer
+				height={'fit'}
+				onClick={listItemContainerOnClick}
+				onDoubleClick={listItemContainerOnDoubleClick}
+				data-testid={`node-item-${id}`}
+				crossAlignment={'flex-end'}
+				$contextualMenuActive={listItemContainerContextualMenuActive}
+				$disableHover={listItemContainerDisableHover}
+				$disabled={disabled}
+				onMouseDown={preventTextSelection}
 			>
-				<ListItemContainer
-					height={'fit'}
-					onClick={listItemContainerOnClick}
-					onDoubleClick={listItemContainerOnDoubleClick}
-					data-testid={`node-item-${id}`}
-					crossAlignment={'flex-end'}
-					$contextualMenuActive={listItemContainerContextualMenuActive}
-					$disableHover={listItemContainerDisableHover}
-					$disabled={disabled}
-					onMouseDown={preventTextSelection}
+				<HoverContainer
+					height={LIST_ITEM_HEIGHT}
+					wrap="nowrap"
+					mainAlignment="flex-start"
+					crossAlignment="center"
+					padding={{ all: 'small' }}
+					width="fill"
+					background={hoverContainerBackground}
 				>
-					<HoverContainer
-						height={LIST_ITEM_HEIGHT}
-						wrap="nowrap"
-						mainAlignment="flex-start"
-						crossAlignment="center"
-						padding={{ all: 'small' }}
+					{nodeAvatarIcon}
+					<Container
+						orientation="vertical"
+						crossAlignment="flex-start"
+						mainAlignment="space-around"
+						padding={{ left: 'large' }}
+						minWidth="auto"
 						width="fill"
-						background={hoverContainerBackground}
+						maxWidth={cssCalcBuilder('100%', ['-', LIST_ITEM_AVATAR_HEIGHT])}
 					>
-						{nodeAvatarIcon}
-						<Container
-							orientation="vertical"
-							crossAlignment="flex-start"
-							mainAlignment="space-around"
-							padding={{ left: 'large' }}
-							minWidth="auto"
+						<Row
+							padding={{ vertical: 'extrasmall' }}
 							width="fill"
-							maxWidth={cssCalcBuilder('100%', ['-', LIST_ITEM_AVATAR_HEIGHT])}
+							wrap="nowrap"
+							mainAlignment="space-between"
 						>
-							<Row
-								padding={{ vertical: 'extrasmall' }}
-								width="fill"
-								wrap="nowrap"
-								mainAlignment="space-between"
-							>
-								<Text overflow="ellipsis" disabled={disabled} size="medium">
-									{name}
-								</Text>
-								<Container orientation="horizontal" mainAlignment="flex-end" width="fit">
-									{flagActive && (
-										<Padding left="extrasmall">
-											<Icon icon="Flag" color="error" disabled={disabled} />
-										</Padding>
-									)}
-									{incomingShare && (
-										<Padding left="extrasmall">
-											<Icon icon="ArrowCircleLeft" color={'linked'} disabled={disabled} />
-										</Padding>
-									)}
-									{outgoingShare && (
-										<Padding left="extrasmall">
-											<Icon icon="ArrowCircleRight" color="shared" disabled={disabled} />
-										</Padding>
-									)}
-									{trashed && (
-										<Padding left="extrasmall">
-											<Icon icon="Trash2Outline" disabled={disabled} />
-										</Padding>
-									)}
+							<Text overflow="ellipsis" disabled={disabled} size="medium">
+								{name}
+							</Text>
+							<Container orientation="horizontal" mainAlignment="flex-end" width="fit">
+								{flagActive && (
 									<Padding left="extrasmall">
-										<Text size="extrasmall" color="gray1" disabled={disabled}>
-											{updatedAt}
-										</Text>
+										<Icon icon="Flag" color="error" disabled={disabled} />
 									</Padding>
-								</Container>
-							</Row>
-							<Row
-								padding={{ vertical: 'extrasmall' }}
-								width="fill"
-								wrap="nowrap"
+								)}
+								{incomingShare && (
+									<Padding left="extrasmall">
+										<Icon icon="ArrowCircleLeft" color={'linked'} disabled={disabled} />
+									</Padding>
+								)}
+								{outgoingShare && (
+									<Padding left="extrasmall">
+										<Icon icon="ArrowCircleRight" color="shared" disabled={disabled} />
+									</Padding>
+								)}
+								{trashed && (
+									<Padding left="extrasmall">
+										<Icon icon="Trash2Outline" disabled={disabled} />
+									</Padding>
+								)}
+								<Padding left="extrasmall">
+									<Text size="extrasmall" color="gray1" disabled={disabled}>
+										{updatedAt}
+									</Text>
+								</Padding>
+							</Container>
+						</Row>
+						<Row
+							padding={{ vertical: 'extrasmall' }}
+							width="fill"
+							wrap="nowrap"
+							mainAlignment="flex-start"
+						>
+							<Container
+								flexShrink={0}
+								flexGrow={1}
+								flexBasis="auto"
 								mainAlignment="flex-start"
+								orientation="horizontal"
+								width="fit"
 							>
+								<UppercaseText color="gray1" disabled={disabled} size="small">
+									{extensionOrType}
+								</UppercaseText>
+								{size && (
+									<Padding left="small">
+										<UppercaseText color="gray1" disabled={disabled} size="small">
+											{humanFileSize(size, t)}
+										</UppercaseText>
+									</Padding>
+								)}
+							</Container>
+							{displayName && (
 								<Container
-									flexShrink={0}
+									width="fit"
+									minWidth={0}
+									flexShrink={1}
 									flexGrow={1}
 									flexBasis="auto"
-									mainAlignment="flex-start"
 									orientation="horizontal"
-									width="fit"
+									mainAlignment="flex-end"
+									padding={{ left: 'small' }}
 								>
-									<UppercaseText color="gray1" disabled={disabled} size="small">
-										{extensionOrType}
-									</UppercaseText>
-									{size && (
-										<Padding left="small">
-											<UppercaseText color="gray1" disabled={disabled} size="small">
-												{humanFileSize(size, t)}
-											</UppercaseText>
-										</Padding>
-									)}
+									<Text size="extrasmall" overflow="ellipsis">
+										{displayName}
+									</Text>
 								</Container>
-								{displayName && (
-									<Container
-										width="fit"
-										minWidth={0}
-										flexShrink={1}
-										flexGrow={1}
-										flexBasis="auto"
-										orientation="horizontal"
-										mainAlignment="flex-end"
-										padding={{ left: 'small' }}
-									>
-										<Text size="extrasmall" overflow="ellipsis">
-											{displayName}
-										</Text>
-									</Container>
-								)}
-							</Row>
-						</Container>
-					</HoverContainer>
-					{nodeHoverBar}
-				</ListItemContainer>
-			</ContextualMenu>
-		</Container>
+							)}
+						</Row>
+					</Container>
+				</HoverContainer>
+				{nodeHoverBar}
+			</ListItemContainer>
+		</ContextualMenu>
 	);
 };

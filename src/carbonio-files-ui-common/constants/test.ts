@@ -133,7 +133,8 @@ export const SELECTORS = {
 	popper: 'popper',
 	mainList: 'main-list',
 	mainGrid: 'main-grid',
-	gridCellThumbnail: 'grid-cell-thumbnail'
+	gridCellThumbnail: 'grid-cell-thumbnail',
+	virtualizedNodeListItem: 'virtualized-node-list-item'
 };
 
 export const EMITTER_CODES = {

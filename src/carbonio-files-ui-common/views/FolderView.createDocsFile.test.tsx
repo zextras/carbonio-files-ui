@@ -55,6 +55,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 function clickOnCreateDocsAction(
 	createOptions: CreateOption[],
 	type: (typeof ACTION_IDS)[keyof Pick<

@@ -25,6 +25,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('View Mode', () => {
 	it.each(Object.values(FILTER_TYPE))(
 		'should switch between list view and grid view in filter %s',

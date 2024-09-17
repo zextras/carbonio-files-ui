@@ -61,6 +61,10 @@ jest.mock<typeof import('../../network/network')>('../../network/network', () =>
 		})
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Folder View', () => {
 	describe('Create Folder', () => {
 		test('Create folder option is disabled if current folder has not can_write_folder permission', async () => {

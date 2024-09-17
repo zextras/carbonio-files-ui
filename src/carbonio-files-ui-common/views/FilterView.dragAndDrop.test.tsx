@@ -29,6 +29,10 @@ import {
 	mockMoveNodes
 } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter View', () => {
 	describe('Drag and drop', () => {
 		test('Drag of files in trash filter shows upload dropzone with dropzone message "not allowed"', async () => {

@@ -27,6 +27,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Get children', () => {
 	test('access to a folder with network error response show an error page', async () => {
 		const currentFolder = populateFolder();

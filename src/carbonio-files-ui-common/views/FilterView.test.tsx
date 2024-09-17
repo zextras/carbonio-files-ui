@@ -33,6 +33,10 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter view', () => {
 	test('No url param render a "Missing filter" message', async () => {
 		const mockedRequestHandler = jest.fn(handleFindNodesRequest);

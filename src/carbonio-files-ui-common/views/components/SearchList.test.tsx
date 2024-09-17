@@ -25,6 +25,8 @@ import {
 	mockTrashNodes
 } from '../../utils/resolverMocks';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('Search list', () => {
 	describe('Selection mode', () => {
 		describe('Mark for deletion', () => {

@@ -18,6 +18,10 @@ import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes, mockRestoreNodes } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter View', () => {
 	describe('Restore', () => {
 		describe('Selection Mode', () => {

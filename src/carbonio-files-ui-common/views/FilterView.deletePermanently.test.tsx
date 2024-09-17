@@ -18,6 +18,10 @@ import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockDeletePermanently, mockFindNodes } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter View', () => {
 	describe('Delete Permanently', () => {
 		describe('Selection Mode', () => {

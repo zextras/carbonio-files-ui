@@ -36,6 +36,10 @@ import {
 	mockMoveNodes
 } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter View', () => {
 	describe('Move', () => {
 		describe('Selection Mode', () => {

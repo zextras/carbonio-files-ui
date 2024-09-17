@@ -23,6 +23,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('View Mode', () => {
 	it('should switch between list view and grid view', async () => {
 		const currentFolder = populateFolder(1, 'currentFolderId');
