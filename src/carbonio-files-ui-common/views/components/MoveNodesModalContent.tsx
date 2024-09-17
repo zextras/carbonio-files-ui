@@ -20,7 +20,6 @@ import { useTranslation } from 'react-i18next';
 import { ModalFooterCustom } from './ModalFooterCustom';
 import { ModalList } from './ModalList';
 import { CustomModalBody } from './StyledComponents';
-import { useUserInfo } from '../../../hooks/useUserInfo';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';
@@ -82,8 +81,6 @@ export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
 		() => find(nodesToMove, (node) => isFolder(node)) !== undefined,
 		[nodesToMove]
 	);
-
-	const { me } = useUserInfo();
 
 	const nodes = useMemo<Array<NodeListItemType>>(() => {
 		if (
@@ -170,7 +167,7 @@ export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
 					{t('node.move.modal.subtitle', 'Select a destination folder:')}
 				</Text>
 				<ModalList
-					folderId={currentFolder?.getNode?.id || ''}
+					folderId={currentFolder?.getNode?.id ?? ''}
 					nodes={nodes}
 					activeNodes={destinationFolder}
 					setActiveNode={setDestinationFolderHandler}

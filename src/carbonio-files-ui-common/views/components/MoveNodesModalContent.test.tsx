@@ -8,15 +8,28 @@
 
 import React from 'react';
 
-import { screen, waitFor, within } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { MoveNodesModalContent } from './MoveNodesModalContent';
 import { destinationVar } from '../../apollo/destinationVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
-import { populateFile, populateFolder, populateNode, populateParents } from '../../mocks/mockUtils';
-import { buildBreadCrumbRegExp, setup, selectNodes, triggerListLoadMore } from '../../tests/utils';
+import {
+	populateFile,
+	populateFolder,
+	populateLocalRoot,
+	populateNode,
+	populateParents
+} from '../../mocks/mockUtils';
+import {
+	buildBreadCrumbRegExp,
+	setup,
+	selectNodes,
+	triggerListLoadMore,
+	screen,
+	within
+} from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -69,6 +82,10 @@ describe('Move Nodes Modal', () => {
 			const nodeToMove = populateNode(typename);
 			nodeToMove.permissions.can_write_file = true;
 			nodeToMove.permissions.can_write_folder = true;
+			const parent = populateFolder();
+			parent.permissions.can_write_file = true;
+			parent.permissions.can_write_folder = true;
+			nodeToMove.parent = parent;
 
 			test('files are disabled in the list', async () => {
 				const currentFolder = populateFolder();
@@ -156,7 +173,7 @@ describe('Move Nodes Modal', () => {
 					color: COLORS.text.regular
 				});
 				await user.dblClick(nodeItem);
-				await screen.findByText(/it looks like there's nothing here/i);
+				expect(await screen.findByText(/it looks like there's nothing here/i)).toBeVisible();
 			});
 
 			test('moving node is disabled in the list', async () => {
@@ -221,6 +238,8 @@ describe('Move Nodes Modal', () => {
 	test('confirm action without selecting a destination moves node in opened folder. Confirm button is disabled if destination folder matches origin folder', async () => {
 		const currentFolder = populateFolder();
 		const file = populateFile();
+		currentFolder.permissions.can_write_folder = true;
+		currentFolder.permissions.can_write_file = true;
 		file.permissions.can_write_file = true;
 		file.parent = currentFolder;
 		currentFolder.children.nodes.push(file);
@@ -287,6 +306,8 @@ describe('Move Nodes Modal', () => {
 
 	test('confirm action after selecting a destination from the list moves node in selected destination', async () => {
 		const currentFolder = populateFolder();
+		currentFolder.permissions.can_write_folder = true;
+		currentFolder.permissions.can_write_file = true;
 		const file = populateFile();
 		file.permissions.can_write_file = true;
 		file.parent = currentFolder;
@@ -353,9 +374,12 @@ describe('Move Nodes Modal', () => {
 
 	test('click on disabled nodes or outside the list reset selected destination to opened folder', async () => {
 		const currentFolder = populateFolder();
+		currentFolder.permissions.can_write_folder = true;
+		currentFolder.permissions.can_write_file = true;
 		const file = populateFile();
 		file.permissions.can_write_file = true;
 		currentFolder.children.nodes.push(file);
+		file.parent = populateLocalRoot();
 		const folder = populateFolder(0);
 		folder.permissions.can_write_folder = true;
 		folder.permissions.can_write_file = true;
@@ -405,15 +429,20 @@ describe('Move Nodes Modal', () => {
 
 	test('breadcrumb shows full path of opened folder and allows navigation to parent nodes', async () => {
 		const currentFolder = populateFolder();
+		currentFolder.permissions.can_write_folder = true;
+		currentFolder.permissions.can_write_file = true;
 		const { path } = populateParents(currentFolder, 4, true);
 		forEach(path, (mockedNode) => {
 			mockedNode.permissions.can_write_file = true;
 		});
 		const file = populateFile();
+		file.permissions.can_write_file = true;
+		file.permissions.can_write_folder = true;
 		file.parent = currentFolder;
 		const folder = populateFolder();
 		folder.parent = currentFolder;
 		folder.permissions.can_write_file = true;
+		folder.permissions.can_write_folder = true;
 		currentFolder.children.nodes.push(file, folder);
 		const nodesToMove = [file];
 		const ancestorIndex = 1;
@@ -426,7 +455,7 @@ describe('Move Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
+		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<MoveNodesModalContent folderId={currentFolder.id} nodesToMove={nodesToMove} />
 			</div>,
@@ -434,23 +463,19 @@ describe('Move Nodes Modal', () => {
 		);
 
 		await screen.findByText(nodesToMove[0].name);
-		let breadcrumbRegexp = buildBreadCrumbRegExp(...map(path, (node) => node.name));
-		await findByTextWithMarkup(breadcrumbRegexp);
+		let breadcrumbRegexp = buildBreadCrumbRegExp(...path.map((node) => node.name));
 		// full path immediately visible
-		expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
+		expect(await screen.findByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 		// navigate to sub-folder
 		await user.dblClick(screen.getByText(folder.name));
-		breadcrumbRegexp = buildBreadCrumbRegExp(...map(path.concat(folder), (node) => node.name));
-		const breadcrumbItem = await findByTextWithMarkup(breadcrumbRegexp);
-		expect(breadcrumbItem).toBeVisible();
+		breadcrumbRegexp = buildBreadCrumbRegExp(...path.concat(folder).map((node) => node.name));
+		expect(await screen.findByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 		// navigate to ancestor
 		await user.click(screen.getByText(ancestor.name));
-		// wait children to be loaded
 		breadcrumbRegexp = buildBreadCrumbRegExp(
-			...map(path.slice(0, ancestorIndex + 1), (node) => node.name)
+			...path.slice(0, ancestorIndex + 1).map((node) => node.name)
 		);
-		await findByTextWithMarkup(breadcrumbRegexp);
-		expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
+		expect(await screen.findByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 		expect(screen.queryByText(currentFolder.name)).not.toBeInTheDocument();
 	});
 
@@ -505,7 +530,7 @@ describe('Move Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const { getByTextWithMarkup } = setup(
+		setup(
 			<div onClick={resetToDefault}>
 				<MoveNodesModalContent folderId={sharedFolder.id} nodesToMove={[nodeToMove]} />
 			</div>,
@@ -524,7 +549,7 @@ describe('Move Nodes Modal', () => {
 		).not.toBeInTheDocument();
 		// breadcrumb has only last subsequent folders with write permissions
 		expect(
-			getByTextWithMarkup(
+			screen.getByTextWithMarkup(
 				buildBreadCrumbRegExp(sharedParentWithWritePermissions.name, sharedFolder.name)
 			)
 		).toBeVisible();
