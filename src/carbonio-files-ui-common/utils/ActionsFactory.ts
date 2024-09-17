@@ -234,22 +234,16 @@ export function canBeCopyDestination(
 }
 
 export function canRestore({ nodes }: ArgsType): boolean {
-	let someNotTrashed: boolean;
-	if (nodes instanceof Array) {
-		someNotTrashed = nodes.some((node) => 'rootId' in node && node.rootId !== ROOTS.TRASH);
-	} else {
-		someNotTrashed = 'rootId' in nodes && nodes.rootId === ROOTS.TRASH;
-	}
+	const someNotTrashed = (nodes instanceof Array ? nodes : [nodes]).some(
+		(node) => 'rootId' in node && node.rootId !== ROOTS.TRASH
+	);
 	return hasWritePermission(nodes, 'canRestore') && !someNotTrashed;
 }
 
 export function canMarkForDeletion({ nodes }: ArgsType): boolean {
-	let someTrashed: boolean;
-	if (nodes instanceof Array) {
-		someTrashed = nodes.some((node) => 'rootId' in node && node.rootId === ROOTS.TRASH);
-	} else {
-		someTrashed = 'rootId' in nodes && nodes.rootId === ROOTS.TRASH;
-	}
+	const someTrashed = (nodes instanceof Array ? nodes : [nodes]).some(
+		(node) => 'rootId' in node && node.rootId === ROOTS.TRASH
+	);
 	return hasWritePermission(nodes, 'canMarkForDeletion') && !someTrashed;
 }
 
