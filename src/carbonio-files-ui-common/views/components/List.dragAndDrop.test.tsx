@@ -40,6 +40,8 @@ import {
 	mockMoveNodes
 } from '../../utils/resolverMocks';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('List', () => {
 	describe('Drag and drop', () => {
 		describe('Upload', () => {
