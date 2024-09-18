@@ -99,6 +99,15 @@ export const MIME_TYPE_PREVIEW_SUPPORT: Record<
 	}
 } as const;
 
+const videoElement = document.createElement('video');
+
+export function canPlayTypeOnVideoTag(mimeType: string | null | undefined): boolean {
+	if (mimeType) {
+		return videoElement.canPlayType(mimeType) !== '';
+	}
+	return true;
+}
+
 /**
  * Check if a file is supported by preview by its mime type
  *

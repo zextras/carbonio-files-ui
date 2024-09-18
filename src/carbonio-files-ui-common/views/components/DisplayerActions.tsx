@@ -31,7 +31,7 @@ import {
 	buildActionItems,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { isSupportedByPreview } from '../../utils/previewUtils';
+import { canPlayTypeOnVideoTag, isSupportedByPreview } from '../../utils/previewUtils';
 import { downloadNode, isFile, openNodeWithDocs } from '../../utils/utils';
 
 interface DisplayerActionsParams {
@@ -111,13 +111,13 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 	>(() => isSupportedByPreview((isFile(node) && node.mime_type) || undefined, 'preview'), [node]);
 
 	const preview = useCallback(() => {
-		if ($isSupportedByPreview) {
+		if ($isSupportedByPreview || canPlayTypeOnVideoTag(node.mime_type)) {
 			openPreview(node.id);
 		} else if (includes(permittedDisplayerActions, Action.OpenWithDocs)) {
 			// if preview is not supported and document can be opened with docs, open editor
 			openNodeWithDocs(node.id);
 		}
-	}, [$isSupportedByPreview, permittedDisplayerActions, openPreview, node.id]);
+	}, [$isSupportedByPreview, node.mime_type, node.id, permittedDisplayerActions, openPreview]);
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({

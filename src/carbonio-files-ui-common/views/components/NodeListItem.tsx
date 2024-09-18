@@ -55,6 +55,7 @@ import {
 	getPermittedHoverBarActions
 } from '../../utils/ActionsFactory';
 import {
+	canPlayTypeOnVideoTag,
 	getPreviewOutputFormat,
 	getPreviewThumbnailSrc,
 	isPreviewDependantOnDocs,
@@ -221,7 +222,7 @@ export const NodeListItem = ({
 			} else if (includes(permittedContextualMenuActions, Action.Edit)) {
 				// if node can be opened with docs on edit mode, open editor
 				openNodeWithDocs(node.id);
-			} else if ($isSupportedByPreview) {
+			} else if ($isSupportedByPreview || (isFile(node) && canPlayTypeOnVideoTag(node.mime_type))) {
 				openPreview(node.id);
 			} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
 				// if preview is not supported and document can be opened with docs, open editor
@@ -235,8 +236,8 @@ export const NodeListItem = ({
 		isNavigable,
 		permittedContextualMenuActions,
 		$isSupportedByPreview,
+		node,
 		navigateToFolder,
-		node.id,
 		openPreview
 	]);
 

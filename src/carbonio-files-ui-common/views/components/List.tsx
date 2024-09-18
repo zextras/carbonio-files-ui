@@ -25,7 +25,15 @@ import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { DISPLAYER_TABS, DRAG_TYPES, PREVIEW_MAX_SIZE, PREVIEW_TYPE, ROOTS } from '../../constants';
+import {
+	DISPLAYER_TABS,
+	DOWNLOAD_PATH,
+	DRAG_TYPES,
+	PREVIEW_MAX_SIZE,
+	PREVIEW_TYPE,
+	REST_ENDPOINT,
+	ROOTS
+} from '../../constants';
 import { ListContext, NodeAvatarIconContext } from '../../contexts';
 import {
 	DeleteNodesType,
@@ -62,7 +70,11 @@ import {
 	canOpenWithDocs,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { getPreviewSrc, isSupportedByPreview } from '../../utils/previewUtils';
+import {
+	canPlayTypeOnVideoTag,
+	getPreviewSrc,
+	isSupportedByPreview
+} from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import { downloadNode, humanFileSize, isFile, isFolder, openNodeWithDocs } from '../../utils/utils';
 
@@ -364,9 +376,6 @@ export const List: React.VFC<ListProps> = ({
 						node.mime_type,
 						'preview'
 					);
-					if (!$isSupportedByPreview) {
-						return accumulator;
-					}
 					const item = {
 						filename: node.name,
 						extension: node.extension ?? undefined,
@@ -380,6 +389,21 @@ export const List: React.VFC<ListProps> = ({
 						src: getPreviewSrc(node, documentType),
 						id: node.id
 					};
+
+					if (canPlayTypeOnVideoTag(node.mime_type)) {
+						const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(node.id)}${
+							node.version ? `/${node.version}` : ''
+						}`;
+						accumulator.push({
+							...item,
+							src: url,
+							previewType: 'video'
+						});
+					}
+
+					if (!$isSupportedByPreview) {
+						return accumulator;
+					}
 
 					if (documentType === PREVIEW_TYPE.IMAGE) {
 						accumulator.push({
@@ -410,7 +434,7 @@ export const List: React.VFC<ListProps> = ({
 		const nodeToPreview = find(nodes, (node) => node.id === selectedIDs[0]);
 		const { id, mime_type: mimeType } = nodeToPreview as File;
 		const [$isSupportedByPreview] = isSupportedByPreview(mimeType, 'preview');
-		if ($isSupportedByPreview) {
+		if ($isSupportedByPreview || canPlayTypeOnVideoTag(mimeType)) {
 			openPreview(id);
 		} else if (includes(permittedSelectionModeActions, Action.OpenWithDocs)) {
 			// if preview is not supported and document can be opened with docs, open editor
