@@ -19,7 +19,7 @@ import { docsHandledMimeTypes, isFile, isFolder } from './utils';
 import { ROOTS } from '../constants';
 import { populateFile, populateFolder, populateUnknownNode } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { File, Folder } from '../types/graphql/types';
+import { File, Folder, NodeType } from '../types/graphql/types';
 
 type NodeWithoutPermission<T extends Node> = Omit<T, 'permissions'> & {
 	permissions: Partial<T['permissions']>;
@@ -441,117 +441,165 @@ describe('ActionsFactory test', () => {
 		});
 
 		it.each([
-			[true, 'application/msword', true, true],
-			[true, 'application/vnd.ms-excel', true, true],
-			[true, 'application/vnd.ms-powerpoint', true, true],
-			[true, 'application/vnd.oasis.opendocument.presentation', true, true],
-			[true, 'application/vnd.oasis.opendocument.spreadsheet', true, true],
-			[true, 'application/vnd.oasis.opendocument.text', true, true],
+			[true, 'application/msword', true, true, NodeType.Text],
+			[true, 'application/vnd.ms-excel', true, true, NodeType.Spreadsheet],
+			[true, 'application/vnd.ms-powerpoint', true, true, NodeType.Presentation],
+			[true, 'application/vnd.oasis.opendocument.presentation', true, true, NodeType.Presentation],
+			[true, 'application/vnd.oasis.opendocument.spreadsheet', true, true, NodeType.Spreadsheet],
+			[true, 'application/vnd.oasis.opendocument.text', true, true, NodeType.Text],
 			[
 				true,
 				'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 				true,
-				true
+				true,
+				NodeType.Presentation
 			],
-			[true, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', true, true],
-			[true, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', true, true],
-			[true, 'image/svg+xml', true, true],
-			[true, 'image/png', true, true],
-			[true, 'application/pdf', true, true],
-			[false, 'application/msword', false, false],
-			[false, 'application/vnd.ms-excel', false, false],
-			[false, 'application/vnd.ms-powerpoint', false, false],
-			[false, 'application/vnd.oasis.opendocument.presentation', false, false],
-			[false, 'application/vnd.oasis.opendocument.spreadsheet', false, false],
-			[false, 'application/vnd.oasis.opendocument.text', false, false],
+			[
+				true,
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				true,
+				true,
+				NodeType.Spreadsheet
+			],
+			[
+				true,
+				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+				true,
+				true,
+				NodeType.Text
+			],
+			[true, 'image/svg+xml', true, true, NodeType.Image],
+			[true, 'image/png', true, true, NodeType.Image],
+			[true, 'application/pdf', true, true, NodeType.Text],
+			[false, 'application/msword', false, false, NodeType.Text],
+			[false, 'application/vnd.ms-excel', false, false, NodeType.Spreadsheet],
+			[false, 'application/vnd.ms-powerpoint', false, false, NodeType.Presentation],
+			[
+				false,
+				'application/vnd.oasis.opendocument.presentation',
+				false,
+				false,
+				NodeType.Presentation
+			],
+			[false, 'application/vnd.oasis.opendocument.spreadsheet', false, false, NodeType.Spreadsheet],
+			[false, 'application/vnd.oasis.opendocument.text', false, false, NodeType.Text],
 			[
 				false,
 				'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 				false,
-				false
+				false,
+				NodeType.Presentation
 			],
-			[false, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', false, false],
+			[
+				false,
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				false,
+				false,
+				NodeType.Spreadsheet
+			],
 			[
 				false,
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 				false,
-				false
+				false,
+				NodeType.Text
 			],
-			[false, 'image/svg+xml', false, false],
-			[false, 'image/png', false, false],
-			[false, 'application/pdf', false, false],
-			[false, 'application/msword', true, false],
-			[false, 'application/vnd.ms-excel', true, false],
-			[false, 'application/vnd.ms-powerpoint', true, false],
-			[false, 'application/vnd.oasis.opendocument.presentation', true, false],
-			[false, 'application/vnd.oasis.opendocument.spreadsheet', true, false],
-			[false, 'application/vnd.oasis.opendocument.text', true, false],
+			[false, 'image/svg+xml', false, false, NodeType.Image],
+			[false, 'image/png', false, false, NodeType.Image],
+			[false, 'application/pdf', false, false, NodeType.Text],
+			[false, 'application/msword', true, false, NodeType.Text],
+			[false, 'application/vnd.ms-excel', true, false, NodeType.Spreadsheet],
+			[false, 'application/vnd.ms-powerpoint', true, false, NodeType.Presentation],
+			[
+				false,
+				'application/vnd.oasis.opendocument.presentation',
+				true,
+				false,
+				NodeType.Presentation
+			],
+			[false, 'application/vnd.oasis.opendocument.spreadsheet', true, false, NodeType.Spreadsheet],
+			[false, 'application/vnd.oasis.opendocument.text', true, false, NodeType.Text],
 			[
 				false,
 				'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 				true,
-				false
+				false,
+				NodeType.Presentation
 			],
-			[false, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', true, false],
+			[
+				false,
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				true,
+				false,
+				NodeType.Spreadsheet
+			],
 			[
 				false,
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 				true,
-				false
+				false,
+				NodeType.Text
 			],
-			[true, 'image/svg+xml', true, false],
-			[true, 'image/png', true, false],
-			[true, 'application/pdf', true, false],
-			[false, 'application/msword', false, true],
-			[false, 'application/vnd.ms-excel', false, true],
-			[false, 'application/vnd.ms-powerpoint', false, true],
-			[false, 'application/vnd.oasis.opendocument.presentation', false, true],
-			[false, 'application/vnd.oasis.opendocument.spreadsheet', false, true],
-			[false, 'application/vnd.oasis.opendocument.text', false, true],
+			[true, 'image/svg+xml', true, false, NodeType.Image],
+			[true, 'image/png', true, false, NodeType.Image],
+			[true, 'application/pdf', true, false, NodeType.Text],
+			[false, 'application/msword', false, true, NodeType.Text],
+			[false, 'application/vnd.ms-excel', false, true, NodeType.Spreadsheet],
+			[false, 'application/vnd.ms-powerpoint', false, true, NodeType.Presentation],
+			[
+				false,
+				'application/vnd.oasis.opendocument.presentation',
+				false,
+				true,
+				NodeType.Presentation
+			],
+			[false, 'application/vnd.oasis.opendocument.spreadsheet', false, true, NodeType.Spreadsheet],
+			[false, 'application/vnd.oasis.opendocument.text', false, true, NodeType.Text],
 			[
 				false,
 				'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 				false,
-				true
+				true,
+				NodeType.Presentation
 			],
-			[false, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', false, true],
+			[
+				false,
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				false,
+				true,
+				NodeType.Spreadsheet
+			],
 			[
 				false,
 				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 				false,
-				true
+				true,
+				NodeType.Text
 			],
-			[false, 'image/svg+xml', false, true],
-			[false, 'image/png', false, true],
-			[false, 'application/pdf', false, true]
+			[false, 'image/svg+xml', false, true, NodeType.Image],
+			[false, 'image/png', false, true, NodeType.Image],
+			[false, 'application/pdf', false, true, NodeType.Text]
 		])(
 			'should return %s when mime Type is %s, canUsePreview is %s and canUseDocs is %s',
-			(expectedResult, mimeType, canUsePreview, canUseDocs) => {
+			(expectedResult, mimeType, canUsePreview, canUseDocs, type) => {
 				const testFile = populateFile();
 				testFile.mime_type = mimeType;
+				testFile.type = type;
 				expect(canPreview({ nodes: [testFile], canUseDocs, canUsePreview })).toBe(expectedResult);
 			}
 		);
 
-		it('should return false when canPlayType return ""', () => {
-			jest.spyOn(HTMLVideoElement.prototype, 'canPlayType').mockReturnValue('');
+		it('should return false when file NodeType is not NodeType.Video', () => {
 			const testFile = populateFile();
+			[testFile.type] = Object.values(NodeType).filter((nodeType) => nodeType !== NodeType.Video);
 			expect(
 				canPreview({ nodes: [testFile], canUseDocs: false, canUsePreview: false })
 			).toBeFalsy();
 		});
 
-		it('should return true when canPlayType return maybe', () => {
-			jest.spyOn(HTMLVideoElement.prototype, 'canPlayType').mockReturnValue('maybe');
+		it('should return true when file NodeType is NodeType.Video', () => {
 			const testFile = populateFile();
-			expect(
-				canPreview({ nodes: [testFile], canUseDocs: false, canUsePreview: false })
-			).toBeTruthy();
-		});
-
-		it('should return true when canPlayType return probably', () => {
-			jest.spyOn(HTMLVideoElement.prototype, 'canPlayType').mockReturnValue('probably');
-			const testFile = populateFile();
+			testFile.type = NodeType.Video;
 			expect(
 				canPreview({ nodes: [testFile], canUseDocs: false, canUsePreview: false })
 			).toBeTruthy();

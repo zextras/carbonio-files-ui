@@ -12,7 +12,7 @@ import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { HeaderAction } from '@zextras/carbonio-ui-preview/lib/preview/Header';
 import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
 import { TFunction } from 'i18next';
-import { isEmpty, find, filter, includes, reduce, size, some } from 'lodash';
+import { filter, find, includes, isEmpty, reduce, size, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -60,7 +60,7 @@ import { useHealthInfo } from '../../hooks/useHealthInfo';
 import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { Action, Crumb, NodeListItemType } from '../../types/common';
-import { File, Folder, GetChildrenParentDocument } from '../../types/graphql/types';
+import { File, Folder, GetChildrenParentDocument, NodeType } from '../../types/graphql/types';
 import {
 	ActionsFactoryChecker,
 	ActionsFactoryCheckerMap,
@@ -70,11 +70,7 @@ import {
 	canOpenWithDocs,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import {
-	canPlayTypeOnVideoTag,
-	getPreviewSrc,
-	isSupportedByPreview
-} from '../../utils/previewUtils';
+import { getPreviewSrc, isSupportedByPreview } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import { downloadNode, humanFileSize, isFile, isFolder, openNodeWithDocs } from '../../utils/utils';
 
@@ -390,7 +386,7 @@ export const List: React.VFC<ListProps> = ({
 						id: node.id
 					};
 
-					if (canPlayTypeOnVideoTag(node.mime_type)) {
+					if (node.type === NodeType.Video) {
 						const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(node.id)}${
 							node.version ? `/${node.version}` : ''
 						}`;
@@ -432,9 +428,9 @@ export const List: React.VFC<ListProps> = ({
 
 	const previewSelection = useCallback(() => {
 		const nodeToPreview = find(nodes, (node) => node.id === selectedIDs[0]);
-		const { id, mime_type: mimeType } = nodeToPreview as File;
+		const { id, mime_type: mimeType, type } = nodeToPreview as File;
 		const [$isSupportedByPreview] = isSupportedByPreview(mimeType, 'preview');
-		if ($isSupportedByPreview || canPlayTypeOnVideoTag(mimeType)) {
+		if ($isSupportedByPreview || type === NodeType.Video) {
 			openPreview(id);
 		} else if (includes(permittedSelectionModeActions, Action.OpenWithDocs)) {
 			// if preview is not supported and document can be opened with docs, open editor

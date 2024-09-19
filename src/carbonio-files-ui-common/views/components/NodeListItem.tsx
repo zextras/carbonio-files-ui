@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { useReactiveVar } from '@apollo/client';
 import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
-import { includes, some, debounce, isEmpty } from 'lodash';
+import { debounce, includes, isEmpty, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { useTheme } from 'styled-components';
@@ -55,7 +55,6 @@ import {
 	getPermittedHoverBarActions
 } from '../../utils/ActionsFactory';
 import {
-	canPlayTypeOnVideoTag,
 	getPreviewOutputFormat,
 	getPreviewThumbnailSrc,
 	isPreviewDependantOnDocs,
@@ -64,15 +63,15 @@ import {
 import { getUploadAddType } from '../../utils/uploadUtils';
 import {
 	downloadNode,
-	openNodeWithDocs,
-	isFile,
-	isSearchView,
 	formatDate,
 	getIconByFileType,
 	getIconColorByFileType,
+	isFile,
 	isFolder,
+	isSearchView,
 	isTrashView,
-	nodeToNodeListItemUIProps
+	nodeToNodeListItemUIProps,
+	openNodeWithDocs
 } from '../../utils/utils';
 
 export interface NodeListItemProps {
@@ -222,7 +221,7 @@ export const NodeListItem = ({
 			} else if (includes(permittedContextualMenuActions, Action.Edit)) {
 				// if node can be opened with docs on edit mode, open editor
 				openNodeWithDocs(node.id);
-			} else if ($isSupportedByPreview || (isFile(node) && canPlayTypeOnVideoTag(node.mime_type))) {
+			} else if ($isSupportedByPreview || (isFile(node) && node.type === NodeType.Video)) {
 				openPreview(node.id);
 			} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
 				// if preview is not supported and document can be opened with docs, open editor

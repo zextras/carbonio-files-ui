@@ -25,13 +25,13 @@ import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { Action, GetNodeParentType } from '../../types/common';
-import { File, MakeOptional, Node } from '../../types/graphql/types';
+import { File, MakeOptional, Node, NodeType } from '../../types/graphql/types';
 import {
 	ActionsFactoryNodeType,
 	buildActionItems,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { canPlayTypeOnVideoTag, isSupportedByPreview } from '../../utils/previewUtils';
+import { isSupportedByPreview } from '../../utils/previewUtils';
 import { downloadNode, isFile, openNodeWithDocs } from '../../utils/utils';
 
 interface DisplayerActionsParams {
@@ -111,7 +111,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 	>(() => isSupportedByPreview((isFile(node) && node.mime_type) || undefined, 'preview'), [node]);
 
 	const preview = useCallback(() => {
-		if ($isSupportedByPreview || canPlayTypeOnVideoTag(node.mime_type)) {
+		if ($isSupportedByPreview || node.mime_type === NodeType.Video) {
 			openPreview(node.id);
 		} else if (includes(permittedDisplayerActions, Action.OpenWithDocs)) {
 			// if preview is not supported and document can be opened with docs, open editor

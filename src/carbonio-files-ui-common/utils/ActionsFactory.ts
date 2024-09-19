@@ -7,17 +7,20 @@
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
 import { every, find, forEach, includes, isBoolean, reduce, size, some } from 'lodash';
 
-import {
-	canPlayTypeOnVideoTag,
-	isPreviewDependantOnDocs,
-	isSupportedByPreview
-} from './previewUtils';
+import { isPreviewDependantOnDocs, isSupportedByPreview } from './previewUtils';
 import { docsHandledMimeTypes, isFile, isFolder } from './utils';
 import { ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT } from '../../constants';
 import { ROOTS } from '../constants';
 import { Action, GetNodeParentType, Node } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
-import { File as FilesFile, Folder, MakeOptional, Permissions, Root } from '../types/graphql/types';
+import {
+	File as FilesFile,
+	Folder,
+	MakeOptional,
+	NodeType,
+	Permissions,
+	Root
+} from '../types/graphql/types';
 import { OneOrMany } from '../types/utils';
 
 export type ActionsFactoryNodeType = Pick<
@@ -425,7 +428,7 @@ export function canPreview({ nodes, canUseDocs, canUsePreview }: ArgsType): bool
 		((isSupportedByPreview($nodes[0].mime_type, 'preview')[0] &&
 			!!canUsePreview &&
 			(!isPreviewDependantOnDocs($nodes[0].mime_type) || !!canUseDocs)) ||
-			canPlayTypeOnVideoTag($nodes[0].mime_type))
+			$nodes[0].type === NodeType.Video)
 	);
 }
 

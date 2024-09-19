@@ -94,22 +94,20 @@ describe('Preview action', () => {
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 	});
 
-	test.each([['video/quicktime'], ['text/html'], ['text/plain']])(
-		'mime types %s does not support preview action',
-		async (mimeType) => {
-			const file = populateFile();
-			file.mime_type = mimeType;
+	test.each([
+		['text/html', NodeType.Text],
+		['text/plain', NodeType.Text]
+	])('mime types %s does not support preview action', async (mimeType, type) => {
+		const file = populateFile();
+		file.mime_type = mimeType;
+		file.type = type;
+		const { user } = setup(<List nodes={[file]} mainList={false} emptyListMessage="empty list" />);
 
-			const { user } = setup(
-				<List nodes={[file]} mainList={false} emptyListMessage="empty list" />
-			);
-
-			await screen.findByText(file.name);
-			await user.rightClick(screen.getByText(file.name));
-			act(() => {
-				jest.runOnlyPendingTimers();
-			});
-			expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
-		}
-	);
+		await screen.findByText(file.name);
+		await user.rightClick(screen.getByText(file.name));
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
+		expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
+	});
 });
