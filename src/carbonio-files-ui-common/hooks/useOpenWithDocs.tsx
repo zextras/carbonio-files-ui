@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 
-import { useSnackbar } from '@zextras/carbonio-design-system';
+import { useSnackbar, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { DOCS_ENDPOINT, HTTP_STATUS_CODE, OPEN_FILE_PATH } from '../constants';
 
-export type OpenWithDocsResponse = { url: string };
+export type OpenWithDocsResponse = { fileOpenUrl: string };
 
 const docsTabMap: { [url: string]: Window } = {};
 
@@ -47,9 +47,21 @@ export const useOpenWithDocs = (): OpenWithDocsFn => {
 						createSnackbar({
 							key: new Date().toLocaleString(),
 							severity: 'warning',
-							label: t(
-								'snackbar.openWithDocs.error.exceedSizeLimit',
-								'The item exceeds the size limit allowed and cannot be opened. To view the item, please download it on your device'
+							label: (
+								<>
+									<Text color="gray6" size="medium" overflow={'break-word'}>
+										{t(
+											'snackbar.openWithDocs.error.exceedSizeLimit',
+											'The item exceeds the size limit allowed and cannot be opened.'
+										)}
+									</Text>
+									<Text color="gray6" size="medium" overflow={'break-word'}>
+										{t(
+											'snackbar.openWithDocs.error.pleaseDownload',
+											'To view the item, please download it on your device'
+										)}
+									</Text>
+								</>
 							),
 							replace: true,
 							actionLabel: t('snackbar.openWithDocs.error.exceedSizeLimit.actionLabel', 'Ok'),
@@ -59,8 +71,8 @@ export const useOpenWithDocs = (): OpenWithDocsFn => {
 						throw new Error('Error code not handled');
 					}
 				} else {
-					const { url } = (await response.json()) as OpenWithDocsResponse;
-					openNodeWithDocs(url);
+					const { fileOpenUrl } = (await response.json()) as OpenWithDocsResponse;
+					openNodeWithDocs(fileOpenUrl);
 				}
 			} catch (error) {
 				createSnackbar({

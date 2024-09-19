@@ -134,7 +134,7 @@ export const HTTP_STATUS_CODE = {
 	/** aborted or blocked request */
 	aborted: 0,
 	overQuota: 422,
-	docsFileSizeExceeded: 413
+	docsFileSizeExceeded: 403
 } as const;
 
 export const ERROR_CODE = {

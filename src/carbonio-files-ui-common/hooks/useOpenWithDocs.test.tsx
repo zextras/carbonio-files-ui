@@ -3,9 +3,11 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import React from 'react';
+
 import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react-hooks';
-import { CreateSnackbarFn, CreateSnackbarFnArgs } from '@zextras/carbonio-design-system';
+import { CreateSnackbarFn, CreateSnackbarFnArgs, Text } from '@zextras/carbonio-design-system';
 import { http, HttpResponse } from 'msw';
 
 import { OpenWithDocsResponse, useOpenWithDocs } from './useOpenWithDocs';
@@ -26,18 +28,18 @@ beforeEach(() => {
 
 describe('useOpenWithDocs hook', () => {
 	it('should open the returned url if the document can be opened', async () => {
-		const url = faker.internet.url();
+		const fileOpenUrl = faker.internet.url();
 		server.use(
 			http.get<Record<string, string>, never, OpenWithDocsResponse>(
 				`${DOCS_ENDPOINT}${OPEN_FILE_PATH}/:id`,
-				() => HttpResponse.json({ url })
+				() => HttpResponse.json({ fileOpenUrl })
 			)
 		);
 
 		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
 		const { result } = setupHook(() => useOpenWithDocs());
 		await result.current('id');
-		expect(spyWindowOpen).toHaveBeenCalledWith(url, url);
+		expect(spyWindowOpen).toHaveBeenCalledWith(fileOpenUrl, fileOpenUrl);
 	});
 
 	it('should show specific snackbar if document cannot be opened due to its size', async () => {
@@ -56,8 +58,16 @@ describe('useOpenWithDocs hook', () => {
 		});
 
 		expect(spyWindowOpen).not.toHaveBeenCalled();
-		const label =
-			'The item exceeds the size limit allowed and cannot be opened. To view the item, please download it on your device';
+		const label = (
+			<>
+				<Text color="gray6" size="medium" overflow={'break-word'}>
+					{'The item exceeds the size limit allowed and cannot be opened.'}
+				</Text>
+				<Text color="gray6" size="medium" overflow={'break-word'}>
+					{'To view the item, please download it on your device'}
+				</Text>
+			</>
+		);
 		expect(mockCreateSnackbar).toHaveBeenCalledWith(
 			expect.objectContaining<CreateSnackbarFnArgs>({
 				label,
