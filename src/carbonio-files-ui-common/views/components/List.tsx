@@ -392,8 +392,13 @@ export const List: React.VFC<ListProps> = ({
 						}`;
 						accumulator.push({
 							...item,
+							mimeType: node.mime_type,
 							src: url,
-							previewType: 'video'
+							previewType: 'video',
+							errorLabel: t(
+								'preview.video.errorLabel',
+								'This video cannot be played. Try to reproduce it using another browser'
+							)
 						});
 					}
 
