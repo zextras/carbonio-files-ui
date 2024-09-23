@@ -54,12 +54,7 @@ import {
 	getAllPermittedActions,
 	getPermittedHoverBarActions
 } from '../../utils/ActionsFactory';
-import {
-	getPreviewOutputFormat,
-	getPreviewThumbnailSrc,
-	isPreviewDependantOnDocs,
-	isSupportedByPreview
-} from '../../utils/previewUtils';
+import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import {
 	downloadNode,
@@ -171,14 +166,6 @@ export const NodeListItem = ({
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
-	const $isSupportedByPreview = useMemo(
-		() =>
-			canUsePreview &&
-			isSupportedByPreview(mimeType, 'preview')[0] &&
-			(!isPreviewDependantOnDocs(mimeType) || canUseDocs),
-		[canUseDocs, canUsePreview, mimeType]
-	);
-
 	// timer to start navigation
 	const navigationTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -221,7 +208,7 @@ export const NodeListItem = ({
 			} else if (includes(permittedContextualMenuActions, Action.Edit)) {
 				// if node can be opened with docs on edit mode, open editor
 				openNodeWithDocs(node.id);
-			} else if ($isSupportedByPreview || (isFile(node) && node.type === NodeType.Video)) {
+			} else if (includes(permittedContextualMenuActions, Action.Preview)) {
 				openPreview(node.id);
 			} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
 				// if preview is not supported and document can be opened with docs, open editor
@@ -234,7 +221,6 @@ export const NodeListItem = ({
 		trashed,
 		isNavigable,
 		permittedContextualMenuActions,
-		$isSupportedByPreview,
 		node,
 		navigateToFolder,
 		openPreview
