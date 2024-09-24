@@ -433,13 +433,13 @@ export const List: React.VFC<ListProps> = ({
 
 	const previewSelection = useCallback(() => {
 		const nodeToPreview = find(nodes, (node) => node.id === selectedIDs[0]);
-		const { id, mime_type: mimeType, type } = nodeToPreview as File;
-		const [$isSupportedByPreview] = isSupportedByPreview(mimeType, 'preview');
-		if ($isSupportedByPreview || type === NodeType.Video) {
-			openPreview(id);
-		} else if (includes(permittedSelectionModeActions, Action.OpenWithDocs)) {
-			// if preview is not supported and document can be opened with docs, open editor
-			openNodeWithDocs(id);
+		if (nodeToPreview) {
+			if (includes(permittedSelectionModeActions, Action.Preview)) {
+				openPreview(nodeToPreview.id);
+			} else if (includes(permittedSelectionModeActions, Action.OpenWithDocs)) {
+				// if preview is not supported and document can be opened with docs, open editor
+				openNodeWithDocs(nodeToPreview.id);
+			}
 		}
 	}, [nodes, permittedSelectionModeActions, selectedIDs, openPreview]);
 

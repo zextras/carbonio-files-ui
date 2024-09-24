@@ -431,6 +431,7 @@ describe('ActionsFactory test', () => {
 		it('should return false when rootId is trash', () => {
 			const testFile = populateFile();
 			testFile.rootId = ROOTS.TRASH;
+			testFile.mime_type = 'application/pdf';
 			expect(
 				canPreview({
 					nodes: [testFile],
