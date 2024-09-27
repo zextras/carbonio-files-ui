@@ -5,6 +5,7 @@
  */
 
 import {
+	canBeMoveDestination,
 	canCopy,
 	canCreateFolder,
 	canFlag,
@@ -12,10 +13,21 @@ import {
 	canMove,
 	canOpenVersionWithDocs,
 	canRename,
+	canRestore,
 	canUnFlag
 } from './ActionsFactory';
 import { docsHandledMimeTypes, isFile, isFolder } from './utils';
-import { populateFile, populateFolder, populateUnknownNode } from '../mocks/mockUtils';
+import { LOGGED_USER } from '../../mocks/constants';
+import { ROOTS } from '../constants';
+import {
+	populateFile,
+	populateFolder,
+	populateLocalRoot,
+	populateNode,
+	populateNodes,
+	populateUnknownNode,
+	populateUser
+} from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { File, Folder } from '../types/graphql/types';
 
@@ -23,363 +35,642 @@ type NodeWithoutPermission<T extends Node> = Omit<T, 'permissions'> & {
 	permissions: Partial<T['permissions']>;
 };
 
-describe('ActionsFactory test', () => {
-	/**
-	 *  isFile
-	 *
-	 * */
-	it('isFile: return false on a Folder', () => {
-		const testFolder = populateFolder();
-		expect(isFile(testFolder)).toBeFalsy();
-	});
-	it('isFile: return true on a File', () => {
-		const testFile = populateFile();
-		expect(isFile(testFile)).toBeTruthy();
-	});
+describe('ActionsFactory', () => {
+	describe('isFile', () => {
+		it('should return false on a Folder', () => {
+			const testFolder = populateFolder();
+			expect(isFile(testFolder)).toBeFalsy();
+		});
+		it('should return true on a File', () => {
+			const testFile = populateFile();
+			expect(isFile(testFile)).toBeTruthy();
+		});
 
-	it('isFile: return false on a UnknownType', () => {
-		const testUnknownType = populateUnknownNode();
-		expect(isFile(testUnknownType)).toBeFalsy();
+		it('should return false on a UnknownType', () => {
+			const testUnknownType = populateUnknownNode();
+			expect(isFile(testUnknownType)).toBeFalsy();
+		});
 	});
 
-	/**
-	 *  isFolder
-	 *
-	 * */
-	it('isFolder: return true on a Folder', () => {
-		const testFolder = populateFolder();
-		expect(isFolder(testFolder)).toBeTruthy();
-	});
-	it('isFolder: return false on a File', () => {
-		const testFile = populateFile();
-		expect(isFolder(testFile)).toBeFalsy();
-	});
+	describe('isFolder', () => {
+		it('should return true on a Folder', () => {
+			const testFolder = populateFolder();
+			expect(isFolder(testFolder)).toBeTruthy();
+		});
+		it('should return false on a File', () => {
+			const testFile = populateFile();
+			expect(isFolder(testFile)).toBeFalsy();
+		});
 
-	it('isFolder: return false on a UnknownType', () => {
-		const testUnknownType = populateUnknownNode();
-		expect(isFolder(testUnknownType)).toBeFalsy();
+		it('should return false on a UnknownType', () => {
+			const testUnknownType = populateUnknownNode();
+			expect(isFolder(testUnknownType)).toBeFalsy();
+		});
 	});
 
-	/**
-	 *  canRename
-	 *
-	 * */
-	// https://stackoverflow.com/questions/46042613/how-to-test-the-type-of-a-thrown-exception-in-jest/58103698#58103698
-	it('canRename: cannot evaluate canRename on Node type', () => {
-		const testFolder: Folder = populateFolder();
-		const canRenameWrapper: () => boolean = () => canRename({ nodes: testFolder });
-		expect(canRenameWrapper).toThrow('cannot evaluate canRename on Node type');
+	describe('canRename', () => {
+		it('cannot evaluate canRename on Node type', () => {
+			const testFolder: Folder = populateFolder();
+			const canRenameWrapper: () => boolean = () => canRename({ nodes: testFolder });
+			expect(canRenameWrapper).toThrow('cannot evaluate canRename on Node type');
+		});
+
+		it('cannot evaluate canRename on empty nodes array', () => {
+			const canRenameWrapper: () => boolean = () => canRename({ nodes: [] });
+			expect(canRenameWrapper).toThrow('cannot evaluate canRename on empty nodes array');
+		});
+
+		it('cannot rename more than one node', () => {
+			const testFolder1: Folder = populateFolder();
+			const testFolder2: Folder = populateFolder();
+			expect(canRename({ nodes: [testFolder1, testFolder2] })).toBeFalsy();
+		});
+
+		it('on Folder depend on can_write_folder value', () => {
+			const testFolder1: Folder = populateFolder();
+			testFolder1.permissions.can_write_folder = true;
+			expect(canRename({ nodes: [testFolder1] })).toBeTruthy();
+			testFolder1.permissions.can_write_folder = false;
+			expect(canRename({ nodes: [testFolder1] })).toBeFalsy();
+		});
+
+		it('on File depend on can_write_file value', () => {
+			const testFile: File = populateFile();
+			testFile.permissions.can_write_file = true;
+			expect(canRename({ nodes: [testFile] })).toBeTruthy();
+			testFile.permissions.can_write_file = false;
+			expect(canRename({ nodes: [testFile] })).toBeFalsy();
+		});
+
+		it('cannot evaluate canRename on UnknownType', () => {
+			const testUnknownType = populateUnknownNode();
+			const canRenameWrapper: () => boolean = () => canRename({ nodes: [testUnknownType] });
+			expect(canRenameWrapper).toThrow('cannot evaluate canRename on UnknownType');
+		});
+
+		it('can_write_file not defined', () => {
+			const testFile: NodeWithoutPermission<File> = populateFile();
+			testFile.permissions.can_write_file = undefined;
+			const canRenameWrapper: () => boolean = () => canRename({ nodes: [testFile as File] });
+			expect(canRenameWrapper).toThrow('can_write_file not defined');
+		});
+
+		it('can_write_folder not defined', () => {
+			const testFolder: NodeWithoutPermission<Folder> = populateFolder();
+			testFolder.permissions.can_write_folder = undefined;
+			const canRenameWrapper: () => boolean = () => canRename({ nodes: [testFolder as Folder] });
+			expect(canRenameWrapper).toThrow('can_write_folder not defined');
+		});
 	});
 
-	it('canRename: cannot evaluate canRename on empty nodes array', () => {
-		const canRenameWrapper: () => boolean = () => canRename({ nodes: [] });
-		expect(canRenameWrapper).toThrow('cannot evaluate canRename on empty nodes array');
+	describe('canFlag', () => {
+		it('cannot evaluate canFlag on Node type', () => {
+			const testFolder: Folder = populateFolder();
+			const canFlagWrapper: () => boolean = () => canFlag({ nodes: testFolder });
+			expect(canFlagWrapper).toThrow('cannot evaluate canFlag on Node type');
+		});
+
+		it('cannot evaluate canFlag on empty nodes array', () => {
+			const canFlagWrapper: () => boolean = () => canFlag({ nodes: [] });
+			expect(canFlagWrapper).toThrow('cannot evaluate canFlag on empty nodes array');
+		});
+
+		it('return true when applied to an array bigger than 1 with at least 1 unflagged node (flagged item will be re-flagged)', () => {
+			const testFolder: Folder = populateFolder();
+			const testFile: File = populateFile();
+			testFile.flagged = false;
+			expect(canFlag({ nodes: [testFile, testFolder] })).toBeTruthy();
+		});
+
+		it('return false when applied to an array bigger than 1 with no unflagged nodes', () => {
+			const testFolder: Folder = populateFolder();
+			const testFile: File = populateFile();
+			testFolder.flagged = true;
+			testFile.flagged = true;
+			expect(canFlag({ nodes: [testFile, testFolder] })).toBeFalsy();
+		});
+
+		it('return true if un-flagged, false otherwise', () => {
+			const testFolder: Folder = populateFolder();
+			testFolder.flagged = true;
+			expect(canFlag({ nodes: [testFolder] })).toBeFalsy();
+			testFolder.flagged = false;
+			expect(canFlag({ nodes: [testFolder] })).toBeTruthy();
+		});
 	});
 
-	it('canRename: cannot rename more than one node', () => {
-		const testFolder1: Folder = populateFolder();
-		const testFolder2: Folder = populateFolder();
-		expect(canRename({ nodes: [testFolder1, testFolder2] })).toBeFalsy();
+	describe('canUnFlag', () => {
+		it('cannot evaluate canUnFlag on Node type', () => {
+			const testFolder: Folder = populateFolder();
+			const canUnFlagWrapper: () => boolean = () => canUnFlag({ nodes: testFolder });
+			expect(canUnFlagWrapper).toThrow('cannot evaluate canUnFlag on Node type');
+		});
+
+		it('cannot evaluate canUnFlag on empty nodes array', () => {
+			const canUnFlagWrapper: () => boolean = () => canUnFlag({ nodes: [] });
+			expect(canUnFlagWrapper).toThrow('cannot evaluate canUnFlag on empty nodes array');
+		});
+
+		it('return true when applied to an array bigger than 1 with at least 1 flagged node (un-flagged item will be re-un-flagged)', () => {
+			const testFolder: Folder = populateFolder();
+			const testFile: File = populateFile();
+			testFile.flagged = true;
+			expect(canUnFlag({ nodes: [testFile, testFolder] })).toBeTruthy();
+		});
+
+		it('return false when applied to an array bigger than 1 with no flagged nodes', () => {
+			const testFolder: Folder = populateFolder();
+			const testFile: File = populateFile();
+			testFolder.flagged = false;
+			testFile.flagged = false;
+			expect(canUnFlag({ nodes: [testFile, testFolder] })).toBeFalsy();
+		});
+
+		it('return true if flagged, false otherwise', () => {
+			const testFolder: Folder = populateFolder();
+			testFolder.flagged = true;
+			expect(canUnFlag({ nodes: [testFolder] })).toBeTruthy();
+			testFolder.flagged = false;
+			expect(canUnFlag({ nodes: [testFolder] })).toBeFalsy();
+		});
 	});
 
-	it('canRename: canRename on Folder depend on can_write_folder value', () => {
-		const testFolder1: Folder = populateFolder();
-		testFolder1.permissions.can_write_folder = true;
-		expect(canRename({ nodes: [testFolder1] })).toBeTruthy();
-		testFolder1.permissions.can_write_folder = false;
-		expect(canRename({ nodes: [testFolder1] })).toBeFalsy();
+	describe('canCreateFolder', () => {
+		it('destinationNode must be a Folder', () => {
+			const testFile: File = populateFile();
+			const canCreateFolderWrapper: () => boolean = () => canCreateFolder(testFile);
+			expect(canCreateFolderWrapper).toThrow('destinationNode must be a Folder');
+		});
+
+		it('can_write_folder not defined', () => {
+			const testFolder: NodeWithoutPermission<Folder> = populateFolder();
+			testFolder.permissions.can_write_folder = undefined;
+			const canCreateFolderWrapper: () => boolean = () => canCreateFolder(testFolder as Folder);
+			expect(canCreateFolderWrapper).toThrow('can_write_folder not defined');
+		});
+
+		it('return true or false based on can_write_folder permission', () => {
+			const testFolder: NodeWithoutPermission<Folder> = populateFolder();
+			testFolder.permissions.can_write_folder = false;
+			expect(canCreateFolder(testFolder as Folder)).toBeFalsy();
+			testFolder.permissions.can_write_folder = true;
+			expect(canCreateFolder(testFolder as Folder)).toBeTruthy();
+		});
 	});
 
-	it('canRename: canRename on File depend on can_write_file value', () => {
-		const testFile: File = populateFile();
-		testFile.permissions.can_write_file = true;
-		expect(canRename({ nodes: [testFile] })).toBeTruthy();
-		testFile.permissions.can_write_file = false;
-		expect(canRename({ nodes: [testFile] })).toBeFalsy();
+	describe('canMarkForDeletion', () => {
+		it.each([undefined, 'unknown'])('should throw if typename is %s', (typename) => {
+			const node = populateUnknownNode();
+			node.__typename = typename as Node['__typename'];
+			expect(() => canMarkForDeletion({ nodes: [node] })).toThrow(
+				'cannot evaluate canMarkForDeletion on UnknownType'
+			);
+		});
+
+		it('should throw if can_write_file is not defined on File', () => {
+			const node: NodeWithoutPermission<File> = populateFile();
+			node.permissions.can_write_file = undefined;
+			expect(() => canMarkForDeletion({ nodes: [node as File] })).toThrow(
+				'can_write_file not defined'
+			);
+		});
+
+		it('should throw if can_write_folder is not defined on Folder', () => {
+			const node: NodeWithoutPermission<Folder> = populateFolder();
+			node.permissions.can_write_folder = undefined;
+			expect(() => canMarkForDeletion({ nodes: [node as Folder] })).toThrow(
+				'can_write_folder not defined'
+			);
+		});
+
+		it.each<[boolean, boolean, (typeof ROOTS)[keyof typeof ROOTS]]>([
+			[true, true, ROOTS.LOCAL_ROOT],
+			[false, false, ROOTS.LOCAL_ROOT],
+			[false, false, ROOTS.TRASH],
+			[false, true, ROOTS.TRASH]
+		])(
+			'should return %s if can_write_file on File is %s and root id is %s',
+			(expected, canWriteFile, rootId) => {
+				const node = populateFile();
+				node.permissions.can_write_file = canWriteFile;
+				node.rootId = rootId;
+				expect(canMarkForDeletion({ nodes: node })).toBe(expected);
+			}
+		);
+
+		it.each<[boolean, boolean, (typeof ROOTS)[keyof typeof ROOTS]]>([
+			[true, true, ROOTS.LOCAL_ROOT],
+			[false, false, ROOTS.LOCAL_ROOT],
+			[false, false, ROOTS.TRASH],
+			[false, true, ROOTS.TRASH]
+		])(
+			'should return %s if can_write_folder on Folder is %s and root id is %s',
+			(expected, canWriteFolder, rootId) => {
+				const node = populateFolder();
+				node.permissions.can_write_folder = canWriteFolder;
+				node.rootId = rootId;
+				expect(canMarkForDeletion({ nodes: node })).toBe(expected);
+			}
+		);
+
+		it('should return true if all nodes of an array can be marked for deletion', () => {
+			const file = populateFile();
+			file.permissions.can_write_file = true;
+			file.rootId = ROOTS.LOCAL_ROOT;
+			const folder = populateFolder();
+			folder.permissions.can_write_folder = true;
+			folder.rootId = ROOTS.LOCAL_ROOT;
+			expect(canMarkForDeletion({ nodes: [file, folder] })).toBe(true);
+		});
+
+		it('should return false if one node of an array cannot be marked for deletion', () => {
+			const file = populateFile();
+			file.permissions.can_write_file = true;
+			file.rootId = ROOTS.LOCAL_ROOT;
+			const folder = populateFolder();
+			folder.permissions.can_write_folder = false;
+			folder.rootId = ROOTS.LOCAL_ROOT;
+			expect(canMarkForDeletion({ nodes: [file, folder] })).toBe(false);
+		});
 	});
 
-	it('canRename: cannot evaluate canRename on UnknownType', () => {
-		const testUnknownType = populateUnknownNode();
-		const canRenameWrapper: () => boolean = () => canRename({ nodes: [testUnknownType] });
-		expect(canRenameWrapper).toThrow('cannot evaluate canRename on UnknownType');
+	describe('canMove', () => {
+		it('cannot evaluate on Node type', () => {
+			const testFolder: Folder = populateFolder();
+			const canMoveWrapper: () => boolean = () => canMove({ nodes: testFolder });
+			expect(canMoveWrapper).toThrow('cannot evaluate canMove on Node type');
+		});
+
+		it('cannot evaluate on empty nodes array', () => {
+			const canMoveWrapper: () => boolean = () => canMove({ nodes: [] });
+			expect(canMoveWrapper).toThrow('cannot evaluate canMove on empty nodes array');
+		});
+
+		it('should return false if node is trashed', () => {
+			const node = populateFolder();
+			node.permissions.can_write_folder = true;
+			node.permissions.can_write_file = true;
+			node.parent = populateFolder();
+			node.parent.permissions.can_write_file = true;
+			node.parent.permissions.can_write_folder = true;
+			node.rootId = ROOTS.TRASH;
+			expect(canMove({ nodes: [node] })).toBe(false);
+		});
+
+		it('should return false if node parent is local root and owner is not logged user', () => {
+			const node = populateFolder();
+			node.permissions.can_write_folder = true;
+			node.permissions.can_write_file = true;
+			node.parent = populateLocalRoot();
+			node.rootId = ROOTS.LOCAL_ROOT;
+			node.owner = populateUser();
+			expect(canMove({ nodes: [node] })).toBe(false);
+		});
+
+		describe('on Folder', () => {
+			it('should return true if folder has can_write_folder true and parent has can_write_folder true', () => {
+				const testFolder1: Folder = populateFolder();
+				const parent = populateFolder();
+				testFolder1.permissions.can_write_folder = true;
+				testFolder1.parent = parent;
+				parent.permissions.can_write_folder = true;
+				expect(canMove({ nodes: [testFolder1] })).toBeTruthy();
+			});
+
+			it('should return false if folder has can_write_folder false and parent has can_write_folder true', () => {
+				const testFolder1: Folder = populateFolder();
+				const parent = populateFolder();
+				testFolder1.permissions.can_write_folder = true;
+				testFolder1.parent = parent;
+				testFolder1.permissions.can_write_folder = false;
+				expect(canMove({ nodes: [testFolder1] })).toBeFalsy();
+			});
+
+			it('should return false if folder has can_write_folder true and parent null', () => {
+				const testFolder1: Folder = populateFolder();
+				testFolder1.permissions.can_write_folder = true;
+				testFolder1.parent = null;
+				expect(canMove({ nodes: [testFolder1] })).toBeFalsy();
+			});
+
+			it('should return false if folder has can_write_folder true and parent has can_write_folder false', () => {
+				const testFolder1: Folder = populateFolder();
+				const parent = populateFolder();
+				testFolder1.permissions.can_write_folder = true;
+				testFolder1.parent = parent;
+				parent.permissions.can_write_folder = false;
+				expect(canMove({ nodes: [testFolder1] })).toBeFalsy();
+			});
+		});
+
+		describe('on File', () => {
+			it('should return true if file has can_write_file true and parent has can_write_file true', () => {
+				const testFile: File = populateFile();
+				const parent = populateFolder();
+				testFile.permissions.can_write_file = true;
+				parent.permissions.can_write_file = true;
+				testFile.parent = parent;
+				expect(canMove({ nodes: [testFile] })).toBeTruthy();
+			});
+
+			it('should return false if file has can_write_file false and parent has can_write_file true', () => {
+				const testFile: File = populateFile();
+				const parent = populateFolder();
+				testFile.permissions.can_write_file = false;
+				parent.permissions.can_write_file = true;
+				testFile.parent = parent;
+				expect(canMove({ nodes: [testFile] })).toBeFalsy();
+			});
+
+			it('should return false if file has can_write_file true and parent has can_write_file false', () => {
+				const testFile: File = populateFile();
+				const parent = populateFolder();
+				testFile.permissions.can_write_file = true;
+				parent.permissions.can_write_file = false;
+				testFile.parent = parent;
+				expect(canMove({ nodes: [testFile] })).toBeFalsy();
+			});
+
+			it('should return false if file has can_write_file true and parent null', () => {
+				const testFile: File = populateFile();
+				testFile.permissions.can_write_file = true;
+				testFile.parent = null;
+				expect(canMove({ nodes: [testFile] })).toBeFalsy();
+			});
+		});
+
+		it('cannot evaluate on UnknownType', () => {
+			const testUnknownType = populateUnknownNode();
+			const canMoveWrapper: () => boolean = () => canMove({ nodes: [testUnknownType] });
+			expect(canMoveWrapper).toThrow('cannot evaluate canMove on UnknownType');
+		});
+
+		it('can_write_file not defined', () => {
+			const testFile: NodeWithoutPermission<File> = populateFile();
+			testFile.permissions.can_write_file = undefined;
+			const canMoveWrapper: () => boolean = () => canMove({ nodes: [testFile as File] });
+			expect(canMoveWrapper).toThrow('can_write_file not defined');
+		});
+
+		it('can_write_folder not defined', () => {
+			const testFolder: NodeWithoutPermission<Folder> = populateFolder();
+			testFolder.permissions.can_write_folder = undefined;
+			const canMoveWrapper: () => boolean = () => canMove({ nodes: [testFolder as Folder] });
+			expect(canMoveWrapper).toThrow('can_write_folder not defined');
+		});
+
+		it('should return false if node is a direct share with me (parent is LOCAL_ROOT and owner is not logged user)', () => {
+			const testNode = populateNode();
+			testNode.permissions.can_write_folder = true;
+			testNode.permissions.can_write_file = true;
+			testNode.parent = populateLocalRoot();
+			testNode.owner = populateUser();
+			expect(canMove({ nodes: [testNode] })).toBeFalsy();
+		});
+
+		it('should return true if node is owned by logged user', () => {
+			const testNode = populateNode();
+			testNode.permissions.can_write_folder = true;
+			testNode.permissions.can_write_file = true;
+			testNode.parent = populateLocalRoot();
+			testNode.owner = populateUser(LOGGED_USER.id);
+			expect(canMove({ nodes: [testNode] })).toBeTruthy();
+		});
 	});
 
-	it('canRename: can_write_file not defined', () => {
-		const testFile: NodeWithoutPermission<File> = populateFile();
-		testFile.permissions.can_write_file = undefined;
-		const canRenameWrapper: () => boolean = () => canRename({ nodes: [testFile as File] });
-		expect(canRenameWrapper).toThrow('can_write_file not defined');
+	describe('canCopy', () => {
+		it('cannot evaluate canCopy on Node type', () => {
+			const testFolder: Folder = populateFolder();
+			const canCopyWrapper: () => boolean = () => canCopy({ nodes: testFolder });
+			expect(canCopyWrapper).toThrow('cannot evaluate canCopy on Node type');
+		});
+
+		it('cannot evaluate canCopy on empty nodes array', () => {
+			const canCopyWrapper: () => boolean = () => canCopy({ nodes: [] });
+			expect(canCopyWrapper).toThrow('cannot evaluate canCopy on empty nodes array');
+		});
+
+		it('canCopy on File/Folder is always allowed', () => {
+			const testFile: File = populateFile();
+			expect(canCopy({ nodes: [testFile] })).toBeTruthy();
+			const testFolder: Folder = populateFolder();
+			expect(canCopy({ nodes: [testFolder] })).toBeTruthy();
+		});
 	});
 
-	it('canRename: can_write_folder not defined', () => {
-		const testFolder: NodeWithoutPermission<Folder> = populateFolder();
-		testFolder.permissions.can_write_folder = undefined;
-		const canRenameWrapper: () => boolean = () => canRename({ nodes: [testFolder as Folder] });
-		expect(canRenameWrapper).toThrow('can_write_folder not defined');
+	describe('canOpenVersionWithDocs', () => {
+		it('return true when canUseDocs is true and others criteria are valid', () => {
+			const testFile: File = populateFile();
+			[testFile.mime_type] = docsHandledMimeTypes;
+			expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: true })).toBeTruthy();
+		});
+
+		it('return false when canUseDocs is false and others criteria are valid', () => {
+			const testFile: File = populateFile();
+			[testFile.mime_type] = docsHandledMimeTypes;
+			expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: false })).toBeFalsy();
+		});
 	});
 
-	/**
-	 *  canFlag
-	 *
-	 * */
-	it('canFlag: cannot evaluate canFlag on Node type', () => {
-		const testFolder: Folder = populateFolder();
-		const canFlagWrapper: () => boolean = () => canFlag({ nodes: testFolder });
-		expect(canFlagWrapper).toThrow('cannot evaluate canFlag on Node type');
+	describe('canRestore', () => {
+		it.each([undefined, 'unknown'])('should throw if typename is %s', (typename) => {
+			const node = populateUnknownNode();
+			node.__typename = typename as Node['__typename'];
+			expect(() => canRestore({ nodes: [node] })).toThrow(
+				'cannot evaluate canRestore on UnknownType'
+			);
+		});
+
+		it('should throw if can_write_file is not defined on File', () => {
+			const node: NodeWithoutPermission<File> = populateFile();
+			node.permissions.can_write_file = undefined;
+			expect(() => canRestore({ nodes: [node as File] })).toThrow('can_write_file not defined');
+		});
+
+		it('should throw if can_write_folder is not defined on Folder', () => {
+			const node: NodeWithoutPermission<Folder> = populateFolder();
+			node.permissions.can_write_folder = undefined;
+			expect(() => canRestore({ nodes: [node as Folder] })).toThrow('can_write_folder not defined');
+		});
+
+		it.each<[boolean, boolean, (typeof ROOTS)[keyof typeof ROOTS]]>([
+			[true, true, ROOTS.TRASH],
+			[false, false, ROOTS.TRASH],
+			[false, false, ROOTS.LOCAL_ROOT],
+			[false, true, ROOTS.LOCAL_ROOT]
+		])(
+			'should return %s if can_write_file on File is %s and root id is %s',
+			(expected, canWriteFile, rootId) => {
+				const node = populateFile();
+				node.permissions.can_write_file = canWriteFile;
+				node.rootId = rootId;
+				expect(canRestore({ nodes: node })).toBe(expected);
+			}
+		);
+
+		it.each<[boolean, boolean, (typeof ROOTS)[keyof typeof ROOTS]]>([
+			[true, true, ROOTS.TRASH],
+			[false, false, ROOTS.TRASH],
+			[false, false, ROOTS.LOCAL_ROOT],
+			[false, true, ROOTS.LOCAL_ROOT]
+		])(
+			'should return %s if can_write_folder on Folder is %s and root id is %s',
+			(expected, canWriteFolder, rootId) => {
+				const node = populateFolder();
+				node.permissions.can_write_folder = canWriteFolder;
+				node.rootId = rootId;
+				expect(canRestore({ nodes: node })).toBe(expected);
+			}
+		);
+
+		it('should return true if all nodes of an array can be restored', () => {
+			const file = populateFile();
+			file.permissions.can_write_file = true;
+			file.rootId = ROOTS.TRASH;
+			const folder = populateFolder();
+			folder.permissions.can_write_folder = true;
+			folder.rootId = ROOTS.TRASH;
+			expect(canRestore({ nodes: [file, folder] })).toBe(true);
+		});
+
+		it('should return false if one node of an array cannot be restored', () => {
+			const file = populateFile();
+			file.permissions.can_write_file = true;
+			file.rootId = ROOTS.TRASH;
+			const folder = populateFolder();
+			folder.permissions.can_write_folder = false;
+			folder.rootId = ROOTS.TRASH;
+			expect(canRestore({ nodes: [file, folder] })).toBe(false);
+		});
 	});
 
-	it('canFlag: cannot evaluate canFlag on empty nodes array', () => {
-		const canFlagWrapper: () => boolean = () => canFlag({ nodes: [] });
-		expect(canFlagWrapper).toThrow('cannot evaluate canFlag on empty nodes array');
-	});
+	describe('canBeMoveDestination', () => {
+		it('should return true if all conditions are matched', () => {
+			const owner = populateUser();
+			const destination = populateFolder();
+			destination.permissions.can_write_folder = true;
+			destination.permissions.can_write_file = true;
+			destination.owner = owner;
+			destination.rootId = ROOTS.LOCAL_ROOT;
+			const nodesToMove = populateNodes(2);
+			nodesToMove.forEach((node) => {
+				node.permissions.can_write_file = true;
+				node.permissions.can_write_folder = true;
+				node.rootId = ROOTS.LOCAL_ROOT;
+				node.owner = owner;
+				node.parent = populateFolder();
+				node.parent.permissions.can_write_file = true;
+				node.parent.permissions.can_write_folder = true;
+			});
+			expect(canBeMoveDestination(destination, nodesToMove)).toBe(true);
+		});
 
-	it('canFlag: return true when applied to an array bigger than 1 with at least 1 unflagged node (flagged item will be re-flagged)', () => {
-		const testFolder: Folder = populateFolder();
-		const testFile: File = populateFile();
-		testFile.flagged = false;
-		expect(canFlag({ nodes: [testFile, testFolder] })).toBeTruthy();
-	});
+		it('should return false if destination folder has can_write_file false and a file is moved', () => {
+			const owner = populateUser();
+			const destination = populateFolder();
+			destination.permissions.can_write_folder = true;
+			destination.permissions.can_write_file = false;
+			destination.owner = owner;
+			destination.rootId = ROOTS.LOCAL_ROOT;
+			const node = populateFile();
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.rootId = ROOTS.LOCAL_ROOT;
+			node.owner = owner;
+			node.parent = populateFolder();
+			node.parent.permissions.can_write_file = true;
+			node.parent.permissions.can_write_folder = true;
+			expect(canBeMoveDestination(destination, [node])).toBe(false);
+		});
 
-	it('canFlag: return false when applied to an array bigger than 1 with no unflagged nodes', () => {
-		const testFolder: Folder = populateFolder();
-		const testFile: File = populateFile();
-		testFolder.flagged = true;
-		testFile.flagged = true;
-		expect(canFlag({ nodes: [testFile, testFolder] })).toBeFalsy();
-	});
+		it('should return false if destination folder has can_write_folder false and a folder is moved', () => {
+			const owner = populateUser();
+			const destination = populateFolder();
+			destination.permissions.can_write_folder = false;
+			destination.permissions.can_write_file = true;
+			destination.owner = owner;
+			destination.rootId = ROOTS.LOCAL_ROOT;
+			const node = populateFolder();
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.rootId = ROOTS.LOCAL_ROOT;
+			node.owner = owner;
+			node.parent = populateFolder();
+			node.parent.permissions.can_write_file = true;
+			node.parent.permissions.can_write_folder = true;
+			expect(canBeMoveDestination(destination, [node])).toBe(false);
+		});
 
-	it('canFlag: return true if un-flagged, false otherwise', () => {
-		const testFolder: Folder = populateFolder();
-		testFolder.flagged = true;
-		expect(canFlag({ nodes: [testFolder] })).toBeFalsy();
-		testFolder.flagged = false;
-		expect(canFlag({ nodes: [testFolder] })).toBeTruthy();
-	});
+		it('should return false if node to move cannot be moved', () => {
+			const owner = populateUser();
+			const destination = populateFolder();
+			destination.permissions.can_write_folder = true;
+			destination.permissions.can_write_file = true;
+			destination.owner = owner;
+			destination.rootId = ROOTS.LOCAL_ROOT;
+			const node = populateFolder();
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.rootId = ROOTS.TRASH;
+			node.owner = owner;
+			node.parent = populateFolder();
+			node.parent.permissions.can_write_file = true;
+			node.parent.permissions.can_write_folder = true;
+			expect(canBeMoveDestination(destination, [node])).toBe(false);
+		});
 
-	/**
-	 *  canUnFlag
-	 *
-	 * */
-	it('canUnFlag: cannot evaluate canUnFlag on Node type', () => {
-		const testFolder: Folder = populateFolder();
-		const canUnFlagWrapper: () => boolean = () => canUnFlag({ nodes: testFolder });
-		expect(canUnFlagWrapper).toThrow('cannot evaluate canUnFlag on Node type');
-	});
+		it('should return false if destination folder is trashed', () => {
+			const owner = populateUser();
+			const destination = populateFolder();
+			destination.permissions.can_write_folder = true;
+			destination.permissions.can_write_file = true;
+			destination.owner = owner;
+			destination.rootId = ROOTS.TRASH;
+			const node = populateFolder();
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.rootId = ROOTS.LOCAL_ROOT;
+			node.owner = owner;
+			node.parent = populateFolder();
+			node.parent.permissions.can_write_file = true;
+			node.parent.permissions.can_write_folder = true;
+			expect(canBeMoveDestination(destination, [node])).toBe(false);
+		});
 
-	it('canUnFlag: cannot evaluate canUnFlag on empty nodes array', () => {
-		const canUnFlagWrapper: () => boolean = () => canUnFlag({ nodes: [] });
-		expect(canUnFlagWrapper).toThrow('cannot evaluate canUnFlag on empty nodes array');
-	});
+		it('should return false if destination folder and node to move have different owners', () => {
+			const owner = populateUser();
+			const destination = populateFolder();
+			destination.permissions.can_write_folder = true;
+			destination.permissions.can_write_file = true;
+			destination.owner = owner;
+			destination.rootId = ROOTS.LOCAL_ROOT;
+			const node = populateFolder();
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.rootId = ROOTS.LOCAL_ROOT;
+			node.owner = populateUser();
+			node.parent = populateFolder();
+			node.parent.permissions.can_write_file = true;
+			node.parent.permissions.can_write_folder = true;
+			expect(canBeMoveDestination(destination, [node])).toBe(false);
+		});
 
-	it('canUnFlag: return true when applied to an array bigger than 1 with at least 1 flagged node (un-flagged item will be re-un-flagged)', () => {
-		const testFolder: Folder = populateFolder();
-		const testFile: File = populateFile();
-		testFile.flagged = true;
-		expect(canUnFlag({ nodes: [testFile, testFolder] })).toBeTruthy();
-	});
-
-	it('canUnFlag: return false when applied to an array bigger than 1 with no flagged nodes', () => {
-		const testFolder: Folder = populateFolder();
-		const testFile: File = populateFile();
-		testFolder.flagged = false;
-		testFile.flagged = false;
-		expect(canUnFlag({ nodes: [testFile, testFolder] })).toBeFalsy();
-	});
-
-	it('canUnFlag: return true if flagged, false otherwise', () => {
-		const testFolder: Folder = populateFolder();
-		testFolder.flagged = true;
-		expect(canUnFlag({ nodes: [testFolder] })).toBeTruthy();
-		testFolder.flagged = false;
-		expect(canUnFlag({ nodes: [testFolder] })).toBeFalsy();
-	});
-
-	/**
-	 *  canCreateFolder
-	 *
-	 * */
-
-	it('canCreateFolder: destinationNode must be a Folder', () => {
-		const testFile: File = populateFile();
-		const canCreateFolderWrapper: () => boolean = () => canCreateFolder(testFile);
-		expect(canCreateFolderWrapper).toThrow('destinationNode must be a Folder');
-	});
-
-	it('canCreateFolder: can_write_folder not defined', () => {
-		const testFolder: NodeWithoutPermission<Folder> = populateFolder();
-		testFolder.permissions.can_write_folder = undefined;
-		const canCreateFolderWrapper: () => boolean = () => canCreateFolder(testFolder as Folder);
-		expect(canCreateFolderWrapper).toThrow('can_write_folder not defined');
-	});
-
-	it('canCreateFolder: return true or false based on can_write_folder permission', () => {
-		const testFolder: NodeWithoutPermission<Folder> = populateFolder();
-		testFolder.permissions.can_write_folder = false;
-		expect(canCreateFolder(testFolder as Folder)).toBeFalsy();
-		testFolder.permissions.can_write_folder = true;
-		expect(canCreateFolder(testFolder as Folder)).toBeTruthy();
-	});
-
-	/**
-	 *  canMarkForDeletion
-	 *
-	 * */
-
-	it('canMarkForDeletion: cannot evaluate canMarkForDeletion on UnknownType', () => {
-		const testUnknownType = populateUnknownNode();
-		const canMarkForDeletionWrapper: () => boolean = () =>
-			canMarkForDeletion({ nodes: [testUnknownType] });
-		expect(canMarkForDeletionWrapper).toThrow('cannot evaluate canMarkForDeletion on UnknownType');
-	});
-
-	it('canMarkForDeletion: can_write_file not defined', () => {
-		const testFile: NodeWithoutPermission<File> = populateFile();
-		testFile.permissions.can_write_file = undefined;
-		const canMarkForDeletionWrapper: () => boolean = () =>
-			canMarkForDeletion({ nodes: [testFile as File] });
-		expect(canMarkForDeletionWrapper).toThrow('can_write_file not defined');
-	});
-
-	it('canMarkForDeletion: can_write_folder not defined', () => {
-		const testFolder: NodeWithoutPermission<Folder> = populateFolder();
-		testFolder.permissions.can_write_folder = undefined;
-		const canMarkForDeletionWrapper: () => boolean = () =>
-			canMarkForDeletion({ nodes: [testFolder as Folder] });
-		expect(canMarkForDeletionWrapper).toThrow('can_write_folder not defined');
-	});
-
-	it('canMarkForDeletion: canMarkForDeletion on Folder depend on can_write_file value', () => {
-		const testFolder: Folder = populateFolder();
-		testFolder.permissions.can_write_folder = false;
-		expect(canMarkForDeletion({ nodes: testFolder })).toBeFalsy();
-		testFolder.permissions.can_write_folder = true;
-		expect(canMarkForDeletion({ nodes: testFolder })).toBeTruthy();
-	});
-
-	it('canMarkForDeletion: canMarkForDeletion on File depend on can_write_file value', () => {
-		const testFile: File = populateFile();
-		testFile.permissions.can_write_file = true;
-		expect(canMarkForDeletion({ nodes: [testFile] })).toBeTruthy();
-		testFile.permissions.can_write_file = false;
-		expect(canMarkForDeletion({ nodes: [testFile] })).toBeFalsy();
-	});
-
-	it('canMarkForDeletion: canMarkForDeletion on Array return true if all nodes return true', () => {
-		const testFile: File = populateFile();
-		const testFile2: File = populateFile();
-		const testFolder: Folder = populateFolder();
-		testFolder.permissions.can_write_folder = true;
-		testFile.permissions.can_write_file = true;
-		testFile2.permissions.can_write_file = true;
-		expect(canMarkForDeletion({ nodes: [testFile, testFile2, testFolder] })).toBeTruthy();
-		testFile.permissions.can_write_file = false;
-		expect(canMarkForDeletion({ nodes: [testFile, testFile2, testFolder] })).toBeFalsy();
-	});
-
-	/**
-	 *  canMove
-	 *
-	 * */
-	it('canMove: cannot evaluate canMove on Node type', () => {
-		const testFolder: Folder = populateFolder();
-		const canMoveWrapper: () => boolean = () => canMove({ nodes: testFolder });
-		expect(canMoveWrapper).toThrow('cannot evaluate canMove on Node type');
-	});
-
-	it('canMove: cannot evaluate canMove on empty nodes array', () => {
-		const canMoveWrapper: () => boolean = () => canMove({ nodes: [] });
-		expect(canMoveWrapper).toThrow('cannot evaluate canMove on empty nodes array');
-	});
-
-	it('canMove: canMove on Folder depend on can_write_folder value of folder and parent', () => {
-		const testFolder1: Folder = populateFolder();
-		const parent = populateFolder();
-		testFolder1.permissions.can_write_folder = true;
-		testFolder1.parent = parent;
-		parent.permissions.can_write_folder = true;
-		expect(canMove({ nodes: [testFolder1] })).toBeTruthy();
-		testFolder1.permissions.can_write_folder = false;
-		expect(canMove({ nodes: [testFolder1] })).toBeFalsy();
-		testFolder1.permissions.can_write_folder = true;
-		testFolder1.parent = null;
-		expect(canMove({ nodes: [testFolder1] })).toBeFalsy();
-		testFolder1.parent = parent;
-		parent.permissions.can_write_folder = false;
-		expect(canMove({ nodes: [testFolder1] })).toBeFalsy();
-	});
-
-	it('canMove: canMove on File depend on can_write_file value of file and parent', () => {
-		const testFile: File = populateFile();
-		const parent = populateFolder();
-		testFile.permissions.can_write_file = true;
-		testFile.parent = parent;
-		parent.permissions.can_write_file = true;
-		expect(canMove({ nodes: [testFile] })).toBeTruthy();
-		testFile.permissions.can_write_file = false;
-		expect(canMove({ nodes: [testFile] })).toBeFalsy();
-		testFile.permissions.can_write_file = true;
-		testFile.parent = null;
-		expect(canMove({ nodes: [testFile] })).toBeFalsy();
-		testFile.parent = parent;
-		parent.permissions.can_write_file = false;
-		expect(canMove({ nodes: [testFile] })).toBeFalsy();
-	});
-
-	it('canMove: cannot evaluate canMove on UnknownType', () => {
-		const testUnknownType = populateUnknownNode();
-		const canMoveWrapper: () => boolean = () => canMove({ nodes: [testUnknownType] });
-		expect(canMoveWrapper).toThrow('cannot evaluate canMove on UnknownType');
-	});
-
-	it('canMove: can_write_file not defined', () => {
-		const testFile: NodeWithoutPermission<File> = populateFile();
-		testFile.permissions.can_write_file = undefined;
-		const canMoveWrapper: () => boolean = () => canMove({ nodes: [testFile as File] });
-		expect(canMoveWrapper).toThrow('can_write_file not defined');
-	});
-
-	it('canMove: can_write_folder not defined', () => {
-		const testFolder: NodeWithoutPermission<Folder> = populateFolder();
-		testFolder.permissions.can_write_folder = undefined;
-		const canMoveWrapper: () => boolean = () => canMove({ nodes: [testFolder as Folder] });
-		expect(canMoveWrapper).toThrow('can_write_folder not defined');
-	});
-
-	/**
-	 *  canCopy
-	 *
-	 * */
-	it('canCopy: cannot evaluate canCopy on Node type', () => {
-		const testFolder: Folder = populateFolder();
-		const canCopyWrapper: () => boolean = () => canCopy({ nodes: testFolder });
-		expect(canCopyWrapper).toThrow('cannot evaluate canCopy on Node type');
-	});
-
-	it('canCopy: cannot evaluate canCopy on empty nodes array', () => {
-		const canCopyWrapper: () => boolean = () => canCopy({ nodes: [] });
-		expect(canCopyWrapper).toThrow('cannot evaluate canCopy on empty nodes array');
-	});
-
-	it('canCopy: canCopy on File/Folder is always allowed', () => {
-		const testFile: File = populateFile();
-		expect(canCopy({ nodes: [testFile] })).toBeTruthy();
-		const testFolder: Folder = populateFolder();
-		expect(canCopy({ nodes: [testFolder] })).toBeTruthy();
-	});
-
-	/**
-	 * canOpenVersionWithDocs
-	 */
-
-	it('canOpenVersionWithDocs return true when canUseDocs is true and others criteria are valid', () => {
-		const testFile: File = populateFile();
-		[testFile.mime_type] = docsHandledMimeTypes;
-		expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: true })).toBeTruthy();
-	});
-
-	it('canOpenVersionWithDocs return false when canUseDocs is false and others criteria are valid', () => {
-		const testFile: File = populateFile();
-		[testFile.mime_type] = docsHandledMimeTypes;
-		expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: false })).toBeFalsy();
+		it('should return false if destination folder is in the nodes to move', () => {
+			const owner = populateUser();
+			const destination = populateFolder();
+			destination.permissions.can_write_folder = true;
+			destination.permissions.can_write_file = true;
+			destination.owner = owner;
+			destination.rootId = ROOTS.LOCAL_ROOT;
+			const node = populateFolder();
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			node.rootId = ROOTS.LOCAL_ROOT;
+			node.owner = owner;
+			node.parent = populateFolder();
+			node.parent.permissions.can_write_file = true;
+			node.parent.permissions.can_write_folder = true;
+			expect(canBeMoveDestination(destination, [node, destination])).toBe(false);
+		});
 	});
 });

@@ -6,14 +6,7 @@
 
 import React from 'react';
 
-import {
-	act,
-	fireEvent,
-	screen,
-	waitFor,
-	waitForElementToBeRemoved,
-	within
-} from '@testing-library/react';
+import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, find } from 'lodash';
 
 import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
@@ -27,7 +20,13 @@ import {
 	populateParents,
 	populateUser
 } from '../../mocks/mockUtils';
-import { buildBreadCrumbRegExp, createMoveDataTransfer, setup } from '../../tests/utils';
+import {
+	buildBreadCrumbRegExp,
+	createMoveDataTransfer,
+	setup,
+	screen,
+	within
+} from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockGetPath, mockMoveNodes } from '../../utils/resolverMocks';
@@ -104,7 +103,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup, user } = setup(
+			const { user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -113,7 +112,7 @@ describe('Header Breadcrumbs', () => {
 			);
 			await screen.findByText(currentFolder.name);
 			expect(
-				getByTextWithMarkup(
+				screen.getByTextWithMarkup(
 					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
 				)
 			).toBeVisible();
@@ -126,7 +125,7 @@ describe('Header Breadcrumbs', () => {
 			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(path[0].name);
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 
 			// simulate a drag of a node of the list
@@ -186,7 +185,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup, user } = setup(
+			const { user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -195,7 +194,7 @@ describe('Header Breadcrumbs', () => {
 			);
 			await screen.findByText(currentFolder.name);
 			expect(
-				getByTextWithMarkup(
+				screen.getByTextWithMarkup(
 					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
 				)
 			).toBeVisible();
@@ -208,7 +207,7 @@ describe('Header Breadcrumbs', () => {
 			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(currentFolder.name);
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 
 			// simulate a drag of a node of the list
@@ -259,7 +258,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup } = setup(
+			setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -269,7 +268,7 @@ describe('Header Breadcrumbs', () => {
 			await screen.findByText(currentFolder.name);
 			const destinationCrumbItem = await screen.findByText(parent.name);
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(parent.name, currentFolder.name))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(parent.name, currentFolder.name))
 			).toBeVisible();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
@@ -322,7 +321,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup } = setup(
+			setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -332,7 +331,7 @@ describe('Header Breadcrumbs', () => {
 			await screen.findByText(currentFolder.name);
 			const destinationCrumbItem = await screen.findByText(parent.name);
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(parent.name, currentFolder.name))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(parent.name, currentFolder.name))
 			).toBeVisible();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
@@ -392,7 +391,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup, user } = setup(
+			const { user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -401,7 +400,7 @@ describe('Header Breadcrumbs', () => {
 			);
 			await screen.findByText(currentFolder.name);
 			expect(
-				getByTextWithMarkup(
+				screen.getByTextWithMarkup(
 					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
 				)
 			).toBeVisible();
@@ -414,7 +413,7 @@ describe('Header Breadcrumbs', () => {
 			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(path[0].name);
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
@@ -467,7 +466,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup } = setup(
+			setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -476,7 +475,7 @@ describe('Header Breadcrumbs', () => {
 			);
 			await screen.findByText(currentFolder.name);
 			expect(
-				getByTextWithMarkup(
+				screen.getByTextWithMarkup(
 					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
 				)
 			).toBeVisible();
@@ -493,7 +492,7 @@ describe('Header Breadcrumbs', () => {
 			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			fireEvent.dragLeave(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 		});
 
@@ -523,7 +522,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup, user } = setup(
+			const { user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -532,7 +531,7 @@ describe('Header Breadcrumbs', () => {
 			);
 			await screen.findByText(currentFolder.name);
 			expect(
-				getByTextWithMarkup(
+				screen.getByTextWithMarkup(
 					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
 				)
 			).toBeVisible();
@@ -545,7 +544,7 @@ describe('Header Breadcrumbs', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
@@ -583,7 +582,7 @@ describe('Header Breadcrumbs', () => {
 			await waitForElementToBeRemoved(screen.queryByText(path[0].name));
 		});
 
-		test('Drag on a hidden crumb trigger move action', async () => {
+		test('Drop on a hidden crumb trigger move action', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
@@ -612,7 +611,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup, user } = setup(
+			const { user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -621,7 +620,7 @@ describe('Header Breadcrumbs', () => {
 			);
 			await screen.findByText(currentFolder.name);
 			expect(
-				getByTextWithMarkup(
+				screen.getByTextWithMarkup(
 					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
 				)
 			).toBeVisible();
@@ -634,7 +633,7 @@ describe('Header Breadcrumbs', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
@@ -674,7 +673,7 @@ describe('Header Breadcrumbs', () => {
 			expect(snackbar).toBeVisible();
 		});
 
-		test('Drag on a hidden crumb without permissions does not trigger move action', async () => {
+		test('Drop on a hidden crumb without permissions does not trigger move action', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
@@ -709,7 +708,7 @@ describe('Header Breadcrumbs', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
-			const { getByTextWithMarkup, user } = setup(
+			const { user } = setup(
 				<>
 					<HeaderBreadcrumbs folderId={currentFolder.id} />
 					<div draggable>draggable element mock</div>
@@ -718,7 +717,7 @@ describe('Header Breadcrumbs', () => {
 			);
 			await screen.findByText(currentFolder.name);
 			expect(
-				getByTextWithMarkup(
+				screen.getByTextWithMarkup(
 					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
 				)
 			).toBeVisible();
@@ -732,7 +731,7 @@ describe('Header Breadcrumbs', () => {
 			await screen.findByText(/hide previous folders/i);
 			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
 			).toBeVisible();
 
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);

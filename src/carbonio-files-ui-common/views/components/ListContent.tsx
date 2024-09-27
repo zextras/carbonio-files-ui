@@ -7,7 +7,6 @@
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
-import { forEach, filter, includes } from 'lodash';
 import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
@@ -15,12 +14,11 @@ import { NodeListItem } from './NodeListItem';
 import { NodeListItemDragImage } from './NodeListItemDragImage';
 import { GridItem } from './StyledComponents';
 import { VirtualizedNodeListItem } from './VirtualizedNodeListItem';
-import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, GRID_ITEM_MIN_WIDTH, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
 import { ListContext } from '../../contexts';
 import { Action, NodeListItemType } from '../../types/common';
-import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
+import { getPermittedActions } from '../../utils/ActionsFactory';
 import { cssCalcBuilder } from '../../utils/utils';
 
 const DragImageContainer = styled.div<{ $isGrid: boolean }>`
@@ -57,7 +55,6 @@ interface ListContentProps {
 	exitSelectionMode: () => void;
 	hasMore?: boolean;
 	loadMore?: () => void;
-	customCheckers?: ActionsFactoryCheckerMap;
 	selectionContextualMenuActionsItems?: DSAction[];
 	fillerWithActions?: React.JSX.Element;
 }
@@ -70,7 +67,6 @@ export const ListContent = ({
 	exitSelectionMode,
 	hasMore = false,
 	loadMore = (): void => undefined,
-	customCheckers,
 	selectionContextualMenuActionsItems,
 	fillerWithActions
 }: ListContentProps): React.JSX.Element => {
@@ -79,8 +75,6 @@ export const ListContent = ({
 
 	const dragImageRef = useRef<HTMLDivElement>(null);
 
-	const { me } = useUserInfo();
-
 	const [dragImage, setDragImage] = useState<React.JSX.Element[]>([]);
 
 	const dragStartHandler = useCallback<
@@ -88,21 +82,17 @@ export const ListContent = ({
 	>(
 		(node) =>
 			(event): void => {
-				forEach(DRAG_TYPES, (dragType) => event.dataTransfer.clearData(dragType));
+				Object.values(DRAG_TYPES).forEach((dragType) => event.dataTransfer.clearData(dragType));
 				const nodesToDrag: NodeListItemType[] = [];
 				if (isSelectionModeActive) {
-					nodesToDrag.push(...filter(nodes, ({ id }) => selectedMap[id]));
+					nodesToDrag.push(...nodes.filter(({ id }) => selectedMap[id]));
 				} else {
 					nodesToDrag.push(node);
 				}
-				const permittedActions = getPermittedActions(
-					nodesToDrag,
-					[Action.Move, Action.MoveToTrash],
-					me,
-					undefined,
-					undefined,
-					customCheckers
-				);
+				const permittedActions = getPermittedActions(nodesToDrag, [
+					Action.Move,
+					Action.MoveToTrash
+				]);
 
 				const draggedItemsTmp = nodesToDrag.reduce<React.JSX.Element[]>(
 					(accumulator, nodeToDrag, currentIndex) => {
@@ -126,16 +116,26 @@ export const ListContent = ({
 				);
 
 				setDragImage(draggedItemsTmp);
-				dragImageRef.current && event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
+				if (dragImageRef.current) {
+					event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
+				}
+
 				draggedItemsVar(nodesToDrag);
-				if (includes(permittedActions, Action.Move)) {
-					event.dataTransfer.setData(DRAG_TYPES.move, JSON.stringify(nodesToDrag));
-				}
-				if (includes(permittedActions, Action.MoveToTrash)) {
-					event.dataTransfer.setData(DRAG_TYPES.markForDeletion, JSON.stringify(nodesToDrag));
-				}
+				event.dataTransfer.setData(
+					DRAG_TYPES.move,
+					permittedActions.includes(Action.Move)
+						? JSON.stringify(nodesToDrag)
+						: JSON.stringify(false)
+				);
+
+				event.dataTransfer.setData(
+					DRAG_TYPES.markForDeletion,
+					permittedActions.includes(Action.MoveToTrash)
+						? JSON.stringify(nodesToDrag)
+						: JSON.stringify(false)
+				);
 			},
-		[customCheckers, isSelectionModeActive, me, nodes, selectedMap]
+		[isSelectionModeActive, nodes, selectedMap]
 	);
 
 	const dragEndHandler = useCallback(() => {
