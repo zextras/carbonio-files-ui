@@ -15,7 +15,6 @@ import { useSearch } from '../../../hooks/useSearch';
 import { nodeSortVar } from '../../apollo/nodeSortVar';
 import { ListContext } from '../../contexts';
 import { useFindNodesQuery } from '../../hooks/graphql/queries/useFindNodesQuery';
-import { NodeListItemType } from '../../types/common';
 import { OneOrMany } from '../../types/utils';
 
 export const SearchList = (): React.JSX.Element => {
@@ -60,7 +59,7 @@ export const SearchList = (): React.JSX.Element => {
 		setQueryCalled?.(filterCount > 0 && (!!previousData || !!searchResult));
 	}, [previousData, searchParams, searchResult, setQueryCalled]);
 
-	const nodes = useMemo<NodeListItemType[]>(() => {
+	const nodes = useMemo(() => {
 		if (searchResult?.findNodes && searchResult.findNodes.nodes.length > 0) {
 			return searchResult.findNodes.nodes.filter(
 				(node): node is NonNullable<typeof node> => !!node

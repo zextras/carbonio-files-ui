@@ -26,7 +26,7 @@ interface UploadListItemProps {
 	id: string;
 	nodeId?: string;
 	name: string;
-	parent?: Maybe<Pick<Node, 'id' | 'name' | 'type'>>;
+	parent?: Maybe<Node<'id' | 'name' | 'type'>>;
 	size?: number;
 	status: UploadStatus;
 	progress: number;

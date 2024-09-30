@@ -21,7 +21,7 @@ import { useDecreaseYourOwnSharePermissionModal } from '../../../hooks/modals/us
 import { useDeleteShareModal } from '../../../hooks/useDeleteShareModal';
 import { Role, Node } from '../../../types/common';
 import {
-	DeleteNodesMutation,
+	DeleteShareMutation,
 	GetPermissionsDocument,
 	GetPermissionsQuery,
 	GetPermissionsQueryVariables,
@@ -62,7 +62,7 @@ const rowIdxToRoleMap: { [id: number]: Role } = {
 
 interface EditShareChipProps {
 	share: MakeRequiredNonNull<ShareFragment, 'share_target'> & {
-		node: Pick<Node, 'id' | '__typename'>;
+		node: Node<'id'>;
 	};
 	permissions: Permissions;
 	yourselfChip: boolean;
@@ -156,8 +156,8 @@ export const EditShareChip = ({
 		updateShareActionCallback
 	);
 
-	const deleteShareCallback = useCallback<() => Promise<FetchResult<DeleteNodesMutation>>>(
-		(): Promise<FetchResult<DeleteNodesMutation>> => deleteShare(share.node, share.share_target.id),
+	const deleteShareCallback = useCallback(
+		(): Promise<FetchResult<DeleteShareMutation>> => deleteShare(share.node, share.share_target.id),
 		[deleteShare, share]
 	);
 

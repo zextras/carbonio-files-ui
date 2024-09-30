@@ -9,7 +9,7 @@ import { List } from './List';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen } from '../../tests/utils';
-import { Node } from '../../types/common';
+import { File, Folder } from '../../types/graphql/types';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
@@ -33,7 +33,7 @@ describe('Move', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>
@@ -86,7 +86,7 @@ describe('Move', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 					folderId={currentFolder.id}
@@ -123,7 +123,7 @@ describe('Move', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>

@@ -20,7 +20,7 @@ import {
 	Text,
 	Tooltip
 } from '@zextras/carbonio-design-system';
-import { reduce, debounce, findIndex, trim } from 'lodash';
+import { debounce, findIndex, trim } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingIcon } from './LoadingIcon';
@@ -37,7 +37,6 @@ import { useGetPermissionsQuery } from '../../hooks/graphql/queries/useGetPermis
 import { useGetRootsListQuery } from '../../hooks/graphql/queries/useGetRootsListQuery';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
 import { useErrorHandler } from '../../hooks/useErrorHandler';
-import { NodeListItemType, NodeWithMetadata, RootListItemType } from '../../types/common';
 import {
 	BaseNodeFragment,
 	BaseNodeFragmentDoc,
@@ -45,18 +44,32 @@ import {
 	ChildFragmentDoc,
 	GetBaseNodeDocument,
 	GetBaseNodeQuery,
-	GetBaseNodeQueryVariables
+	GetBaseNodeQueryVariables,
+	NodeType
 } from '../../types/graphql/types';
-import { ArrayOneOrMore } from '../../types/utils';
+import { ArrayOneOrMore, MakeOptional } from '../../types/utils';
 import { canCreateFolder } from '../../utils/ActionsFactory';
 import { decodeError, isFile, isFolder } from '../../utils/utils';
 
-interface NodesSelectionModalContentProps {
+type RootListItem = {
+	__typename?: never;
+	id: string;
+	name: string;
+	type: NodeType.Root;
+};
+type NodeWithMetadata = MakeOptional<BaseNodeFragment, 'flagged' | 'rootId'>;
+
+export type NodeForSelection = (RootListItem | NodeWithMetadata) & {
+	disabled?: boolean;
+	selectable?: boolean;
+};
+
+export interface NodesSelectionModalContentProps {
 	title: string;
-	confirmAction: (nodes: ArrayOneOrMore<NodeWithMetadata>) => void;
+	confirmAction: (nodes: ArrayOneOrMore<NodeForSelection>) => void;
 	confirmLabel: string;
 	closeAction: () => void;
-	isValidSelection?: (node: NodeWithMetadata | RootListItemType) => boolean;
+	isValidSelection?: (node: NodeWithMetadata | RootListItem) => boolean;
 	maxSelection?: number;
 	disabledTooltip?: string;
 	canSelectOpenedFolder?: boolean;
@@ -68,7 +81,7 @@ const stopPropagation = (e: Event | React.SyntheticEvent): void => {
 	e.stopPropagation();
 };
 
-const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>;
+const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeForSelection[]>>;
 
 const allValidSelectionFn = (): boolean => true;
 
@@ -86,9 +99,9 @@ export const NodesSelectionModalContent = ({
 }: NodesSelectionModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const apolloClient = useApolloClient();
-	const { setCurrent, setDefault } = useDestinationVarManager<NodeWithMetadata[]>();
-	const { currentValue } = useReactiveVar<DestinationVar<NodeWithMetadata[]>>(
-		destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>
+	const { setCurrent, setDefault } = useDestinationVarManager<NodeForSelection[]>();
+	const { currentValue } = useReactiveVar<DestinationVar<NodeForSelection[]>>(
+		destinationVar as ReactiveVar<DestinationVar<NodeForSelection[]>>
 	);
 	const [openedFolder, setOpenedFolder] = useState<string>('');
 	const selectedNodes = useMemo(() => currentValue ?? [], [currentValue]);
@@ -116,7 +129,7 @@ export const NodesSelectionModalContent = ({
 
 	const getCurrentFolderBaseNode = useCallback<() => BaseNodeFragment | null>(() => {
 		if (currentFolderNode) {
-			return apolloClient.readFragment<BaseNodeFragment>({
+			return apolloClient.readFragment({
 				fragment: BaseNodeFragmentDoc,
 				fragmentName: 'BaseNode',
 				id: apolloClient.cache.identify(currentFolderNode)
@@ -125,40 +138,44 @@ export const NodesSelectionModalContent = ({
 		return null;
 	}, [apolloClient, currentFolderNode]);
 
-	const selectId = useCallback(
-		(node: NodeWithMetadata) => {
-			function getNewSelection(): NodeWithMetadata[] {
-				const prevState = getDestinationVar().currentValue || [];
-				if (!maxSelection || maxSelection > 1) {
-					if (prevState.length === 1) {
-						// if previous selected node is the opened folder and user is selecting a node from the list,
-						// reset the selection to contains only the list node
-						if (prevState[0].id === currentFolderNode?.id && node.id !== currentFolderNode?.id) {
-							return [node];
-						}
-						// if previous selected node is the one to deselect and opened folder is a potentially valid selection,
-						// try to set opened folder as selected node
-						if (prevState[0].id === node.id && canSelectOpenedFolder && currentFolderNode) {
-							// current folder base node has to be already in cache because of previous navigation
-							// so read data directly from cache
-							const cachedNode = getCurrentFolderBaseNode();
-							return cachedNode ? [cachedNode] : [];
-						}
-					}
-					const newSelection = [...prevState];
-					const index = findIndex(newSelection, (prevNode) => prevNode.id === node.id);
-					if (index > -1) {
-						newSelection.splice(index, 1);
-					} else {
-						newSelection.push(node);
-					}
-					return newSelection;
-				}
+	const getNewSelection = useCallback(
+		(node: NodeForSelection): NodeForSelection[] => {
+			const prevState = getDestinationVar().currentValue || [];
+			if (maxSelection && maxSelection === 1) {
 				return [node];
 			}
-			setCurrent(getNewSelection());
+			if (prevState.length === 1) {
+				// if previous selected node is the opened folder and user is selecting a node from the list,
+				// reset the selection to contains only the list node
+				if (prevState[0].id === currentFolderNode?.id && node.id !== currentFolderNode?.id) {
+					return [node];
+				}
+				// if previous selected node is the one to deselect and opened folder is a potentially valid selection,
+				// try to set opened folder as selected node
+				if (prevState[0].id === node.id && canSelectOpenedFolder && currentFolderNode) {
+					// current folder base node has to be already in cache because of previous navigation
+					// so read data directly from cache
+					const cachedNode = getCurrentFolderBaseNode();
+					return cachedNode ? [cachedNode] : [];
+				}
+			}
+			const newSelection = [...prevState];
+			const index = findIndex(newSelection, (prevNode) => prevNode.id === node.id);
+			if (index > -1) {
+				newSelection.splice(index, 1);
+			} else {
+				newSelection.push(node);
+			}
+			return newSelection;
 		},
-		[canSelectOpenedFolder, currentFolderNode, getCurrentFolderBaseNode, maxSelection, setCurrent]
+		[canSelectOpenedFolder, currentFolderNode, getCurrentFolderBaseNode, maxSelection]
+	);
+
+	const selectId = useCallback(
+		(node: NodeForSelection) => {
+			setCurrent(getNewSelection(node));
+		},
+		[getNewSelection, setCurrent]
 	);
 
 	const unSelectAll = useCallback(() => {
@@ -204,41 +221,42 @@ export const NodesSelectionModalContent = ({
 	);
 
 	const checkSelectable = useCallback(
-		(node: NodeWithMetadata | RootListItemType) =>
+		(node: NodeForSelection) =>
 			// folders and roots are never disabled since they must be navigable
 			isValidSelection(node),
 		[isValidSelection]
 	);
 
 	const checkDisabled = useCallback(
-		(node: NodeWithMetadata | RootListItemType) =>
+		(node: NodeForSelection) =>
 			// folders and roots are never disabled since they must be navigable
 			isFile(node) && !checkSelectable(node),
 		[checkSelectable]
 	);
 
-	const nodes = useMemo<Array<NodeListItemType>>(() => {
+	const nodes = useMemo(() => {
 		if (currentFolderNode?.children?.nodes && currentFolderNode.children.nodes.length > 0) {
-			return reduce<(typeof currentFolderNode.children.nodes)[number], NodeListItemType[]>(
-				currentFolderNode.children.nodes,
-				(result, node) => {
-					if (node) {
-						result.push({
-							...node,
-							disabled: checkDisabled(node),
-							selectable: checkSelectable(node)
-						});
-					}
-					return result;
-				},
-				[]
-			);
+			return currentFolderNode.children.nodes.reduce<
+				((typeof currentFolderNode.children.nodes)[number] & {
+					disabled: boolean;
+					selectable: boolean;
+				})[]
+			>((result, node) => {
+				if (node) {
+					result.push({
+						...node,
+						disabled: checkDisabled(node),
+						selectable: checkSelectable(node)
+					});
+				}
+				return result;
+			}, []);
 		}
 		return [];
 	}, [checkDisabled, checkSelectable, currentFolderNode]);
 
 	const getBaseNodeData = useCallback(
-		(node: Pick<NodeListItemType, 'id'>) =>
+		(node: { id: string }) =>
 			// for nodes already loaded as child these query should read data in cache
 			apolloClient.query<GetBaseNodeQuery, GetBaseNodeQueryVariables>({
 				query: GetBaseNodeDocument,
@@ -252,11 +270,7 @@ export const NodesSelectionModalContent = ({
 	const cancelSetSelectedNodeHandlerRef = useRef(false);
 
 	const setSelectedNodeHandler = useCallback(
-		(
-			node: Pick<NodeListItemType | RootListItemType, 'id' | '__typename'> | null | undefined,
-			event?: React.SyntheticEvent | Event,
-			reset?: boolean
-		) => {
+		(node: { id: string } | null, event?: React.SyntheticEvent | Event, reset?: boolean) => {
 			// Internal util function to set state
 			const setSelectedNodeIfValid = (
 				nodeWithMetadata: NodeWithMetadata | null | undefined
@@ -383,7 +397,9 @@ export const NodesSelectionModalContent = ({
 			if (!createFolderPendingRequest && currentFolderNode && newFolderName) {
 				createFolder(currentFolderNode, newFolderName)
 					.then((result) => {
-						result.data && setSelectedNodeHandler(result.data.createFolder);
+						if (result.data) {
+							setSelectedNodeHandler(result.data.createFolder);
+						}
 						hideCreateFolderInput();
 					})
 					.catch((err) => {

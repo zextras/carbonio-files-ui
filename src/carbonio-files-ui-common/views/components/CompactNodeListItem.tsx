@@ -19,8 +19,7 @@ import {
 	ROOTS
 } from '../../constants';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
-import { NodeListItemType } from '../../types/common';
-import { NodeType } from '../../types/graphql/types';
+import { File, Folder, Node as GQLNode, NodeType } from '../../types/graphql/types';
 import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';
 import {
 	getIconByFileType,
@@ -29,10 +28,13 @@ import {
 	isFile
 } from '../../utils/utils';
 
-interface CompactNodeListItemProps {
-	node: NodeListItemType;
+type NodeItem = Pick<GQLNode, 'id' | 'name' | 'type'> &
+	(Pick<File, '__typename' | 'mime_type'> | Pick<Folder, '__typename'> | { __typename?: never });
+
+export interface CompactNodeListItemProps<TNode extends NodeItem = NodeItem> {
+	node: TNode;
 	isActive?: boolean;
-	setActive?: (node: NodeListItemType, event: React.SyntheticEvent) => void;
+	setActive?: (node: TNode, event: React.SyntheticEvent) => void;
 	navigateTo?: (id: string, event?: React.SyntheticEvent | Event) => void;
 	disabled?: boolean;
 	selectable?: boolean;
@@ -40,7 +42,7 @@ interface CompactNodeListItemProps {
 	version?: number;
 }
 
-export const CompactNodeListItem = ({
+export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 	node,
 	isActive,
 	setActive = (): void => undefined,
@@ -49,7 +51,7 @@ export const CompactNodeListItem = ({
 	selectable = true,
 	trashed,
 	version
-}: CompactNodeListItemProps): React.JSX.Element => {
+}: CompactNodeListItemProps<TNode>): React.JSX.Element => {
 	const theme = useTheme();
 
 	const isNavigable = useMemo(
@@ -66,7 +68,7 @@ export const CompactNodeListItem = ({
 			// remove text selection on double click
 			if (window.getSelection) {
 				const selection = window.getSelection();
-				selection && selection.removeAllRanges();
+				selection?.removeAllRanges();
 			}
 
 			if (!disabled && !trashed && isNavigable) {

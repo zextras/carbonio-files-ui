@@ -9,23 +9,16 @@ import { findIndex, last } from 'lodash';
 
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, ROOTS, SHARES_LOAD_LIMIT } from '../constants';
 import { populateConfigs, populateNodePage } from '../mocks/mockUtils';
-import { Node } from '../types/common';
 import { MutationResolvers, QueryResolvers } from '../types/graphql/resolvers-types';
 import type * as GQLTypes from '../types/graphql/types';
-import { Maybe } from '../types/graphql/types';
-
-type Id = string;
+import { Maybe, NodePage } from '../types/graphql/types';
 
 type QueryName<TData> = keyof TData & keyof QueryResolvers;
 
 type MutationName<TData> = keyof TData & keyof MutationResolvers;
 
-export type Mock<
-	TData extends Pick<GQLTypes.Query, '__typename'> | Pick<GQLTypes.Mutation, '__typename'>
-> =
-	TData extends Pick<GQLTypes.Query, '__typename'>
-		? QueryResolvers[QueryName<TData>]
-		: MutationResolvers[MutationName<TData>];
+export type QueryMock<TData> = QueryResolvers[QueryName<TData>];
+export type MutationMock<TData> = MutationResolvers[MutationName<TData>];
 
 export function mockErrorResolver(error: GraphQLError): () => never {
 	return () => {
@@ -41,50 +34,45 @@ export function shiftData<TData>(data: TData[]): NonNullable<TData> {
 	throw new GraphQLError('no more data provided to resolver');
 }
 
-export function getFindNodesVariables(
-	variables: Partial<GQLTypes.FindNodesQueryVariables>,
-	withCursor = false
-): GQLTypes.FindNodesQueryVariables {
-	return {
-		limit: NODES_LOAD_LIMIT,
-		sort: NODES_SORT_DEFAULT,
-		page_token: withCursor ? 'next_page_token' : undefined,
-		shares_limit: SHARES_LOAD_LIMIT,
-		...variables
-	};
-}
-
-export function mockFindNodes(...findNodes: Node[][]): Mock<GQLTypes.FindNodesQuery> {
+export function mockFindNodes(
+	...findNodes: NodePage['nodes'][]
+): QueryMock<GQLTypes.FindNodesQuery> {
 	return () => {
 		const nodes = shiftData(findNodes);
 		return populateNodePage(nodes);
 	};
 }
 
-export function mockTrashNodes(...trashNodes: Id[][]): Mock<GQLTypes.TrashNodesMutation> {
+export function mockTrashNodes(
+	...trashNodes: string[][]
+): MutationMock<GQLTypes.TrashNodesMutation> {
 	return () => shiftData(trashNodes);
 }
 
 export function mockRestoreNodes(
-	...restoreNodes: Array<Node>[]
-): Mock<GQLTypes.RestoreNodesMutation> {
+	...restoreNodes: (GQLTypes.File | GQLTypes.Folder)[][]
+): MutationMock<GQLTypes.RestoreNodesMutation> {
 	return () => shiftData(restoreNodes);
 }
 
-export function mockDeletePermanently(...deleteNodes: Id[][]): Mock<GQLTypes.DeleteNodesMutation> {
+export function mockDeletePermanently(
+	...deleteNodes: string[][]
+): MutationMock<GQLTypes.DeleteNodesMutation> {
 	return () => shiftData(deleteNodes);
 }
 
-export function mockUpdateNode(...updateNode: Node[]): Mock<GQLTypes.UpdateNodeMutation> {
+export function mockUpdateNode(
+	...updateNode: (GQLTypes.File | GQLTypes.Folder)[]
+): MutationMock<GQLTypes.UpdateNodeMutation> {
 	return () => shiftData(updateNode);
 }
 
-export function mockFlagNodes(...flagNodes: Id[][]): Mock<GQLTypes.FlagNodesMutation> {
+export function mockFlagNodes(...flagNodes: string[][]): MutationMock<GQLTypes.FlagNodesMutation> {
 	return () => shiftData(flagNodes);
 }
 
 export function getChildrenVariables(
-	folderId: Id,
+	folderstring: string,
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
 	sharesLimit = SHARES_LOAD_LIMIT,
@@ -92,7 +80,7 @@ export function getChildrenVariables(
 	pageToken = 'next_page_token'
 ): GQLTypes.GetChildrenQueryVariables {
 	return {
-		node_id: folderId,
+		node_id: folderstring,
 		children_limit: childrenLimit,
 		sort,
 		shares_limit: sharesLimit,
@@ -100,19 +88,27 @@ export function getChildrenVariables(
 	};
 }
 
-export function mockMoveNodes(...moveNodes: Node[][]): Mock<GQLTypes.MoveNodesMutation> {
+export function mockMoveNodes(
+	...moveNodes: (GQLTypes.File | GQLTypes.Folder)[][]
+): MutationMock<GQLTypes.MoveNodesMutation> {
 	return () => shiftData(moveNodes);
 }
 
-export function mockCopyNodes(...copyNodes: Node[][]): Mock<GQLTypes.CopyNodesMutation> {
+export function mockCopyNodes(
+	...copyNodes: (GQLTypes.File | GQLTypes.Folder)[][]
+): MutationMock<GQLTypes.CopyNodesMutation> {
 	return () => shiftData(copyNodes);
 }
 
-export function mockCreateFolder(...createFolder: Node[]): Mock<GQLTypes.CreateFolderMutation> {
+export function mockCreateFolder(
+	...createFolder: GQLTypes.Folder[]
+): MutationMock<GQLTypes.CreateFolderMutation> {
 	return () => shiftData(createFolder);
 }
 
-export function mockGetPath(...getPath: Node[][]): Mock<GQLTypes.GetPathQuery> {
+export function mockGetPath(
+	...getPath: (GQLTypes.File | GQLTypes.Folder)[][]
+): QueryMock<GQLTypes.GetPathQuery> {
 	// this resolver assumes that the path has always at least one node,
 	// and that the last node of the path is always the node for which the getPath
 	// request has been made
@@ -129,13 +125,13 @@ export function mockGetPath(...getPath: Node[][]): Mock<GQLTypes.GetPathQuery> {
 }
 
 export function getNodeVariables(
-	nodeId: Id,
+	nodestring: string,
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
 	sharesLimit = SHARES_LOAD_LIMIT
 ): GQLTypes.GetNodeQueryVariables {
 	return {
-		node_id: nodeId,
+		node_id: nodestring,
 		children_limit: childrenLimit,
 		sort,
 		shares_limit: sharesLimit
@@ -149,7 +145,7 @@ export function mockGetNode(
 			Array<GQLTypes.File | GQLTypes.Folder>
 		>
 	>
-): Mock<GQLTypes.GetNodeQuery> {
+): QueryMock<GQLTypes.GetNodeQuery> {
 	return (parent, args, context, info) => {
 		const operationName = info.operation.name?.value;
 		if (operationName && operationName in getNode) {
@@ -170,25 +166,27 @@ export function mockGetNode(
 	};
 }
 
-export function mockDeleteShare(...deleteShare: boolean[]): Mock<GQLTypes.DeleteShareMutation> {
+export function mockDeleteShare(
+	...deleteShare: boolean[]
+): MutationMock<GQLTypes.DeleteShareMutation> {
 	return () => shiftData(deleteShare);
 }
 
 export function mockCreateShare(
 	...createShare: GQLTypes.Share[]
-): Mock<GQLTypes.CreateShareMutation> {
+): MutationMock<GQLTypes.CreateShareMutation> {
 	return () => shiftData(createShare);
 }
 
 export function mockUpdateShare(
 	...updateShare: GQLTypes.Share[]
-): Mock<GQLTypes.UpdateShareMutation> {
+): MutationMock<GQLTypes.UpdateShareMutation> {
 	return () => shiftData(updateShare);
 }
 
 export function mockGetAccountByEmail(
 	...accounts: GQLTypes.Account[]
-): Mock<GQLTypes.GetAccountByEmailQuery> {
+): QueryMock<GQLTypes.GetAccountByEmailQuery> {
 	return (parent, args) => {
 		const matchIndex = findIndex(
 			accounts,
@@ -206,35 +204,37 @@ export function mockGetAccountByEmail(
 
 export function mockGetAccountsByEmail(
 	...accounts: GQLTypes.Account[][]
-): Mock<GQLTypes.GetAccountsByEmailQuery> {
+): QueryMock<GQLTypes.GetAccountsByEmailQuery> {
 	return () => shiftData(accounts);
 }
 
-export function mockGetLinks(...links: Maybe<GQLTypes.Link>[][]): Mock<GQLTypes.GetLinksQuery> {
+export function mockGetLinks(
+	...links: Maybe<GQLTypes.Link>[][]
+): QueryMock<GQLTypes.GetLinksQuery> {
 	return () => shiftData(links);
 }
 
 export function mockGetCollaborationLinks(
 	...collaborationLinks: Array<Maybe<GQLTypes.CollaborationLink>>[]
-): Mock<GQLTypes.GetCollaborationLinksQuery> {
+): QueryMock<GQLTypes.GetCollaborationLinksQuery> {
 	return () => shiftData(collaborationLinks);
 }
 
 export function mockCreateCollaborationLink(
 	createCollaborationLink: GQLTypes.CollaborationLink
-): Mock<GQLTypes.CreateCollaborationLinkMutation> {
+): MutationMock<GQLTypes.CreateCollaborationLinkMutation> {
 	return () => createCollaborationLink;
 }
 
 export function mockDeleteCollaborationLinks(
 	...deleteCollaborationLinks: Array<string>[]
-): Mock<GQLTypes.DeleteCollaborationLinksMutation> {
+): MutationMock<GQLTypes.DeleteCollaborationLinksMutation> {
 	return () => shiftData(deleteCollaborationLinks);
 }
 
 export function mockGetVersions(
 	...files: GQLTypes.Query['getVersions'][]
-): Mock<GQLTypes.GetVersionsQuery> {
+): QueryMock<GQLTypes.GetVersionsQuery> {
 	return () => {
 		const result = files.shift();
 		if (result) {
@@ -246,21 +246,23 @@ export function mockGetVersions(
 
 export function mockDeleteVersions(
 	...versions: Array<Maybe<number>>[]
-): Mock<GQLTypes.DeleteVersionsMutation> {
+): MutationMock<GQLTypes.DeleteVersionsMutation> {
 	return () => shiftData(versions);
 }
 
 export function mockKeepVersions(
 	...versions: Array<Maybe<number>>[]
-): Mock<GQLTypes.KeepVersionsMutation> {
+): MutationMock<GQLTypes.KeepVersionsMutation> {
 	return () => shiftData(versions);
 }
 
-export function mockCloneVersion(...file: GQLTypes.File[]): Mock<GQLTypes.CloneVersionMutation> {
+export function mockCloneVersion(
+	...file: GQLTypes.File[]
+): MutationMock<GQLTypes.CloneVersionMutation> {
 	return () => shiftData(file);
 }
 
-export function mockGetRootsList(): Mock<GQLTypes.GetRootsListQuery> {
+export function mockGetRootsList(): QueryMock<GQLTypes.GetRootsListQuery> {
 	return () =>
 		[
 			{ __typename: 'Root', id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT },
@@ -270,17 +272,23 @@ export function mockGetRootsList(): Mock<GQLTypes.GetRootsListQuery> {
 
 export function mockGetConfigs(
 	configs: Array<GQLTypes.Config> = populateConfigs()
-): Mock<GQLTypes.GetConfigsQuery> {
+): QueryMock<GQLTypes.GetConfigsQuery> {
 	return () => configs;
 }
 
-export function mockCreateLink(...link: GQLTypes.Link[]): Mock<GQLTypes.CreateLinkMutation> {
+export function mockCreateLink(
+	...link: GQLTypes.Link[]
+): MutationMock<GQLTypes.CreateLinkMutation> {
 	return () => shiftData(link);
 }
 
-export function mockUpdateLink(...link: GQLTypes.Link[]): Mock<GQLTypes.UpdateLinkMutation> {
+export function mockUpdateLink(
+	...link: GQLTypes.Link[]
+): MutationMock<GQLTypes.UpdateLinkMutation> {
 	return () => shiftData(link);
 }
-export function mockDeleteLinks(...link: Array<string>[]): Mock<GQLTypes.DeleteLinksMutation> {
+export function mockDeleteLinks(
+	...link: Array<string>[]
+): MutationMock<GQLTypes.DeleteLinksMutation> {
 	return () => shiftData(link);
 }

@@ -31,10 +31,9 @@ import {
 } from '../mocks/mockUtils';
 import { Node } from '../types/common';
 import { File, Folder, NodeType } from '../types/graphql/types';
+import { MakePartial } from '../types/utils';
 
-type NodeWithoutPermission<T extends Node> = Omit<T, 'permissions'> & {
-	permissions: Partial<T['permissions']>;
-};
+type NodeWithoutPermission<T extends File | Folder> = MakePartial<T, 'permissions'>;
 
 describe('ActionsFactory', () => {
 	describe('isFile', () => {
@@ -48,7 +47,7 @@ describe('ActionsFactory', () => {
 		});
 
 		it('should return false on a UnknownType', () => {
-			const testUnknownType = populateUnknownNode();
+			const testUnknownType = { ...populateUnknownNode(), __typename: undefined };
 			expect(isFile(testUnknownType)).toBeFalsy();
 		});
 	});
@@ -64,18 +63,12 @@ describe('ActionsFactory', () => {
 		});
 
 		it('should return false on a UnknownType', () => {
-			const testUnknownType = populateUnknownNode();
+			const testUnknownType = { ...populateUnknownNode(), __typename: undefined };
 			expect(isFolder(testUnknownType)).toBeFalsy();
 		});
 	});
 
 	describe('canRename', () => {
-		it('cannot evaluate canRename on Node type', () => {
-			const testFolder: Folder = populateFolder();
-			const canRenameWrapper: () => boolean = () => canRename({ nodes: testFolder });
-			expect(canRenameWrapper).toThrow('cannot evaluate canRename on Node type');
-		});
-
 		it('cannot evaluate canRename on empty nodes array', () => {
 			const canRenameWrapper: () => boolean = () => canRename({ nodes: [] });
 			expect(canRenameWrapper).toThrow('cannot evaluate canRename on empty nodes array');
@@ -104,7 +97,10 @@ describe('ActionsFactory', () => {
 		});
 
 		it('cannot evaluate canRename on UnknownType', () => {
-			const testUnknownType = populateUnknownNode();
+			const testUnknownType = {
+				...populateUnknownNode(),
+				__typename: undefined as unknown as Node['__typename']
+			};
 			const canRenameWrapper: () => boolean = () => canRename({ nodes: [testUnknownType] });
 			expect(canRenameWrapper).toThrow('cannot evaluate canRename on UnknownType');
 		});
@@ -125,12 +121,6 @@ describe('ActionsFactory', () => {
 	});
 
 	describe('canFlag', () => {
-		it('cannot evaluate canFlag on Node type', () => {
-			const testFolder: Folder = populateFolder();
-			const canFlagWrapper: () => boolean = () => canFlag({ nodes: testFolder });
-			expect(canFlagWrapper).toThrow('cannot evaluate canFlag on Node type');
-		});
-
 		it('cannot evaluate canFlag on empty nodes array', () => {
 			const canFlagWrapper: () => boolean = () => canFlag({ nodes: [] });
 			expect(canFlagWrapper).toThrow('cannot evaluate canFlag on empty nodes array');
@@ -161,12 +151,6 @@ describe('ActionsFactory', () => {
 	});
 
 	describe('canUnFlag', () => {
-		it('cannot evaluate canUnFlag on Node type', () => {
-			const testFolder: Folder = populateFolder();
-			const canUnFlagWrapper: () => boolean = () => canUnFlag({ nodes: testFolder });
-			expect(canUnFlagWrapper).toThrow('cannot evaluate canUnFlag on Node type');
-		});
-
 		it('cannot evaluate canUnFlag on empty nodes array', () => {
 			const canUnFlagWrapper: () => boolean = () => canUnFlag({ nodes: [] });
 			expect(canUnFlagWrapper).toThrow('cannot evaluate canUnFlag on empty nodes array');
@@ -221,8 +205,7 @@ describe('ActionsFactory', () => {
 
 	describe('canMarkForDeletion', () => {
 		it.each([undefined, 'unknown'])('should throw if typename is %s', (typename) => {
-			const node = populateUnknownNode();
-			node.__typename = typename as Node['__typename'];
+			const node = { ...populateUnknownNode(), __typename: typename as Node['__typename'] };
 			expect(() => canMarkForDeletion({ nodes: [node] })).toThrow(
 				'cannot evaluate canMarkForDeletion on UnknownType'
 			);
@@ -255,7 +238,7 @@ describe('ActionsFactory', () => {
 				const node = populateFile();
 				node.permissions.can_write_file = canWriteFile;
 				node.rootId = rootId;
-				expect(canMarkForDeletion({ nodes: node })).toBe(expected);
+				expect(canMarkForDeletion({ nodes: [node] })).toBe(expected);
 			}
 		);
 
@@ -270,7 +253,7 @@ describe('ActionsFactory', () => {
 				const node = populateFolder();
 				node.permissions.can_write_folder = canWriteFolder;
 				node.rootId = rootId;
-				expect(canMarkForDeletion({ nodes: node })).toBe(expected);
+				expect(canMarkForDeletion({ nodes: [node] })).toBe(expected);
 			}
 		);
 
@@ -296,12 +279,6 @@ describe('ActionsFactory', () => {
 	});
 
 	describe('canMove', () => {
-		it('cannot evaluate on Node type', () => {
-			const testFolder: Folder = populateFolder();
-			const canMoveWrapper: () => boolean = () => canMove({ nodes: testFolder });
-			expect(canMoveWrapper).toThrow('cannot evaluate canMove on Node type');
-		});
-
 		it('cannot evaluate on empty nodes array', () => {
 			const canMoveWrapper: () => boolean = () => canMove({ nodes: [] });
 			expect(canMoveWrapper).toThrow('cannot evaluate canMove on empty nodes array');
@@ -401,7 +378,10 @@ describe('ActionsFactory', () => {
 		});
 
 		it('cannot evaluate on UnknownType', () => {
-			const testUnknownType = populateUnknownNode();
+			const testUnknownType = {
+				...populateUnknownNode(),
+				__typename: undefined as unknown as Node['__typename']
+			};
 			const canMoveWrapper: () => boolean = () => canMove({ nodes: [testUnknownType] });
 			expect(canMoveWrapper).toThrow('cannot evaluate canMove on UnknownType');
 		});
@@ -440,12 +420,6 @@ describe('ActionsFactory', () => {
 	});
 
 	describe('canCopy', () => {
-		it('cannot evaluate canCopy on Node type', () => {
-			const testFolder: Folder = populateFolder();
-			const canCopyWrapper: () => boolean = () => canCopy({ nodes: testFolder });
-			expect(canCopyWrapper).toThrow('cannot evaluate canCopy on Node type');
-		});
-
 		it('cannot evaluate canCopy on empty nodes array', () => {
 			const canCopyWrapper: () => boolean = () => canCopy({ nodes: [] });
 			expect(canCopyWrapper).toThrow('cannot evaluate canCopy on empty nodes array');
@@ -482,17 +456,6 @@ describe('ActionsFactory', () => {
 					});
 
 				expect(canPreviewWrapper).toThrow('cannot evaluate canPreview on empty nodes array');
-			});
-
-			it('should throw cannot evaluate canPreview on Node type when nodes is not an array', () => {
-				const canPreviewWrapper: () => boolean = () =>
-					canPreview({
-						nodes: populateFile(),
-						canUseDocs: true,
-						canUsePreview: true
-					});
-
-				expect(canPreviewWrapper).toThrow('cannot evaluate canPreview on Node type');
 			});
 
 			it('should return false when nodes are more than 1', () => {
@@ -713,8 +676,7 @@ describe('ActionsFactory', () => {
 
 	describe('canRestore', () => {
 		it.each([undefined, 'unknown'])('should throw if typename is %s', (typename) => {
-			const node = populateUnknownNode();
-			node.__typename = typename as Node['__typename'];
+			const node = { ...populateUnknownNode(), __typename: typename as Node['__typename'] };
 			expect(() => canRestore({ nodes: [node] })).toThrow(
 				'cannot evaluate canRestore on UnknownType'
 			);
@@ -743,7 +705,7 @@ describe('ActionsFactory', () => {
 				const node = populateFile();
 				node.permissions.can_write_file = canWriteFile;
 				node.rootId = rootId;
-				expect(canRestore({ nodes: node })).toBe(expected);
+				expect(canRestore({ nodes: [node] })).toBe(expected);
 			}
 		);
 
@@ -758,7 +720,7 @@ describe('ActionsFactory', () => {
 				const node = populateFolder();
 				node.permissions.can_write_folder = canWriteFolder;
 				node.rootId = rootId;
-				expect(canRestore({ nodes: node })).toBe(expected);
+				expect(canRestore({ nodes: [node] })).toBe(expected);
 			}
 		);
 

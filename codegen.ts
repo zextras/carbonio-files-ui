@@ -12,13 +12,20 @@ import { TypeScriptResolversPluginConfig } from '@graphql-codegen/typescript-res
 const typescriptPluginConfig: TypeScriptPluginConfig = {
 	useImplementingTypes: true,
 	defaultScalarType: 'unknown',
-	nonOptionalTypename: false,
+	nonOptionalTypename: true,
 	scalars: {
 		DateTime: 'number',
 		UploadItem: 'ClientTypes.UploadItem'
 	},
 	strictScalars: true,
-	useTypeImports: true
+	useTypeImports: true,
+	avoidOptionals: {
+		field: true,
+		object: false,
+		inputValue: false,
+		resolvers: false,
+		defaultValue: false
+	}
 };
 
 const config: CodegenConfig = {
@@ -60,7 +67,8 @@ const config: CodegenConfig = {
 			config: {
 				...typescriptPluginConfig,
 				exportFragmentSpreadSubTypes: true,
-				mergeFragmentTypes: true
+				mergeFragmentTypes: true,
+				skipTypeNameForRoot: true
 			} satisfies TypeScriptPluginConfig &
 				TypeScriptDocumentsPluginConfig &
 				TypeScriptTypedDocumentNodesConfig

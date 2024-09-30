@@ -23,9 +23,9 @@ const rowRoleToIdxMap: { [key in Role]: number } = {
 };
 
 const roleAssignChecker: {
-	[key in Role]: (node: Pick<Node, '__typename' | 'permissions'>) => boolean;
+	[key in Role]: (node: Node<'permissions'>) => boolean;
 } = {
-	[Role.Editor]: (node: Pick<Node, '__typename' | 'permissions'>): boolean =>
+	[Role.Editor]: (node: Node<'permissions'>): boolean =>
 		(isFolder(node) && node.permissions.can_write_folder) ||
 		(isFile(node) && node.permissions.can_write_file),
 	[Role.Viewer]: (): boolean => true
@@ -71,7 +71,8 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, AddShareChipProps>(
 		);
 
 		const disabledRows = useMemo(
-			() => filter(rowRoleToIdxMap, (idx, role) => !node || !roleAssignChecker[role as Role](node)),
+			() =>
+				filter(rowRoleToIdxMap, (_value, role) => !node || !roleAssignChecker[role as Role](node)),
 			[node]
 		);
 

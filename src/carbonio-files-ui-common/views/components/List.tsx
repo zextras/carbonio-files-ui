@@ -47,9 +47,11 @@ import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameMod
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
-import { Action, Crumb, NodeListItemType } from '../../types/common';
-import { File, Folder, GetChildrenParentDocument, NodeType } from '../../types/graphql/types';
+import { Crumb, Node } from '../../types/common';
+import { File, GetChildrenParentDocument, Maybe, NodeType, Share } from '../../types/graphql/types';
+import { DeepPick } from '../../types/utils';
 import {
+	Action,
 	buildActionItems,
 	canBeMoveDestination,
 	canEdit,
@@ -67,7 +69,7 @@ const MainContainer = styled(Container)`
 function getHeaderActions(
 	t: TFunction,
 	setActiveNode: ReturnType<typeof useActiveNode>['setActiveNode'],
-	node: File,
+	node: Pick<File, '__typename' | 'id' | 'permissions' | 'rootId' | 'mime_type'>,
 	canUseDocs: boolean
 ): Array<HeaderAction> {
 	const actions: Array<HeaderAction> = [
@@ -102,8 +104,24 @@ function getHeaderActions(
 	return actions;
 }
 
+type NodeItem = Node<
+	| 'id'
+	| 'name'
+	| 'permissions'
+	| 'type'
+	| 'rootId'
+	| 'flagged'
+	| 'updated_at'
+	| 'owner'
+	| 'last_editor',
+	'mime_type' | 'extension' | 'size' | 'version'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> & {
+		shares: Maybe<Pick<Share, '__typename'>>[];
+	};
+
 interface ListProps {
-	nodes: NodeListItemType[];
+	nodes: NodeItem[];
 	loading?: boolean;
 	hasMore?: boolean;
 	loadMore?: () => void;
@@ -148,7 +166,7 @@ export const List = ({
 		icons?: string[];
 	}>();
 
-	const folderNode = useMemo<Pick<Folder, '__typename' | 'id' | 'owner' | 'permissions'> | null>(
+	const folderNode = useMemo(
 		() =>
 			getChildrenParentData?.getNode &&
 			getChildrenParentData?.getNode.id === folderId &&
@@ -189,14 +207,12 @@ export const List = ({
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
 	const permittedSelectionModeActions = useMemo(
-		() => getAllPermittedActions(selectedNodes, canUsePreview, canUseDocs),
+		() => getAllPermittedActions({ nodes: selectedNodes, canUsePreview, canUseDocs }),
 		[canUseDocs, canUsePreview, selectedNodes]
 	);
 
-	const setActiveNodeHandler = useCallback<
-		(node: Pick<NodeListItemType, 'id'>, event?: React.SyntheticEvent) => void
-	>(
-		(node, event) => {
+	const setActiveNodeHandler = useCallback(
+		(node: { id: string }, event?: React.SyntheticEvent) => {
 			if (!event?.defaultPrevented) {
 				setActiveNode(node.id);
 			}

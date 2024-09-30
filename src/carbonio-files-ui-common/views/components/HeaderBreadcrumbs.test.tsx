@@ -7,7 +7,6 @@
 import React from 'react';
 
 import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
-import { forEach, map } from 'lodash';
 
 import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
@@ -27,8 +26,8 @@ import {
 	screen,
 	within
 } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
+import { File, Folder } from '../../types/graphql/types';
 import { mockGetPath, mockMoveNodes } from '../../utils/resolverMocks';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
@@ -78,14 +77,14 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -97,7 +96,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] })))
+					moveNodes: mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] })))
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
@@ -141,14 +140,14 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -163,7 +162,7 @@ describe('Header Breadcrumbs', () => {
 					moveNodes: jest.fn(
 						mockMoveNodes(
 							movingNodes.map((node) => ({ ...node, parent: currentFolder }))
-						) as () => Node[]
+						) as () => (File | Folder)[]
 					)
 				}
 			} satisfies Partial<Resolvers>;
@@ -212,7 +211,7 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.parent = parent;
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -263,7 +262,7 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.parent = parent;
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -304,7 +303,7 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
@@ -314,7 +313,7 @@ describe('Header Breadcrumbs', () => {
 			path[0].permissions.can_write_file = false;
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -327,9 +326,10 @@ describe('Header Breadcrumbs', () => {
 				},
 				Mutation: {
 					moveNodes: jest.fn(
-						mockMoveNodes(
-							map(movingNodes, (node) => ({ ...node, parent: path[0] }))
-						) as () => Node[]
+						mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] }))) as () => (
+							| File
+							| Folder
+						)[]
 					)
 				}
 			} satisfies Partial<Resolvers>;
@@ -376,14 +376,14 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -423,14 +423,14 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -490,14 +490,14 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -509,7 +509,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] })))
+					moveNodes: mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] })))
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
@@ -562,7 +562,7 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
@@ -571,7 +571,7 @@ describe('Header Breadcrumbs', () => {
 			path[0].permissions.can_write_folder = false;
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -584,9 +584,10 @@ describe('Header Breadcrumbs', () => {
 				},
 				Mutation: {
 					moveNodes: jest.fn(
-						mockMoveNodes(
-							map(movingNodes, (node) => ({ ...node, parent: path[0] }))
-						) as () => Node[]
+						mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] }))) as () => (
+							| File
+							| Folder
+						)[]
 					)
 				}
 			} satisfies Partial<Resolvers>;

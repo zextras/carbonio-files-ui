@@ -34,7 +34,6 @@ import {
 	spyOnUseCreateOptions,
 	within
 } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, Share, SharePermission } from '../types/graphql/types';
 import {
@@ -142,7 +141,7 @@ describe('Folder View', () => {
 					getNode: mockGetNode({
 						getChildren: [currentFolder],
 						getPermissions: [currentFolder],
-						getNode: [currentFolder.children.nodes[0] as Node]
+						getNode: [currentFolder.children.nodes[0]!]
 					}),
 					getPath: mockGetPath([currentFolder])
 				}
@@ -154,7 +153,7 @@ describe('Folder View', () => {
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
 			});
-			await user.click(screen.getByText((currentFolder.children.nodes[0] as Node).name));
+			await user.click(screen.getByText(currentFolder.children.nodes[0]!.name));
 			expect(
 				within(await screen.findByTestId(SELECTORS.displayer)).getByText(/details/i)
 			).toBeVisible();
@@ -168,14 +167,14 @@ describe('Folder View', () => {
 					getNode: mockGetNode({
 						getChildren: [currentFolder],
 						getPermissions: [currentFolder],
-						getNode: [currentFolder.children.nodes[0] as Node]
+						getNode: [currentFolder.children.nodes[0]!]
 					}),
 					getPath: mockGetPath([currentFolder])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [
-					`/?folder=${currentFolder.id}&node=${(currentFolder.children.nodes[0] as Node).id}`
+					`/?folder=${currentFolder.id}&node=${currentFolder.children.nodes[0]!.id}`
 				],
 				mocks
 			});
@@ -197,7 +196,7 @@ describe('Folder View', () => {
 					getNode: mockGetNode({
 						getChildren: [currentFolder],
 						getPermissions: [currentFolder],
-						getNode: [currentFolder.children.nodes[0] as Node]
+						getNode: [currentFolder.children.nodes[0]!]
 					}),
 					getPath: mockGetPath([currentFolder])
 				}
@@ -206,17 +205,15 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
 			});
-			const nodeItem = await screen.findByText((currentFolder.children.nodes[0] as Node).name);
+			const nodeItem = await screen.findByText(currentFolder.children.nodes[0]!.name);
 			expect(nodeItem).toBeVisible();
 			const displayer = screen.getByTestId(SELECTORS.displayer);
 			expect(within(displayer).queryByText(/details/i)).not.toBeInTheDocument();
 			await user.click(nodeItem);
 			await screen.findByText(/details/i);
+			expect(within(displayer).getAllByText(currentFolder.children.nodes[0]!.name)).toHaveLength(2);
 			expect(
-				within(displayer).getAllByText((currentFolder.children.nodes[0] as Node).name)
-			).toHaveLength(2);
-			expect(
-				getByTextWithMarkup(buildBreadCrumbRegExp((currentFolder.children.nodes[0] as Node).name))
+				getByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.children.nodes[0]!.name))
 			).toBeVisible();
 		});
 

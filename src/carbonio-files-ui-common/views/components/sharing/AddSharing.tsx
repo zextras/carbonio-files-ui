@@ -37,7 +37,7 @@ import { useCreateShareMutation } from '../../../hooks/graphql/mutations/useCrea
 import { useGetAccountByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountByEmailQuery';
 import { useGetAccountsByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
 import { Contact, Node, Role, ShareChip } from '../../../types/common';
-import { Account, Share, User } from '../../../types/graphql/types';
+import { Account, Maybe, Share, User } from '../../../types/graphql/types';
 import {
 	AutocompleteRequest,
 	AutocompleteResponse,
@@ -50,13 +50,16 @@ import {
 	isDistributionList,
 	Match
 } from '../../../types/network';
+import { DeepPick } from '../../../types/utils';
 import { getChipLabel, sharePermissionsGetter } from '../../../utils/utils';
 import { RouteLeavingGuard } from '../RouteLeavingGuard';
 import { Hint, Loader } from '../StyledComponents';
 
 interface AddSharingProps {
-	node: Pick<Node, '__typename' | 'id' | 'owner' | 'permissions'> & {
-		shares?: Array<Pick<Share, '__typename' | 'share_target'> | null | undefined>;
+	node: Node<'id' | 'owner' | 'permissions'> & {
+		shares: Array<
+			Maybe<Pick<Share, '__typename'> & DeepPick<Share, 'share_target', '__typename' | 'id'>>
+		> | null;
 	};
 }
 

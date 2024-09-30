@@ -11,7 +11,7 @@ import { List } from './List';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen, within } from '../../tests/utils';
-import { Node } from '../../types/common';
+import { File, Folder } from '../../types/graphql/types';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
@@ -31,7 +31,7 @@ describe('Mark for deletion - trash', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>
@@ -77,7 +77,7 @@ describe('Mark for deletion - trash', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>
@@ -121,7 +121,7 @@ describe('Mark for deletion - trash', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>

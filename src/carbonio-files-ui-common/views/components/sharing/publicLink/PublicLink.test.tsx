@@ -26,11 +26,11 @@ import {
 import { formatDate, initExpirationDate } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 
-const getDayBefore = (): number | undefined => {
+const getDayBefore = (): number | null => {
 	const date = new Date();
 	date.setDate(date.getDate() - 1);
 	date.setHours(0, 0, 0, 0);
-	return initExpirationDate(date)?.getTime();
+	return initExpirationDate(date)?.getTime() ?? null;
 };
 
 describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeType) => {

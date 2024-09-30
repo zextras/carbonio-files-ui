@@ -10,22 +10,26 @@ import { BreadcrumbsProps, ChipItem } from '@zextras/carbonio-design-system';
 
 import { UploadItem } from './graphql/client-types';
 import {
-	BaseNodeFragment,
-	ChildFragment,
+	File,
 	File as FilesFile,
 	FindNodesQueryVariables,
 	Folder,
 	GetNodeQuery,
 	Maybe,
+	Node as GQLNode,
 	Permissions,
-	Share,
 	User
 } from './graphql/types';
-import { MakeOptional, SnakeToCamelCase } from './utils';
+import { SnakeToCamelCase } from './utils';
 
-export type Node = FilesFile | Folder;
+export type Node<
+	NodeKeys extends keyof GQLNode = never,
+	FileKeys extends keyof File = never,
+	FolderKeys extends keyof Folder = never
+> = Pick<GQLNode, NodeKeys> &
+	(Pick<File, '__typename' | FileKeys> | Pick<Folder, '__typename' | FolderKeys>);
 
-export type PickIdNodeType = Pick<Node, 'id'>;
+export type PickIdNodeType = Node<'id'>;
 
 export type GetNodeParentType = {
 	parent?: Maybe<
@@ -64,7 +68,7 @@ export type GetNodeParentType = {
 
 export type Crumb = BreadcrumbsProps['crumbs'][number];
 
-export type CrumbNode = Pick<Node, 'id' | 'name' | 'type'>;
+export type CrumbNode = Pick<GQLNode, 'id' | 'name' | 'type'>;
 
 export type DroppableCrumb = Crumb & {
 	onDragEnter?: DragEventHandler;
@@ -77,21 +81,6 @@ export enum Role {
 	Viewer = 'Viewer',
 	Editor = 'Editor'
 }
-
-export type NodeListItemType = ChildFragment & {
-	parent?: Pick<NonNullable<Node['parent']>, 'id' | 'permissions'> | null;
-	disabled?: boolean;
-	selectable?: boolean;
-	shares?: Array<Pick<Share, '__typename' | 'created_at'> | null | undefined>;
-};
-
-export type RootListItemType = Pick<
-	NodeListItemType,
-	'__typename' | 'id' | 'name' | 'type' | 'disabled' | 'selectable'
->;
-
-export type SortableNode = Pick<Node, 'id' | 'name' | 'updated_at' | 'type'> &
-	MakeOptional<Pick<File, 'size'>, 'size'>;
 
 export interface UploadFolderItem extends UploadItem {
 	children: Array<UploadItem['id']>;
@@ -243,29 +232,6 @@ export type URLParams = {
 
 export type TargetModule = 'MAILS' | 'CONTACTS' | 'CALENDARS' | 'CHATS';
 
-export type NodeWithMetadata = BaseNodeFragment;
-
-export enum Action {
-	Edit = 'EDIT',
-	Preview = 'PREVIEW',
-	SendViaMail = 'SEND_VIA_MAIL',
-	Download = 'DOWNLOAD',
-	ManageShares = 'MANAGE_SHARES',
-	Flag = 'FLAG',
-	UnFlag = 'UNFLAG',
-	OpenWithDocs = 'OPEN_WITH_DOCS',
-	Copy = 'COPY',
-	Move = 'MOVE',
-	Rename = 'RENAME',
-	MoveToTrash = 'MOVE_TO_TRASH',
-	Restore = 'RESTORE',
-	DeletePermanently = 'DELETE_PERMANENTLY',
-	UpsertDescription = 'UPSERT_DESCRIPTION',
-	RemoveUpload = 'REMOVE_UPLOAD',
-	RetryUpload = 'RETRY_UPLOAD',
-	GoToFolder = 'GO_TO_FOLDER'
-}
-
 export interface ShareChip extends ChipItem {
 	value: {
 		id: string | undefined;
@@ -275,6 +241,6 @@ export interface ShareChip extends ChipItem {
 			id: string | undefined,
 			updatedPartialObject: Partial<Omit<ShareChip['value'], 'onUpdate'>>
 		) => void;
-		node: Pick<Node, '__typename' | 'permissions'>;
+		node: Node<'permissions'>;
 	} & (Contact | User);
 }

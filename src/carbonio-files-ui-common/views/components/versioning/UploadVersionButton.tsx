@@ -13,7 +13,7 @@ import { File } from '../../../types/graphql/types';
 import { DeepPick } from '../../../types/utils';
 
 export interface UploadVersionButtonProps {
-	node: Pick<File, '__typename' | 'id'> & DeepPick<File, 'parent', 'id'>;
+	node: Pick<File, '__typename' | 'id'> & DeepPick<File, 'parent', 'id' | 'name'>;
 	disabled: boolean;
 }
 

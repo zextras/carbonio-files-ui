@@ -26,8 +26,8 @@ import {
 	populateParents
 } from '../../mocks/mockUtils';
 import { buildBreadCrumbRegExp, setup, screen } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
+import { File, Folder } from '../../types/graphql/types';
 import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
 
 let confirmAction = jest.fn();
@@ -211,7 +211,7 @@ describe('Folder Selection Modal Content', () => {
 
 		const mocks = {
 			Query: {
-				getPath: jest.fn(mockGetPath([localRoot]) as () => Node[]),
+				getPath: jest.fn(mockGetPath([localRoot]) as () => (File | Folder)[]),
 				getNode: mockGetNode({ getChildren: [localRoot] })
 			}
 		} satisfies Partial<Resolvers>;
@@ -234,7 +234,7 @@ describe('Folder Selection Modal Content', () => {
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
 		expect(screen.getByText(folder.name)).toBeVisible();
-		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
+		expect(screen.getByText(localRoot.children.nodes[0]!.name)).toBeVisible();
 		expect(
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', folder.parent.name))
 		).toBeVisible();
@@ -259,7 +259,7 @@ describe('Folder Selection Modal Content', () => {
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
 		expect(screen.getByText(folder.name)).toBeVisible();
-		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
+		expect(screen.getByText(localRoot.children.nodes[0]!.name)).toBeVisible();
 		await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', folder.parent.name));
 		// choose button is disabled because active folder (opened folder) is same as set one
 		expect(chooseButton).toBeVisible();
@@ -451,10 +451,10 @@ describe('Folder Selection Modal Content', () => {
 		);
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
-		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
+		expect(screen.getByText(localRoot.children.nodes[0]!.name)).toBeVisible();
 		expect(screen.getByText(folder.name)).toBeVisible();
 		await user.dblClick(screen.getByText(folder.name));
-		await screen.findByText((folder.children.nodes[0] as Node).name);
+		await screen.findByText(folder.children.nodes[0]!.name);
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeEnabled();
 		await user.click(chooseButton);
@@ -489,7 +489,7 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText(filter[0].name)).toBeVisible();
 		expect(screen.getByText(folder.name)).toBeVisible();
 		await user.dblClick(screen.getByText(folder.name));
-		await screen.findByText((folder.children.nodes[0] as Node).name);
+		await screen.findByText(folder.children.nodes[0]!.name);
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeEnabled();
 		await user.click(chooseButton);

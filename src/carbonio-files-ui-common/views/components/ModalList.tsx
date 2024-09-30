@@ -12,32 +12,28 @@ import { takeRightWhile } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { CompactListContent } from './CompactListContent';
+import { CompactListContent, CompactListContentProps } from './CompactListContent';
 import { EmptyFolder } from './EmptyFolder';
 import { LoadingIcon } from './LoadingIcon';
 import { ScrollContainer } from './ScrollContainer';
 import { OverFlowHiddenRow } from './StyledComponents';
 import { BREADCRUMB_ROW_HEIGHT, LIST_ITEM_HEIGHT_COMPACT, ROOTS } from '../../constants';
-import { Crumb, NodeListItemType } from '../../types/common';
-import {
-	GetPathDocument,
-	GetPathQuery,
-	GetPathQueryVariables,
-	Node
-} from '../../types/graphql/types';
-import { OneOrMany } from '../../types/utils';
+import { Crumb, Node } from '../../types/common';
+import { GetPathDocument, GetPathQuery, GetPathQueryVariables } from '../../types/graphql/types';
 import { canBeWriteNodeDestination } from '../../utils/ActionsFactory';
 import { buildCrumbs, cssCalcBuilder } from '../../utils/utils';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
 
-interface ModalListProps {
+type NodeItem = CompactListContentProps['nodes'][number];
+
+export interface ModalListProps<TNode extends NodeItem = NodeItem> {
 	folderId: string;
-	nodes: Array<NodeListItemType>;
-	activeNodes?: OneOrMany<string>;
-	setActiveNode: (node: NodeListItemType, event: React.SyntheticEvent) => void;
+	nodes: CompactListContentProps<TNode>['nodes'];
+	activeNodes: CompactListContentProps<TNode>['activeNodes'];
+	setActiveNode: CompactListContentProps<TNode>['setActiveNode'];
 	loadMore: () => void;
 	hasMore: boolean;
-	navigateTo: (id: string, event?: React.SyntheticEvent | Event) => void;
+	navigateTo: NonNullable<CompactListContentProps<TNode>['navigateTo']>;
 	loading: boolean;
 	writingFile?: boolean;
 	writingFolder?: boolean;
@@ -49,7 +45,7 @@ const ModalContainer = styled(Container)`
 	flex: 1 1 auto;
 `;
 
-export const ModalList = ({
+export const ModalList = <TNode extends NodeItem = NodeItem>({
 	folderId,
 	nodes,
 	activeNodes,
@@ -62,7 +58,7 @@ export const ModalList = ({
 	writingFolder = false,
 	limitNavigation = false,
 	allowRootNavigation = false
-}: ModalListProps): React.JSX.Element => {
+}: ModalListProps<TNode>): React.JSX.Element => {
 	const [t] = useTranslation();
 	const listRef = useRef<HTMLDivElement | null>(null);
 
@@ -102,7 +98,7 @@ export const ModalList = ({
 		const validParents = limitNavigation
 			? takeRightWhile(
 					pathData?.getPath,
-					(parent: Pick<Node, 'id' | 'name' | 'permissions' | 'type'> | undefined | null) =>
+					(parent: Node<'id' | 'name' | 'permissions' | 'type'> | undefined | null) =>
 						// TODO: it might be convenient to move this check in parent component through the checkDisabled function
 						parent && canBeWriteNodeDestination(parent, writingFile, writingFolder)
 				)

@@ -79,7 +79,6 @@ export function useTrashNodesMutation(): TrashNodesType {
 					node_ids: nodesIds
 				},
 				optimisticResponse: {
-					__typename: 'Mutation',
 					trashNodes: nodesIds
 				},
 				update(cache, { data }) {

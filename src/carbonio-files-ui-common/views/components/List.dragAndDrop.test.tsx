@@ -30,7 +30,6 @@ import {
 	selectNodes,
 	setup
 } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { File as FilesFile, Folder, GetChildrenDocument, Maybe } from '../../types/graphql/types';
 import {
@@ -214,7 +213,14 @@ describe('List', () => {
 				currentFolder.permissions.can_write_file = true;
 				const destinationFile = populateFile();
 				destinationFile.permissions.can_write_file = true;
-				destinationFile.parent = { ...currentFolder, children: { nodes: [] } } as Folder;
+				destinationFile.parent = {
+					...currentFolder,
+					children: {
+						nodes: [],
+						__typename: 'NodePage',
+						page_token: null
+					}
+				} satisfies Folder;
 				currentFolder.children.nodes.push(destinationFile);
 				const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 				uploadedFiles.forEach((file) => {
@@ -240,7 +246,7 @@ describe('List', () => {
 
 				setup(
 					<List
-						nodes={currentFolder.children.nodes as Node[]}
+						nodes={currentFolder.children.nodes as (FilesFile | Folder)[]}
 						mainList
 						emptyListMessage={'Empty list'}
 						folderId={currentFolder.id}
