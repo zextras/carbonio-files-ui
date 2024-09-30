@@ -206,7 +206,7 @@ const FilterView: React.VFC = () => {
 	]);
 
 	const displayerPlaceholdersKey = useMemo(() => {
-		const filterKey = filterParam && filterParam.includes('Trash') ? 'trash' : filterParam;
+		const filterKey = filterParam?.includes('Trash') ? 'trash' : filterParam;
 		return `displayer.filter.${filterKey}`;
 	}, [filterParam]);
 
@@ -374,7 +374,7 @@ const FilterView: React.VFC = () => {
 			<Snackbar
 				open={showUploadSnackbar}
 				onClose={closeUploadSnackbar}
-				type="info"
+				severity="info"
 				label={t('uploads.destination.home', "Upload occurred in Files' Home")}
 				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
 				onActionClick={uploadSnackbarAction}

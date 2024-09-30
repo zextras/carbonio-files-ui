@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { useReactiveVar } from '@apollo/client';
 import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
-import { debounce, includes, isEmpty, some } from 'lodash';
+import { includes, some, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { useTheme } from 'styled-components';
@@ -89,7 +89,7 @@ export const NodeListItem = ({
 	selectionContextualMenuActionsItems
 }: NodeListItemProps): React.JSX.Element => {
 	const { viewMode } = useContext(ListContext);
-	const { me, locale } = useUserInfo();
+	const { locale } = useUserInfo();
 
 	const params = useParams<URLParams>();
 	const isATrashFilter = useMemo(() => isTrashView(params), [params]);
@@ -99,13 +99,16 @@ export const NodeListItem = ({
 	const draggedItems = useReactiveVar(draggedItemsVar);
 
 	const [dragging, isDragged] = useMemo(
-		() => [!isEmpty(draggedItems), !!draggedItems && some(draggedItems, ['id', node.id])],
+		() => [
+			!!draggedItems && draggedItems.length > 0,
+			!!draggedItems?.some((item) => item.id === node.id)
+		],
 		[draggedItems, node]
 	);
 	const [t] = useTranslation();
 	const theme = useTheme();
 
-	const props = nodeToNodeListItemUIProps(node, t, me);
+	const props = nodeToNodeListItemUIProps(node, t);
 
 	const mimeType = useMemo(() => (isFile(node) && node.mime_type) || undefined, [node]);
 	const size = useMemo(() => (isFile(node) && node.size) || undefined, [node]);
@@ -188,11 +191,10 @@ export const NodeListItem = ({
 			getAllPermittedActions(
 				[node],
 				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				me,
 				canUsePreview,
 				canUseDocs
 			),
-		[canUseDocs, canUsePreview, me, node]
+		[canUseDocs, canUsePreview, node]
 	);
 
 	const openNode = useCallback(() => {
@@ -405,14 +407,14 @@ export const NodeListItem = ({
 
 	const dragMoveHandler = useCallback(() => {
 		const draggedNodes = draggedItemsVar();
-		if (draggedNodes && draggedNodes.length > 0 && canBeMoveDestination(node, draggedNodes, me)) {
+		if (draggedNodes && draggedNodes.length > 0 && canBeMoveDestination(node, draggedNodes)) {
 			navigationTimerRef.current = setTimeout(() => {
 				navigateToFolder(node.id);
 			}, TIMERS.DRAG_NAVIGATION_TRIGGER);
 			return true;
 		}
 		return false;
-	}, [me, navigateToFolder, node]);
+	}, [navigateToFolder, node]);
 
 	const dragUploadHandler = useCallback(() => {
 		navigationTimerRef.current = setTimeout(() => {

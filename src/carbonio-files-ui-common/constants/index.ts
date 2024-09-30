@@ -31,14 +31,14 @@ export const DISPLAYER_TABS = {
 	sharing: 'sharing',
 	versioning: 'versioning'
 } as const;
-export const ROOTS: RootsType = {
+export const ROOTS = {
 	ENTRY_POINT: 'ROOTS_ENTRY_POINT',
 	LOCAL_ROOT: 'LOCAL_ROOT',
 	TRASH: 'TRASH_ROOT',
 	TRASH_MY_ELEMENTS: 'TRASH_ROOT_MY_ELEMENTS',
 	TRASH_SHARED_ELEMENTS: 'TRASH_ROOT_SHARED_ELEMENTS',
 	SHARED_WITH_ME: 'SHARED_WITH_ME_ROOT'
-} as const;
+} as const satisfies RootsType;
 export const DRAG_TYPES = {
 	upload: 'Files',
 	move: 'files-drag-move',

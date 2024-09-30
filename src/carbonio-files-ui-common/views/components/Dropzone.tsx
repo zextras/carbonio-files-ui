@@ -96,7 +96,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 					event.dataTransfer.dropEffect = disabled ? 'none' : effect;
 					event.dataTransfer.effectAllowed = disabled ? 'none' : effect;
 					throttledDragOverHandler();
-					onDragOver && onDragOver(event);
+					onDragOver?.(event);
 					event.preventDefault();
 				} else if (showDropzoneTimer.current) {
 					hideDropzone();
@@ -116,7 +116,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 					showDropzoneTimer.current = setTimeout(() => {
 						setDragging(true);
 					}, TIMERS.SHOW_DROPZONE);
-					onDragEnter && onDragEnter(event);
+					onDragEnter?.(event);
 					event.preventDefault();
 				} else if (showDropzoneTimer.current) {
 					hideDropzone();
@@ -128,7 +128,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 
 	const dragLeaveAction = useCallback(
 		(event: DragEvent | React.DragEvent<HTMLElement>) => {
-			onDragLeave && onDragLeave(event);
+			onDragLeave?.(event);
 			hideDropzone();
 		},
 		[hideDropzone, onDragLeave]
@@ -138,7 +138,9 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 		(event) => {
 			if (intersection(event.dataTransfer.types, types).length > 0) {
 				event.preventDefault();
-				const leavingNode = !event.currentTarget.contains(event.relatedTarget as Node | null);
+				const leavingNode = !(
+					event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget)
+				);
 				if (leavingNode) {
 					dragLeaveAction(event);
 				}
@@ -152,7 +154,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 			if (!event.defaultPrevented && intersection(event.dataTransfer.types, types).length > 0) {
 				event.preventDefault();
 				hideDropzone();
-				onDrop && onDrop(event);
+				onDrop?.(event);
 			}
 		},
 		[hideDropzone, onDrop, types]
@@ -162,7 +164,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
 		(event: DragEvent) => {
 			if (
 				!hideDropzoneTimer.current &&
-				!dropzoneRef.current?.contains(event.target as Node | null)
+				!(event.target instanceof Node && dropzoneRef.current?.contains(event.target))
 			) {
 				hideDropzoneTimer.current = setTimeout(() => {
 					dragLeaveAction(event);

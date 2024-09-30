@@ -15,7 +15,6 @@ import { DefaultTheme, useTheme } from 'styled-components';
 import { useMoveNodesMutation } from './graphql/mutations/useMoveNodesMutation';
 import { useUpload } from './useUpload';
 import { useNavigation } from '../../hooks/useNavigation';
-import { useUserInfo } from '../../hooks/useUserInfo';
 import { draggedItemsVar } from '../apollo/dragAndDropVar';
 import { selectionModeVar } from '../apollo/selectionVar';
 import { DRAG_TYPES, TIMERS } from '../constants';
@@ -48,7 +47,6 @@ export function useDroppableCrumbs(
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const dropdownListRef = useRef<HTMLDivElement>(null);
 	const apolloClient = useApolloClient();
-	const { me } = useUserInfo();
 	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
 	const { add } = useUpload();
 	const createSnackbar = useSnackbar();
@@ -113,7 +111,7 @@ export function useDroppableCrumbs(
 				// (current folder/parent cannot trigger navigation nor be destination of the move)
 				if (crumb.id !== currentFolderId || parents.length !== 1 || parents[0] !== crumb.id) {
 					const node = getNodeFromCrumb(crumb);
-					const validDestination = node && canBeMoveDestination(node, draggedNodes, me);
+					const validDestination = node && canBeMoveDestination(node, draggedNodes);
 					setDropzoneActive(validDestination ? 'primary' : 'secondary', event.currentTarget, theme);
 					event.dataTransfer.dropEffect = 'move';
 					if (validDestination && !actionTimer.current) {
@@ -127,7 +125,7 @@ export function useDroppableCrumbs(
 				}
 			}
 		},
-		[currentFolderId, getNodeFromCrumb, me, theme]
+		[currentFolderId, getNodeFromCrumb, theme]
 	);
 
 	const dragUploadHandler = useCallback(
@@ -203,14 +201,14 @@ export function useDroppableCrumbs(
 				(node.id !== currentFolderId || parents.length !== 1 || parents[0] !== node.id) &&
 				isFolder(node) &&
 				!isEmpty(movingNodes) &&
-				canBeMoveDestination(node, movingNodes, me)
+				canBeMoveDestination(node, movingNodes)
 			) {
 				moveNodesMutation(node, ...movingNodes).then(() => {
 					selectionModeVar(false);
 				});
 			}
 		},
-		[currentFolderId, me, moveNodesMutation]
+		[currentFolderId, moveNodesMutation]
 	);
 
 	const uploadAction = useCallback(
