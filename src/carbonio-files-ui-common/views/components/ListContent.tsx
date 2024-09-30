@@ -7,19 +7,18 @@
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
-import { forEach, filter, includes } from 'lodash';
 import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
 import { NodeListItem } from './NodeListItem';
 import { NodeListItemDragImage } from './NodeListItemDragImage';
 import { GridItem } from './StyledComponents';
-import { useUserInfo } from '../../../hooks/useUserInfo';
+import { VirtualizedNodeListItem } from './VirtualizedNodeListItem';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, GRID_ITEM_MIN_WIDTH, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
 import { ListContext } from '../../contexts';
 import { Action, NodeListItemType } from '../../types/common';
-import { ActionsFactoryCheckerMap, getPermittedActions } from '../../utils/ActionsFactory';
+import { getPermittedActions } from '../../utils/ActionsFactory';
 import { cssCalcBuilder } from '../../utils/utils';
 
 const DragImageContainer = styled.div<{ $isGrid: boolean }>`
@@ -56,7 +55,6 @@ interface ListContentProps {
 	exitSelectionMode: () => void;
 	hasMore?: boolean;
 	loadMore?: () => void;
-	customCheckers?: ActionsFactoryCheckerMap;
 	selectionContextualMenuActionsItems?: DSAction[];
 	fillerWithActions?: React.JSX.Element;
 }
@@ -69,15 +67,13 @@ export const ListContent = ({
 	exitSelectionMode,
 	hasMore = false,
 	loadMore = (): void => undefined,
-	customCheckers,
 	selectionContextualMenuActionsItems,
 	fillerWithActions
 }: ListContentProps): React.JSX.Element => {
 	const { viewMode } = useContext(ListContext);
+	const listRef = useRef<HTMLDivElement>(null);
 
 	const dragImageRef = useRef<HTMLDivElement>(null);
-
-	const { me } = useUserInfo();
 
 	const [dragImage, setDragImage] = useState<React.JSX.Element[]>([]);
 
@@ -86,21 +82,17 @@ export const ListContent = ({
 	>(
 		(node) =>
 			(event): void => {
-				forEach(DRAG_TYPES, (dragType) => event.dataTransfer.clearData(dragType));
+				Object.values(DRAG_TYPES).forEach((dragType) => event.dataTransfer.clearData(dragType));
 				const nodesToDrag: NodeListItemType[] = [];
 				if (isSelectionModeActive) {
-					nodesToDrag.push(...filter(nodes, ({ id }) => !!selectedMap[id]));
+					nodesToDrag.push(...nodes.filter(({ id }) => selectedMap[id]));
 				} else {
 					nodesToDrag.push(node);
 				}
-				const permittedActions = getPermittedActions(
-					nodesToDrag,
-					[Action.Move, Action.MoveToTrash],
-					me,
-					undefined,
-					undefined,
-					customCheckers
-				);
+				const permittedActions = getPermittedActions(nodesToDrag, [
+					Action.Move,
+					Action.MoveToTrash
+				]);
 
 				const draggedItemsTmp = nodesToDrag.reduce<React.JSX.Element[]>(
 					(accumulator, nodeToDrag, currentIndex) => {
@@ -124,16 +116,26 @@ export const ListContent = ({
 				);
 
 				setDragImage(draggedItemsTmp);
-				dragImageRef.current && event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
+				if (dragImageRef.current) {
+					event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
+				}
+
 				draggedItemsVar(nodesToDrag);
-				if (includes(permittedActions, Action.Move)) {
-					event.dataTransfer.setData(DRAG_TYPES.move, JSON.stringify(nodesToDrag));
-				}
-				if (includes(permittedActions, Action.MoveToTrash)) {
-					event.dataTransfer.setData(DRAG_TYPES.markForDeletion, JSON.stringify(nodesToDrag));
-				}
+				event.dataTransfer.setData(
+					DRAG_TYPES.move,
+					permittedActions.includes(Action.Move)
+						? JSON.stringify(nodesToDrag)
+						: JSON.stringify(false)
+				);
+
+				event.dataTransfer.setData(
+					DRAG_TYPES.markForDeletion,
+					permittedActions.includes(Action.MoveToTrash)
+						? JSON.stringify(nodesToDrag)
+						: JSON.stringify(false)
+				);
 			},
-		[customCheckers, isSelectionModeActive, me, nodes, selectedMap]
+		[isSelectionModeActive, nodes, selectedMap]
 	);
 
 	const dragEndHandler = useCallback(() => {
@@ -155,23 +157,32 @@ export const ListContent = ({
 				);
 			}
 			accumulator.push(
-				<Draggable
-					onDragStart={dragStartHandler(node)}
-					onDragEnd={dragEndHandler}
+				// id required for scrollToNodeItem function
+				<VirtualizedNodeListItem
 					key={node.id}
-					effect="move"
+					listRef={listRef}
+					id={node.id}
+					type={node.type}
+					data-testid={'virtualized-node-list-item'}
 				>
-					<NodeListItem
-						node={node}
-						isSelected={selectedMap && selectedMap[node.id]}
-						isSelectionModeActive={isSelectionModeActive}
-						selectId={selectId}
-						exitSelectionMode={exitSelectionMode}
-						selectionContextualMenuActionsItems={
-							selectedMap && selectedMap[node.id] ? selectionContextualMenuActionsItems : undefined
-						}
-					/>
-				</Draggable>
+					<Draggable
+						onDragStart={dragStartHandler(node)}
+						onDragEnd={dragEndHandler}
+						key={node.id}
+						effect="move"
+					>
+						<NodeListItem
+							node={node}
+							isSelected={selectedMap?.[node.id]}
+							isSelectionModeActive={isSelectionModeActive}
+							selectId={selectId}
+							exitSelectionMode={exitSelectionMode}
+							selectionContextualMenuActionsItems={
+								selectedMap?.[node.id] ? selectionContextualMenuActionsItems : undefined
+							}
+						/>
+					</Draggable>
+				</VirtualizedNodeListItem>
 			);
 			return accumulator;
 		}, []);
@@ -208,6 +219,7 @@ export const ListContent = ({
 					data-testid={'main-grid'}
 					onListBottom={hasMore ? loadMore : undefined}
 					intersectionObserverInitOptions={intersectionObserverInitOptions}
+					ref={listRef}
 				>
 					{items}
 				</Grid>
@@ -219,6 +231,7 @@ export const ListContent = ({
 					background={'gray6'}
 					onListBottom={hasMore ? loadMore : undefined}
 					intersectionObserverInitOptions={intersectionObserverInitOptions}
+					ref={listRef}
 				>
 					{items}
 				</ListV2>

@@ -14,7 +14,9 @@ import { MoveNodesModalContent } from '../../views/components/MoveNodesModalCont
 import { useDestinationVarManager } from '../useDestinationVarManager';
 
 export type OpenMoveModal = (
-	nodes: Array<Pick<Node, '__typename' | 'id' | 'owner'> & GetNodeParentType>,
+	nodes: Array<
+		Pick<Node, '__typename' | 'id' | 'owner' | 'permissions' | 'rootId'> & GetNodeParentType
+	>,
 	fromFolder?: string
 ) => void;
 

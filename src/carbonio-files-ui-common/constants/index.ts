@@ -12,6 +12,7 @@ export const NODES_SORT_DEFAULT = NodeSort.NameAsc;
 export const VIEW_MODE = { grid: 'grid', list: 'list' } as const;
 export const VIEW_MODE_DEFAULT = VIEW_MODE.list;
 export const GRID_ITEM_MIN_WIDTH = '13.4375rem';
+export const GRID_ITEM_MIN_HEIGHT = '4.625rem';
 export const LIST_ITEM_HEIGHT = '4rem';
 export const LIST_ITEM_HEIGHT_COMPACT = '3.25rem';
 export const LIST_ITEM_HEIGHT_DETAILS = '3.25rem';
@@ -30,14 +31,14 @@ export const DISPLAYER_TABS = {
 	sharing: 'sharing',
 	versioning: 'versioning'
 } as const;
-export const ROOTS: RootsType = {
+export const ROOTS = {
 	ENTRY_POINT: 'ROOTS_ENTRY_POINT',
 	LOCAL_ROOT: 'LOCAL_ROOT',
 	TRASH: 'TRASH_ROOT',
 	TRASH_MY_ELEMENTS: 'TRASH_ROOT_MY_ELEMENTS',
 	TRASH_SHARED_ELEMENTS: 'TRASH_ROOT_SHARED_ELEMENTS',
 	SHARED_WITH_ME: 'SHARED_WITH_ME_ROOT'
-} as const;
+} as const satisfies RootsType;
 export const DRAG_TYPES = {
 	upload: 'Files',
 	move: 'files-drag-move',

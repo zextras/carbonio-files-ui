@@ -14,6 +14,8 @@ import { selectNodes, setup, screen } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('List', () => {
 	describe('Badge', () => {
 		test('should render the list header with the badge with the number of selected items', async () => {

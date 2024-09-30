@@ -14,6 +14,7 @@ import { TFunction } from 'i18next';
 import { chain, findIndex, forEach, isEmpty, map, reduce, toLower, trim } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
+import { getUserAccount } from '../../utils/utils';
 import {
 	DATE_FORMAT,
 	DOCS_EXTENSIONS,
@@ -766,15 +767,15 @@ export function cssCalcBuilder(
 	return `calc(${operationsString})`;
 }
 
-export function isFile(
-	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
-): node is File & MakeRequiredNonNull<File, '__typename'> {
+export function isFile<TNode extends { __typename?: string }>(
+	node: TNode | null | undefined
+): node is TNode & MakeRequiredNonNull<File, '__typename'> {
 	return node?.__typename === 'File';
 }
 
-export function isFolder(
-	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
-): node is Folder & MakeRequiredNonNull<Folder, '__typename'> {
+export function isFolder<TNode extends { __typename?: string }>(
+	node: TNode | null | undefined
+): node is TNode & MakeRequiredNonNull<Folder, '__typename'> {
 	return node?.__typename === 'Folder';
 }
 
@@ -822,8 +823,7 @@ export function nodeToNodeListItemUIProps(
 		| '__typename'
 	> &
 		(Pick<{ __typename: 'File' } & NodeListItemType, 'size' | 'extension'> | Record<never, never>),
-	t: TFunction,
-	me: string
+	t: TFunction
 ): Pick<
 	NodeListItemUIProps,
 	| 'id'
@@ -836,6 +836,7 @@ export function nodeToNodeListItemUIProps(
 	| 'size'
 	| 'trashed'
 > {
+	const me = getUserAccount().id;
 	return {
 		id: node.id,
 		name: node.name,

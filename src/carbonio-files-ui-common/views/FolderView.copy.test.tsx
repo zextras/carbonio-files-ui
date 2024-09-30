@@ -44,6 +44,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Copy', () => {
 	describe('Selection mode', () => {
 		test('Copy is enabled when multiple files are selected', async () => {

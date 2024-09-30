@@ -31,6 +31,10 @@ import {
 import { UPDATE_VIEW_EVENT } from '../constants';
 import server from '../mocks/server';
 
+jest.mock<typeof import('../carbonio-files-ui-common/views/components/VirtualizedNodeListItem')>(
+	'../carbonio-files-ui-common/views/components/VirtualizedNodeListItem'
+);
+
 describe('AppView', () => {
 	describe('on update view', () => {
 		it('should show new child ', async () => {

@@ -41,6 +41,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 function clickOnCreateFolderAction(createOptions: CreateOption[]): void {
 	const createFolder = createOptions.find((option) => option.id === ACTION_IDS.CREATE_FOLDER);
 	act(() => {

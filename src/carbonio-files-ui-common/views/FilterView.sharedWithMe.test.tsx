@@ -32,6 +32,10 @@ import {
 	mockGetLinks
 } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter view', () => {
 	describe('Shared With Me filter', () => {
 		it('should show sorting component', async () => {

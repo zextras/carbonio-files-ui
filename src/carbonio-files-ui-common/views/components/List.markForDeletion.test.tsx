@@ -13,6 +13,8 @@ import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtil
 import { setup, selectNodes, screen, within } from '../../tests/utils';
 import { Node } from '../../types/common';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('Mark for deletion - trash', () => {
 	describe('Selection mode', () => {
 		test('Mark for deletion is visible and not disabled when more than one file is selected', async () => {

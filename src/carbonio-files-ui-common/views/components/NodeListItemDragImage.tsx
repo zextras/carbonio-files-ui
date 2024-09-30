@@ -29,14 +29,14 @@ import {
 export const NodeListItemDragImage = ({ node }: { node: NodeListItemType }): React.JSX.Element => {
 	const { viewMode } = useContext(ListContext);
 
-	const { me, locale } = useUserInfo();
+	const { locale } = useUserInfo();
 
 	const [t] = useTranslation();
 	const location = useLocation();
 
 	const theme = useTheme();
 	const mimeType = (isFile(node) && node.mime_type) || undefined;
-	const props = nodeToNodeListItemUIProps(node, t, me);
+	const props = nodeToNodeListItemUIProps(node, t);
 
 	return viewMode === VIEW_MODE.grid ? (
 		<NodeGridItemUI

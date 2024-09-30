@@ -11,6 +11,8 @@ import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtil
 import { setup, selectNodes, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('Move', () => {
 	describe('Selection mode', () => {
 		test('Move is hidden if node has not permissions', async () => {

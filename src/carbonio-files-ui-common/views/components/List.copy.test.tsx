@@ -16,6 +16,8 @@ import { generateError, screen, setup, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockErrorResolver, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('Copy', () => {
 	describe('Failure for over quota', () => {
 		it('should render the snackbar if the copy operation fails', async () => {

@@ -44,6 +44,8 @@ function prepareCache(folder: Folder): void {
 	});
 }
 
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+
 describe('List', () => {
 	describe('docs actions', () => {
 		describe('selection mode', () => {
