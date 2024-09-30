@@ -9,7 +9,14 @@ import React, { useCallback } from 'react';
 import { useSnackbar, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { DOCS_ENDPOINT, HTTP_STATUS_CODE, OPEN_FILE_PATH } from '../constants';
+import { useTracker } from '../../hooks/useTracker';
+import {
+	DOCS_ENDPOINT,
+	FILES_APP_ID,
+	HTTP_STATUS_CODE,
+	OPEN_FILE_PATH,
+	TRACKER_EVENT
+} from '../constants';
 
 export type OpenWithDocsResponse = { fileOpenUrl: string };
 
@@ -28,6 +35,7 @@ type OpenWithDocsFn = (id: string, version?: number) => Promise<void>;
 export const useOpenWithDocs = (): OpenWithDocsFn => {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
+	const { capture } = useTracker();
 	return useCallback(
 		async (id, version) => {
 			try {
@@ -42,6 +50,7 @@ export const useOpenWithDocs = (): OpenWithDocsFn => {
 						}
 					}
 				);
+				capture(TRACKER_EVENT.openDocumentWithDocs, { app: FILES_APP_ID, success: response.ok });
 				if (!response.ok) {
 					if (response.status === HTTP_STATUS_CODE.docsFileSizeExceeded) {
 						createSnackbar({
@@ -84,6 +93,6 @@ export const useOpenWithDocs = (): OpenWithDocsFn => {
 				});
 			}
 		},
-		[createSnackbar, t]
+		[capture, createSnackbar, t]
 	);
 };
