@@ -341,10 +341,6 @@ export const List: React.VFC<ListProps> = ({
 				if (!isFile(node)) {
 					return accumulator;
 				}
-				const [$isSupportedByPreview, documentType] = isSupportedByPreview(
-					node.mime_type,
-					'preview'
-				);
 				const item = {
 					filename: node.name,
 					extension: node.extension ?? undefined,
@@ -355,7 +351,6 @@ export const List: React.VFC<ListProps> = ({
 						icon: 'ArrowBackOutline',
 						tooltipLabel: t('preview.close.tooltip', 'Close')
 					},
-					src: getPreviewSrc(node, documentType),
 					id: node.id
 				};
 
@@ -373,8 +368,12 @@ export const List: React.VFC<ListProps> = ({
 							'This video cannot be played. Try to reproduce it using another browser'
 						)
 					});
+					return accumulator;
 				}
-
+				const [$isSupportedByPreview, documentType] = isSupportedByPreview(
+					node.mime_type,
+					'preview'
+				);
 				if (!$isSupportedByPreview) {
 					return accumulator;
 				}
@@ -382,11 +381,13 @@ export const List: React.VFC<ListProps> = ({
 				if (documentType === PREVIEW_TYPE.IMAGE) {
 					accumulator.push({
 						...item,
+						src: getPreviewSrc(node, documentType),
 						previewType: 'image'
 					});
 				} else {
 					accumulator.push({
 						...item,
+						src: getPreviewSrc(node, documentType),
 						forceCache: false,
 						previewType: 'pdf',
 						useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE

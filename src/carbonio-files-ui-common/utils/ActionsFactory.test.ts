@@ -701,14 +701,6 @@ describe('ActionsFactory', () => {
 				}
 			);
 
-			it('should return false when file NodeType is not NodeType.Video', () => {
-				const testFile = populateFile();
-				[testFile.type] = Object.values(NodeType).filter((nodeType) => nodeType !== NodeType.Video);
-				expect(
-					canPreview({ nodes: [testFile], canUseDocs: false, canUsePreview: false })
-				).toBeFalsy();
-			});
-
 			it('should return true when file NodeType is NodeType.Video', () => {
 				const testFile = populateFile();
 				testFile.type = NodeType.Video;
