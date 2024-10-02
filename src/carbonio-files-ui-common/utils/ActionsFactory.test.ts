@@ -466,7 +466,7 @@ describe('ActionsFactory', () => {
 			expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: true })).toBeTruthy();
 		});
 
-		it(' return false when canUseDocs is false and others criteria are valid', () => {
+		it('should return false when canUseDocs is false and others criteria are valid', () => {
 			const testFile: File = populateFile();
 			[testFile.mime_type] = docsHandledMimeTypes;
 			expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: false })).toBeFalsy();
