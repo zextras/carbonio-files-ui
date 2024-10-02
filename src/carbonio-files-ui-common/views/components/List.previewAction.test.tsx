@@ -80,6 +80,48 @@ describe('List', () => {
 				expect(screen.getByText(ACTION_REGEXP.preview)).toBeVisible();
 			});
 
+			it('should show preview action if preview is not available but NodeType is video', async () => {
+				healthCache.reset();
+				server.use(
+					http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+						HttpResponse.json({ dependencies: [{ name: PREVIEW_SERVICE_NAME, live: false }] })
+					)
+				);
+				const currentFolder = populateFolder(0);
+				currentFolder.permissions.can_write_file = false;
+				currentFolder.permissions.can_write_folder = false;
+				const node = populateFile();
+				node.permissions.can_write_file = true;
+				node.parent = currentFolder;
+				node.owner = currentFolder.owner as User;
+				node.type = NodeType.Video;
+				node.mime_type = 'video/mp4';
+				currentFolder.children = populateNodePage([node]);
+				prepareCache(currentFolder);
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder])
+					}
+				} satisfies Partial<Resolvers>;
+
+				const { user } = setup(
+					<List
+						folderId={currentFolder.id}
+						fillerWithActions={<EmptySpaceFiller actions={[]} />}
+						nodes={currentFolder.children.nodes as Array<Node>}
+						mainList
+						emptyListMessage={'hint'}
+					/>,
+					{ mocks }
+				);
+
+				await screen.findByTextWithMarkup(currentFolder.name);
+				await selectNodes([node.id], user);
+				await user.rightClick(screen.getByText(node.name));
+				await screen.findByTestId(SELECTORS.dropdownList);
+				expect(screen.getByText(ACTION_REGEXP.preview)).toBeVisible();
+			});
+
 			it('should not show preview action if preview is not available', async () => {
 				healthCache.reset();
 				server.use(
@@ -142,6 +184,47 @@ describe('List', () => {
 				node.owner = currentFolder.owner as User;
 				node.type = NodeType.Text;
 				node.mime_type = 'application/pdf';
+				currentFolder.children = populateNodePage([node]);
+				prepareCache(currentFolder);
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder])
+					}
+				} satisfies Partial<Resolvers>;
+
+				const { user } = setup(
+					<List
+						folderId={currentFolder.id}
+						fillerWithActions={<EmptySpaceFiller actions={[]} />}
+						nodes={currentFolder.children.nodes as Array<Node>}
+						mainList
+						emptyListMessage={'hint'}
+					/>,
+					{ mocks }
+				);
+
+				await screen.findByTextWithMarkup(currentFolder.name);
+				await user.rightClick(screen.getByText(node.name));
+				await screen.findByTestId(SELECTORS.dropdownList);
+				expect(screen.getByText(ACTION_REGEXP.preview)).toBeVisible();
+			});
+
+			it('should show preview action if preview is not available but NodeType is video', async () => {
+				healthCache.reset();
+				server.use(
+					http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+						HttpResponse.json({ dependencies: [{ name: PREVIEW_SERVICE_NAME, live: false }] })
+					)
+				);
+				const currentFolder = populateFolder(0);
+				currentFolder.permissions.can_write_file = true;
+				currentFolder.permissions.can_write_folder = true;
+				const node = populateFile();
+				node.permissions.can_write_file = true;
+				node.parent = currentFolder;
+				node.owner = currentFolder.owner as User;
+				node.type = NodeType.Video;
+				node.mime_type = 'video/mp4';
 				currentFolder.children = populateNodePage([node]);
 				prepareCache(currentFolder);
 				const mocks = {
