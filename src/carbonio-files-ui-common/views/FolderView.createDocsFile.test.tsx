@@ -12,7 +12,7 @@ import { http, HttpResponse } from 'msw';
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import { CreateOption } from '../../hooks/useCreateOptions';
+import { CreateOption, NewAction } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
 	CREATE_FILE_PATH,
@@ -67,10 +67,9 @@ function clickOnCreateDocsAction(
 	>],
 	subType: 'libre' | 'ms' = 'libre'
 ): void {
-	const createDocsDocument = createOptions
-		.find((option) => option.id === type)
-		?.action(undefined)
-		.items?.find((subOption) => subOption.id === `${type}-${subType}`);
+	const createDocsDocument = (
+		createOptions.find((option) => option.id === type)?.action(undefined) as NewAction
+	).items?.find((subOption) => subOption.id === `${type}-${subType}`);
 	expect(createDocsDocument).toBeDefined();
 	act(() => {
 		createDocsDocument?.onClick?.(new KeyboardEvent('keyup'));

@@ -15,7 +15,8 @@ import {
 	registerActions,
 	ACTION_TYPES,
 	SecondaryBarComponentProps,
-	SearchViewProps
+	SearchViewProps,
+	NewAction
 } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -99,6 +100,19 @@ export default function App(): React.JSX.Element {
 		inputElement.onchange = inputElementOnchange;
 	}, [inputElementOnchange]);
 
+	const newAction: NewAction = useMemo(
+		() => ({
+			id: 'upload-file',
+			label: t('create.options.new.upload', 'Upload'),
+			icon: 'CloudUploadOutline',
+			execute: uploadClick,
+			disabled: false,
+			primary: true,
+			group: FILES_APP_ID
+		}),
+		[t, uploadClick]
+	);
+
 	useEffect(() => {
 		addRoute({
 			route: FILES_ROUTE,
@@ -114,20 +128,12 @@ export default function App(): React.JSX.Element {
 			component: SearchView,
 			label: t('label.app_name', 'Files')
 		});
-		registerActions({
-			action: () => ({
-				id: 'upload-file',
-				label: t('create.options.new.upload', 'Upload'),
-				icon: 'CloudUploadOutline',
-				onClick: uploadClick,
-				disabled: false,
-				primary: true,
-				group: FILES_APP_ID
-			}),
+		registerActions<NewAction>({
+			action: () => newAction,
 			id: 'upload-file',
 			type: ACTION_TYPES.NEW
 		});
-	}, [uploadClick, t]);
+	}, [t, newAction]);
 
 	const apolloClient = useMemo(() => buildClient(), []);
 

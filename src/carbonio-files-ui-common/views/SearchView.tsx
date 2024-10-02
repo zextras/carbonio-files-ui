@@ -14,7 +14,7 @@ import { Displayer } from './components/Displayer';
 import { SearchList } from './components/SearchList';
 import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
-import { useCreateOptions } from '../../hooks/useCreateOptions';
+import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
 import { FILES_APP_ID, ROOTS, VIEW_MODE } from '../constants';
 import { ListContext } from '../contexts';
@@ -62,7 +62,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 	const { canUseDocs } = useHealthInfo();
 
 	useEffect(() => {
-		setCreateOptions(
+		setCreateOptions<NewAction>(
 			{
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
@@ -72,7 +72,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 					group: FILES_APP_ID,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					onClick: (event): void => {
+					execute: (event): void => {
 						event && event.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
@@ -89,7 +89,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 					label: t('create.options.new.folder', 'New folder'),
 					icon: 'FolderOutline',
 					disabled: true,
-					onClick: noop
+					execute: noop
 				})
 			},
 			...(canUseDocs
@@ -103,18 +103,16 @@ export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 								label: t('create.options.new.document', 'New document'),
 								icon: 'FileTextOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -129,18 +127,16 @@ export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 								label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 								icon: 'FileCalcOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -155,18 +151,16 @@ export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 								label: t('create.options.new.presentation', 'New presentation'),
 								icon: 'FilePresentationOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-										onClick: noop,
 										disabled: true
 									}
 								]

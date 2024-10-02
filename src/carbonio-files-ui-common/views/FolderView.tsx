@@ -7,11 +7,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Text } from '@zextras/carbonio-design-system';
-import { filter, map } from 'lodash';
+import { filter, map, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import { ContextualMenuProps } from './components/ContextualMenu';
 import { Displayer } from './components/Displayer';
 import { EmptySpaceFiller } from './components/EmptySpaceFiller';
 import { List } from './components/List';
@@ -20,7 +19,7 @@ import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
-import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
+import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
 import { DOCS_EXTENSIONS, FILES_APP_ID, ROOTS } from '../constants';
 import { ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
@@ -179,19 +178,20 @@ const FolderView = (): React.JSX.Element => {
 
 	const { canUseDocs } = useHealthInfo();
 
-	const actions = useMemo(
-		(): ContextualMenuProps['actions'] => [
+	const actions = useMemo<NewAction[]>(
+		() => [
 			{
 				id: ACTION_IDS.CREATE_FOLDER,
 				label: t('create.options.new.folder', 'New folder'),
 				icon: 'FolderOutline',
-				onClick: createFolderAction,
+				execute: createFolderAction,
 				disabled: !isCanCreateFolder
 			},
 			...(canUseDocs
 				? [
 						{
 							id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
+							execute: noop,
 							label: t('create.options.new.document', 'New document'),
 							icon: 'FileTextOutline',
 							disabled: !isCanCreateFile,
@@ -212,6 +212,7 @@ const FolderView = (): React.JSX.Element => {
 						},
 						{
 							id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
+							execute: noop,
 							label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 							icon: 'FileCalcOutline',
 							disabled: !isCanCreateFile,
@@ -232,6 +233,7 @@ const FolderView = (): React.JSX.Element => {
 						},
 						{
 							id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
+							execute: noop,
 							label: t('create.options.new.presentation', 'New presentation'),
 							icon: 'FilePresentationOutline',
 							disabled: !isCanCreateFile,
@@ -257,19 +259,16 @@ const FolderView = (): React.JSX.Element => {
 	);
 
 	useEffect(() => {
-		const createActions = map<ContextualMenuProps['actions'][number], CreateOption>(
-			actions,
-			(action) => ({
-				type: ACTION_TYPES.NEW,
-				id: action.id,
-				action: () => ({
-					group: FILES_APP_ID,
-					...action
-				})
+		const createActions = map(actions, (action) => ({
+			type: ACTION_TYPES.NEW,
+			id: action.id,
+			action: () => ({
+				group: FILES_APP_ID,
+				...action
 			})
-		);
+		}));
 
-		setCreateOptions(
+		setCreateOptions<NewAction>(
 			{
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
@@ -279,7 +278,7 @@ const FolderView = (): React.JSX.Element => {
 					group: FILES_APP_ID,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					onClick: (event: React.SyntheticEvent | KeyboardEvent): void => {
+					execute: (event: React.SyntheticEvent | KeyboardEvent): void => {
 						event && event.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
