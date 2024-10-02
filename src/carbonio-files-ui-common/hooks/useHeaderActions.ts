@@ -42,7 +42,9 @@ export function useHeaderActions(): (node: File) => Array<HeaderAction> {
 				actions.unshift({
 					icon: 'Edit2Outline',
 					id: 'Edit',
-					onClick: (): Promise<void> => openNodeWithDocs(node.id),
+					onClick: (): void => {
+						openNodeWithDocs(node.id);
+					},
 					tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
 				});
 			} else if (canOpenWithDocs({ nodes: [node], canUseDocs })) {
@@ -50,7 +52,9 @@ export function useHeaderActions(): (node: File) => Array<HeaderAction> {
 					id: 'OpenWithDocs',
 					icon: 'BookOpenOutline',
 					tooltipLabel: t('actions.openWithDocs', 'Open document'),
-					onClick: (): Promise<void> => openNodeWithDocs(node.id)
+					onClick: (): void => {
+						openNodeWithDocs(node.id);
+					},
 				});
 			}
 			return actions;
