@@ -51,6 +51,37 @@ describe('Displayer Actions', () => {
 			}
 		});
 
+		it('should show preview action if preview is not available but NodeType is video', async () => {
+			healthCache.reset();
+			server.use(
+				http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+					HttpResponse.json({ dependencies: [{ name: PREVIEW_SERVICE_NAME, live: false }] })
+				)
+			);
+			const parentFolder = populateFolder();
+			parentFolder.permissions.can_write_file = true;
+			parentFolder.permissions.can_write_folder = true;
+			const node = populateFile();
+			node.permissions.can_write_file = true;
+			node.parent = parentFolder;
+			node.owner = parentFolder.owner as User;
+			node.type = NodeType.Video;
+			node.mime_type = 'video/mp4';
+			parentFolder.children = populateNodePage([node]);
+
+			const { user } = setup(<DisplayerActions node={node} />);
+			await screen.findByTestId(SELECTORS.displayerActionsHeader);
+			await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
+			const actionButton = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.preview });
+			if (actionButton !== null) {
+				expect(actionButton).toBeVisible();
+			} else {
+				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
+				await screen.findByTestId(SELECTORS.dropdownList);
+				expect(screen.getByText(ACTION_REGEXP.preview)).toBeVisible();
+			}
+		});
+
 		it('should not show preview action if preview is not available', async () => {
 			healthCache.reset();
 			server.use(

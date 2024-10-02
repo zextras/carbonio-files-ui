@@ -12,7 +12,7 @@ import { getUserAccount } from '../../utils/utils';
 import { ROOTS } from '../constants';
 import { Action, GetNodeParentType, Node } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
-import { File as FilesFile, Folder, Permissions, Root } from '../types/graphql/types';
+import { File as FilesFile, Folder, NodeType, Permissions, Root } from '../types/graphql/types';
 import { DeepPick, MakeOptional, OneOrMany } from '../types/utils';
 
 export type ActionsFactoryNodeType = Pick<
@@ -454,9 +454,10 @@ export function canPreview({ nodes, canUseDocs, canUsePreview }: ArgsType): bool
 		'__typename' in node &&
 		isFile(node) &&
 		node.rootId !== ROOTS.TRASH &&
-		isSupportedByPreview(node.mime_type, 'preview')[0] &&
-		!!canUsePreview &&
-		(!isPreviewDependantOnDocs(node.mime_type) || !!canUseDocs)
+		((isSupportedByPreview(node.mime_type, 'preview')[0] &&
+			!!canUsePreview &&
+			(!isPreviewDependantOnDocs(node.mime_type) || !!canUseDocs)) ||
+			node.type === NodeType.Video)
 	);
 }
 

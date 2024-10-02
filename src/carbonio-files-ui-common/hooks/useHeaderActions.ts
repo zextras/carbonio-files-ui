@@ -54,7 +54,7 @@ export function useHeaderActions(): (node: File) => Array<HeaderAction> {
 					tooltipLabel: t('actions.openWithDocs', 'Open document'),
 					onClick: (): void => {
 						openNodeWithDocs(node.id);
-					},
+					}
 				});
 			}
 			return actions;

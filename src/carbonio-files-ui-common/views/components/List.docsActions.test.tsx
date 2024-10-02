@@ -297,6 +297,7 @@ describe('List', () => {
 				async (mimeType) => {
 					const file = populateFile();
 					file.mime_type = mimeType;
+					file.type = NodeType.Text;
 					file.permissions.can_write_file = true;
 
 					const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
@@ -315,6 +316,7 @@ describe('List', () => {
 				async (mimeType) => {
 					const file = populateFile();
 					file.mime_type = mimeType;
+					file.type = NodeType.Text;
 					file.permissions.can_write_file = false;
 
 					const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);

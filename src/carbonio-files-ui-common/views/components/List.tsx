@@ -21,7 +21,15 @@ import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { DISPLAYER_TABS, DRAG_TYPES, PREVIEW_MAX_SIZE, PREVIEW_TYPE, ROOTS } from '../../constants';
+import {
+	DISPLAYER_TABS,
+	DOWNLOAD_PATH,
+	DRAG_TYPES,
+	PREVIEW_MAX_SIZE,
+	PREVIEW_TYPE,
+	REST_ENDPOINT,
+	ROOTS
+} from '../../constants';
 import { ListContext, NodeAvatarIconContext } from '../../contexts';
 import {
 	DeleteNodesType,
@@ -50,7 +58,7 @@ import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { Action, Crumb, NodeListItemType } from '../../types/common';
-import { File, Folder, GetChildrenParentDocument } from '../../types/graphql/types';
+import { Folder, GetChildrenParentDocument, NodeType } from '../../types/graphql/types';
 import {
 	buildActionItems,
 	canBeMoveDestination,
@@ -295,13 +303,6 @@ export const List: React.VFC<ListProps> = ({
 				if (!isFile(node)) {
 					return accumulator;
 				}
-				const [$isSupportedByPreview, documentType] = isSupportedByPreview(
-					node.mime_type,
-					'preview'
-				);
-				if (!$isSupportedByPreview) {
-					return accumulator;
-				}
 				const item = {
 					filename: node.name,
 					extension: node.extension ?? undefined,
@@ -312,18 +313,43 @@ export const List: React.VFC<ListProps> = ({
 						icon: 'ArrowBackOutline',
 						tooltipLabel: t('preview.close.tooltip', 'Close')
 					},
-					src: getPreviewSrc(node, documentType),
 					id: node.id
 				};
+
+				if (node.type === NodeType.Video) {
+					const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(node.id)}${
+						node.version ? `/${node.version}` : ''
+					}`;
+					accumulator.push({
+						...item,
+						mimeType: node.mime_type,
+						src: url,
+						previewType: 'video',
+						errorLabel: t(
+							'preview.video.errorLabel',
+							'This video cannot be played. Try to reproduce it using another browser'
+						)
+					});
+					return accumulator;
+				}
+				const [$isSupportedByPreview, documentType] = isSupportedByPreview(
+					node.mime_type,
+					'preview'
+				);
+				if (!$isSupportedByPreview) {
+					return accumulator;
+				}
 
 				if (documentType === PREVIEW_TYPE.IMAGE) {
 					accumulator.push({
 						...item,
+						src: getPreviewSrc(node, documentType),
 						previewType: 'image'
 					});
 				} else {
 					accumulator.push({
 						...item,
+						src: getPreviewSrc(node, documentType),
 						forceCache: false,
 						previewType: 'pdf',
 						useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE
@@ -341,13 +367,13 @@ export const List: React.VFC<ListProps> = ({
 
 	const previewSelection = useCallback(() => {
 		const nodeToPreview = nodes.find((node) => node.id === selectedIDs[0]);
-		const { id, mime_type: mimeType } = nodeToPreview as File;
-		const [$isSupportedByPreview] = isSupportedByPreview(mimeType, 'preview');
-		if ($isSupportedByPreview) {
-			openPreview(id);
-		} else if (permittedSelectionModeActions.includes(Action.OpenWithDocs)) {
-			// if preview is not supported and document can be opened with docs, open editor
-			openNodeWithDocs(id);
+		if (nodeToPreview) {
+			if (permittedSelectionModeActions.includes(Action.Preview)) {
+				openPreview(nodeToPreview.id);
+			} else if (permittedSelectionModeActions.includes(Action.OpenWithDocs)) {
+				// if preview is not supported and document can be opened with docs, open editor
+				openNodeWithDocs(nodeToPreview.id);
+			}
 		}
 	}, [nodes, permittedSelectionModeActions, selectedIDs, openPreview, openNodeWithDocs]);
 
