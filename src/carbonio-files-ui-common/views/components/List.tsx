@@ -9,9 +9,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
 import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
-import { HeaderAction } from '@zextras/carbonio-ui-preview/lib/preview/Header';
 import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
-import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -54,63 +52,25 @@ import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
 import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useHeaderActions } from '../../hooks/useHeaderActions';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { Action, Crumb, NodeListItemType } from '../../types/common';
-import { File, Folder, GetChildrenParentDocument, NodeType } from '../../types/graphql/types';
+import { Folder, GetChildrenParentDocument, NodeType } from '../../types/graphql/types';
 import {
 	buildActionItems,
 	canBeMoveDestination,
-	canEdit,
-	canOpenWithDocs,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
 import { getPreviewSrc, isSupportedByPreview } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
-import { downloadNode, humanFileSize, isFile, isFolder, openNodeWithDocs } from '../../utils/utils';
+import { downloadNode, humanFileSize, isFile, isFolder } from '../../utils/utils';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};
 `;
-
-function getHeaderActions(
-	t: TFunction,
-	setActiveNode: ReturnType<typeof useActiveNode>['setActiveNode'],
-	node: File,
-	canUseDocs: boolean
-): Array<HeaderAction> {
-	const actions: Array<HeaderAction> = [
-		{
-			icon: 'ShareOutline',
-			id: 'ShareOutline',
-			tooltipLabel: t('preview.actions.tooltip.manageShares', 'Manage shares'),
-			onClick: (): void => setActiveNode(node.id, DISPLAYER_TABS.sharing)
-		},
-		{
-			icon: 'DownloadOutline',
-			tooltipLabel: t('preview.actions.tooltip.download', 'Download'),
-			id: 'DownloadOutline',
-			onClick: (): void => downloadNode(node.id)
-		}
-	];
-	if (canEdit({ nodes: [node], canUseDocs })) {
-		actions.unshift({
-			icon: 'Edit2Outline',
-			id: 'Edit',
-			onClick: (): void => openNodeWithDocs(node.id),
-			tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
-		});
-	} else if (canOpenWithDocs({ nodes: [node], canUseDocs })) {
-		actions.unshift({
-			id: 'OpenWithDocs',
-			icon: 'BookOpenOutline',
-			tooltipLabel: t('actions.openWithDocs', 'Open document'),
-			onClick: (): void => openNodeWithDocs(node.id)
-		});
-	}
-	return actions;
-}
 
 interface ListProps {
 	nodes: NodeListItemType[];
@@ -195,7 +155,7 @@ export const List: React.VFC<ListProps> = ({
 		() => nodes.filter((node) => selectedIDs.includes(node.id)),
 		[nodes, selectedIDs]
 	);
-
+	const openNodeWithDocs = useOpenWithDocs();
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
 	const permittedSelectionModeActions = useMemo(
@@ -331,9 +291,11 @@ export const List: React.VFC<ListProps> = ({
 			openNodeWithDocs(nodeToOpen.id);
 			exitSelectionMode();
 		}
-	}, [nodes, selectedIDs, exitSelectionMode]);
+	}, [nodes, selectedIDs, openNodeWithDocs, exitSelectionMode]);
 
 	const { initPreview, emptyPreview, openPreview } = useContext(PreviewsManagerContext);
+
+	const getHeaderActions = useHeaderActions();
 
 	const nodesForPreview = useMemo(
 		() =>
@@ -345,7 +307,7 @@ export const List: React.VFC<ListProps> = ({
 					filename: node.name,
 					extension: node.extension ?? undefined,
 					size: (node.size !== undefined && humanFileSize(node.size, t)) || undefined,
-					actions: getHeaderActions(t, setActiveNode, node, canUseDocs),
+					actions: getHeaderActions(node),
 					closeAction: {
 						id: 'close-action',
 						icon: 'ArrowBackOutline',
@@ -395,7 +357,7 @@ export const List: React.VFC<ListProps> = ({
 				}
 				return accumulator;
 			}, []),
-		[canUseDocs, nodes, setActiveNode, t]
+		[getHeaderActions, nodes, t]
 	);
 
 	useEffect(() => {
@@ -413,7 +375,7 @@ export const List: React.VFC<ListProps> = ({
 				openNodeWithDocs(nodeToPreview.id);
 			}
 		}
-	}, [nodes, permittedSelectionModeActions, selectedIDs, openPreview]);
+	}, [nodes, permittedSelectionModeActions, selectedIDs, openPreview, openNodeWithDocs]);
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({

@@ -23,6 +23,7 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { Action, GetNodeParentType } from '../../types/common';
 import { File, MakeOptional, Node } from '../../types/graphql/types';
 import {
@@ -30,7 +31,7 @@ import {
 	buildActionItems,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { downloadNode, openNodeWithDocs } from '../../utils/utils';
+import { downloadNode } from '../../utils/utils';
 
 interface DisplayerActionsParams {
 	node: ActionsFactoryNodeType &
@@ -84,6 +85,8 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 
 	const { sendViaMail } = useSendViaMail();
 
+	const openNodeWithDocs = useOpenWithDocs();
+
 	const sendViaMailCallback = useCallback(() => {
 		sendViaMail(node.id);
 	}, [node, sendViaMail]);
@@ -103,7 +106,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 			// if preview is not supported and document can be opened with docs, open editor
 			openNodeWithDocs(node.id);
 		}
-	}, [node.id, permittedDisplayerActions, openPreview]);
+	}, [node.id, permittedDisplayerActions, openPreview, openNodeWithDocs]);
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
@@ -216,6 +219,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 			openCopyNodesModal,
 			openDeletePermanentlyModal,
 			openMoveNodesModal,
+			openNodeWithDocs,
 			openRenameModal,
 			preview,
 			restoreNodeCallback,

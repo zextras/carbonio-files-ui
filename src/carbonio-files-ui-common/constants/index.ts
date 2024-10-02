@@ -134,7 +134,8 @@ export const HTTP_STATUS_CODE = {
 	maxVersionReached: 405,
 	/** aborted or blocked request */
 	aborted: 0,
-	overQuota: 422
+	overQuota: 422,
+	docsFileSizeExceeded: 403
 } as const;
 
 export const ERROR_CODE = {
@@ -183,3 +184,7 @@ export const FILTER_TYPE = {
 
 export const FILES_ROUTE = 'files';
 export const FILES_APP_ID = 'carbonio-files-ui';
+
+export const TRACKER_EVENT = {
+	openDocumentWithDocs: 'Open document with Docs'
+} as const;
