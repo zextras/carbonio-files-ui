@@ -100,8 +100,8 @@ export default function App(): React.JSX.Element {
 		inputElement.onchange = inputElementOnchange;
 	}, [inputElementOnchange]);
 
-	const newAction: NewAction = useMemo(
-		() => ({
+	const newAction = useMemo(
+		(): NewAction => ({
 			id: 'upload-file',
 			label: t('create.options.new.upload', 'Upload'),
 			icon: 'CloudUploadOutline',
