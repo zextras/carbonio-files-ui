@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
-import { DISPLAYER_TABS, PREVIEW_TYPE } from '../../constants';
+import { DISPLAYER_TABS } from '../../constants';
 import { useDeleteNodesMutation } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
 import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
 import { useRestoreNodesMutation } from '../../hooks/graphql/mutations/useRestoreNodesMutation';
@@ -30,8 +30,7 @@ import {
 	buildActionItems,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
-import { isSupportedByPreview } from '../../utils/previewUtils';
-import { downloadNode, isFile, openNodeWithDocs } from '../../utils/utils';
+import { downloadNode, openNodeWithDocs } from '../../utils/utils';
 
 interface DisplayerActionsParams {
 	node: ActionsFactoryNodeType &
@@ -97,18 +96,14 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 
 	const { openPreview } = useContext(PreviewsManagerContext);
 
-	const [$isSupportedByPreview] = useMemo<
-		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview((isFile(node) && node.mime_type) || undefined, 'preview'), [node]);
-
 	const preview = useCallback(() => {
-		if ($isSupportedByPreview) {
+		if (includes(permittedDisplayerActions, Action.Preview)) {
 			openPreview(node.id);
 		} else if (includes(permittedDisplayerActions, Action.OpenWithDocs)) {
 			// if preview is not supported and document can be opened with docs, open editor
 			openNodeWithDocs(node.id);
 		}
-	}, [$isSupportedByPreview, permittedDisplayerActions, openPreview, node.id]);
+	}, [node.id, permittedDisplayerActions, openPreview]);
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({

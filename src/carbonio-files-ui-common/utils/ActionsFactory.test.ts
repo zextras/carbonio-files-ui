@@ -12,6 +12,7 @@ import {
 	canMarkForDeletion,
 	canMove,
 	canOpenVersionWithDocs,
+	canPreview,
 	canRename,
 	canRestore,
 	canUnFlag
@@ -29,7 +30,7 @@ import {
 	populateUser
 } from '../mocks/mockUtils';
 import { Node } from '../types/common';
-import { File, Folder } from '../types/graphql/types';
+import { File, Folder, NodeType } from '../types/graphql/types';
 
 type NodeWithoutPermission<T extends Node> = Omit<T, 'permissions'> & {
 	permissions: Partial<T['permissions']>;
@@ -465,10 +466,248 @@ describe('ActionsFactory', () => {
 			expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: true })).toBeTruthy();
 		});
 
-		it('return false when canUseDocs is false and others criteria are valid', () => {
+		it('should return false when canUseDocs is false and others criteria are valid', () => {
 			const testFile: File = populateFile();
 			[testFile.mime_type] = docsHandledMimeTypes;
 			expect(canOpenVersionWithDocs({ nodes: [testFile], canUseDocs: false })).toBeFalsy();
+		});
+
+		describe('canPreview', () => {
+			it('should throw cannot evaluate canPreview on empty nodes array when nodes are 0', () => {
+				const canPreviewWrapper: () => boolean = () =>
+					canPreview({
+						nodes: [],
+						canUseDocs: true,
+						canUsePreview: true
+					});
+
+				expect(canPreviewWrapper).toThrow('cannot evaluate canPreview on empty nodes array');
+			});
+
+			it('should throw cannot evaluate canPreview on Node type when nodes is not an array', () => {
+				const canPreviewWrapper: () => boolean = () =>
+					canPreview({
+						nodes: populateFile(),
+						canUseDocs: true,
+						canUsePreview: true
+					});
+
+				expect(canPreviewWrapper).toThrow('cannot evaluate canPreview on Node type');
+			});
+
+			it('should return false when nodes are more than 1', () => {
+				expect(
+					canPreview({
+						nodes: [populateFile(), populateFile()],
+						canUseDocs: true,
+						canUsePreview: true
+					})
+				).toBeFalsy();
+			});
+
+			it('should return false when nodes are folder', () => {
+				expect(
+					canPreview({
+						nodes: [populateFolder()],
+						canUseDocs: true,
+						canUsePreview: true
+					})
+				).toBeFalsy();
+			});
+
+			it('should return false when rootId is trash', () => {
+				const testFile = populateFile();
+				testFile.rootId = ROOTS.TRASH;
+				testFile.mime_type = 'application/pdf';
+				expect(
+					canPreview({
+						nodes: [testFile],
+						canUseDocs: true,
+						canUsePreview: true
+					})
+				).toBeFalsy();
+			});
+
+			it.each([
+				[true, 'application/msword', true, true, NodeType.Text],
+				[true, 'application/vnd.ms-excel', true, true, NodeType.Spreadsheet],
+				[true, 'application/vnd.ms-powerpoint', true, true, NodeType.Presentation],
+				[
+					true,
+					'application/vnd.oasis.opendocument.presentation',
+					true,
+					true,
+					NodeType.Presentation
+				],
+				[true, 'application/vnd.oasis.opendocument.spreadsheet', true, true, NodeType.Spreadsheet],
+				[true, 'application/vnd.oasis.opendocument.text', true, true, NodeType.Text],
+				[
+					true,
+					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+					true,
+					true,
+					NodeType.Presentation
+				],
+				[
+					true,
+					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+					true,
+					true,
+					NodeType.Spreadsheet
+				],
+				[
+					true,
+					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+					true,
+					true,
+					NodeType.Text
+				],
+				[true, 'image/svg+xml', true, true, NodeType.Image],
+				[true, 'image/png', true, true, NodeType.Image],
+				[true, 'application/pdf', true, true, NodeType.Text],
+				[false, 'application/msword', false, false, NodeType.Text],
+				[false, 'application/vnd.ms-excel', false, false, NodeType.Spreadsheet],
+				[false, 'application/vnd.ms-powerpoint', false, false, NodeType.Presentation],
+				[
+					false,
+					'application/vnd.oasis.opendocument.presentation',
+					false,
+					false,
+					NodeType.Presentation
+				],
+				[
+					false,
+					'application/vnd.oasis.opendocument.spreadsheet',
+					false,
+					false,
+					NodeType.Spreadsheet
+				],
+				[false, 'application/vnd.oasis.opendocument.text', false, false, NodeType.Text],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+					false,
+					false,
+					NodeType.Presentation
+				],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+					false,
+					false,
+					NodeType.Spreadsheet
+				],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+					false,
+					false,
+					NodeType.Text
+				],
+				[false, 'image/svg+xml', false, false, NodeType.Image],
+				[false, 'image/png', false, false, NodeType.Image],
+				[false, 'application/pdf', false, false, NodeType.Text],
+				[false, 'application/msword', true, false, NodeType.Text],
+				[false, 'application/vnd.ms-excel', true, false, NodeType.Spreadsheet],
+				[false, 'application/vnd.ms-powerpoint', true, false, NodeType.Presentation],
+				[
+					false,
+					'application/vnd.oasis.opendocument.presentation',
+					true,
+					false,
+					NodeType.Presentation
+				],
+				[
+					false,
+					'application/vnd.oasis.opendocument.spreadsheet',
+					true,
+					false,
+					NodeType.Spreadsheet
+				],
+				[false, 'application/vnd.oasis.opendocument.text', true, false, NodeType.Text],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+					true,
+					false,
+					NodeType.Presentation
+				],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+					true,
+					false,
+					NodeType.Spreadsheet
+				],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+					true,
+					false,
+					NodeType.Text
+				],
+				[true, 'image/svg+xml', true, false, NodeType.Image],
+				[true, 'image/png', true, false, NodeType.Image],
+				[true, 'application/pdf', true, false, NodeType.Text],
+				[false, 'application/msword', false, true, NodeType.Text],
+				[false, 'application/vnd.ms-excel', false, true, NodeType.Spreadsheet],
+				[false, 'application/vnd.ms-powerpoint', false, true, NodeType.Presentation],
+				[
+					false,
+					'application/vnd.oasis.opendocument.presentation',
+					false,
+					true,
+					NodeType.Presentation
+				],
+				[
+					false,
+					'application/vnd.oasis.opendocument.spreadsheet',
+					false,
+					true,
+					NodeType.Spreadsheet
+				],
+				[false, 'application/vnd.oasis.opendocument.text', false, true, NodeType.Text],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+					false,
+					true,
+					NodeType.Presentation
+				],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+					false,
+					true,
+					NodeType.Spreadsheet
+				],
+				[
+					false,
+					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+					false,
+					true,
+					NodeType.Text
+				],
+				[false, 'image/svg+xml', false, true, NodeType.Image],
+				[false, 'image/png', false, true, NodeType.Image],
+				[false, 'application/pdf', false, true, NodeType.Text]
+			])(
+				'should return %s when mime Type is %s, canUsePreview is %s and canUseDocs is %s',
+				(expectedResult, mimeType, canUsePreview, canUseDocs, type) => {
+					const testFile = populateFile();
+					testFile.mime_type = mimeType;
+					testFile.type = type;
+					expect(canPreview({ nodes: [testFile], canUseDocs, canUsePreview })).toBe(expectedResult);
+				}
+			);
+
+			it('should return true when file NodeType is NodeType.Video', () => {
+				const testFile = populateFile();
+				testFile.type = NodeType.Video;
+				expect(
+					canPreview({ nodes: [testFile], canUseDocs: false, canUsePreview: false })
+				).toBeTruthy();
+			});
 		});
 	});
 
