@@ -73,7 +73,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
 					execute: (event): void => {
-						event && event.stopPropagation();
+						event?.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
 					},
