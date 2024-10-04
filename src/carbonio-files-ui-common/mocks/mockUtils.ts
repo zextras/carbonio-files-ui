@@ -159,7 +159,7 @@ function populateNodeFields(
 		created_at: faker.date.past().getTime(),
 		updated_at: faker.date.recent().getTime(),
 		permissions: populatePermissions(),
-		name: name ?? faker.word.words(),
+		name: name ?? faker.system.fileName(),
 		description: faker.lorem.paragraph(),
 		type: (id && some(ROOTS, (root) => root === id) && NodeType.Root) || nodeType,
 		flagged: faker.datatype.boolean(),

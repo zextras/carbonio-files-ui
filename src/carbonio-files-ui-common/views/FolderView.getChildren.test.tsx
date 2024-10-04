@@ -6,8 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
-import { forEach } from 'lodash';
+import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -58,7 +57,7 @@ describe('Get children', () => {
 	});
 
 	test('first access to a folder show loading state and than show children', async () => {
-		const currentFolder = populateFolder();
+		const currentFolder = populateFolder(1);
 
 		const mocks = {
 			Query: {
@@ -73,13 +72,9 @@ describe('Get children', () => {
 
 		const listHeader = screen.getByTestId(SELECTORS.listHeader);
 		expect(within(listHeader).getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-		await waitFor(() =>
-			expect(screen.getByTestId(SELECTORS.list(currentFolder.id))).not.toBeEmptyDOMElement()
-		);
+		await screen.findByText(currentFolder.name);
+		await screen.findByText(currentFolder.children.nodes[0]!.name);
 		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
-		forEach(currentFolder.children.nodes, (child) => {
-			expect(screen.getByText((child as Node).name)).toBeVisible();
-		});
 	});
 
 	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {

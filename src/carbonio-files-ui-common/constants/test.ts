@@ -171,7 +171,8 @@ export const COLORS = {
 
 export const TIMERS = {
 	modalDelayOpen: 1,
-	snackbarHide: 4000
+	snackbarHide: 4000,
+	dropdownListeners: 1
 };
 export const DISPLAYER_EMPTY_MESSAGE = 'View files and folders, share them with your contacts.';
 export const LIST_EMPTY_MESSAGE = "It looks like there's nothing here.";

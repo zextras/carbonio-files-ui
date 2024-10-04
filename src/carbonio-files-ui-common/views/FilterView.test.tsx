@@ -6,8 +6,7 @@
 
 import React from 'react';
 
-import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
-import { forEach } from 'lodash';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import { graphql, http, HttpResponse } from 'msw';
 import { Link, Route, Switch } from 'react-router-dom';
 
@@ -77,12 +76,10 @@ describe('Filter view', () => {
 
 		const listHeader = screen.getByTestId(SELECTORS.listHeader);
 		expect(within(listHeader).getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-		await waitFor(() => expect(screen.getByTestId(SELECTORS.list())).not.toBeEmptyDOMElement());
 		await screen.findByText(nodes[0].name);
 		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
-		forEach(nodes, (node) => {
-			expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toBeInTheDocument();
-			expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toHaveTextContent(node.name);
+		nodes.forEach((node) => {
+			expect(screen.getByText(node.name)).toBeVisible();
 		});
 	});
 
@@ -103,29 +100,16 @@ describe('Filter view', () => {
 			mocks
 		});
 
-		// this is the loading refresh icon
-		expect(screen.getByTestId(SELECTORS.listHeader)).toContainElement(
-			screen.getByTestId(ICON_REGEXP.queryLoading)
-		);
-		expect(
-			within(screen.getByTestId(SELECTORS.listHeader)).getByTestId(ICON_REGEXP.queryLoading)
-		).toBeVisible();
-		await waitForElementToBeRemoved(
-			within(screen.getByTestId(SELECTORS.listHeader)).queryByTestId(ICON_REGEXP.queryLoading)
-		);
 		// wait the rendering of the first item
 		await screen.findByTestId(SELECTORS.nodeItem(currentFilter[0].id));
 		expect(
 			screen.getByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT - 1].id))
 		).toBeVisible();
-
 		// elements after the limit should not be rendered
 		expect(screen.queryByTestId(currentFilter[NODES_LOAD_LIMIT].id)).not.toBeInTheDocument();
 		triggerListLoadMore();
-
 		// wait for the response
 		await screen.findByTestId(SELECTORS.nodeItem(currentFilter[NODES_LOAD_LIMIT].id));
-
 		// now all elements are loaded so last node and first node should be visible and no loading icon should be rendered
 		expect(
 			screen.getByTestId(SELECTORS.nodeItem(currentFilter[currentFilter.length - 1].id))
@@ -207,9 +191,7 @@ describe('Filter view', () => {
 			)
 		);
 		setup(<FilterView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);

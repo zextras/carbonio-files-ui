@@ -12,7 +12,7 @@ import { forEach, map } from 'lodash';
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { NODES_LOAD_LIMIT } from '../constants';
-import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
+import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage } from '../mocks/mockUtils';
 import {
 	moveNode,
