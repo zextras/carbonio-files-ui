@@ -78,7 +78,6 @@ describe('Node Sharing', () => {
 			}
 		} satisfies Partial<Resolvers>;
 		const { getByTextWithMarkup } = setup(<NodeSharing node={node} />, { mocks });
-		await screen.findByText(/collaborators/i);
 		await screen.findByText(userAccount.full_name);
 		expect(screen.getByText(/owner/i)).toBeVisible();
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
@@ -328,6 +327,8 @@ describe('Node Sharing', () => {
 			const share = populateShare(node, 'existing-share');
 			share.permission = SharePermission.ReadOnly;
 			node.shares = [share];
+			node.links = [];
+			node.collaboration_links = [];
 			const userAccount = populateUser();
 			// put email to lowercase otherwise the regexp split parts in a weird way
 			userAccount.email = userAccount.email.toLowerCase();
@@ -344,7 +345,7 @@ describe('Node Sharing', () => {
 			const mocks = {
 				Query: {
 					getNode: mockGetNode({ getShares: [node] }),
-					getLinks: mockGetLinks(node.links),
+					getLinks: mockGetLinks([]),
 					getCollaborationLinks: mockGetCollaborationLinks([]),
 					getAccountByEmail: mockGetAccountByEmail(userAccount)
 				},
@@ -364,6 +365,10 @@ describe('Node Sharing', () => {
 			const { user } = setup(<NodeSharing node={node} />, {
 				mocks,
 				initialRouterEntries: [`/?node=${node.id}`]
+			});
+			// run queries
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
 			});
 			await screen.findByText(getChipLabel(share.share_target as SharedTarget));
 			const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });
@@ -469,6 +474,10 @@ describe('Node Sharing', () => {
 			const { user } = setup(<NodeSharing node={node} />, {
 				mocks,
 				initialRouterEntries: [`/?node=${node.id}`]
+			});
+			// run queries
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
 			});
 			await screen.findByText(getChipLabel(share.share_target as SharedTarget));
 			const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });

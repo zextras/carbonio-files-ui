@@ -199,7 +199,7 @@ export const setup = (
 	ui: ReactElement,
 	options?: SetupOptions
 ): { user: UserEvent } & ReturnType<typeof customRender> => ({
-	user: setupUserEvent({ advanceTimers: jest.advanceTimersByTime, ...options?.setupOptions }),
+	user: setupUserEvent({ advanceTimers: jest.advanceTimersByTimeAsync, ...options?.setupOptions }),
 	...customRender(ui, {
 		initialRouterEntries: options?.initialRouterEntries,
 		mocks: options?.mocks,
@@ -393,7 +393,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	await waitFor(() =>
 		expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument()
 	);
-	expect(screen.queryByText('Move')).not.toBeInTheDocument();
+	expect(moveAction).not.toBeInTheDocument();
 }
 
 export function buildChipsFromKeywords(keywords: string[]): AdvancedFilters['keywords'] {
