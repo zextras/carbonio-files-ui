@@ -8,9 +8,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
-import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
+import { PreviewItem, PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { HeaderAction } from '@zextras/carbonio-ui-preview/lib/preview/Header';
-import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -325,7 +324,7 @@ export const List = ({
 
 	const nodesForPreview = useMemo(
 		() =>
-			nodes.reduce<Parameters<PreviewManagerContextType['initPreview']>[0]>((accumulator, node) => {
+			nodes.reduce<PreviewItem[]>((accumulator, node) => {
 				if (!isFile(node)) {
 					return accumulator;
 				}

@@ -68,16 +68,15 @@ export const FolderSelectionModalContent = ({
 		if (currentFilterPathData?.getPath) {
 			const { length } = currentFilterPathData.getPath;
 			if (length > 0) {
-				setCurrent(currentFilterPathData.getPath[length - 1] || undefined);
+				setCurrent(currentFilterPathData.getPath[length - 1] ?? undefined);
 				if (length > 1) {
-					setOpenedFolderId(currentFilterPathData.getPath[length - 2]?.id || '');
+					setOpenedFolderId(currentFilterPathData.getPath[length - 2]?.id ?? '');
 					setDefault(currentFilterPathData.getPath[length - 2]);
 				}
 			}
 		} else if (folderId) {
 			setCurrent({
 				id: folderId,
-				/* i18next-extract-disable-next-line */
 				name: t('node.alias.name', folderId, { context: folderId })
 			});
 		} else {
