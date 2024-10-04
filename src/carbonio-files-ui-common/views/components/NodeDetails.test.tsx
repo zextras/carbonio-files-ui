@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { http, HttpResponse } from 'msw';
 import { DefaultTheme } from 'styled-components';
@@ -351,9 +351,8 @@ describe('Node Details', () => {
 			{ mocks: {} }
 		);
 		await screen.findByTestId('node-details');
-		expect(healthCache.healthReceived).toBeTruthy();
-		await screen.findByRole('img');
-		expect(screen.getByRole('img')).toBeVisible();
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
+		expect(await screen.findByRole('presentation')).toBeVisible();
 		expect(getPreviewThumbnailSrcFn).toHaveBeenCalled();
 	});
 
@@ -393,10 +392,10 @@ describe('Node Details', () => {
 			{ mocks: {} }
 		);
 		await screen.findByTestId('node-details');
-		expect(healthCache.healthReceived).toBeTruthy();
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(getPreviewThumbnailSrcFn).not.toHaveBeenCalled();
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	test('should show preview of gif image with gif format', async () => {
@@ -427,15 +426,14 @@ describe('Node Details', () => {
 			/>,
 			{ mocks: {} }
 		);
-		await screen.findByRole('img');
-		expect(screen.getByRole('img')).toBeVisible();
-		expect(screen.getByRole('img')).toHaveAttribute(
+		expect(await screen.findByRole('presentation')).toBeVisible();
+		expect(screen.getByRole('presentation')).toHaveAttribute(
 			'src',
 			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/${node.version}/0x256/thumbnail/?shape=rectangular&quality=high&output_format=gif`
 		);
 	});
 
-	test('Show file preview for pdf', async () => {
+	it('should show file preview for pdf', async () => {
 		const node = populateFile();
 		const loadMore = jest.fn();
 		node.type = NodeType.Text;
@@ -463,8 +461,12 @@ describe('Node Details', () => {
 			/>,
 			{ mocks: {} }
 		);
-		await screen.findByRole('img');
-		expect(screen.getByRole('img')).toBeVisible();
+		await screen.findByRole('presentation');
+		expect(screen.getByRole('presentation')).toBeVisible();
+		expect(screen.getByRole('presentation')).toHaveAttribute(
+			'src',
+			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${node.id}/${node.version}/0x256/thumbnail/?shape=rectangular&quality=high&output_format=jpeg`
+		);
 	});
 
 	test('should not show file thumbnail for document', async () => {
@@ -496,7 +498,10 @@ describe('Node Details', () => {
 			{ mocks: {} }
 		);
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	test('Do not show file preview for node with unsupported type/mime type', async () => {
@@ -528,7 +533,10 @@ describe('Node Details', () => {
 			{ mocks: {} }
 		);
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {

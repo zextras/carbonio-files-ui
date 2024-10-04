@@ -19,7 +19,7 @@ import { draggedItemsVar } from '../apollo/dragAndDropVar';
 import { selectionModeVar } from '../apollo/selectionVar';
 import { DRAG_TYPES, TIMERS } from '../constants';
 import { Crumb, DroppableCrumb, NodeListItemType } from '../types/common';
-import { ParentFragmentDoc } from '../types/graphql/types';
+import { Folder, ParentFragmentDoc } from '../types/graphql/types';
 import { canBeMoveDestination, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddType } from '../utils/uploadUtils';
 import { hexToRGBA, isFolder } from '../utils/utils';
@@ -78,7 +78,7 @@ export function useDroppableCrumbs(
 				event.preventDefault();
 				closeDropdownTimer.current && clearTimeout(closeDropdownTimer.current);
 				closeDropdownTimer.current = setTimeout(() => {
-					containerRef.current && containerRef.current.click();
+					containerRef.current?.click();
 					openRef.current = false;
 				}, delay);
 			}
@@ -96,8 +96,10 @@ export function useDroppableCrumbs(
 			apolloClient.readFragment({
 				fragment: ParentFragmentDoc,
 				fragmentName: 'Parent',
-				// FIXME: remove hardcoded typename
-				id: apolloClient.cache.identify({ __typename: 'Folder', id: crumb.id })
+				id: apolloClient.cache.identify({ __typename: 'Folder', id: crumb.id } satisfies Pick<
+					Folder,
+					'__typename' | 'id'
+				>)
 			}),
 		[apolloClient]
 	);

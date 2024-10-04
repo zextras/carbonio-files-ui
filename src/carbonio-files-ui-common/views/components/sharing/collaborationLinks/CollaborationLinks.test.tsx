@@ -6,12 +6,12 @@
 
 import React from 'react';
 
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 
 import { CollaborationLinks } from './CollaborationLinks';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateCollaborationLink, populateNode } from '../../../../mocks/mockUtils';
-import { setup } from '../../../../tests/utils';
+import { setup, screen, within } from '../../../../tests/utils';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { SharePermission } from '../../../../types/graphql/types';
 import {
@@ -23,7 +23,7 @@ import * as moduleUtils from '../../../../utils/utils';
 import { isFile } from '../../../../utils/utils';
 
 describe('Collaboration Link', () => {
-	test('no collaboration Links created', async () => {
+	it('should render the section without no collaboration link created', async () => {
 		const node = populateNode();
 		node.permissions.can_share = true;
 		node.permissions.can_write_folder = true;
@@ -43,23 +43,22 @@ describe('Collaboration Link', () => {
 			/>,
 			{ mocks }
 		);
-		const readAndShareCollaborationLinkContainer = await screen.findByTestId(
-			SELECTORS.collaborationLinkReadShare
+		await waitFor(() =>
+			expect(
+				within(screen.getByTestId(SELECTORS.collaborationLinkReadShare)).getByRole('button', {
+					name: /generate link/i
+				})
+			).toBeEnabled()
 		);
-		const readAndShareGenerateButton = within(readAndShareCollaborationLinkContainer).getByRole(
-			'button',
-			{
-				name: /generate link/i
-			}
-		);
-		await waitFor(() => expect(readAndShareGenerateButton).toBeEnabled());
-		const collaborationLinkContainer = screen.getByTestId(SELECTORS.collaborationLinkContainer);
-		expect(within(collaborationLinkContainer).getByText('Collaboration links')).toBeVisible();
+		expect(screen.getByText('Collaboration links')).toBeVisible();
 		expect(
-			within(collaborationLinkContainer).getByText(
+			screen.getByText(
 				'Internal users will receive the permissions by opening the link. You can always modify granted permissions.'
 			)
 		).toBeVisible();
+		const readAndShareCollaborationLinkContainer = screen.getByTestId(
+			SELECTORS.collaborationLinkReadShare
+		);
 		expect(
 			within(readAndShareCollaborationLinkContainer).getByTestId(ICON_REGEXP.shareCanRead)
 		).toBeVisible();
@@ -71,15 +70,14 @@ describe('Collaboration Link', () => {
 				'Create a link in order to share the item'
 			)
 		).toBeVisible();
-		expect(readAndShareGenerateButton).toBeVisible();
-		const readAndShareRevokeButton = within(readAndShareCollaborationLinkContainer).queryByRole(
-			'button',
-			{
+		expect(
+			within(readAndShareCollaborationLinkContainer).getByRole('button', { name: /generate link/i })
+		).toBeVisible();
+		expect(
+			within(readAndShareCollaborationLinkContainer).queryByRole('button', {
 				name: /revoke/i
-			}
-		);
-		expect(readAndShareRevokeButton).not.toBeInTheDocument();
-
+			})
+		).not.toBeInTheDocument();
 		const readWriteAndShareCollaborationLinkContainer = screen.getByTestId(
 			SELECTORS.collaborationLinkWriteShare
 		);
@@ -94,18 +92,16 @@ describe('Collaboration Link', () => {
 				'Create a link in order to share the item'
 			)
 		).toBeVisible();
-		const readWriteAndShareGenerateButton = within(
-			readWriteAndShareCollaborationLinkContainer
-		).getByRole('button', {
-			name: /generate link/i
-		});
-		expect(readWriteAndShareGenerateButton).toBeVisible();
-		const readWriteAndShareRevokeButton = within(
-			readWriteAndShareCollaborationLinkContainer
-		).queryByRole('button', {
-			name: /revoke/i
-		});
-		expect(readWriteAndShareRevokeButton).not.toBeInTheDocument();
+		expect(
+			within(readWriteAndShareCollaborationLinkContainer).getByRole('button', {
+				name: /generate link/i
+			})
+		).toBeVisible();
+		expect(
+			within(readWriteAndShareCollaborationLinkContainer).queryByRole('button', {
+				name: /revoke/i
+			})
+		).not.toBeInTheDocument();
 	});
 
 	test('starting with ReadAndShare collaboration link and then create ReadWriteAndShare collaboration link', async () => {

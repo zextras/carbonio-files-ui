@@ -33,7 +33,7 @@ const getDayBefore = (): number | undefined => {
 	return initExpirationDate(date)?.getTime();
 };
 
-describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) => {
+describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeType) => {
 	it('should render the link section with title and description', async () => {
 		const node = populateNode(nodeType);
 		const linkName = 'Link name';
@@ -120,6 +120,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 				await user.click(screen.getByRole('textbox', { name: /expiration date/i }));
 				await user.click(screen.getAllByText(currentDate)[0]);
 				await user.click(screen.getByRole('button', { name: /generate link/i }));
+				await screen.findByTestId(SELECTORS.snackbar);
 				const expiresOnDate = formatDate(
 					new Date(expiresAt.getFullYear(), expiresAt.getMonth(), expiresAt.getDate(), 23, 59),
 					undefined,

@@ -134,7 +134,8 @@ export const SELECTORS = {
 	mainList: 'main-list',
 	mainGrid: 'main-grid',
 	gridCellThumbnail: 'grid-cell-thumbnail',
-	virtualizedNodeListItem: 'virtualized-node-list-item'
+	virtualizedNodeListItem: 'virtualized-node-list-item',
+	snackbar: 'snackbar'
 };
 
 export const EMITTER_CODES = {

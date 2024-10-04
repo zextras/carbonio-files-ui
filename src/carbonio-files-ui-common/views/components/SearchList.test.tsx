@@ -631,6 +631,7 @@ describe('Search list', () => {
 			expect(unflagIcon).toBeVisible();
 			expect(unflagIcon).toBeEnabled();
 			await user.click(unflagIcon);
+			await waitForElementToBeRemoved(screen.queryAllByTestId(SELECTORS.checkedAvatar));
 			expect(within(nodeToUnflagItem1).queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[1].name)).toBeVisible();
