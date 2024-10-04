@@ -161,7 +161,7 @@ export interface HintProps {
 	email?: string;
 }
 
-export const Hint: React.VFC<HintProps> = ({ label, email }) => (
+export const Hint = ({ label, email }: HintProps): React.JSX.Element => (
 	<Container
 		orientation="horizontal"
 		mainAlignment="flex-start"
@@ -200,7 +200,7 @@ const SkeletonTile = styled.div<{ width: string; height: string; radius: string 
 	background: ${({ theme }): string => theme.palette.gray2.regular};
 `;
 
-export const Loader: React.VFC = () => (
+export const Loader = (): React.JSX.Element => (
 	<Container
 		orientation="horizontal"
 		mainAlignment="flex-start"

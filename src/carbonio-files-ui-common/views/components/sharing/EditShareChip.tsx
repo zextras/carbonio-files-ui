@@ -69,12 +69,12 @@ interface EditShareChipProps {
 	deleteShare: ReturnType<typeof useDeleteShareMutation>;
 }
 
-export const EditShareChip: React.FC<EditShareChipProps> = ({
+export const EditShareChip = ({
 	share,
 	permissions,
 	deleteShare,
 	yourselfChip = false
-}) => {
+}: EditShareChipProps): React.JSX.Element => {
 	const [updateShare] = useUpdateShareMutation();
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();

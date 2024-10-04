@@ -19,9 +19,11 @@ import {
 	screen as rtlScreen,
 	waitFor,
 	within as rtlWithin,
-	type Screen
+	type Screen,
+	RenderHookOptions,
+	RenderHookResult,
+	renderHook
 } from '@testing-library/react';
-import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
 import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
@@ -211,8 +213,8 @@ export const setup = (
 export function setupHook<TProps, TResult>(
 	hook: (props: TProps) => TResult,
 	options?: Pick<WrapperProps, 'initialRouterEntries' | 'mocks'> & RenderHookOptions<TProps>
-): RenderHookResult<TProps, TResult> {
-	const view = renderHook<TProps, TResult>(hook, {
+): RenderHookResult<TResult, TProps> {
+	const view = renderHook<TResult, TProps>(hook, {
 		wrapper: ({ children }: Pick<WrapperProps, 'children'>) => (
 			<Wrapper {...options}>{children}</Wrapper>
 		)
@@ -458,7 +460,7 @@ function createFileSystemEntry(
 	node: Pick<Node, '__typename' | 'name'> &
 		(Pick<FilesFile, 'mime_type'> | Pick<Folder, '__typename'>),
 	file?: File
-): FileSystemEntry {
+): FileSystemDirectoryEntry | FileSystemFileEntry {
 	const baseEntry: FileSystemEntry = {
 		name: node.name,
 		fullPath: `/${node.name}`,
@@ -472,25 +474,26 @@ function createFileSystemEntry(
 	};
 	if (isFolder(node)) {
 		const reader = createFileSystemDirectoryEntryReader(node);
-		const directoryEntry: FileSystemDirectoryEntry = {
+		return {
 			...baseEntry,
 			createReader: () => reader,
 			getFile: noop,
 			getDirectory: noop
-		};
-		return directoryEntry;
+		} satisfies FileSystemDirectoryEntry;
 	}
-	const fileEntry: FileSystemFileEntry = {
+	return {
 		...baseEntry,
-		file(successCallback: FileCallback, errorCallback?: ErrorCallback) {
+		file(
+			successCallback: FileCallback,
+			errorCallback?: ErrorCallback
+		): ReturnType<FileSystemFileEntry['file']> {
 			if (file) {
 				successCallback(file);
 			} else if (errorCallback) {
 				errorCallback(new DOMException('no file provided', 'createFileSystemEntry'));
 			}
 		}
-	};
-	return fileEntry;
+	} satisfies FileSystemFileEntry;
 }
 
 export function createUploadDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
@@ -570,7 +573,11 @@ export function spyOnUseCreateOptions(): CreateOption[] {
 			createOptionsCollector.splice(0, createOptionsCollector.length, ...options);
 		},
 		removeCreateOptions: (...ids: string[]): void => {
-			createOptionsCollector.filter((option) => !ids.includes(option.id));
+			createOptionsCollector.splice(
+				0,
+				createOptionsCollector.length,
+				...createOptionsCollector.filter((option) => !ids.includes(option.id))
+			);
 		}
 	});
 	return createOptionsCollector;

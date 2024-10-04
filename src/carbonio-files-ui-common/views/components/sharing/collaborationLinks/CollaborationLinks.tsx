@@ -38,11 +38,11 @@ interface CollaborationLinksProps {
 	nodeName: string;
 }
 
-export const CollaborationLinks: React.FC<CollaborationLinksProps> = ({
+export const CollaborationLinks = ({
 	nodeId,
 	canWrite,
 	nodeName
-}) => {
+}: CollaborationLinksProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { createModal, closeModal } = useModal();

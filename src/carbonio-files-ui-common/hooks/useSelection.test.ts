@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { act } from '@testing-library/react-hooks';
+import { act } from '@testing-library/react';
 
 import useSelection from './useSelection';
 import { populateFolder } from '../mocks/mockUtils';

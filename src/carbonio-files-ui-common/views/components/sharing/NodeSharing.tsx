@@ -68,7 +68,7 @@ function shareTargetExists<T extends MakePartial<Pick<Share, 'share_target'>, 's
 	return share.share_target !== undefined && share.share_target !== null;
 }
 
-export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
+export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { me } = useUserInfo();
 

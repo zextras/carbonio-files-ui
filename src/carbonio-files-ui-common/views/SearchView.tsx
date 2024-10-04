@@ -28,7 +28,7 @@ interface SearchViewProps {
 	resultsHeader?: React.ReactNode;
 }
 
-export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
+export const SearchView = ({ resultsHeader }: SearchViewProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 	const { navigateToFolder } = useNavigation();
@@ -210,7 +210,7 @@ export const SearchView: React.VFC<SearchViewProps> = ({ resultsHeader }) => {
 			<Snackbar
 				open={showUploadSnackbar}
 				onClose={closeUploadSnackbar}
-				type="info"
+				severity="info"
 				label={t('uploads.destination.home', "Upload occurred in Files' Home")}
 				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
 				onActionClick={uploadSnackbarAction}

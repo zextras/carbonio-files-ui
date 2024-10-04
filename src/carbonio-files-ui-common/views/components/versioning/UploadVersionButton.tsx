@@ -17,7 +17,7 @@ export interface UploadVersionButtonProps {
 	disabled: boolean;
 }
 
-const UploadVersionButton: React.VFC<UploadVersionButtonProps> = ({ node, disabled }) => {
+const UploadVersionButton = ({ node, disabled }: UploadVersionButtonProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { update } = useUpload();
 	const inputRef = useRef<HTMLInputElement>(null);

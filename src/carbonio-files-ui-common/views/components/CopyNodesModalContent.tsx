@@ -40,11 +40,11 @@ interface CopyNodesModalContentProps {
 	closeAction?: () => void;
 }
 
-export const CopyNodesModalContent: React.VFC<CopyNodesModalContentProps> = ({
+export const CopyNodesModalContent = ({
 	closeAction,
 	nodesToCopy,
 	folderId
-}) => {
+}: CopyNodesModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCurrent, setDefault } = useDestinationVarManager<string>();
 	const { currentValue } = useReactiveVar<DestinationVar<string>>(

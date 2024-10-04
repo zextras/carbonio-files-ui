@@ -70,7 +70,7 @@ const View = (): React.JSX.Element | null => {
 	);
 };
 
-const AppView: React.VFC = () => {
+const AppView = (): React.JSX.Element => {
 	const { path } = useRouteMatch<URLParams>();
 
 	const apolloClient = useMemo(() => buildClient(), []);

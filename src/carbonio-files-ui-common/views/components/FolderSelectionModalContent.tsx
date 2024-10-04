@@ -40,12 +40,12 @@ interface FolderSelectionModalContentProps {
 
 type SelectedNode = Pick<NodeListItemType, 'id' | 'name'> | null;
 
-export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentProps> = ({
+export const FolderSelectionModalContent = ({
 	folderId,
 	cascadeDefault = true,
 	confirmAction,
 	closeAction
-}) => {
+}: FolderSelectionModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCurrent, setDefault } = useDestinationVarManager<SelectedNode>();
 	const { currentValue } = useReactiveVar<DestinationVar<SelectedNode>>(

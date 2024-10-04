@@ -28,7 +28,7 @@ import { Action } from '../../types/common';
 import { UploadItem } from '../../types/graphql/client-types';
 import { getUploadAddType, isUploadFolderItem } from '../../utils/uploadUtils';
 
-export const UploadList: React.VFC = () => {
+export const UploadList = (): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const { add, removeAllCompleted } = useUpload();

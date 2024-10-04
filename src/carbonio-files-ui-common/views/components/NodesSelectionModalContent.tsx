@@ -70,7 +70,7 @@ const stopPropagation = (e: Event | React.SyntheticEvent): void => {
 
 const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>;
 
-export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentProps> = ({
+export const NodesSelectionModalContent = ({
 	title,
 	confirmAction,
 	confirmLabel,
@@ -81,7 +81,7 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 	canSelectOpenedFolder,
 	description,
 	canCreateFolder: canCreateFolderProp
-}) => {
+}: NodesSelectionModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const apolloClient = useApolloClient();
 	const { setCurrent, setDefault } = useDestinationVarManager<NodeWithMetadata[]>();

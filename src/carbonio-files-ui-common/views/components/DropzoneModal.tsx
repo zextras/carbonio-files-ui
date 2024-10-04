@@ -40,8 +40,8 @@ const DetailText = styled(Text)`
 	white-space: pre-line;
 	line-height: ${({ theme, size }): string =>
 		cssCalcBuilder(
-			theme.sizes.font[size || 'medium'],
-			['+', theme.sizes.font[size || 'medium']],
+			theme.sizes.font[size ?? 'medium'],
+			['+', theme.sizes.font[size ?? 'medium']],
 			['/', 2]
 		)};
 `;
@@ -58,12 +58,12 @@ interface DropzoneModalProps {
 	disabled?: boolean;
 }
 
-export const DropzoneModal: React.VFC<DropzoneModalProps> = ({
+export const DropzoneModal = ({
 	title,
 	message,
 	disabled,
 	icons
-}) => {
+}: DropzoneModalProps): React.JSX.Element => {
 	const color = useMemo(() => (disabled ? 'secondary' : 'primary'), [disabled]);
 
 	const iconItems = useMemo(

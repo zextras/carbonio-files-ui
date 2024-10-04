@@ -423,7 +423,7 @@ export const NodeListItem = ({
 		return canUploadFile(node);
 	}, [navigateToFolder, node]);
 
-	const dragEnterHandler = useCallback(
+	const dragEnterHandler = useCallback<React.DragEventHandler>(
 		(event) => {
 			// check if node is a valid destination for write inside action
 			setDropzoneEnabled((prevState) => {
@@ -444,7 +444,7 @@ export const NodeListItem = ({
 	}, []);
 
 	const moveNodesAction = useCallback(
-		(event) => {
+		(event: React.DragEvent) => {
 			const movingNodes = JSON.parse(event.dataTransfer.getData(DRAG_TYPES.move) || '{}');
 			if (movingNodes && isFolder(node)) {
 				moveNodesMutation(node, ...movingNodes).then(() => {

@@ -118,7 +118,7 @@ interface NodeGridItemProps {
 	createImgSrc?: (args: { width: number; height: number }) => string | undefined;
 }
 
-export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
+export const NodeGridItemUI = ({
 	showPreview,
 	icon,
 	color,
@@ -143,7 +143,7 @@ export const NodeGridItemUI: React.VFC<NodeGridItemProps> = ({
 	nodeAvatarIcon,
 	size,
 	createImgSrc
-}) => {
+}: NodeGridItemProps): React.JSX.Element => {
 	const [imgSrc, setImgSrc] = useState<string>();
 
 	const previewRef = useCallback<React.RefCallback<HTMLDivElement>>(
