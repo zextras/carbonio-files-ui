@@ -81,11 +81,11 @@ export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
 			confirmAction(nodeId, trim(newName))
 				.then(() => {
 					setPendingRequest(false);
-					closeAction && closeAction();
+					closeAction?.();
 				})
 				.catch((err) => {
 					setPendingRequest(false);
-					setErrorMsg(decodeError(err, t) || 'something went wrong');
+					setErrorMsg(decodeError(err, t) || t('errorCode.code', 'something went wrong'));
 				});
 		}
 	}, [closeAction, confirmAction, newName, nodeId, pendingRequest, t]);
