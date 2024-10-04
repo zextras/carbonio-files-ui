@@ -25,12 +25,15 @@ import { CustomModalBody } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { nodeSortVar } from '../../apollo/nodeSortVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
-import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import { useCopyNodesMutation } from '../../hooks/graphql/mutations/useCopyNodesMutation';
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
 import { GetNodeParentType, Node, NodeListItemType, RootListItemType } from '../../types/common';
-import { GetChildrenQuery, GetChildrenQueryVariables } from '../../types/graphql/types';
+import {
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+} from '../../types/graphql/types';
 import { canBeCopyDestination, isRoot } from '../../utils/ActionsFactory';
 import { isFile, isFolder } from '../../utils/utils';
 
@@ -60,7 +63,6 @@ export const CopyNodesModalContent = ({
 		setDestinationFolder(currentValue);
 	}, [currentValue]);
 
-	/** Mutation to copy nodes */
 	const { copyNodes, loading: copyNodesMutationLoading } = useCopyNodesMutation();
 
 	const title = useMemo(
@@ -154,7 +156,7 @@ export const CopyNodesModalContent = ({
 	}, [checkDisabled, checkSelectable, currentFolder?.getNode]);
 
 	const closeHandler = useCallback(() => {
-		closeAction && closeAction();
+		closeAction?.();
 	}, [closeAction]);
 
 	const apolloClient = useApolloClient();
@@ -172,14 +174,14 @@ export const CopyNodesModalContent = ({
 				} else {
 					// case when a root folder is selected from the roots list
 					const cachedData = apolloClient.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-						query: GET_CHILDREN,
+						query: GetChildrenDocument,
 						variables: {
 							node_id: destinationFolder,
 							children_limit: NODES_LOAD_LIMIT,
 							sort: nodeSortVar()
 						}
 					});
-					destinationFolderNode = cachedData?.getNode || {
+					destinationFolderNode = cachedData?.getNode ?? {
 						__typename: 'Folder',
 						id: destinationFolder
 					};
@@ -188,7 +190,6 @@ export const CopyNodesModalContent = ({
 
 			if (destinationFolderNode && isFolder(destinationFolderNode)) {
 				copyNodes(destinationFolderNode, ...nodesToCopy).then((result) => {
-					// TODO: handle case when not all nodes are copied
 					if (result?.data) {
 						closeHandler();
 					}
