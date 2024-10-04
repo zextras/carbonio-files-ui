@@ -32,8 +32,8 @@ import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
 import { queriesExtended } from './queries';
-import { CreateOption } from '../../hooks/useCreateOptions';
 import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
+import { CreateOption } from '../../hooks/useCreateOptions';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ERROR_CODE } from '../constants';

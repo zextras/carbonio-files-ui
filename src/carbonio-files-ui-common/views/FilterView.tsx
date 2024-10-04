@@ -18,7 +18,7 @@ import { SortingComponent } from './components/SortingComponent';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
-import { useCreateOptions } from '../../hooks/useCreateOptions';
+import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
 import { nodeSortVar } from '../apollo/nodeSortVar';
 import { FILES_APP_ID, FILTER_PARAMS, FILTER_TYPE, ROOTS } from '../constants';
@@ -74,7 +74,7 @@ const FilterView: React.VFC = () => {
 	const { canUseDocs } = useHealthInfo();
 
 	useEffect(() => {
-		setCreateOptions(
+		setCreateOptions<NewAction>(
 			{
 				id: ACTION_IDS.UPLOAD_FILE,
 				type: ACTION_TYPES.NEW,
@@ -84,8 +84,8 @@ const FilterView: React.VFC = () => {
 					group: FILES_APP_ID,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					onClick: (event): void => {
-						event && event.stopPropagation();
+					execute: (event): void => {
+						event?.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
 					}
@@ -100,7 +100,7 @@ const FilterView: React.VFC = () => {
 					label: t('create.options.new.folder', 'New folder'),
 					icon: 'FolderOutline',
 					disabled: true,
-					onClick: noop
+					execute: noop
 				})
 			},
 			...(canUseDocs
@@ -114,18 +114,16 @@ const FilterView: React.VFC = () => {
 								label: t('create.options.new.document', 'New document'),
 								icon: 'FileTextOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -140,18 +138,16 @@ const FilterView: React.VFC = () => {
 								label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 								icon: 'FileCalcOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -166,18 +162,16 @@ const FilterView: React.VFC = () => {
 								label: t('create.options.new.presentation', 'New presentation'),
 								icon: 'FilePresentationOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-										onClick: noop,
 										disabled: true
 									}
 								]
