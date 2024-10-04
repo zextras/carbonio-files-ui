@@ -9,7 +9,6 @@ import {
 	GetAllBy,
 	queries,
 	queryHelpers,
-	screen,
 	within
 } from '@testing-library/react';
 
@@ -17,7 +16,7 @@ import {
  * Matcher function to search a string in more html elements and not just in a single element.
  */
 const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) =>
-	screen.queryAllByText((_content, element) => {
+	within(container).queryAllByText((_content, element) => {
 		if (element && element instanceof HTMLElement) {
 			const hasText = (singleNode: Element): boolean => {
 				const regExp = RegExp(text);
@@ -33,11 +32,11 @@ const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) 
 const getByTextWithMarkupMultipleError = (
 	container: Element | null,
 	text: string | RegExp
-): string => `Found multiple elements with text: ${text}`;
+): string => `Found multiple elements with text: ${text} inside ${container}`;
 const getByTextWithMarkupMissingError = (
 	container: Element | null,
 	text: string | RegExp
-): string => `Unable to find an element with text: ${text}`;
+): string => `Unable to find an element with text: ${text} inside ${container}`;
 
 const [
 	queryByTextWithMarkup,
@@ -57,7 +56,9 @@ const [
 type ByRoleWithIconOptions = ByRoleOptions & {
 	icon: string | RegExp;
 };
-
+/**
+ * Matcher function to search an icon button through the icon data-testid
+ */
 const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> = (
 	container,
 	role,
@@ -66,19 +67,18 @@ const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> =
 	within(container)
 		.queryAllByRole(role, options)
 		.filter((element) => within(element).queryByTestId(icon) !== null);
-
-const printRole = (role: ByRoleMatcher): string =>
-	typeof role === 'string' ? role : `unprintable matcher function ${JSON.stringify(role)}`;
 const getByRoleWithIconMultipleError = (
 	container: Element | null,
 	role: ByRoleMatcher,
 	options: ByRoleWithIconOptions
-): string => `Found multiple elements with role ${printRole(role)} and icon ${options.icon}`;
+): string =>
+	`Found multiple elements with role ${role as string} and icon ${options.icon} inside ${container}`;
 const getByRoleWithIconMissingError = (
 	container: Element | null,
 	role: ByRoleMatcher,
 	options: ByRoleWithIconOptions
-): string => `Unable to find an element with role ${printRole(role)} and icon ${options.icon}`;
+): string =>
+	`Unable to find an element with role ${role as string} and icon ${options.icon} inside ${container}`;
 
 const [
 	queryByRoleWithIcon,

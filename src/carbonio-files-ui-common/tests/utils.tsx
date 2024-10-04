@@ -372,8 +372,14 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 }
 
 export async function moveNode(destinationFolder: Folder, user: UserEvent): Promise<void> {
-	const moveAction = await screen.findByText('Move');
-	expect(moveAction).toBeVisible();
+	let moveAction = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.move });
+	if (!moveAction) {
+		const moreVertical = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.moreVertical });
+		if (moreVertical) {
+			await user.click(moreVertical);
+		}
+		moveAction = await screen.findByText('Move');
+	}
 	await user.click(moveAction);
 	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
