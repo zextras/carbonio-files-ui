@@ -503,7 +503,7 @@ describe('Node List Item', () => {
 				<NodeListItem node={folder} {...getMissingProps()} />
 			</ListContext.Provider>
 		);
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	it.each(mimeTypesWithThumbnailSupport)(
@@ -518,7 +518,7 @@ describe('Node List Item', () => {
 					<NodeListItem node={file} {...getMissingProps()} />
 				</ListContext.Provider>
 			);
-			expect(screen.getByRole('img')).toBeVisible();
+			expect(screen.getByRole('presentation')).toBeVisible();
 		}
 	);
 
@@ -534,7 +534,7 @@ describe('Node List Item', () => {
 					<NodeListItem node={file} {...getMissingProps()} />
 				</ListContext.Provider>
 			);
-			expect(screen.queryByRole('img')).not.toBeInTheDocument();
+			expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 		}
 	);
 
@@ -578,7 +578,7 @@ describe('Node List Item', () => {
 				<NodeListItem node={file} {...getMissingProps()} />
 			</ListContext.Provider>
 		);
-		fireEvent.error(screen.getByRole('img'));
+		fireEvent.error(screen.getByRole('presentation'));
 		expect(await screen.findByText('Failed to load image')).toBeVisible();
 	});
 });
