@@ -23,7 +23,7 @@ import * as moduleUtils from '../../../../utils/utils';
 import { isFile } from '../../../../utils/utils';
 
 describe('Collaboration Link', () => {
-	it('should render the section without no collaboration link created', async () => {
+	it('should render the section without collaboration links created', async () => {
 		const node = populateNode();
 		node.permissions.can_share = true;
 		node.permissions.can_write_folder = true;
