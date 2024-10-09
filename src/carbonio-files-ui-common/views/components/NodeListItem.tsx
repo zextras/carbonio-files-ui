@@ -50,7 +50,6 @@ import { Maybe, NodeType, Share } from '../../types/graphql/types';
 import { DeepPick } from '../../types/utils';
 import {
 	Action,
-	Action,
 	buildActionItems,
 	canBeMoveDestination,
 	canUploadFile,
