@@ -19,12 +19,14 @@ import {
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
+import { AccessCodeSection } from './AccessCodeSection';
 import { PublicLinkRowStatus } from '../../../../types/common';
 import { initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 import { TextWithLineHeight } from '../../StyledComponents';
 
 interface AddPublicLinkComponentProps {
+	isFolder: boolean;
 	status: PublicLinkRowStatus;
 	onAddLink: () => void;
 	onUndo: () => void;
@@ -35,6 +37,7 @@ interface AddPublicLinkComponentProps {
 }
 
 export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
+	isFolder,
 	status,
 	onAddLink,
 	onUndo,
@@ -219,6 +222,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 							</Text>
 						</Row>
 					)}
+					{isFolder && <AccessCodeSection />}
 					<span ref={scrollToElementRef} />
 				</>
 			)}

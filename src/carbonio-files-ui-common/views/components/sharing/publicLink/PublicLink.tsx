@@ -28,6 +28,7 @@ import { NonNullableListItem } from '../../../../types/utils';
 import { copyToClipboard } from '../../../../utils/utils';
 
 interface PublicLinkProps {
+	isFolder: boolean;
 	nodeId: string;
 	nodeName: string;
 	linkName: string;
@@ -36,6 +37,7 @@ interface PublicLinkProps {
 }
 
 export const PublicLink = ({
+	isFolder,
 	nodeId,
 	nodeName,
 	linkName,
@@ -231,6 +233,7 @@ export const PublicLink = ({
 				if (link) {
 					accumulator.push(
 						<PublicLinkComponent
+							isFolder={isFolder}
 							key={link.id}
 							id={link.id}
 							url={link.url}
@@ -252,12 +255,13 @@ export const PublicLink = ({
 		);
 	}, [
 		links,
+		openLinkId,
+		thereIsOpenRow,
+		isFolder,
 		onEdit,
 		onEditConfirm,
 		onEditUndo,
 		onRevokeOrRemove,
-		openLinkId,
-		thereIsOpenRow,
 		linkName
 	]);
 
@@ -280,6 +284,7 @@ export const PublicLink = ({
 			background={'gray6'}
 		>
 			<AddPublicLinkComponent
+				isFolder={isFolder}
 				status={addPublicLinkComputedStatus}
 				onAddLink={onAddLink}
 				onUndo={onAddUndo}

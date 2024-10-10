@@ -47,6 +47,7 @@ interface PublicLinkComponentProps {
 	onRevokeOrRemove: (linkId: string, isRevoke: boolean) => void;
 	forceUrlCopyDisabled: boolean;
 	linkName: string;
+	isFolder: boolean;
 }
 
 export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
@@ -60,7 +61,8 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	onUndo,
 	onRevokeOrRemove,
 	forceUrlCopyDisabled,
-	linkName
+	linkName,
+	isFolder
 }) => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
