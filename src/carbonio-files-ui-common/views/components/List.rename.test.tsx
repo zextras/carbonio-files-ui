@@ -14,7 +14,6 @@ import { populateFolder, populateNode, sortNodes } from '../../mocks/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { File, Folder, NodeSort } from '../../types/graphql/types';
-import { NonNullableList } from '../../types/utils';
 import { mockErrorResolver } from '../../utils/resolverMocks';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
@@ -159,9 +158,7 @@ describe('Rename', () => {
 
 			const { user } = setup(
 				<List
-					nodes={
-						currentFolder.children.nodes as NonNullableList<typeof currentFolder.children.nodes>
-					}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>

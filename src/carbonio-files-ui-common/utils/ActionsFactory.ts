@@ -10,16 +10,10 @@ import { isPreviewDependantOnDocs, isSupportedByPreview } from './previewUtils';
 import { docsHandledMimeTypes, isFile, isFolder } from './utils';
 import { getUserAccount } from '../../utils/utils';
 import { ROOTS } from '../constants';
-import { Node as NodeWithOptionals } from '../types/common';
+import { Node } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
-import { File, Folder, Node as GQLNode, NodeType, Permissions, Root } from '../types/graphql/types';
+import { NodeType, Permissions, Root } from '../types/graphql/types';
 import { DeepPick, OneOrMany } from '../types/utils';
-
-type Node<
-	NodeKeys extends keyof GQLNode = never,
-	FileKeys extends keyof File = never,
-	FolderKeys extends keyof Folder = never
-> = Required<NodeWithOptionals<NodeKeys, FileKeys, FolderKeys>>;
 
 export const Action = {
 	Edit: 'EDIT',
@@ -563,7 +557,7 @@ export function getPermittedActions<TActions extends AtLeastOneAction<(keyof Act
 export function getAllPermittedActions(
 	args: IntersectArgs<typeof completeListActionsForNode>,
 	customCheckers?: CustomCheckers<typeof completeListActionsForNode>
-): (keyof ActionHandlers)[] {
+): Action[] {
 	return getPermittedActions(completeListActionsForNode, args, customCheckers);
 }
 

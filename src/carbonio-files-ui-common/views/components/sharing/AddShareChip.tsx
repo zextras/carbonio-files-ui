@@ -72,7 +72,7 @@ export const AddShareChip = React.forwardRef<HTMLDivElement, AddShareChipProps>(
 
 		const disabledRows = useMemo(
 			() =>
-				filter(rowRoleToIdxMap, (_value, role) => !node || !roleAssignChecker[role as Role](node)),
+				filter(rowRoleToIdxMap, (_idx, role) => !node || !roleAssignChecker[role as Role](node)),
 			[node]
 		);
 

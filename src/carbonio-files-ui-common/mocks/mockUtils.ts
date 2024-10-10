@@ -113,7 +113,7 @@ export function populateSharePermission(sharePermission?: SharePermission): Shar
 }
 
 export function populateShare(
-	node: Share['node'],
+	node: GQLFile | GQLFolder,
 	key: number | string,
 	shareTarget?: SharedTarget
 ): MakeRequiredNonNull<Share, 'share_target'> {
@@ -149,7 +149,7 @@ function populateNodeFields(
 	type?: NodeType,
 	id?: string,
 	name?: string
-): MakeRequiredNonNull<Required<GQLNode>, 'owner'> {
+): MakeRequiredNonNull<GQLNode, 'owner'> {
 	const types = filter(Object.values(NodeType), (t) => t !== NodeType.Root);
 	const nodeType = type ?? faker.helpers.arrayElement(types);
 	return {
@@ -257,7 +257,7 @@ export function populateFolder(
 	}
 	for (let i = 0; i < childrenLimit; i += 1) {
 		const child = populateNode();
-		child.parent = { ...folder, children: populateNodePage([]) } as GQLFolder;
+		child.parent = { ...folder, children: populateNodePage([]) } satisfies GQLFolder;
 		child.name = `child-${i} - ${child.name}`;
 		children.push(child);
 	}
@@ -454,7 +454,7 @@ export function populateContactGroup(
 	};
 }
 
-export function populateLink(node: Link['node']): Link {
+export function populateLink(node: GQLFile | GQLFolder): Link {
 	return {
 		__typename: 'Link',
 		id: faker.string.uuid(),
@@ -471,7 +471,7 @@ export function populateLink(node: Link['node']): Link {
 }
 
 export function populateCollaborationLink(
-	node: CollaborationLink['node'],
+	node: GQLFile | GQLFolder,
 	sharePermission?: SharePermission
 ): CollaborationLink {
 	return {
@@ -486,7 +486,7 @@ export function populateCollaborationLink(
 	};
 }
 
-export function populateLinks(node: Link['node'], limit = 2): Link[] {
+export function populateLinks(node: GQLFile | GQLFolder, limit = 2): Link[] {
 	const links = [];
 	for (let i = 0; i < limit; i += 1) {
 		const link = populateLink(node);

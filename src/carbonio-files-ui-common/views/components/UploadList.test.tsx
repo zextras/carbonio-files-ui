@@ -558,15 +558,15 @@ describe('Upload list', () => {
 			const subFolder2 = populateFolder();
 			folderToUpload.children.nodes.push(populateFile(), subFolder1);
 			forEach(folderToUpload.children.nodes, (child) => {
-				(child as NonNullable<typeof child>).parent = folderToUpload;
+				child!.parent = folderToUpload;
 			});
 			subFolder1.children.nodes.push(...populateNodes(2, 'File'), subFolder2);
 			forEach(subFolder1.children.nodes, (child) => {
-				(child as NonNullable<typeof child>).parent = subFolder1;
+				child!.parent = subFolder1;
 			});
 			subFolder2.children.nodes.push(...populateNodes(3, 'File'));
 			forEach(subFolder2.children.nodes, (child) => {
-				(child as NonNullable<typeof child>).parent = subFolder2;
+				child!.parent = subFolder2;
 			});
 			const numberOfFiles = 6; // number of files to upload considering all the tree
 			const numberOfFolders = 3;

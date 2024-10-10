@@ -72,7 +72,7 @@ export function mockFlagNodes(...flagNodes: string[][]): MutationMock<GQLTypes.F
 }
 
 export function getChildrenVariables(
-	folderstring: string,
+	folderId: string,
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
 	sharesLimit = SHARES_LOAD_LIMIT,
@@ -80,7 +80,7 @@ export function getChildrenVariables(
 	pageToken = 'next_page_token'
 ): GQLTypes.GetChildrenQueryVariables {
 	return {
-		node_id: folderstring,
+		node_id: folderId,
 		children_limit: childrenLimit,
 		sort,
 		shares_limit: sharesLimit,
@@ -125,13 +125,13 @@ export function mockGetPath(
 }
 
 export function getNodeVariables(
-	nodestring: string,
+	nodeId: string,
 	childrenLimit = NODES_LOAD_LIMIT,
 	sort = NODES_SORT_DEFAULT,
 	sharesLimit = SHARES_LOAD_LIMIT
 ): GQLTypes.GetNodeQueryVariables {
 	return {
-		node_id: nodestring,
+		node_id: nodeId,
 		children_limit: childrenLimit,
 		sort,
 		shares_limit: sharesLimit
