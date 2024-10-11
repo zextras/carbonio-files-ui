@@ -75,22 +75,27 @@ export const AccessCodeSection = (): React.JSX.Element => {
 		<Container mainAlignment="flex-start" crossAlignment="flex-start">
 			<Switch
 				padding={{ top: 'small' }}
-				label={t('publicLink.switch.label', 'Enable access code')}
+				label={t('publicLink.accessCode.switch.label', 'Enable access code')}
 				onClick={toggleAccessCode}
 			/>
 			{isAccessCodeEnabled && (
 				<Container orientation={'horizontal'} padding={{ top: 'small' }} gap={'0.3rem'}>
 					<Input
 						type={isAccessCodeShown ? 'text' : 'password'}
-						label={t('publicLink.inputAccessCode.label', 'Access code')}
+						label={t('publicLink.accessCode.input.label', 'Access code')}
 						value={accessCode}
 						disabled
 						CustomIcon={CustomElement}
 					/>
-					<Tooltip label={'Copy access code'}>
+					<Tooltip label={t('publicLink.accessCode.buttons.copy.tooltip.', 'Copy access code')}>
 						<Button onClick={copyAccessCode} icon={'Copy'} type={'outlined'} size={'extralarge'} />
 					</Tooltip>
-					<Tooltip label={'Generate new access code'}>
+					<Tooltip
+						label={t(
+							'publicLink.accessCode.buttons.regenerate.tooltip',
+							'Generate new access code'
+						)}
+					>
 						<Button
 							onClick={regenerateAccessCode}
 							icon={'Refresh'}

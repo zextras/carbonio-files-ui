@@ -133,7 +133,7 @@ describe('Access code', () => {
 			const snackbar = await screen.findByTestId(SELECTORS.snackbar);
 			expect(within(snackbar).getByText(/access code copied/i)).toBeVisible();
 			const accessCodeInput = screen.getByLabelText<HTMLInputElement>(/access code/i);
-			expect(copyToClipboardFn).toBeCalledWith(accessCodeInput.value);
+			expect(copyToClipboardFn).toHaveBeenCalledWith(accessCodeInput.value);
 		});
 
 		it('should generate a new access code when the user clicks on the regenerate button', async () => {
