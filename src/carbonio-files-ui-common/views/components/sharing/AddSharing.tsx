@@ -140,7 +140,7 @@ function cleanEmails<T extends { email?: string }>(
 	);
 }
 
-export const AddSharing: React.VFC<AddSharingProps> = ({ node }) => {
+export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const [createShare] = useCreateShareMutation();

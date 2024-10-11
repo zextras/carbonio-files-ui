@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
@@ -78,6 +78,9 @@ function clickOnCreateDocsAction(
 
 async function createNode(newNode: { name: string }, user: UserEvent): Promise<void> {
 	// wait for the creation modal to be opened
+	await act(async () => {
+		await jest.advanceTimersByTimeAsync(TIMERS.modalDelayOpen);
+	});
 	const inputField = screen.getByRole('textbox');
 	expect(inputField).toHaveValue('');
 	await user.type(inputField, newNode.name);
@@ -96,9 +99,9 @@ describe('Create docs file', () => {
 			)
 		);
 		setup(<FolderView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
 		expect(createOptions).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);
@@ -119,9 +122,9 @@ describe('Create docs file', () => {
 			)
 		);
 		setup(<FolderView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
 		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);
@@ -326,7 +329,6 @@ describe('Create docs file', () => {
 		// create action
 		await createNode(node2, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
-
 		const nodeItem = await screen.findByTestId(SELECTORS.nodeItem(node2.id));
 		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(nodeItem).toBeVisible();
@@ -406,7 +408,6 @@ describe('Create docs file', () => {
 		await createNode(node2, user);
 		await screen.findByTestId(SELECTORS.nodeItem(node2.id));
 		expect(screen.getByText(node2.name)).toBeVisible();
-
 		const node2Item = screen.getByTestId(SELECTORS.nodeItem(node2.id));
 		expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 		expect(node2Item).toBeVisible();

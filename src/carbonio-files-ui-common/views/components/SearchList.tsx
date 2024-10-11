@@ -16,9 +16,9 @@ import { nodeSortVar } from '../../apollo/nodeSortVar';
 import { ListContext } from '../../contexts';
 import { useFindNodesQuery } from '../../hooks/graphql/queries/useFindNodesQuery';
 import { NodeListItemType } from '../../types/common';
-import { NonNullableList, OneOrMany } from '../../types/utils';
+import { OneOrMany } from '../../types/utils';
 
-export const SearchList: React.VFC = () => {
+export const SearchList = (): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { searchParams } = useSearch();
 	const { queryCalled, setQueryCalled } = useContext(ListContext);
@@ -57,16 +57,17 @@ export const SearchList: React.VFC = () => {
 				(isArray(param) && !isEmpty(param)) ||
 				(!isArray(param) && !!param && 'label' in param && !!param.label)
 		).length;
-		setQueryCalled && setQueryCalled(filterCount > 0 && (!!previousData || !!searchResult));
+		setQueryCalled?.(filterCount > 0 && (!!previousData || !!searchResult));
 	}, [previousData, searchParams, searchResult, setQueryCalled]);
 
 	const nodes = useMemo<NodeListItemType[]>(() => {
 		if (searchResult?.findNodes && searchResult.findNodes.nodes.length > 0) {
-			const $nodes = searchResult.findNodes.nodes;
-			return filter($nodes, (node) => !!node) as NonNullableList<typeof $nodes>;
+			return searchResult.findNodes.nodes.filter(
+				(node): node is NonNullable<typeof node> => !!node
+			);
 		}
 		return [];
-	}, [searchResult]);
+	}, [searchResult?.findNodes]);
 
 	const emptyListMessage = useMemo(() => {
 		const translations: OneOrMany<string> = queryCalled

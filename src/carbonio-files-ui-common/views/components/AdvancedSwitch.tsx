@@ -20,12 +20,12 @@ const DescriptionText = styled(Text)`
 	line-height: 1.5;
 `;
 
-export const AdvancedSwitch: React.VFC<AdvancedSwitchProps> = ({
+export const AdvancedSwitch = ({
 	label,
 	description,
 	onChange,
 	initialValue: value = false
-}) => {
+}: AdvancedSwitchProps): React.JSX.Element => {
 	const valueRef = useRef(value);
 
 	useEffect(() => {

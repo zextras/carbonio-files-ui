@@ -46,11 +46,11 @@ interface AdvancedSearchModalContentProps {
 	searchAdvancedFilters: (advancedFilters: AdvancedFilters) => void;
 }
 
-export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentProps> = ({
+export const AdvancedSearchModalContent = ({
 	filters,
 	closeAction,
 	searchAdvancedFilters
-}) => {
+}: AdvancedSearchModalContentProps): React.JSX.Element => {
 	const { activeNodeId, removeActiveNode } = useActiveNode();
 	const [t] = useTranslation();
 	const [currentFilters, setCurrentFilters] = useState<AdvancedFilters>(filters);
@@ -128,19 +128,16 @@ export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentPro
 		[updateFilter]
 	);
 
-	const keywordsOnAdd = useCallback<NonNullable<ChipInputProps['onAdd']>>(
-		(keyword: string | unknown) => {
-			if (typeof keyword === 'string') {
-				return {
-					label: keyword,
-					hasAvatar: false,
-					value: keyword
-				};
-			}
-			throw new Error('invalid keywords received');
-		},
-		[]
-	);
+	const keywordsOnAdd = useCallback<NonNullable<ChipInputProps['onAdd']>>((keyword) => {
+		if (typeof keyword === 'string') {
+			return {
+				label: keyword,
+				hasAvatar: false,
+				value: keyword
+			};
+		}
+		throw new Error('invalid keywords received');
+	}, []);
 
 	const keywordsOnType = useCallback<NonNullable<ChipInputProps['onInputType']>>(
 		({ textContent }) => {

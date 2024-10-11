@@ -11,7 +11,7 @@ import { NetworkError } from '@apollo/client/errors';
 import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
-import { chain, findIndex, forEach, isEmpty, map, reduce, toLower, trim } from 'lodash';
+import { chain, findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
 import { getUserAccount } from '../../utils/utils';
@@ -221,8 +221,8 @@ export const initExpirationDate = (date: Date | null | undefined): Date | undefi
 	return endOfDay;
 };
 
-export function takeIfNotEmpty(value: string | undefined): string | undefined {
-	return value !== undefined && !isEmpty(value) ? value : undefined;
+export function takeIfNotEmpty(value: string | null | undefined): string | undefined {
+	return value !== undefined && value !== null && value.trim().length > 0 ? value : undefined;
 }
 
 function decodeGraphQLErrorWithCode(error: GraphQLError, t: TFunction): string | undefined {

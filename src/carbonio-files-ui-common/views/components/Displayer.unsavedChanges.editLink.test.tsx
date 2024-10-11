@@ -26,6 +26,8 @@ import {
 } from '../../utils/resolverMocks';
 import { formatDate, initExpirationDate } from '../../utils/utils';
 
+jest.mock('./DisplayerActions');
+
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {
 		describe.each<[Node['__typename'], string, string, string]>([
@@ -61,7 +63,6 @@ describe('Displayer', () => {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
 					mocks
 				});
-				await screen.findByText(title);
 				const link = node.links[0] as Link;
 				await screen.findByText(link.url as string);
 				await user.click(screen.getAllByRole('button', { name: /edit/i })[0]);
@@ -104,7 +105,6 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(title);
 				const link = node.links[0] as Link;
 				await screen.findByText(link.url as string);
 				await user.click(screen.getAllByRole('button', { name: /edit/i })[0]);
@@ -152,7 +152,6 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(title);
 				await screen.findByText(link.url as string);
 				await user.click(screen.getAllByRole('button', { name: /edit/i })[0]);
 				const descriptionInput = await screen.findByRole('textbox', {
@@ -205,7 +204,6 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(title);
 				await screen.findByText(link.url as string);
 				await user.click(screen.getAllByRole('button', { name: /edit/i })[0]);
 				let descriptionInput = await screen.findByRole('textbox', {
@@ -280,7 +278,6 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(title);
 				await screen.findByText(link.url as string);
 				await user.click(screen.getByRole('button', { name: /edit/i }));
 				const descriptionInput = await screen.findByRole('textbox', {
@@ -358,7 +355,6 @@ describe('Displayer', () => {
 					mocks
 				});
 
-				await screen.findByText(title);
 				await screen.findByText(link.url as string);
 				await user.click(screen.getByRole('button', { name: /edit/i }));
 				const descriptionInput = await screen.findByRole('textbox', {

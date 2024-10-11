@@ -100,6 +100,7 @@ describe('Upload view', () => {
 			setup(<UploadView />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			await uploadWithDnD(dropzone, dataTransferObj);
 			await screen.findByText(otherUploads[0].name);
 			// wait for the displayer to open
@@ -257,9 +258,7 @@ describe('Upload view', () => {
 			)
 		);
 		setup(<UploadView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);
@@ -280,9 +279,7 @@ describe('Upload view', () => {
 			)
 		);
 		setup(<UploadView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);

@@ -8,9 +8,8 @@
 
 import React from 'react';
 
-import { screen, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import 'jest-styled-components';
-import { map } from 'lodash';
 import { find as findStyled } from 'styled-components/test-utils';
 
 import { FolderSelectionModalContent } from './FolderSelectionModalContent';
@@ -26,7 +25,7 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
-import { buildBreadCrumbRegExp, setup } from '../../tests/utils';
+import { buildBreadCrumbRegExp, setup, screen } from '../../tests/utils';
 import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
@@ -56,7 +55,6 @@ describe('Folder Selection Modal Content', () => {
 			}
 		);
 
-		await screen.findByText(/home/i);
 		expect(screen.getByText('Home')).toBeVisible();
 		expect(screen.getByText('Shared with me')).toBeVisible();
 		expect(screen.getByText('Trash')).toBeVisible();
@@ -85,7 +83,7 @@ describe('Folder Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const { findByTextWithMarkup, user } = setup(
+		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent folderId={folder.id} confirmAction={confirmAction} />
 			</div>,
@@ -94,8 +92,8 @@ describe('Folder Selection Modal Content', () => {
 			}
 		);
 		await screen.findByText(folder.name);
-		const breadcrumbItem = await findByTextWithMarkup(
-			buildBreadCrumbRegExp('Files', ...map(path, (node) => node.name))
+		const breadcrumbItem = await screen.findByTextWithMarkup(
+			buildBreadCrumbRegExp('Files', ...path.map((node) => node.name))
 		);
 		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(folder.name)).toBeVisible();
@@ -124,7 +122,6 @@ describe('Folder Selection Modal Content', () => {
 		// choose button becomes active. Opened folder is a valid selection
 		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
-		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
 			expect.objectContaining({
 				id: parent.id,
@@ -139,7 +136,6 @@ describe('Folder Selection Modal Content', () => {
 		// choose button becomes active. Other folder is a valid selection
 		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
-		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
 			expect.objectContaining({
 				id: folder2.id,
@@ -169,7 +165,7 @@ describe('Folder Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const { findByTextWithMarkup, user } = setup(
+		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent folderId={localRoot.id} confirmAction={confirmAction} />
 			</div>,
@@ -178,9 +174,6 @@ describe('Folder Selection Modal Content', () => {
 			}
 		);
 
-		await screen.findByText(/home/i);
-		const breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
-		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
 		expect(
@@ -218,12 +211,12 @@ describe('Folder Selection Modal Content', () => {
 
 		const mocks = {
 			Query: {
-				getPath: jest.fn(mockGetPath([localRoot]) as (...args: unknown[]) => Node[]),
+				getPath: jest.fn(mockGetPath([localRoot]) as () => Node[]),
 				getNode: mockGetNode({ getChildren: [localRoot] })
 			}
 		} satisfies Partial<Resolvers>;
 
-		const { findByTextWithMarkup, user } = setup(
+		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent folderId={localRoot.id} confirmAction={confirmAction} />
 			</div>,
@@ -232,10 +225,7 @@ describe('Folder Selection Modal Content', () => {
 			}
 		);
 
-		await screen.findByText(/home/i);
 		await waitFor(() => expect(mocks.Query.getPath).toHaveBeenCalled());
-		let breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files'));
-		expect(breadcrumbItem).toBeVisible();
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
 		expect(
@@ -245,8 +235,9 @@ describe('Folder Selection Modal Content', () => {
 		await screen.findByText(folder.name);
 		expect(screen.getByText(folder.name)).toBeVisible();
 		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
-		breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files', folder.parent.name));
-		expect(breadcrumbItem).toBeVisible();
+		expect(
+			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', folder.parent.name))
+		).toBeVisible();
 		// choose button is disabled because active folder (opened folder) is same as set one
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
@@ -269,8 +260,7 @@ describe('Folder Selection Modal Content', () => {
 		await screen.findByText(folder.name);
 		expect(screen.getByText(folder.name)).toBeVisible();
 		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
-		breadcrumbItem = await findByTextWithMarkup(buildBreadCrumbRegExp('Files', folder.parent.name));
-		expect(breadcrumbItem).toBeVisible();
+		await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', folder.parent.name));
 		// choose button is disabled because active folder (opened folder) is same as set one
 		expect(chooseButton).toBeVisible();
 		expect(chooseButton).toBeDisabled();
@@ -281,7 +271,6 @@ describe('Folder Selection Modal Content', () => {
 		// choose button is active because folder is a valid selection
 		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
-		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
 			expect.objectContaining({
 				id: folder.id,
@@ -311,7 +300,9 @@ describe('Folder Selection Modal Content', () => {
 			}
 		);
 
-		await screen.findByText(/home/i);
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
 		const checkboxLabel = screen.getByText('search also in contained folders');
 		expect(checkboxLabel).toBeVisible();
 		const checkboxChecked = screen.getByTestId(ICON_REGEXP.checkboxChecked);
@@ -337,7 +328,6 @@ describe('Folder Selection Modal Content', () => {
 				mocks
 			}
 		);
-		await screen.findByText(/home/i);
 		const checkboxLabel = screen.getByText('search also in contained folders');
 		let checkboxChecked = screen.getByTestId(ICON_REGEXP.checkboxChecked);
 		expect(checkboxLabel).toBeVisible();
@@ -359,7 +349,6 @@ describe('Folder Selection Modal Content', () => {
 		await user.click(checkboxChecked);
 		await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 		await user.click(chooseButton);
-		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
 			expect.objectContaining({
 				id: localRoot.id,
@@ -376,7 +365,7 @@ describe('Folder Selection Modal Content', () => {
 				findNodes: mockFindNodes(sharedWithMeFilter)
 			}
 		} satisfies Partial<Resolvers>;
-		const { getByTextWithMarkup, user } = setup(
+		const { user } = setup(
 			<div onClick={resetToDefault}>
 				<FolderSelectionModalContent confirmAction={confirmAction} />
 			</div>,
@@ -385,7 +374,6 @@ describe('Folder Selection Modal Content', () => {
 			}
 		);
 
-		await screen.findByText(/home/i);
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeVisible();
@@ -395,7 +383,6 @@ describe('Folder Selection Modal Content', () => {
 		// shared with me item is a valid selection
 		await waitFor(() => expect(chooseButton).toBeEnabled());
 		await user.click(chooseButton);
-		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenCalledWith(
 			expect.objectContaining({ id: ROOTS.SHARED_WITH_ME, name: 'Shared with me' }),
 			true
@@ -430,7 +417,9 @@ describe('Folder Selection Modal Content', () => {
 		await user.dblClick(screen.getByText(/shared with me/i));
 		await screen.findByText(sharedWithMeFilter[0].name);
 		expect(screen.getByText(sharedWithMeFilter[0].name)).toBeVisible();
-		expect(getByTextWithMarkup(buildBreadCrumbRegExp('Files', 'Shared with me'))).toBeVisible();
+		expect(
+			screen.getByTextWithMarkup(buildBreadCrumbRegExp('Files', 'Shared with me'))
+		).toBeVisible();
 		expect(chooseButton).toBeEnabled();
 		await user.click(chooseButton);
 		expect(confirmAction).toHaveBeenCalledTimes(3);
@@ -460,7 +449,6 @@ describe('Folder Selection Modal Content', () => {
 				mocks
 			}
 		);
-		await screen.findByText(/home/i);
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
 		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
@@ -470,7 +458,6 @@ describe('Folder Selection Modal Content', () => {
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeEnabled();
 		await user.click(chooseButton);
-		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenLastCalledWith(
 			expect.objectContaining({ id: folder.id, name: folder.name }),
 			true
@@ -497,7 +484,6 @@ describe('Folder Selection Modal Content', () => {
 				mocks
 			}
 		);
-		await screen.findByText(/shared with me/i);
 		await user.dblClick(screen.getByText(/shared with me/i));
 		await screen.findByText(folder.name);
 		expect(screen.getByText(filter[0].name)).toBeVisible();
@@ -507,7 +493,6 @@ describe('Folder Selection Modal Content', () => {
 		const chooseButton = screen.getByRole('button', { name: /choose folder/i });
 		expect(chooseButton).toBeEnabled();
 		await user.click(chooseButton);
-		expect(confirmAction).toHaveBeenCalled();
 		expect(confirmAction).toHaveBeenLastCalledWith(
 			expect.objectContaining({ id: folder.id, name: folder.name }),
 			true

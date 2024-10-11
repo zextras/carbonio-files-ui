@@ -15,7 +15,7 @@ const LazyFolderView = lazy(() => import(/* webpackChunkName: "folderView" */ '.
 
 const LazyFileView = lazy(() => import(/* webpackChunkName: "fileView" */ './FileView'));
 
-const FileFolderViewSelector: React.VFC = () => {
+const FileFolderViewSelector = (): React.JSX.Element => {
 	const folderId = useQueryParam('folder');
 	const fileId = useQueryParam('file');
 	const { path } = useRouteMatch();

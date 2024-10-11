@@ -8,9 +8,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
-import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
+import { PreviewItem, PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { HeaderAction } from '@zextras/carbonio-ui-preview/lib/preview/Header';
-import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -37,19 +36,10 @@ import {
 	DeleteNodesType,
 	useDeleteNodesMutation
 } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
-import {
-	FlagNodesType,
-	useFlagNodesMutation
-} from '../../hooks/graphql/mutations/useFlagNodesMutation';
+import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
-import {
-	RestoreType,
-	useRestoreNodesMutation
-} from '../../hooks/graphql/mutations/useRestoreNodesMutation';
-import {
-	TrashNodesType,
-	useTrashNodesMutation
-} from '../../hooks/graphql/mutations/useTrashNodesMutation';
+import { useRestoreNodesMutation } from '../../hooks/graphql/mutations/useRestoreNodesMutation';
+import { useTrashNodesMutation } from '../../hooks/graphql/mutations/useTrashNodesMutation';
 import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
@@ -125,7 +115,7 @@ interface ListProps {
 	fillerWithActions?: React.JSX.Element;
 }
 
-export const List: React.VFC<ListProps> = ({
+export const List = ({
 	nodes,
 	loading,
 	hasMore,
@@ -136,7 +126,7 @@ export const List: React.VFC<ListProps> = ({
 	emptyListMessage,
 	canUpload = true,
 	fillerWithActions
-}) => {
+}: ListProps): React.JSX.Element => {
 	const { navigateToFolder } = useNavigation();
 	const { setActiveNode } = useActiveNode();
 	const [t] = useTranslation();
@@ -227,32 +217,29 @@ export const List: React.VFC<ListProps> = ({
 	 * Set flagValue for selected nodes.
 	 * @param {boolean} flagValue - value to set
 	 */
-	const toggleFlagSelection = useCallback<FlagNodesType>(
-		(flagValue) =>
+	const toggleFlagSelection = useCallback(
+		(flagValue: boolean) => {
 			toggleFlag(flagValue, ...selectedNodes).then((result) => {
 				exitSelectionMode();
 				return result;
-			}),
+			});
+		},
 		[toggleFlag, selectedNodes, exitSelectionMode]
 	);
 
-	const markForDeletionSelection = useCallback<() => ReturnType<TrashNodesType>>(
-		() =>
-			markNodesForDeletion(...selectedNodes).then((result) => {
-				exitSelectionMode();
-				return result;
-			}),
-		[markNodesForDeletion, selectedNodes, exitSelectionMode]
-	);
+	const markForDeletionSelection = useCallback<() => void>(() => {
+		markNodesForDeletion(...selectedNodes).then((result) => {
+			exitSelectionMode();
+			return result;
+		});
+	}, [markNodesForDeletion, selectedNodes, exitSelectionMode]);
 
-	const restoreSelection = useCallback<() => ReturnType<RestoreType>>(
-		() =>
-			restore(...selectedNodes).then((result) => {
-				exitSelectionMode();
-				return result;
-			}),
-		[restore, selectedNodes, exitSelectionMode]
-	);
+	const restoreSelection = useCallback<() => void>(() => {
+		restore(...selectedNodes).then((result) => {
+			exitSelectionMode();
+			return result;
+		});
+	}, [restore, selectedNodes, exitSelectionMode]);
 
 	const deletePermanentlySelection = useCallback<DeleteNodesType>(
 		() => deletePermanently(...selectedNodes),
@@ -337,7 +324,7 @@ export const List: React.VFC<ListProps> = ({
 
 	const nodesForPreview = useMemo(
 		() =>
-			nodes.reduce<Parameters<PreviewManagerContextType['initPreview']>[0]>((accumulator, node) => {
+			nodes.reduce<PreviewItem[]>((accumulator, node) => {
 				if (!isFile(node)) {
 					return accumulator;
 				}

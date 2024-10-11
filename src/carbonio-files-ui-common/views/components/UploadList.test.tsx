@@ -157,7 +157,11 @@ describe('Upload list', () => {
 
 			setup(<UploadList />, { mocks });
 
-			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
+			// run queries
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			const itemToDrag = screen.getByText(nodesToDrag[0].name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(itemToDrag, { dataTransfer: dataTransfer() });
 			// drag image item is not shown

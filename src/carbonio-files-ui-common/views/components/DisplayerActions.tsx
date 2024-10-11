@@ -39,7 +39,7 @@ interface DisplayerActionsParams {
 		MakeOptional<Pick<File, 'version'>, 'version'>;
 }
 
-export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) => {
+export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	/** Mutation to update the flag status */

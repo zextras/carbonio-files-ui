@@ -40,12 +40,12 @@ interface FolderSelectionModalContentProps {
 
 type SelectedNode = Pick<NodeListItemType, 'id' | 'name'> | null;
 
-export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentProps> = ({
+export const FolderSelectionModalContent = ({
 	folderId,
 	cascadeDefault = true,
 	confirmAction,
 	closeAction
-}) => {
+}: FolderSelectionModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCurrent, setDefault } = useDestinationVarManager<SelectedNode>();
 	const { currentValue } = useReactiveVar<DestinationVar<SelectedNode>>(
@@ -68,16 +68,15 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 		if (currentFilterPathData?.getPath) {
 			const { length } = currentFilterPathData.getPath;
 			if (length > 0) {
-				setCurrent(currentFilterPathData.getPath[length - 1] || undefined);
+				setCurrent(currentFilterPathData.getPath[length - 1] ?? undefined);
 				if (length > 1) {
-					setOpenedFolderId(currentFilterPathData.getPath[length - 2]?.id || '');
+					setOpenedFolderId(currentFilterPathData.getPath[length - 2]?.id ?? '');
 					setDefault(currentFilterPathData.getPath[length - 2]);
 				}
 			}
 		} else if (folderId) {
 			setCurrent({
 				id: folderId,
-				/* i18next-extract-disable-next-line */
 				name: t('node.alias.name', folderId, { context: folderId })
 			});
 		} else {

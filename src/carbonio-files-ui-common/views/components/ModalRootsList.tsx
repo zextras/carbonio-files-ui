@@ -51,16 +51,16 @@ type FilterQueryParams = Pick<
 	'flagged' | 'sharedWithMe' | 'folderId' | 'cascade' | 'directShare'
 >;
 
-export const ModalRootsList: React.VFC<RootsListProps> = ({
+export const ModalRootsList = ({
 	activeNodes,
 	setActiveNode,
 	navigateTo,
 	showTrash = false,
 	checkDisabled,
 	checkSelectable
-}) => {
+}: RootsListProps): React.JSX.Element => {
 	const [t] = useTranslation();
-	const [filterQueryParams, setFilterQueryParam] = useState<FilterQueryParams>({});
+	const [filterQueryParams, setFilterQueryParams] = useState<FilterQueryParams>({});
 	const {
 		data: findNodesData,
 		loading,
@@ -81,7 +81,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 			id: ROOTS.ENTRY_POINT,
 			label: t('modal.roots.rootsList', 'Files'),
 			onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
-				setFilterQueryParam({});
+				setFilterQueryParams({});
 				navigateTo('', event);
 			}
 		});
@@ -93,7 +93,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 					id: 'sharedWithMe',
 					label: sharedWithMeLabel,
 					onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
-						setFilterQueryParam(FILTER_PARAMS.sharedWithMe);
+						setFilterQueryParams(FILTER_PARAMS.sharedWithMe);
 						setActiveNode(
 							{
 								id: ROOTS.SHARED_WITH_ME,
@@ -192,11 +192,11 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 		(id, event) => {
 			switch (id) {
 				case ROOTS.LOCAL_ROOT:
-					setFilterQueryParam({});
+					setFilterQueryParams({});
 					navigateTo(id, event);
 					break;
 				case ROOTS.SHARED_WITH_ME:
-					setFilterQueryParam(FILTER_PARAMS.sharedWithMe);
+					setFilterQueryParams(FILTER_PARAMS.sharedWithMe);
 					break;
 				default:
 					break;

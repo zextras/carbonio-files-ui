@@ -6,7 +6,7 @@
 
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
+import { List, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
 import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
@@ -36,7 +36,7 @@ const DragImageContainer = styled.div<{ $isGrid: boolean }>`
 		`};
 `;
 
-const Grid = styled(ListV2)`
+const Grid = styled(List)`
 	& > div {
 		padding-left: 1rem;
 		padding-right: 1rem;
@@ -224,7 +224,7 @@ export const ListContent = ({
 					{items}
 				</Grid>
 			) : (
-				<ListV2
+				<List
 					maxHeight={'100%'}
 					height={'auto'}
 					data-testid="main-list"
@@ -234,7 +234,7 @@ export const ListContent = ({
 					ref={listRef}
 				>
 					{items}
-				</ListV2>
+				</List>
 			)}
 			<DragImageContainer $isGrid={viewMode === VIEW_MODE.grid} ref={dragImageRef}>
 				{dragImage}

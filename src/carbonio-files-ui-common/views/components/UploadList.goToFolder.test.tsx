@@ -39,15 +39,12 @@ describe('Upload List', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user, getByRoleWithIcon } = setup(<UploadList />, { mocks });
-
-				await screen.findByText(uploadItems[0].name);
+				const { user } = setup(<UploadList />, { mocks });
 
 				await selectNodes(Object.keys(uploadMap), user);
-
 				await screen.findByText(/deselect all/i);
-				expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
-				expect(getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeEnabled();
+				expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeVisible();
+				expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })).toBeEnabled();
 			});
 
 			test('Action is hidden if selected at least one of the selected items has a different parent', async () => {
@@ -71,15 +68,12 @@ describe('Upload List', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user, queryByRoleWithIcon } = setup(<UploadList />, { mocks });
-
-				await screen.findByText(uploadItems[0].name);
+				const { user } = setup(<UploadList />, { mocks });
 
 				await selectNodes(Object.keys(uploadMap), user);
-
 				await screen.findByText(/deselect all/i);
 				expect(
-					queryByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })
+					screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder })
 				).not.toBeInTheDocument();
 			});
 
@@ -116,13 +110,10 @@ describe('Upload List', () => {
 					mocks
 				});
 
-				await screen.findByText(uploadItems[0].name);
 				expect(
 					screen.queryByText(`current location: /?folder=${localRoot.id}`, { exact: false })
 				).not.toBeInTheDocument();
-
 				await selectNodes(Object.keys(uploadMap), user);
-
 				await screen.findByText(/deselect all/i);
 				await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder }));
 				await screen.findByText(`current location: /?folder=${localRoot.id}`, { exact: false });

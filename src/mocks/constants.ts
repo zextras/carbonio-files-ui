@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import type { Account } from '@zextras/carbonio-shell-ui';
+import { User } from '../carbonio-files-ui-common/types/graphql/types';
 
-export const LOGGED_USER: Account = {
+export const LOGGED_USER_ACCOUNT = {
 	displayName: '',
 	identities: {
 		identity: [
@@ -23,3 +23,10 @@ export const LOGGED_USER: Account = {
 	id: 'logged-user-id',
 	name: 'Logged User Name'
 };
+
+export const LOGGED_USER = {
+	id: LOGGED_USER_ACCOUNT.id,
+	full_name: LOGGED_USER_ACCOUNT.name,
+	email: 'logged.user@email.test',
+	__typename: 'User'
+} satisfies User;

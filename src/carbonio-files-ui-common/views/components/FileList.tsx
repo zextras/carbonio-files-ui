@@ -18,7 +18,7 @@ interface FileListProps {
 	canUploadFile: boolean;
 }
 
-const FileList: React.VFC<FileListProps> = ({ fileId, canUploadFile }) => {
+const FileList = ({ fileId, canUploadFile }: FileListProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { data: nodeData, loading, loadMore, hasMore } = useGetNodeQuery(fileId);
 	const node = useMemo(() => nodeData?.getNode || null, [nodeData]);

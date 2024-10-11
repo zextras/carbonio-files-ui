@@ -39,13 +39,13 @@ interface NewShareChipPopoverContainerProps {
 	containerOnClick: (containerId: number) => void;
 }
 
-export const NewShareChipPopoverContainer: React.FC<NewShareChipPopoverContainerProps> = ({
+export const NewShareChipPopoverContainer = ({
 	activeRow = 0,
 	disabledRows = [],
 	checkboxValue = false,
 	checkboxOnClick,
 	containerOnClick
-}) => {
+}: NewShareChipPopoverContainerProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const container0Click = useCallback(() => containerOnClick(0), [containerOnClick]);
 	const container1Click = useCallback(() => containerOnClick(1), [containerOnClick]);

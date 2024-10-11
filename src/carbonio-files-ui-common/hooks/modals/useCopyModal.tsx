@@ -40,7 +40,7 @@ export function useCopyModal(copyNodesActionCallback?: () => void): {
 					children: (
 						<CopyNodesModalContent
 							closeAction={(): void => {
-								copyNodesActionCallback && copyNodesActionCallback();
+								copyNodesActionCallback?.();
 								resetAll();
 								closeModal(modalId);
 							}}

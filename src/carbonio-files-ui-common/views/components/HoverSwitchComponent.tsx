@@ -30,10 +30,10 @@ interface HoverSwitchComponentProps {
 	hiddenToVisibleComponent: React.ReactNode;
 }
 
-export const HoverSwitchComponent: React.FC<HoverSwitchComponentProps> = ({
+export const HoverSwitchComponent = ({
 	visibleToHiddenComponent,
 	hiddenToVisibleComponent
-}) => (
+}: HoverSwitchComponentProps): React.JSX.Element => (
 	<DivContainer>
 		<StyledFirstComponent>{visibleToHiddenComponent}</StyledFirstComponent>
 		<StyledSecondComponent>{hiddenToVisibleComponent}</StyledSecondComponent>

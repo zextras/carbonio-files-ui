@@ -49,7 +49,7 @@ interface PublicLinkComponentProps {
 	linkName: string;
 }
 
-export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
+export const PublicLinkComponent = ({
 	id,
 	description,
 	url,
@@ -61,7 +61,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	onRevokeOrRemove,
 	forceUrlCopyDisabled,
 	linkName
-}) => {
+}: PublicLinkComponentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
@@ -118,7 +118,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 				onEditConfirm(
 					id,
 					linkDescriptionValue,
-					updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined
+					updatedTimestamp !== expiresAt ? (updatedTimestamp ?? 0) : undefined
 				)
 			]),
 		[expiresAt, id, linkDescriptionValue, onEditConfirm, updatedTimestamp]

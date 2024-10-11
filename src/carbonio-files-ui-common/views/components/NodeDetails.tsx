@@ -52,7 +52,7 @@ interface NodeDetailsProps {
 	mimeType?: string;
 }
 
-export const NodeDetails: React.VFC<NodeDetailsProps> = ({
+export const NodeDetails = ({
 	typeName,
 	id,
 	name,
@@ -73,7 +73,7 @@ export const NodeDetails: React.VFC<NodeDetailsProps> = ({
 	rootId,
 	version,
 	mimeType
-}) => {
+}: NodeDetailsProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const [$isSupportedByPreview, previewType] = useMemo(
 		() => isSupportedByPreview(mimeType, 'thumbnail_detail'),

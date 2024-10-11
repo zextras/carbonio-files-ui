@@ -20,7 +20,7 @@ import {
 	Text,
 	Tooltip
 } from '@zextras/carbonio-design-system';
-import { map, reduce, some, debounce, findIndex, trim } from 'lodash';
+import { reduce, debounce, findIndex, trim } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingIcon } from './LoadingIcon';
@@ -31,9 +31,6 @@ import { CustomModalBody, OverFlowHiddenRow } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { DOUBLE_CLICK_DELAY } from '../../constants';
 import { NodeAvatarIconContext } from '../../contexts';
-import BASE_NODE from '../../graphql/fragments/baseNode.graphql';
-import CHILD from '../../graphql/fragments/child.graphql';
-import GET_BASE_NODE from '../../graphql/queries/getBaseNode.graphql';
 import { useCreateFolderMutation } from '../../hooks/graphql/mutations/useCreateFolderMutation';
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';
 import { useGetPermissionsQuery } from '../../hooks/graphql/queries/useGetPermissionsQuery';
@@ -43,7 +40,10 @@ import { useErrorHandler } from '../../hooks/useErrorHandler';
 import { NodeListItemType, NodeWithMetadata, RootListItemType } from '../../types/common';
 import {
 	BaseNodeFragment,
+	BaseNodeFragmentDoc,
 	ChildFragment,
+	ChildFragmentDoc,
+	GetBaseNodeDocument,
 	GetBaseNodeQuery,
 	GetBaseNodeQueryVariables
 } from '../../types/graphql/types';
@@ -70,18 +70,20 @@ const stopPropagation = (e: Event | React.SyntheticEvent): void => {
 
 const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>;
 
-export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentProps> = ({
+const allValidSelectionFn = (): boolean => true;
+
+export const NodesSelectionModalContent = ({
 	title,
 	confirmAction,
 	confirmLabel,
 	closeAction,
-	isValidSelection = (): boolean => true, // by default all nodes are active,
+	isValidSelection = allValidSelectionFn, // by default all nodes are active,
 	maxSelection,
 	disabledTooltip,
 	canSelectOpenedFolder,
 	description,
 	canCreateFolder: canCreateFolderProp
-}) => {
+}: NodesSelectionModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const apolloClient = useApolloClient();
 	const { setCurrent, setDefault } = useDestinationVarManager<NodeWithMetadata[]>();
@@ -89,9 +91,8 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 		destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>
 	);
 	const [openedFolder, setOpenedFolder] = useState<string>('');
-	const [selectedNodes, setSelectedNodes] = useState<NodeWithMetadata[]>([]);
-	const selectedNodesIds = useMemo(() => map(selectedNodes, (node) => node.id), [selectedNodes]);
-	const navigationOccurredRef = useRef(false);
+	const selectedNodes = useMemo(() => currentValue ?? [], [currentValue]);
+	const selectedNodesIds = useMemo(() => selectedNodes.map((node) => node.id), [selectedNodes]);
 	const [newFolderInputVisible, setNewFolderInputVisible] = useState(false);
 	const [newFolderName, setNewFolderName] = useState('');
 	const newFolderInputRef = useRef<HTMLInputElement>(null);
@@ -116,17 +117,13 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 	const getCurrentFolderBaseNode = useCallback<() => BaseNodeFragment | null>(() => {
 		if (currentFolderNode) {
 			return apolloClient.readFragment<BaseNodeFragment>({
-				fragment: BASE_NODE,
+				fragment: BaseNodeFragmentDoc,
 				fragmentName: 'BaseNode',
 				id: apolloClient.cache.identify(currentFolderNode)
 			});
 		}
 		return null;
 	}, [apolloClient, currentFolderNode]);
-
-	useEffect(() => {
-		setSelectedNodes(currentValue || []);
-	}, [currentValue]);
 
 	const selectId = useCallback(
 		(node: NodeWithMetadata) => {
@@ -244,7 +241,7 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 		(node: Pick<NodeListItemType, 'id'>) =>
 			// for nodes already loaded as child these query should read data in cache
 			apolloClient.query<GetBaseNodeQuery, GetBaseNodeQueryVariables>({
-				query: GET_BASE_NODE,
+				query: GetBaseNodeDocument,
 				variables: {
 					node_id: node.id
 				}
@@ -252,15 +249,15 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 		[apolloClient]
 	);
 
+	const cancelSetSelectedNodeHandlerRef = useRef(false);
+
 	const setSelectedNodeHandler = useCallback(
 		(
 			node: Pick<NodeListItemType | RootListItemType, 'id' | '__typename'> | null | undefined,
 			event?: React.SyntheticEvent | Event,
 			reset?: boolean
 		) => {
-			/**
-			 * Internal util function to set state
-			 */
+			// Internal util function to set state
 			const setSelectedNodeIfValid = (
 				nodeWithMetadata: NodeWithMetadata | null | undefined
 			): void => {
@@ -270,7 +267,7 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 					isValidSelection(nodeWithMetadata) &&
 					(canSelectOpenedFolder || nodeWithMetadata.id !== currentFolderNode?.id)
 				) {
-					event && event.stopPropagation();
+					event?.stopPropagation();
 					// if is valid set it directly
 					selectId(nodeWithMetadata);
 					// delay the hide callback of the input to make navigation to be executed before this one, in order
@@ -280,27 +277,28 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 				}
 			};
 
-			navigationOccurredRef.current = false;
+			cancelSetSelectedNodeHandlerRef.current = true;
 			if (reset) {
 				unSelectAll();
 			}
 			const cachedNode = node?.id
 				? apolloClient.readFragment<ChildFragment>({
-						fragment: CHILD,
+						fragment: ChildFragmentDoc,
 						fragmentName: 'Child',
 						// assuming it's a folder, not the best solution
 						id: apolloClient.cache.identify(node)
 					})
 				: null;
 			if (cachedNode?.id) {
+				cancelSetSelectedNodeHandlerRef.current = false;
 				// set directly cached data to make operation immediate
 				setSelectedNodeIfValid(cachedNode);
-			} else if (node?.id && some(rootsData?.getRootsList, (root) => root?.id === node.id)) {
+			} else if (node?.id && rootsData?.getRootsList.some((root) => root?.id === node.id)) {
+				cancelSetSelectedNodeHandlerRef.current = false;
 				// if node is a Root load data in order to check its validity
 				getBaseNodeData(node)
 					.then((result) => {
-						// avoid to set active node if navigation occurred while query was executing
-						if (!navigationOccurredRef.current) {
+						if (!cancelSetSelectedNodeHandlerRef.current) {
 							setSelectedNodeIfValid(result?.data.getNode);
 						}
 					})
@@ -322,35 +320,32 @@ export const NodesSelectionModalContent: React.VFC<NodesSelectionModalContentPro
 		]
 	);
 
+	useEffect(() => {
+		if (currentFolderNode && canSelectOpenedFolder) {
+			setSelectedNodeHandler(currentFolderNode, undefined, true);
+			const newDefault = isValidSelection(currentFolderNode) ? [currentFolderNode] : [];
+			setDefault(newDefault);
+		} else {
+			setSelectedNodeHandler(null, undefined, true);
+			setDefault([]);
+		}
+	}, [
+		canSelectOpenedFolder,
+		currentFolderNode,
+		isValidSelection,
+		setDefault,
+		setSelectedNodeHandler,
+		unSelectAll
+	]);
+
 	const navigateTo = useCallback(
 		(id: string, event?: React.SyntheticEvent | Event) => {
-			setOpenedFolder(id || '');
+			setOpenedFolder(id);
 			hideCreateFolderInputDebounced.cancel();
 			hideCreateFolderInput();
-			navigationOccurredRef.current = true;
-			if (canSelectOpenedFolder && id) {
-				setSelectedNodeHandler(
-					{
-						id,
-						__typename: 'Folder'
-					},
-					undefined,
-					true
-				);
-			} else {
-				unSelectAll();
-				setDefault([]);
-			}
-			event && event.stopPropagation();
+			event?.stopPropagation();
 		},
-		[
-			canSelectOpenedFolder,
-			hideCreateFolderInput,
-			hideCreateFolderInputDebounced,
-			setDefault,
-			setSelectedNodeHandler,
-			unSelectAll
-		]
+		[hideCreateFolderInput, hideCreateFolderInputDebounced]
 	);
 
 	const closeHandler = useCallback(() => {

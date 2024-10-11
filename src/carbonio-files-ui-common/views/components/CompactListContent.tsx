@@ -6,7 +6,7 @@
 
 import React, { useMemo } from 'react';
 
-import { ListV2 } from '@zextras/carbonio-design-system';
+import { List } from '@zextras/carbonio-design-system';
 import { map } from 'lodash';
 
 import { CompactNodeListItem } from './CompactNodeListItem';
@@ -54,7 +54,7 @@ export const CompactListContent = ({
 	);
 
 	return (
-		<ListV2
+		<List
 			maxHeight={'100%'}
 			height={'auto'}
 			data-testid="main-list"
@@ -63,6 +63,6 @@ export const CompactListContent = ({
 			intersectionObserverInitOptions={intersectionObserverInitOptions}
 		>
 			{items}
-		</ListV2>
+		</List>
 	);
 };
