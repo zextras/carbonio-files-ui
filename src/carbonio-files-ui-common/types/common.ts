@@ -11,7 +11,6 @@ import { BreadcrumbsProps, ChipItem } from '@zextras/carbonio-design-system';
 import { UploadItem } from './graphql/client-types';
 import {
 	File,
-	File as FilesFile,
 	FindNodesQueryVariables,
 	Folder,
 	GetNodeQuery,
@@ -33,7 +32,7 @@ export type PickIdNodeType = Node<'id'>;
 
 export type GetNodeParentType = {
 	parent?: Maybe<
-		| ({ __typename?: 'File' } & Pick<FilesFile, 'id'> & {
+		| ({ __typename?: 'File' } & Pick<File, 'id'> & {
 					permissions: { __typename?: 'Permissions' } & Pick<
 						Permissions,
 						| 'can_read'
