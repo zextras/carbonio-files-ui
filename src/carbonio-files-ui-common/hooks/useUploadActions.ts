@@ -11,21 +11,20 @@ import { useTranslation } from 'react-i18next';
 
 import { useUpload } from './useUpload';
 import { useNavigation } from '../../hooks/useNavigation';
-import { Action } from '../types/common';
 import { UploadItem } from '../types/graphql/client-types';
-import { MakeRequired } from '../types/utils';
 import {
-	ActionsFactoryCheckerMap,
+	Action,
 	buildActionItems,
+	CustomUploadCheckers,
 	getPermittedUploadActions
 } from '../utils/ActionsFactory';
 import { scrollToNodeItem } from '../utils/utils';
 
-type ActionNodes = MakeRequired<Partial<UploadItem>, 'id'>[];
+type ActionNodes = Pick<UploadItem, 'id' | 'parentNodeId' | 'nodeId' | 'status'>[];
 
 export function useUploadActions(
 	nodes: ActionNodes,
-	actionCheckers: ActionsFactoryCheckerMap | undefined = {},
+	actionCheckers: CustomUploadCheckers | undefined = {},
 	actionCallbacks: Partial<Record<Action, (nodesInvolved: ActionNodes) => void>> | undefined = {}
 ): DSAction[] {
 	const [t] = useTranslation();

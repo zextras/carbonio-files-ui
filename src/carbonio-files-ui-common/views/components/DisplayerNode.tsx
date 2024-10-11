@@ -45,21 +45,14 @@ export const DisplayerNode = ({
 		isExistingTab
 	} = useActiveNode();
 
-	const activeNodeIsFile: boolean | null = useMemo(() => {
-		if (node) {
-			return isFile(node);
-		}
-		return null;
-	}, [node]);
+	const activeNodeIsFile = isFile(node);
 
 	const tabs = useMemo(
 		() =>
 			map(
 				filter(
 					DISPLAYER_TABS,
-					(displayerTab) =>
-						displayerTab !== DISPLAYER_TABS.versioning ||
-						(activeNodeIsFile != null && activeNodeIsFile)
+					(displayerTab) => displayerTab !== DISPLAYER_TABS.versioning || activeNodeIsFile
 				),
 				(dTab) => ({ id: dTab, label: t(`displayer.tabs.${dTab}`, dTab) })
 			),
@@ -75,7 +68,7 @@ export const DisplayerNode = ({
 
 	const canUpsertNodeDescription = useMemo(() => {
 		if (node) {
-			return canUpsertDescription({ nodes: node });
+			return canUpsertDescription({ nodes: [node] });
 		}
 		return false;
 	}, [node]);
@@ -109,7 +102,7 @@ export const DisplayerNode = ({
 				<Container mainAlignment="flex-start" height="fill">
 					<TabBar
 						items={tabs}
-						selected={tab || DISPLAYER_TABS.details}
+						selected={tab ?? DISPLAYER_TABS.details}
 						onChange={tabOnChangeHandler}
 						width="fill"
 						height="3rem"
@@ -136,13 +129,13 @@ export const DisplayerNode = ({
 							nodes={isFolder(node) ? node.children?.nodes : undefined}
 							shares={node.shares}
 							type={node.type}
-							rootId={node.rootId || undefined}
+							rootId={node.rootId}
 							version={isFile(node) ? node.version : undefined}
 							mimeType={isFile(node) ? node.mime_type : undefined}
 						/>
 					)}
 					{isSharingTab && <NodeSharing node={node} />}
-					{isVersioningTab && activeNodeIsFile && <Versioning node={node} />}
+					{isVersioningTab && isFile(node) && <Versioning node={node} />}
 				</Container>
 			</DisplayerContentContainer>
 		</>

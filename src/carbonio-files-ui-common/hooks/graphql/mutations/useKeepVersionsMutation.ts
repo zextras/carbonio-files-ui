@@ -45,7 +45,6 @@ export function useKeepVersionsMutation(): KeepVersionsType {
 					keep_forever: keepForever
 				},
 				optimisticResponse: {
-					__typename: 'Mutation',
 					keepVersions: versions
 				},
 				update(cache, { data }) {

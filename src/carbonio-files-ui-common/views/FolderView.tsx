@@ -30,7 +30,7 @@ import { useCreateDocsFile } from '../hooks/useCreateDocsFile';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import useQueryParam from '../hooks/useQueryParam';
 import { useUpload } from '../hooks/useUpload';
-import { DocsType, NodeListItemType, URLParams } from '../types/common';
+import { DocsType, URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
@@ -125,7 +125,7 @@ const FolderView = (): React.JSX.Element => {
 	const createDocsFileAction = useCallback(
 		(docsType: DocsType) => async (_parentId: string, newName: string) => {
 			if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
-				const result = await createDocsFile(currentFolder?.getNode, newName, docsType);
+				const result = await createDocsFile(currentFolder.getNode, newName, docsType);
 				if (result?.data?.getNode) {
 					setActiveNode(result.data.getNode.id);
 				}
@@ -291,7 +291,7 @@ const FolderView = (): React.JSX.Element => {
 		t
 	]);
 
-	const nodes = useMemo<NodeListItemType[]>(() => {
+	const nodes = useMemo(() => {
 		if (
 			currentFolder?.getNode &&
 			isFolder(currentFolder.getNode) &&

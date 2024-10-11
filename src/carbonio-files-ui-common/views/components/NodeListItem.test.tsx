@@ -32,7 +32,6 @@ import {
 	populateUser
 } from '../../mocks/mockUtils';
 import { setup, screen, within } from '../../tests/utils';
-import { NodeListItemType } from '../../types/common';
 import { NodeType, User } from '../../types/graphql/types';
 import {
 	MIME_TYPE_PREVIEW_SUPPORT,
@@ -454,7 +453,7 @@ describe('Node List Item', () => {
 			[ROOTS.TRASH, 'Trash2', '#828282'],
 			[ROOTS.LOCAL_ROOT, 'Folder', '#828282']
 		])('node with root type %s show icon %s with color %s', (rootType, icon, color) => {
-			const node: NodeListItemType = { ...populateFolder(undefined, rootType) };
+			const node = populateFolder(undefined, rootType);
 			node.type = NodeType.Root;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>

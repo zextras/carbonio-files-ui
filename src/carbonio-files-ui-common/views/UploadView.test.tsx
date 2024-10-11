@@ -39,7 +39,6 @@ import {
 	within,
 	spyOnUseCreateOptions
 } from '../tests/utils';
-import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, GetChildrenDocument } from '../types/graphql/types';
@@ -111,8 +110,8 @@ describe('Upload view', () => {
 			await screen.findAllByTestId(ICON_REGEXP.uploadCompleted);
 			expect(screen.getByText(/path/i)).toBeVisible();
 			expect(screen.getByText(/content/i)).toBeVisible();
-			expect(screen.getByText((folder.children.nodes[0] as Node).name)).toBeVisible();
-			expect(screen.getByText((folder.children.nodes[1] as Node).name)).toBeVisible();
+			expect(screen.getByText(folder.children.nodes[0]!.name)).toBeVisible();
+			expect(screen.getByText(folder.children.nodes[1]!.name)).toBeVisible();
 		});
 
 		test('When the first item uploaded is a folder, but the upload list is not empty, does not open displayer', async () => {

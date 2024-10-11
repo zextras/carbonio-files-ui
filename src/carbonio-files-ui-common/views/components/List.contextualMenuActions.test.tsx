@@ -15,8 +15,8 @@ import { ACTION_IDS } from '../../../constants';
 import { ACTION_REGEXP, COLORS, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
+import { File, Folder } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/resolverMocks';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
@@ -80,7 +80,7 @@ describe('Contextual menu actions', () => {
 					<List
 						folderId={currentFolder.id}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
 						mainList
 						emptyListMessage={'hint'}
 					/>,
@@ -186,7 +186,7 @@ describe('Contextual menu actions', () => {
 					<List
 						folderId={currentFolder.id}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
 						mainList
 						emptyListMessage={'hint'}
 					/>,
@@ -289,7 +289,7 @@ describe('Contextual menu actions', () => {
 					<List
 						folderId={currentFolder.id}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
 						mainList
 						emptyListMessage={'hint'}
 					/>,
@@ -390,7 +390,7 @@ describe('Contextual menu actions', () => {
 					<List
 						folderId={currentFolder.id}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
 						mainList
 						emptyListMessage={'hint'}
 					/>,
@@ -454,8 +454,8 @@ describe('Contextual menu actions', () => {
 					mockedNode.parent = populateFolder(0, currentFolder.id, currentFolder.name);
 				}
 			});
-			const element0 = currentFolder.children.nodes[0] as Node;
-			const element1 = currentFolder.children.nodes[1] as Node;
+			const element0 = currentFolder.children.nodes[0]!;
+			const element1 = currentFolder.children.nodes[1]!;
 
 			const mocks = {
 				Query: {
@@ -467,7 +467,7 @@ describe('Contextual menu actions', () => {
 				<List
 					folderId={currentFolder.id}
 					fillerWithActions={<EmptySpaceFiller actions={[]} />}
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>,
@@ -501,8 +501,8 @@ describe('Contextual menu actions', () => {
 					mockedNode.flagged = false;
 				}
 			});
-			const element0 = currentFolder.children.nodes[0] as Node;
-			const element1 = currentFolder.children.nodes[1] as Node;
+			const element0 = currentFolder.children.nodes[0]!;
+			const element1 = currentFolder.children.nodes[1]!;
 
 			const mocks = {
 				Query: {
@@ -514,7 +514,7 @@ describe('Contextual menu actions', () => {
 				<List
 					folderId={currentFolder.id}
 					fillerWithActions={<EmptySpaceFiller actions={[]} />}
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>,
@@ -554,7 +554,7 @@ describe('Contextual menu actions', () => {
 			<List
 				folderId={currentFolder.id}
 				fillerWithActions={<EmptySpaceFiller actions={[]} />}
-				nodes={currentFolder.children.nodes as Array<Node>}
+				nodes={currentFolder.children.nodes as (File | Folder)[]}
 				mainList
 				emptyListMessage={'hint'}
 			/>,

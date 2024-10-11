@@ -17,8 +17,8 @@ const handleUpdateLinkRequest: GraphQLResponseResolver<
 	const link: UpdateLinkMutation['updateLink'] = {
 		__typename: 'Link',
 		id,
-		description,
-		expires_at: expiresAt,
+		description: description ?? null,
+		expires_at: expiresAt ?? null,
 		url: faker.internet.url(),
 		created_at: faker.date.recent().getTime()
 	};

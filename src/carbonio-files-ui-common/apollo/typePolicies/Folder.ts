@@ -8,7 +8,12 @@ import { forEach } from 'lodash';
 
 import { mergeNodesList, readNodesList } from './utils';
 import { NodesPage, NodesPageCachedObject } from '../../types/apollo';
-import { Folder, FolderChildrenArgs, ParentIdFragmentDoc } from '../../types/graphql/types';
+import {
+	Folder,
+	FolderChildrenArgs,
+	ParentIdFragment,
+	ParentIdFragmentDoc
+} from '../../types/graphql/types';
 
 export const folderTypePolicies: TypePolicy = {
 	fields: {
@@ -44,7 +49,7 @@ export const folderTypePolicies: TypePolicy = {
 
 					const folderId = readField<Folder['id']>('id' satisfies keyof Folder);
 					const typename = readField<Folder['__typename']>('__typename' satisfies keyof Folder);
-					if (folderId) {
+					if (folderId && typename) {
 						const parentFolderRef = toReference({
 							__typename: typename,
 							id: folderId
@@ -59,7 +64,7 @@ export const folderTypePolicies: TypePolicy = {
 								});
 								if (!parentCachedData?.parent) {
 									// use writeFragment and not cache modify in order to write the field even if it is not already present
-									cache.writeFragment({
+									cache.writeFragment<Omit<ParentIdFragment, '__typename'>>({
 										id: cache.identify(child),
 										fragment: ParentIdFragmentDoc,
 										fragmentName: 'ParentId',

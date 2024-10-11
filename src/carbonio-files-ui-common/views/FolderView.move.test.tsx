@@ -22,9 +22,9 @@ import {
 	screen,
 	buildBreadCrumbRegExp
 } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
+	File,
 	Folder,
 	GetChildrenDocument,
 	GetChildrenQuery,
@@ -59,7 +59,7 @@ describe('Move', () => {
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
 			currentFolder.children.nodes.unshift(destinationFolder);
-			const nodeToMove = currentFolder.children.nodes[1] as Node;
+			const nodeToMove = currentFolder.children.nodes[1]!;
 			nodeToMove.permissions.can_write_folder = true;
 			nodeToMove.permissions.can_write_file = true;
 			// write destination folder in cache as if it was already loaded
@@ -121,10 +121,10 @@ describe('Move', () => {
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
 			currentFolder.children.nodes.unshift(destinationFolder);
-			const nodesToMove = [
-				currentFolder.children.nodes[1],
-				currentFolder.children.nodes[2]
-			] as Node[];
+			const nodesToMove = [currentFolder.children.nodes[1], currentFolder.children.nodes[2]] as (
+				| File
+				| Folder
+			)[];
 			forEach(nodesToMove, (mockedNode) => {
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -207,8 +207,11 @@ describe('Move', () => {
 					mockedNode.parent = currentFolder;
 				}
 			});
-			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
-			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
+			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as (
+				| File
+				| Folder
+			)[];
+			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as (File | Folder)[];
 			const nodesToMove = [...firstPage];
 			const mocks = {
 				Query: {
@@ -246,7 +249,7 @@ describe('Move', () => {
 				buildBreadCrumbRegExp(commonParent.name, currentFolder.name)
 			);
 			const modalList = screen.getByTestId(SELECTORS.modalList);
-			await within(modalList).findByText((currentFolder.children.nodes[0] as Node).name);
+			await within(modalList).findByText(currentFolder.children.nodes[0]!.name);
 			const moveModalButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });
 			act(() => {
 				// run path lazy query
@@ -279,7 +282,7 @@ describe('Move', () => {
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
 			currentFolder.children.nodes.unshift(destinationFolder);
-			const nodeToMove = currentFolder.children.nodes[1] as Node;
+			const nodeToMove = currentFolder.children.nodes[1]!;
 			nodeToMove.permissions.can_write_folder = true;
 			nodeToMove.permissions.can_write_file = true;
 			// write destination folder in cache as if it was already loaded
@@ -346,8 +349,11 @@ describe('Move', () => {
 					mockedNode.parent = currentFolder;
 				}
 			});
-			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
-			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
+			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as (
+				| File
+				| Folder
+			)[];
+			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as (File | Folder)[];
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),

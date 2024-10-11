@@ -22,7 +22,7 @@ import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
 import { useUserInfo } from '../../../hooks/useUserInfo';
-import { draggedItemsVar } from '../../apollo/dragAndDropVar';
+import { DraggedItem, draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { selectionModeVar } from '../../apollo/selectionVar';
 import { DRAG_TYPES, ROOTS, TIMERS } from '../../constants';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
@@ -101,10 +101,12 @@ export const SecondaryBarItem = ({ item, expanded }: SecondaryBarItemProps): Rea
 				if (isUploadingFiles) {
 					add(getUploadAddType(event.dataTransfer), item.id);
 				} else if (movingNodes) {
-					const nodesToMove: Array<Partial<Node> & PickIdNodeType> = JSON.parse(movingNodes);
-					moveNodesMutation(getBaseNodeData.getNode as Folder, ...nodesToMove).then(() => {
-						selectionModeVar(false);
-					});
+					const nodesToMove: DraggedItem[] = JSON.parse(movingNodes);
+					if (isFolder(getBaseNodeData.getNode)) {
+						moveNodesMutation(getBaseNodeData.getNode, ...nodesToMove).then(() => {
+							selectionModeVar(false);
+						});
+					}
 				}
 			}
 		},

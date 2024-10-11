@@ -16,7 +16,8 @@ import { NodeListItemUI } from './NodeListItemUI';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { DATE_FORMAT_SHORT, VIEW_MODE } from '../../constants';
 import { ListContext } from '../../contexts';
-import { NodeListItemType } from '../../types/common';
+import { Node } from '../../types/common';
+import { Maybe, Share } from '../../types/graphql/types';
 import {
 	formatDate,
 	getIconByFileType,
@@ -26,7 +27,16 @@ import {
 	nodeToNodeListItemUIProps
 } from '../../utils/utils';
 
-export const NodeListItemDragImage = ({ node }: { node: NodeListItemType }): React.JSX.Element => {
+type NodeItem = Node<
+	'id' | 'name' | 'flagged' | 'owner' | 'last_editor' | 'type' | 'rootId' | 'updated_at',
+	'size' | 'extension' | 'mime_type'
+> & { shares: Maybe<Pick<Share, '__typename'>>[] };
+
+export interface NodeListItemDragImageProps {
+	node: NodeItem;
+}
+
+export const NodeListItemDragImage = ({ node }: NodeListItemDragImageProps): React.JSX.Element => {
 	const { viewMode } = useContext(ListContext);
 
 	const { locale } = useUserInfo();

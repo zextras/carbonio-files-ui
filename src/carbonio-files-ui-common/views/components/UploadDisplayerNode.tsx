@@ -76,14 +76,14 @@ export const UploadDisplayerNode = ({
 					return {
 						name: path[path.length - 2],
 						type: NodeType.Folder,
-						rootId: undefined,
+						rootId: null,
 						id: uploadItem.parentId ?? `${uploadItem.id}-parent-${Date.now().toLocaleString()}`
 					};
 				}
 				return {
 					name: path[path.length - 1],
 					type: NodeType.Other,
-					rootId: undefined,
+					rootId: null,
 					id: uploadItem.id
 				};
 			}
@@ -91,7 +91,7 @@ export const UploadDisplayerNode = ({
 		return {
 			name: '',
 			type: NodeType.Other,
-			rootId: undefined,
+			rootId: null,
 			id: ''
 		};
 	}, [loadingParent, parentData, uploadItem.fullPath, uploadItem.id, uploadItem.parentId]);

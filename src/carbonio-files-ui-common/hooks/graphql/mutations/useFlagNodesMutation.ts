@@ -62,7 +62,6 @@ export function useFlagNodesMutation(): FlagNodesType {
 					flag: flagValue
 				},
 				optimisticResponse: {
-					__typename: 'Mutation',
 					flagNodes: nodesIds
 				},
 				update(cache, { data }) {

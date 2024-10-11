@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import { List } from './List';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useGetNodeQuery } from '../../hooks/graphql/queries/useGetNodeQuery';
-import { NodeListItemType } from '../../types/common';
 
 interface FileListProps {
 	fileId: string;
@@ -21,7 +20,7 @@ interface FileListProps {
 const FileList = ({ fileId, canUploadFile }: FileListProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { data: nodeData, loading, loadMore, hasMore } = useGetNodeQuery(fileId);
-	const node = useMemo(() => nodeData?.getNode || null, [nodeData]);
+	const node = useMemo(() => nodeData?.getNode ?? null, [nodeData]);
 
 	const { setActiveNode, tab } = useActiveNode();
 
@@ -29,7 +28,7 @@ const FileList = ({ fileId, canUploadFile }: FileListProps): React.JSX.Element =
 		setActiveNode(fileId, tab);
 	}, [fileId, setActiveNode, tab]);
 
-	const nodes = useMemo<NodeListItemType[]>(() => {
+	const nodes = useMemo(() => {
 		if (node) {
 			return [node];
 		}

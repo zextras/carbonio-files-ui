@@ -14,7 +14,11 @@ import { act, waitFor } from '@testing-library/react';
 import { forEach, noop, size } from 'lodash';
 import { find as findStyled } from 'styled-components/test-utils';
 
-import { NodesSelectionModalContent } from './NodesSelectionModalContent';
+import {
+	NodeForSelection,
+	NodesSelectionModalContent,
+	NodesSelectionModalContentProps
+} from './NodesSelectionModalContent';
 import { HoverContainer } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
@@ -27,7 +31,6 @@ import {
 	populateNodes
 } from '../../mocks/mockUtils';
 import { buildBreadCrumbRegExp, generateError, setup, screen } from '../../tests/utils';
-import { Node, NodeWithMetadata } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	GetRootsListDocument,
@@ -44,6 +47,8 @@ import {
 } from '../../utils/resolverMocks';
 import { isFile, isFolder } from '../../utils/utils';
 
+type IsValidSelectionFn = NonNullable<NodesSelectionModalContentProps['isValidSelection']>;
+
 const resetToDefault = ({
 	maxSelection,
 	canSelectOpenedFolder
@@ -52,7 +57,7 @@ const resetToDefault = ({
 	canSelectOpenedFolder: boolean | undefined;
 }): void => {
 	// clone implementation of the function contained in the click callback of useNodesSelectionModalContent
-	const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>;
+	const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeForSelection[]>>;
 	if (maxSelection === 1 || size(getDestinationVar().currentValue) === 0) {
 		if (canSelectOpenedFolder) {
 			destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
@@ -116,7 +121,9 @@ describe('Nodes Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const isValidSelection = jest.fn().mockReturnValue(() => true);
+		const isValidSelection = jest
+			.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+			.mockReturnValue(true);
 		const confirmAction = jest.fn();
 
 		const { user } = setup(
@@ -174,8 +181,8 @@ describe('Nodes Selection Modal Content', () => {
 		} satisfies Partial<Resolvers>;
 
 		const isValidSelection = jest
-			.fn()
-			.mockImplementation(({ id }: { id: string }) => id !== localRoot.id);
+			.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+			.mockImplementation(({ id }) => id !== localRoot.id);
 		const confirmAction = jest.fn();
 
 		const { user } = setup(
@@ -238,7 +245,9 @@ describe('Nodes Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const isValidSelection = jest.fn().mockReturnValue(true);
+		const isValidSelection = jest
+			.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+			.mockReturnValue(true);
 		const confirmAction = jest.fn();
 
 		const { user } = setup(
@@ -292,7 +301,9 @@ describe('Nodes Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const isValidSelection = jest.fn().mockReturnValue(false);
+		const isValidSelection = jest
+			.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+			.mockReturnValue(false);
 
 		const { user } = setup(
 			<div
@@ -996,8 +1007,8 @@ describe('Nodes Selection Modal Content', () => {
 				file.parent = localRoot;
 
 				const isValidSelection = jest
-					.fn()
-					.mockImplementation((node: Pick<Node, '__typename'>) => isFile(node));
+					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+					.mockImplementation((node) => isFile(node));
 				const confirmAction = jest.fn();
 
 				const mocks = {
@@ -1066,8 +1077,8 @@ describe('Nodes Selection Modal Content', () => {
 				file.parent = localRoot;
 
 				const isValidSelection = jest
-					.fn()
-					.mockImplementation((node: Pick<Node, '__typename'>) => isFolder(node));
+					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+					.mockImplementation((node) => isFolder(node));
 				const confirmAction = jest.fn();
 				const resetToDefaultFn = jest.fn(resetToDefault);
 
@@ -1158,8 +1169,8 @@ describe('Nodes Selection Modal Content', () => {
 				invalidFile.parent = localRoot;
 
 				const isValidSelection = jest
-					.fn()
-					.mockImplementation((node: Pick<Node, 'name'>) => node.name.startsWith('valid'));
+					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+					.mockImplementation((node) => node.name.startsWith('valid'));
 				const confirmAction = jest.fn();
 
 				const mocks = {
@@ -1960,8 +1971,8 @@ describe('Nodes Selection Modal Content', () => {
 				file2.parent = localRoot;
 
 				const isValidSelection = jest
-					.fn()
-					.mockImplementation((node: Pick<Node, '__typename'>) => isFile(node));
+					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+					.mockImplementation((node) => isFile(node));
 				const confirmAction = jest.fn();
 
 				const mocks = {
@@ -2055,8 +2066,8 @@ describe('Nodes Selection Modal Content', () => {
 				file.parent = localRoot;
 
 				const isValidSelection = jest
-					.fn()
-					.mockImplementation((node: Pick<Node, '__typename'>) => isFolder(node));
+					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+					.mockImplementation((node) => isFolder(node));
 				const confirmAction = jest.fn();
 
 				const mocks = {
@@ -2178,8 +2189,8 @@ describe('Nodes Selection Modal Content', () => {
 				invalidFile.parent = localRoot;
 
 				const isValidSelection = jest
-					.fn()
-					.mockImplementation((node: Pick<Node, 'name'>) => node.name.startsWith('valid'));
+					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+					.mockImplementation((node) => node.name.startsWith('valid'));
 				const confirmAction = jest.fn();
 
 				const mocks = {
@@ -2333,7 +2344,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2387,7 +2400,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2445,7 +2460,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2506,7 +2523,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2569,7 +2588,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 
 			const newFolderName = 'new folder name';
 
@@ -2641,7 +2662,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 
 			const newFolderName = 'new folder name';
 
@@ -2717,7 +2740,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 			const confirmAction = jest.fn();
 
 			const { user } = setup(
@@ -2791,7 +2816,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2864,7 +2891,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 			const confirmAction = jest.fn();
 			const closeAction = jest.fn();
 			const { user } = setup(
@@ -2922,7 +2951,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest.fn().mockReturnValue(true);
+			const isValidSelection = jest
+				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				.mockReturnValue(true);
 
 			const newFolderName = 'new folder name';
 

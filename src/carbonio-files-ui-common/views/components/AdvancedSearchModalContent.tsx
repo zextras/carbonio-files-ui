@@ -30,7 +30,7 @@ import { OwnerChipInput } from './OwnerChipInput';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { ROOTS } from '../../constants';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
-import { AdvancedFilters, NodeListItemType } from '../../types/common';
+import { AdvancedFilters, Node } from '../../types/common';
 import { Folder } from '../../types/graphql/types';
 
 const FolderChipInput = styled(ChipInput)`
@@ -56,10 +56,7 @@ export const AdvancedSearchModalContent = ({
 	const [currentFilters, setCurrentFilters] = useState<AdvancedFilters>(filters);
 	const [keywordsHasTextContent, setKeywordsHasTextContent] = useState<boolean>(false);
 	const folderChipInputRef = useRef<HTMLInputElement>(null);
-	const { resetAll, resetCurrent } = useDestinationVarManager<Pick<
-		NodeListItemType,
-		'id' | 'name'
-	> | null>();
+	const { resetAll, resetCurrent } = useDestinationVarManager<Node<'id' | 'name'> | null>();
 
 	const keywords = useMemo<ChipItem[]>(() => {
 		if (currentFilters.keywords) {

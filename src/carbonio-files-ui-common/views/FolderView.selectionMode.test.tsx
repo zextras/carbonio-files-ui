@@ -15,7 +15,6 @@ import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNodePage, populateNodes } from '../mocks/mockUtils';
 import { setup, selectNodes, triggerListLoadMore } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
@@ -47,15 +46,15 @@ describe('Folder View Selection mode', () => {
 			mocks
 		});
 
-		await screen.findByText((currentFolder.children.nodes[0] as Node).name);
-		expect(screen.getByText((currentFolder.children.nodes[0] as Node).name)).toBeVisible();
+		await screen.findByText(currentFolder.children.nodes[0]!.name);
+		expect(screen.getByText(currentFolder.children.nodes[0]!.name)).toBeVisible();
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
-		await selectNodes([(currentFolder.children.nodes[0] as Node).id], user);
+		await selectNodes([currentFolder.children.nodes[0]!.id], user);
 		// check that all wanted items are selected
 		expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
 		expect(screen.getByText(/select all/i)).toBeVisible();
 		// deselect node. Selection mode remains active
-		await selectNodes([(currentFolder.children.nodes[0] as Node).id], user);
+		await selectNodes([currentFolder.children.nodes[0]!.id], user);
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 		expect(screen.getAllByTestId(SELECTORS.uncheckedAvatar)).toHaveLength(
 			currentFolder.children.nodes.length

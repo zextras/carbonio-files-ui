@@ -33,7 +33,7 @@ export type Scalars = {
 export type Account = DistributionList | User;
 
 export type CollaborationLink = {
-	__typename?: 'CollaborationLink';
+	__typename: 'CollaborationLink';
 	created_at: Scalars['DateTime']['output'];
 	id: Scalars['ID']['output'];
 	node: File | Folder;
@@ -42,13 +42,13 @@ export type CollaborationLink = {
 };
 
 export type Config = {
-	__typename?: 'Config';
+	__typename: 'Config';
 	name: Scalars['String']['output'];
 	value: Scalars['String']['output'];
 };
 
 export type DistributionList = {
-	__typename?: 'DistributionList';
+	__typename: 'DistributionList';
 	id: Scalars['ID']['output'];
 	name: Scalars['String']['output'];
 	users: Array<Maybe<User>>;
@@ -60,25 +60,25 @@ export type DistributionListUsersArgs = {
 };
 
 export type File = Node & {
-	__typename?: 'File';
-	cloned_from_version?: Maybe<Scalars['Int']['output']>;
+	__typename: 'File';
+	cloned_from_version: Maybe<Scalars['Int']['output']>;
 	collaboration_links: Array<Maybe<CollaborationLink>>;
 	created_at: Scalars['DateTime']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
-	extension?: Maybe<Scalars['String']['output']>;
+	extension: Maybe<Scalars['String']['output']>;
 	flagged: Scalars['Boolean']['output'];
 	id: Scalars['ID']['output'];
 	keep_forever: Scalars['Boolean']['output'];
-	last_editor?: Maybe<User>;
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
 	mime_type: Scalars['String']['output'];
 	name: Scalars['String']['output'];
-	owner?: Maybe<User>;
-	parent?: Maybe<File | Folder>;
+	owner: Maybe<User>;
+	parent: Maybe<File | Folder>;
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']['output']>;
-	share?: Maybe<Share>;
+	rootId: Maybe<Scalars['ID']['output']>;
+	share: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	size: Scalars['Float']['output'];
 	type: NodeType;
@@ -97,7 +97,7 @@ export type FileSharesArgs = {
 };
 
 export type Folder = Node & {
-	__typename?: 'Folder';
+	__typename: 'Folder';
 	children: NodePage;
 	collaboration_links: Array<Maybe<CollaborationLink>>;
 	created_at: Scalars['DateTime']['output'];
@@ -105,14 +105,14 @@ export type Folder = Node & {
 	description: Scalars['String']['output'];
 	flagged: Scalars['Boolean']['output'];
 	id: Scalars['ID']['output'];
-	last_editor?: Maybe<User>;
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
 	name: Scalars['String']['output'];
-	owner?: Maybe<User>;
-	parent?: Maybe<File | Folder>;
+	owner: Maybe<User>;
+	parent: Maybe<File | Folder>;
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']['output']>;
-	share?: Maybe<Share>;
+	rootId: Maybe<Scalars['ID']['output']>;
+	share: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	type: NodeType;
 	updated_at: Scalars['DateTime']['output'];
@@ -135,36 +135,36 @@ export type FolderSharesArgs = {
 };
 
 export type Link = {
-	__typename?: 'Link';
+	__typename: 'Link';
 	created_at: Scalars['DateTime']['output'];
-	description?: Maybe<Scalars['String']['output']>;
-	expires_at?: Maybe<Scalars['DateTime']['output']>;
+	description: Maybe<Scalars['String']['output']>;
+	expires_at: Maybe<Scalars['DateTime']['output']>;
 	id: Scalars['ID']['output'];
 	node: File | Folder;
-	url?: Maybe<Scalars['String']['output']>;
+	url: Maybe<Scalars['String']['output']>;
 };
 
 export type Mutation = {
-	__typename?: 'Mutation';
+	__typename: 'Mutation';
 	cloneVersion: File;
-	copyNodes?: Maybe<Array<File | Folder>>;
+	copyNodes: Maybe<Array<File | Folder>>;
 	createCollaborationLink: CollaborationLink;
 	createFolder: File | Folder;
 	createLink: Link;
 	createShare: Share;
 	deleteCollaborationLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteLinks: Array<Maybe<Scalars['ID']['output']>>;
-	deleteNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	deleteNodes: Maybe<Array<Scalars['ID']['output']>>;
 	deleteShare: Scalars['Boolean']['output'];
 	deleteVersions: Array<Maybe<Scalars['Int']['output']>>;
-	flagNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	flagNodes: Maybe<Array<Scalars['ID']['output']>>;
 	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
-	moveNodes?: Maybe<Array<File | Folder>>;
-	restoreNodes?: Maybe<Array<Maybe<File | Folder>>>;
-	trashNodes?: Maybe<Array<Scalars['ID']['output']>>;
-	updateLink?: Maybe<Link>;
+	moveNodes: Maybe<Array<File | Folder>>;
+	restoreNodes: Maybe<Array<Maybe<File | Folder>>>;
+	trashNodes: Maybe<Array<Scalars['ID']['output']>>;
+	updateLink: Maybe<Link>;
 	updateNode: File | Folder;
-	updateShare?: Maybe<Share>;
+	updateShare: Maybe<Share>;
 };
 
 export type MutationCloneVersionArgs = {
@@ -274,14 +274,14 @@ export type Node = {
 	description: Scalars['String']['output'];
 	flagged: Scalars['Boolean']['output'];
 	id: Scalars['ID']['output'];
-	last_editor?: Maybe<User>;
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
 	name: Scalars['String']['output'];
-	owner?: Maybe<User>;
-	parent?: Maybe<File | Folder>;
+	owner: Maybe<User>;
+	parent: Maybe<File | Folder>;
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']['output']>;
-	share?: Maybe<Share>;
+	rootId: Maybe<Scalars['ID']['output']>;
+	share: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	type: NodeType;
 	updated_at: Scalars['DateTime']['output'];
@@ -298,9 +298,9 @@ export type NodeSharesArgs = {
 };
 
 export type NodePage = {
-	__typename?: 'NodePage';
+	__typename: 'NodePage';
 	nodes: Array<Maybe<File | Folder>>;
-	page_token?: Maybe<Scalars['String']['output']>;
+	page_token: Maybe<Scalars['String']['output']>;
 };
 
 export enum NodeSort {
@@ -333,7 +333,7 @@ export enum NodeType {
 }
 
 export type Permissions = {
-	__typename?: 'Permissions';
+	__typename: 'Permissions';
 	can_add_version: Scalars['Boolean']['output'];
 	can_change_link: Scalars['Boolean']['output'];
 	can_change_share: Scalars['Boolean']['output'];
@@ -347,18 +347,18 @@ export type Permissions = {
 };
 
 export type Query = {
-	__typename?: 'Query';
-	findNodes?: Maybe<NodePage>;
-	getAccountByEmail?: Maybe<Account>;
+	__typename: 'Query';
+	findNodes: Maybe<NodePage>;
+	getAccountByEmail: Maybe<Account>;
 	getAccountsByEmail: Array<Maybe<Account>>;
 	getCollaborationLinks: Array<Maybe<CollaborationLink>>;
 	getConfigs: Array<Maybe<Config>>;
 	getLinks: Array<Maybe<Link>>;
-	getNode?: Maybe<File | Folder>;
+	getNode: Maybe<File | Folder>;
 	getPath: Array<Maybe<File | Folder>>;
 	getRootsList: Array<Maybe<Root>>;
-	getShare?: Maybe<Share>;
-	getUserById?: Maybe<User>;
+	getShare: Maybe<Share>;
+	getUserById: Maybe<User>;
 	getVersions: Array<Maybe<File>>;
 };
 
@@ -417,18 +417,18 @@ export type QueryGetVersionsArgs = {
 };
 
 export type Root = {
-	__typename?: 'Root';
+	__typename: 'Root';
 	id: Scalars['ID']['output'];
 	name: Scalars['String']['output'];
 };
 
 export type Share = {
-	__typename?: 'Share';
+	__typename: 'Share';
 	created_at: Scalars['DateTime']['output'];
-	expires_at?: Maybe<Scalars['DateTime']['output']>;
+	expires_at: Maybe<Scalars['DateTime']['output']>;
 	node: File | Folder;
 	permission: SharePermission;
-	share_target?: Maybe<SharedTarget>;
+	share_target: Maybe<SharedTarget>;
 };
 
 export enum SharePermission {
@@ -452,7 +452,7 @@ export enum ShareSort {
 export type SharedTarget = DistributionList | User;
 
 export type User = {
-	__typename?: 'User';
+	__typename: 'User';
 	email: Scalars['String']['output'];
 	full_name: Scalars['String']['output'];
 	id: Scalars['ID']['output'];
@@ -552,8 +552,8 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 		| (Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 				collaboration_links: Array<Maybe<_RefType['CollaborationLink']>>;
 				links: Array<Maybe<_RefType['Link']>>;
-				parent?: Maybe<_RefType['Node']>;
-				share?: Maybe<_RefType['Share']>;
+				parent: Maybe<_RefType['Node']>;
+				share: Maybe<_RefType['Share']>;
 				shares: Array<Maybe<_RefType['Share']>>;
 		  })
 		| (Omit<
@@ -563,8 +563,8 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 				children: _RefType['NodePage'];
 				collaboration_links: Array<Maybe<_RefType['CollaborationLink']>>;
 				links: Array<Maybe<_RefType['Link']>>;
-				parent?: Maybe<_RefType['Node']>;
-				share?: Maybe<_RefType['Share']>;
+				parent: Maybe<_RefType['Node']>;
+				share: Maybe<_RefType['Share']>;
 				shares: Array<Maybe<_RefType['Share']>>;
 		  });
 };
@@ -583,8 +583,8 @@ export type ResolversTypes = {
 		Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 			collaboration_links: Array<Maybe<ResolversTypes['CollaborationLink']>>;
 			links: Array<Maybe<ResolversTypes['Link']>>;
-			parent?: Maybe<ResolversTypes['Node']>;
-			share?: Maybe<ResolversTypes['Share']>;
+			parent: Maybe<ResolversTypes['Node']>;
+			share: Maybe<ResolversTypes['Share']>;
 			shares: Array<Maybe<ResolversTypes['Share']>>;
 		}
 	>;
@@ -594,8 +594,8 @@ export type ResolversTypes = {
 			children: ResolversTypes['NodePage'];
 			collaboration_links: Array<Maybe<ResolversTypes['CollaborationLink']>>;
 			links: Array<Maybe<ResolversTypes['Link']>>;
-			parent?: Maybe<ResolversTypes['Node']>;
-			share?: Maybe<ResolversTypes['Share']>;
+			parent: Maybe<ResolversTypes['Node']>;
+			share: Maybe<ResolversTypes['Share']>;
 			shares: Array<Maybe<ResolversTypes['Share']>>;
 		}
 	>;
@@ -615,7 +615,7 @@ export type ResolversTypes = {
 	Share: ResolverTypeWrapper<
 		Omit<Share, 'node' | 'share_target'> & {
 			node: ResolversTypes['Node'];
-			share_target?: Maybe<ResolversTypes['SharedTarget']>;
+			share_target: Maybe<ResolversTypes['SharedTarget']>;
 		}
 	>;
 	SharePermission: SharePermission;
@@ -636,8 +636,8 @@ export type ResolversParentTypes = {
 	File: Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 		collaboration_links: Array<Maybe<ResolversParentTypes['CollaborationLink']>>;
 		links: Array<Maybe<ResolversParentTypes['Link']>>;
-		parent?: Maybe<ResolversParentTypes['Node']>;
-		share?: Maybe<ResolversParentTypes['Share']>;
+		parent: Maybe<ResolversParentTypes['Node']>;
+		share: Maybe<ResolversParentTypes['Share']>;
 		shares: Array<Maybe<ResolversParentTypes['Share']>>;
 	};
 	Float: Scalars['Float']['output'];
@@ -648,8 +648,8 @@ export type ResolversParentTypes = {
 		children: ResolversParentTypes['NodePage'];
 		collaboration_links: Array<Maybe<ResolversParentTypes['CollaborationLink']>>;
 		links: Array<Maybe<ResolversParentTypes['Link']>>;
-		parent?: Maybe<ResolversParentTypes['Node']>;
-		share?: Maybe<ResolversParentTypes['Share']>;
+		parent: Maybe<ResolversParentTypes['Node']>;
+		share: Maybe<ResolversParentTypes['Share']>;
 		shares: Array<Maybe<ResolversParentTypes['Share']>>;
 	};
 	ID: Scalars['ID']['output'];
@@ -663,7 +663,7 @@ export type ResolversParentTypes = {
 	Root: Root;
 	Share: Omit<Share, 'node' | 'share_target'> & {
 		node: ResolversParentTypes['Node'];
-		share_target?: Maybe<ResolversParentTypes['SharedTarget']>;
+		share_target: Maybe<ResolversParentTypes['SharedTarget']>;
 	};
 	SharedTarget: ResolversUnionTypes<ResolversParentTypes>['SharedTarget'];
 	String: Scalars['String']['output'];

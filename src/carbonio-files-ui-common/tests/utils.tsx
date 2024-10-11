@@ -43,7 +43,7 @@ import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { File as FilesFile, Folder } from '../types/graphql/types';
+import { Folder } from '../types/graphql/types';
 import { resolvers } from '../utils/resolvers';
 import { asyncForEach, isFile, isFolder } from '../utils/utils';
 
@@ -463,8 +463,7 @@ function createFileSystemDirectoryEntryReader(
 }
 
 function createFileSystemEntry(
-	node: Pick<Node, '__typename' | 'name'> &
-		(Pick<FilesFile, 'mime_type'> | Pick<Folder, '__typename'>),
+	node: Node<'name', 'mime_type', 'children'>,
 	file?: File
 ): FileSystemDirectoryEntry | FileSystemFileEntry {
 	const baseEntry: FileSystemEntry = {
@@ -502,9 +501,11 @@ function createFileSystemEntry(
 	} satisfies FileSystemFileEntry;
 }
 
-export function createUploadDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
+export function createUploadDataTransfer(
+	nodes: Array<Node<'name', 'mime_type', 'children'>>
+): DataTransferUploadStub {
 	const fileBlobs: File[] = [];
-	const items = map<Node, { webkitGetAsEntry: () => Partial<FileSystemEntry> }>(nodes, (node) => {
+	const items = nodes.map((node) => {
 		const fileBlob = new File(['(⌐□_□)😂😂😂😂'], node.name, {
 			type: (isFile(node) && node.mime_type) || undefined
 		});

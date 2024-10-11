@@ -14,7 +14,6 @@ import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder } from '../mocks/mockUtils';
 import { generateError, setup, triggerListLoadMore } from '../tests/utils';
-import { Node } from '../types/common';
 import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
@@ -107,32 +106,28 @@ describe('Get children', () => {
 			within(screen.getByTestId(SELECTORS.listHeader)).queryByTestId(ICON_REGEXP.queryLoading)
 		);
 		// wait the rendering of the first item
-		await screen.findByTestId(SELECTORS.nodeItem((currentFolder.children.nodes[0] as Node).id));
+		await screen.findByTestId(SELECTORS.nodeItem(currentFolder.children.nodes[0]!.id));
 		expect(
-			screen.getByTestId(
-				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT - 1] as Node).id)
-			)
+			screen.getByTestId(SELECTORS.nodeItem(currentFolder.children.nodes[NODES_LOAD_LIMIT - 1]!.id))
 		).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(
-			screen.queryByTestId(
-				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
-			)
+			screen.queryByTestId(SELECTORS.nodeItem(currentFolder.children.nodes[NODES_LOAD_LIMIT]!.id))
 		).not.toBeInTheDocument();
 
 		triggerListLoadMore();
 
 		// wait for the response
 		await screen.findByTestId(
-			SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
+			SELECTORS.nodeItem(currentFolder.children.nodes[NODES_LOAD_LIMIT]!.id)
 		);
 
 		// now all elements are loaded so last children should be visible
 		expect(
 			screen.getByTestId(
 				SELECTORS.nodeItem(
-					(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as Node).id
+					currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.id
 				)
 			)
 		).toBeVisible();

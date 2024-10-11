@@ -15,9 +15,7 @@ import {
 	ChildFragment,
 	Folder,
 	GetChildrenQuery,
-	GetChildrenQueryVariables,
-	Maybe,
-	Node
+	GetChildrenQueryVariables
 } from '../../types/graphql/types';
 import { addNodeInSortedList, isFolder } from '../../utils/utils';
 
@@ -53,8 +51,7 @@ export const useUpdateFolderContent = (
 				return { newPosition: 0, isLast: true };
 			}
 
-			const nodes: Array<Maybe<Node>> =
-				(isFolder(cachedFolder.getNode) && cachedFolder.getNode.children.nodes) || [];
+			const nodes = (isFolder(cachedFolder.getNode) && cachedFolder.getNode.children.nodes) || [];
 			const newNodeWithParent = { ...newNode, parent: cachedFolder.getNode };
 
 			// if folder is empty, just write cache

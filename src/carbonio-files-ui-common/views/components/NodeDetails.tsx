@@ -6,7 +6,6 @@
 
 import React, { useMemo } from 'react';
 
-import { ApolloError } from '@apollo/client';
 import { Container } from '@zextras/carbonio-design-system';
 import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -33,23 +32,21 @@ interface NodeDetailsProps {
 	name: string;
 	owner: Maybe<Partial<User>> | undefined;
 	creator: Partial<User>;
-	lastEditor?: Maybe<Partial<User>>;
-	size?: number;
+	lastEditor: Maybe<Partial<User>>;
+	size: number | undefined;
 	createdAt: number;
 	updatedAt: number;
 	description: string | undefined;
 	canUpsertDescription: boolean;
-	downloads?: number;
-	nodes?: Array<Maybe<ChildFragment> | undefined>;
-	hasMore?: boolean;
+	nodes: Array<Maybe<ChildFragment> | undefined> | undefined;
+	hasMore: boolean;
 	loadMore: () => void;
 	loading: boolean;
-	error?: ApolloError;
 	shares: CollaboratorsRowProps['shares'];
 	type: NodeType;
-	rootId?: string;
-	version?: number;
-	mimeType?: string;
+	rootId: string | null;
+	version: number | undefined;
+	mimeType: string | undefined;
 }
 
 export const NodeDetails = ({

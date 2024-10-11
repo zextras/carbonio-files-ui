@@ -18,12 +18,12 @@ import { ERROR_CODE } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateLocalRoot } from '../mocks/mockUtils';
 import { setup, selectNodes, screen, within, generateError } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
 	CopyNodesDocument,
 	CopyNodesMutation,
 	CopyNodesMutationVariables,
+	File,
 	Folder,
 	GetChildrenDocument,
 	GetChildrenQuery,
@@ -88,7 +88,7 @@ describe('Copy', () => {
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
 			currentFolder.children.nodes.unshift(destinationFolder);
-			const nodeToCopy = currentFolder.children.nodes[1] as Node;
+			const nodeToCopy = currentFolder.children.nodes[1]!;
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
@@ -167,10 +167,10 @@ describe('Copy', () => {
 			const currentFolder = populateFolder(5);
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;
-			const nodesToCopy = [
-				currentFolder.children.nodes[0],
-				currentFolder.children.nodes[1]
-			] as Node[];
+			const nodesToCopy = [currentFolder.children.nodes[0], currentFolder.children.nodes[1]] as (
+				| File
+				| Folder
+			)[];
 			const copiedNodes = map(nodesToCopy, (node) => ({
 				...node,
 				id: faker.string.uuid(),
@@ -243,7 +243,7 @@ describe('Copy', () => {
 			localRoot.permissions.can_write_file = true;
 			const nodesToCopy = map(localRoot.children.nodes, (node) => ({
 				...node
-			})) as Node[];
+			})) as (File | Folder)[];
 
 			global.apolloClient.cache.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 				query: GetChildrenDocument,
@@ -313,7 +313,7 @@ describe('Copy', () => {
 			destinationFolder.permissions.can_write_folder = true;
 			destinationFolder.permissions.can_write_file = true;
 			currentFolder.children.nodes.unshift(destinationFolder);
-			const nodeToCopy = currentFolder.children.nodes[1] as Node;
+			const nodeToCopy = currentFolder.children.nodes[1]!;
 
 			// write destination folder in cache as if it was already loaded
 			global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({

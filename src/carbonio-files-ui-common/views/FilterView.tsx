@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Container, Snackbar } from '@zextras/carbonio-design-system';
-import { filter, noop } from 'lodash';
+import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 
@@ -26,9 +26,9 @@ import { ListHeaderActionContext } from '../contexts';
 import { useFindNodesQuery } from '../hooks/graphql/queries/useFindNodesQuery';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import { useUpload } from '../hooks/useUpload';
-import { Crumb, DocsType, NodeListItemType, URLParams } from '../types/common';
+import { Crumb, DocsType, URLParams } from '../types/common';
 import { NodeSort } from '../types/graphql/types';
-import { NonNullableListItem, Unwrap } from '../types/utils';
+import { NonNullableListItem } from '../types/utils';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
@@ -317,12 +317,10 @@ const FilterView = (): React.JSX.Element => {
 		sort
 	});
 
-	const nodes = useMemo<NodeListItemType[]>(() => {
+	const nodes = useMemo(() => {
 		if (findNodesResult?.findNodes?.nodes && findNodesResult.findNodes.nodes.length > 0) {
-			const $nodes = findNodesResult.findNodes.nodes;
-			return filter<Unwrap<typeof $nodes>, NonNullableListItem<typeof $nodes>>(
-				$nodes,
-				(node): node is NonNullableListItem<typeof $nodes> => !!node
+			return findNodesResult.findNodes.nodes.filter(
+				(node): node is NonNullableListItem<typeof findNodesResult.findNodes.nodes> => !!node
 			);
 		}
 		return [];
