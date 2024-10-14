@@ -40,7 +40,7 @@ import {
 } from '../types/network';
 import { MakeRequired, MakeRequiredNonNull } from '../types/utils';
 import { ActionsFactoryNodeType } from '../utils/ActionsFactory';
-import { isFile, nodeSortComparator } from '../utils/utils';
+import { generateAccessCode, isFile, nodeSortComparator } from '../utils/utils';
 
 type NodeTypename = FilesFile['__typename'] | Folder['__typename'];
 
@@ -441,7 +441,7 @@ export function populateContactGroup(
 	};
 }
 
-export function populateLink(node: Node): Link {
+export function populateLink(node: Node, withAccessCode?: boolean): Link {
 	return {
 		__typename: 'Link',
 		id: faker.string.uuid(),
@@ -453,6 +453,7 @@ export function populateLink(node: Node): Link {
 		]),
 		description: faker.helpers.arrayElement([null, faker.lorem.sentence()]),
 		url: faker.internet.url(),
+		access_code: withAccessCode ? generateAccessCode() : undefined,
 		node
 	};
 }

@@ -7,9 +7,11 @@ import React, { ComponentProps } from 'react';
 
 import { PublicLink } from './PublicLink';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
-import { populateNode } from '../../../../mocks/mockUtils';
+import { populateLink, populateNode } from '../../../../mocks/mockUtils';
 import { screen, setup, within } from '../../../../tests/utils';
+import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../../../../types/graphql/types';
+import { mockGetLinks } from '../../../../utils/resolverMocks';
 import * as moduleUtils from '../../../../utils/utils';
 import { isFolder } from '../../../../utils/utils';
 
@@ -156,19 +158,25 @@ describe('Access code', () => {
 		});
 	});
 
-	describe.skip('Access code generated', () => {
+	describe('Access code generated', () => {
 		it('should render the chip with the hidden access code when the link is generated (access code is enabled)', async () => {
-			const props = getPublicLinkProps(populateNode('Folder'));
-			const { user } = setup(<PublicLink {...props} />);
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const link = populateLink(node, true);
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<PublicLink {...props} />, { mocks });
 
-			await user.click(screen.getByRole('button', { name: /add link/i }));
-			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
-			await user.click(screen.getByRole('button', { name: /generate link/i }));
-
-			expect(screen.getByText(/access code:/i)).toBeVisible();
-			const chip = screen.getByTestId(SELECTORS.chip);
-			expect(within(chip).getByText('**********')).toBeVisible();
-			expect(within(chip).getByTestId(ICON_REGEXP.eyePasswordOff)).toBeVisible();
+			expect(await screen.findByText(/access code:/i)).toBeVisible();
+			const accessCodeChip = screen
+				.getAllByTestId(SELECTORS.chip)
+				.find((chip) => within(chip).queryByText('**********') !== null) as HTMLElement;
+			expect(
+				within(accessCodeChip).getByRoleWithIcon('button', { icon: ICON_REGEXP.eyePasswordOff })
+			).toBeVisible();
 		});
 
 		it('should render the tooltip "copy access code" when the user hovers on the chip with the hidden access code', async () => {

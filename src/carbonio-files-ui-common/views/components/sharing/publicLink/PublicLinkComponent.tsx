@@ -39,7 +39,7 @@ const CustomText = styled(Text)`
 interface PublicLinkComponentProps {
 	id: string;
 	description?: string | null;
-	accessCode?: string;
+	accessCode?: string | null;
 	url?: string | null;
 	status: PublicLinkRowStatus;
 	expiresAt?: number | null;

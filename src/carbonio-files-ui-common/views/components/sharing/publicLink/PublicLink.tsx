@@ -238,6 +238,7 @@ export const PublicLink = ({
 							id={link.id}
 							url={link.url}
 							description={link.description}
+							accessCode={link.access_code}
 							status={getLinkStatus(link.id)}
 							expiresAt={link.expires_at}
 							onEdit={onEdit}
