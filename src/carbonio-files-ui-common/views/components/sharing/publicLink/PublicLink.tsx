@@ -78,10 +78,10 @@ export const PublicLink = ({
 	}, []);
 
 	const onGenerate = useCallback(
-		(description?: string, expiresAt?: Date) => {
+		(description?: string, expiresAt?: Date, accessCode?: string) => {
 			setAddPublicLinkStatus(PublicLinkRowStatus.CLOSED);
 			setThereIsOpenRow(false);
-			return createLink(description, expiresAt?.getTime())
+			return createLink(description, expiresAt?.getTime(), accessCode)
 				.then(({ data }) => {
 					if (data) {
 						createSnackbar({

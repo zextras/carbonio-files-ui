@@ -24,6 +24,7 @@ import { size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { AccessCodeComponent } from './AccessCodeComponent';
 import { useUserInfo } from '../../../../../hooks/useUserInfo';
 import { DATE_TIME_FORMAT } from '../../../../constants';
 import { PublicLinkRowStatus } from '../../../../types/common';
@@ -38,6 +39,7 @@ const CustomText = styled(Text)`
 interface PublicLinkComponentProps {
 	id: string;
 	description?: string | null;
+	accessCode?: string;
 	url?: string | null;
 	status: PublicLinkRowStatus;
 	expiresAt?: number | null;
@@ -53,6 +55,7 @@ interface PublicLinkComponentProps {
 export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	id,
 	description,
+	accessCode,
 	url,
 	status,
 	expiresAt,
@@ -301,14 +304,17 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 			)}
 
 			{status !== PublicLinkRowStatus.OPEN && (
-				<Container orientation="horizontal" mainAlignment="space-between" wrap="wrap">
-					<Text overflow="break-word" color="gray1" size="small" disabled={isExpired}>
-						{description}
-					</Text>
-					<CustomText color="gray1" size="small">
-						{expirationText}
-					</CustomText>
-				</Container>
+				<>
+					<Container orientation="horizontal" mainAlignment="space-between" wrap="wrap">
+						<Text overflow="break-word" color="gray1" size="small" disabled={isExpired}>
+							{description}
+						</Text>
+						<CustomText color="gray1" size="small">
+							{expirationText}
+						</CustomText>
+					</Container>
+					{accessCode && <AccessCodeComponent accessCode={accessCode} />}
+				</>
 			)}
 			<Padding vertical="small" />
 			<Divider color="gray2" />

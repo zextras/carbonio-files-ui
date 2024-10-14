@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useImperativeHandle, useMemo, useState } from 'react';
 
 import {
 	Button,
@@ -18,15 +18,21 @@ import { useTranslation } from 'react-i18next';
 
 import { copyToClipboard, generateAccessCode } from '../../../../utils/utils';
 
-export const AccessCodeSection = (): React.JSX.Element => {
-	const [t] = useTranslation();
-	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState<boolean>(false);
-	const [isAccessCodeShown, setIsAccessCodeShown] = useState<boolean>(false);
-	const [accessCode, setAccessCode] = useState<string>();
+export type AccessCodeInfo = { accessCode: string; isAccessCodeEnabled: boolean };
 
-	useEffect(() => {
-		setAccessCode(generateAccessCode());
-	}, []);
+interface AccessCodeSectionProps {
+	initialAccessCode: string;
+	accessCodeRef: React.Ref<AccessCodeInfo>;
+}
+
+export const AccessCodeSection = ({
+	accessCodeRef,
+	initialAccessCode
+}: AccessCodeSectionProps): React.JSX.Element => {
+	const [t] = useTranslation();
+	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState(false);
+	const [isAccessCodeShown, setIsAccessCodeShown] = useState(false);
+	const [accessCode, setAccessCode] = useState(initialAccessCode);
 
 	const createSnackbar = useSnackbar();
 
@@ -71,6 +77,15 @@ export const AccessCodeSection = (): React.JSX.Element => {
 		setAccessCode(generateAccessCode());
 	}, []);
 
+	useImperativeHandle(
+		accessCodeRef,
+		() => ({
+			accessCode,
+			isAccessCodeEnabled
+		}),
+		[accessCode, isAccessCodeEnabled]
+	);
+
 	return (
 		<Container mainAlignment="flex-start" crossAlignment="flex-start">
 			<Switch
@@ -87,7 +102,7 @@ export const AccessCodeSection = (): React.JSX.Element => {
 						disabled
 						CustomIcon={CustomElement}
 					/>
-					<Tooltip label={t('publicLink.accessCode.buttons.copy.tooltip.', 'Copy access code')}>
+					<Tooltip label={t('publicLink.accessCode.buttons.copy.tooltip', 'Copy access code')}>
 						<Button onClick={copyAccessCode} icon={'Copy'} type={'outlined'} size={'extralarge'} />
 					</Tooltip>
 					<Tooltip

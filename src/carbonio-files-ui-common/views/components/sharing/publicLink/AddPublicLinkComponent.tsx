@@ -19,9 +19,9 @@ import {
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { AccessCodeSection } from './AccessCodeSection';
+import { AccessCodeInfo, AccessCodeSection } from './AccessCodeSection';
 import { PublicLinkRowStatus } from '../../../../types/common';
-import { initExpirationDate } from '../../../../utils/utils';
+import { generateAccessCode, initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 import { TextWithLineHeight } from '../../StyledComponents';
 
@@ -30,7 +30,11 @@ interface AddPublicLinkComponentProps {
 	status: PublicLinkRowStatus;
 	onAddLink: () => void;
 	onUndo: () => void;
-	onGenerate: (linkDescriptionValue: string, date: Date | undefined) => Promise<unknown>;
+	onGenerate: (
+		linkDescriptionValue: string,
+		date: Date | undefined,
+		accessCode?: string
+	) => Promise<unknown>;
 	limitReached: boolean;
 	linkTitle: string;
 	linkDescription: string;
@@ -48,6 +52,8 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 }) => {
 	const [t] = useTranslation();
 	const scrollToElementRef = useRef<HTMLElement>(null);
+
+	const accessCodeRef = useRef<AccessCodeInfo>(null);
 
 	const [linkDescriptionValue, setLinkDescriptionValue] = useState('');
 
@@ -76,8 +82,15 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 
 	const onGenerateCallback = useCallback(() => {
 		const expirationDate = initExpirationDate(date);
+		const accessCode = accessCodeRef.current?.accessCode ?? '';
+		const isAccessCodeEnabled = accessCodeRef.current?.isAccessCodeEnabled ?? false;
+
 		return Promise.allSettled([
-			onGenerate(linkDescriptionValue, expirationDate).then(() => {
+			onGenerate(
+				linkDescriptionValue,
+				expirationDate,
+				isAccessCodeEnabled ? accessCode : undefined
+			).then(() => {
 				setLinkDescriptionValue('');
 				setDate(undefined);
 			})
@@ -108,6 +121,8 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 			}
 		}
 	}, [status]);
+
+	const initialAccessCode = useMemo(() => generateAccessCode(), []);
 
 	return (
 		<Container>
@@ -222,7 +237,12 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 							</Text>
 						</Row>
 					)}
-					{isFolder && <AccessCodeSection />}
+					{isFolder && (
+						<AccessCodeSection
+							accessCodeRef={accessCodeRef}
+							initialAccessCode={initialAccessCode}
+						/>
+					)}
 					<span ref={scrollToElementRef} />
 				</>
 			)}
