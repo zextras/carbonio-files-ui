@@ -159,6 +159,7 @@ describe('Access code', () => {
 	});
 
 	describe('Access code generated', () => {
+		// DUPLICATE and update this description
 		it('should render the chip with the hidden access code when the link is generated (access code is enabled)', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
@@ -179,6 +180,7 @@ describe('Access code', () => {
 			).toBeVisible();
 		});
 
+		// TODO move
 		it('should render the tooltip "copy access code" when the user hovers on the chip with the hidden access code', async () => {
 			const props = getPublicLinkProps(populateNode('Folder'));
 			const { user } = setup(<PublicLink {...props} />);
@@ -191,6 +193,7 @@ describe('Access code', () => {
 			expect(await screen.findByText(/copy access code/i)).toBeVisible();
 		});
 
+		// TODO move
 		it('should copy the access code when the user clicks on its chip', async () => {
 			const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
 			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
@@ -206,6 +209,7 @@ describe('Access code', () => {
 			expect(copyToClipboardFn).toHaveBeenCalledWith(accessCodeValue);
 		});
 
+		// TODO move
 		it('should not copy the access code when the user clicks on the EyeOffOutline icon', async () => {
 			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 			const props = getPublicLinkProps(populateNode('Folder'));
@@ -219,6 +223,7 @@ describe('Access code', () => {
 			expect(copyToClipboardFn).not.toHaveBeenCalled();
 		});
 
+		// TODO move
 		it('should render the tooltip "show access code" when the user hovers on the EyeOffOutline icon of the chip with the hidden access code', async () => {
 			const props = getPublicLinkProps(populateNode('Folder'));
 			const { user } = setup(<PublicLink {...props} />);
@@ -242,6 +247,7 @@ describe('Access code', () => {
 			expect(screen.queryByTestId(ICON_REGEXP.eyePasswordOff)).not.toBeInTheDocument();
 		});
 
+		// TODO move
 		it('should show the access code and change the icon to EyeOutline when the user clicks on the EyeOffOutline icon', async () => {
 			const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
 			const props = getPublicLinkProps(populateNode('Folder'));
@@ -259,6 +265,7 @@ describe('Access code', () => {
 			expect(screen.getByTestId(ICON_REGEXP.eyePasswordOn)).toBeVisible();
 		});
 
+		// TODO move
 		it('should render the tooltip "hide access code" when the user hovers on the EyeOutline icon', async () => {
 			const props = getPublicLinkProps(populateNode('Folder'));
 			const { user } = setup(<PublicLink {...props} />);
