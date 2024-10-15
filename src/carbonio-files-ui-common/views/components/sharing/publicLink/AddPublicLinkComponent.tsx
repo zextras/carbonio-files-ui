@@ -241,6 +241,7 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 						<AccessCodeSection
 							accessCodeRef={accessCodeRef}
 							initialAccessCode={initialAccessCode}
+							initialIsAccessCodeShown={false}
 						/>
 					)}
 					<span ref={scrollToElementRef} />

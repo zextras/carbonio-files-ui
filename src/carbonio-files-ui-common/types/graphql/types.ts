@@ -1370,6 +1370,7 @@ export type UpdateLinkMutationVariables = Exact<{
 	link_id: Scalars['ID']['input'];
 	description?: InputMaybe<Scalars['String']['input']>;
 	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	access_code?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 export type UpdateLinkMutation = {
@@ -1380,6 +1381,7 @@ export type UpdateLinkMutation = {
 				description?: string | null;
 				expires_at?: number | null;
 				created_at: number;
+				access_code?: string | null;
 		  } & { __typename?: 'Link' })
 		| null;
 } & { __typename?: 'Mutation' };
@@ -4610,6 +4612,11 @@ export const UpdateLinkDocument = {
 					kind: 'VariableDefinition',
 					variable: { kind: 'Variable', name: { kind: 'Name', value: 'expires_at' } },
 					type: { kind: 'NamedType', name: { kind: 'Name', value: 'DateTime' } }
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'access_code' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 				}
 			],
 			selectionSet: {
@@ -4633,6 +4640,11 @@ export const UpdateLinkDocument = {
 								kind: 'Argument',
 								name: { kind: 'Name', value: 'expires_at' },
 								value: { kind: 'Variable', name: { kind: 'Name', value: 'expires_at' } }
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'access_code' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'access_code' } }
 							}
 						],
 						selectionSet: {
@@ -4642,7 +4654,8 @@ export const UpdateLinkDocument = {
 								{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'access_code' } }
 							]
 						}
 					}

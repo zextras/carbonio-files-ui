@@ -22,16 +22,18 @@ export type AccessCodeInfo = { accessCode: string; isAccessCodeEnabled: boolean 
 
 interface AccessCodeSectionProps {
 	initialAccessCode: string;
+	initialIsAccessCodeShown: boolean;
 	accessCodeRef: React.Ref<AccessCodeInfo>;
 }
 
 export const AccessCodeSection = ({
 	accessCodeRef,
-	initialAccessCode
+	initialAccessCode,
+	initialIsAccessCodeShown
 }: AccessCodeSectionProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState(false);
-	const [isAccessCodeShown, setIsAccessCodeShown] = useState(false);
+	const [isAccessCodeShown, setIsAccessCodeShown] = useState(initialIsAccessCodeShown);
 	const [accessCode, setAccessCode] = useState(initialAccessCode);
 
 	const createSnackbar = useSnackbar();

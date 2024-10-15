@@ -5,7 +5,10 @@
  */
 import React, { ComponentProps } from 'react';
 
+import { faker } from '@faker-js/faker';
+
 import { PublicLink } from './PublicLink';
+import { calculateUpdatedAccessCode } from './PublicLinkComponent';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateNode } from '../../../../mocks/mockUtils';
 import { screen, setup, within } from '../../../../tests/utils';
@@ -13,7 +16,7 @@ import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../../../../types/graphql/types';
 import { mockCreateLink, mockGetLinks } from '../../../../utils/resolverMocks';
 import * as moduleUtils from '../../../../utils/utils';
-import { isFolder } from '../../../../utils/utils';
+import { generateAccessCode, isFolder } from '../../../../utils/utils';
 
 function getPublicLinkProps(node: FilesFile | Folder): ComponentProps<typeof PublicLink> {
 	return {
@@ -219,6 +222,78 @@ describe('Access code', () => {
 			expect(screen.queryByText(/access code:/i)).not.toBeInTheDocument();
 			expect(screen.queryByText('**********')).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.eyePasswordOff)).not.toBeInTheDocument();
+		});
+	});
+
+	describe('Edit access code', () => {
+		it('should render the current access code when click on edit button', async () => {
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const link = populateLink(node, true);
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
+			await screen.findByText(link.url as string);
+			await user.click(screen.getByRole('button', { name: /edit/i }));
+			const accessCodeInput = screen.getByLabelText<HTMLInputElement>(/access code/i);
+			expect(accessCodeInput).toBeVisible();
+			expect(accessCodeInput).toHaveValue(link.access_code);
+		});
+
+		describe('CalculateUpdatedAccessCode', () => {
+			it('should return a new access code when the access code was not set and a new one is added', () => {
+				const newAccessCode = generateAccessCode();
+				expect(
+					calculateUpdatedAccessCode(
+						faker.helpers.arrayElement([undefined, null]),
+						newAccessCode,
+						true
+					)
+				).toBe(newAccessCode);
+			});
+
+			it('should return an empty string when the access code was set and then we remove it', () => {
+				const result = calculateUpdatedAccessCode(
+					generateAccessCode(),
+					generateAccessCode(),
+					false
+				);
+				expect(result).toBe('');
+			});
+
+			it('should return new access code when the access code was set and then we change it', () => {
+				const newAccessCode = generateAccessCode();
+				expect(calculateUpdatedAccessCode(generateAccessCode(), newAccessCode, true)).toBe(
+					newAccessCode
+				);
+			});
+
+			it('should return undefined when the access code was set and it is not changed', () => {
+				const accessCode = generateAccessCode();
+				expect(calculateUpdatedAccessCode(accessCode, accessCode, true)).toBeUndefined();
+			});
+
+			it('should return undefined when the access code was not set and we do not add it', () => {
+				expect(
+					calculateUpdatedAccessCode(
+						faker.helpers.arrayElement([undefined, null]),
+						generateAccessCode(),
+						false
+					)
+				).toBeUndefined();
+			});
+
+			it('should throw an error if access code was empty string', () => {
+				const newAccessCode = generateAccessCode();
+				const canCalculateUpdateAccessCode: () => ReturnType<
+					typeof calculateUpdatedAccessCode
+				> = () => calculateUpdatedAccessCode('', newAccessCode, false);
+				expect(canCalculateUpdateAccessCode).toThrow('Unexpected access code length 0');
+			});
 		});
 	});
 });

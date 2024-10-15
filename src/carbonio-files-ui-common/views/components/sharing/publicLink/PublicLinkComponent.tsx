@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import {
 	Button,
@@ -25,11 +25,37 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { AccessCodeComponent } from './AccessCodeComponent';
+import { AccessCodeInfo, AccessCodeSection } from './AccessCodeSection';
 import { useUserInfo } from '../../../../../hooks/useUserInfo';
 import { DATE_TIME_FORMAT } from '../../../../constants';
 import { PublicLinkRowStatus } from '../../../../types/common';
-import { copyToClipboard, formatDate, initExpirationDate } from '../../../../utils/utils';
+import {
+	copyToClipboard,
+	formatDate,
+	generateAccessCode,
+	initExpirationDate
+} from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
+
+export const calculateUpdatedAccessCode = (
+	currentAccessCode: string | undefined | null,
+	newAccessCode: string,
+	isAccessCodeEnabled: boolean
+): string | undefined => {
+	if (currentAccessCode?.length === 0) {
+		throw new Error('Unexpected access code length 0');
+	}
+	if (currentAccessCode && !isAccessCodeEnabled) {
+		return '';
+	}
+	if (
+		isAccessCodeEnabled &&
+		(!currentAccessCode || (currentAccessCode !== newAccessCode && currentAccessCode))
+	) {
+		return newAccessCode;
+	}
+	return undefined;
+};
 
 const CustomText = styled(Text)`
 	margin-right: 0;
@@ -44,7 +70,12 @@ interface PublicLinkComponentProps {
 	status: PublicLinkRowStatus;
 	expiresAt?: number | null;
 	onEdit: (linkId: string) => void;
-	onEditConfirm: (linkId: string, description?: string, expiresAt?: number) => Promise<unknown>;
+	onEditConfirm: (
+		linkId: string,
+		description?: string,
+		expiresAt?: number,
+		accessCode?: string
+	) => Promise<unknown>;
 	onUndo: () => void;
 	onRevokeOrRemove: (linkId: string, isRevoke: boolean) => void;
 	forceUrlCopyDisabled: boolean;
@@ -70,6 +101,8 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
+
+	const accessCodeRef = useRef<AccessCodeInfo>(null);
 
 	const isExpired = useMemo(() => (expiresAt ? Date.now() > expiresAt : false), [expiresAt]);
 
@@ -117,17 +150,19 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 		onRevokeOrRemove(id, !isExpired);
 	}, [id, onRevokeOrRemove, isExpired]);
 
-	const onEditConfirmCallback = useCallback(
-		() =>
-			Promise.allSettled([
-				onEditConfirm(
-					id,
-					linkDescriptionValue,
-					updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined
-				)
-			]),
-		[expiresAt, id, linkDescriptionValue, onEditConfirm, updatedTimestamp]
-	);
+	const onEditConfirmCallback = useCallback(() => {
+		const newAccessCode = accessCodeRef.current?.accessCode ?? '';
+		const isAccessCodeEnabled = accessCodeRef.current?.isAccessCodeEnabled ?? false;
+
+		return Promise.allSettled([
+			onEditConfirm(
+				id,
+				linkDescriptionValue,
+				updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined,
+				calculateUpdatedAccessCode(accessCode, newAccessCode, isAccessCodeEnabled)
+			)
+		]);
+	}, [accessCode, expiresAt, id, linkDescriptionValue, onEditConfirm, updatedTimestamp]);
 
 	const copyUrl = useCallback(() => {
 		copyToClipboard(url as string).then(() => {
@@ -299,6 +334,13 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 								)}
 							</Text>
 						</Row>
+					)}
+					{isFolder && (
+						<AccessCodeSection
+							initialAccessCode={accessCode ?? generateAccessCode()}
+							accessCodeRef={accessCodeRef}
+							initialIsAccessCodeShown={!!accessCode}
+						/>
 					)}
 				</>
 			)}

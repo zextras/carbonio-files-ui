@@ -181,10 +181,10 @@ export const PublicLink = ({
 	);
 
 	const onEditConfirm = useCallback(
-		(linkId: string, description?: string, expiresAt?: number) => {
+		(linkId: string, description?: string, expiresAt?: number, accessCode?: string) => {
 			setOpenLinkId(undefined);
 			setThereIsOpenRow(false);
-			return updateLink(linkId, description, expiresAt)
+			return updateLink(linkId, description, expiresAt, accessCode)
 				.then(({ data }) => {
 					if (data) {
 						createSnackbar({
