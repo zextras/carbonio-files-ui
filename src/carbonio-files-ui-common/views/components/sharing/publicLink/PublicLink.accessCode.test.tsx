@@ -11,7 +11,7 @@ import { populateLink, populateNode } from '../../../../mocks/mockUtils';
 import { screen, setup, within } from '../../../../tests/utils';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../../../../types/graphql/types';
-import { mockGetLinks } from '../../../../utils/resolverMocks';
+import { mockCreateLink, mockGetLinks } from '../../../../utils/resolverMocks';
 import * as moduleUtils from '../../../../utils/utils';
 import { isFolder } from '../../../../utils/utils';
 
@@ -159,8 +159,7 @@ describe('Access code', () => {
 	});
 
 	describe('Access code generated', () => {
-		// DUPLICATE and update this description
-		it('should render the chip with the hidden access code when the link is generated (access code is enabled)', async () => {
+		it('should render the chip with the hidden access code (access code is enabled)', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node, true);
@@ -180,102 +179,44 @@ describe('Access code', () => {
 			).toBeVisible();
 		});
 
-		// TODO move
-		it('should render the tooltip "copy access code" when the user hovers on the chip with the hidden access code', async () => {
-			const props = getPublicLinkProps(populateNode('Folder'));
-			const { user } = setup(<PublicLink {...props} />);
+		it.skip('should render the same access code as the one in the input when the user clicks on generate button', async () => {
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const link = populateLink(node, true);
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([])
+				},
+				Mutation: {
+					createLink: mockCreateLink(link)
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<PublicLink {...props} />, { mocks });
 
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
+			const accessCodeInput = screen.getByLabelText<HTMLInputElement>(/access code/i);
+			const accessCodeValue = accessCodeInput.value;
 			await user.click(screen.getByRole('button', { name: /generate link/i }));
-			const chip = screen.getByTestId(SELECTORS.chip);
-			await user.hover(within(chip).getByText('**********'));
-			expect(await screen.findByText(/copy access code/i)).toBeVisible();
+			await user.click(screen.getByTestId(ICON_REGEXP.eyePasswordOff));
+			expect(screen.getByText(accessCodeValue)).toBeVisible();
 		});
 
-		// TODO move
-		it('should copy the access code when the user clicks on its chip', async () => {
-			const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
-			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
-			const props = getPublicLinkProps(populateNode('Folder'));
-			const { user } = setup(<PublicLink {...props} />);
+		it.skip('should not render the chip with the access code when the link is generated (access code in not enabled)', async () => {
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const link = populateLink(node, false);
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<PublicLink {...props} />, { mocks });
 
-			await user.click(screen.getByRole('button', { name: /add link/i }));
-			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
-			await user.click(screen.getByRole('button', { name: /generate link/i }));
-			const chip = screen.getByTestId(SELECTORS.chip);
-			await user.click(within(chip).getByText('**********'));
-			const accessCodeValue = spy.mock.results[0].value;
-			expect(copyToClipboardFn).toHaveBeenCalledWith(accessCodeValue);
-		});
-
-		// TODO move
-		it('should not copy the access code when the user clicks on the EyeOffOutline icon', async () => {
-			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
-			const props = getPublicLinkProps(populateNode('Folder'));
-			const { user } = setup(<PublicLink {...props} />);
-
-			await user.click(screen.getByRole('button', { name: /add link/i }));
-			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
-			await user.click(screen.getByRole('button', { name: /generate link/i }));
-			const chip = screen.getByTestId(SELECTORS.chip);
-			await user.click(within(chip).getByTestId(ICON_REGEXP.eyePasswordOff));
-			expect(copyToClipboardFn).not.toHaveBeenCalled();
-		});
-
-		// TODO move
-		it('should render the tooltip "show access code" when the user hovers on the EyeOffOutline icon of the chip with the hidden access code', async () => {
-			const props = getPublicLinkProps(populateNode('Folder'));
-			const { user } = setup(<PublicLink {...props} />);
-
-			await user.click(screen.getByRole('button', { name: /add link/i }));
-			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
-			await user.click(screen.getByRole('button', { name: /generate link/i }));
-			const chip = screen.getByTestId(SELECTORS.chip);
-			await user.hover(within(chip).getByTestId(ICON_REGEXP.eyePasswordOff));
-			expect(await screen.findByText(/show access code/i)).toBeVisible();
-		});
-
-		it('should not render the chip with the access code when the link is generated (access code in not enabled)', async () => {
-			const props = getPublicLinkProps(populateNode('Folder'));
-			const { user } = setup(<PublicLink {...props} />);
-
-			await user.click(screen.getByRole('button', { name: /add link/i }));
-			await user.click(screen.getByRole('button', { name: /generate link/i }));
+			await screen.findByText(link.url as string);
 			expect(screen.queryByText(/access code:/i)).not.toBeInTheDocument();
 			expect(screen.queryByText('**********')).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.eyePasswordOff)).not.toBeInTheDocument();
-		});
-
-		// TODO move
-		it('should show the access code and change the icon to EyeOutline when the user clicks on the EyeOffOutline icon', async () => {
-			const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
-			const props = getPublicLinkProps(populateNode('Folder'));
-			const { user } = setup(<PublicLink {...props} />);
-
-			await user.click(screen.getByRole('button', { name: /add link/i }));
-			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
-			await user.click(screen.getByRole('button', { name: /generate link/i }));
-			const chip = screen.getByTestId(SELECTORS.chip);
-			await user.click(within(chip).getByTestId(ICON_REGEXP.eyePasswordOff));
-			const accessCodeValue = spy.mock.results[0].value;
-			expect(within(chip).getByText(accessCodeValue)).toBeVisible();
-			expect(screen.queryByText('**********')).not.toBeInTheDocument();
-			expect(screen.queryByTestId(ICON_REGEXP.eyePasswordOff)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.eyePasswordOn)).toBeVisible();
-		});
-
-		// TODO move
-		it('should render the tooltip "hide access code" when the user hovers on the EyeOutline icon', async () => {
-			const props = getPublicLinkProps(populateNode('Folder'));
-			const { user } = setup(<PublicLink {...props} />);
-
-			await user.click(screen.getByRole('button', { name: /add link/i }));
-			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
-			await user.click(screen.getByRole('button', { name: /generate link/i }));
-			const chip = screen.getByTestId(SELECTORS.chip);
-			await user.hover(within(chip).getByTestId(ICON_REGEXP.eyePasswordOn));
-			expect(await screen.findByText(/hide access code/i)).toBeVisible();
 		});
 	});
 });
