@@ -453,7 +453,7 @@ export function populateLink(node: Node, withAccessCode?: boolean): Link {
 		]),
 		description: faker.helpers.arrayElement([null, faker.lorem.sentence()]),
 		url: faker.internet.url(),
-		access_code: withAccessCode ? generateAccessCode() : undefined,
+		access_code: withAccessCode ? generateAccessCode() : null,
 		node
 	};
 }

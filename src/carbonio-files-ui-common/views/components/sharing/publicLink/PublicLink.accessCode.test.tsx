@@ -179,7 +179,7 @@ describe('Access code', () => {
 			).toBeVisible();
 		});
 
-		it.skip('should render the same access code as the one in the input when the user clicks on generate button', async () => {
+		it('should render the same access code as the one in the input when the user clicks on generate button', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node, true);
@@ -197,12 +197,14 @@ describe('Access code', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
 			const accessCodeInput = screen.getByLabelText<HTMLInputElement>(/access code/i);
 			const accessCodeValue = accessCodeInput.value;
+			link.access_code = accessCodeValue;
+			mocks.Mutation.createLink = mockCreateLink(link);
 			await user.click(screen.getByRole('button', { name: /generate link/i }));
 			await user.click(screen.getByTestId(ICON_REGEXP.eyePasswordOff));
 			expect(screen.getByText(accessCodeValue)).toBeVisible();
 		});
 
-		it.skip('should not render the chip with the access code when the link is generated (access code in not enabled)', async () => {
+		it('should not render the chip with the access code when the link is generated (access code in not enabled)', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node, false);
