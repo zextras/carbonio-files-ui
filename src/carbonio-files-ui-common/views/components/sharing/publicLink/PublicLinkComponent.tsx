@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
 	Button,
@@ -20,12 +20,11 @@ import {
 	useSnackbar,
 	InputProps
 } from '@zextras/carbonio-design-system';
-import { size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { AccessCodeComponent } from './AccessCodeComponent';
-import { AccessCodeInfo, AccessCodeSection } from './AccessCodeSection';
+import { AccessCodeSection } from './AccessCodeSection';
 import { useUserInfo } from '../../../../../hooks/useUserInfo';
 import { DATE_TIME_FORMAT } from '../../../../constants';
 import { PublicLinkRowStatus } from '../../../../types/common';
@@ -36,6 +35,13 @@ import {
 	initExpirationDate
 } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
+
+export function isDescriptionChanged(
+	oldDescription: string | null | undefined,
+	newDescription: string | null | undefined
+): boolean {
+	return oldDescription !== newDescription;
+}
 
 export const calculateUpdatedAccessCode = (
 	currentAccessCode: string | undefined | null,
@@ -102,11 +108,19 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
 
-	const accessCodeRef = useRef<AccessCodeInfo>(null);
+	const [newAccessCodeValue, setNewAccessCodeValue] = useState(accessCode ?? generateAccessCode());
+	const regenerateAccessCode = useCallback(() => {
+		setNewAccessCodeValue(generateAccessCode());
+	}, []);
+
+	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState(!!accessCode);
+	const toggleAccessCode = useCallback(() => {
+		setIsAccessCodeEnabled((prevState) => !prevState);
+	}, []);
 
 	const isExpired = useMemo(() => (expiresAt ? Date.now() > expiresAt : false), [expiresAt]);
 
-	const [linkDescriptionValue, setLinkDescriptionValue] = useState<string>(description ?? '');
+	const [linkDescriptionValue, setLinkDescriptionValue] = useState(description);
 
 	const moreThan300Characters = useMemo(
 		() => linkDescriptionValue != null && linkDescriptionValue.length > 300,
@@ -122,10 +136,11 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	const [date, setDate] = useState(initialDate);
 	const [updatedTimestamp, setUpdatedTimestamp] = useState(expiresAt);
 
+	// TODO controllo vuoto a vuoto + controllo access code
 	const isSomethingChanged = useMemo(
 		() =>
 			(expiresAt !== updatedTimestamp && (expiresAt != null || updatedTimestamp != null)) ||
-			size(description) !== size(linkDescriptionValue),
+			isDescriptionChanged(description, linkDescriptionValue),
 		[description, expiresAt, linkDescriptionValue, updatedTimestamp]
 	);
 
@@ -150,19 +165,27 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 		onRevokeOrRemove(id, !isExpired);
 	}, [id, onRevokeOrRemove, isExpired]);
 
-	const onEditConfirmCallback = useCallback(() => {
-		const newAccessCode = accessCodeRef.current?.accessCode ?? '';
-		const isAccessCodeEnabled = accessCodeRef.current?.isAccessCodeEnabled ?? false;
-
-		return Promise.allSettled([
-			onEditConfirm(
-				id,
-				linkDescriptionValue,
-				updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined,
-				calculateUpdatedAccessCode(accessCode, newAccessCode, isAccessCodeEnabled)
-			)
-		]);
-	}, [accessCode, expiresAt, id, linkDescriptionValue, onEditConfirm, updatedTimestamp]);
+	const onEditConfirmCallback = useCallback(
+		() =>
+			Promise.allSettled([
+				onEditConfirm(
+					id,
+					linkDescriptionValue,
+					updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined,
+					calculateUpdatedAccessCode(accessCode, newAccessCodeValue, isAccessCodeEnabled)
+				)
+			]),
+		[
+			onEditConfirm,
+			id,
+			linkDescriptionValue,
+			updatedTimestamp,
+			expiresAt,
+			accessCode,
+			newAccessCodeValue,
+			isAccessCodeEnabled
+		]
+	);
 
 	const copyUrl = useCallback(() => {
 		copyToClipboard(url as string).then(() => {
@@ -337,9 +360,10 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 					)}
 					{isFolder && (
 						<AccessCodeSection
-							initialAccessCode={accessCode ?? generateAccessCode()}
-							accessCodeRef={accessCodeRef}
-							initialIsAccessCodeShown={!!accessCode}
+							accessCode={newAccessCodeValue}
+							isAccessCodeEnabled={isAccessCodeEnabled}
+							toggleAccessCode={toggleAccessCode}
+							regenerateAccessCode={regenerateAccessCode}
 						/>
 					)}
 				</>

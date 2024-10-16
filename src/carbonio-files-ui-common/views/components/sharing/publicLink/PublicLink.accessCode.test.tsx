@@ -226,7 +226,7 @@ describe('Access code', () => {
 	});
 
 	describe('Edit access code', () => {
-		it('should render the current access code when click on edit button', async () => {
+		it('should render the switch enabled and the current access code when click on edit button (access code was set)', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node, true);
@@ -239,9 +239,88 @@ describe('Access code', () => {
 
 			await screen.findByText(link.url as string);
 			await user.click(screen.getByRole('button', { name: /edit/i }));
+			expect(screen.getByTestId(ICON_REGEXP.switchOn)).toBeVisible();
 			const accessCodeInput = screen.getByLabelText<HTMLInputElement>(/access code/i);
 			expect(accessCodeInput).toBeVisible();
 			expect(accessCodeInput).toHaveValue(link.access_code);
+		});
+
+		it('should render the switch disabled when click on edit button (access code was not set)', async () => {
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const link = populateLink(node, false);
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
+			await screen.findByText(link.url as string);
+			await user.click(screen.getByRole('button', { name: /edit/i }));
+			expect(screen.getByTestId(ICON_REGEXP.switchOff)).toBeVisible();
+		});
+
+		it('should enable the edit link button when the user enables the switch (access code was not set)', async () => {
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const link = populateLink(node, false);
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
+			await screen.findByText(link.url as string);
+			await user.click(screen.getByRole('button', { name: /edit/i }));
+			expect(screen.queryByRole('button', { name: /edit link/i })).toBeDisabled();
+			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
+			expect(screen.getByTestId(ICON_REGEXP.switchOn)).toBeVisible();
+			expect(screen.getByRole('button', { name: /edit link/i })).toBeEnabled();
+		});
+
+		it('should enable the edit link button when the user disables the switch (access code was set)', async () => {
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const link = populateLink(node, true);
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
+			await screen.findByText(link.url as string);
+			await user.click(screen.getByRole('button', { name: /edit/i }));
+			expect(screen.queryByRole('button', { name: /edit link/i })).toBeDisabled();
+			await user.click(screen.getByTestId(ICON_REGEXP.switchOn));
+			expect(screen.getByTestId(ICON_REGEXP.switchOff)).toBeVisible();
+			expect(screen.getByRole('button', { name: /edit link/i })).toBeEnabled();
+		});
+
+		describe('Update access code', () => {
+			it.todo('should update the changes when the user clicks on "edit link" button');
+		});
+
+		describe('Undo', () => {
+			it('should hide the access code section when the user clicks on undo button', async () => {
+				const node = populateNode('Folder');
+				const props = getPublicLinkProps(node);
+				const link = populateLink(node, true);
+				const mocks = {
+					Query: {
+						getLinks: mockGetLinks([link])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
+				await screen.findByText(link.url as string);
+				await user.click(screen.getByRole('button', { name: /edit/i }));
+				await user.click(screen.getByTestId(ICON_REGEXP.switchOn));
+				expect(screen.getByTestId(ICON_REGEXP.switchOff)).toBeVisible();
+				expect(screen.getByRole('button', { name: /edit link/i })).toBeEnabled();
+			});
 		});
 
 		describe('CalculateUpdatedAccessCode', () => {

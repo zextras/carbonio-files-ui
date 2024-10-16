@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React, { useCallback, useImperativeHandle, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
 	Button,
@@ -16,25 +16,24 @@ import {
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { copyToClipboard, generateAccessCode } from '../../../../utils/utils';
-
-export type AccessCodeInfo = { accessCode: string; isAccessCodeEnabled: boolean };
+import { copyToClipboard } from '../../../../utils/utils';
 
 interface AccessCodeSectionProps {
-	initialAccessCode: string;
-	initialIsAccessCodeShown: boolean;
-	accessCodeRef: React.Ref<AccessCodeInfo>;
+	accessCode: string;
+	isAccessCodeEnabled: boolean;
+	regenerateAccessCode: () => void;
+	toggleAccessCode: () => void;
 }
 
 export const AccessCodeSection = ({
-	accessCodeRef,
-	initialAccessCode,
-	initialIsAccessCodeShown
+	accessCode,
+	isAccessCodeEnabled,
+	regenerateAccessCode,
+	toggleAccessCode
 }: AccessCodeSectionProps): React.JSX.Element => {
 	const [t] = useTranslation();
-	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState(false);
-	const [isAccessCodeShown, setIsAccessCodeShown] = useState(initialIsAccessCodeShown);
-	const [accessCode, setAccessCode] = useState(initialAccessCode);
+
+	const [isAccessCodeShown, setIsAccessCodeShown] = useState(false);
 
 	const createSnackbar = useSnackbar();
 
@@ -71,26 +70,10 @@ export const AccessCodeSection = ({
 		[isAccessCodeShown, toggleShowAccessCode]
 	);
 
-	const toggleAccessCode = useCallback(() => {
-		setIsAccessCodeEnabled((prevState) => !prevState);
-	}, []);
-
-	const regenerateAccessCode = useCallback(() => {
-		setAccessCode(generateAccessCode());
-	}, []);
-
-	useImperativeHandle(
-		accessCodeRef,
-		() => ({
-			accessCode,
-			isAccessCodeEnabled
-		}),
-		[accessCode, isAccessCodeEnabled]
-	);
-
 	return (
 		<Container mainAlignment="flex-start" crossAlignment="flex-start">
 			<Switch
+				value={isAccessCodeEnabled}
 				padding={{ top: 'small' }}
 				label={t('publicLink.accessCode.switch.label', 'Enable access code')}
 				onClick={toggleAccessCode}

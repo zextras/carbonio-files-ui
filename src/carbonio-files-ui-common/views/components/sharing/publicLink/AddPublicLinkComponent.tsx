@@ -19,7 +19,7 @@ import {
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { AccessCodeInfo, AccessCodeSection } from './AccessCodeSection';
+import { AccessCodeSection } from './AccessCodeSection';
 import { PublicLinkRowStatus } from '../../../../types/common';
 import { generateAccessCode, initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
@@ -31,7 +31,7 @@ interface AddPublicLinkComponentProps {
 	onAddLink: () => void;
 	onUndo: () => void;
 	onGenerate: (
-		linkDescriptionValue: string,
+		linkDescriptionValue: string | undefined,
 		date: Date | undefined,
 		accessCode?: string
 	) => Promise<unknown>;
@@ -53,7 +53,16 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 	const [t] = useTranslation();
 	const scrollToElementRef = useRef<HTMLElement>(null);
 
-	const accessCodeRef = useRef<AccessCodeInfo>(null);
+	// TODO move to custom hook
+	const [newAccessCodeValue, setNewAccessCodeValue] = useState(generateAccessCode());
+	const regenerateAccessCode = useCallback(() => {
+		setNewAccessCodeValue(generateAccessCode());
+	}, []);
+
+	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState(false);
+	const toggleAccessCode = useCallback(() => {
+		setIsAccessCodeEnabled((prevState) => !prevState);
+	}, []);
 
 	const [linkDescriptionValue, setLinkDescriptionValue] = useState('');
 
@@ -82,20 +91,18 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 
 	const onGenerateCallback = useCallback(() => {
 		const expirationDate = initExpirationDate(date);
-		const accessCode = accessCodeRef.current?.accessCode ?? '';
-		const isAccessCodeEnabled = accessCodeRef.current?.isAccessCodeEnabled ?? false;
 
 		return Promise.allSettled([
 			onGenerate(
-				linkDescriptionValue,
+				linkDescriptionValue.length > 0 ? linkDescriptionValue : undefined,
 				expirationDate,
-				isAccessCodeEnabled ? accessCode : undefined
+				isAccessCodeEnabled ? newAccessCodeValue : undefined
 			).then(() => {
 				setLinkDescriptionValue('');
 				setDate(undefined);
 			})
 		]);
-	}, [date, linkDescriptionValue, onGenerate]);
+	}, [date, isAccessCodeEnabled, linkDescriptionValue, newAccessCodeValue, onGenerate]);
 
 	const onUndoCallback = useCallback(() => {
 		onUndo();
@@ -121,8 +128,6 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 			}
 		}
 	}, [status]);
-
-	const initialAccessCode = useMemo(() => generateAccessCode(), []);
 
 	return (
 		<Container>
@@ -239,9 +244,10 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 					)}
 					{isFolder && (
 						<AccessCodeSection
-							accessCodeRef={accessCodeRef}
-							initialAccessCode={initialAccessCode}
-							initialIsAccessCodeShown={false}
+							accessCode={newAccessCodeValue}
+							isAccessCodeEnabled={isAccessCodeEnabled}
+							regenerateAccessCode={regenerateAccessCode}
+							toggleAccessCode={toggleAccessCode}
 						/>
 					)}
 					<span ref={scrollToElementRef} />

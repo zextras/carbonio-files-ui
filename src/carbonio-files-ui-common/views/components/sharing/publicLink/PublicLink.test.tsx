@@ -10,6 +10,7 @@ import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
 
 import { PublicLink } from './PublicLink';
+import { isDescriptionChanged } from './PublicLinkComponent';
 import { DATE_TIME_FORMAT } from '../../../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateLinks, populateNode } from '../../../../mocks/mockUtils';
@@ -820,6 +821,42 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 				screen.queryByRole('textbox', { name: /link's description/i })
 			).not.toBeInTheDocument();
 			expect(screen.queryByRole('textbox', { name: /expiration date/i })).not.toBeInTheDocument();
+		});
+
+		it.todo('');
+	});
+	describe('isDescriptionChanged', () => {
+		// logiche basate sull cambiamento percepito dall'utente dove '' e null | undefined non hanno differenza
+		// olddescription null|undef e nuova description null| undef	 ----> false OK
+		// olddescription null|undef e nuova description '' 			----> false OK
+		// olddescription null|undef e nuova description stringa piena  ----> true OK
+		// olddescription '' e nuova description null| undef 			---> false OK
+		// olddescription '' e nuova description ''  					---> false OK
+		// olddescription '' e nuova description stringa piena 			----> true OK
+		// olddescription stringa piena e nuova description null| undef ----> true OK
+		// olddescription stringa piena e nuova description '' 			----> true OK
+		// olddescription stringa piena A e nuova description stringa piena A---> false OK
+		// olddescription stringa piena A e nuova description stringa piena B ---> true OK
+
+		it('should return false if the new description is the same as the old one', () => {
+			const res = isDescriptionChanged('same description', 'same description');
+			expect(isDescriptionChanged).toBeFalsy();
+		});
+
+		it('should return true if the new description is the not same as the old one', () => {
+			const isDescriptionChanged = isDescriptionChanged(
+				'same description',
+				'different description'
+			);
+			expect(isDescriptionChanged).toBeTruthy();
+		});
+
+		it('should return false if the new description is undefined/null the not same as the old one', () => {
+			const isDescriptionChanged = isDescriptionChanged(
+				'same description',
+				'different description'
+			);
+			expect(isDescriptionChanged).toBeTruthy();
 		});
 	});
 });

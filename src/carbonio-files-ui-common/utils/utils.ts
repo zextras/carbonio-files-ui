@@ -874,8 +874,7 @@ export function nodeToNodeListItemUIProps(
 	};
 }
 
-// only on https
-export function generateAccessCode(length = 10): string {
+function generateAccessCodeWithCrypto(length: number): string {
 	let generatedPassword = '';
 	const numbers = '0123456789';
 	const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
@@ -891,4 +890,13 @@ export function generateAccessCode(length = 10): string {
 	}
 
 	return generatedPassword;
+}
+
+export function generateAccessCode(length = 10): string {
+	try {
+		return generateAccessCodeWithCrypto(length);
+	} catch (e) {
+		// TODO implement fallback
+		return 'abcde12345';
+	}
 }
