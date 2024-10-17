@@ -18,7 +18,8 @@ import { useErrorHandler } from '../../useErrorHandler';
 
 export type CreateLinkType = (
 	description?: string,
-	expiresAt?: number
+	expiresAt?: number,
+	accessCode?: string
 ) => Promise<FetchResult<CreateLinkMutation>>;
 
 export function useCreateLinkMutation(nodeId: string): {
@@ -31,12 +32,13 @@ export function useCreateLinkMutation(nodeId: string): {
 	>(CreateLinkDocument);
 
 	const createLink: CreateLinkType = useCallback(
-		(description?: string, expiresAt?: number) =>
+		(description?: string, expiresAt?: number, accessCode?: string) =>
 			createLinkMutation({
 				variables: {
 					node_id: nodeId,
 					description,
-					expires_at: expiresAt
+					expires_at: expiresAt,
+					access_code: accessCode
 				},
 				update(cache, { data }) {
 					if (data?.createLink) {

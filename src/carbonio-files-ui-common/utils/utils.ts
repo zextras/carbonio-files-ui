@@ -862,3 +862,30 @@ export function nodeToNodeListItemUIProps(
 		trashed: node.rootId === ROOTS.TRASH
 	};
 }
+
+function generateAccessCodeWithCrypto(length: number): string {
+	let generatedPassword = '';
+	const numbers = '0123456789';
+	const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
+	const capitalLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	const validChars = numbers + lowerCaseLetters + capitalLetters;
+
+	for (let i = 0; i < length; i += 1) {
+		let randomNumber = crypto.getRandomValues(new Uint32Array(1))[0];
+		randomNumber /= 0x100000000;
+		randomNumber = Math.floor(randomNumber * validChars.length);
+
+		generatedPassword += validChars[randomNumber];
+	}
+
+	return generatedPassword;
+}
+
+export function generateAccessCode(length = 10): string {
+	try {
+		return generateAccessCodeWithCrypto(length);
+	} catch (e) {
+		// TODO implement fallback
+		return 'abcde12345';
+	}
+}

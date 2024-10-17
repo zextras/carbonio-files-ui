@@ -28,6 +28,7 @@ import { NonNullableListItem } from '../../../../types/utils';
 import { copyToClipboard } from '../../../../utils/utils';
 
 interface PublicLinkProps {
+	isFolder: boolean;
 	nodeId: string;
 	nodeName: string;
 	linkName: string;
@@ -36,6 +37,7 @@ interface PublicLinkProps {
 }
 
 export const PublicLink = ({
+	isFolder,
 	nodeId,
 	nodeName,
 	linkName,
@@ -76,10 +78,10 @@ export const PublicLink = ({
 	}, []);
 
 	const onGenerate = useCallback(
-		(description?: string, expiresAt?: Date) => {
+		(description?: string, expiresAt?: Date, accessCode?: string) => {
 			setAddPublicLinkStatus(PublicLinkRowStatus.CLOSED);
 			setThereIsOpenRow(false);
-			return createLink(description, expiresAt?.getTime())
+			return createLink(description, expiresAt?.getTime(), accessCode)
 				.then(({ data }) => {
 					if (data) {
 						createSnackbar({
@@ -179,10 +181,10 @@ export const PublicLink = ({
 	);
 
 	const onEditConfirm = useCallback(
-		(linkId: string, description?: string, expiresAt?: number) => {
+		(linkId: string, description?: string | null, expiresAt?: number, accessCode?: string) => {
 			setOpenLinkId(undefined);
 			setThereIsOpenRow(false);
-			return updateLink(linkId, description, expiresAt)
+			return updateLink(linkId, description, expiresAt, accessCode)
 				.then(({ data }) => {
 					if (data) {
 						createSnackbar({
@@ -231,10 +233,12 @@ export const PublicLink = ({
 				if (link) {
 					accumulator.push(
 						<PublicLinkComponent
+							isFolder={isFolder}
 							key={link.id}
 							id={link.id}
 							url={link.url}
 							description={link.description}
+							accessCode={link.access_code}
 							status={getLinkStatus(link.id)}
 							expiresAt={link.expires_at}
 							onEdit={onEdit}
@@ -252,12 +256,13 @@ export const PublicLink = ({
 		);
 	}, [
 		links,
+		openLinkId,
+		thereIsOpenRow,
+		isFolder,
 		onEdit,
 		onEditConfirm,
 		onEditUndo,
 		onRevokeOrRemove,
-		openLinkId,
-		thereIsOpenRow,
 		linkName
 	]);
 
@@ -280,6 +285,7 @@ export const PublicLink = ({
 			background={'gray6'}
 		>
 			<AddPublicLinkComponent
+				isFolder={isFolder}
 				status={addPublicLinkComputedStatus}
 				onAddLink={onAddLink}
 				onUndo={onAddUndo}

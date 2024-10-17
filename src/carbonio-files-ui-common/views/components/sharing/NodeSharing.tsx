@@ -31,7 +31,13 @@ import { useGetSharesQuery } from '../../../hooks/graphql/queries/useGetSharesQu
 import { Node } from '../../../types/common';
 import { GetSharesQuery, Maybe, Share } from '../../../types/graphql/types';
 import { DeepPick, MakePartial, MakeRequiredNonNull } from '../../../types/utils';
-import { cssCalcBuilder, getChipLabel, getChipTooltip, isFile } from '../../../utils/utils';
+import {
+	cssCalcBuilder,
+	getChipLabel,
+	getChipTooltip,
+	isFile,
+	isFolder
+} from '../../../utils/utils';
 
 const MainContainer = styled(Container)`
 	gap: ${({ theme }): string => theme.sizes.padding.medium};
@@ -225,6 +231,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 			)}
 			{node.permissions.can_share && (
 				<PublicLink
+					isFolder={isFolder(node)}
 					nodeId={node.id}
 					nodeName={node.name}
 					linkName={linkName}
