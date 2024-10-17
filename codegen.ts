@@ -23,12 +23,12 @@ const typescriptPluginConfig: TypeScriptPluginConfig = {
 
 const config: CodegenConfig = {
 	schema: {
-		'https://sw-u20-pry3.demo.zextras.io/services/files/graphql': {
-			headers: {
-				Cookie:
-					'ZM_AUTH_TOKEN=0_2bbb00195ab9039b3da2253820f91a8b86d72a98_69643d33363a66356466356665312d623736312d343139362d386535312d3961653861653530336465653b6578703d31333a313732393135373134303431343b747970653d363a7a696d6272613b753d313a613b7469643d31303a313131383335313438303b'
+		'https://raw.githubusercontent.com/Zextras/carbonio-files-ce/develop/core/src/main/resources/api/schema.graphql':
+			{
+				headers: {
+					Cookie: ''
+				}
 			}
-		}
 	},
 	generates: {
 		'src/carbonio-files-ui-common/graphql/schema.graphql': {

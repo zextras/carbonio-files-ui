@@ -20,8 +20,9 @@ import {
 import { useTranslation } from 'react-i18next';
 
 import { AccessCodeSection } from './AccessCodeSection';
+import { useAccessCode } from '../../../../hooks/useAccessCode';
 import { PublicLinkRowStatus } from '../../../../types/common';
-import { generateAccessCode, initExpirationDate } from '../../../../utils/utils';
+import { initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 import { TextWithLineHeight } from '../../StyledComponents';
 
@@ -53,16 +54,8 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 	const [t] = useTranslation();
 	const scrollToElementRef = useRef<HTMLElement>(null);
 
-	// TODO move to custom hook
-	const [newAccessCodeValue, setNewAccessCodeValue] = useState(generateAccessCode());
-	const regenerateAccessCode = useCallback(() => {
-		setNewAccessCodeValue(generateAccessCode());
-	}, []);
-
-	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState(false);
-	const toggleAccessCode = useCallback(() => {
-		setIsAccessCodeEnabled((prevState) => !prevState);
-	}, []);
+	const { newAccessCodeValue, isAccessCodeEnabled, regenerateAccessCode, toggleAccessCode, reset } =
+		useAccessCode(false);
 
 	const [linkDescriptionValue, setLinkDescriptionValue] = useState('');
 
@@ -108,7 +101,8 @@ export const AddPublicLinkComponent: React.FC<AddPublicLinkComponentProps> = ({
 		onUndo();
 		setLinkDescriptionValue('');
 		setDate(undefined);
-	}, [onUndo]);
+		reset();
+	}, [onUndo, reset]);
 
 	const [pickerIsOpen, setPickerIsOpen] = useState(false);
 

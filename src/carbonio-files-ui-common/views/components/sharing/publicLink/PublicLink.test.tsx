@@ -10,7 +10,7 @@ import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
 
 import { PublicLink } from './PublicLink';
-import { isDescriptionChanged } from './PublicLinkComponent';
+import { calculateIsDescriptionChanged } from './PublicLinkComponent';
 import { DATE_TIME_FORMAT } from '../../../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateLinks, populateNode } from '../../../../mocks/mockUtils';
@@ -822,41 +822,72 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 			).not.toBeInTheDocument();
 			expect(screen.queryByRole('textbox', { name: /expiration date/i })).not.toBeInTheDocument();
 		});
-
-		it.todo('');
 	});
-	describe('isDescriptionChanged', () => {
-		// logiche basate sull cambiamento percepito dall'utente dove '' e null | undefined non hanno differenza
-		// olddescription null|undef e nuova description null| undef	 ----> false OK
-		// olddescription null|undef e nuova description '' 			----> false OK
-		// olddescription null|undef e nuova description stringa piena  ----> true OK
-		// olddescription '' e nuova description null| undef 			---> false OK
-		// olddescription '' e nuova description ''  					---> false OK
-		// olddescription '' e nuova description stringa piena 			----> true OK
-		// olddescription stringa piena e nuova description null| undef ----> true OK
-		// olddescription stringa piena e nuova description '' 			----> true OK
-		// olddescription stringa piena A e nuova description stringa piena A---> false OK
-		// olddescription stringa piena A e nuova description stringa piena B ---> true OK
 
-		it('should return false if the new description is the same as the old one', () => {
-			const res = isDescriptionChanged('same description', 'same description');
-			expect(isDescriptionChanged).toBeFalsy();
+	describe('calculateIsDescriptionChanged', () => {
+		it.each([
+			['description', 'description'],
+			[null, null],
+			[undefined, null],
+			[undefined, undefined],
+			[null, undefined]
+		])(
+			'should return false if the old description is %s and the new one is %s',
+			(oldDescription, newDescription) => {
+				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
+				expect(res).toBeFalsy();
+			}
+		);
+
+		it.each([
+			[null, ''],
+			[undefined, '']
+		])(
+			`should return false if the old description is %s and the new one is empty string`,
+			(oldDescription, newDescription) => {
+				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
+				expect(res).toBeFalsy();
+			}
+		);
+
+		it.each([
+			['', null],
+			['', undefined]
+		])(
+			'should return false if the old description is empty string and the new one is null',
+			(oldDescription, newDescription) => {
+				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
+				expect(res).toBeFalsy();
+			}
+		);
+
+		it.each([
+			[null, 'new description'],
+			[undefined, 'new description'],
+			['old description', null],
+			['old description', undefined],
+			['old description', 'new description']
+		])(
+			'should return true if the old description is null and the new one is set',
+			(oldDescription, newDescription) => {
+				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
+				expect(res).toBeTruthy();
+			}
+		);
+
+		it('should return false if the old description is empty string and the new one is empty string', () => {
+			const res = calculateIsDescriptionChanged('', '');
+			expect(res).toBeFalsy();
 		});
 
-		it('should return true if the new description is the not same as the old one', () => {
-			const isDescriptionChanged = isDescriptionChanged(
-				'same description',
-				'different description'
-			);
-			expect(isDescriptionChanged).toBeTruthy();
+		it('should return true if the old description is empty string and the new one is set', () => {
+			const res = calculateIsDescriptionChanged('', 'new description');
+			expect(res).toBeTruthy();
 		});
 
-		it('should return false if the new description is undefined/null the not same as the old one', () => {
-			const isDescriptionChanged = isDescriptionChanged(
-				'same description',
-				'different description'
-			);
-			expect(isDescriptionChanged).toBeTruthy();
+		it('should return true if the old description was set and the new one is empty string', () => {
+			const res = calculateIsDescriptionChanged('old description', '');
+			expect(res).toBeTruthy();
 		});
 	});
 });

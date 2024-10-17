@@ -27,20 +27,31 @@ import { AccessCodeComponent } from './AccessCodeComponent';
 import { AccessCodeSection } from './AccessCodeSection';
 import { useUserInfo } from '../../../../../hooks/useUserInfo';
 import { DATE_TIME_FORMAT } from '../../../../constants';
+import { useAccessCode } from '../../../../hooks/useAccessCode';
 import { PublicLinkRowStatus } from '../../../../types/common';
-import {
-	copyToClipboard,
-	formatDate,
-	generateAccessCode,
-	initExpirationDate
-} from '../../../../utils/utils';
+import { copyToClipboard, formatDate, initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 
-export function isDescriptionChanged(
+export function calculateIsDescriptionChanged(
 	oldDescription: string | null | undefined,
 	newDescription: string | null | undefined
 ): boolean {
-	return oldDescription !== newDescription;
+	return (oldDescription ?? '') !== (newDescription ?? '');
+}
+
+export function calculateIsAccessCodeChanged(
+	oldAccessCode: string | null | undefined,
+	newAccessCode: string,
+	isNewAccessCodeEnabled: boolean
+): boolean {
+	if (oldAccessCode?.length === 0 || newAccessCode.length === 0) {
+		throw new Error('Unexpected access code length 0');
+	}
+
+	return !(
+		(!oldAccessCode && !isNewAccessCodeEnabled) ||
+		(oldAccessCode && oldAccessCode === newAccessCode && isNewAccessCodeEnabled)
+	);
 }
 
 export const calculateUpdatedAccessCode = (
@@ -78,7 +89,7 @@ interface PublicLinkComponentProps {
 	onEdit: (linkId: string) => void;
 	onEditConfirm: (
 		linkId: string,
-		description?: string,
+		description?: string | null,
 		expiresAt?: number,
 		accessCode?: string
 	) => Promise<unknown>;
@@ -108,15 +119,8 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
 
-	const [newAccessCodeValue, setNewAccessCodeValue] = useState(accessCode ?? generateAccessCode());
-	const regenerateAccessCode = useCallback(() => {
-		setNewAccessCodeValue(generateAccessCode());
-	}, []);
-
-	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState(!!accessCode);
-	const toggleAccessCode = useCallback(() => {
-		setIsAccessCodeEnabled((prevState) => !prevState);
-	}, []);
+	const { newAccessCodeValue, isAccessCodeEnabled, regenerateAccessCode, toggleAccessCode } =
+		useAccessCode(!!accessCode, accessCode);
 
 	const isExpired = useMemo(() => (expiresAt ? Date.now() > expiresAt : false), [expiresAt]);
 
@@ -136,12 +140,20 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	const [date, setDate] = useState(initialDate);
 	const [updatedTimestamp, setUpdatedTimestamp] = useState(expiresAt);
 
-	// TODO controllo vuoto a vuoto + controllo access code
 	const isSomethingChanged = useMemo(
 		() =>
 			(expiresAt !== updatedTimestamp && (expiresAt != null || updatedTimestamp != null)) ||
-			isDescriptionChanged(description, linkDescriptionValue),
-		[description, expiresAt, linkDescriptionValue, updatedTimestamp]
+			calculateIsDescriptionChanged(description, linkDescriptionValue) ||
+			calculateIsAccessCodeChanged(accessCode, newAccessCodeValue, isAccessCodeEnabled),
+		[
+			accessCode,
+			description,
+			expiresAt,
+			isAccessCodeEnabled,
+			linkDescriptionValue,
+			newAccessCodeValue,
+			updatedTimestamp
+		]
 	);
 
 	const handleChange = useCallback((newDate: Date | null) => {
@@ -319,7 +331,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 					<Input
 						backgroundColor="gray5"
 						label={t('publicLink.input.label', "Link's description")}
-						value={linkDescriptionValue}
+						value={linkDescriptionValue ?? ''}
 						onChange={linkDescriptionOnChange}
 						hasError={moreThan300Characters}
 					/>

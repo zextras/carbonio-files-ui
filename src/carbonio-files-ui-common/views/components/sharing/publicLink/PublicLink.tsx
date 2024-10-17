@@ -181,7 +181,7 @@ export const PublicLink = ({
 	);
 
 	const onEditConfirm = useCallback(
-		(linkId: string, description?: string, expiresAt?: number, accessCode?: string) => {
+		(linkId: string, description?: string | null, expiresAt?: number, accessCode?: string) => {
 			setOpenLinkId(undefined);
 			setThereIsOpenRow(false);
 			return updateLink(linkId, description, expiresAt, accessCode)

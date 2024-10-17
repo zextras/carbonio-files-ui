@@ -17,7 +17,7 @@ import { ErrorHandlerOptions, useErrorHandler } from '../../useErrorHandler';
 
 export type UpdateLinkType = (
 	id: string,
-	description?: string,
+	description?: string | null,
 	expiresAt?: number,
 	accessCode?: string
 ) => Promise<FetchResult<UpdateLinkMutation>>;
@@ -32,7 +32,7 @@ export function useUpdateLinkMutation(errorHandlerOptions?: ErrorHandlerOptions)
 	>(UpdateLinkDocument);
 
 	const updateLink: UpdateLinkType = useCallback(
-		(id: string, description?: string, expiresAt?: number, accessCode?: string) =>
+		(id: string, description?: string | null, expiresAt?: number, accessCode?: string) =>
 			updateLinkMutation({
 				variables: {
 					link_id: id,
