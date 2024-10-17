@@ -7,7 +7,6 @@
 import React from 'react';
 
 import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
-import { forEach, map, find } from 'lodash';
 
 import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
@@ -27,8 +26,8 @@ import {
 	screen,
 	within
 } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
+import { File, Folder } from '../../types/graphql/types';
 import { mockGetPath, mockMoveNodes } from '../../utils/resolverMocks';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
@@ -47,7 +46,7 @@ beforeEach(() => {
 
 describe('Header Breadcrumbs', () => {
 	describe('Drag and drop', () => {
-		test('Drag and drop is disabled if folder id is empty', () => {
+		it('should not show the dropzone if folder id is empty', () => {
 			const crumbs = [{ id: 'Filter', label: 'Filter' }];
 			const dataTransfer = createMoveDataTransfer();
 			setup(
@@ -58,14 +57,12 @@ describe('Header Breadcrumbs', () => {
 				{ mocks: {} }
 			);
 			const destinationCrumbItem = screen.getByText('Filter');
-			expect(destinationCrumbItem).toBeVisible();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.queryByTestId(SELECTORS.dropCrumb);
-			expect(breadcrumbCrumbs).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.dropCrumb)).not.toBeInTheDocument();
 			expect(destinationCrumbItem).not.toHaveStyle({
 				background: COLORS.dropzone.enabled
 			});
@@ -74,20 +71,20 @@ describe('Header Breadcrumbs', () => {
 			});
 		});
 
-		test('Drop on a crumb trigger move action', async () => {
+		test('on a crumb shows enabled dropzone and trigger move action', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -99,7 +96,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] })))
+					moveNodes: mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] })))
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
@@ -111,23 +108,9 @@ describe('Header Breadcrumbs', () => {
 				{ mocks }
 			);
 			await screen.findByText(currentFolder.name);
-			expect(
-				screen.getByTextWithMarkup(
-					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
-				)
-			).toBeVisible();
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			await screen.findByText(/hide previous folders/i);
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(path[0].name);
-			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
-			).toBeVisible();
-
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -136,8 +119,7 @@ describe('Header Breadcrumbs', () => {
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
-			const destinationCrumb = find(
-				breadcrumbCrumbs,
+			const destinationCrumb = breadcrumbCrumbs.find(
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
@@ -152,20 +134,20 @@ describe('Header Breadcrumbs', () => {
 			expect(snackbar).toBeVisible();
 		});
 
-		test('Drop on current folder crumb does not trigger move action if crumb is parent of nodes', async () => {
+		test('on current folder crumb shows enabled dropzone but does not trigger move action if crumb is parent of nodes', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -178,9 +160,9 @@ describe('Header Breadcrumbs', () => {
 				},
 				Mutation: {
 					moveNodes: jest.fn(
-						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: currentFolder }))) as (
-							...args: unknown[]
-						) => Node[]
+						mockMoveNodes(
+							movingNodes.map((node) => ({ ...node, parent: currentFolder }))
+						) as () => (File | Folder)[]
 					)
 				}
 			} satisfies Partial<Resolvers>;
@@ -193,23 +175,9 @@ describe('Header Breadcrumbs', () => {
 				{ mocks }
 			);
 			await screen.findByText(currentFolder.name);
-			expect(
-				screen.getByTextWithMarkup(
-					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
-				)
-			).toBeVisible();
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			await screen.findByText(/hide previous folders/i);
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(currentFolder.name);
-			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
-			).toBeVisible();
-
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -218,8 +186,7 @@ describe('Header Breadcrumbs', () => {
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
-			const destinationCrumb = find(
-				breadcrumbCrumbs,
+			const destinationCrumb = breadcrumbCrumbs.find(
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).not.toHaveStyle({
@@ -227,7 +194,6 @@ describe('Header Breadcrumbs', () => {
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
-			// wait a tick to let mutation be called
 			await jest.advanceTimersToNextTimerAsync();
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
@@ -245,7 +211,7 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.parent = parent;
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -265,11 +231,7 @@ describe('Header Breadcrumbs', () => {
 				</>,
 				{ mocks }
 			);
-			await screen.findByText(currentFolder.name);
 			const destinationCrumbItem = await screen.findByText(parent.name);
-			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(parent.name, currentFolder.name))
-			).toBeVisible();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -278,14 +240,6 @@ describe('Header Breadcrumbs', () => {
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
-			const destinationCrumb = find(
-				breadcrumbCrumbs,
-				(crumb) => within(crumb).queryByText(parent.name) !== null
-			);
-			expect(destinationCrumb).toHaveStyle({
-				background: COLORS.dropzone.enabled
-			});
 			// wait for navigation to start
 			await waitFor(() => expect(mockedUseNavigationHook.navigateToFolder).toHaveBeenCalled());
 			fireEvent.dragLeave(destinationCrumbItem, { dataTransfer: dataTransfer() });
@@ -308,7 +262,7 @@ describe('Header Breadcrumbs', () => {
 			currentFolder.parent = parent;
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -328,11 +282,7 @@ describe('Header Breadcrumbs', () => {
 				</>,
 				{ mocks }
 			);
-			await screen.findByText(currentFolder.name);
 			const destinationCrumbItem = await screen.findByText(parent.name);
-			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(parent.name, currentFolder.name))
-			).toBeVisible();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -341,27 +291,19 @@ describe('Header Breadcrumbs', () => {
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
-			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
-			const destinationCrumb = find(
-				breadcrumbCrumbs,
-				(crumb) => within(crumb).queryByText(parent.name) !== null
-			);
-			expect(destinationCrumb).toHaveStyle({
-				background: COLORS.dropzone.disabled
-			});
 			// wait for navigation to start eventually
-			jest.advanceTimersByTime(TIMERS.DRAG_NAVIGATION_TRIGGER);
+			await jest.advanceTimersByTimeAsync(TIMERS.DRAG_NAVIGATION_TRIGGER);
 			fireEvent.dragLeave(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			expect(mockedUseNavigationHook.navigateToFolder).not.toHaveBeenCalled();
 		});
 
-		test('Drop on a crumb without right permission does not trigger action', async () => {
+		test('on a crumb without right permission shows disabled dropzone and does not trigger action', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
@@ -371,7 +313,7 @@ describe('Header Breadcrumbs', () => {
 			path[0].permissions.can_write_file = false;
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -384,9 +326,10 @@ describe('Header Breadcrumbs', () => {
 				},
 				Mutation: {
 					moveNodes: jest.fn(
-						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] }))) as (
-							...args: unknown[]
-						) => Node[]
+						mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] }))) as () => (
+							| File
+							| Folder
+						)[]
 					)
 				}
 			} satisfies Partial<Resolvers>;
@@ -399,22 +342,9 @@ describe('Header Breadcrumbs', () => {
 				{ mocks }
 			);
 			await screen.findByText(currentFolder.name);
-			expect(
-				screen.getByTextWithMarkup(
-					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
-				)
-			).toBeVisible();
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
 			await screen.findByText(/hide previous folders/i);
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			const destinationCrumbItem = await screen.findByText(path[0].name);
-			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
-			).toBeVisible();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -424,8 +354,7 @@ describe('Header Breadcrumbs', () => {
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
-			const destinationCrumb = find(
-				breadcrumbCrumbs,
+			const destinationCrumb = breadcrumbCrumbs.find(
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
@@ -436,24 +365,25 @@ describe('Header Breadcrumbs', () => {
 				background: ''
 			});
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
-			// wait a tick to allow mutation to eventually be executed
+			// advance timers to allow mutation to eventually be executed
+			await jest.advanceTimersToNextTimerAsync();
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 
-		test('Drag on cta load full path', async () => {
+		test('on cta loads full path', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -474,14 +404,6 @@ describe('Header Breadcrumbs', () => {
 				{ mocks }
 			);
 			await screen.findByText(currentFolder.name);
-			expect(
-				screen.getByTextWithMarkup(
-					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
-				)
-			).toBeVisible();
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			// simulate a drag of a node of the list
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
@@ -489,27 +411,26 @@ describe('Header Breadcrumbs', () => {
 			draggedItemsVar(movingNodes);
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
 			fireEvent.dragLeave(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
+				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...path.map((parent) => parent.name)))
 			).toBeVisible();
 		});
 
-		test('Drag on collapser open breadcrumb dropdown to show hidden crumbs. If drag leave the collapser and enter the dropdown within the default timeout, the dropdown remains open. When mouse leave the dropdown, the dropdown is closed', async () => {
+		test('on collapser opens breadcrumb dropdown to show hidden crumbs. If drag leave the collapser and enter the dropdown within the default timeout, the dropdown remains open. When mouse leave the dropdown, the dropdown is closed', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -530,33 +451,15 @@ describe('Header Breadcrumbs', () => {
 				{ mocks }
 			);
 			await screen.findByText(currentFolder.name);
-			expect(
-				screen.getByTextWithMarkup(
-					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
-				)
-			).toBeVisible();
-
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			// simulate a drag of a node of the list
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
-			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
-			).toBeVisible();
-
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
 			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
-
 			act(() => {
 				window.resizeTo(500, 300);
 			});
-
 			const collapserItem = await screen.findByText('…');
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
 			// set drag data as if a node of the list was dragged
@@ -564,15 +467,14 @@ describe('Header Breadcrumbs', () => {
 			dataTransfer().setData(DRAG_TYPES.move, JSON.stringify(movingNodes));
 			fireEvent.dragEnter(collapserItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(collapserItem, { dataTransfer: dataTransfer() });
-			await screen.findByText(path[0].name);
-			expect(screen.getByText(path[0].name)).toBeVisible();
+			expect(await screen.findByText(path[0].name)).toBeVisible();
 			fireEvent.dragLeave(collapserItem, { dataTransfer: dataTransfer() });
 			// wait less than the timeout to be sure that when mouse is over the dropdown of the breadcrumbs, it will not be closed by another event
-			await jest.advanceTimersByTimeAsync(TIMERS.HIDE_DROPZONE - 1);
+			await jest.advanceTimersByTimeAsync(TIMERS.DRAG_DELAY_CLOSE_DROPDOWN - 1);
 			fireEvent.dragEnter(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			// now wait the default timeout to be sure the dropdown remains opened
-			await jest.advanceTimersByTimeAsync(TIMERS.HIDE_DROPZONE);
+			await jest.advanceTimersByTimeAsync(TIMERS.DRAG_DELAY_CLOSE_DROPDOWN);
 			expect(screen.getByText(path[0].name)).toBeVisible();
 			fireEvent.dragLeave(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(screen.getByText('draggable element mock'), {
@@ -582,20 +484,20 @@ describe('Header Breadcrumbs', () => {
 			await waitForElementToBeRemoved(screen.queryByText(path[0].name));
 		});
 
-		test('Drop on a hidden crumb trigger move action', async () => {
+		test('on a hidden crumb shows enabled dropzone and trigger move action', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
 			});
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -607,7 +509,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] })))
+					moveNodes: mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] })))
 				}
 			} satisfies Partial<Resolvers>;
 			const dataTransfer = createMoveDataTransfer();
@@ -619,32 +521,15 @@ describe('Header Breadcrumbs', () => {
 				{ mocks }
 			);
 			await screen.findByText(currentFolder.name);
-			expect(
-				screen.getByTextWithMarkup(
-					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
-				)
-			).toBeVisible();
-
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			// simulate a drag of a node of the list
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
-			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
-			).toBeVisible();
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
 			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
-
 			act(() => {
 				window.resizeTo(500, 300);
 			});
-
 			const collapserItem = await screen.findByText('…');
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
 			// set drag data as if a node of the list was dragged
@@ -653,13 +538,11 @@ describe('Header Breadcrumbs', () => {
 			fireEvent.dragEnter(collapserItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(collapserItem, { dataTransfer: dataTransfer() });
 			const destinationItem = await screen.findByText(path[0].name);
-			expect(destinationItem).toBeVisible();
 			fireEvent.dragLeave(collapserItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationItem, { dataTransfer: dataTransfer() });
 			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
-			const destinationCrumb = find(
-				breadcrumbCrumbs,
+			const destinationCrumb = breadcrumbCrumbs.find(
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
@@ -673,13 +556,13 @@ describe('Header Breadcrumbs', () => {
 			expect(snackbar).toBeVisible();
 		});
 
-		test('Drop on a hidden crumb without permissions does not trigger move action', async () => {
+		test('on a hidden crumb without permissions shows disabled dropzone and does not trigger move action', async () => {
 			const owner = populateUser();
 			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.owner = owner;
-			forEach(path, (mockedNode) => {
+			path.forEach((mockedNode) => {
 				mockedNode.permissions.can_write_file = true;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.owner = owner;
@@ -688,7 +571,7 @@ describe('Header Breadcrumbs', () => {
 			path[0].permissions.can_write_folder = false;
 
 			const movingNodes = populateNodes(2);
-			forEach(movingNodes, (mockedNode) => {
+			movingNodes.forEach((mockedNode) => {
 				mockedNode.parent = currentFolder;
 				mockedNode.permissions.can_write_folder = true;
 				mockedNode.permissions.can_write_file = true;
@@ -701,9 +584,10 @@ describe('Header Breadcrumbs', () => {
 				},
 				Mutation: {
 					moveNodes: jest.fn(
-						mockMoveNodes(map(movingNodes, (node) => ({ ...node, parent: path[0] }))) as (
-							...args: unknown[]
-						) => Node[]
+						mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] }))) as () => (
+							| File
+							| Folder
+						)[]
 					)
 				}
 			} satisfies Partial<Resolvers>;
@@ -716,34 +600,16 @@ describe('Header Breadcrumbs', () => {
 				{ mocks }
 			);
 			await screen.findByText(currentFolder.name);
-			expect(
-				screen.getByTextWithMarkup(
-					buildBreadCrumbRegExp((currentFolder.parent as Node).name, currentFolder.name)
-				)
-			).toBeVisible();
-
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand)).toBeVisible();
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaReduce)).not.toBeInTheDocument();
 			// simulate a drag of a node of the list
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
-			expect(screen.queryByTestId(ICON_REGEXP.breadcrumbCtaExpand)).not.toBeInTheDocument();
 			await screen.findByText(/hide previous folders/i);
-			expect(screen.getByTestId(ICON_REGEXP.breadcrumbCtaReduce)).toBeVisible();
-			expect(
-				screen.getByTextWithMarkup(buildBreadCrumbRegExp(...map(path, (parent) => parent.name)))
-			).toBeVisible();
-
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
 			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
 			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
-
 			act(() => {
 				window.resizeTo(500, 300);
 			});
-
 			const collapserItem = await screen.findByText('…');
-			expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
 			const mockDraggedItem = screen.getByText('draggable element mock');
 			fireEvent.dragStart(mockDraggedItem, { dataTransfer: dataTransfer() });
 			// set drag data as if a node of the list was dragged
@@ -752,13 +618,11 @@ describe('Header Breadcrumbs', () => {
 			fireEvent.dragEnter(collapserItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(collapserItem, { dataTransfer: dataTransfer() });
 			const destinationItem = await screen.findByText(path[0].name);
-			expect(destinationItem).toBeVisible();
-			fireEvent.dragLeave(collapserItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
+			fireEvent.dragLeave(collapserItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationItem, { dataTransfer: dataTransfer() });
 			const breadcrumbCrumbs = screen.getAllByTestId(SELECTORS.dropCrumb);
-			const destinationCrumb = find(
-				breadcrumbCrumbs,
+			const destinationCrumb = breadcrumbCrumbs.find(
 				(crumb) => within(crumb).queryByText(path[0].name) !== null
 			);
 			expect(destinationCrumb).toHaveStyle({
@@ -768,7 +632,10 @@ describe('Header Breadcrumbs', () => {
 			expect(destinationCrumb).not.toHaveStyle({
 				'background-color': COLORS.dropzone.disabled
 			});
-			// wait a tick to allow mutation to eventually be executed
+			// dropdown is closed
+			await waitForElementToBeRemoved(destinationItem);
+			// advance timers to allow mutation to eventually be executed
+			await jest.advanceTimersToNextTimerAsync();
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 	});

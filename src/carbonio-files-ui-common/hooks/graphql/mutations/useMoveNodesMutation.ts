@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 import { useSnackbar } from '@zextras/carbonio-design-system';
-import { forEach, map, find, some } from 'lodash';
+import { forEach, map, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ import { useActiveNode } from '../../../../hooks/useActiveNode';
 import { useNavigation } from '../../../../hooks/useNavigation';
 import MOVE_NODES from '../../../graphql/mutations/moveNodes.graphql';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
-import { URLParams } from '../../../types/common';
+import { Node, URLParams } from '../../../types/common';
 import {
 	Folder,
 	GetChildrenQuery,
@@ -25,9 +25,9 @@ import {
 	GetPathQueryVariables,
 	MoveNodesMutation,
 	MoveNodesMutationVariables,
-	Node,
 	QueryGetPathArgs
 } from '../../../types/graphql/types';
+import { DeepPick } from '../../../types/utils';
 import { isFolder } from '../../../utils/utils';
 import { useErrorHandler } from '../../useErrorHandler';
 import useQueryParam from '../../useQueryParam';
@@ -36,7 +36,7 @@ import { isOperationVariables, isQueryResult } from '../utils';
 
 export type MoveNodesType = (
 	destinationFolder: Pick<Folder, '__typename' | 'id'>,
-	...nodes: Array<Pick<Node, 'id' | 'parent'>>
+	...nodes: Array<Node<'id'> & DeepPick<Node<'parent'>, 'parent', 'id' | '__typename'>>
 ) => Promise<FetchResult<MoveNodesMutation>>;
 
 /**
@@ -82,8 +82,8 @@ export function useMoveNodesMutation(): { moveNodes: MoveNodesType; loading: boo
 	});
 	useErrorHandler(error, 'MOVE_NODES');
 
-	const moveNodes: MoveNodesType = useCallback(
-		(destinationFolder, ...nodes) => {
+	const moveNodes = useCallback<MoveNodesType>(
+		async (destinationFolder, ...nodes) => {
 			const nodesIds = map(nodes, 'id');
 
 			return moveNodesMutation({
@@ -96,7 +96,7 @@ export function useMoveNodesMutation(): { moveNodes: MoveNodesType; loading: boo
 					const parents: Record<string, Pick<Folder, 'id' | '__typename'>> = {};
 					const nodesByParent: Record<string, string[]> = {};
 					forEach(result?.moveNodes, (movedNode) => {
-						const fromParent = find(nodes, ['id', movedNode.id])?.parent;
+						const fromParent = nodes.find((node) => node.id === movedNode.id)?.parent;
 						if (fromParent && isFolder(fromParent) && movedNode.parent?.id !== fromParent.id) {
 							if (fromParent.id in parents) {
 								nodesByParent[fromParent.id].push(movedNode.id);

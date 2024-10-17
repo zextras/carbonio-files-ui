@@ -19,9 +19,11 @@ import {
 	screen as rtlScreen,
 	waitFor,
 	within as rtlWithin,
-	type Screen
+	type Screen,
+	RenderHookOptions,
+	RenderHookResult,
+	renderHook
 } from '@testing-library/react';
-import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
 import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
@@ -41,7 +43,7 @@ import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { File as FilesFile, Folder } from '../types/graphql/types';
+import { Folder } from '../types/graphql/types';
 import { resolvers } from '../utils/resolvers';
 import { asyncForEach, isFile, isFolder } from '../utils/utils';
 
@@ -197,7 +199,7 @@ export const setup = (
 	ui: ReactElement,
 	options?: SetupOptions
 ): { user: UserEvent } & ReturnType<typeof customRender> => ({
-	user: setupUserEvent({ advanceTimers: jest.advanceTimersByTime, ...options?.setupOptions }),
+	user: setupUserEvent({ advanceTimers: jest.advanceTimersByTimeAsync, ...options?.setupOptions }),
 	...customRender(ui, {
 		initialRouterEntries: options?.initialRouterEntries,
 		mocks: options?.mocks,
@@ -211,8 +213,8 @@ export const setup = (
 export function setupHook<TProps, TResult>(
 	hook: (props: TProps) => TResult,
 	options?: Pick<WrapperProps, 'initialRouterEntries' | 'mocks'> & RenderHookOptions<TProps>
-): RenderHookResult<TProps, TResult> {
-	const view = renderHook<TProps, TResult>(hook, {
+): RenderHookResult<TResult, TProps> {
+	const view = renderHook<TResult, TProps>(hook, {
 		wrapper: ({ children }: Pick<WrapperProps, 'children'>) => (
 			<Wrapper {...options}>{children}</Wrapper>
 		)
@@ -370,8 +372,14 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 }
 
 export async function moveNode(destinationFolder: Folder, user: UserEvent): Promise<void> {
-	const moveAction = await screen.findByText('Move');
-	expect(moveAction).toBeVisible();
+	let moveAction = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.move });
+	if (!moveAction) {
+		const moreVertical = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.moreVertical });
+		if (moreVertical) {
+			await user.click(moreVertical);
+		}
+		moveAction = await screen.findByText('Move');
+	}
 	await user.click(moveAction);
 	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
@@ -385,7 +393,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	await waitFor(() =>
 		expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument()
 	);
-	expect(screen.queryByText('Move')).not.toBeInTheDocument();
+	expect(moveAction).not.toBeInTheDocument();
 }
 
 export function buildChipsFromKeywords(keywords: string[]): AdvancedFilters['keywords'] {
@@ -455,10 +463,9 @@ function createFileSystemDirectoryEntryReader(
 }
 
 function createFileSystemEntry(
-	node: Pick<Node, '__typename' | 'name'> &
-		(Pick<FilesFile, 'mime_type'> | Pick<Folder, '__typename'>),
+	node: Node<'name', 'mime_type', 'children'>,
 	file?: File
-): FileSystemEntry {
+): FileSystemDirectoryEntry | FileSystemFileEntry {
 	const baseEntry: FileSystemEntry = {
 		name: node.name,
 		fullPath: `/${node.name}`,
@@ -472,30 +479,33 @@ function createFileSystemEntry(
 	};
 	if (isFolder(node)) {
 		const reader = createFileSystemDirectoryEntryReader(node);
-		const directoryEntry: FileSystemDirectoryEntry = {
+		return {
 			...baseEntry,
 			createReader: () => reader,
 			getFile: noop,
 			getDirectory: noop
-		};
-		return directoryEntry;
+		} satisfies FileSystemDirectoryEntry;
 	}
-	const fileEntry: FileSystemFileEntry = {
+	return {
 		...baseEntry,
-		file(successCallback: FileCallback, errorCallback?: ErrorCallback) {
+		file(
+			successCallback: FileCallback,
+			errorCallback?: ErrorCallback
+		): ReturnType<FileSystemFileEntry['file']> {
 			if (file) {
 				successCallback(file);
 			} else if (errorCallback) {
 				errorCallback(new DOMException('no file provided', 'createFileSystemEntry'));
 			}
 		}
-	};
-	return fileEntry;
+	} satisfies FileSystemFileEntry;
 }
 
-export function createUploadDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
+export function createUploadDataTransfer(
+	nodes: Array<Node<'name', 'mime_type', 'children'>>
+): DataTransferUploadStub {
 	const fileBlobs: File[] = [];
-	const items = map<Node, { webkitGetAsEntry: () => Partial<FileSystemEntry> }>(nodes, (node) => {
+	const items = nodes.map((node) => {
 		const fileBlob = new File(['(⌐□_□)😂😂😂😂'], node.name, {
 			type: (isFile(node) && node.mime_type) || undefined
 		});
@@ -546,16 +556,16 @@ export async function uploadWithDnD(
 	fireEvent.dragEnter(dropzoneElement, {
 		dataTransfer: dataTransferObj
 	});
-
 	await screen.findByTestId(SELECTORS.dropzone);
 	expect(
 		screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 	).toBeVisible();
-
 	fireEvent.drop(dropzoneElement, {
 		dataTransfer: dataTransferObj
 	});
-
+	await act(async () => {
+		await jest.advanceTimersToNextTimerAsync();
+	});
 	if (dataTransferObj.files.length > 0) {
 		// use find all to make this work also when there is the displayer open
 		await screen.findAllByText(dataTransferObj.files[0].name);
@@ -570,7 +580,11 @@ export function spyOnUseCreateOptions(): CreateOption[] {
 			createOptionsCollector.splice(0, createOptionsCollector.length, ...options);
 		},
 		removeCreateOptions: (...ids: string[]): void => {
-			createOptionsCollector.filter((option) => !ids.includes(option.id));
+			createOptionsCollector.splice(
+				0,
+				createOptionsCollector.length,
+				...createOptionsCollector.filter((option) => !ids.includes(option.id))
+			);
 		}
 	});
 	return createOptionsCollector;

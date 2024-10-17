@@ -19,7 +19,6 @@ import {
 	populateShares
 } from '../../mocks/mockUtils';
 import { buildBreadCrumbRegExp, renameNode, setup, screen, within } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	File,
@@ -254,7 +253,9 @@ describe('Displayer', () => {
 		const mocks = {
 			Query: {
 				getNode: jest.fn(
-					mockGetNode({ getNode: [node], getShares: [node] }) as (...args: unknown[]) => Node
+					mockGetNode({ getNode: [node], getShares: [node] }) as (
+						...args: unknown[]
+					) => File | Folder
 				)
 			}
 		} satisfies Partial<Resolvers>;

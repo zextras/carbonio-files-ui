@@ -100,7 +100,7 @@ interface PublicLinkComponentProps {
 	isFolder: boolean;
 }
 
-export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
+export const PublicLinkComponent = ({
 	id,
 	description,
 	accessCode,
@@ -114,7 +114,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 	forceUrlCopyDisabled,
 	linkName,
 	isFolder
-}) => {
+}: PublicLinkComponentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
@@ -183,7 +183,7 @@ export const PublicLinkComponent: React.FC<PublicLinkComponentProps> = ({
 				onEditConfirm(
 					id,
 					linkDescriptionValue,
-					updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined,
+					updatedTimestamp !== expiresAt ? (updatedTimestamp ?? 0) : undefined,
 					calculateUpdatedAccessCode(accessCode, newAccessCodeValue, isAccessCodeEnabled)
 				)
 			]),

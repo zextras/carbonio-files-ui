@@ -14,7 +14,6 @@ import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateNodes } from '../mocks/mockUtils';
 import { setup, selectNodes } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes, mockFlagNodes } from '../utils/resolverMocks';
 
@@ -145,7 +144,7 @@ describe('Filter View', () => {
 
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
-			expect(screen.getByText((last(firstPage) as Node).name)).toBeVisible();
+			expect(screen.getByText(last(firstPage)!.name)).toBeVisible();
 			expect(screen.queryByText(secondPage[0].name)).not.toBeInTheDocument();
 
 			// select all loaded nodes
@@ -160,7 +159,7 @@ describe('Filter View', () => {
 			await screen.findByText(secondPage[0].name);
 			expect(screen.getByText(secondPage[0].name)).toBeVisible();
 			expect(screen.queryByText(firstPage[0].name)).not.toBeInTheDocument();
-			expect(screen.queryByText((last(firstPage) as Node).name)).not.toBeInTheDocument();
+			expect(screen.queryByText(last(firstPage)!.name)).not.toBeInTheDocument();
 		});
 	});
 });

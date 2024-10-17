@@ -14,13 +14,8 @@ import { useParams } from 'react-router-dom';
 
 import { useNavigation } from '../../../../hooks/useNavigation';
 import { SHARES_LOAD_LIMIT } from '../../../constants';
-import COPY_NODES from '../../../graphql/mutations/copyNodes.graphql';
 import { PickIdNodeType } from '../../../types/common';
-import {
-	CopyNodesMutation,
-	CopyNodesMutationVariables,
-	Folder
-} from '../../../types/graphql/types';
+import { CopyNodesDocument, CopyNodesMutation, Folder } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 import useQueryParam from '../../useQueryParam';
 import { useUpdateFolderContent } from '../useUpdateFolderContent';
@@ -39,13 +34,11 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 	const { rootId } = useParams<{ rootId: string }>();
 	const folderId = useQueryParam('folder');
 	const { navigateToFolder } = useNavigation();
-	const [copyNodesMutation, { error, loading }] = useMutation<
-		CopyNodesMutation,
-		CopyNodesMutationVariables
-	>(COPY_NODES, {
+	const handleError = useErrorHandler(undefined, 'COPY_NODES');
+	const [copyNodesMutation, { loading }] = useMutation(CopyNodesDocument, {
 		errorPolicy: 'all',
 		onCompleted({ copyNodes: copyNodesResult }) {
-			if (copyNodesResult) {
+			if (copyNodesResult && copyNodesResult.length > 0) {
 				createSnackbar({
 					key: new Date().toLocaleString(),
 					severity: 'info',
@@ -56,18 +49,12 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 						copyNodesResult[0].parent && navigateToFolder(copyNodesResult[0].parent.id);
 					}
 				});
-			} else {
-				createSnackbar({
-					key: new Date().toLocaleString(),
-					severity: 'error',
-					label: t('snackbar.copyNodes.error', 'Something went wrong, try again'),
-					replace: true,
-					hideButton: true
-				});
 			}
+		},
+		onError(error) {
+			handleError(error);
 		}
 	});
-	useErrorHandler(error, 'COPY_NODES');
 
 	const { addNodeToFolder } = useUpdateFolderContent();
 
@@ -82,7 +69,7 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 					shares_limit: SHARES_LOAD_LIMIT
 				},
 				update(cache, { data: result }) {
-					const currentFolderId = folderId || rootId;
+					const currentFolderId = folderId ?? rootId;
 					// clear cached children for destination folder
 					if (destinationFolder.id !== currentFolderId) {
 						cache.evict({ id: cache.identify(destinationFolder), fieldName: 'children' });

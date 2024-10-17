@@ -15,7 +15,7 @@ import {
 	Row,
 	Text
 } from '@zextras/carbonio-design-system';
-import { reduce, noop } from 'lodash';
+import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { ModalFooterCustom } from './ModalFooterCustom';
@@ -27,7 +27,7 @@ import { ROOTS } from '../../constants';
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';
 import { useGetPathQuery } from '../../hooks/graphql/queries/useGetPathQuery';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
-import { NodeListItemType, RootListItemType } from '../../types/common';
+import { Node } from '../../types/common';
 import { BaseNodeFragment, BaseNodeFragmentDoc, Folder } from '../../types/graphql/types';
 import { isFile, isFolder } from '../../utils/utils';
 
@@ -38,23 +38,25 @@ interface FolderSelectionModalContentProps {
 	closeAction?: () => void;
 }
 
-type SelectedNode = Pick<NodeListItemType, 'id' | 'name'> | null;
+type SelectedNode = Pick<Folder, 'id' | 'name'>;
 
-export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentProps> = ({
+type RootItem = { __typename?: never };
+
+export const FolderSelectionModalContent = ({
 	folderId,
 	cascadeDefault = true,
 	confirmAction,
 	closeAction
-}) => {
+}: FolderSelectionModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
-	const { setCurrent, setDefault } = useDestinationVarManager<SelectedNode>();
-	const { currentValue } = useReactiveVar<DestinationVar<SelectedNode>>(
-		destinationVar as ReactiveVar<DestinationVar<SelectedNode>>
+	const { setCurrent, setDefault } = useDestinationVarManager<SelectedNode | null>();
+	const { currentValue } = useReactiveVar<DestinationVar<SelectedNode | null>>(
+		destinationVar as ReactiveVar<DestinationVar<SelectedNode | null>>
 	);
 	const { data: currentFilterPathData } = useGetPathQuery(
 		folderId !== ROOTS.SHARED_WITH_ME ? folderId : undefined
 	);
-	const [selectedFolder, setSelectedFolder] = useState<SelectedNode | undefined>();
+	const [selectedFolder, setSelectedFolder] = useState<SelectedNode | null | undefined>();
 	const [cascade, setCascade] = useState(cascadeDefault);
 	const [openedFolderId, setOpenedFolderId] = useState<string>('');
 	const { data: currentFolder, loading, hasMore, loadMore } = useGetChildrenQuery(openedFolderId);
@@ -68,16 +70,15 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 		if (currentFilterPathData?.getPath) {
 			const { length } = currentFilterPathData.getPath;
 			if (length > 0) {
-				setCurrent(currentFilterPathData.getPath[length - 1] || undefined);
+				setCurrent(currentFilterPathData.getPath[length - 1] ?? undefined);
 				if (length > 1) {
-					setOpenedFolderId(currentFilterPathData.getPath[length - 2]?.id || '');
+					setOpenedFolderId(currentFilterPathData.getPath[length - 2]?.id ?? '');
 					setDefault(currentFilterPathData.getPath[length - 2]);
 				}
 			}
 		} else if (folderId) {
 			setCurrent({
 				id: folderId,
-				/* i18next-extract-disable-next-line */
 				name: t('node.alias.name', folderId, { context: folderId })
 			});
 		} else {
@@ -85,40 +86,35 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 		}
 	}, [currentFilterPathData, folderId, setCurrent, setDefault, t]);
 
-	const checkSelectable = useCallback(
-		(node: NodeListItemType | RootListItemType) => !isFile(node),
-		[]
-	);
+	const checkSelectable = useCallback((node: Node | { __typename?: never }) => !isFile(node), []);
 
-	const checkDisabled = useCallback(
-		(node: NodeListItemType | RootListItemType) => isFile(node),
-		[]
-	);
+	const checkDisabled = useCallback((node: Node | { __typename?: never }) => isFile(node), []);
 
-	const nodes = useMemo<Array<NodeListItemType>>(() => {
+	const nodes = useMemo(() => {
 		if (
 			currentFolder?.getNode &&
 			isFolder(currentFolder.getNode) &&
 			currentFolder.getNode.children?.nodes &&
 			currentFolder.getNode.children.nodes.length > 0
 		) {
-			return reduce(
-				currentFolder.getNode.children.nodes,
-				(result: NodeListItemType[], node) => {
-					if (node) {
-						result.push({
-							...node,
-							disabled: checkDisabled(node),
-							selectable: checkSelectable(node)
-						});
-					}
-					return result;
-				},
-				[]
-			);
+			return currentFolder.getNode.children.nodes.reduce<
+				((typeof currentFolder.getNode.children.nodes)[number] & {
+					disabled: boolean;
+					selectable: boolean;
+				})[]
+			>((result, node) => {
+				if (node) {
+					result.push({
+						...node,
+						disabled: checkDisabled(node),
+						selectable: checkSelectable(node)
+					});
+				}
+				return result;
+			}, []);
 		}
 		return [];
-	}, [checkDisabled, checkSelectable, currentFolder?.getNode]);
+	}, [checkDisabled, checkSelectable, currentFolder]);
 
 	const closeHandler = useCallback(() => {
 		closeAction && closeAction();
@@ -153,10 +149,7 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 	);
 
 	const setDestinationFolderHandler = useCallback(
-		(
-			node: Pick<NodeListItemType, 'id' | 'name' | 'disabled'>,
-			event: React.SyntheticEvent | Event
-		) => {
+		(node: (SelectedNode & { disabled?: boolean }) | null, event: React.SyntheticEvent | Event) => {
 			const destination =
 				(node && !node.disabled && node) ||
 				(openedFolderId === currentFolder?.getNode?.id && currentFolder.getNode) ||
@@ -225,6 +218,7 @@ export const FolderSelectionModalContent: React.VFC<FolderSelectionModalContentP
 							hasMore={false}
 							navigateTo={noop}
 							loading
+							activeNodes={undefined}
 						/>
 					)
 				)}

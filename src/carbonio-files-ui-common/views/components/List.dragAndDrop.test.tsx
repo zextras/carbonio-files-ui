@@ -30,7 +30,6 @@ import {
 	selectNodes,
 	setup
 } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { File as FilesFile, Folder, GetChildrenDocument, Maybe } from '../../types/graphql/types';
 import {
@@ -70,8 +69,6 @@ describe('List', () => {
 				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 				setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, { mocks });
-
-				await screen.findByText(nodes[0].name);
 
 				fireEvent.dragEnter(screen.getByText(nodes[0].name), {
 					dataTransfer: dataTransferObj
@@ -124,7 +121,6 @@ describe('List', () => {
 					{ mocks }
 				);
 
-				await screen.findByText(nodes[0].name);
 				fireEvent.dragEnter(screen.getByText(nodes[0].name), {
 					dataTransfer: dataTransferObj
 				});
@@ -156,8 +152,6 @@ describe('List', () => {
 				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 				setup(<List nodes={nodes} mainList emptyListMessage={'Emtpy list'} />, { mocks });
-
-				await screen.findByText(destinationFolder.name);
 
 				fireEvent.dragEnter(screen.getByText(destinationFolder.name), {
 					dataTransfer: dataTransferObj
@@ -197,8 +191,6 @@ describe('List', () => {
 					mocks
 				});
 
-				await screen.findByText(destinationFolder.name);
-
 				fireEvent.dragEnter(screen.getByText(destinationFolder.name), {
 					dataTransfer: dataTransferObj
 				});
@@ -221,7 +213,14 @@ describe('List', () => {
 				currentFolder.permissions.can_write_file = true;
 				const destinationFile = populateFile();
 				destinationFile.permissions.can_write_file = true;
-				destinationFile.parent = { ...currentFolder, children: { nodes: [] } } as Folder;
+				destinationFile.parent = {
+					...currentFolder,
+					children: {
+						nodes: [],
+						__typename: 'NodePage',
+						page_token: null
+					}
+				} satisfies Folder;
 				currentFolder.children.nodes.push(destinationFile);
 				const uploadedFiles = populateNodes(2, 'File') as FilesFile[];
 				uploadedFiles.forEach((file) => {
@@ -247,7 +246,7 @@ describe('List', () => {
 
 				setup(
 					<List
-						nodes={currentFolder.children.nodes as Node[]}
+						nodes={currentFolder.children.nodes as (FilesFile | Folder)[]}
 						mainList
 						emptyListMessage={'Empty list'}
 						folderId={currentFolder.id}
@@ -256,8 +255,6 @@ describe('List', () => {
 						mocks
 					}
 				);
-
-				await screen.findByText(destinationFile.name);
 
 				fireEvent.dragEnter(screen.getByText(destinationFile.name), {
 					dataTransfer: dataTransferObj
@@ -307,7 +304,7 @@ describe('List', () => {
 					mocks
 				});
 
-				const itemToDrag = await screen.findByText(nodes[1].name);
+				const itemToDrag = screen.getByText(nodes[1].name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 				const destinationItem = screen.getByText(destinationFolder.name);
 				fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
@@ -343,7 +340,7 @@ describe('List', () => {
 					mocks
 				});
 
-				const itemToDrag = await screen.findByText(nodesToDrag[0].name);
+				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 				// two items are visible for the node, the one in the list is disabled, the other one is the one dragged and is not disabled
 				const draggedNodeItems = screen.getAllByText(nodesToDrag[0].name);
@@ -390,7 +387,7 @@ describe('List', () => {
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 				});
 
-				const itemToDrag = await screen.findByText(nodesToDrag[0].name);
+				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 				// drag and drop on folder without permissions
 				const folderWithoutPermissionsItem = screen.getByText(folderWithoutPermission.name);
@@ -437,7 +434,7 @@ describe('List', () => {
 					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 				});
 
-				const itemToDrag = await screen.findByText(nodesToDrag[0].name);
+				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				// drag and drop on folder with permissions
 				const destinationItem = screen.getByText(destinationFolder.name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -475,7 +472,7 @@ describe('List', () => {
 					mocks
 				});
 
-				const itemToDrag = await screen.findByText(nodesToDrag[0].name);
+				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				const destinationItem = screen.getByText(destinationFolder.name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 				// drag and drop on folder with permissions. Overlay is not shown.
@@ -507,7 +504,7 @@ describe('List', () => {
 					mocks: {}
 				});
 
-				const itemToDrag = await screen.findByText(nodesToDrag[0].name);
+				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 				fireEvent.dragEnter(itemToDrag, { dataTransfer: dataTransfer() });
 				act(() => {
@@ -553,7 +550,7 @@ describe('List', () => {
 					mocks
 				});
 
-				const itemToDrag = await screen.findByText(nodesToDrag[1].name);
+				const itemToDrag = screen.getByText(nodesToDrag[1].name);
 				await selectNodes(
 					nodesToDrag.map((node) => node.id),
 					user

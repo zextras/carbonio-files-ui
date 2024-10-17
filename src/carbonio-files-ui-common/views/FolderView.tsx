@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { Text } from '@zextras/carbonio-design-system';
 import { filter, map, noop } from 'lodash';
@@ -30,7 +30,7 @@ import { useCreateDocsFile } from '../hooks/useCreateDocsFile';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import useQueryParam from '../hooks/useQueryParam';
 import { useUpload } from '../hooks/useUpload';
-import { DocsType, NodeListItemType, URLParams } from '../types/common';
+import { DocsType, URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
@@ -46,7 +46,6 @@ const FolderView = (): React.JSX.Element => {
 	const { rootId } = useParams<URLParams>();
 	const { setActiveNode } = useActiveNode();
 	const folderId = useQueryParam('folder');
-	const [newFile, setNewFile] = useState<DocsType | undefined>();
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 
@@ -89,16 +88,15 @@ const FolderView = (): React.JSX.Element => {
 		[permissionsData]
 	);
 
-	// folder creation
-	const [newFolder, setNewFolder] = useState(false);
-
 	const { createFolder } = useCreateFolderMutation();
 
 	const createFolderCallback = useCallback(
 		(_parentId: string, newName: string) => {
 			if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
 				return createFolder(currentFolder.getNode, newName).then((result) => {
-					result.data && setActiveNode(result.data.createFolder.id);
+					if (result.data) {
+						setActiveNode(result.data.createFolder.id);
+					}
 					return result;
 				});
 			}
@@ -107,73 +105,62 @@ const FolderView = (): React.JSX.Element => {
 		[createFolder, currentFolder?.getNode, setActiveNode]
 	);
 
-	const resetNewFolder = useCallback(() => {
-		setNewFolder(false);
-	}, []);
+	const { openCreateModal: openCreateFolderModal } = useCreateModal();
 
-	const { openCreateModal: openCreateFolderModal } = useCreateModal(
-		t('folder.create.modal.title', 'Create new folder'),
-		t('folder.create.modal.input.label.name', 'Folder name'),
-		createFolderCallback,
-		undefined,
-		resetNewFolder
+	const createFolderAction = useCallback(
+		(event: React.SyntheticEvent | KeyboardEvent) => {
+			event?.stopPropagation();
+			openCreateFolderModal({
+				title: t('folder.create.modal.title', 'Create new folder'),
+				inputLabel: t('folder.create.modal.input.label.name', 'Folder name'),
+				createAction: createFolderCallback,
+				parentFolderId: currentFolderId
+			});
+		},
+		[createFolderCallback, currentFolderId, openCreateFolderModal, t]
 	);
-
-	useEffect(() => {
-		if (newFolder) {
-			openCreateFolderModal(currentFolderId);
-		}
-	}, [currentFolderId, newFolder, openCreateFolderModal]);
-
-	const createFolderAction = useCallback((event: React.SyntheticEvent | KeyboardEvent) => {
-		event?.stopPropagation();
-		setNewFolder(true);
-	}, []);
 
 	const createDocsFile = useCreateDocsFile();
 
 	const createDocsFileAction = useCallback(
-		(_parentId: string, newName: string) => {
-			if (currentFolder?.getNode && isFolder(currentFolder.getNode) && newFile) {
-				return createDocsFile(currentFolder?.getNode, newName, newFile).then((result) => {
-					if (result?.data?.getNode) {
-						setActiveNode(result.data.getNode.id);
-					}
-					return result ?? {};
-				});
+		(docsType: DocsType) => async (_parentId: string, newName: string) => {
+			if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
+				const result = await createDocsFile(currentFolder.getNode, newName, docsType);
+				if (result?.data?.getNode) {
+					setActiveNode(result.data.getNode.id);
+				}
+				return result ?? {};
 			}
 			return Promise.reject(new Error('cannot create folder: invalid node or file type'));
 		},
-		[createDocsFile, currentFolder?.getNode, newFile, setActiveNode]
+		[createDocsFile, currentFolder?.getNode, setActiveNode]
 	);
 
-	const resetNewFile = useCallback(() => {
-		setNewFile(undefined);
-	}, [setNewFile]);
-
-	const documentGenericType = newFile ? getDocumentGenericType(newFile) : 'document';
-
-	const { openCreateModal: openCreateFileModal } = useCreateModal(
-		t(`docs.create.modal.title.${documentGenericType}`, `Create new ${documentGenericType}`),
-		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
-		createDocsFileAction,
-		newFile ? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[newFile]}`}</Text> : undefined,
-		resetNewFile
-	);
-
-	useEffect(() => {
-		if (newFile) {
-			openCreateFileModal(currentFolderId);
-		}
-	}, [openCreateFileModal, currentFolderId, newFile]);
+	const { openCreateModal: openCreateFileModal } = useCreateModal();
 
 	const createDocsAction = useCallback<
 		(docsType: DocsType) => (event: React.SyntheticEvent | KeyboardEvent) => void
 	>(
 		(docsType) => () => {
-			setNewFile(docsType);
+			const documentGenericType = getDocumentGenericType(docsType);
+
+			openCreateFileModal({
+				title: t(
+					`docs.create.modal.title.${documentGenericType}`,
+					`Create new ${documentGenericType}`
+				),
+				inputLabel: t(
+					`docs.create.modal.input.label.name.${documentGenericType}`,
+					`${documentGenericType} Name`
+				),
+				createAction: createDocsFileAction(docsType),
+				inputCustomIcon: docsType
+					? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[docsType]}`}</Text>
+					: undefined,
+				parentFolderId: currentFolderId
+			});
 		},
-		[]
+		[createDocsFileAction, currentFolderId, openCreateFileModal, t]
 	);
 
 	const { canUseDocs } = useHealthInfo();
@@ -304,7 +291,7 @@ const FolderView = (): React.JSX.Element => {
 		t
 	]);
 
-	const nodes = useMemo<NodeListItemType[]>(() => {
+	const nodes = useMemo(() => {
 		if (
 			currentFolder?.getNode &&
 			isFolder(currentFolder.getNode) &&

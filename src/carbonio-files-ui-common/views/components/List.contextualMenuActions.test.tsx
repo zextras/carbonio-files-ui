@@ -15,8 +15,8 @@ import { ACTION_IDS } from '../../../constants';
 import { ACTION_REGEXP, COLORS, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
+import { File, Folder } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/resolverMocks';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
@@ -80,18 +80,16 @@ describe('Contextual menu actions', () => {
 					<List
 						folderId={currentFolder.id}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
 						mainList
 						emptyListMessage={'hint'}
 					/>,
 					{ mocks }
 				);
 
-				const fillerContainer = await screen.findByTestId(`fillerContainer`);
-
+				const fillerContainer = screen.getByTestId('fillerContainer');
 				// open context menu and click on empty space
 				await user.rightClick(fillerContainer);
-
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
@@ -100,10 +98,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).toHaveBeenCalledTimes(1);
-
 				// open context menu and click on empty space
 				await user.rightClick(fillerContainer);
-
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
@@ -112,10 +108,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).toHaveBeenCalledTimes(1);
-
 				// open context menu and click on empty space
 				await user.rightClick(fillerContainer);
-
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
@@ -124,10 +118,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).toHaveBeenCalledTimes(1);
-
 				// open context menu and click on empty space
 				await user.rightClick(fillerContainer);
-
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
@@ -194,18 +186,16 @@ describe('Contextual menu actions', () => {
 					<List
 						folderId={currentFolder.id}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
 						mainList
 						emptyListMessage={'hint'}
 					/>,
 					{ mocks }
 				);
 
-				const fillerContainer = await screen.findByTestId(`fillerContainer`);
-
+				const fillerContainer = screen.getByTestId('fillerContainer');
 				// open context menu and click on empty space
 				await user.rightClick(fillerContainer);
-
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
@@ -214,10 +204,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).not.toHaveBeenCalled();
-
 				// open context menu and click on empty space
 				await user.rightClick(fillerContainer);
-
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
@@ -226,10 +214,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).not.toHaveBeenCalled();
-
 				// open context menu and click on empty space
 				await user.rightClick(fillerContainer);
-
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
@@ -238,10 +224,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).not.toHaveBeenCalled();
-
 				// open context menu and click on empty space
 				await user.rightClick(fillerContainer);
-
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
@@ -305,18 +289,16 @@ describe('Contextual menu actions', () => {
 					<List
 						folderId={currentFolder.id}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
 						mainList
 						emptyListMessage={'hint'}
 					/>,
 					{ mocks }
 				);
 
-				const emptySpaceFiller = await screen.findByTestId(`emptyFolder`);
-
+				const emptySpaceFiller = screen.getByTestId('emptyFolder');
 				// open context menu and click on empty space
 				await user.rightClick(emptySpaceFiller);
-
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
@@ -325,10 +307,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).toHaveBeenCalledTimes(1);
-
 				// open context menu and click on empty space
 				await user.rightClick(emptySpaceFiller);
-
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
@@ -337,10 +317,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).toHaveBeenCalledTimes(1);
-
 				// open context menu and click on empty space
 				await user.rightClick(emptySpaceFiller);
-
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
@@ -349,10 +327,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).toHaveBeenCalledTimes(1);
-
 				// open context menu and click on empty space
 				await user.rightClick(emptySpaceFiller);
-
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
@@ -414,18 +390,16 @@ describe('Contextual menu actions', () => {
 					<List
 						folderId={currentFolder.id}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
 						mainList
 						emptyListMessage={'hint'}
 					/>,
 					{ mocks }
 				);
 
-				const emptySpaceFiller = await screen.findByTestId(`emptyFolder`);
-
+				const emptySpaceFiller = screen.getByTestId('emptyFolder');
 				// open context menu and click on empty space
 				await user.rightClick(emptySpaceFiller);
-
 				// new Folder
 				const newFolderActionItem = await screen.findByText(/\bNew Folder\b/i);
 				expect(newFolderActionItem).toBeVisible();
@@ -434,10 +408,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newFolderActionItem);
 				expect(createFolderAction).not.toHaveBeenCalled();
-
 				// open context menu and click on empty space
 				await user.rightClick(emptySpaceFiller);
-
 				// new Document
 				const newDocumentActionItem = await screen.findByText(/\bNew Document\b/i);
 				expect(newDocumentActionItem).toBeVisible();
@@ -446,10 +418,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newDocumentActionItem);
 				expect(createDocumentAction).not.toHaveBeenCalled();
-
 				// open context menu and click on empty space
 				await user.rightClick(emptySpaceFiller);
-
 				// New Spreadsheet
 				const newSpreadsheetActionItem = await screen.findByText(/\bNew Spreadsheet\b/i);
 				expect(newSpreadsheetActionItem).toBeVisible();
@@ -458,10 +428,8 @@ describe('Contextual menu actions', () => {
 				});
 				await user.click(newSpreadsheetActionItem);
 				expect(createSpreadsheetAction).not.toHaveBeenCalled();
-
 				// open context menu and click on empty space
 				await user.rightClick(emptySpaceFiller);
-
 				// New Presentation
 				const newPresentationActionItem = await screen.findByText(/\bNew Presentation\b/i);
 				expect(newPresentationActionItem).toBeVisible();
@@ -486,8 +454,8 @@ describe('Contextual menu actions', () => {
 					mockedNode.parent = populateFolder(0, currentFolder.id, currentFolder.name);
 				}
 			});
-			const element0 = currentFolder.children.nodes[0] as Node;
-			const element1 = currentFolder.children.nodes[1] as Node;
+			const element0 = currentFolder.children.nodes[0]!;
+			const element1 = currentFolder.children.nodes[1]!;
 
 			const mocks = {
 				Query: {
@@ -499,7 +467,7 @@ describe('Contextual menu actions', () => {
 				<List
 					folderId={currentFolder.id}
 					fillerWithActions={<EmptySpaceFiller actions={[]} />}
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>,
@@ -533,8 +501,8 @@ describe('Contextual menu actions', () => {
 					mockedNode.flagged = false;
 				}
 			});
-			const element0 = currentFolder.children.nodes[0] as Node;
-			const element1 = currentFolder.children.nodes[1] as Node;
+			const element0 = currentFolder.children.nodes[0]!;
+			const element1 = currentFolder.children.nodes[1]!;
 
 			const mocks = {
 				Query: {
@@ -546,7 +514,7 @@ describe('Contextual menu actions', () => {
 				<List
 					folderId={currentFolder.id}
 					fillerWithActions={<EmptySpaceFiller actions={[]} />}
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>,
@@ -586,7 +554,7 @@ describe('Contextual menu actions', () => {
 			<List
 				folderId={currentFolder.id}
 				fillerWithActions={<EmptySpaceFiller actions={[]} />}
-				nodes={currentFolder.children.nodes as Array<Node>}
+				nodes={currentFolder.children.nodes as (File | Folder)[]}
 				mainList
 				emptyListMessage={'hint'}
 			/>,
@@ -594,8 +562,8 @@ describe('Contextual menu actions', () => {
 		);
 
 		// right click to open contextual menu
-		const node1Item = screen.getByTestId(SELECTORS.nodeItem(node1.id));
-		const node2Item = screen.getByTestId(SELECTORS.nodeItem(node2.id));
+		const node1Item = screen.getByText(node1.name);
+		const node2Item = screen.getByText(node2.name);
 		await user.rightClick(node1Item);
 		// check that the flag action becomes visible (contextual menu of first node)
 		const flagAction = await screen.findByText(ACTION_REGEXP.flag);

@@ -15,9 +15,8 @@ import { NODES_LOAD_LIMIT } from '../constants';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodePage, sortNodes } from '../mocks/mockUtils';
 import { setup, selectNodes, triggerListLoadMore } from '../tests/utils';
-import { Node } from '../types/common';
 import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
-import { NodeSort } from '../types/graphql/types';
+import { File, Folder, NodeSort } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes } from '../utils/resolverMocks';
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
@@ -145,10 +144,10 @@ describe('Mark for deletion - trash', () => {
 				mocks
 			});
 
-			await screen.findByText((firstPage[0] as Node).name);
-			expect(screen.getByText((firstPage[0] as Node).name)).toBeVisible();
-			expect(screen.getByText((firstPage[NODES_LOAD_LIMIT - 1] as Node).name)).toBeVisible();
-			expect(screen.queryByText((secondPage[0] as Node).name)).not.toBeInTheDocument();
+			await screen.findByText(firstPage[0]!.name);
+			expect(screen.getByText(firstPage[0]!.name)).toBeVisible();
+			expect(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1]!.name)).toBeVisible();
+			expect(screen.queryByText(secondPage[0]!.name)).not.toBeInTheDocument();
 			await selectNodes(nodesToTrash, user);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(firstPage.length);
@@ -162,15 +161,11 @@ describe('Mark for deletion - trash', () => {
 			});
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);
-			await screen.findByText((secondPage[0] as Node).name);
-			expect(screen.queryByText((firstPage[0] as Node).name)).not.toBeInTheDocument();
-			expect(
-				screen.queryByText((firstPage[NODES_LOAD_LIMIT - 1] as Node).name)
-			).not.toBeInTheDocument();
-			expect(screen.queryByText((firstPage[0] as Node).name)).not.toBeInTheDocument();
-			expect(
-				screen.queryByText((firstPage[NODES_LOAD_LIMIT - 1] as Node).name)
-			).not.toBeInTheDocument();
+			await screen.findByText(secondPage[0]!.name);
+			expect(screen.queryByText(firstPage[0]!.name)).not.toBeInTheDocument();
+			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1]!.name)).not.toBeInTheDocument();
+			expect(screen.queryByText(firstPage[0]!.name)).not.toBeInTheDocument();
+			expect(screen.queryByText(firstPage[NODES_LOAD_LIMIT - 1]!.name)).not.toBeInTheDocument();
 		});
 	});
 
@@ -188,7 +183,7 @@ describe('Mark for deletion - trash', () => {
 			const sort = NodeSort.NameAsc; // sort only by name
 			sortNodes(currentFolder.children.nodes, sort);
 
-			const element = currentFolder.children.nodes[0] as Node;
+			const element = currentFolder.children.nodes[0]!;
 
 			const mocks = {
 				Query: {
@@ -238,8 +233,8 @@ describe('Mark for deletion - trash', () => {
 			const sort = NodeSort.NameAsc; // sort only by name
 			sortNodes(currentFolder.children.nodes, sort);
 
-			const element0 = currentFolder.children.nodes[0] as Node;
-			const element1 = currentFolder.children.nodes[1] as Node;
+			const element0 = currentFolder.children.nodes[0]!;
+			const element1 = currentFolder.children.nodes[1]!;
 
 			const mocks = {
 				Query: {
@@ -289,8 +284,11 @@ describe('Mark for deletion - trash', () => {
 					mockedNode.parent = currentFolder;
 				}
 			});
-			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as Node[];
-			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as Node[];
+			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as (
+				| File
+				| Folder
+			)[];
+			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as (File | Folder)[];
 
 			const mocks = {
 				Query: {

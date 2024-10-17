@@ -6,12 +6,12 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { screen, act } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { format } from 'date-fns';
 
 import { Displayer } from './Displayer';
 import { DATE_TIME_FORMAT, DISPLAYER_TABS } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import { ICON_REGEXP, TIMERS } from '../../constants/test';
 import { populateLink, populateNode } from '../../mocks/mockUtils';
 import { generateError, getFirstOfNextMonth, setup } from '../../tests/utils';
 import { Node } from '../../types/common';
@@ -24,6 +24,8 @@ import {
 	mockErrorResolver
 } from '../../utils/resolverMocks';
 import { formatDate, initExpirationDate } from '../../utils/utils';
+
+jest.mock('./DisplayerActions');
 
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {
@@ -59,8 +61,7 @@ describe('Displayer', () => {
 					initialRouterEntries: [`/?node=${node.id}&tab=${DISPLAYER_TABS.sharing}`],
 					mocks
 				});
-				await screen.findByText(title);
-				await user.click(screen.getByRole('button', { name: /add link/i }));
+				await user.click(await screen.findByRole('button', { name: /add link/i }));
 				const descriptionInput = await screen.findByRole('textbox', {
 					name: /link's description/i
 				});
@@ -68,9 +69,8 @@ describe('Displayer', () => {
 				await user.paste(description);
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
+				await act(async () => {
+					await jest.advanceTimersByTimeAsync(TIMERS.modalDelayOpen);
 				});
 				expect(screen.getByText(/you have unsaved changes/i)).toBeVisible();
 				expect(screen.getByText(/Do you want to leave the page without saving\?/i)).toBeVisible();
@@ -110,9 +110,8 @@ describe('Displayer', () => {
 				await screen.findByText(formatDate(chosenDate));
 				await user.click(screen.getByText(/details/i));
 				await screen.findByText(/you have unsaved changes/i);
-				act(() => {
-					// run timers of modal
-					jest.runOnlyPendingTimers();
+				await act(async () => {
+					await jest.advanceTimersByTimeAsync(TIMERS.modalDelayOpen);
 				});
 				expect(screen.getByText(/you have unsaved changes/i)).toBeVisible();
 				expect(screen.getByText(/Do you want to leave the page without saving\?/i)).toBeVisible();

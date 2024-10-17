@@ -28,11 +28,11 @@ import {
 import { formatDate, initExpirationDate, isFolder } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 
-const getDayBefore = (): number | undefined => {
+const getDayBefore = (): number | null => {
 	const date = new Date();
 	date.setDate(date.getDate() - 1);
 	date.setHours(0, 0, 0, 0);
-	return initExpirationDate(date)?.getTime();
+	return initExpirationDate(date)?.getTime() ?? null;
 };
 
 function getPublicLinkProps(node: FilesFile | Folder): ComponentProps<typeof PublicLink> {
@@ -46,7 +46,7 @@ function getPublicLinkProps(node: FilesFile | Folder): ComponentProps<typeof Pub
 	};
 }
 
-describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) => {
+describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeType) => {
 	it('should render the link section with title and description', async () => {
 		const node = populateNode(nodeType);
 		const props = getPublicLinkProps(node);
@@ -105,6 +105,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public Link', (nodeType) 
 				await user.click(screen.getByRole('textbox', { name: /expiration date/i }));
 				await user.click(screen.getAllByText(currentDate)[0]);
 				await user.click(screen.getByRole('button', { name: /generate link/i }));
+				await screen.findByTestId(SELECTORS.snackbar);
 				const expiresOnDate = formatDate(
 					new Date(expiresAt.getFullYear(), expiresAt.getMonth(), expiresAt.getDate(), 23, 59),
 					undefined,

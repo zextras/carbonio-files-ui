@@ -25,7 +25,7 @@ import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
-const UploadView: React.VFC = () => {
+const UploadView = (): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 	const { navigateToFolder } = useNavigation();
@@ -205,7 +205,7 @@ const UploadView: React.VFC = () => {
 			<Snackbar
 				open={showUploadSnackbar}
 				onClose={closeUploadSnackbar}
-				type="info"
+				severity="info"
 				label={t('uploads.destination.home', "Upload occurred in Files' Home")}
 				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
 				onActionClick={uploadSnackbarAction}

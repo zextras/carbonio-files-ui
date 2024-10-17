@@ -30,7 +30,7 @@ type ListHeaderProps = Omit<
 	selectedCount?: number;
 };
 
-const ListHeader: React.VFC<ListHeaderProps> = ({
+const ListHeader = ({
 	folderId,
 	crumbs,
 	loadingData,
@@ -41,7 +41,7 @@ const ListHeader: React.VFC<ListHeaderProps> = ({
 	exitSelectionMode,
 	isAllSelected,
 	selectedCount
-}) => {
+}: ListHeaderProps): React.JSX.Element => {
 	const location = useLocation();
 	const inSearchView = isSearchView(location);
 	const actionComponent = useContext(ListHeaderActionContext);

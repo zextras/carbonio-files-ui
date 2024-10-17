@@ -39,7 +39,6 @@ import {
 	within,
 	spyOnUseCreateOptions
 } from '../tests/utils';
-import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, GetChildrenDocument } from '../types/graphql/types';
@@ -100,6 +99,7 @@ describe('Upload view', () => {
 			setup(<UploadView />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			await uploadWithDnD(dropzone, dataTransferObj);
 			await screen.findByText(otherUploads[0].name);
 			// wait for the displayer to open
@@ -110,8 +110,8 @@ describe('Upload view', () => {
 			await screen.findAllByTestId(ICON_REGEXP.uploadCompleted);
 			expect(screen.getByText(/path/i)).toBeVisible();
 			expect(screen.getByText(/content/i)).toBeVisible();
-			expect(screen.getByText((folder.children.nodes[0] as Node).name)).toBeVisible();
-			expect(screen.getByText((folder.children.nodes[1] as Node).name)).toBeVisible();
+			expect(screen.getByText(folder.children.nodes[0]!.name)).toBeVisible();
+			expect(screen.getByText(folder.children.nodes[1]!.name)).toBeVisible();
 		});
 
 		test('When the first item uploaded is a folder, but the upload list is not empty, does not open displayer', async () => {
@@ -257,9 +257,7 @@ describe('Upload view', () => {
 			)
 		);
 		setup(<UploadView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);
@@ -280,9 +278,7 @@ describe('Upload view', () => {
 			)
 		);
 		setup(<UploadView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);

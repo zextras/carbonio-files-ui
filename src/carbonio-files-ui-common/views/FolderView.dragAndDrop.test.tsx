@@ -21,9 +21,8 @@ import {
 	populateUser
 } from '../mocks/mockUtils';
 import { setup, createMoveDataTransfer } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { Folder } from '../types/graphql/types';
+import { File, Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 
 jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
@@ -43,7 +42,7 @@ describe('Drag and drop', () => {
 		const currentFolder = populateFolder(5);
 		currentFolder.permissions.can_write_file = true;
 		currentFolder.permissions.can_write_folder = true;
-		const nodesToDrag = [currentFolder.children.nodes[0]] as Node[];
+		const nodesToDrag = [currentFolder.children.nodes[0]] as (File | Folder)[];
 		forEach(nodesToDrag, (mockedNode) => {
 			mockedNode.permissions.can_write_file = true;
 			mockedNode.permissions.can_write_folder = true;
@@ -101,7 +100,7 @@ describe('Drag and drop', () => {
 		path[1].permissions.can_write_file = false;
 		path[1].owner = owner;
 
-		const nodesToDrag = [currentFolder.children.nodes[0]] as Node[];
+		const nodesToDrag = [currentFolder.children.nodes[0]] as (File | Folder)[];
 		forEach(nodesToDrag, (mockedNode) => {
 			mockedNode.permissions.can_write_file = true;
 			mockedNode.permissions.can_write_folder = true;

@@ -6,12 +6,12 @@
 
 import React, { useCallback } from 'react';
 
-import { Catcher } from '@zextras/carbonio-design-system';
+import { Catcher, CatcherProps } from '@zextras/carbonio-design-system';
 
 import { captureException } from '../utils/utils';
 
-export const AppErrorCatcher: React.FC = ({ children }) => {
-	const onError = useCallback((error) => {
+export const AppErrorCatcher = ({ children }: React.PropsWithChildren): React.JSX.Element => {
+	const onError = useCallback<NonNullable<CatcherProps['onError']>>((error) => {
 		captureException(error);
 	}, []);
 	return <Catcher onError={onError}>{children}</Catcher>;

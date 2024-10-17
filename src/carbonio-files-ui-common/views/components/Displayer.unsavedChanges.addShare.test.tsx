@@ -29,6 +29,8 @@ import {
 	mockGetLinks
 } from '../../utils/resolverMocks';
 
+jest.mock('./DisplayerActions');
+
 const mockedSoapFetch = jest.fn();
 
 jest.mock<typeof import('../../../network/network')>('../../../network/network', () => ({

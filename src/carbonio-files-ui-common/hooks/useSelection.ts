@@ -7,13 +7,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { map, find, filter, includes, isEqual, reduce } from 'lodash';
+import { map, find, filter, includes, isEqual } from 'lodash';
 
 import { useMemoCompare } from './useMemoCompare';
 import { selectionModeVar } from '../apollo/selectionVar';
-import { PickIdNodeType } from '../types/common';
 
-export default function useSelection(nodes: Array<PickIdNodeType>): {
+export default function useSelection(nodes: Array<{ id: string }>): {
 	selectedIDs: string[];
 	selectedMap: { [id: string]: boolean };
 	selectId: (id: string) => void;
@@ -47,14 +46,10 @@ export default function useSelection(nodes: Array<PickIdNodeType>): {
 
 	const selectedMap = useMemo(
 		() =>
-			reduce(
-				memoNodes,
-				(accumulator: { [id: string]: boolean }, node: PickIdNodeType) => {
-					accumulator[node.id] = includes(selectedIDs, node.id);
-					return accumulator;
-				},
-				{}
-			),
+			memoNodes.reduce<{ [id: string]: boolean }>((accumulator, node) => {
+				accumulator[node.id] = includes(selectedIDs, node.id);
+				return accumulator;
+			}, {}),
 		[memoNodes, selectedIDs]
 	);
 
@@ -78,7 +73,7 @@ export default function useSelection(nodes: Array<PickIdNodeType>): {
 	}, []);
 
 	const selectAll = useCallback(() => {
-		const allSelected: string[] = map(memoNodes, (node: PickIdNodeType) => node.id);
+		const allSelected: string[] = memoNodes.map((node) => node.id);
 		setSelectedIDs(allSelected);
 		setIsSelectionModeActive(true);
 		selectionModeVar(true);

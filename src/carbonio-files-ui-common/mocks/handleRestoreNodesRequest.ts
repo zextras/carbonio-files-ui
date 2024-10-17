@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { map } from 'lodash';
+import { faker } from '@faker-js/faker';
 import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { ROOTS } from '../constants';
 import CHILD from '../graphql/fragments/child.graphql';
+import { Node } from '../types/common';
 import {
 	ChildFragment,
 	RestoreNodesMutation,
@@ -43,9 +44,10 @@ const handleRestoreNodesRequest: GraphQLResponseResolver<
 	let result: RestoreNodesMutation['restoreNodes'] = null;
 	if (nodes) {
 		if (nodes instanceof Array) {
-			result = map(nodes, (nodeId) => {
+			result = nodes.map((nodeId) => {
 				const cachedNode = readDataFromCache(nodeId);
 				return {
+					__typename: faker.helpers.arrayElement<Node['__typename']>(['File', 'Folder']),
 					...cachedNode,
 					id: nodeId,
 					parent: {
@@ -59,6 +61,7 @@ const handleRestoreNodesRequest: GraphQLResponseResolver<
 			const cachedNode = readDataFromCache(nodes);
 			result = [
 				{
+					__typename: faker.helpers.arrayElement<Node['__typename']>(['File', 'Folder']),
 					...cachedNode,
 					id: nodes,
 					parent: {

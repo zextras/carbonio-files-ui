@@ -18,7 +18,7 @@ import { assertCachedObject, recursiveShareEvict } from '../../../apollo/cacheUt
 import FIND_NODES from '../../../graphql/queries/findNodes.graphql';
 import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
 import { NodeCachedObject } from '../../../types/apollo';
-import { Node, PickIdNodeType } from '../../../types/common';
+import { PickIdNodeType } from '../../../types/common';
 import {
 	DeleteShareDocument,
 	DeleteShareMutation,
@@ -73,7 +73,6 @@ export function useDeleteShareMutation(): (
 					share_target_id: shareTargetId
 				},
 				optimisticResponse: {
-					__typename: 'Mutation',
 					deleteShare: true
 				},
 				errorPolicy: 'all',
@@ -137,8 +136,7 @@ export function useDeleteShareMutation(): (
 						// close displayer when deleted share cause node to be removed from the list
 						if (
 							listNodes !== null &&
-							(shareTargetId === me ||
-								!some<Pick<Node, 'id'> | null>(listNodes, (listNode) => node.id === listNode?.id))
+							(shareTargetId === me || !some(listNodes, (listNode) => node.id === listNode?.id))
 						) {
 							removeActiveNode();
 						}

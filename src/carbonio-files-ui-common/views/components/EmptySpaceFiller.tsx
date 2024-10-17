@@ -16,7 +16,10 @@ interface EmptySpaceFillerProps {
 	children?: React.ReactElement;
 }
 
-export const EmptySpaceFiller: React.VFC<EmptySpaceFillerProps> = ({ actions, children }) => (
+export const EmptySpaceFiller = ({
+	actions,
+	children
+}: EmptySpaceFillerProps): React.JSX.Element => (
 	<Container height="unset" flexGrow={1}>
 		<ContextualMenu actions={actions} onClose={noop} onOpen={noop} disableRestoreFocus>
 			{children || <></>}

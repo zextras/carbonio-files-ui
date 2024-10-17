@@ -29,8 +29,8 @@ import { SHARE_CHIP_MAX_WIDTH, SHARE_CHIP_SIZE } from '../../../constants';
 import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
 import { useGetSharesQuery } from '../../../hooks/graphql/queries/useGetSharesQuery';
 import { Node } from '../../../types/common';
-import { GetSharesQuery, Share, SharedTarget } from '../../../types/graphql/types';
-import { MakePartial, MakeRequiredNonNull } from '../../../types/utils';
+import { GetSharesQuery, Maybe, Share } from '../../../types/graphql/types';
+import { DeepPick, MakePartial, MakeRequiredNonNull } from '../../../types/utils';
 import {
 	cssCalcBuilder,
 	getChipLabel,
@@ -59,12 +59,10 @@ const CustomText = styled(Text)`
 `;
 
 interface NodeSharingProps {
-	node: Pick<Node, '__typename' | 'id' | 'permissions' | 'owner' | 'name'> & {
-		shares?: Array<
-			| (Pick<Share, '__typename'> & { shared_target?: Pick<SharedTarget, '__typename' | 'id'> })
-			| null
-			| undefined
-		>;
+	node: Node<'id' | 'permissions' | 'owner' | 'name'> & {
+		shares: Array<
+			Maybe<Pick<Share, '__typename'> & DeepPick<Share, 'share_target', '__typename' | 'id'>>
+		> | null;
 	};
 }
 
@@ -74,7 +72,7 @@ function shareTargetExists<T extends MakePartial<Pick<Share, 'share_target'>, 's
 	return share.share_target !== undefined && share.share_target !== null;
 }
 
-export const NodeSharing: React.VFC<NodeSharingProps> = ({ node }) => {
+export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { me } = useUserInfo();
 

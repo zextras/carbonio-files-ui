@@ -42,7 +42,7 @@ export type Account = DistributionList | User;
  *  permission on the node.
  */
 export type CollaborationLink = {
-	__typename?: 'CollaborationLink';
+	__typename: 'CollaborationLink';
 	/**  Link creation timestamp. */
 	created_at: Scalars['DateTime']['output'];
 	/**  Unique identifier of the CollaborationLink. */
@@ -60,13 +60,13 @@ export type CollaborationLink = {
 };
 
 export type Config = {
-	__typename?: 'Config';
+	__typename: 'Config';
 	name: Scalars['String']['output'];
 	value: Scalars['String']['output'];
 };
 
 export type DistributionList = {
-	__typename?: 'DistributionList';
+	__typename: 'DistributionList';
 	id: Scalars['ID']['output'];
 	name: Scalars['String']['output'];
 	users: Array<Maybe<User>>;
@@ -79,8 +79,8 @@ export type DistributionListUsersArgs = {
 
 /**  Definition of the File type which implements the Node interface */
 export type File = Node & {
-	__typename?: 'File';
-	cloned_from_version?: Maybe<Scalars['Int']['output']>;
+	__typename: 'File';
+	cloned_from_version: Maybe<Scalars['Int']['output']>;
 	/**
 	 *  Returns all the CollaborationLinks of current node.
 	 *  It can be maximum of 2 collaboration links:
@@ -95,7 +95,7 @@ export type File = Node & {
 	/**  Description of the file */
 	description: Scalars['String']['output'];
 	/**  Extension of the file */
-	extension?: Maybe<Scalars['String']['output']>;
+	extension: Maybe<Scalars['String']['output']>;
 	/**  True if the owner has marked the file as favourite, false otherwise */
 	flagged: Scalars['Boolean']['output'];
 	/**  Unique identifier of the file */
@@ -103,22 +103,22 @@ export type File = Node & {
 	/**  Boolean representing if a version in kept forever or not */
 	keep_forever: Scalars['Boolean']['output'];
 	/**  Last user who has edited the file */
-	last_editor?: Maybe<User>;
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
 	/**  Mime type of the file */
 	mime_type: Scalars['String']['output'];
 	/**  Name of the file */
 	name: Scalars['String']['output'];
 	/**  Owner of the file */
-	owner?: Maybe<User>;
+	owner: Maybe<User>;
 	/**  Parent folder containing the file */
-	parent?: Maybe<File | Folder>;
+	parent: Maybe<File | Folder>;
 	/**  File permissions of the user making the request */
 	permissions: Permissions;
 	/**  The top level root where the node resides */
-	rootId?: Maybe<Scalars['ID']['output']>;
+	rootId: Maybe<Scalars['ID']['output']>;
 	/**  Specific share of the current file with the target user (if exists) */
-	share?: Maybe<Share>;
+	share: Maybe<Share>;
 	/**  List of shares of the current file (if they exist) */
 	shares: Array<Maybe<Share>>;
 	/**  Size of the file */
@@ -145,7 +145,7 @@ export type FileSharesArgs = {
 
 /**  Definition of the Folder type which implements the Node interface */
 export type Folder = Node & {
-	__typename?: 'Folder';
+	__typename: 'Folder';
 	/**  List of all child nodes of a folder. */
 	children: NodePage;
 	/**
@@ -166,20 +166,20 @@ export type Folder = Node & {
 	/**  Unique identifier of the folder */
 	id: Scalars['ID']['output'];
 	/**  Last user who has edited the folder */
-	last_editor?: Maybe<User>;
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
 	/**  Name of the folder */
 	name: Scalars['String']['output'];
 	/**  Owner of the folder */
-	owner?: Maybe<User>;
+	owner: Maybe<User>;
 	/**  Parent folder containing the folder. The parent can be null when the current folder is the root */
-	parent?: Maybe<File | Folder>;
+	parent: Maybe<File | Folder>;
 	/**  Folder permissions of the user making the request */
 	permissions: Permissions;
 	/**  The top level root where the node resides */
-	rootId?: Maybe<Scalars['ID']['output']>;
+	rootId: Maybe<Scalars['ID']['output']>;
 	/**  Specific share of the current folder with the target user (if exists) */
-	share?: Maybe<Share>;
+	share: Maybe<Share>;
 	/**  List of shares of the current folder (if they exist) */
 	shares: Array<Maybe<Share>>;
 	/**  Type of the node */
@@ -212,15 +212,15 @@ export type FolderSharesArgs = {
  *  Temporarily only a file can have a link
  */
 export type Link = {
-	__typename?: 'Link';
+	__typename: 'Link';
 	/**  Link access code. It must be 10 characters long. */
-	access_code?: Maybe<Scalars['String']['output']>;
+	access_code: Maybe<Scalars['String']['output']>;
 	/**  Link creation timestamp. */
 	created_at: Scalars['DateTime']['output'];
 	/**  Link description. It must be shorter than 300 characters. */
-	description?: Maybe<Scalars['String']['output']>;
+	description: Maybe<Scalars['String']['output']>;
 	/**  Link expiration timestamp. */
-	expires_at?: Maybe<Scalars['DateTime']['output']>;
+	expires_at: Maybe<Scalars['DateTime']['output']>;
 	/**  Unique identifier of the link. */
 	id: Scalars['ID']['output'];
 	/**  Node related to this link. */
@@ -230,14 +230,14 @@ export type Link = {
 	 *  <strong>can_share<strong> permission on the node. However anyone who has this link can
 	 *  download the node.
 	 */
-	url?: Maybe<Scalars['String']['output']>;
+	url: Maybe<Scalars['String']['output']>;
 };
 
 export type Mutation = {
-	__typename?: 'Mutation';
+	__typename: 'Mutation';
 	cloneVersion: File;
 	/**  Allows to copy a list of Nodes into a specified Folder. */
-	copyNodes?: Maybe<Array<File | Folder>>;
+	copyNodes: Maybe<Array<File | Folder>>;
 	/**
 	 *  Allows to create a collaboration link for an existing node. A collaboration link can be created
 	 *  only if the requester has the <strong>can_share<strong> permission on the specified node.
@@ -273,32 +273,32 @@ export type Mutation = {
 	 *  if the node is a file then it removes all the related versions. This operation requires can_delete permission on
 	 *  every node that should be deleted and it cannot be reverted.
 	 */
-	deleteNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	deleteNodes: Maybe<Array<Scalars['ID']['output']>>;
 	deleteShare: Scalars['Boolean']['output'];
 	/** TODO doc */
 	deleteVersions: Array<Maybe<Scalars['Int']['output']>>;
 	/**  Allows to flag a list of nodes. */
-	flagNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	flagNodes: Maybe<Array<Scalars['ID']['output']>>;
 	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
 	/**
 	 *  Allows to move a list of nodes into a folder destination. This operation requires write permissions on each file
 	 *  should be moved and write permission on the destination folder otherwise it fails.
 	 */
-	moveNodes?: Maybe<Array<File | Folder>>;
+	moveNodes: Maybe<Array<File | Folder>>;
 	/**  Restores a list of nodes. */
-	restoreNodes?: Maybe<Array<Maybe<File | Folder>>>;
+	restoreNodes: Maybe<Array<Maybe<File | Folder>>>;
 	/**  Trashes a list of nodes. */
-	trashNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	trashNodes: Maybe<Array<Scalars['ID']['output']>>;
 	/**
 	 *  Allows to update the expiration timestamp and/or the description of an existing link.
 	 *  An existing link can be updated only if the requester has the <strong>can_share<strong>
 	 *  permission on the specified node.
 	 */
-	updateLink?: Maybe<Link>;
+	updateLink: Maybe<Link>;
 	/**  <strong>Update an existing node</strong> */
 	updateNode: File | Folder;
 	/**  Allows to update the SharePermissions and the expiration timestamp of an existing share. */
-	updateShare?: Maybe<Share>;
+	updateShare: Maybe<Share>;
 };
 
 export type MutationCloneVersionArgs = {
@@ -423,20 +423,20 @@ export type Node = {
 	/**  Unique identifier of the node */
 	id: Scalars['ID']['output'];
 	/**  Last user who has edited the node (it will be a User type when it will be implemented) */
-	last_editor?: Maybe<User>;
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
 	/**  Name of the file/folder */
 	name: Scalars['String']['output'];
 	/**  Owner of the node (it will be a User type when it will be implemented) */
-	owner?: Maybe<User>;
+	owner: Maybe<User>;
 	/**  Parent folder containing the node. The parent can be null when the current node is the root folder */
-	parent?: Maybe<File | Folder>;
+	parent: Maybe<File | Folder>;
 	/**  Node permissions of the user making the request */
 	permissions: Permissions;
 	/**  The top level root where the node resides */
-	rootId?: Maybe<Scalars['ID']['output']>;
+	rootId: Maybe<Scalars['ID']['output']>;
 	/**  Specific share of the current node with the target user (if exists) */
-	share?: Maybe<Share>;
+	share: Maybe<Share>;
 	/**  List of shares of the current node (if they exist) */
 	shares: Array<Maybe<Share>>;
 	/**  Type of the node */
@@ -458,11 +458,11 @@ export type NodeSharesArgs = {
 };
 
 export type NodePage = {
-	__typename?: 'NodePage';
+	__typename: 'NodePage';
 	/** The list of nodes of the requested page */
 	nodes: Array<Maybe<File | Folder>>;
 	/**  The token to use as a cursor for requesting the next page of nodes */
-	page_token?: Maybe<Scalars['String']['output']>;
+	page_token: Maybe<Scalars['String']['output']>;
 };
 
 /**  Definition of the NodeSort enumerator. This is useful for sorting the result of a list of nodes. */
@@ -526,7 +526,7 @@ export enum NodeType {
  * +---------------------------------+-------------------------------------------------------+
  */
 export type Permissions = {
-	__typename?: 'Permissions';
+	__typename: 'Permissions';
 	can_add_version: Scalars['Boolean']['output'];
 	can_change_link: Scalars['Boolean']['output'];
 	can_change_share: Scalars['Boolean']['output'];
@@ -540,10 +540,10 @@ export type Permissions = {
 };
 
 export type Query = {
-	__typename?: 'Query';
+	__typename: 'Query';
 	/** <strong> Returns a NodePage based on the given criteria </strong> */
-	findNodes?: Maybe<NodePage>;
-	getAccountByEmail?: Maybe<Account>;
+	findNodes: Maybe<NodePage>;
+	getAccountByEmail: Maybe<Account>;
 	getAccountsByEmail: Array<Maybe<Account>>;
 	/**
 	 *  Returns all the CollaborationLinks of the specified node.
@@ -559,7 +559,7 @@ export type Query = {
 	 */
 	getLinks: Array<Maybe<Link>>;
 	/**  <strong>Returns the attributes of the node specified by ID</strong> */
-	getNode?: Maybe<File | Folder>;
+	getNode: Maybe<File | Folder>;
 	/**
 	 *  <strong> Returns the list of nodes corresponding to the path of a node</strong>
 	 *  The path is ordered and returns from the highest visible one to the requested node.
@@ -568,8 +568,8 @@ export type Query = {
 	/**  Returns the list of all root folders */
 	getRootsList: Array<Maybe<Root>>;
 	/**  Returns the attributes of the specified share */
-	getShare?: Maybe<Share>;
-	getUserById?: Maybe<User>;
+	getShare: Maybe<Share>;
+	getUserById: Maybe<User>;
 	getVersions: Array<Maybe<File>>;
 };
 
@@ -629,7 +629,7 @@ export type QueryGetVersionsArgs = {
 
 /**  Definition of the type Root. Represents a root folder */
 export type Root = {
-	__typename?: 'Root';
+	__typename: 'Root';
 	/**  Unique identifier of the root */
 	id: Scalars['ID']['output'];
 	/**  Name of the root */
@@ -638,17 +638,17 @@ export type Root = {
 
 /**  Definition of the Share type. It represents a share between a node and a user. */
 export type Share = {
-	__typename?: 'Share';
+	__typename: 'Share';
 	/**  Share creation timestamp */
 	created_at: Scalars['DateTime']['output'];
 	/**  Share expiration timestamp */
-	expires_at?: Maybe<Scalars['DateTime']['output']>;
+	expires_at: Maybe<Scalars['DateTime']['output']>;
 	/**  Node shared */
 	node: File | Folder;
 	/**  User permission for the node */
 	permission: SharePermission;
 	/**  User to whom a node has been shared */
-	share_target?: Maybe<SharedTarget>;
+	share_target: Maybe<SharedTarget>;
 };
 
 /**  The SharePermissions enumerator represents the permissions of a node shared with a user */
@@ -679,7 +679,7 @@ export type SharedTarget = DistributionList | User;
 
 /**  Definition of the User type */
 export type User = {
-	__typename?: 'User';
+	__typename: 'User';
 	/**  Email of the user */
 	email: Scalars['String']['output'];
 	/**  Full name of the user */
@@ -782,8 +782,8 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 		| (Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 				collaboration_links: Array<Maybe<_RefType['CollaborationLink']>>;
 				links: Array<Maybe<_RefType['Link']>>;
-				parent?: Maybe<_RefType['Node']>;
-				share?: Maybe<_RefType['Share']>;
+				parent: Maybe<_RefType['Node']>;
+				share: Maybe<_RefType['Share']>;
 				shares: Array<Maybe<_RefType['Share']>>;
 		  })
 		| (Omit<
@@ -793,8 +793,8 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 				children: _RefType['NodePage'];
 				collaboration_links: Array<Maybe<_RefType['CollaborationLink']>>;
 				links: Array<Maybe<_RefType['Link']>>;
-				parent?: Maybe<_RefType['Node']>;
-				share?: Maybe<_RefType['Share']>;
+				parent: Maybe<_RefType['Node']>;
+				share: Maybe<_RefType['Share']>;
 				shares: Array<Maybe<_RefType['Share']>>;
 		  });
 };
@@ -813,8 +813,8 @@ export type ResolversTypes = {
 		Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 			collaboration_links: Array<Maybe<ResolversTypes['CollaborationLink']>>;
 			links: Array<Maybe<ResolversTypes['Link']>>;
-			parent?: Maybe<ResolversTypes['Node']>;
-			share?: Maybe<ResolversTypes['Share']>;
+			parent: Maybe<ResolversTypes['Node']>;
+			share: Maybe<ResolversTypes['Share']>;
 			shares: Array<Maybe<ResolversTypes['Share']>>;
 		}
 	>;
@@ -824,8 +824,8 @@ export type ResolversTypes = {
 			children: ResolversTypes['NodePage'];
 			collaboration_links: Array<Maybe<ResolversTypes['CollaborationLink']>>;
 			links: Array<Maybe<ResolversTypes['Link']>>;
-			parent?: Maybe<ResolversTypes['Node']>;
-			share?: Maybe<ResolversTypes['Share']>;
+			parent: Maybe<ResolversTypes['Node']>;
+			share: Maybe<ResolversTypes['Share']>;
 			shares: Array<Maybe<ResolversTypes['Share']>>;
 		}
 	>;
@@ -845,7 +845,7 @@ export type ResolversTypes = {
 	Share: ResolverTypeWrapper<
 		Omit<Share, 'node' | 'share_target'> & {
 			node: ResolversTypes['Node'];
-			share_target?: Maybe<ResolversTypes['SharedTarget']>;
+			share_target: Maybe<ResolversTypes['SharedTarget']>;
 		}
 	>;
 	SharePermission: SharePermission;
@@ -866,8 +866,8 @@ export type ResolversParentTypes = {
 	File: Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 		collaboration_links: Array<Maybe<ResolversParentTypes['CollaborationLink']>>;
 		links: Array<Maybe<ResolversParentTypes['Link']>>;
-		parent?: Maybe<ResolversParentTypes['Node']>;
-		share?: Maybe<ResolversParentTypes['Share']>;
+		parent: Maybe<ResolversParentTypes['Node']>;
+		share: Maybe<ResolversParentTypes['Share']>;
 		shares: Array<Maybe<ResolversParentTypes['Share']>>;
 	};
 	Float: Scalars['Float']['output'];
@@ -878,8 +878,8 @@ export type ResolversParentTypes = {
 		children: ResolversParentTypes['NodePage'];
 		collaboration_links: Array<Maybe<ResolversParentTypes['CollaborationLink']>>;
 		links: Array<Maybe<ResolversParentTypes['Link']>>;
-		parent?: Maybe<ResolversParentTypes['Node']>;
-		share?: Maybe<ResolversParentTypes['Share']>;
+		parent: Maybe<ResolversParentTypes['Node']>;
+		share: Maybe<ResolversParentTypes['Share']>;
 		shares: Array<Maybe<ResolversParentTypes['Share']>>;
 	};
 	ID: Scalars['ID']['output'];
@@ -893,7 +893,7 @@ export type ResolversParentTypes = {
 	Root: Root;
 	Share: Omit<Share, 'node' | 'share_target'> & {
 		node: ResolversParentTypes['Node'];
-		share_target?: Maybe<ResolversParentTypes['SharedTarget']>;
+		share_target: Maybe<ResolversParentTypes['SharedTarget']>;
 	};
 	SharedTarget: ResolversUnionTypes<ResolversParentTypes>['SharedTarget'];
 	String: Scalars['String']['output'];

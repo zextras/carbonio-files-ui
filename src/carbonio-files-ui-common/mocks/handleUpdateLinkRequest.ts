@@ -13,12 +13,13 @@ const handleUpdateLinkRequest: GraphQLResponseResolver<
 	UpdateLinkMutation,
 	UpdateLinkMutationVariables
 > = ({ variables }) => {
-	const { link_id: id, description, expires_at: expiresAt } = variables;
+	const { link_id: id, description, expires_at: expiresAt, access_code: accessCode } = variables;
 	const link: UpdateLinkMutation['updateLink'] = {
 		__typename: 'Link',
 		id,
-		description,
-		expires_at: expiresAt,
+		description: description ?? null,
+		access_code: accessCode ?? null,
+		expires_at: expiresAt ?? null,
 		url: faker.internet.url(),
 		created_at: faker.date.recent().getTime()
 	};
