@@ -14,9 +14,9 @@ import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFile, populateFolder, populateNodes, sortNodes } from '../mocks/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import {
+	File,
 	Folder,
 	GetChildrenDocument,
 	GetChildrenQuery,
@@ -313,7 +313,7 @@ describe('Filter View', () => {
 				const element = nodes[1];
 				const lastElementName = nodes[nodes.length - 1].name;
 				const newName = lastElementName.substring(0, lastElementName.length - 1);
-				const nodeWithNewName = { ...element, name: newName } satisfies Node;
+				const nodeWithNewName = { ...element, name: newName } satisfies File | Folder;
 
 				const mocks = {
 					Query: {
@@ -377,7 +377,9 @@ describe('Filter View', () => {
 					}
 				});
 
-				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies Node;
+				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies
+					| File
+					| Folder;
 				const newPosition = addNodeInSortedList(
 					parentFolder.children.nodes,
 					nodeWithNewName,
@@ -414,9 +416,7 @@ describe('Filter View', () => {
 				expect(parentFolderData?.getNode).toBeDefined();
 				expect(parentFolderData?.getNode).not.toBeNull();
 				expect((parentFolderData?.getNode as Folder).children.nodes).toHaveLength(NODES_LOAD_LIMIT);
-				expect(((parentFolderData?.getNode as Folder).children.nodes[0] as Node).id).toBe(
-					element.id
-				);
+				expect((parentFolderData?.getNode as Folder).children.nodes[0]!.id).toBe(element.id);
 				// right click to open contextual menu
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				// open context menu
@@ -441,12 +441,12 @@ describe('Filter View', () => {
 					parentFolder.children.nodes.length
 				);
 				// element is moved at its new position ( -1 because it is also remove from its previous position)
-				expect(
-					((parentFolderData?.getNode as Folder).children.nodes[newPosition - 1] as Node).id
-				).toBe(element.id);
-				expect(
-					((parentFolderData?.getNode as Folder).children.nodes[newPosition - 1] as Node).name
-				).toBe(newName);
+				expect((parentFolderData?.getNode as Folder).children.nodes[newPosition - 1]!.id).toBe(
+					element.id
+				);
+				expect((parentFolderData?.getNode as Folder).children.nodes[newPosition - 1]!.name).toBe(
+					newName
+				);
 			});
 
 			test('Rename a node with a parent folder already partially loaded, where node is not loaded yet, add node in cached children of the parent folder', async () => {
@@ -465,9 +465,9 @@ describe('Filter View', () => {
 				element.parent = parentFolder;
 
 				// new name set to put element as first element in folder
-				const newName = (parentFolder.children.nodes[0] as Node).name.substring(
+				const newName = parentFolder.children.nodes[0]!.name.substring(
 					0,
-					(parentFolder.children.nodes[0] as Node).name.length - 1
+					parentFolder.children.nodes[0]!.name.length - 1
 				);
 
 				// prepare the cache with the parent folder as if already loaded
@@ -479,7 +479,9 @@ describe('Filter View', () => {
 					}
 				});
 
-				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies Node;
+				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies
+					| File
+					| Folder;
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),
@@ -514,7 +516,7 @@ describe('Filter View', () => {
 				expect(
 					find(
 						(parentFolderData?.getNode as Folder).children.nodes,
-						(child) => (child as Node).id === element.id
+						(child) => child!.id === element.id
 					)
 				).toBe(undefined);
 				// right click to open contextual menu
@@ -541,12 +543,8 @@ describe('Filter View', () => {
 				expect((parentFolderData?.getNode as Folder).children.nodes).toHaveLength(
 					parentFolder.children.nodes.length + 1
 				);
-				expect(((parentFolderData?.getNode as Folder).children.nodes[0] as Node).id).toBe(
-					element.id
-				);
-				expect(((parentFolderData?.getNode as Folder).children.nodes[0] as Node).name).toBe(
-					newName
-				);
+				expect((parentFolderData?.getNode as Folder).children.nodes[0]!.id).toBe(element.id);
+				expect((parentFolderData?.getNode as Folder).children.nodes[0]!.name).toBe(newName);
 			});
 		});
 	});

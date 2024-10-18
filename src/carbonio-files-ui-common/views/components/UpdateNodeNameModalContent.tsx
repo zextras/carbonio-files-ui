@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { ModalFooterCustom } from './ModalFooterCustom';
 import { CreateDocsFile } from '../../types/common';
 import { CreateFolderMutation, UpdateNodeMutation } from '../../types/graphql/types';
-import { decodeError } from '../../utils/utils';
+import { decodeError, takeIfNotEmpty } from '../../utils/utils';
 
 type UpdateNameMutation = UpdateNodeMutation | CreateFolderMutation | CreateDocsFile;
 
@@ -81,11 +81,13 @@ export const UpdateNodeNameModalContent = <T extends UpdateNameMutation>({
 			confirmAction(nodeId, trim(newName))
 				.then(() => {
 					setPendingRequest(false);
-					closeAction && closeAction();
+					closeAction?.();
 				})
 				.catch((err) => {
 					setPendingRequest(false);
-					setErrorMsg(decodeError(err, t) || 'something went wrong');
+					setErrorMsg(
+						takeIfNotEmpty(decodeError(err, t)) ?? t('errorCode.code', 'something went wrong')
+					);
 				});
 		}
 	}, [closeAction, confirmAction, newName, nodeId, pendingRequest, t]);

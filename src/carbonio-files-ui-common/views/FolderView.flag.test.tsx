@@ -14,7 +14,6 @@ import FolderView from './FolderView';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder, populateNode } from '../mocks/mockUtils';
 import { setup, selectNodes, screen, within } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
@@ -42,7 +41,7 @@ describe('Flag', () => {
 
 			const nodesIdsToFlag = map(
 				currentFolder.children.nodes.slice(0, currentFolder.children.nodes.length / 2),
-				(child) => (child as Node).id
+				(child) => child!.id
 			);
 
 			const nodesIdsToUnflag = nodesIdsToFlag.slice(0, nodesIdsToFlag.length / 2);

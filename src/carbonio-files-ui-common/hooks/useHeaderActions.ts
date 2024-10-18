@@ -16,7 +16,9 @@ import { File } from '../types/graphql/types';
 import { canEdit, canOpenWithDocs } from '../utils/ActionsFactory';
 import { downloadNode } from '../utils/utils';
 
-export function useHeaderActions(): (node: File) => Array<HeaderAction> {
+export function useHeaderActions(): (
+	node: Pick<File, '__typename' | 'id' | 'permissions' | 'rootId' | 'mime_type'>
+) => Array<HeaderAction> {
 	const [t] = useTranslation();
 	const openNodeWithDocs = useOpenWithDocs();
 	const { setActiveNode } = useActiveNode();

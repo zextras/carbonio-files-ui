@@ -45,7 +45,6 @@ import {
 	setup,
 	uploadWithDnD
 } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { UploadItem, UploadStatus } from '../../types/graphql/client-types';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
@@ -157,7 +156,11 @@ describe('Upload list', () => {
 
 			setup(<UploadList />, { mocks });
 
-			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
+			// run queries
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			const itemToDrag = screen.getByText(nodesToDrag[0].name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(itemToDrag, { dataTransfer: dataTransfer() });
 			// drag image item is not shown
@@ -193,7 +196,7 @@ describe('Upload list', () => {
 					getNode: mockGetNode({ getBaseNode: [localRoot] })
 				},
 				Mutation: {
-					createFolder: mockCreateFolder(uploadedFiles[0])
+					createFolder: mockCreateFolder(uploadedFiles[0] as Folder)
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -555,15 +558,15 @@ describe('Upload list', () => {
 			const subFolder2 = populateFolder();
 			folderToUpload.children.nodes.push(populateFile(), subFolder1);
 			forEach(folderToUpload.children.nodes, (child) => {
-				(child as Node).parent = folderToUpload;
+				child!.parent = folderToUpload;
 			});
 			subFolder1.children.nodes.push(...populateNodes(2, 'File'), subFolder2);
 			forEach(subFolder1.children.nodes, (child) => {
-				(child as Node).parent = subFolder1;
+				child!.parent = subFolder1;
 			});
 			subFolder2.children.nodes.push(...populateNodes(3, 'File'));
 			forEach(subFolder2.children.nodes, (child) => {
-				(child as Node).parent = subFolder2;
+				child!.parent = subFolder2;
 			});
 			const numberOfFiles = 6; // number of files to upload considering all the tree
 			const numberOfFolders = 3;

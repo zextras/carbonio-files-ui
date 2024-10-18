@@ -33,7 +33,6 @@ import {
 	populateUser
 } from '../../mocks/mockUtils';
 import { setup, screen, within } from '../../tests/utils';
-import { NodeListItemType } from '../../types/common';
 import { NodeType, User } from '../../types/graphql/types';
 import {
 	MIME_TYPE_PREVIEW_SUPPORT,
@@ -455,7 +454,7 @@ describe('Node List Item', () => {
 			[ROOTS.TRASH, 'Trash2', '#828282'],
 			[ROOTS.LOCAL_ROOT, 'Folder', '#828282']
 		])('node with root type %s show icon %s with color %s', (rootType, icon, color) => {
-			const node: NodeListItemType = { ...populateFolder(undefined, rootType) };
+			const node = populateFolder(undefined, rootType);
 			node.type = NodeType.Root;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
@@ -504,7 +503,7 @@ describe('Node List Item', () => {
 				<NodeListItem node={folder} {...getMissingProps()} />
 			</ListContext.Provider>
 		);
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	it.each(mimeTypesWithThumbnailSupport)(
@@ -519,7 +518,7 @@ describe('Node List Item', () => {
 					<NodeListItem node={file} {...getMissingProps()} />
 				</ListContext.Provider>
 			);
-			expect(screen.getByRole('img')).toBeVisible();
+			expect(screen.getByRole('presentation')).toBeVisible();
 		}
 	);
 
@@ -535,7 +534,7 @@ describe('Node List Item', () => {
 					<NodeListItem node={file} {...getMissingProps()} />
 				</ListContext.Provider>
 			);
-			expect(screen.queryByRole('img')).not.toBeInTheDocument();
+			expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 		}
 	);
 
@@ -579,7 +578,7 @@ describe('Node List Item', () => {
 				<NodeListItem node={file} {...getMissingProps()} />
 			</ListContext.Provider>
 		);
-		fireEvent.error(screen.getByRole('img'));
+		fireEvent.error(screen.getByRole('presentation'));
 		expect(await screen.findByText('Failed to load image')).toBeVisible();
 	});
 });

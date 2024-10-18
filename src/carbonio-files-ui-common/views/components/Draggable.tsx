@@ -17,13 +17,13 @@ interface DraggableProps {
 	effect: typeof DataTransfer.prototype.effectAllowed;
 }
 
-export const Draggable: React.FC<DraggableProps> = ({
+export const Draggable = ({
 	children,
 	onDragStart,
 	onDragEnd,
 	draggable = true,
 	effect
-}) => {
+}: React.PropsWithChildren<DraggableProps>): React.JSX.Element => {
 	const mouseMoveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// ---- Workaround to fire dragEnd when dragged element is removed from DOM ----

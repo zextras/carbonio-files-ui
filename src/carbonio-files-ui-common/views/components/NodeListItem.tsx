@@ -46,9 +46,11 @@ import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { usePreview } from '../../hooks/usePreview';
 import { useUpload } from '../../hooks/useUpload';
-import { Action, NodeListItemType, URLParams } from '../../types/common';
-import { NodeType } from '../../types/graphql/types';
+import { Node, URLParams } from '../../types/common';
+import { Maybe, NodeType, Share } from '../../types/graphql/types';
+import { DeepPick } from '../../types/utils';
 import {
+	Action,
 	buildActionItems,
 	canBeMoveDestination,
 	canUploadFile,
@@ -69,8 +71,24 @@ import {
 	nodeToNodeListItemUIProps
 } from '../../utils/utils';
 
+type NodeItem = Node<
+	| 'id'
+	| 'name'
+	| 'flagged'
+	| 'owner'
+	| 'last_editor'
+	| 'type'
+	| 'rootId'
+	| 'permissions'
+	| 'updated_at',
+	'size' | 'extension' | 'mime_type' | 'version'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> & {
+		shares: Maybe<Pick<Share, '__typename'>>[];
+	};
+
 export interface NodeListItemProps {
-	node: Omit<NodeListItemType, 'disabled' | 'selectable'>;
+	node: NodeItem;
 	// Selection props
 	isSelected: boolean;
 	isSelectionModeActive: boolean;
@@ -181,20 +199,16 @@ export const NodeListItem = ({
 		[]
 	);
 
-	const permittedHoverBarActions = useMemo<Action[]>(
-		() => node.permissions && getPermittedHoverBarActions(node),
-		[node]
-	);
+	const permittedHoverBarActions = useMemo(() => getPermittedHoverBarActions(node), [node]);
 
 	const permittedContextualMenuActions = useMemo(
 		() =>
 			node.permissions &&
-			getAllPermittedActions(
-				[node],
-				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
+			getAllPermittedActions({
+				nodes: [node],
 				canUsePreview,
 				canUseDocs
-			),
+			}),
 		[canUseDocs, canUsePreview, node]
 	);
 
@@ -426,7 +440,7 @@ export const NodeListItem = ({
 		return canUploadFile(node);
 	}, [navigateToFolder, node]);
 
-	const dragEnterHandler = useCallback(
+	const dragEnterHandler = useCallback<React.DragEventHandler>(
 		(event) => {
 			// check if node is a valid destination for write inside action
 			setDropzoneEnabled((prevState) => {
@@ -447,7 +461,7 @@ export const NodeListItem = ({
 	}, []);
 
 	const moveNodesAction = useCallback(
-		(event) => {
+		(event: React.DragEvent) => {
 			const movingNodes = JSON.parse(event.dataTransfer.getData(DRAG_TYPES.move) || '{}');
 			if (movingNodes && isFolder(node)) {
 				moveNodesMutation(node, ...movingNodes).then(() => {

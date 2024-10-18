@@ -48,7 +48,7 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 function clickOnCreateFolderAction(createOptions: CreateOption[]): void {
 	const createFolder = createOptions.find((option) => option.id === ACTION_IDS.CREATE_FOLDER);
 	act(() => {
-		createFolder?.action(undefined).onClick?.(new KeyboardEvent(''));
+		createFolder?.action(undefined).execute(new KeyboardEvent(''));
 	});
 }
 

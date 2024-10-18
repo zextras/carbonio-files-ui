@@ -60,10 +60,10 @@ const itemTypesArray = [
 	}
 ];
 
-export const ItemTypeChipInput: React.VFC<ItemTypeChipInputProps> = ({
+export const ItemTypeChipInput = ({
 	currentFilters,
 	updateFilter
-}) => {
+}: ItemTypeChipInputProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const [filterValue, setFilterValue] = useState<string | null>(null);
 	const [icon, setIcon] = useState<keyof DefaultTheme['icons']>('ChevronDown');

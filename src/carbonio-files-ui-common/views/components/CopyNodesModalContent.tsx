@@ -15,7 +15,7 @@ import {
 	Text,
 	TextWithTooltip
 } from '@zextras/carbonio-design-system';
-import { find, reduce, every } from 'lodash';
+import { find, every } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { ModalFooterCustom } from './ModalFooterCustom';
@@ -25,33 +25,52 @@ import { CustomModalBody } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { nodeSortVar } from '../../apollo/nodeSortVar';
 import { NODES_LOAD_LIMIT } from '../../constants';
-import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import { useCopyNodesMutation } from '../../hooks/graphql/mutations/useCopyNodesMutation';
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
-import { GetNodeParentType, Node, NodeListItemType, RootListItemType } from '../../types/common';
-import { GetChildrenQuery, GetChildrenQueryVariables } from '../../types/graphql/types';
+import { Node } from '../../types/common';
+import {
+	File,
+	Folder,
+	GetChildrenDocument,
+	GetChildrenQuery,
+	GetChildrenQueryVariables,
+	Node as GQLNode
+} from '../../types/graphql/types';
+import { DeepPick } from '../../types/utils';
 import { canBeCopyDestination, isRoot } from '../../utils/ActionsFactory';
 import { isFile, isFolder } from '../../utils/utils';
 
+type NodeToCopy = Node<'id'> & DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions'>;
+
+type NodeItem = Pick<GQLNode, 'id' | 'name' | 'type'> &
+	(
+		| Pick<File, '__typename' | 'mime_type' | 'rootId' | 'permissions'>
+		| Pick<Folder, '__typename' | 'rootId' | 'permissions'>
+		| { __typename?: never; rootId?: never }
+	) & {
+		disabled?: boolean;
+		selectable?: boolean;
+	};
+
 interface CopyNodesModalContentProps {
-	nodesToCopy: Array<Pick<Node, '__typename' | 'id'> & GetNodeParentType>;
+	nodesToCopy: NodeToCopy[];
 	folderId?: string;
 	closeAction?: () => void;
 }
 
-export const CopyNodesModalContent: React.VFC<CopyNodesModalContentProps> = ({
+export const CopyNodesModalContent = ({
 	closeAction,
 	nodesToCopy,
 	folderId
-}) => {
+}: CopyNodesModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCurrent, setDefault } = useDestinationVarManager<string>();
 	const { currentValue } = useReactiveVar<DestinationVar<string>>(
 		destinationVar as ReactiveVar<DestinationVar<string>>
 	);
 	const [destinationFolder, setDestinationFolder] = useState<string>();
-	const [openedFolder, setOpenedFolder] = useState<string>(folderId || '');
+	const [openedFolder, setOpenedFolder] = useState<string>(folderId ?? '');
 	const { data: currentFolder, loading, hasMore, loadMore } = useGetChildrenQuery(openedFolder);
 	const mainContainerRef = useRef<HTMLDivElement>(null);
 	const footerContainerRef = useRef<HTMLDivElement>(null);
@@ -60,7 +79,6 @@ export const CopyNodesModalContent: React.VFC<CopyNodesModalContentProps> = ({
 		setDestinationFolder(currentValue);
 	}, [currentValue]);
 
-	/** Mutation to copy nodes */
 	const { copyNodes, loading: copyNodesMutationLoading } = useCopyNodesMutation();
 
 	const title = useMemo(
@@ -114,47 +132,43 @@ export const CopyNodesModalContent: React.VFC<CopyNodesModalContentProps> = ({
 	);
 
 	const checkSelectable = useCallback(
-		(node: Pick<NodeListItemType, '__typename' | 'permissions' | 'id'> | RootListItemType) =>
+		(node: NodeItem) =>
 			// a node is selectable if it can be a copy destination
 			isFolder(node) && canBeCopyDestination(node, nodesToCopy),
 		[nodesToCopy]
 	);
 
 	const checkDisabled = useCallback(
-		(node: Pick<NodeListItemType, '__typename' | 'permissions' | 'id'> | RootListItemType) =>
+		(node: NodeItem) =>
 			// a node is disabled (not interactive) if it is a file or if it is a folder which is not selectable
 			// roots which are not a file and not a folder are enabled
 			isFile(node) || (isFolder(node) && !checkSelectable(node)),
 		[checkSelectable]
 	);
 
-	const nodes = useMemo<Array<NodeListItemType>>(() => {
+	const nodes = useMemo(() => {
 		if (
 			currentFolder?.getNode &&
 			isFolder(currentFolder.getNode) &&
 			currentFolder.getNode.children?.nodes &&
 			currentFolder.getNode.children.nodes.length > 0
 		) {
-			return reduce(
-				currentFolder.getNode.children.nodes,
-				(result: NodeListItemType[], node) => {
-					if (node) {
-						result.push({
-							...node,
-							disabled: checkDisabled(node),
-							selectable: checkSelectable(node)
-						});
-					}
-					return result;
-				},
-				[]
-			);
+			return currentFolder.getNode.children.nodes.reduce<NodeItem[]>((result, node) => {
+				if (node) {
+					result.push({
+						...node,
+						disabled: checkDisabled(node),
+						selectable: checkSelectable(node)
+					});
+				}
+				return result;
+			}, []);
 		}
 		return [];
 	}, [checkDisabled, checkSelectable, currentFolder?.getNode]);
 
 	const closeHandler = useCallback(() => {
-		closeAction && closeAction();
+		closeAction?.();
 	}, [closeAction]);
 
 	const apolloClient = useApolloClient();
@@ -162,33 +176,36 @@ export const CopyNodesModalContent: React.VFC<CopyNodesModalContentProps> = ({
 	const confirmHandler = useCallback(
 		(e: Event | React.SyntheticEvent) => {
 			e.stopPropagation();
-			let destinationFolderNode: Pick<Node, '__typename' | 'id'> | undefined | null;
+			let destinationFolderNode: Node<'id'> | undefined | null;
 			if (destinationFolder === currentFolder?.getNode?.id) {
 				destinationFolderNode = currentFolder?.getNode;
 			} else if (destinationFolder) {
-				const node = find(nodes, (item) => item.id === destinationFolder);
+				const node = nodes.find(
+					(item): item is Node & typeof item => !!item.__typename && item.id === destinationFolder
+				);
 				if (node) {
 					destinationFolderNode = node;
 				} else {
 					// case when a root folder is selected from the roots list
 					const cachedData = apolloClient.readQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-						query: GET_CHILDREN,
+						query: GetChildrenDocument,
 						variables: {
 							node_id: destinationFolder,
 							children_limit: NODES_LOAD_LIMIT,
 							sort: nodeSortVar()
 						}
 					});
-					destinationFolderNode = cachedData?.getNode || {
-						__typename: 'Folder',
-						id: destinationFolder
-					};
+					destinationFolderNode =
+						cachedData?.getNode ??
+						({
+							__typename: 'Folder',
+							id: destinationFolder
+						} satisfies Pick<Folder, '__typename' | 'id'>);
 				}
 			}
 
 			if (destinationFolderNode && isFolder(destinationFolderNode)) {
 				copyNodes(destinationFolderNode, ...nodesToCopy).then((result) => {
-					// TODO: handle case when not all nodes are copied
 					if (result?.data) {
 						closeHandler();
 					}
@@ -217,7 +234,7 @@ export const CopyNodesModalContent: React.VFC<CopyNodesModalContentProps> = ({
 
 	const setDestinationFolderHandler = useCallback(
 		(
-			node: Pick<NodeListItemType, 'id' | '__typename' | 'disabled'> | RootListItemType,
+			node: Pick<NodeItem, 'id' | '__typename' | 'disabled'>,
 			event: React.SyntheticEvent | Event
 		) => {
 			const destinationId =

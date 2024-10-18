@@ -24,11 +24,11 @@ import { usePrevious } from '../../hooks/usePrevious';
 import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { useUploadActions } from '../../hooks/useUploadActions';
-import { Action } from '../../types/common';
 import { UploadItem } from '../../types/graphql/client-types';
+import { Action } from '../../utils/ActionsFactory';
 import { getUploadAddType, isUploadFolderItem } from '../../utils/uploadUtils';
 
-export const UploadList: React.VFC = () => {
+export const UploadList = (): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const { add, removeAllCompleted } = useUpload();
@@ -93,7 +93,7 @@ export const UploadList: React.VFC = () => {
 				<UploadListItemWrapper
 					key={item.id}
 					node={item}
-					isSelected={selectedMap && selectedMap[item.id]}
+					isSelected={selectedMap?.[item.id]}
 					isSelectionModeActive={isSelectionModeActive}
 					selectId={selectId}
 				/>

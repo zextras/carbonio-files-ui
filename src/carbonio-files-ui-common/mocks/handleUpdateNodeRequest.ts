@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { faker } from '@faker-js/faker';
 import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import buildClient from '../apollo';
-import CHILD from '../graphql/fragments/child.graphql';
 import { Node } from '../types/common';
 import {
-	ChildFragment,
+	ChildFragmentDoc,
 	UpdateNodeMutation,
 	UpdateNodeMutationVariables
 } from '../types/graphql/types';
@@ -22,29 +22,32 @@ const handleUpdateNodeRequest: GraphQLResponseResolver<
 	const apolloClient = buildClient();
 
 	// try to read the node as a file
-	let result = apolloClient.readFragment<ChildFragment>({
+	let result = apolloClient.readFragment({
 		fragmentName: 'Child',
-		fragment: CHILD,
+		fragment: ChildFragmentDoc,
 		id: `File:${variables.node_id}`
 	});
 
 	if (!result) {
 		// if result is null, try to read the node as a folder
-		result = apolloClient.readFragment<ChildFragment>({
+		result = apolloClient.readFragment({
 			fragmentName: 'Child',
-			fragment: CHILD,
+			fragment: ChildFragmentDoc,
 			id: `Folder:${variables.node_id}`
 		});
 	}
 
-	const name = ('name' in variables && variables.name) || result?.name || '';
+	const name = variables.name ?? result?.name ?? '';
 	return HttpResponse.json({
 		data: {
 			updateNode: {
+				id: faker.string.uuid(),
+				parent: null,
+				__typename: faker.helpers.arrayElement<Node['__typename']>(['File', 'Folder']),
 				...result,
 				name,
 				description: variables.description ?? ''
-			} as Node
+			}
 		}
 	});
 };

@@ -56,7 +56,6 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 					node_ids: nodesIds
 				},
 				optimisticResponse: {
-					__typename: 'Mutation',
 					deleteNodes: nodesIds
 				},
 				update(cache, { data }) {

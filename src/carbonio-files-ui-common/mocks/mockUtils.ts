@@ -9,14 +9,14 @@ import { map, find, filter, some } from 'lodash';
 
 import { LOGGED_USER } from '../../mocks/constants';
 import { CONFIGS, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, ROOTS } from '../constants';
-import { Node, SortableNode, UploadFolderItem } from '../types/common';
+import { Node, UploadFolderItem } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
 import {
 	Config,
 	DistributionList,
-	Node as GQLNode,
-	File as FilesFile,
-	Folder,
+	Node as GQLNodeWithOptionals,
+	File as GQLFileWithOptionals,
+	Folder as GQLFolderWithOptionals,
 	CollaborationLink,
 	Link,
 	Maybe,
@@ -39,10 +39,11 @@ import {
 	Member
 } from '../types/network';
 import { MakeRequired, MakeRequiredNonNull } from '../types/utils';
-import { ActionsFactoryNodeType } from '../utils/ActionsFactory';
-import { isFile, nodeSortComparator } from '../utils/utils';
+import { isFile, nodeSortComparator, SortableNode } from '../utils/utils';
 
-type NodeTypename = FilesFile['__typename'] | Folder['__typename'];
+type GQLNode = Required<GQLNodeWithOptionals>;
+type GQLFile = Required<GQLFileWithOptionals>;
+type GQLFolder = Required<GQLFolderWithOptionals>;
 
 export function sortNodes(
 	nodes: Array<Maybe<SortableNode>>,
@@ -54,7 +55,7 @@ export function sortNodes(
 }
 
 export function populateNodePage(
-	nodes: Maybe<Node>[],
+	nodes: NodePage['nodes'],
 	pageSize: number = NODES_LOAD_LIMIT,
 	pageToken = 'next_page_token'
 ): NodePage {
@@ -112,7 +113,7 @@ export function populateSharePermission(sharePermission?: SharePermission): Shar
 }
 
 export function populateShare(
-	node: Node,
+	node: GQLFile | GQLFolder,
 	key: number | string,
 	shareTarget?: SharedTarget
 ): MakeRequiredNonNull<Share, 'share_target'> {
@@ -131,15 +132,15 @@ export function populateShare(
 	};
 }
 
-export function populateShares(node: FilesFile | Folder, limit = 1): Share[] {
+export function populateShares(node: GQLFile | GQLFolder, limit = 1): Share[] {
 	const shares: Share[] = [];
-	const nodeRef: Pick<FilesFile | Folder, 'id' | 'type' | '__typename'> = {
+	const nodeRef: Pick<GQLFile | GQLFolder, 'id' | 'type' | '__typename'> = {
 		id: node.id,
 		type: node.type,
 		__typename: node.__typename
 	};
 	for (let i = 0; i < limit; i += 1) {
-		shares.push(populateShare(nodeRef as unknown as Node, i));
+		shares.push(populateShare(nodeRef as Share['node'], i));
 	}
 	return shares;
 }
@@ -154,12 +155,12 @@ function populateNodeFields(
 	return {
 		id: id ?? faker.string.uuid(),
 		creator: populateUser(),
-		owner: populateUser(LOGGED_USER.id, LOGGED_USER.name),
+		owner: populateUser(LOGGED_USER.id, LOGGED_USER.full_name, LOGGED_USER.email),
 		last_editor: populateUser(),
 		created_at: faker.date.past().getTime(),
 		updated_at: faker.date.recent().getTime(),
 		permissions: populatePermissions(),
-		name: name ?? faker.word.words(),
+		name: name ?? faker.system.fileName(),
 		description: faker.lorem.paragraph(),
 		type: (id && some(ROOTS, (root) => root === id) && NodeType.Root) || nodeType,
 		flagged: faker.datatype.boolean(),
@@ -172,10 +173,7 @@ function populateNodeFields(
 	};
 }
 
-export function populateUnknownNode(
-	id?: string,
-	name?: string
-): Partial<Node> & Omit<ActionsFactoryNodeType, '__typename'> {
+export function populateUnknownNode(id?: string, name?: string): GQLNode {
 	return {
 		id: id ?? faker.string.uuid(),
 		creator: populateUser(),
@@ -192,12 +190,17 @@ export function populateUnknownNode(
 		parent: null,
 		share: null,
 		shares: [],
-		links: []
+		links: [],
+		collaboration_links: []
 	};
 }
 
-export function populateNode(type?: NodeTypename, id?: string, name?: string): FilesFile | Folder {
-	const __typename = type ?? faker.helpers.arrayElement<NodeTypename>(['File', 'Folder']);
+export function populateNode(
+	type?: Node['__typename'],
+	id?: string,
+	name?: string
+): GQLFile | GQLFolder {
+	const __typename = type ?? faker.helpers.arrayElement<Node['__typename']>(['File', 'Folder']);
 
 	switch (__typename) {
 		case 'File':
@@ -211,9 +214,12 @@ export function populateNode(type?: NodeTypename, id?: string, name?: string): F
 	}
 }
 
-export function populateNodes(limit?: number, type?: NodeTypename): Array<FilesFile | Folder> {
+export function populateNodes(
+	limit?: number,
+	type?: Node['__typename']
+): Array<GQLFile | GQLFolder> {
 	const nodesLength = limit ?? 6;
-	const nodes: Array<FilesFile | Folder> = [];
+	const nodes: Array<GQLFile | GQLFolder> = [];
 	for (let i = 0; i < nodesLength; i += 1) {
 		const node = populateNode(type);
 		node.name = `n${i} - ${node.name}`;
@@ -231,8 +237,8 @@ export function populateFolder(
 	id: string | undefined = undefined,
 	name: string | undefined = undefined,
 	sort = NODES_SORT_DEFAULT
-): Folder {
-	const children: Node[] = [];
+): GQLFolder {
+	const children: Array<GQLFile | GQLFolder> = [];
 	let folderName = name;
 	let type = NodeType.Folder;
 	if (id === ROOTS.LOCAL_ROOT && !name) {
@@ -241,7 +247,7 @@ export function populateFolder(
 	if (some(ROOTS, (root) => root === id)) {
 		type = NodeType.Root;
 	}
-	const folder: Folder = {
+	const folder: GQLFolder = {
 		...populateNodeFields(type, id, folderName),
 		children: populateNodePage(children),
 		__typename: 'Folder'
@@ -251,7 +257,7 @@ export function populateFolder(
 	}
 	for (let i = 0; i < childrenLimit; i += 1) {
 		const child = populateNode();
-		child.parent = { ...folder, children: populateNodePage([]) } as Folder;
+		child.parent = { ...folder, children: populateNodePage([]) } satisfies GQLFolder;
 		child.name = `child-${i} - ${child.name}`;
 		children.push(child);
 	}
@@ -260,17 +266,17 @@ export function populateFolder(
 	return folder;
 }
 
-export function populateLocalRoot(childrenLimit = 0): Folder {
+export function populateLocalRoot(childrenLimit = 0): GQLFolder {
 	const localRoot = populateFolder(childrenLimit, ROOTS.LOCAL_ROOT, 'ROOT');
 	localRoot.permissions = populatePermissions(true);
 	return localRoot;
 }
 
 export function populateParents(
-	node: Node,
+	node: GQLFile | GQLFolder,
 	limit = 1,
 	withRoot = false
-): { node: Node; path: Node[] } {
+): { node: GQLFile | GQLFolder; path: (GQLFile | GQLFolder)[] } {
 	let currentNode = node;
 	const path = [currentNode];
 	const parentsLimit = withRoot ? limit - 1 : limit;
@@ -293,7 +299,7 @@ export function populateParents(
 	};
 }
 
-export function incrementVersion(inputFile: FilesFile, changeLastEditor = false): FilesFile {
+export function incrementVersion(inputFile: GQLFile, changeLastEditor = false): GQLFile {
 	const result = { ...inputFile };
 	if (result.version) {
 		result.version += 1;
@@ -307,12 +313,19 @@ export function incrementVersion(inputFile: FilesFile, changeLastEditor = false)
 }
 
 export function getVersionFromFile(
-	inputFile: FilesFile
+	inputFile: GQLFile
 ): Pick<
-	FilesFile,
-	'version' | 'size' | 'last_editor' | 'updated_at' | 'keep_forever' | 'cloned_from_version'
+	GQLFile,
+	| '__typename'
+	| 'version'
+	| 'size'
+	| 'last_editor'
+	| 'updated_at'
+	| 'keep_forever'
+	| 'cloned_from_version'
 > {
 	return {
+		__typename: 'File',
 		version: inputFile.version,
 		size: inputFile.size,
 		last_editor: inputFile.last_editor,
@@ -322,13 +335,13 @@ export function getVersionFromFile(
 	};
 }
 
-export function populateFile(id?: string, name?: string): MakeRequiredNonNull<FilesFile, 'owner'> {
+export function populateFile(id?: string, name?: string): MakeRequiredNonNull<GQLFile, 'owner'> {
 	const mimeType = faker.system.mimeType();
 	const types = filter(
 		Object.values(NodeType),
 		(t) => t !== NodeType.Root && t !== NodeType.Folder
 	);
-	const file: MakeRequiredNonNull<FilesFile, 'owner'> = {
+	const file: MakeRequiredNonNull<GQLFile, 'owner'> = {
 		...populateNodeFields(faker.helpers.arrayElement(types), id, name),
 		mime_type: mimeType,
 		size: faker.number.int(),
@@ -441,7 +454,7 @@ export function populateContactGroup(
 	};
 }
 
-export function populateLink(node: Node): Link {
+export function populateLink(node: GQLFile | GQLFolder): Link {
 	return {
 		__typename: 'Link',
 		id: faker.string.uuid(),
@@ -458,7 +471,7 @@ export function populateLink(node: Node): Link {
 }
 
 export function populateCollaborationLink(
-	node: Node,
+	node: GQLFile | GQLFolder,
 	sharePermission?: SharePermission
 ): CollaborationLink {
 	return {
@@ -473,7 +486,7 @@ export function populateCollaborationLink(
 	};
 }
 
-export function populateLinks(node: Node, limit = 2): Link[] {
+export function populateLinks(node: GQLFile | GQLFolder, limit = 2): Link[] {
 	const links = [];
 	for (let i = 0; i < limit; i += 1) {
 		const link = populateLink(node);
@@ -525,10 +538,10 @@ export function populateUploadFolderItem(item?: Partial<UploadFolderItem>): Uplo
 	};
 }
 
-export function populateUploadItems(limit?: number, type?: NodeTypename): UploadItem[] {
+export function populateUploadItems(limit?: number, type?: Node['__typename']): UploadItem[] {
 	const items: UploadItem[] = [];
 	for (let i = 0; i < (limit || 10); i += 1) {
-		const itemType = type ?? faker.helpers.arrayElement<NodeTypename>(['Folder', 'File']);
+		const itemType = type ?? faker.helpers.arrayElement<Node['__typename']>(['Folder', 'File']);
 		const item = itemType === 'Folder' ? populateUploadFolderItem() : populateUploadItem();
 		items.push(item);
 	}

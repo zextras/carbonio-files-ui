@@ -9,7 +9,7 @@ import { List } from './List';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen } from '../../tests/utils';
-import { Node } from '../../types/common';
+import { File, Folder } from '../../types/graphql/types';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
@@ -33,7 +33,7 @@ describe('Move', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>
@@ -86,7 +86,7 @@ describe('Move', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 					folderId={currentFolder.id}
@@ -96,18 +96,11 @@ describe('Move', () => {
 			await screen.findByText(file.name);
 			await screen.findByTestId(SELECTORS.customBreadcrumbs);
 			await selectNodes([file.id, folder.id], user);
-
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-			expect(screen.getByTestId(ICON_REGEXP.moreVertical)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
-			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-
-			const moveIcon = await screen.findByTestId(ICON_REGEXP.move);
-			expect(moveIcon).toBeVisible();
-			expect(moveIcon).toHaveStyle({
-				color: 'currentColor'
-			});
+			const moveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.move });
+			expect(moveIcon).toBeEnabled();
 		});
 	});
 
@@ -130,7 +123,7 @@ describe('Move', () => {
 
 			const { user } = setup(
 				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
 					mainList
 					emptyListMessage={'hint'}
 				/>

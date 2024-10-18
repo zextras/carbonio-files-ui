@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { Container, Snackbar } from '@zextras/carbonio-design-system';
-import { filter, noop } from 'lodash';
+import { noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ import { SortingComponent } from './components/SortingComponent';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
-import { useCreateOptions } from '../../hooks/useCreateOptions';
+import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
 import { nodeSortVar } from '../apollo/nodeSortVar';
 import { FILES_APP_ID, FILTER_PARAMS, FILTER_TYPE, ROOTS } from '../constants';
@@ -26,13 +26,13 @@ import { ListHeaderActionContext } from '../contexts';
 import { useFindNodesQuery } from '../hooks/graphql/queries/useFindNodesQuery';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import { useUpload } from '../hooks/useUpload';
-import { Crumb, DocsType, NodeListItemType, URLParams } from '../types/common';
+import { Crumb, DocsType, URLParams } from '../types/common';
 import { NodeSort } from '../types/graphql/types';
-import { NonNullableListItem, Unwrap } from '../types/utils';
+import { NonNullableListItem } from '../types/utils';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
-const FilterView: React.VFC = () => {
+const FilterView = (): React.JSX.Element => {
 	const { filter: filterParam } = useParams<URLParams>();
 	const isFlaggedFilter = `/${filterParam}` === FILTER_TYPE.flagged;
 	const isMyTrashFilter = `/${filterParam}` === FILTER_TYPE.myTrash;
@@ -74,7 +74,7 @@ const FilterView: React.VFC = () => {
 	const { canUseDocs } = useHealthInfo();
 
 	useEffect(() => {
-		setCreateOptions(
+		setCreateOptions<NewAction>(
 			{
 				id: ACTION_IDS.UPLOAD_FILE,
 				type: ACTION_TYPES.NEW,
@@ -84,8 +84,8 @@ const FilterView: React.VFC = () => {
 					group: FILES_APP_ID,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					onClick: (event): void => {
-						event && event.stopPropagation();
+					execute: (event): void => {
+						event?.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
 					}
@@ -100,7 +100,7 @@ const FilterView: React.VFC = () => {
 					label: t('create.options.new.folder', 'New folder'),
 					icon: 'FolderOutline',
 					disabled: true,
-					onClick: noop
+					execute: noop
 				})
 			},
 			...(canUseDocs
@@ -114,18 +114,16 @@ const FilterView: React.VFC = () => {
 								label: t('create.options.new.document', 'New document'),
 								icon: 'FileTextOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -140,18 +138,16 @@ const FilterView: React.VFC = () => {
 								label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 								icon: 'FileCalcOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -166,18 +162,16 @@ const FilterView: React.VFC = () => {
 								label: t('create.options.new.presentation', 'New presentation'),
 								icon: 'FilePresentationOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -323,12 +317,10 @@ const FilterView: React.VFC = () => {
 		sort
 	});
 
-	const nodes = useMemo<NodeListItemType[]>(() => {
+	const nodes = useMemo(() => {
 		if (findNodesResult?.findNodes?.nodes && findNodesResult.findNodes.nodes.length > 0) {
-			const $nodes = findNodesResult.findNodes.nodes;
-			return filter<Unwrap<typeof $nodes>, NonNullableListItem<typeof $nodes>>(
-				$nodes,
-				(node): node is NonNullableListItem<typeof $nodes> => !!node
+			return findNodesResult.findNodes.nodes.filter(
+				(node): node is NonNullableListItem<typeof findNodesResult.findNodes.nodes> => !!node
 			);
 		}
 		return [];

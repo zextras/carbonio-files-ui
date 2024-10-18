@@ -14,7 +14,7 @@ import {
 	Text,
 	TextWithTooltip
 } from '@zextras/carbonio-design-system';
-import { find, reduce } from 'lodash';
+import { find } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { ModalFooterCustom } from './ModalFooterCustom';
@@ -24,22 +24,30 @@ import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
 import { useGetChildrenQuery } from '../../hooks/graphql/queries/useGetChildrenQuery';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
-import { Node, NodeListItemType } from '../../types/common';
-import { Folder, GetChildrenQuery } from '../../types/graphql/types';
+import { Node } from '../../types/common';
+import { DeepPick } from '../../types/utils';
 import { canBeMoveDestination } from '../../utils/ActionsFactory';
 import { isFile, isFolder } from '../../utils/utils';
 
+type NodeToMove = Node<'id' | 'permissions' | 'rootId'> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
+
+type NodeItem = Node<'id' | 'name' | 'type' | 'rootId', 'mime_type'> & {
+	disabled: boolean;
+	selectable: boolean;
+};
 interface MoveNodesModalContentProps {
-	nodesToMove: Array<Pick<Node, '__typename' | 'id' | 'owner' | 'permissions'>>;
+	nodesToMove: NodeToMove[];
 	folderId: string;
 	closeAction?: () => void;
 }
 
-export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
+export const MoveNodesModalContent = ({
 	closeAction,
 	nodesToMove,
 	folderId
-}) => {
+}: MoveNodesModalContentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCurrent, setDefault } = useDestinationVarManager<string>();
 	const { currentValue } = useReactiveVar<DestinationVar<string>>(
@@ -82,30 +90,26 @@ export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
 		[nodesToMove]
 	);
 
-	const nodes = useMemo<Array<NodeListItemType>>(() => {
+	const nodes = useMemo(() => {
 		if (
 			currentFolder?.getNode &&
 			isFolder(currentFolder.getNode) &&
 			currentFolder.getNode.children?.nodes &&
 			currentFolder.getNode.children.nodes.length > 0
 		) {
-			return reduce(
-				currentFolder.getNode.children.nodes,
-				(result: NodeListItemType[], node) => {
-					if (node) {
-						// in move modal, if a node cannot be a move destination, then it is fully disabled
-						// and cannot be navigated if it is a folder (out of workspace)
-						const isSelectable = canBeMoveDestination(node, nodesToMove);
-						result.push({
-							...node,
-							disabled: !isSelectable,
-							selectable: isSelectable
-						});
-					}
-					return result;
-				},
-				[]
-			);
+			return currentFolder.getNode.children.nodes.reduce<NodeItem[]>((result, node) => {
+				if (node) {
+					// in move modal, if a node cannot be a move destination, then it is fully disabled
+					// and cannot be navigated if it is a folder (out of workspace)
+					const isSelectable = canBeMoveDestination(node, nodesToMove);
+					result.push({
+						...node,
+						disabled: !isSelectable,
+						selectable: isSelectable
+					});
+				}
+				return result;
+			}, []);
 		}
 		return [];
 	}, [currentFolder, nodesToMove]);
@@ -123,8 +127,8 @@ export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
 					: find(nodes, ['id', destinationFolder]);
 
 			// reset the opened folder so that the eviction of the children in the mutation does not run a new network query
-			if (destinationFolderNode) {
-				moveNodes(destinationFolderNode as Folder, ...nodesToMove).then((result) => {
+			if (destinationFolderNode && isFolder(destinationFolderNode)) {
+				moveNodes(destinationFolderNode, ...nodesToMove).then((result) => {
 					if (result.data?.moveNodes?.length === nodesToMove.length) {
 						closeHandler();
 					}
@@ -144,9 +148,8 @@ export const MoveNodesModalContent: React.VFC<MoveNodesModalContentProps> = ({
 	);
 
 	const setDestinationFolderHandler = useCallback(
-		(node: Pick<NodeListItemType, 'id' | 'disabled'>, event: React.SyntheticEvent) => {
-			const destinationId =
-				(node && !node.disabled && node.id) || (currentFolder as GetChildrenQuery)?.getNode?.id;
+		(node: NodeItem, event: React.SyntheticEvent) => {
+			const destinationId = (node && !node.disabled && node.id) || currentFolder?.getNode?.id;
 			setCurrent(destinationId);
 			event.stopPropagation();
 		},

@@ -6,8 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
-import { forEach } from 'lodash';
+import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -15,7 +14,6 @@ import { NODES_LOAD_LIMIT } from '../constants';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder } from '../mocks/mockUtils';
 import { generateError, setup, triggerListLoadMore } from '../tests/utils';
-import { Node } from '../types/common';
 import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
@@ -58,7 +56,7 @@ describe('Get children', () => {
 	});
 
 	test('first access to a folder show loading state and than show children', async () => {
-		const currentFolder = populateFolder();
+		const currentFolder = populateFolder(1);
 
 		const mocks = {
 			Query: {
@@ -73,13 +71,9 @@ describe('Get children', () => {
 
 		const listHeader = screen.getByTestId(SELECTORS.listHeader);
 		expect(within(listHeader).getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-		await waitFor(() =>
-			expect(screen.getByTestId(SELECTORS.list(currentFolder.id))).not.toBeEmptyDOMElement()
-		);
+		await screen.findByText(currentFolder.name);
+		await screen.findByText(currentFolder.children.nodes[0]!.name);
 		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
-		forEach(currentFolder.children.nodes, (child) => {
-			expect(screen.getByText((child as Node).name)).toBeVisible();
-		});
 	});
 
 	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
@@ -112,32 +106,28 @@ describe('Get children', () => {
 			within(screen.getByTestId(SELECTORS.listHeader)).queryByTestId(ICON_REGEXP.queryLoading)
 		);
 		// wait the rendering of the first item
-		await screen.findByTestId(SELECTORS.nodeItem((currentFolder.children.nodes[0] as Node).id));
+		await screen.findByTestId(SELECTORS.nodeItem(currentFolder.children.nodes[0]!.id));
 		expect(
-			screen.getByTestId(
-				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT - 1] as Node).id)
-			)
+			screen.getByTestId(SELECTORS.nodeItem(currentFolder.children.nodes[NODES_LOAD_LIMIT - 1]!.id))
 		).toBeVisible();
 
 		// elements after the limit should not be rendered
 		expect(
-			screen.queryByTestId(
-				SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
-			)
+			screen.queryByTestId(SELECTORS.nodeItem(currentFolder.children.nodes[NODES_LOAD_LIMIT]!.id))
 		).not.toBeInTheDocument();
 
 		triggerListLoadMore();
 
 		// wait for the response
 		await screen.findByTestId(
-			SELECTORS.nodeItem((currentFolder.children.nodes[NODES_LOAD_LIMIT] as Node).id)
+			SELECTORS.nodeItem(currentFolder.children.nodes[NODES_LOAD_LIMIT]!.id)
 		);
 
 		// now all elements are loaded so last children should be visible
 		expect(
 			screen.getByTestId(
 				SELECTORS.nodeItem(
-					(currentFolder.children.nodes[currentFolder.children.nodes.length - 1] as Node).id
+					currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.id
 				)
 			)
 		).toBeVisible();

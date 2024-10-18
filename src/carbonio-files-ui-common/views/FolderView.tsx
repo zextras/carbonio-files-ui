@@ -4,14 +4,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { Text } from '@zextras/carbonio-design-system';
-import { filter, map } from 'lodash';
+import { filter, map, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import { ContextualMenuProps } from './components/ContextualMenu';
 import { Displayer } from './components/Displayer';
 import { EmptySpaceFiller } from './components/EmptySpaceFiller';
 import { List } from './components/List';
@@ -20,7 +19,7 @@ import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
-import { CreateOption, useCreateOptions } from '../../hooks/useCreateOptions';
+import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
 import { DOCS_EXTENSIONS, FILES_APP_ID, ROOTS } from '../constants';
 import { ListHeaderActionContext } from '../contexts';
 import { useCreateFolderMutation } from '../hooks/graphql/mutations/useCreateFolderMutation';
@@ -31,7 +30,7 @@ import { useCreateDocsFile } from '../hooks/useCreateDocsFile';
 import { useHealthInfo } from '../hooks/useHealthInfo';
 import useQueryParam from '../hooks/useQueryParam';
 import { useUpload } from '../hooks/useUpload';
-import { DocsType, NodeListItemType, URLParams } from '../types/common';
+import { DocsType, URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
@@ -47,7 +46,6 @@ const FolderView = (): React.JSX.Element => {
 	const { rootId } = useParams<URLParams>();
 	const { setActiveNode } = useActiveNode();
 	const folderId = useQueryParam('folder');
-	const [newFile, setNewFile] = useState<DocsType | undefined>();
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 
@@ -90,16 +88,15 @@ const FolderView = (): React.JSX.Element => {
 		[permissionsData]
 	);
 
-	// folder creation
-	const [newFolder, setNewFolder] = useState(false);
-
 	const { createFolder } = useCreateFolderMutation();
 
 	const createFolderCallback = useCallback(
 		(_parentId: string, newName: string) => {
 			if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
 				return createFolder(currentFolder.getNode, newName).then((result) => {
-					result.data && setActiveNode(result.data.createFolder.id);
+					if (result.data) {
+						setActiveNode(result.data.createFolder.id);
+					}
 					return result;
 				});
 			}
@@ -108,90 +105,80 @@ const FolderView = (): React.JSX.Element => {
 		[createFolder, currentFolder?.getNode, setActiveNode]
 	);
 
-	const resetNewFolder = useCallback(() => {
-		setNewFolder(false);
-	}, []);
+	const { openCreateModal: openCreateFolderModal } = useCreateModal();
 
-	const { openCreateModal: openCreateFolderModal } = useCreateModal(
-		t('folder.create.modal.title', 'Create new folder'),
-		t('folder.create.modal.input.label.name', 'Folder name'),
-		createFolderCallback,
-		undefined,
-		resetNewFolder
+	const createFolderAction = useCallback(
+		(event: React.SyntheticEvent | KeyboardEvent) => {
+			event?.stopPropagation();
+			openCreateFolderModal({
+				title: t('folder.create.modal.title', 'Create new folder'),
+				inputLabel: t('folder.create.modal.input.label.name', 'Folder name'),
+				createAction: createFolderCallback,
+				parentFolderId: currentFolderId
+			});
+		},
+		[createFolderCallback, currentFolderId, openCreateFolderModal, t]
 	);
-
-	useEffect(() => {
-		if (newFolder) {
-			openCreateFolderModal(currentFolderId);
-		}
-	}, [currentFolderId, newFolder, openCreateFolderModal]);
-
-	const createFolderAction = useCallback((event: React.SyntheticEvent | KeyboardEvent) => {
-		event?.stopPropagation();
-		setNewFolder(true);
-	}, []);
 
 	const createDocsFile = useCreateDocsFile();
 
 	const createDocsFileAction = useCallback(
-		(_parentId: string, newName: string) => {
-			if (currentFolder?.getNode && isFolder(currentFolder.getNode) && newFile) {
-				return createDocsFile(currentFolder?.getNode, newName, newFile).then((result) => {
-					if (result?.data?.getNode) {
-						setActiveNode(result.data.getNode.id);
-					}
-					return result ?? {};
-				});
+		(docsType: DocsType) => async (_parentId: string, newName: string) => {
+			if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
+				const result = await createDocsFile(currentFolder.getNode, newName, docsType);
+				if (result?.data?.getNode) {
+					setActiveNode(result.data.getNode.id);
+				}
+				return result ?? {};
 			}
 			return Promise.reject(new Error('cannot create folder: invalid node or file type'));
 		},
-		[createDocsFile, currentFolder?.getNode, newFile, setActiveNode]
+		[createDocsFile, currentFolder?.getNode, setActiveNode]
 	);
 
-	const resetNewFile = useCallback(() => {
-		setNewFile(undefined);
-	}, [setNewFile]);
-
-	const documentGenericType = newFile ? getDocumentGenericType(newFile) : 'document';
-
-	const { openCreateModal: openCreateFileModal } = useCreateModal(
-		t(`docs.create.modal.title.${documentGenericType}`, `Create new ${documentGenericType}`),
-		t(`docs.create.modal.input.label.name.${documentGenericType}`, `${documentGenericType} Name`),
-		createDocsFileAction,
-		newFile ? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[newFile]}`}</Text> : undefined,
-		resetNewFile
-	);
-
-	useEffect(() => {
-		if (newFile) {
-			openCreateFileModal(currentFolderId);
-		}
-	}, [openCreateFileModal, currentFolderId, newFile]);
+	const { openCreateModal: openCreateFileModal } = useCreateModal();
 
 	const createDocsAction = useCallback<
 		(docsType: DocsType) => (event: React.SyntheticEvent | KeyboardEvent) => void
 	>(
 		(docsType) => () => {
-			setNewFile(docsType);
+			const documentGenericType = getDocumentGenericType(docsType);
+
+			openCreateFileModal({
+				title: t(
+					`docs.create.modal.title.${documentGenericType}`,
+					`Create new ${documentGenericType}`
+				),
+				inputLabel: t(
+					`docs.create.modal.input.label.name.${documentGenericType}`,
+					`${documentGenericType} Name`
+				),
+				createAction: createDocsFileAction(docsType),
+				inputCustomIcon: docsType
+					? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[docsType]}`}</Text>
+					: undefined,
+				parentFolderId: currentFolderId
+			});
 		},
-		[]
+		[createDocsFileAction, currentFolderId, openCreateFileModal, t]
 	);
 
 	const { canUseDocs } = useHealthInfo();
 
-	const actions = useMemo(
-		(): ContextualMenuProps['actions'] => [
+	const actions = useMemo<NewAction[]>(
+		() => [
 			{
 				id: ACTION_IDS.CREATE_FOLDER,
 				label: t('create.options.new.folder', 'New folder'),
 				icon: 'FolderOutline',
-				onClick: createFolderAction,
+				execute: createFolderAction,
 				disabled: !isCanCreateFolder
 			},
 			...(canUseDocs
 				? [
 						{
 							id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
+							execute: noop,
 							label: t('create.options.new.document', 'New document'),
 							icon: 'FileTextOutline',
 							disabled: !isCanCreateFile,
@@ -212,6 +199,7 @@ const FolderView = (): React.JSX.Element => {
 						},
 						{
 							id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
+							execute: noop,
 							label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 							icon: 'FileCalcOutline',
 							disabled: !isCanCreateFile,
@@ -232,6 +220,7 @@ const FolderView = (): React.JSX.Element => {
 						},
 						{
 							id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
+							execute: noop,
 							label: t('create.options.new.presentation', 'New presentation'),
 							icon: 'FilePresentationOutline',
 							disabled: !isCanCreateFile,
@@ -257,19 +246,16 @@ const FolderView = (): React.JSX.Element => {
 	);
 
 	useEffect(() => {
-		const createActions = map<ContextualMenuProps['actions'][number], CreateOption>(
-			actions,
-			(action) => ({
-				type: ACTION_TYPES.NEW,
-				id: action.id,
-				action: () => ({
-					group: FILES_APP_ID,
-					...action
-				})
+		const createActions = map(actions, (action) => ({
+			type: ACTION_TYPES.NEW,
+			id: action.id,
+			action: () => ({
+				group: FILES_APP_ID,
+				...action
 			})
-		);
+		}));
 
-		setCreateOptions(
+		setCreateOptions<NewAction>(
 			{
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
@@ -279,8 +265,8 @@ const FolderView = (): React.JSX.Element => {
 					group: FILES_APP_ID,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					onClick: (event: React.SyntheticEvent | KeyboardEvent): void => {
-						event && event.stopPropagation();
+					execute: (event: React.SyntheticEvent | KeyboardEvent): void => {
+						event?.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
 					},
@@ -305,7 +291,7 @@ const FolderView = (): React.JSX.Element => {
 		t
 	]);
 
-	const nodes = useMemo<NodeListItemType[]>(() => {
+	const nodes = useMemo(() => {
 		if (
 			currentFolder?.getNode &&
 			isFolder(currentFolder.getNode) &&

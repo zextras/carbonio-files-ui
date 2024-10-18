@@ -77,7 +77,7 @@ describe('Node List Item Avatar', () => {
 		node.mime_type = 'image/gif';
 		setup(<NodeListItem node={node} {...getMissingProps()} />);
 		expect(await screen.findByTestId(SELECTORS.nodeAvatar)).toBeVisible();
-		expect(healthCache.healthReceived).toBeTruthy();
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(getPreviewThumbnailSrcFn).not.toHaveBeenCalled();
 	});
 });

@@ -9,16 +9,16 @@ import React, { useCallback } from 'react';
 import { useModal, useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { GetNodeParentType, Node } from '../../types/common';
+import { Node } from '../../types/common';
+import { DeepPick } from '../../types/utils';
 import { MoveNodesModalContent } from '../../views/components/MoveNodesModalContent';
 import { useDestinationVarManager } from '../useDestinationVarManager';
 
-export type OpenMoveModal = (
-	nodes: Array<
-		Pick<Node, '__typename' | 'id' | 'owner' | 'permissions' | 'rootId'> & GetNodeParentType
-	>,
-	fromFolder?: string
-) => void;
+type NodeItem = Node<'id' | 'permissions' | 'rootId'> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
+
+export type OpenMoveModal = (nodes: NodeItem[], fromFolder?: string) => void;
 
 export function useMoveModal(moveNodesActionCallback?: () => void): {
 	openMoveNodesModal: OpenMoveModal;

@@ -6,7 +6,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act } from '@testing-library/react-hooks';
+import { act } from '@testing-library/react';
 import { CreateSnackbarFn, CreateSnackbarFnArgs, Text } from '@zextras/carbonio-design-system';
 import { http, HttpResponse } from 'msw';
 

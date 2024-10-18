@@ -24,23 +24,22 @@ import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
-import { Action, GetNodeParentType } from '../../types/common';
-import { File, MakeOptional, Node } from '../../types/graphql/types';
-import {
-	ActionsFactoryNodeType,
-	buildActionItems,
-	getAllPermittedActions
-} from '../../utils/ActionsFactory';
+import { Node } from '../../types/common';
+import { DeepPick } from '../../types/utils';
+import { Action, buildActionItems, getAllPermittedActions } from '../../utils/ActionsFactory';
 import { downloadNode } from '../../utils/utils';
 
+type NodeItem = Node<
+	'id' | 'name' | 'rootId' | 'permissions' | 'type' | 'flagged',
+	'version' | 'mime_type'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
 interface DisplayerActionsParams {
-	node: ActionsFactoryNodeType &
-		Pick<Node, 'rootId' | 'id' | 'name'> &
-		GetNodeParentType &
-		MakeOptional<Pick<File, 'version'>, 'version'>;
+	node: NodeItem;
 }
 
-export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) => {
+export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	/** Mutation to update the flag status */
@@ -73,7 +72,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
 	const permittedDisplayerActions: Action[] = useMemo(
-		() => getAllPermittedActions([node], canUsePreview, canUseDocs),
+		() => getAllPermittedActions({ nodes: [node], canUsePreview, canUseDocs }),
 		[canUseDocs, canUsePreview, node]
 	);
 

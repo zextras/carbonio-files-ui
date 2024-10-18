@@ -14,21 +14,16 @@ import { Label } from './Label';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { ROOTS } from '../../constants';
 import useQueryParam from '../../hooks/useQueryParam';
-import { Crumb, CrumbNode, Node, URLParams } from '../../types/common';
-import {
-	GetPathDocument,
-	GetPathQuery,
-	GetPathQueryVariables,
-	NodeType
-} from '../../types/graphql/types';
+import { Crumb, URLParams } from '../../types/common';
+import { GetPathDocument, NodeType, Node as GQLNode } from '../../types/graphql/types';
 import { buildCrumbs } from '../../utils/utils';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
 
 export interface PathRowProps {
-	id: Node['id'];
-	name: Node['name'];
-	type: Node['type'];
-	rootId?: Node['rootId'];
+	id: GQLNode['id'];
+	name: GQLNode['name'];
+	type: GQLNode['type'];
+	rootId: GQLNode['rootId'];
 }
 
 export const PathRow = ({ id, name, type, rootId }: PathRowProps): React.JSX.Element => {
@@ -40,7 +35,7 @@ export const PathRow = ({ id, name, type, rootId }: PathRowProps): React.JSX.Ele
 	const { navigateToFolder } = useNavigation();
 
 	const isCrumbNavigable = useCallback(
-		(node: Pick<Node, 'id' | 'type'>) =>
+		(node: Pick<GQLNode, 'id' | 'type'>) =>
 			(node.type === NodeType.Folder || node.type === NodeType.Root) &&
 			// disable navigation for folder currently visible in list
 			node.id !== activeFolderId &&
@@ -51,34 +46,22 @@ export const PathRow = ({ id, name, type, rootId }: PathRowProps): React.JSX.Ele
 	);
 
 	const [crumbs, setCrumbs] = useState<Crumb[]>(
-		buildCrumbs([{ name, id, type }], navigateToFolder, t, (node: CrumbNode) =>
-			isCrumbNavigable(node)
-		)
+		buildCrumbs([{ name, id, type }], navigateToFolder, t, isCrumbNavigable)
 	);
 
 	const [crumbsRequested, setCrumbsRequested] = useState<boolean>(false);
 
 	// use a lazy query to load full path only when requested
-	const [getPathQuery, { data: getPathData }] = useLazyQuery<GetPathQuery, GetPathQueryVariables>(
-		GetPathDocument,
-		{
-			notifyOnNetworkStatusChange: true
-		}
-	);
+	const [getPathQuery, { data: getPathData }] = useLazyQuery(GetPathDocument, {
+		notifyOnNetworkStatusChange: true
+	});
 
 	useEffect(() => {
 		// when node changes, check if getPath is already in cache
 		// if so, show full path
 		// otherwise, show collapsed crumbs (by default show collapsed crumbs)
 		setCrumbsRequested(false);
-		setCrumbs(
-			buildCrumbs(
-				[{ name, id, type }],
-				navigateToFolder,
-				t,
-				(node: Pick<Node, 'id' | 'name' | 'type'>) => isCrumbNavigable(node)
-			)
-		);
+		setCrumbs(buildCrumbs([{ name, id, type }], navigateToFolder, t, isCrumbNavigable));
 		getPathQuery({
 			variables: {
 				node_id: id
@@ -91,11 +74,7 @@ export const PathRow = ({ id, name, type, rootId }: PathRowProps): React.JSX.Ele
 		// use an effect on data returned by lazy query to update the crumbs in order to trigger rerender of the UI
 		// when lazy query reload following an eviction of the cache
 		if (getPathData?.getPath) {
-			setCrumbs(
-				buildCrumbs(getPathData.getPath, navigateToFolder, t, (node: Pick<Node, 'id' | 'type'>) =>
-					isCrumbNavigable(node)
-				)
-			);
+			setCrumbs(buildCrumbs(getPathData.getPath, navigateToFolder, t, isCrumbNavigable));
 			setCrumbsRequested(true);
 		}
 	}, [getPathData, isCrumbNavigable, navigateToFolder, t]);

@@ -6,19 +6,18 @@
 
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
-import { ListV2, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
+import { List, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
 import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
-import { NodeListItem } from './NodeListItem';
+import { NodeListItem, NodeListItemProps } from './NodeListItem';
 import { NodeListItemDragImage } from './NodeListItemDragImage';
 import { GridItem } from './StyledComponents';
 import { VirtualizedNodeListItem } from './VirtualizedNodeListItem';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, GRID_ITEM_MIN_WIDTH, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
 import { ListContext } from '../../contexts';
-import { Action, NodeListItemType } from '../../types/common';
-import { getPermittedActions } from '../../utils/ActionsFactory';
+import { Action, getPermittedActions } from '../../utils/ActionsFactory';
 import { cssCalcBuilder } from '../../utils/utils';
 
 const DragImageContainer = styled.div<{ $isGrid: boolean }>`
@@ -36,7 +35,7 @@ const DragImageContainer = styled.div<{ $isGrid: boolean }>`
 		`};
 `;
 
-const Grid = styled(ListV2)`
+const Grid = styled(List)`
 	& > div {
 		padding-left: 1rem;
 		padding-right: 1rem;
@@ -47,8 +46,10 @@ const Grid = styled(ListV2)`
 	}
 `;
 
+type NodeItem = NodeListItemProps['node'];
+
 interface ListContentProps {
-	nodes: NodeListItemType[];
+	nodes: NodeItem[];
 	selectedMap: Record<string, boolean>;
 	selectId: (id: string) => void;
 	isSelectionModeActive: boolean;
@@ -77,22 +78,19 @@ export const ListContent = ({
 
 	const [dragImage, setDragImage] = useState<React.JSX.Element[]>([]);
 
-	const dragStartHandler = useCallback<
-		(node: NodeListItemType) => React.DragEventHandler<HTMLElement>
-	>(
+	const dragStartHandler = useCallback<(node: NodeItem) => React.DragEventHandler<HTMLElement>>(
 		(node) =>
 			(event): void => {
 				Object.values(DRAG_TYPES).forEach((dragType) => event.dataTransfer.clearData(dragType));
-				const nodesToDrag: NodeListItemType[] = [];
+				const nodesToDrag: NodeItem[] = [];
 				if (isSelectionModeActive) {
 					nodesToDrag.push(...nodes.filter(({ id }) => selectedMap[id]));
 				} else {
 					nodesToDrag.push(node);
 				}
-				const permittedActions = getPermittedActions(nodesToDrag, [
-					Action.Move,
-					Action.MoveToTrash
-				]);
+				const permittedActions = getPermittedActions([Action.Move, Action.MoveToTrash], {
+					nodes: nodesToDrag
+				});
 
 				const draggedItemsTmp = nodesToDrag.reduce<React.JSX.Element[]>(
 					(accumulator, nodeToDrag, currentIndex) => {
@@ -224,7 +222,7 @@ export const ListContent = ({
 					{items}
 				</Grid>
 			) : (
-				<ListV2
+				<List
 					maxHeight={'100%'}
 					height={'auto'}
 					data-testid="main-list"
@@ -234,7 +232,7 @@ export const ListContent = ({
 					ref={listRef}
 				>
 					{items}
-				</ListV2>
+				</List>
 			)}
 			<DragImageContainer $isGrid={viewMode === VIEW_MODE.grid} ref={dragImageRef}>
 				{dragImage}

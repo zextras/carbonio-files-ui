@@ -11,7 +11,7 @@ import { NetworkError } from '@apollo/client/errors';
 import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
-import { chain, findIndex, forEach, isEmpty, map, reduce, toLower, trim } from 'lodash';
+import { findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
 import { getUserAccount } from '../../utils/utils';
@@ -30,23 +30,22 @@ import {
 	Crumb,
 	CrumbNode,
 	DocsType,
-	NodeListItemType,
+	Node,
 	OrderTrend,
 	OrderType,
 	Role,
-	SortableNode,
 	TargetModule
 } from '../types/common';
 import {
 	File,
 	Folder,
 	Maybe,
-	Node,
+	Node as GQLNode,
 	NodeSort,
 	NodeType,
+	Share,
 	SharePermission
 } from '../types/graphql/types';
-import { MakeRequiredNonNull } from '../types/utils';
 import type { NodeListItemUIProps } from '../views/components/NodeListItemUI';
 
 /**
@@ -166,23 +165,19 @@ export const buildCrumbs = (
 	nodes: Array<Maybe<CrumbNode> | undefined>,
 	clickHandler?: (id: string, event: React.SyntheticEvent | KeyboardEvent) => void,
 	t?: TFunction,
-	nodeClickCondition: (node: Pick<Node, 'id' | 'name' | 'type'>) => boolean = (): boolean => true
+	nodeClickCondition: (node: CrumbNode) => boolean = (): boolean => true
 ): Crumb[] =>
 	// the array can contain null if path is requested for a node with no accessible parent
-	chain(nodes)
+	nodes
 		.filter((node): node is CrumbNode => node !== undefined && node !== null)
-		.map(
-			(node): Crumb => ({
-				id: node.id,
-				/* i18next-extract-disable-next-line */
-				label: t?.('node.alias.name', node.name, { context: node.id }) ?? node.name,
-				onClick:
-					node && clickHandler && nodeClickCondition(node)
-						? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler(node.id, event)
-						: undefined
-			})
-		)
-		.value();
+		.map((node) => ({
+			id: node.id,
+			label: t?.('node.alias.name', node.name, { context: node.id }) ?? node.name,
+			onClick:
+				node && clickHandler && nodeClickCondition(node)
+					? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler(node.id, event)
+					: undefined
+		}));
 
 export const formatDate = (
 	date: Date | string | number | undefined | null,
@@ -219,8 +214,8 @@ export const initExpirationDate = (date: Date | null | undefined): Date | undefi
 	return endOfDay;
 };
 
-export function takeIfNotEmpty(value: string | undefined): string | undefined {
-	return value !== undefined && !isEmpty(value) ? value : undefined;
+export function takeIfNotEmpty(value: string | null | undefined): string | undefined {
+	return value !== undefined && value !== null && value.trim().length > 0 ? value : undefined;
 }
 
 function decodeGraphQLErrorWithCode(error: GraphQLError, t: TFunction): string | undefined {
@@ -366,6 +361,9 @@ export const scrollToNodeItem = (
 		}, timeout);
 	}
 };
+
+export type SortableNode = Pick<GQLNode, 'id' | 'name' | 'updated_at' | 'type'> &
+	Partial<Pick<File, 'size'>>;
 
 export function propertyComparator<T extends SortableNode[keyof SortableNode]>(
 	nodeA: Maybe<SortableNode> | undefined,
@@ -769,13 +767,13 @@ export function cssCalcBuilder(
 
 export function isFile<TNode extends { __typename?: string }>(
 	node: TNode | null | undefined
-): node is TNode & MakeRequiredNonNull<File, '__typename'> {
+): node is TNode & { __typename: NonNullable<File['__typename']> } {
 	return node?.__typename === 'File';
 }
 
 export function isFolder<TNode extends { __typename?: string }>(
 	node: TNode | null | undefined
-): node is TNode & MakeRequiredNonNull<Folder, '__typename'> {
+): node is TNode & { __typename: NonNullable<Folder['__typename']> } {
 	return node?.__typename === 'Folder';
 }
 
@@ -810,19 +808,10 @@ export function getDocumentGenericType(
 }
 
 export function nodeToNodeListItemUIProps(
-	node: Pick<
-		NodeListItemType,
-		| 'id'
-		| 'name'
-		| 'flagged'
-		| 'owner'
-		| 'shares'
-		| 'last_editor'
-		| 'type'
-		| 'rootId'
-		| '__typename'
-	> &
-		(Pick<{ __typename: 'File' } & NodeListItemType, 'size' | 'extension'> | Record<never, never>),
+	node: Node<
+		'id' | 'name' | 'flagged' | 'owner' | 'last_editor' | 'type' | 'rootId',
+		'size' | 'extension'
+	> & { shares: Maybe<Pick<Share, '__typename'>>[] },
 	t: TFunction
 ): Pick<
 	NodeListItemUIProps,
