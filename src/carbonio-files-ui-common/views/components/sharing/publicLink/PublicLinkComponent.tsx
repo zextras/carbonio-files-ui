@@ -118,7 +118,7 @@ export const PublicLinkComponent = ({
 				onEditConfirm(
 					id,
 					linkDescriptionValue,
-					updatedTimestamp !== expiresAt ? (updatedTimestamp ?? 0) : undefined
+					updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined
 				)
 			]),
 		[expiresAt, id, linkDescriptionValue, onEditConfirm, updatedTimestamp]

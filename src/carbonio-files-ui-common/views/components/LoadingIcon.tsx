@@ -26,6 +26,8 @@ export const LoadingIcon = React.forwardRef<HTMLDivElement, Partial<ButtonProps>
 		{ onClick = (): void => undefined, type = 'ghost', shape = 'round', color = 'text', ...rest },
 		ref
 	) {
-		return <StyledButton onClick={onClick} type={type} shape={shape} {...rest} ref={ref} />;
+		return (
+			<StyledButton onClick={onClick} type={type} shape={shape} color={color} {...rest} ref={ref} />
+		);
 	}
 );

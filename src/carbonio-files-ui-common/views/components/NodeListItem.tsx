@@ -43,6 +43,7 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { usePreview } from '../../hooks/usePreview';
 import { useUpload } from '../../hooks/useUpload';
 import { Node, URLParams } from '../../types/common';
@@ -60,15 +61,14 @@ import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/prev
 import { getUploadAddType } from '../../utils/uploadUtils';
 import {
 	downloadNode,
+	isFile,
+	isSearchView,
 	formatDate,
 	getIconByFileType,
 	getIconColorByFileType,
-	isFile,
 	isFolder,
-	isSearchView,
 	isTrashView,
-	nodeToNodeListItemUIProps,
-	openNodeWithDocs
+	nodeToNodeListItemUIProps
 } from '../../utils/utils';
 
 type NodeItem = Node<
@@ -186,6 +186,7 @@ export const NodeListItem = ({
 		[node.id, node.type]
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
+	const openNodeWithDocs = useOpenWithDocs();
 
 	// timer to start navigation
 	const navigationTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -237,8 +238,9 @@ export const NodeListItem = ({
 		trashed,
 		isNavigable,
 		permittedContextualMenuActions,
-		node,
 		navigateToFolder,
+		node.id,
+		openNodeWithDocs,
 		openPreview
 	]);
 
@@ -366,10 +368,11 @@ export const NodeListItem = ({
 		[
 			t,
 			sendViaMailCallback,
+			openNodeWithDocs,
+			node,
 			openPreview,
 			createSnackbar,
 			setActiveNode,
-			node,
 			toggleFlag,
 			openCopyNodesModal,
 			openMoveNodesModal,

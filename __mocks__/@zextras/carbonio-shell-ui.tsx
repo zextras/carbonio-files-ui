@@ -80,3 +80,9 @@ export const EMAIL_VALIDATION_REGEX =
 export const registerActions: typeof shell.registerActions = () => undefined;
 export const removeActions: typeof shell.removeActions = () => undefined;
 export const Spinner: typeof shell.Spinner = () => <>Spinner component stub</>;
+const noop = (): void => undefined;
+export const useTracker: typeof shell.useTracker = () => ({
+	capture: noop,
+	enableTracker: noop,
+	reset: noop
+});
