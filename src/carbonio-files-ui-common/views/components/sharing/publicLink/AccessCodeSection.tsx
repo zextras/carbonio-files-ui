@@ -3,13 +3,14 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import {
 	Button,
 	Container,
 	Icon,
 	Input,
+	InputProps,
 	Switch,
 	Tooltip,
 	useSnackbar
@@ -53,18 +54,15 @@ export const AccessCodeSection = ({
 		setIsAccessCodeShown((prevState) => !prevState);
 	}, []);
 
-	const CustomElement = useMemo(
-		() =>
-			function IconComponent() {
-				return (
-					<Icon
-						size={'large'}
-						style={{ cursor: 'pointer' }}
-						icon={isAccessCodeShown ? 'EyeOutline' : 'EyeOffOutline'}
-						onClick={toggleShowAccessCode}
-					/>
-				);
-			},
+	const CustomElement = useCallback<NonNullable<InputProps['CustomIcon']>>(
+		() => (
+			<Icon
+				size={'large'}
+				style={{ cursor: 'pointer' }}
+				icon={isAccessCodeShown ? 'EyeOutline' : 'EyeOffOutline'}
+				onClick={toggleShowAccessCode}
+			/>
+		),
 		[isAccessCodeShown, toggleShowAccessCode]
 	);
 
