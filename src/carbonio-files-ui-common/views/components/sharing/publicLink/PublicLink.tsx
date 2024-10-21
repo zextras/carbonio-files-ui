@@ -77,6 +77,18 @@ export const PublicLink = ({
 		setThereIsOpenRow(false);
 	}, []);
 
+	const createLinkCopiedSnackbar = useCallback(() => {
+		createSnackbar({
+			key: new Date().toLocaleString(),
+			severity: 'info',
+			label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
+				replace: { linkName }
+			}),
+			replace: true,
+			hideButton: true
+		});
+	}, [createSnackbar, linkName, t]);
+
 	const onGenerate = useCallback(
 		(description?: string, expiresAt?: Date, accessCode?: string) => {
 			setAddPublicLinkStatus(PublicLinkRowStatus.CLOSED);
@@ -95,17 +107,8 @@ export const PublicLink = ({
 								}
 							),
 							replace: true,
-							onActionClick: async () => {
-								await copyToClipboard(data.createLink.url as string);
-								createSnackbar({
-									key: new Date().toLocaleString(),
-									severity: 'info',
-									label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
-										replace: { linkName }
-									}),
-									replace: true,
-									hideButton: true
-								});
+							onActionClick: () => {
+								copyToClipboard(data.createLink.url as string).then(createLinkCopiedSnackbar);
 							},
 							actionLabel: t('snackbar.publicLink.actionLabel.copyLink', 'Copy Link')
 						});
@@ -118,7 +121,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createLink, createSnackbar, t, linkName]
+		[createLink, createSnackbar, t, linkName, createLinkCopiedSnackbar]
 	);
 
 	/** PublicLinkComponent callbacks */
@@ -193,17 +196,8 @@ export const PublicLink = ({
 								replace: { linkName }
 							}),
 							replace: true,
-							onActionClick: async () => {
-								await copyToClipboard(data.updateLink?.url as string);
-								createSnackbar({
-									key: new Date().toLocaleString(),
-									severity: 'info',
-									label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
-										replace: { linkName }
-									}),
-									replace: true,
-									hideButton: true
-								});
+							onActionClick: () => {
+								copyToClipboard(data.updateLink?.url as string).then(createLinkCopiedSnackbar);
 							},
 							actionLabel: t('snackbar.publicLink.actionLabel.copyLink', 'Copy Link')
 						});
@@ -215,7 +209,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createSnackbar, t, updateLink, linkName]
+		[updateLink, createSnackbar, t, linkName, createLinkCopiedSnackbar]
 	);
 
 	const linkComponents = useMemo(() => {
