@@ -95,17 +95,16 @@ export const PublicLink = ({
 								}
 							),
 							replace: true,
-							onActionClick: () => {
-								copyToClipboard(data.createLink.url as string).then(() => {
-									createSnackbar({
-										key: new Date().toLocaleString(),
-										severity: 'info',
-										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
-											replace: { linkName }
-										}),
-										replace: true,
-										hideButton: true
-									});
+							onActionClick: async () => {
+								await copyToClipboard(data.createLink.url as string);
+								createSnackbar({
+									key: new Date().toLocaleString(),
+									severity: 'info',
+									label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
+										replace: { linkName }
+									}),
+									replace: true,
+									hideButton: true
 								});
 							},
 							actionLabel: t('snackbar.publicLink.actionLabel.copyLink', 'Copy Link')
@@ -194,17 +193,16 @@ export const PublicLink = ({
 								replace: { linkName }
 							}),
 							replace: true,
-							onActionClick: () => {
-								copyToClipboard(data.updateLink?.url as string).then(() => {
-									createSnackbar({
-										key: new Date().toLocaleString(),
-										severity: 'info',
-										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
-											replace: { linkName }
-										}),
-										replace: true,
-										hideButton: true
-									});
+							onActionClick: async () => {
+								await copyToClipboard(data.updateLink?.url as string);
+								createSnackbar({
+									key: new Date().toLocaleString(),
+									severity: 'info',
+									label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
+										replace: { linkName }
+									}),
+									replace: true,
+									hideButton: true
 								});
 							},
 							actionLabel: t('snackbar.publicLink.actionLabel.copyLink', 'Copy Link')

@@ -18,7 +18,7 @@ import { populateLink, populateNode } from '../../../../mocks/mockUtils';
 import { screen, setup, within } from '../../../../tests/utils';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../../../../types/graphql/types';
-import { mockCreateLink, mockGetLinks } from '../../../../utils/resolverMocks';
+import { mockCreateLink, mockGetLinks, mockUpdateLink } from '../../../../utils/resolverMocks';
 import * as moduleUtils from '../../../../utils/utils';
 import { generateAccessCode, isFolder } from '../../../../utils/utils';
 
@@ -358,7 +358,39 @@ describe('Access code', () => {
 		});
 
 		describe('Update access code', () => {
-			it.todo('should update the changes when the user clicks on "edit link" button');
+			it('should update the changes when the user clicks on "edit link" button (after regenerating)', async () => {
+				const node = populateNode('Folder');
+				const props = getPublicLinkProps(node);
+				const link = populateLink(node, true);
+				const mocks = {
+					Query: {
+						getLinks: mockGetLinks([link])
+					},
+					Mutation: {
+						updateLink: mockUpdateLink(link)
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
+				await screen.findByText(link.url as string);
+				await user.click(screen.getByRole('button', { name: /edit/i }));
+				await user.click(
+					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.regenerateAccessCode })
+				);
+				const accessCodeInput = screen.getByLabelText<HTMLInputElement>(/access code/i);
+				const accessCodeValue = accessCodeInput.value;
+				link.access_code = accessCodeValue;
+				mocks.Mutation.updateLink = mockUpdateLink(link);
+				await user.click(screen.getByRole('button', { name: /edit link/i }));
+				const accessCodeChip = screen
+					.getAllByTestId(SELECTORS.chip)
+					.find((chip) => within(chip).queryByText('**********') !== null) as HTMLElement;
+
+				await user.click(
+					within(accessCodeChip).getByRoleWithIcon('button', { icon: ICON_REGEXP.eyePasswordOff })
+				);
+				expect(within(accessCodeChip).getByText(accessCodeValue)).toBeVisible();
+			});
 		});
 
 		describe('Undo', () => {

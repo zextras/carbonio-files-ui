@@ -24,17 +24,15 @@ export const AccessCodeComponent = ({ accessCode }: { accessCode: string }): Rea
 	const [showAccessCode, setShowAccessCode] = useState(false);
 
 	const copyAccessCode = useCallback(() => {
-		if (accessCode) {
-			copyToClipboard(accessCode).then(() => {
-				createSnackbar({
-					key: new Date().toLocaleString(),
-					severity: 'info',
-					label: t('snackbar.clipboard.accessCodeCopied', 'Access code copied'),
-					replace: true,
-					hideButton: true
-				});
+		copyToClipboard(accessCode).then(() => {
+			createSnackbar({
+				key: new Date().toLocaleString(),
+				severity: 'info',
+				label: t('snackbar.clipboard.accessCodeCopied', 'Access code copied'),
+				replace: true,
+				hideButton: true
 			});
-		}
+		});
 	}, [accessCode, createSnackbar, t]);
 
 	const showActionCallback = useCallback<IconButtonProps['onClick']>((ev) => {

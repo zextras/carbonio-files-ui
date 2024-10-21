@@ -38,17 +38,15 @@ export const AccessCodeSection = ({
 	const createSnackbar = useSnackbar();
 
 	const copyAccessCode = useCallback(() => {
-		if (accessCode) {
-			copyToClipboard(accessCode).then(() => {
-				createSnackbar({
-					key: new Date().toLocaleString(),
-					severity: 'info',
-					label: t('snackbar.clipboard.accessCodeCopied', 'Access code copied'),
-					replace: true,
-					hideButton: true
-				});
+		copyToClipboard(accessCode).then(() => {
+			createSnackbar({
+				key: new Date().toLocaleString(),
+				severity: 'info',
+				label: t('snackbar.clipboard.accessCodeCopied', 'Access code copied'),
+				replace: true,
+				hideButton: true
 			});
-		}
+		});
 	}, [createSnackbar, accessCode, t]);
 
 	const toggleShowAccessCode = useCallback(() => {

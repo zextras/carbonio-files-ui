@@ -27,6 +27,7 @@ import {
 	TIMERS,
 	UPLOAD_TO_PATH
 } from '../constants';
+import { generateAccessCodeFallback, generateAccessCodeWithCrypto } from './utils.accessCode';
 import {
 	Contact,
 	Crumb,
@@ -863,43 +864,13 @@ export function nodeToNodeListItemUIProps(
 	};
 }
 
-function generateAccessCodeWithCrypto(length: number): string {
-	let generatedPassword = '';
-	const numbers = '0123456789';
-	const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
-	const capitalLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	const validChars = numbers + lowerCaseLetters + capitalLetters;
-
-	for (let i = 0; i < length; i += 1) {
-		let randomNumber = crypto.getRandomValues(new Uint32Array(1))[0];
-		randomNumber /= 0x100000000;
-		randomNumber = Math.floor(randomNumber * validChars.length);
-
-		generatedPassword += validChars[randomNumber];
+export const generateAccessCode = (length = 10): string => {
+	if (length < 0) {
+		throw new Error('Unexpected length');
 	}
-
-	return generatedPassword;
-}
-
-function generateAccessCodeFallback(length: number): string {
-	let pass = '';
-	const numbers = '0123456789';
-	const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
-	const capitalLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	const validChars = numbers + lowerCaseLetters + capitalLetters;
-
-	for (let i = 1; i <= length; i += 1) {
-		const char = Math.floor(Math.random() * validChars.length + 1);
-		pass += validChars.charAt(char);
-	}
-
-	return pass;
-}
-
-export function generateAccessCode(length = 10): string {
 	try {
 		return generateAccessCodeWithCrypto(length);
 	} catch (e) {
 		return generateAccessCodeFallback(length);
 	}
-}
+};
