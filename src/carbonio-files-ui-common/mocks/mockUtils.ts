@@ -461,8 +461,8 @@ export function populateLink(node: GQLFile | GQLFolder, withAccessCode?: boolean
 		created_at: faker.date.recent().getTime(),
 		expires_at: faker.helpers.arrayElement([
 			null,
-			faker.date.soon().getTime(),
-			faker.date.future().getTime()
+			faker.date.soon().setHours(23, 59, 59),
+			faker.date.future().setHours(23, 59, 59)
 		]),
 		description: faker.helpers.arrayElement([null, faker.lorem.sentence()]),
 		url: faker.internet.url(),

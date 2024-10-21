@@ -32,6 +32,16 @@ import { PublicLinkRowStatus } from '../../../../types/common';
 import { copyToClipboard, formatDate, initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 
+export function calculateIsExpirationChanged(
+	expiresAt: number | null | undefined,
+	updatedTimestamp: number | null | undefined
+): boolean {
+	return !(
+		(!expiresAt && !updatedTimestamp) ||
+		(expiresAt && updatedTimestamp && expiresAt === updatedTimestamp)
+	);
+}
+
 export function calculateIsDescriptionChanged(
 	oldDescription: string | null | undefined,
 	newDescription: string | null | undefined
@@ -119,8 +129,13 @@ export const PublicLinkComponent = ({
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
 
-	const { newAccessCodeValue, isAccessCodeEnabled, regenerateAccessCode, toggleAccessCode } =
-		useAccessCode(!!accessCode, accessCode);
+	const {
+		newAccessCodeValue,
+		isAccessCodeEnabled,
+		regenerateAccessCode,
+		toggleAccessCode,
+		resetToInitial
+	} = useAccessCode(!!accessCode, accessCode);
 
 	const isExpired = useMemo(() => (expiresAt ? Date.now() > expiresAt : false), [expiresAt]);
 
@@ -142,8 +157,8 @@ export const PublicLinkComponent = ({
 
 	const isSomethingChanged = useMemo(
 		() =>
-			(expiresAt !== updatedTimestamp && (expiresAt != null || updatedTimestamp != null)) ||
 			calculateIsDescriptionChanged(description, linkDescriptionValue) ||
+			calculateIsExpirationChanged(expiresAt, updatedTimestamp) ||
 			calculateIsAccessCodeChanged(accessCode, newAccessCodeValue, isAccessCodeEnabled),
 		[
 			accessCode,
@@ -170,8 +185,9 @@ export const PublicLinkComponent = ({
 		setLinkDescriptionValue(description ?? '');
 		setDate(initialDate);
 		setUpdatedTimestamp(expiresAt);
+		resetToInitial();
 		onUndo();
-	}, [description, expiresAt, initialDate, onUndo]);
+	}, [description, expiresAt, initialDate, onUndo, resetToInitial]);
 
 	const onRevokeOrRemoveCallback = useCallback(() => {
 		onRevokeOrRemove(id, !isExpired);

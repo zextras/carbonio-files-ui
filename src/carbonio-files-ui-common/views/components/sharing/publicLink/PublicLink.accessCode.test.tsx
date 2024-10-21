@@ -8,7 +8,11 @@ import React, { ComponentProps } from 'react';
 import { faker } from '@faker-js/faker';
 
 import { PublicLink } from './PublicLink';
-import { calculateIsAccessCodeChanged, calculateUpdatedAccessCode } from './PublicLinkComponent';
+import {
+	calculateIsAccessCodeChanged,
+	calculateIsExpirationChanged,
+	calculateUpdatedAccessCode
+} from './PublicLinkComponent';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateNode } from '../../../../mocks/mockUtils';
 import { screen, setup, within } from '../../../../tests/utils';
@@ -48,7 +52,7 @@ describe('Access code', () => {
 		expect(screen.queryByText(/enable access code/i)).not.toBeInTheDocument();
 	});
 
-	it('should generate the access code on first render', async () => {
+	it('should generate the access code when the user enables the access code', async () => {
 		const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
 		const props = getPublicLinkProps(populateNode('Folder'));
 		const mocks = {
@@ -81,6 +85,16 @@ describe('Access code', () => {
 		expect(screen.getByTestId(ICON_REGEXP.eyePasswordOff)).toBeEnabled();
 	});
 
+	it('should not render the input password when the user disables the switch', async () => {
+		const props = getPublicLinkProps(populateNode('Folder'));
+		const { user } = setup(<PublicLink {...props} />);
+
+		await user.click(screen.getByRole('button', { name: /add link/i }));
+		await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
+		await user.click(screen.getByTestId(ICON_REGEXP.switchOn));
+		expect(screen.queryByLabelText<HTMLInputElement>(/access code/i)).not.toBeInTheDocument();
+	});
+
 	it('should change the input type from password to text when the user clicks on the eye icon of the input', async () => {
 		const node = populateNode('Folder');
 		const props = getPublicLinkProps(node);
@@ -94,8 +108,8 @@ describe('Access code', () => {
 		expect(screen.getByRole('textbox', { name: /access code/i })).toHaveAttribute('type', 'text');
 	});
 
-	describe('buttons', () => {
-		it('should render the copy and regenerate buttons when the user enables the switch', async () => {
+	describe('Copy and regenerate buttons', () => {
+		it('should render the copy and regenerate buttons when the user enables the access code', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const { user } = setup(<PublicLink {...props} />);
@@ -106,6 +120,22 @@ describe('Access code', () => {
 			expect(
 				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.regenerateAccessCode })
 			).toBeVisible();
+		});
+
+		it('should not render the copy and regenerate buttons when the user disables the access code', async () => {
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const { user } = setup(<PublicLink {...props} />);
+
+			await user.click(screen.getByRole('button', { name: /add link/i }));
+			await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
+			await user.click(screen.getByTestId(ICON_REGEXP.switchOn));
+			expect(
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.copy })
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.regenerateAccessCode })
+			).not.toBeInTheDocument();
 		});
 
 		it('should render the tooltip when the user hovers the copy button', async () => {
@@ -132,7 +162,7 @@ describe('Access code', () => {
 			expect(await screen.findByText(/generate new access code/i)).toBeVisible();
 		});
 
-		it('should render tooltip and copy the access code when the user clicks on the copy button', async () => {
+		it('should copy the access code when the user clicks on the copy button', async () => {
 			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
@@ -192,6 +222,22 @@ describe('Access code', () => {
 			expect(
 				within(accessCodeChip).getByRoleWithIcon('button', { icon: ICON_REGEXP.eyePasswordOff })
 			).toBeVisible();
+		});
+
+		it('should render the tooltip when the user hovers the chip with the hidden access code (access code is enabled)', async () => {
+			const node = populateNode('Folder');
+			const props = getPublicLinkProps(node);
+			const link = populateLink(node, true);
+			const mocks = {
+				Query: {
+					getLinks: mockGetLinks([link])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
+			expect(await screen.findByText(/access code:/i)).toBeVisible();
+			await user.hover(screen.getByText('**********'));
+			expect(await screen.findByText(/copy access code/i)).toBeVisible();
 		});
 
 		it('should render the same access code as the one in the input when the user clicks on generate button', async () => {
@@ -273,7 +319,7 @@ describe('Access code', () => {
 			expect(screen.getByTestId(ICON_REGEXP.switchOff)).toBeVisible();
 		});
 
-		it.skip('should enable the edit link button when the user enables the switch (access code was not set)', async () => {
+		it('should enable the edit link button when the user enables the switch (access code was not set)', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node, false);
@@ -292,7 +338,7 @@ describe('Access code', () => {
 			expect(screen.getByRole('button', { name: /edit link/i })).toBeEnabled();
 		});
 
-		it.skip('should enable the edit link button when the user disables the switch (access code was set)', async () => {
+		it('should enable the edit link button when the user disables the switch (access code was set)', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node, true);
@@ -335,9 +381,31 @@ describe('Access code', () => {
 				expect(screen.queryByText(/enable access code/i)).not.toBeInTheDocument();
 			});
 
-			it.todo(
-				'should not change the access code when the user clicks on undo button after regenerating a new access code'
-			);
+			it('should not change the access code when the user clicks on undo button after regenerating a new access code', async () => {
+				const node = populateNode('Folder');
+				const props = getPublicLinkProps(node);
+				const link = populateLink(node, true);
+				const initialAccessCode = link.access_code;
+				const mocks = {
+					Query: {
+						getLinks: mockGetLinks([link])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
+				await screen.findByText(link.url as string);
+				await user.click(screen.getByRole('button', { name: /edit/i }));
+				await user.click(
+					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.regenerateAccessCode })
+				);
+				const newAccessCode = screen.getByLabelText<HTMLInputElement>(/access code/i).value;
+				expect(newAccessCode).not.toBe(initialAccessCode);
+				await user.click(screen.getByRole('button', { name: /undo/i }));
+				await user.click(screen.getByRole('button', { name: /edit/i }));
+				expect(screen.getByLabelText<HTMLInputElement>(/access code/i).value).toBe(
+					initialAccessCode
+				);
+			});
 
 			it('should render the switch disabled when the user clicks on undo and then click on add link button', async () => {
 				const node = populateNode('Folder');
@@ -480,6 +548,52 @@ describe('Access code', () => {
 				expect(
 					calculateIsAccessCodeChanged(generateAccessCode(), generateAccessCode(), false)
 				).toBeTruthy();
+			});
+		});
+
+		describe('CalculateIsExpirationChanged', () => {
+			it.each([null, undefined])(
+				'should return true if the expiration date was not set (%s) and then the user sets it',
+				(expiresAt) => {
+					expect(
+						calculateIsExpirationChanged(expiresAt, faker.date.future().setHours(23, 59, 59))
+					).toBeTruthy();
+				}
+			);
+
+			it.each([
+				[null, undefined],
+				[undefined, null],
+				[null, null],
+				[undefined, undefined]
+			])(
+				'should return false if the expiration date was not set and the users does not set it',
+				(expiresAt, updatedTimestamp) => {
+					expect(calculateIsExpirationChanged(expiresAt, updatedTimestamp)).toBeFalsy();
+				}
+			);
+
+			it.each([null, undefined])(
+				'should return true if the expiration date was set and the user unset it',
+				(updatedTimestamp) => {
+					expect(
+						calculateIsExpirationChanged(faker.date.future().setHours(23, 59, 59), updatedTimestamp)
+					).toBeTruthy();
+				}
+			);
+
+			it('should return true if the expiration date was set and the user changes it', () => {
+				expect(
+					calculateIsExpirationChanged(
+						faker.date.future().setHours(23, 59, 59),
+						faker.date.future().setHours(23, 59, 59)
+					)
+				).toBeTruthy();
+			});
+
+			it('should return true if the expiration date was set and the user changes it', () => {
+				const expirationDate = faker.date.future().setHours(23, 59, 59);
+				expect(calculateIsExpirationChanged(expirationDate, expirationDate)).toBeFalsy();
 			});
 		});
 	});

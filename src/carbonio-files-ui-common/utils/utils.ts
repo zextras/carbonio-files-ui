@@ -881,11 +881,25 @@ function generateAccessCodeWithCrypto(length: number): string {
 	return generatedPassword;
 }
 
+function generateAccessCodeFallback(length: number): string {
+	let pass = '';
+	const numbers = '0123456789';
+	const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
+	const capitalLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	const validChars = numbers + lowerCaseLetters + capitalLetters;
+
+	for (let i = 1; i <= length; i += 1) {
+		const char = Math.floor(Math.random() * validChars.length + 1);
+		pass += validChars.charAt(char);
+	}
+
+	return pass;
+}
+
 export function generateAccessCode(length = 10): string {
 	try {
 		return generateAccessCodeWithCrypto(length);
 	} catch (e) {
-		// TODO implement fallback
-		return 'abcde12345';
+		return generateAccessCodeFallback(length);
 	}
 }
