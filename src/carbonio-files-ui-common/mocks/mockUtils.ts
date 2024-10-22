@@ -39,7 +39,7 @@ import {
 	Member
 } from '../types/network';
 import { MakeRequired, MakeRequiredNonNull } from '../types/utils';
-import { isFile, nodeSortComparator, SortableNode } from '../utils/utils';
+import { generateAccessCode, isFile, nodeSortComparator, SortableNode } from '../utils/utils';
 
 type GQLNode = Required<GQLNodeWithOptionals>;
 type GQLFile = Required<GQLFileWithOptionals>;
@@ -454,18 +454,19 @@ export function populateContactGroup(
 	};
 }
 
-export function populateLink(node: GQLFile | GQLFolder): Link {
+export function populateLink(node: GQLFile | GQLFolder, withAccessCode?: boolean): Link {
 	return {
 		__typename: 'Link',
 		id: faker.string.uuid(),
 		created_at: faker.date.recent().getTime(),
 		expires_at: faker.helpers.arrayElement([
 			null,
-			faker.date.soon().getTime(),
-			faker.date.future().getTime()
+			faker.date.soon().setHours(23, 59, 59),
+			faker.date.future().setHours(23, 59, 59)
 		]),
 		description: faker.helpers.arrayElement([null, faker.lorem.sentence()]),
 		url: faker.internet.url(),
+		access_code: withAccessCode ? generateAccessCode() : null,
 		node
 	};
 }

@@ -6,6 +6,7 @@ fragment Link on Link {
 	id
 	url
 	description
+	access_code
 	expires_at
 	created_at
 	node {

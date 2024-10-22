@@ -19,22 +19,30 @@ import {
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
+import { AccessCodeSection } from './AccessCodeSection';
+import { useAccessCode } from '../../../../hooks/useAccessCode';
 import { PublicLinkRowStatus } from '../../../../types/common';
 import { initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 import { TextWithLineHeight } from '../../StyledComponents';
 
 interface AddPublicLinkComponentProps {
+	isFolder: boolean;
 	status: PublicLinkRowStatus;
 	onAddLink: () => void;
 	onUndo: () => void;
-	onGenerate: (linkDescriptionValue: string, date: Date | undefined) => Promise<unknown>;
+	onGenerate: (
+		linkDescriptionValue: string | undefined,
+		date: Date | undefined,
+		accessCode?: string
+	) => Promise<unknown>;
 	limitReached: boolean;
 	linkTitle: string;
 	linkDescription: string;
 }
 
 export const AddPublicLinkComponent = ({
+	isFolder,
 	status,
 	onAddLink,
 	onUndo,
@@ -45,6 +53,9 @@ export const AddPublicLinkComponent = ({
 }: AddPublicLinkComponentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const scrollToElementRef = useRef<HTMLElement>(null);
+
+	const { newAccessCodeValue, isAccessCodeEnabled, regenerateAccessCode, toggleAccessCode, reset } =
+		useAccessCode(false);
 
 	const [linkDescriptionValue, setLinkDescriptionValue] = useState('');
 
@@ -73,19 +84,26 @@ export const AddPublicLinkComponent = ({
 
 	const onGenerateCallback = useCallback(() => {
 		const expirationDate = initExpirationDate(date);
+
 		return Promise.allSettled([
-			onGenerate(linkDescriptionValue, expirationDate).then(() => {
+			onGenerate(
+				linkDescriptionValue.length > 0 ? linkDescriptionValue : undefined,
+				expirationDate,
+				isAccessCodeEnabled ? newAccessCodeValue : undefined
+			).then(() => {
 				setLinkDescriptionValue('');
 				setDate(undefined);
+				reset();
 			})
 		]);
-	}, [date, linkDescriptionValue, onGenerate]);
+	}, [date, isAccessCodeEnabled, linkDescriptionValue, newAccessCodeValue, onGenerate, reset]);
 
 	const onUndoCallback = useCallback(() => {
 		onUndo();
 		setLinkDescriptionValue('');
 		setDate(undefined);
-	}, [onUndo]);
+		reset();
+	}, [onUndo, reset]);
 
 	const [pickerIsOpen, setPickerIsOpen] = useState(false);
 
@@ -218,6 +236,14 @@ export const AddPublicLinkComponent = ({
 								)}
 							</Text>
 						</Row>
+					)}
+					{isFolder && (
+						<AccessCodeSection
+							accessCode={newAccessCodeValue}
+							isAccessCodeEnabled={isAccessCodeEnabled}
+							regenerateAccessCode={regenerateAccessCode}
+							toggleAccessCode={toggleAccessCode}
+						/>
 					)}
 					<span ref={scrollToElementRef} />
 				</>

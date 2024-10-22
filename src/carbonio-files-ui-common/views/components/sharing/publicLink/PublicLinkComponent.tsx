@@ -20,15 +20,69 @@ import {
 	useSnackbar,
 	InputProps
 } from '@zextras/carbonio-design-system';
-import { size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { AccessCodeComponent } from './AccessCodeComponent';
+import { AccessCodeSection } from './AccessCodeSection';
 import { useUserInfo } from '../../../../../hooks/useUserInfo';
 import { DATE_TIME_FORMAT } from '../../../../constants';
+import { useAccessCode } from '../../../../hooks/useAccessCode';
 import { PublicLinkRowStatus } from '../../../../types/common';
 import { copyToClipboard, formatDate, initExpirationDate } from '../../../../utils/utils';
 import { RouteLeavingGuard } from '../../RouteLeavingGuard';
+
+export function calculateIsExpirationChanged(
+	expiresAt: number | null | undefined,
+	updatedTimestamp: number | null | undefined
+): boolean {
+	return !(
+		(!expiresAt && !updatedTimestamp) ||
+		(expiresAt && updatedTimestamp && expiresAt === updatedTimestamp)
+	);
+}
+
+export function calculateIsDescriptionChanged(
+	oldDescription: string | null | undefined,
+	newDescription: string | null | undefined
+): boolean {
+	return (oldDescription ?? '') !== (newDescription ?? '');
+}
+
+export function calculateIsAccessCodeChanged(
+	oldAccessCode: string | null | undefined,
+	newAccessCode: string,
+	isNewAccessCodeEnabled: boolean
+): boolean {
+	if (oldAccessCode?.length === 0 || newAccessCode.length === 0) {
+		throw new Error('Unexpected access code length 0');
+	}
+
+	return !(
+		(!oldAccessCode && !isNewAccessCodeEnabled) ||
+		(oldAccessCode && oldAccessCode === newAccessCode && isNewAccessCodeEnabled)
+	);
+}
+
+export const calculateUpdatedAccessCode = (
+	currentAccessCode: string | undefined | null,
+	newAccessCode: string,
+	isAccessCodeEnabled: boolean
+): string | undefined => {
+	if (currentAccessCode?.length === 0) {
+		throw new Error('Unexpected access code length 0');
+	}
+	if (currentAccessCode && !isAccessCodeEnabled) {
+		return '';
+	}
+	if (
+		isAccessCodeEnabled &&
+		(!currentAccessCode || (currentAccessCode !== newAccessCode && currentAccessCode))
+	) {
+		return newAccessCode;
+	}
+	return undefined;
+};
 
 const CustomText = styled(Text)`
 	margin-right: 0;
@@ -38,20 +92,28 @@ const CustomText = styled(Text)`
 interface PublicLinkComponentProps {
 	id: string;
 	description?: string | null;
+	accessCode?: string | null;
 	url?: string | null;
 	status: PublicLinkRowStatus;
 	expiresAt?: number | null;
 	onEdit: (linkId: string) => void;
-	onEditConfirm: (linkId: string, description?: string, expiresAt?: number) => Promise<unknown>;
+	onEditConfirm: (
+		linkId: string,
+		description?: string | null,
+		expiresAt?: number,
+		accessCode?: string
+	) => Promise<unknown>;
 	onUndo: () => void;
 	onRevokeOrRemove: (linkId: string, isRevoke: boolean) => void;
 	forceUrlCopyDisabled: boolean;
 	linkName: string;
+	isFolder: boolean;
 }
 
 export const PublicLinkComponent = ({
 	id,
 	description,
+	accessCode,
 	url,
 	status,
 	expiresAt,
@@ -60,15 +122,19 @@ export const PublicLinkComponent = ({
 	onUndo,
 	onRevokeOrRemove,
 	forceUrlCopyDisabled,
-	linkName
+	linkName,
+	isFolder
 }: PublicLinkComponentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
 
+	const { newAccessCodeValue, isAccessCodeEnabled, regenerateAccessCode, toggleAccessCode, reset } =
+		useAccessCode(!!accessCode, accessCode);
+
 	const isExpired = useMemo(() => (expiresAt ? Date.now() > expiresAt : false), [expiresAt]);
 
-	const [linkDescriptionValue, setLinkDescriptionValue] = useState<string>(description ?? '');
+	const [linkDescriptionValue, setLinkDescriptionValue] = useState(description);
 
 	const moreThan300Characters = useMemo(
 		() => linkDescriptionValue != null && linkDescriptionValue.length > 300,
@@ -86,9 +152,18 @@ export const PublicLinkComponent = ({
 
 	const isSomethingChanged = useMemo(
 		() =>
-			(expiresAt !== updatedTimestamp && (expiresAt != null || updatedTimestamp != null)) ||
-			size(description) !== size(linkDescriptionValue),
-		[description, expiresAt, linkDescriptionValue, updatedTimestamp]
+			calculateIsDescriptionChanged(description, linkDescriptionValue) ||
+			calculateIsExpirationChanged(expiresAt, updatedTimestamp) ||
+			calculateIsAccessCodeChanged(accessCode, newAccessCodeValue, isAccessCodeEnabled),
+		[
+			accessCode,
+			description,
+			expiresAt,
+			isAccessCodeEnabled,
+			linkDescriptionValue,
+			newAccessCodeValue,
+			updatedTimestamp
+		]
 	);
 
 	const handleChange = useCallback((newDate: Date | null) => {
@@ -105,8 +180,9 @@ export const PublicLinkComponent = ({
 		setLinkDescriptionValue(description ?? '');
 		setDate(initialDate);
 		setUpdatedTimestamp(expiresAt);
+		reset(accessCode);
 		onUndo();
-	}, [description, expiresAt, initialDate, onUndo]);
+	}, [accessCode, description, expiresAt, initialDate, onUndo, reset]);
 
 	const onRevokeOrRemoveCallback = useCallback(() => {
 		onRevokeOrRemove(id, !isExpired);
@@ -118,10 +194,20 @@ export const PublicLinkComponent = ({
 				onEditConfirm(
 					id,
 					linkDescriptionValue,
-					updatedTimestamp !== expiresAt ? (updatedTimestamp ?? 0) : undefined
+					updatedTimestamp !== expiresAt ? (updatedTimestamp ?? 0) : undefined,
+					calculateUpdatedAccessCode(accessCode, newAccessCodeValue, isAccessCodeEnabled)
 				)
 			]),
-		[expiresAt, id, linkDescriptionValue, onEditConfirm, updatedTimestamp]
+		[
+			onEditConfirm,
+			id,
+			linkDescriptionValue,
+			updatedTimestamp,
+			expiresAt,
+			accessCode,
+			newAccessCodeValue,
+			isAccessCodeEnabled
+		]
 	);
 
 	const copyUrl = useCallback(() => {
@@ -256,7 +342,7 @@ export const PublicLinkComponent = ({
 					<Input
 						backgroundColor="gray5"
 						label={t('publicLink.input.label', "Link's description")}
-						value={linkDescriptionValue}
+						value={linkDescriptionValue ?? ''}
 						onChange={linkDescriptionOnChange}
 						hasError={moreThan300Characters}
 					/>
@@ -295,18 +381,29 @@ export const PublicLinkComponent = ({
 							</Text>
 						</Row>
 					)}
+					{isFolder && (
+						<AccessCodeSection
+							accessCode={newAccessCodeValue}
+							isAccessCodeEnabled={isAccessCodeEnabled}
+							toggleAccessCode={toggleAccessCode}
+							regenerateAccessCode={regenerateAccessCode}
+						/>
+					)}
 				</>
 			)}
 
 			{status !== PublicLinkRowStatus.OPEN && (
-				<Container orientation="horizontal" mainAlignment="space-between" wrap="wrap">
-					<Text overflow="break-word" color="gray1" size="small" disabled={isExpired}>
-						{description}
-					</Text>
-					<CustomText color="gray1" size="small">
-						{expirationText}
-					</CustomText>
-				</Container>
+				<>
+					<Container orientation="horizontal" mainAlignment="space-between" wrap="wrap">
+						<Text overflow="break-word" color="gray1" size="small" disabled={isExpired}>
+							{description}
+						</Text>
+						<CustomText color="gray1" size="small">
+							{expirationText}
+						</CustomText>
+					</Container>
+					{accessCode && <AccessCodeComponent accessCode={accessCode} />}
+				</>
 			)}
 			<Padding vertical="small" />
 			<Divider color="gray2" />
