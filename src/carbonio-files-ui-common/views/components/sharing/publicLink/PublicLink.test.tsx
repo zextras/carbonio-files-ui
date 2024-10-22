@@ -840,24 +840,18 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			}
 		);
 
-		it.each([
-			[null, ''],
-			[undefined, '']
-		])(
+		it.each([null, undefined])(
 			`should return false if the old description is %s and the new one is empty string`,
-			(oldDescription, newDescription) => {
-				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
+			(oldDescription) => {
+				const res = calculateIsDescriptionChanged(oldDescription, '');
 				expect(res).toBeFalsy();
 			}
 		);
 
-		it.each([
-			['', null],
-			['', undefined]
-		])(
-			'should return false if the old description is empty string and the new one is null',
-			(oldDescription, newDescription) => {
-				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
+		it.each([null, undefined])(
+			'should return false if the old description is empty string and the new one is %s',
+			(newDescription) => {
+				const res = calculateIsDescriptionChanged('', newDescription);
 				expect(res).toBeFalsy();
 			}
 		);
@@ -869,7 +863,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			['old description', undefined],
 			['old description', 'new description']
 		])(
-			'should return true if the old description is null and the new one is set',
+			'should return true if the old description is %s and the new one is %s',
 			(oldDescription, newDescription) => {
 				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
 				expect(res).toBeTruthy();

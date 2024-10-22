@@ -265,7 +265,7 @@ describe('Access code', () => {
 			expect(screen.getByText(accessCodeValue)).toBeVisible();
 		});
 
-		it('should not render the chip with the access code when the link is generated (access code in not enabled)', async () => {
+		it('should not render the chip with the access code when the link is generated (access code is not enabled)', async () => {
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node, false);
