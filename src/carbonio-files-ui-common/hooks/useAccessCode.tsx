@@ -15,8 +15,7 @@ export function useAccessCode(
 	isAccessCodeEnabled: boolean;
 	toggleAccessCode: () => void;
 	regenerateAccessCode: () => void;
-	reset: () => void;
-	resetToInitial: () => void;
+	reset: (accessCode?: string | null) => void;
 } {
 	const newAccessCodeValueInitialStateFallback = useMemo(() => generateAccessCode(), []);
 
@@ -33,22 +32,21 @@ export function useAccessCode(
 		setIsAccessCodeEnabled((prevState) => !prevState);
 	}, []);
 
-	const reset = useCallback(() => {
-		setNewAccessCodeValue(generateAccessCode());
-		setIsAccessCodeEnabled(false);
+	const reset = useCallback((accessCode?: string | null) => {
+		if (accessCode) {
+			setNewAccessCodeValue(accessCode);
+			setIsAccessCodeEnabled(true);
+		} else {
+			setNewAccessCodeValue(generateAccessCode());
+			setIsAccessCodeEnabled(false);
+		}
 	}, []);
-
-	const resetToInitial = useCallback(() => {
-		setNewAccessCodeValue(newAccessCodeValueInitialState ?? generateAccessCode());
-		setIsAccessCodeEnabled(isAccessCodeEnabledInitialState);
-	}, [isAccessCodeEnabledInitialState, newAccessCodeValueInitialState]);
 
 	return {
 		newAccessCodeValue,
 		isAccessCodeEnabled,
 		toggleAccessCode,
 		regenerateAccessCode,
-		reset,
-		resetToInitial
+		reset
 	};
 }

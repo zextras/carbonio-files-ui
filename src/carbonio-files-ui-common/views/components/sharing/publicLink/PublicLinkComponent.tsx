@@ -129,13 +129,8 @@ export const PublicLinkComponent = ({
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
 
-	const {
-		newAccessCodeValue,
-		isAccessCodeEnabled,
-		regenerateAccessCode,
-		toggleAccessCode,
-		resetToInitial
-	} = useAccessCode(!!accessCode, accessCode);
+	const { newAccessCodeValue, isAccessCodeEnabled, regenerateAccessCode, toggleAccessCode, reset } =
+		useAccessCode(!!accessCode, accessCode);
 
 	const isExpired = useMemo(() => (expiresAt ? Date.now() > expiresAt : false), [expiresAt]);
 
@@ -185,9 +180,9 @@ export const PublicLinkComponent = ({
 		setLinkDescriptionValue(description ?? '');
 		setDate(initialDate);
 		setUpdatedTimestamp(expiresAt);
-		resetToInitial();
+		reset(accessCode);
 		onUndo();
-	}, [description, expiresAt, initialDate, onUndo, resetToInitial]);
+	}, [accessCode, description, expiresAt, initialDate, onUndo, reset]);
 
 	const onRevokeOrRemoveCallback = useCallback(() => {
 		onRevokeOrRemove(id, !isExpired);

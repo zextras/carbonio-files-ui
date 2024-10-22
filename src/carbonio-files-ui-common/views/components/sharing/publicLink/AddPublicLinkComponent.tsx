@@ -93,9 +93,10 @@ export const AddPublicLinkComponent = ({
 			).then(() => {
 				setLinkDescriptionValue('');
 				setDate(undefined);
+				reset();
 			})
 		]);
-	}, [date, isAccessCodeEnabled, linkDescriptionValue, newAccessCodeValue, onGenerate]);
+	}, [date, isAccessCodeEnabled, linkDescriptionValue, newAccessCodeValue, onGenerate, reset]);
 
 	const onUndoCallback = useCallback(() => {
 		onUndo();

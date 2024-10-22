@@ -476,6 +476,34 @@ describe('Access code', () => {
 			});
 		});
 
+		describe('Edit confirm', () => {
+			it('should regenerate a new access code when the user clicks on generate link and then click on add link button', async () => {
+				const node = populateNode('Folder');
+				const props = getPublicLinkProps(node);
+				const link = populateLink(node, true);
+				const mocks = {
+					Query: {
+						getLinks: mockGetLinks([])
+					},
+					Mutation: {
+						createLink: mockCreateLink(link)
+					}
+				} satisfies Partial<Resolvers>;
+
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
+				await user.click(screen.getByRole('button', { name: /add link/i }));
+				await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
+				const accessCodeInput = screen.getByLabelText<HTMLInputElement>(/access code/i);
+				const accessCodeValue = accessCodeInput.value;
+				await user.click(screen.getByRole('button', { name: /generate link/i }));
+				await user.click(await screen.findByRole('button', { name: /add link/i }));
+				await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
+				const accessCodeValue2 = screen.getByLabelText<HTMLInputElement>(/access code/i).value;
+				expect(accessCodeValue2).not.toBe(accessCodeValue);
+			});
+		});
+
 		describe('CalculateUpdatedAccessCode', () => {
 			it('should return a new access code when the access code was not set and a new one is added', () => {
 				const newAccessCode = generateAccessCode();
