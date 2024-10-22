@@ -8,7 +8,6 @@ import React, { useCallback, useState } from 'react';
 import {
 	Button,
 	Container,
-	Icon,
 	Input,
 	InputProps,
 	Switch,
@@ -56,9 +55,10 @@ export const AccessCodeSection = ({
 
 	const CustomElement = useCallback<NonNullable<InputProps['CustomIcon']>>(
 		() => (
-			<Icon
-				size={'large'}
-				style={{ cursor: 'pointer' }}
+			<Button
+				type={'ghost'}
+				color={'gray0'}
+				size={'extralarge'}
 				icon={isAccessCodeShown ? 'EyeOutline' : 'EyeOffOutline'}
 				onClick={toggleShowAccessCode}
 			/>
