@@ -48,7 +48,7 @@ describe('AccessCodeComponent', () => {
 		await user.click(within(chip).getByText('**********'));
 		expect(copyToClipboardFn).toHaveBeenCalledWith(accessCode);
 		const snackbar = screen.getByTestId(SELECTORS.snackbar);
-		expect(await within(snackbar).findByText(/access code copied/i)).toBeVisible();
+		expect(within(snackbar).getByText(/access code copied/i)).toBeVisible();
 	});
 
 	it('should show the access code and change the icon to EyeOutline when the user clicks on the EyeOffOutline icon', async () => {

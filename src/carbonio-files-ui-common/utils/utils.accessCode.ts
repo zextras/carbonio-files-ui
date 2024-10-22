@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 export const generateAccessCodeWithCrypto = (length: number): string => {
-	let generatedPassword = '';
+	let generatedAccessCode = '';
 	const numbers = '0123456789';
 	const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
 	const capitalLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -15,14 +15,14 @@ export const generateAccessCodeWithCrypto = (length: number): string => {
 		randomNumber /= 0x100000000;
 		randomNumber = Math.floor(randomNumber * validChars.length);
 
-		generatedPassword += validChars[randomNumber];
+		generatedAccessCode += validChars[randomNumber];
 	}
 
-	return generatedPassword;
+	return generatedAccessCode;
 };
 
 export const generateAccessCodeFallback = (length: number): string => {
-	let pass = '';
+	let accessCode = '';
 	const numbers = '0123456789';
 	const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
 	const capitalLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -30,8 +30,8 @@ export const generateAccessCodeFallback = (length: number): string => {
 
 	for (let i = 1; i <= length; i += 1) {
 		const char = Math.floor(Math.random() * validChars.length + 1);
-		pass += validChars.charAt(char);
+		accessCode += validChars.charAt(char);
 	}
 
-	return pass;
+	return accessCode;
 };

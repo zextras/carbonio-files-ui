@@ -8,11 +8,7 @@ import React, { ComponentProps } from 'react';
 import { faker } from '@faker-js/faker';
 
 import { PublicLink } from './PublicLink';
-import {
-	calculateIsAccessCodeChanged,
-	calculateIsExpirationChanged,
-	calculateUpdatedAccessCode
-} from './PublicLinkComponent';
+import { calculateUpdatedAccessCode } from './PublicLinkComponent';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateNode } from '../../../../mocks/mockUtils';
 import { screen, setup, within } from '../../../../tests/utils';
@@ -358,7 +354,7 @@ describe('Access code', () => {
 		});
 
 		describe('Update access code', () => {
-			it('should update the changes when the user clicks on "edit link" button (after regenerating)', async () => {
+			it('should update the access code when the user clicks on "edit link" button (after regenerating)', async () => {
 				const node = populateNode('Folder');
 				const props = getPublicLinkProps(node);
 				const link = populateLink(node, true);
@@ -529,103 +525,6 @@ describe('Access code', () => {
 					typeof calculateUpdatedAccessCode
 				> = () => calculateUpdatedAccessCode('', newAccessCode, false);
 				expect(canCalculateUpdateAccessCode).toThrow('Unexpected access code length 0');
-			});
-		});
-
-		describe('calculateIsAccessCodeChanged', () => {
-			it('should throw an error if the old access code is an empty string', () => {
-				const canCalculateIsAccessCodeChanged: () => ReturnType<
-					typeof calculateIsAccessCodeChanged
-				> = () => calculateIsAccessCodeChanged('', generateAccessCode(), true);
-				expect(canCalculateIsAccessCodeChanged).toThrow('Unexpected access code length 0');
-			});
-
-			it('should throw an error if the new access code is an empty string', () => {
-				const canCalculateIsAccessCodeChanged: () => ReturnType<
-					typeof calculateIsAccessCodeChanged
-				> = () => calculateIsAccessCodeChanged(generateAccessCode(), '', true);
-				expect(canCalculateIsAccessCodeChanged).toThrow('Unexpected access code length 0');
-			});
-
-			it.each([[undefined, null]])(
-				'should return true when the access code was not set and the user sets it',
-				(oldAccessCode) => {
-					expect(
-						calculateIsAccessCodeChanged(oldAccessCode, generateAccessCode(), true)
-					).toBeTruthy();
-				}
-			);
-
-			it.each([[undefined, null]])(
-				'should return false when was unset and remains unset ',
-				(oldAccessCode) => {
-					expect(
-						calculateIsAccessCodeChanged(oldAccessCode, generateAccessCode(), false)
-					).toBeFalsy();
-				}
-			);
-
-			it('should return false when was set and remains the same', () => {
-				const accessCode = generateAccessCode();
-				expect(calculateIsAccessCodeChanged(accessCode, accessCode, true)).toBeFalsy();
-			});
-
-			it('should return true when the access code was set and the user regenerates it', () => {
-				expect(
-					calculateIsAccessCodeChanged(generateAccessCode(), generateAccessCode(), true)
-				).toBeTruthy();
-			});
-
-			it('should return true when the access code was set and the user unset it', () => {
-				expect(
-					calculateIsAccessCodeChanged(generateAccessCode(), generateAccessCode(), false)
-				).toBeTruthy();
-			});
-		});
-
-		describe('CalculateIsExpirationChanged', () => {
-			it.each([null, undefined])(
-				'should return true if the expiration date was not set (%s) and then the user sets it',
-				(expiresAt) => {
-					expect(
-						calculateIsExpirationChanged(expiresAt, faker.date.future().setHours(23, 59, 59))
-					).toBeTruthy();
-				}
-			);
-
-			it.each([
-				[null, undefined],
-				[undefined, null],
-				[null, null],
-				[undefined, undefined]
-			])(
-				'should return false if the expiration date was not set and the users does not set it',
-				(expiresAt, updatedTimestamp) => {
-					expect(calculateIsExpirationChanged(expiresAt, updatedTimestamp)).toBeFalsy();
-				}
-			);
-
-			it.each([null, undefined])(
-				'should return true if the expiration date was set and the user unset it',
-				(updatedTimestamp) => {
-					expect(
-						calculateIsExpirationChanged(faker.date.future().setHours(23, 59, 59), updatedTimestamp)
-					).toBeTruthy();
-				}
-			);
-
-			it('should return true if the expiration date was set and the user changes it', () => {
-				expect(
-					calculateIsExpirationChanged(
-						faker.date.future().setHours(23, 59, 59),
-						faker.date.future().setHours(23, 59, 59)
-					)
-				).toBeTruthy();
-			});
-
-			it('should return true if the expiration date was set and the user changes it', () => {
-				const expirationDate = faker.date.future().setHours(23, 59, 59);
-				expect(calculateIsExpirationChanged(expirationDate, expirationDate)).toBeFalsy();
 			});
 		});
 	});
