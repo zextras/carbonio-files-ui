@@ -1,18 +1,18 @@
 /*
- * SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+ * SPDX-FileCopyrightText: 2024 Zextras <https://www.zextras.com>
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { map, find, filter, includes, isEqual } from 'lodash';
 
-import { useMemoCompare } from './useMemoCompare';
-import { selectionModeVar } from '../apollo/selectionVar';
+import { selectionModeVar } from '../../apollo/selectionVar';
+import { useMemoCompare } from '../../hooks/useMemoCompare';
 
-export default function useSelection(nodes: Array<{ id: string }>): {
+export function useSelection(nodes: Array<{ id: string }>): {
 	selectedIDs: string[];
 	selectedMap: { [id: string]: boolean };
 	selectId: (id: string) => void;
@@ -92,4 +92,52 @@ export default function useSelection(nodes: Array<{ id: string }>): {
 		selectAll,
 		exitSelectionMode
 	};
+}
+export const SelectionContext = createContext<ReturnType<typeof useSelection>>({
+	exitSelectionMode(): void {},
+	isSelectionModeActive: false,
+	selectAll(): void {},
+	selectId(id: string): void {},
+	selectedIDs: [],
+	selectedMap: {},
+	unSelectAll(): void {}
+});
+
+interface SelectionProviderProps {
+	children: React.ReactNode;
+	items: { id: string }[];
+}
+
+export const SelectionProvider = ({
+	children,
+	items
+}: SelectionProviderProps): React.JSX.Element => {
+	const {
+		selectedIDs,
+		selectedMap,
+		selectId,
+		selectAll,
+		unSelectAll,
+		isSelectionModeActive,
+		exitSelectionMode
+	} = useSelection(items);
+	return (
+		<SelectionContext.Provider
+			value={{
+				selectedIDs,
+				selectedMap,
+				selectId,
+				selectAll,
+				unSelectAll,
+				isSelectionModeActive,
+				exitSelectionMode
+			}}
+		>
+			{children}
+		</SelectionContext.Provider>
+	);
+};
+
+export function useSelectionContext(): ReturnType<typeof useSelection> {
+	return useContext(SelectionContext);
 }

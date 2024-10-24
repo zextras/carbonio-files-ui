@@ -9,6 +9,7 @@ import React, { useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useGetNodeQuery } from '../../hooks/graphql/queries/useGetNodeQuery';
 
@@ -36,15 +37,17 @@ const FileList = ({ fileId, canUploadFile }: FileListProps): React.JSX.Element =
 	}, [node]);
 
 	return (
-		<List
-			nodes={nodes}
-			hasMore={hasMore}
-			loadMore={loadMore}
-			loading={loading}
-			canUpload={canUploadFile}
-			emptyListMessage={t('empty.folder.hint', "It looks like there's nothing here.")}
-			mainList={false}
-		/>
+		<SelectionProvider items={nodes}>
+			<List
+				nodes={nodes}
+				hasMore={hasMore}
+				loadMore={loadMore}
+				loading={loading}
+				canUpload={canUploadFile}
+				emptyListMessage={t('empty.folder.hint', "It looks like there's nothing here.")}
+				mainList={false}
+			/>
+		</SelectionProvider>
 	);
 };
 

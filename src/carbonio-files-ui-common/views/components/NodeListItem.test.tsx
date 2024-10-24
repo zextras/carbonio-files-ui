@@ -9,7 +9,7 @@ import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
-import { NodeListItem, NodeListItemProps } from './NodeListItem';
+import { NodeListItem } from './NodeListItem';
 import * as useNavigation from '../../../hooks/useNavigation';
 import {
 	DATE_FORMAT_SHORT,
@@ -40,18 +40,6 @@ import {
 import { formatDate, humanFileSize } from '../../utils/utils';
 import 'jest-styled-components';
 import * as utils from '../../utils/utils';
-
-export function getMissingProps(): Pick<
-	NodeListItemProps,
-	'isSelected' | 'isSelectionModeActive' | 'selectId' | 'exitSelectionMode'
-> {
-	return {
-		isSelected: false,
-		isSelectionModeActive: false,
-		selectId: jest.fn(),
-		exitSelectionMode: jest.fn()
-	};
-}
 
 let mockedUserLogged: User;
 
@@ -135,7 +123,7 @@ describe('Node List Item', () => {
 
 					const { user } = setup(
 						<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-							<NodeListItem node={node} {...getMissingProps()} />
+							<NodeListItem node={node} />
 						</ListContext.Provider>
 					);
 
@@ -162,7 +150,7 @@ describe('Node List Item', () => {
 			node.last_editor = mockedUserLogged;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 
@@ -177,7 +165,7 @@ describe('Node List Item', () => {
 			const node = populateFolder();
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByText(/folder/i)).toBeInTheDocument();
@@ -189,7 +177,7 @@ describe('Node List Item', () => {
 			node.shares = populateShares(node, 1);
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeInTheDocument();
@@ -202,7 +190,7 @@ describe('Node List Item', () => {
 			node.owner = populateUser();
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeInTheDocument();
@@ -215,7 +203,7 @@ describe('Node List Item', () => {
 			node.shares = [];
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.queryByTestId(ICON_REGEXP.sharedWithMe)).not.toBeInTheDocument();
@@ -227,7 +215,7 @@ describe('Node List Item', () => {
 			node.flagged = true;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
@@ -239,7 +227,7 @@ describe('Node List Item', () => {
 			node.flagged = false;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
@@ -249,7 +237,7 @@ describe('Node List Item', () => {
 			const node = populateFile();
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByText(node.extension as string)).toBeVisible();
@@ -262,7 +250,7 @@ describe('Node List Item', () => {
 			node.last_editor = node.owner;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByText(node.owner.full_name)).toBeVisible();
@@ -272,7 +260,7 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByText((node.last_editor as User).full_name)).toBeVisible();
@@ -292,7 +280,7 @@ describe('Node List Item', () => {
 			const node = populateFolder(0);
 			const { user } = setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			await user.dblClick(screen.getByText(node.name));
@@ -311,7 +299,7 @@ describe('Node List Item', () => {
 			const node = populateFolder(0);
 			const { user } = setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} isSelectionModeActive />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			await user.dblClick(screen.getByText(node.name));
@@ -329,7 +317,7 @@ describe('Node List Item', () => {
 			node.rootId = ROOTS.TRASH;
 			const { user } = setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			await user.dblClick(screen.getByText(node.name));
@@ -346,7 +334,7 @@ describe('Node List Item', () => {
 			const node = populateFolder(0);
 			const { user } = setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			await user.dblClick(screen.getByText(node.name));
@@ -358,7 +346,7 @@ describe('Node List Item', () => {
 			node.rootId = ROOTS.TRASH;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>,
 				{
 					initialRouterEntries: [INTERNAL_PATH.SEARCH]
@@ -373,7 +361,7 @@ describe('Node List Item', () => {
 			node.rootId = ROOTS.TRASH;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByText(node.name)).toBeVisible();
@@ -384,7 +372,7 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>,
 				{
 					initialRouterEntries: [INTERNAL_PATH.SEARCH]
@@ -421,7 +409,7 @@ describe('Node List Item', () => {
 				node.mime_type = mimeType ?? '';
 				setup(
 					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-						<NodeListItem node={node} {...getMissingProps()} />
+						<NodeListItem node={node} />
 					</ListContext.Provider>
 				);
 				expect(
@@ -439,7 +427,7 @@ describe('Node List Item', () => {
 			node.mime_type = 'image/gif';
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByTestId(SELECTORS.nodeAvatar)).toHaveStyle({
@@ -457,7 +445,7 @@ describe('Node List Item', () => {
 			node.type = NodeType.Root;
 			setup(
 				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
+					<NodeListItem node={node} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
@@ -472,7 +460,7 @@ describe('Node List Item', () => {
 			<ListContext.Provider
 				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
 			>
-				<NodeListItem node={node} {...getMissingProps()} />
+				<NodeListItem node={node} />
 			</ListContext.Provider>
 		);
 		expect(screen.getByTestId(ICON_REGEXP.unflag)).toBeInTheDocument();
@@ -486,7 +474,7 @@ describe('Node List Item', () => {
 			<ListContext.Provider
 				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
 			>
-				<NodeListItem node={node} {...getMissingProps()} />
+				<NodeListItem node={node} />
 			</ListContext.Provider>
 		);
 		expect(screen.getByTestId(ICON_REGEXP.flag)).toBeInTheDocument();
@@ -499,7 +487,7 @@ describe('Node List Item', () => {
 			<ListContext.Provider
 				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 			>
-				<NodeListItem node={folder} {...getMissingProps()} />
+				<NodeListItem node={folder} />
 			</ListContext.Provider>
 		);
 		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
@@ -514,7 +502,7 @@ describe('Node List Item', () => {
 				<ListContext.Provider
 					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 				>
-					<NodeListItem node={file} {...getMissingProps()} />
+					<NodeListItem node={file} />
 				</ListContext.Provider>
 			);
 			expect(screen.getByRole('presentation')).toBeVisible();
@@ -530,7 +518,7 @@ describe('Node List Item', () => {
 				<ListContext.Provider
 					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 				>
-					<NodeListItem node={file} {...getMissingProps()} />
+					<NodeListItem node={file} />
 				</ListContext.Provider>
 			);
 			expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
@@ -558,7 +546,7 @@ describe('Node List Item', () => {
 				<ListContext.Provider
 					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 				>
-					<NodeListItem node={file} {...getMissingProps()} />
+					<NodeListItem node={file} />
 				</ListContext.Provider>
 			);
 			expect(
@@ -574,7 +562,7 @@ describe('Node List Item', () => {
 			<ListContext.Provider
 				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 			>
-				<NodeListItem node={file} {...getMissingProps()} />
+				<NodeListItem node={file} />
 			</ListContext.Provider>
 		);
 		fireEvent.error(screen.getByRole('presentation'));

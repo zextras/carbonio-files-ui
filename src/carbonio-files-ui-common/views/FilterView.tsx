@@ -31,6 +31,7 @@ import { NodeSort } from '../types/graphql/types';
 import { NonNullableListItem } from '../types/utils';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
+import { SelectionProvider } from './components/SelectionProvider';
 
 const FilterView = (): React.JSX.Element => {
 	const { filter: filterParam } = useParams<URLParams>();
@@ -330,16 +331,18 @@ const FilterView = (): React.JSX.Element => {
 		() =>
 			filterParam ? (
 				<ListHeaderActionContext.Provider value={ActionComponent}>
-					<List
-						nodes={nodes}
-						loading={loading}
-						hasMore={hasMore}
-						loadMore={loadMore}
-						crumbs={crumbs}
-						canUpload={canUploadFile}
-						mainList={false}
-						emptyListMessage={emptyListMessage}
-					/>
+					<SelectionProvider items={nodes}>
+						<List
+							nodes={nodes}
+							loading={loading}
+							hasMore={hasMore}
+							loadMore={loadMore}
+							crumbs={crumbs}
+							canUpload={canUploadFile}
+							mainList={false}
+							emptyListMessage={emptyListMessage}
+						/>
+					</SelectionProvider>
 				</ListHeaderActionContext.Provider>
 			) : (
 				<Container data-testid="missing-filter">{emptyListMessage}</Container>

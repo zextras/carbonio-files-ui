@@ -8,6 +8,7 @@ import React from 'react';
 import { map } from 'lodash';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen, within } from '../../tests/utils';
@@ -30,11 +31,13 @@ describe('Mark for deletion - trash', () => {
 			}
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as (File | Folder)[]}
-					mainList
-					emptyListMessage={'hint'}
-				/>
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+					/>
+				</SelectionProvider>
 			);
 
 			// activate selection mode by selecting items
@@ -76,11 +79,13 @@ describe('Mark for deletion - trash', () => {
 			currentFolder.children.nodes.push(folder);
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as (File | Folder)[]}
-					mainList
-					emptyListMessage={'hint'}
-				/>
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+					/>
+				</SelectionProvider>
 			);
 
 			await screen.findByText(filename1);

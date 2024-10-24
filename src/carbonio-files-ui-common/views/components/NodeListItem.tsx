@@ -18,6 +18,7 @@ import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { NodeGridItemUI } from './NodeGridItemUI';
 import { NodeHoverBar } from './NodeHoverBar';
 import { NodeListItemUI } from './NodeListItemUI';
+import { useSelectionContext } from './SelectionProvider';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
@@ -89,23 +90,14 @@ type NodeItem = Node<
 
 export interface NodeListItemProps {
 	node: NodeItem;
-	// Selection props
-	isSelected: boolean;
-	isSelectionModeActive: boolean;
-	selectId: (id: string) => void;
-	exitSelectionMode: () => void;
 	selectionContextualMenuActionsItems?: DSAction[];
 }
 
 export const NodeListItem = ({
 	node,
-	// Selection props
-	isSelected,
-	isSelectionModeActive,
-	selectId,
-	exitSelectionMode,
 	selectionContextualMenuActionsItems
 }: NodeListItemProps): React.JSX.Element => {
+	const { selectId, isSelectionModeActive, exitSelectionMode, selectedMap } = useSelectionContext();
 	const { viewMode } = useContext(ListContext);
 	const { locale } = useUserInfo();
 
@@ -573,7 +565,7 @@ export const NodeListItem = ({
 						nodeAvatarIcon={
 							<NodeAvatarIcon
 								selectionModeActive={isSelectionModeActive}
-								selected={isSelected}
+								selected={selectedMap?.[node.id]}
 								onClick={selectIdCallback}
 								compact={false}
 								disabled={isDragged}
@@ -606,7 +598,7 @@ export const NodeListItem = ({
 						nodeAvatarIcon={
 							<NodeAvatarIcon
 								selectionModeActive={isSelectionModeActive}
-								selected={isSelected}
+								selected={selectedMap?.[node.id]}
 								onClick={selectIdCallback}
 								compact={false}
 								disabled={isDragged}

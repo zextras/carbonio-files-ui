@@ -13,15 +13,7 @@ import { makeListItemsVisible, screen, setup } from '../../tests/utils';
 describe('ListContent', () => {
 	it('should render list item only when it becomes visible', () => {
 		const node = populateNode();
-		setup(
-			<ListContent
-				nodes={[node]}
-				exitSelectionMode={jest.fn()}
-				isSelectionModeActive={false}
-				selectId={jest.fn()}
-				selectedMap={{}}
-			/>
-		);
+		setup(<ListContent nodes={[node]} />);
 		expect(screen.getByTestId(SELECTORS.virtualizedNodeListItem)).toBeVisible();
 		expect(screen.getByTestId(SELECTORS.virtualizedNodeListItem)).toHaveAttribute('id', node.id);
 		expect(screen.queryByText(node.name)).not.toBeInTheDocument();

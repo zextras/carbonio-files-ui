@@ -11,6 +11,7 @@ import { forEach } from 'lodash';
 import { http, HttpResponse } from 'msw';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import server from '../../../mocks/server';
 import {
 	FILTER_TYPE,
@@ -546,9 +547,14 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				const { user } = setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, {
-					mocks
-				});
+				const { user } = setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{
+						mocks
+					}
+				);
 
 				const itemToDrag = screen.getByText(nodesToDrag[1].name);
 				await selectNodes(

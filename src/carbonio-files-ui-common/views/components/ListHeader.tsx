@@ -18,6 +18,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import styled, { SimpleInterpolation } from 'styled-components';
 
+import { useSelectionContext } from './SelectionProvider';
 import { BREADCRUMB_ROW_HEIGHT } from '../../constants';
 import { cssCalcBuilder } from '../../utils/utils';
 
@@ -33,11 +34,7 @@ const CollapsingActionsRow = styled(Row)<{ $maxVisible: number | undefined }>`
 `;
 
 export interface ListHeaderProps {
-	isSelectionModeActive: boolean;
-	unSelectAll: () => void;
-	selectAll: () => void;
 	isAllSelected: boolean;
-	exitSelectionMode: () => void;
 	permittedSelectionModeActionsItems: DSAction[];
 	hide?: boolean;
 	firstCustomComponent?: React.ReactNode;
@@ -49,11 +46,7 @@ export interface ListHeaderProps {
 const MAX_ACTIONS_VISIBLE = 3;
 
 export const ListHeader = ({
-	isSelectionModeActive,
-	unSelectAll,
-	selectAll,
 	isAllSelected,
-	exitSelectionMode,
 	permittedSelectionModeActionsItems = [],
 	hide = false,
 	firstCustomComponent,
@@ -62,6 +55,9 @@ export const ListHeader = ({
 	selectedCount
 }: ListHeaderProps): React.JSX.Element => {
 	const [t] = useTranslation();
+
+	const { isSelectionModeActive, selectAll, exitSelectionMode, unSelectAll } =
+		useSelectionContext();
 
 	return !isSelectionModeActive ? (
 		<>

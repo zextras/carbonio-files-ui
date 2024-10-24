@@ -9,6 +9,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { map } from 'lodash';
 
+import { SelectionContext } from './SelectionProvider';
 import ListHeader from '../../../components/ListHeader';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateParents } from '../../mocks/mockUtils';
@@ -27,18 +28,11 @@ describe('ListHeader', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const selectAll = jest.fn();
-			const unSelectAll = jest.fn();
-			const exitSelectionMode = jest.fn();
 			const { getByTextWithMarkup } = setup(
 				<ListHeader
 					folderId={currentFolder.id}
-					exitSelectionMode={exitSelectionMode}
 					isAllSelected={false}
-					isSelectionModeActive={false}
 					permittedSelectionModeActionsItems={[]}
-					selectAll={selectAll}
-					unSelectAll={unSelectAll}
 				/>,
 				{ mocks }
 			);
@@ -57,18 +51,11 @@ describe('ListHeader', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const selectAll = jest.fn();
-			const unSelectAll = jest.fn();
-			const exitSelectionMode = jest.fn();
 			const { getByTextWithMarkup } = setup(
 				<ListHeader
 					folderId={currentFolder.id}
-					exitSelectionMode={exitSelectionMode}
 					isAllSelected={false}
-					isSelectionModeActive={false}
 					permittedSelectionModeActionsItems={[]}
-					selectAll={selectAll}
-					unSelectAll={unSelectAll}
 				/>,
 				{ mocks }
 			);
@@ -90,18 +77,11 @@ describe('ListHeader', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const selectAll = jest.fn();
-			const unSelectAll = jest.fn();
-			const exitSelectionMode = jest.fn();
 			const { findByTextWithMarkup, getByTextWithMarkup, user } = setup(
 				<ListHeader
 					folderId={currentFolder.id}
-					exitSelectionMode={exitSelectionMode}
 					isAllSelected={false}
-					isSelectionModeActive={false}
 					permittedSelectionModeActionsItems={[]}
-					selectAll={selectAll}
-					unSelectAll={unSelectAll}
 				/>,
 				{ mocks }
 			);
@@ -143,21 +123,26 @@ describe('ListHeader', () => {
 		test('should render the badge with the number of selectedCount if the selectedCount is > 0', () => {
 			const { node: currentFolder } = populateParents(populateFolder(), 5);
 
-			const selectAll = jest.fn();
-			const unselectAll = jest.fn();
-			const exitSelectionMode = jest.fn();
 			const selectedCount = 1;
 			setup(
-				<ListHeader
-					folderId={currentFolder.id}
-					isSelectionModeActive
-					permittedSelectionModeActionsItems={[]}
-					selectAll={selectAll}
-					unSelectAll={unselectAll}
-					exitSelectionMode={exitSelectionMode}
-					isAllSelected={false}
-					selectedCount={selectedCount}
-				/>,
+				<SelectionContext.Provider
+					value={{
+						exitSelectionMode(): void {},
+						isSelectionModeActive: true,
+						selectAll(): void {},
+						selectId(id: string): void {},
+						selectedIDs: [],
+						selectedMap: {},
+						unSelectAll(): void {}
+					}}
+				>
+					<ListHeader
+						folderId={currentFolder.id}
+						permittedSelectionModeActionsItems={[]}
+						isAllSelected={false}
+						selectedCount={selectedCount}
+					/>
+				</SelectionContext.Provider>,
 				{ mocks: {} }
 			);
 			expect(screen.getByTestId(SELECTORS.listHeaderSelectionMode)).toBeVisible();
@@ -166,21 +151,26 @@ describe('ListHeader', () => {
 		test('Should not render the badge with 0 if selectedCount is 0', () => {
 			const { node: currentFolder } = populateParents(populateFolder(), 5);
 
-			const selectAll = jest.fn();
-			const unselectAll = jest.fn();
-			const exitSelectionMode = jest.fn();
 			const selectedCount = 0;
 			setup(
-				<ListHeader
-					folderId={currentFolder.id}
-					isSelectionModeActive
-					permittedSelectionModeActionsItems={[]}
-					selectAll={selectAll}
-					unSelectAll={unselectAll}
-					exitSelectionMode={exitSelectionMode}
-					isAllSelected={false}
-					selectedCount={selectedCount}
-				/>,
+				<SelectionContext.Provider
+					value={{
+						exitSelectionMode(): void {},
+						isSelectionModeActive: true,
+						selectAll(): void {},
+						selectId(id: string): void {},
+						selectedIDs: [],
+						selectedMap: {},
+						unSelectAll(): void {}
+					}}
+				>
+					<ListHeader
+						folderId={currentFolder.id}
+						permittedSelectionModeActionsItems={[]}
+						isAllSelected={false}
+						selectedCount={selectedCount}
+					/>
+				</SelectionContext.Provider>,
 				{ mocks: {} }
 			);
 			expect(screen.queryByText(selectedCount)).not.toBeInTheDocument();
