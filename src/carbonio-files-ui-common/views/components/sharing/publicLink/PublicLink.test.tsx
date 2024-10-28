@@ -10,7 +10,6 @@ import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
 
 import { PublicLink } from './PublicLink';
-import { calculateIsDescriptionChanged } from './PublicLinkComponent';
 import { DATE_TIME_FORMAT } from '../../../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import { populateLink, populateLinks, populateNode } from '../../../../mocks/mockUtils';
@@ -822,67 +821,6 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 				screen.queryByRole('textbox', { name: /link's description/i })
 			).not.toBeInTheDocument();
 			expect(screen.queryByRole('textbox', { name: /expiration date/i })).not.toBeInTheDocument();
-		});
-	});
-
-	describe('calculateIsDescriptionChanged', () => {
-		it.each([
-			['description', 'description'],
-			[null, null],
-			[undefined, null],
-			[undefined, undefined],
-			[null, undefined]
-		])(
-			'should return false if the old description is %s and the new one is %s',
-			(oldDescription, newDescription) => {
-				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
-				expect(res).toBeFalsy();
-			}
-		);
-
-		it.each([null, undefined])(
-			`should return false if the old description is %s and the new one is empty string`,
-			(oldDescription) => {
-				const res = calculateIsDescriptionChanged(oldDescription, '');
-				expect(res).toBeFalsy();
-			}
-		);
-
-		it.each([null, undefined])(
-			'should return false if the old description is empty string and the new one is %s',
-			(newDescription) => {
-				const res = calculateIsDescriptionChanged('', newDescription);
-				expect(res).toBeFalsy();
-			}
-		);
-
-		it.each([
-			[null, 'new description'],
-			[undefined, 'new description'],
-			['old description', null],
-			['old description', undefined],
-			['old description', 'new description']
-		])(
-			'should return true if the old description is %s and the new one is %s',
-			(oldDescription, newDescription) => {
-				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
-				expect(res).toBeTruthy();
-			}
-		);
-
-		it('should return false if the old description is empty string and the new one is empty string', () => {
-			const res = calculateIsDescriptionChanged('', '');
-			expect(res).toBeFalsy();
-		});
-
-		it('should return true if the old description is empty string and the new one is set', () => {
-			const res = calculateIsDescriptionChanged('', 'new description');
-			expect(res).toBeTruthy();
-		});
-
-		it('should return true if the old description was set and the new one is empty string', () => {
-			const res = calculateIsDescriptionChanged('old description', '');
-			expect(res).toBeTruthy();
 		});
 	});
 });

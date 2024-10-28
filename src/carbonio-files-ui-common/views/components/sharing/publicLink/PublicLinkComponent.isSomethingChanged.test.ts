@@ -5,7 +5,11 @@
  */
 import { faker } from '@faker-js/faker';
 
-import { calculateIsAccessCodeChanged, calculateIsExpirationChanged } from './PublicLinkComponent';
+import {
+	calculateIsAccessCodeChanged,
+	calculateIsDescriptionChanged,
+	calculateIsExpirationChanged
+} from './PublicLinkComponent';
 import { generateAccessCode } from '../../../../utils/utils';
 
 describe('Public Link component is something changed', () => {
@@ -103,6 +107,67 @@ describe('Public Link component is something changed', () => {
 		it('should return false if the expiration date was set and the users does not set it', () => {
 			const expirationDate = faker.date.future().setHours(23, 59, 59);
 			expect(calculateIsExpirationChanged(expirationDate, expirationDate)).toBeFalsy();
+		});
+	});
+
+	describe('calculateIsDescriptionChanged', () => {
+		it.each([
+			['description', 'description'],
+			[null, null],
+			[undefined, null],
+			[undefined, undefined],
+			[null, undefined]
+		])(
+			'should return false if the old description is %s and the new one is %s',
+			(oldDescription, newDescription) => {
+				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
+				expect(res).toBeFalsy();
+			}
+		);
+
+		it.each([null, undefined])(
+			`should return false if the old description is %s and the new one is empty string`,
+			(oldDescription) => {
+				const res = calculateIsDescriptionChanged(oldDescription, '');
+				expect(res).toBeFalsy();
+			}
+		);
+
+		it.each([null, undefined])(
+			'should return false if the old description is empty string and the new one is %s',
+			(newDescription) => {
+				const res = calculateIsDescriptionChanged('', newDescription);
+				expect(res).toBeFalsy();
+			}
+		);
+
+		it.each([
+			[null, 'new description'],
+			[undefined, 'new description'],
+			['old description', null],
+			['old description', undefined],
+			['old description', 'new description']
+		])(
+			'should return true if the old description is %s and the new one is %s',
+			(oldDescription, newDescription) => {
+				const res = calculateIsDescriptionChanged(oldDescription, newDescription);
+				expect(res).toBeTruthy();
+			}
+		);
+
+		it('should return false if the old description is empty string and the new one is empty string', () => {
+			const res = calculateIsDescriptionChanged('', '');
+			expect(res).toBeFalsy();
+		});
+
+		it('should return true if the old description is empty string and the new one is set', () => {
+			const res = calculateIsDescriptionChanged('', 'new description');
+			expect(res).toBeTruthy();
+		});
+
+		it('should return true if the old description was set and the new one is empty string', () => {
+			const res = calculateIsDescriptionChanged('old description', '');
+			expect(res).toBeTruthy();
 		});
 	});
 });

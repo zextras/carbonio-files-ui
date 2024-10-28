@@ -57,7 +57,7 @@ export const AccessCodeSection = ({
 		() => (
 			<Button
 				type={'ghost'}
-				color={'gray0'}
+				color={'text'}
 				size={'extralarge'}
 				icon={isAccessCodeShown ? 'EyeOutline' : 'EyeOffOutline'}
 				onClick={toggleShowAccessCode}
