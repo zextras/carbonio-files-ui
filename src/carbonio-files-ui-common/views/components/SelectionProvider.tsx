@@ -121,21 +121,29 @@ export const SelectionProvider = ({
 		isSelectionModeActive,
 		exitSelectionMode
 	} = useSelection(items);
-	return (
-		<SelectionContext.Provider
-			value={{
-				selectedIDs,
-				selectedMap,
-				selectId,
-				selectAll,
-				unSelectAll,
-				isSelectionModeActive,
-				exitSelectionMode
-			}}
-		>
-			{children}
-		</SelectionContext.Provider>
+
+	const providerValue = useMemo(
+		() => ({
+			selectedIDs,
+			selectedMap,
+			selectId,
+			selectAll,
+			unSelectAll,
+			isSelectionModeActive,
+			exitSelectionMode
+		}),
+		[
+			exitSelectionMode,
+			isSelectionModeActive,
+			selectAll,
+			selectId,
+			selectedIDs,
+			selectedMap,
+			unSelectAll
+		]
 	);
+
+	return <SelectionContext.Provider value={providerValue}>{children}</SelectionContext.Provider>;
 };
 
 export function useSelectionContext(): ReturnType<typeof useSelection> {
