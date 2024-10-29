@@ -15,7 +15,7 @@ import {
 	Shimmer,
 	Text
 } from '@zextras/carbonio-design-system';
-import styled, { css, SimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import {
 	LIST_ITEM_AVATAR_HEIGHT,
@@ -38,9 +38,9 @@ export const HoverContainer = styled(Row)`
 	width: 100%;
 `;
 
-export const HoverBarContainer = styled(Row).attrs(({ height = '45%', width, theme }) => ({
-	height,
-	width: width || `calc(100% - ${LIST_ITEM_AVATAR_HEIGHT} - ${theme.sizes.padding.small})`
+export const HoverBarContainer = styled(Row).attrs(({ height, width, theme }) => ({
+	height: height ?? '45%',
+	width: width ?? `calc(100% - ${LIST_ITEM_AVATAR_HEIGHT} - ${theme.sizes.padding.small})`
 }))`
 	display: none;
 	position: absolute;
@@ -59,24 +59,19 @@ interface ListItemContainerProps {
 	$disableHover?: boolean;
 }
 
-export const ListItemContainer = styled(Container).attrs<
-	ListItemContainerProps,
-	{ backgroundColor?: string }
->(({ $contextualMenuActive, $disabled, theme }) => ({
-	backgroundColor:
-		($disabled && getColor('gray6.disabled', theme)) ||
-		($contextualMenuActive && getColor('gray6.hover', theme)) ||
-		undefined
-}))<ListItemContainerProps>`
+export const ListItemContainer = styled(Container)<ListItemContainerProps>`
 	position: relative;
 	${HoverContainer} {
-		background-color: ${({ backgroundColor }): SimpleInterpolation => backgroundColor};
+		background-color: ${({ $disabled, $contextualMenuActive, theme }): false | string | undefined =>
+			($disabled && getColor('gray6.disabled', theme)) ||
+			($contextualMenuActive && getColor('gray6.hover', theme)) ||
+			undefined};
 	}
 	${HoverBarContainer} {
 		display: none;
 	}
 
-	${({ $disableHover, theme }): SimpleInterpolation =>
+	${({ $disableHover, theme }): false | ReturnType<typeof css> =>
 		!$disableHover &&
 		css`
 			&:hover {
@@ -89,7 +84,7 @@ export const ListItemContainer = styled(Container).attrs<
 				}
 			}
 		`}
-	${({ $disabled }): SimpleInterpolation =>
+	${({ $disabled }): false | ReturnType<typeof css> =>
 		!$disabled &&
 		css`
 			cursor: pointer;
@@ -143,7 +138,7 @@ export const ShimmerText = styled(Shimmer.Text).attrs<{
 }>(({ $size, theme }) => ({
 	height: cssCalcBuilder(theme.sizes.font[$size], ['*', 1.2]),
 	'data-testid': 'shimmer-text'
-}))``;
+}))<{ $size: 'extrasmall' | 'small' | 'medium' | 'large' | 'extralarge' }>``;
 
 export const TextWithLineHeight = styled(Text)`
 	line-height: 1.5;

@@ -16,7 +16,7 @@ import {
 	CollapsingActions
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled, { SimpleInterpolation } from 'styled-components';
+import styled from 'styled-components';
 
 import { BREADCRUMB_ROW_HEIGHT } from '../../constants';
 import { cssCalcBuilder } from '../../utils/utils';
@@ -24,7 +24,7 @@ import { cssCalcBuilder } from '../../utils/utils';
 const CustomCollapsingActions = styled(CollapsingActions)``;
 
 const CollapsingActionsRow = styled(Row)<{ $maxVisible: number | undefined }>`
-	--lh-collapsing-actions-max-width: ${({ $maxVisible }): SimpleInterpolation =>
+	--lh-collapsing-actions-max-width: ${({ $maxVisible }): string =>
 		$maxVisible !== undefined ? cssCalcBuilder('2.25rem', ['*', $maxVisible]) : '100%'};
 	max-width: var(--lh-collapsing-actions-max-width);
 	${CustomCollapsingActions} {

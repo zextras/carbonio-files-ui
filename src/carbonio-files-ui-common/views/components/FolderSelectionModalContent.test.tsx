@@ -10,10 +10,8 @@ import React from 'react';
 
 import { act, waitFor } from '@testing-library/react';
 import 'jest-styled-components';
-import { find as findStyled } from 'styled-components/test-utils';
 
 import { FolderSelectionModalContent } from './FolderSelectionModalContent';
-import { HoverContainer } from './StyledComponents';
 import { destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
@@ -25,7 +23,7 @@ import {
 	populateNodes,
 	populateParents
 } from '../../mocks/mockUtils';
-import { buildBreadCrumbRegExp, setup, screen } from '../../tests/utils';
+import { buildBreadCrumbRegExp, setup, screen, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { File, Folder } from '../../types/graphql/types';
 import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
@@ -177,7 +175,9 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
 		expect(
-			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+			within(screen.getByTestId(SELECTORS.nodeItem(localRoot.id))).getByTestId(
+				SELECTORS.hoverContainer
+			)
 		).toHaveStyle({ background: COLORS.highlight.regular });
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		expect(screen.getByText(/trash/i)).toBeVisible();
@@ -190,10 +190,14 @@ describe('Folder Selection Modal Content', () => {
 		await waitFor(() => expect(chooseButton).toBeEnabled());
 		// active root is become the clicked root
 		expect(
-			findStyled(screen.getByTestId(SELECTORS.nodeItem(ROOTS.SHARED_WITH_ME)), HoverContainer)
+			within(screen.getByTestId(SELECTORS.nodeItem(ROOTS.SHARED_WITH_ME))).getByTestId(
+				SELECTORS.hoverContainer
+			)
 		).toHaveStyle({ background: COLORS.highlight.regular });
 		expect(
-			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+			within(screen.getByTestId(SELECTORS.nodeItem(localRoot.id))).getByTestId(
+				SELECTORS.hoverContainer
+			)
 		).not.toHaveStyle({ background: COLORS.highlight.regular });
 		// click on subtitle to reset active folder
 		await user.click(screen.getByText(/searched only inside the selected folder/i));
@@ -229,7 +233,9 @@ describe('Folder Selection Modal Content', () => {
 		expect(screen.getByText(/home/i)).toBeVisible();
 		// ugly but it's the only way to check the item is visibly active
 		expect(
-			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+			within(screen.getByTestId(SELECTORS.nodeItem(localRoot.id))).getByTestId(
+				SELECTORS.hoverContainer
+			)
 		).toHaveStyle({ background: COLORS.highlight.regular });
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
@@ -251,7 +257,9 @@ describe('Folder Selection Modal Content', () => {
 		expect(chooseButton).toBeDisabled();
 		// local root item is not visibly active
 		expect(
-			findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+			within(screen.getByTestId(SELECTORS.nodeItem(localRoot.id))).getByTestId(
+				SELECTORS.hoverContainer
+			)
 		).not.toHaveStyle(expect.objectContaining({ background: COLORS.highlight.regular }));
 		await user.click(chooseButton);
 		expect(confirmAction).not.toHaveBeenCalled();
@@ -410,7 +418,9 @@ describe('Folder Selection Modal Content', () => {
 		expect(chooseButton).toBeEnabled();
 		// ugly but it's the only way to check the item is visibly active
 		expect(
-			findStyled(screen.getByTestId(SELECTORS.nodeItem(ROOTS.TRASH)), HoverContainer)
+			within(screen.getByTestId(SELECTORS.nodeItem(ROOTS.TRASH))).getByTestId(
+				SELECTORS.hoverContainer
+			)
 		).toHaveStyle({
 			background: COLORS.highlight.regular
 		});

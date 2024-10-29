@@ -76,10 +76,11 @@
 	},
 	"dependencies": {
 		"@apollo/client": "3.10.8",
-		"@zextras/carbonio-design-system": "^8.0.0",
+		"@zextras/carbonio-design-system": "file:zextras-carbonio-design-system-0.0.0-semantically-released.tgz",
 		"@zextras/carbonio-shell-ui": "devel",
-		"@zextras/carbonio-ui-preview": "^3.0.0",
+		"@zextras/carbonio-ui-preview": "^3.1.0-devel.1",
 		"core-js": "^3.38.1",
+		"date-fns": "^4.1.0",
 		"graphql": "^16.9.0",
 		"i18next": "^22.5.1",
 		"lodash": "^4.17.21",
@@ -87,7 +88,7 @@
 		"react-dom": "^18.3.1",
 		"react-i18next": "^12.3.1",
 		"react-router-dom": "^5.3.4",
-		"styled-components": "^5.3.11",
+		"styled-components": "^6.1.13",
 		"uuid": "^10.0.0"
 	},
 	"browserslist": [

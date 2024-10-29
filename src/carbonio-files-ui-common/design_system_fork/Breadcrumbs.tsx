@@ -5,16 +5,16 @@
  */
 
 import { Breadcrumbs as DsBreadcrumbs, getColor, TextProps } from '@zextras/carbonio-design-system';
-import styled, { css, SimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Breadcrumbs = styled(DsBreadcrumbs)<{ $size?: TextProps['size']; color?: string }>`
+export const Breadcrumbs = styled(DsBreadcrumbs)<{ $size?: TextProps['size']; $color?: string }>`
 	[class^='Text'] {
 		font-size: ${({ theme, $size = 'medium' }): string => theme.sizes.font[$size]};
 
-		${({ theme, color }): SimpleInterpolation =>
-			color &&
+		${({ theme, $color }): string | undefined | ReturnType<typeof css> =>
+			$color &&
 			css`
-				color: ${getColor(color, theme)};
+				color: ${getColor($color, theme)};
 			`};
 	}
 `;

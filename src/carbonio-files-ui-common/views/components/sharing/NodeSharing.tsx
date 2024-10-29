@@ -38,13 +38,14 @@ const MainContainer = styled(Container)`
 	overflow-y: auto;
 `;
 
-const ScrollContainer = styled(Container).attrs(({ theme }) => ({
-	$marginSize: cssCalcBuilder(theme.sizes.padding.extrasmall, ['/', 2])
-}))`
+const ScrollContainer = styled(Container)`
 	overflow-y: auto;
 
 	> div {
-		margin: ${({ $marginSize }): string => `${$marginSize} ${$marginSize} ${$marginSize} 0`};
+		margin: ${({ theme }): string => {
+			const $marginSize = cssCalcBuilder(theme.sizes.padding.extrasmall, ['/', 2]);
+			return `${$marginSize} ${$marginSize} ${$marginSize} 0`;
+		}};
 	}
 `;
 

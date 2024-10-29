@@ -105,6 +105,7 @@ export const UploadListItem = React.memo<UploadListItemProps>(
 						padding={{ all: 'small' }}
 						width={'fill'}
 						background={isActive ? 'highlight' : 'gray6'}
+						data-testid={'hover-container'}
 					>
 						<NodeAvatarIcon
 							selectionModeActive={isSelectionModeActive}

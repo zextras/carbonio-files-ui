@@ -60,6 +60,10 @@ interface ListContentProps {
 	fillerWithActions?: React.JSX.Element;
 }
 
+const GridRowFiller = (): React.JSX.Element => (
+	<GridItem height={0} $columnStart={1} $columnEnd={-1} />
+);
+
 export const ListContent = ({
 	nodes,
 	selectedMap,
@@ -150,9 +154,7 @@ export const ListContent = ({
 				((node.__typename === 'File' && nodes[currentIndex - 1].__typename === 'Folder') ||
 					(node.__typename === 'Folder' && nodes[currentIndex - 1].__typename === 'File'))
 			) {
-				accumulator.push(
-					<GridItem key={'grid-row-filler'} height={0} $columnStart={1} $columnEnd={-1} />
-				);
+				accumulator.push(<GridRowFiller key={'grid-row-filler'} />);
 			}
 			accumulator.push(
 				// id required for scrollToNodeItem function

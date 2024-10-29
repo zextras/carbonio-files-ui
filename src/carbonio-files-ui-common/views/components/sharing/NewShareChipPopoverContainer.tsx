@@ -13,16 +13,19 @@ import {
 	Padding,
 	Divider,
 	Checkbox,
-	pseudoClasses
+	pseudoClasses,
+	type ContainerProps
 } from '@zextras/carbonio-design-system';
 import { includes } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled, { SimpleInterpolation } from 'styled-components';
+import styled from 'styled-components';
 
-const ExclusiveSelectionContainer = styled(Container)<{ $disabled: boolean; background: string }>`
+const ExclusiveSelectionContainer = styled(Container)<
+	{ $disabled: boolean } & Required<Pick<ContainerProps, 'background'>>
+>`
 	cursor: ${({ $disabled }): string => (!$disabled ? 'pointer' : 'default')};
 	max-width: 16rem;
-	${({ theme, background, $disabled }): SimpleInterpolation =>
+	${({ theme, background, $disabled }): false | ReturnType<typeof pseudoClasses> =>
 		!$disabled && pseudoClasses(theme, background, 'background')};
 `;
 

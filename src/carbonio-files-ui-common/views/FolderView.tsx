@@ -6,7 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Text } from '@zextras/carbonio-design-system';
+import { DropdownItem, Text } from '@zextras/carbonio-design-system';
 import { filter, map, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -245,6 +245,11 @@ const FolderView = (): React.JSX.Element => {
 		[canUseDocs, createDocsAction, createFolderAction, isCanCreateFile, isCanCreateFolder, t]
 	);
 
+	const actionAsDropdownItems = useMemo(
+		() => actions.map(({ execute, ...rest }): DropdownItem => ({ ...rest, onClick: execute })),
+		[actions]
+	);
+
 	useEffect(() => {
 		const createActions = map(actions, (action) => ({
 			type: ACTION_TYPES.NEW,
@@ -327,14 +332,14 @@ const FolderView = (): React.JSX.Element => {
 					loadMore={loadMore}
 					loading={loading}
 					canUpload={isCanUploadFile}
-					fillerWithActions={<EmptySpaceFiller actions={actions} />}
+					fillerWithActions={<EmptySpaceFiller actions={actionAsDropdownItems} />}
 					emptyListMessage={t('empty.folder.hint', "It looks like there's nothing here.")}
 					mainList={isCanUploadFile}
 				/>
 			</ListHeaderActionContext.Provider>
 		),
 		[
-			actions,
+			actionAsDropdownItems,
 			currentFolderId,
 			hasMore,
 			isCanUploadFile,
