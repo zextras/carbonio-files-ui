@@ -16,7 +16,8 @@ import {
 	ACTION_TYPES,
 	SecondaryBarComponentProps,
 	SearchViewProps,
-	NewAction
+	NewAction,
+	useAuthenticated
 } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -65,7 +66,7 @@ const SearchView = (props: SearchViewProps): React.JSX.Element => (
 	</Suspense>
 );
 
-export default function App(): React.JSX.Element {
+function AuthenticatedApp(): React.JSX.Element {
 	const [t] = useTranslation();
 
 	const beforeunloadCallback = useCallback((e: Event) => {
@@ -145,4 +146,10 @@ export default function App(): React.JSX.Element {
 			</ModalManager>
 		</ApolloProvider>
 	);
+}
+
+export default function App(): React.JSX.Element | null {
+	const isAuthenticated = useAuthenticated();
+
+	return isAuthenticated ? <AuthenticatedApp /> : null;
 }
