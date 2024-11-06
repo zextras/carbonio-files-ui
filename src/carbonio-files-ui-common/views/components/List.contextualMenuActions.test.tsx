@@ -78,13 +78,15 @@ describe('Contextual menu actions', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as (File | Folder)[]}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={actions} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -184,13 +186,15 @@ describe('Contextual menu actions', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as (File | Folder)[]}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={actions} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -287,13 +291,15 @@ describe('Contextual menu actions', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as (File | Folder)[]}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={actions} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -388,13 +394,15 @@ describe('Contextual menu actions', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={actions} />}
-						nodes={currentFolder.children.nodes as (File | Folder)[]}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={actions} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -557,13 +565,15 @@ describe('Contextual menu actions', () => {
 		} satisfies Partial<Resolvers>;
 
 		const { user } = setup(
-			<List
-				folderId={currentFolder.id}
-				fillerWithActions={<EmptySpaceFiller actions={[]} />}
-				nodes={currentFolder.children.nodes as (File | Folder)[]}
-				mainList
-				emptyListMessage={'hint'}
-			/>,
+			<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+				<List
+					folderId={currentFolder.id}
+					fillerWithActions={<EmptySpaceFiller actions={[]} />}
+					nodes={currentFolder.children.nodes as (File | Folder)[]}
+					mainList
+					emptyListMessage={'hint'}
+				/>
+			</SelectionProvider>,
 			{ mocks }
 		);
 

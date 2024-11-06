@@ -77,7 +77,11 @@ export const UploadListWrapper = (): React.JSX.Element => {
 
 describe('Upload list', () => {
 	test('Show upload crumbs', async () => {
-		const { getByTextWithMarkup } = setup(<UploadList uploadItems={[]} />);
+		const { getByTextWithMarkup } = setup(
+			<SelectionProvider items={[]}>
+				<UploadList uploadItems={[]} />
+			</SelectionProvider>
+		);
 		await screen.findByText(/nothing here/i);
 		expect(getByTextWithMarkup(buildBreadCrumbRegExp('Uploads'))).toBeVisible();
 	});

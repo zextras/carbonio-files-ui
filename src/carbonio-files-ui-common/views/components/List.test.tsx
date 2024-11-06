@@ -65,7 +65,11 @@ describe('List', () => {
 				node.extension = 'ext';
 				node.mime_type = mimeType;
 
-				const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
+				const { user } = setup(
+					<SelectionProvider items={[node]}>
+						<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>
+				);
 				await user.dblClick(screen.getByText(node.name));
 				await screen.findByRole('img');
 				expect(screen.getByRole('img')).toBeVisible();
@@ -83,7 +87,11 @@ describe('List', () => {
 			node.extension = 'pdf';
 			node.size = 5000;
 
-			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
+			const { user } = setup(
+				<SelectionProvider items={[node]}>
+					<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+				</SelectionProvider>
+			);
 			await user.dblClick(screen.getByText(node.name));
 			await screen.findByTestId(SELECTORS.pdfPreview);
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
@@ -105,7 +113,11 @@ describe('List', () => {
 			node.type = NodeType.Text;
 			node.extension = 'odt';
 
-			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
+			const { user } = setup(
+				<SelectionProvider items={[node]}>
+					<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+				</SelectionProvider>
+			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(openWithDocsFn).toHaveBeenCalled();
 			expect(screen.queryByTestId(SELECTORS.pdfPreview)).not.toBeInTheDocument();
@@ -120,7 +132,11 @@ describe('List', () => {
 			node.extension = 'odt';
 			node.size = 5000;
 
-			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
+			const { user } = setup(
+				<SelectionProvider items={[node]}>
+					<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+				</SelectionProvider>
+			);
 			await user.dblClick(screen.getByText(node.name));
 			await screen.findByTestId(SELECTORS.pdfPreview);
 			expect(openWithDocsFn).not.toHaveBeenCalled();
@@ -145,7 +161,11 @@ describe('List', () => {
 			node.type = NodeType.Application;
 			node.mime_type = 'unsupported/mimetype';
 
-			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />);
+			const { user } = setup(
+				<SelectionProvider items={[node]}>
+					<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+				</SelectionProvider>
+			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(getDocumentPreviewSrcFn).not.toHaveBeenCalled();
 			expect(getPdfPreviewSrcFn).not.toHaveBeenCalled();

@@ -34,30 +34,32 @@ const CollapsingActionsRow = styled(Row)<{ $maxVisible: number | undefined }>`
 `;
 
 export interface ListHeaderProps {
-	isAllSelected: boolean;
 	permittedSelectionModeActionsItems: DSAction[];
 	hide?: boolean;
 	firstCustomComponent?: React.ReactNode;
 	secondCustomComponent?: React.ReactNode;
 	headerEndComponent?: React.ReactNode;
-	selectedCount?: number;
 }
 
 const MAX_ACTIONS_VISIBLE = 3;
 
 export const ListHeader = ({
-	isAllSelected,
 	permittedSelectionModeActionsItems = [],
 	hide = false,
 	firstCustomComponent,
 	secondCustomComponent,
-	headerEndComponent,
-	selectedCount
+	headerEndComponent
 }: ListHeaderProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
-	const { isSelectionModeActive, selectAll, exitSelectionMode, unSelectAll } =
-		useSelectionContext();
+	const {
+		isSelectionModeActive,
+		selectAll,
+		exitSelectionMode,
+		unSelectAll,
+		selectedCount,
+		isAllSelected
+	} = useSelectionContext();
 
 	return !isSelectionModeActive ? (
 		<>

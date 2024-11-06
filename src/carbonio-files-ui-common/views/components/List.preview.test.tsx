@@ -9,6 +9,7 @@ import React from 'react';
 import { act, screen } from '@testing-library/react';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { PREVIEW_MAX_SIZE } from '../../constants';
 import { ACTION_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
@@ -24,7 +25,11 @@ describe('Preview action', () => {
 		file.mime_type = 'application/pdf';
 		file.size = PREVIEW_MAX_SIZE + 1;
 		file.extension = 'pdf';
-		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
@@ -43,7 +48,11 @@ describe('Preview action', () => {
 		file.mime_type = 'application/pdf';
 		file.size = 0;
 		file.extension = 'pdf';
-		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
@@ -61,7 +70,11 @@ describe('Preview action', () => {
 		file.mime_type = 'application/pdf';
 		file.size = PREVIEW_MAX_SIZE;
 		file.extension = 'pdf';
-		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
@@ -87,7 +100,11 @@ describe('Preview action', () => {
 		const file = populateFile();
 		file.mime_type = mimeType;
 
-		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
@@ -101,7 +118,11 @@ describe('Preview action', () => {
 		const file = populateFile();
 		file.mime_type = mimeType;
 		file.type = type;
-		const { user } = setup(<List nodes={[file]} mainList={false} emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList={false} emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));

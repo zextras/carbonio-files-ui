@@ -687,11 +687,9 @@ export const List = ({
 			background={'gray6'}
 		>
 			<ListHeader
-				selectedCount={selectedNodes.length}
 				folderId={folderId}
 				crumbs={crumbs}
 				loadingData={loading || getChildrenParentLoading}
-				isAllSelected={selectedIDs.length === nodes.length}
 				permittedSelectionModeActionsItems={permittedSelectionModeActionsItems}
 			/>
 			<Dropzone

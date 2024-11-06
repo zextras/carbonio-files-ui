@@ -125,11 +125,13 @@ describe('Mark for deletion - trash', () => {
 			currentFolder.children.nodes.push(node);
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as (File | Folder)[]}
-					mainList
-					emptyListMessage={'hint'}
-				/>
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+					/>
+				</SelectionProvider>
 			);
 
 			// right click to open contextual menu

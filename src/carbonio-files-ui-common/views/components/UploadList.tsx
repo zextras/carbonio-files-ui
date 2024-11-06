@@ -148,12 +148,7 @@ export const UploadList = ({ uploadItems }: { uploadItems: UploadItem[] }): Reac
 			background={'gray6'}
 		>
 			<ListHeaderActionContext.Provider value={headerAction}>
-				<ListHeader
-					selectedCount={size(selectedIDs)}
-					crumbs={crumbs}
-					permittedSelectionModeActionsItems={uploadActions}
-					isAllSelected={size(selectedIDs) === size(items)}
-				/>
+				<ListHeader crumbs={crumbs} permittedSelectionModeActionsItems={uploadActions} />
 			</ListHeaderActionContext.Provider>
 			<Dropzone
 				onDrop={uploadWithDragAndDrop}

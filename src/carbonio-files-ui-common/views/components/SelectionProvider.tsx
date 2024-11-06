@@ -7,12 +7,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { map, find, filter, includes, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 import { selectionModeVar } from '../../apollo/selectionVar';
 import { useMemoCompare } from '../../hooks/useMemoCompare';
 
-export function useSelection(nodes: Array<{ id: string }>): {
+interface SelectionContextType {
 	selectedIDs: string[];
 	selectedMap: { [id: string]: boolean };
 	selectId: (id: string) => void;
@@ -20,7 +20,11 @@ export function useSelection(nodes: Array<{ id: string }>): {
 	unSelectAll: () => void;
 	selectAll: () => void;
 	exitSelectionMode: () => void;
-} {
+	selectedCount: number;
+	isAllSelected: boolean;
+}
+
+export function useSelection(nodes: Array<{ id: string }>): SelectionContextType {
 	const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 	const [isSelectionModeActive, setIsSelectionModeActive] = useState(false);
 	const selectionModeActive = useReactiveVar(selectionModeVar);
@@ -33,21 +37,21 @@ export function useSelection(nodes: Array<{ id: string }>): {
 	}, [selectionModeActive]);
 
 	const memoNodes = useMemoCompare(nodes, (prev, next) => {
-		const prevMap = map(prev, (item) => item.id);
-		const nextMap = map(next, (item) => item.id);
+		const prevMap = prev?.map((item) => item.id);
+		const nextMap = next.map((item) => item.id);
 		return isEqual(prevMap, nextMap);
 	});
 
 	useEffect(() => {
 		setSelectedIDs((prevState) =>
-			filter(prevState, (selectedId) => find(memoNodes, ['id', selectedId]) !== undefined)
+			prevState.filter((selectedId) => memoNodes.some((node) => node.id === selectedId))
 		);
 	}, [memoNodes]);
 
 	const selectedMap = useMemo(
 		() =>
 			memoNodes.reduce<{ [id: string]: boolean }>((accumulator, node) => {
-				accumulator[node.id] = includes(selectedIDs, node.id);
+				accumulator[node.id] = selectedIDs.includes(node.id);
 				return accumulator;
 			}, {}),
 		[memoNodes, selectedIDs]
@@ -90,18 +94,13 @@ export function useSelection(nodes: Array<{ id: string }>): {
 		isSelectionModeActive,
 		unSelectAll,
 		selectAll,
-		exitSelectionMode
+		exitSelectionMode,
+		selectedCount: selectedIDs.length,
+		isAllSelected: selectedIDs.length === memoNodes.length
 	};
 }
-export const SelectionContext = createContext<ReturnType<typeof useSelection>>({
-	exitSelectionMode(): void {},
-	isSelectionModeActive: false,
-	selectAll(): void {},
-	selectId(id: string): void {},
-	selectedIDs: [],
-	selectedMap: {},
-	unSelectAll(): void {}
-});
+
+export const SelectionContext = createContext<SelectionContextType | null>(null);
 
 interface SelectionProviderProps {
 	children: React.ReactNode;
@@ -119,7 +118,9 @@ export const SelectionProvider = ({
 		selectAll,
 		unSelectAll,
 		isSelectionModeActive,
-		exitSelectionMode
+		exitSelectionMode,
+		selectedCount,
+		isAllSelected
 	} = useSelection(items);
 
 	const providerValue = useMemo(
@@ -130,13 +131,17 @@ export const SelectionProvider = ({
 			selectAll,
 			unSelectAll,
 			isSelectionModeActive,
-			exitSelectionMode
+			exitSelectionMode,
+			selectedCount,
+			isAllSelected
 		}),
 		[
 			exitSelectionMode,
+			isAllSelected,
 			isSelectionModeActive,
 			selectAll,
 			selectId,
+			selectedCount,
 			selectedIDs,
 			selectedMap,
 			unSelectAll
@@ -146,6 +151,10 @@ export const SelectionProvider = ({
 	return <SelectionContext.Provider value={providerValue}>{children}</SelectionContext.Provider>;
 };
 
-export function useSelectionContext(): ReturnType<typeof useSelection> {
-	return useContext(SelectionContext);
+export function useSelectionContext(): SelectionContextType {
+	const context = useContext(SelectionContext);
+	if (!context) {
+		throw new Error('useSelectionContext must be used within a SelectionProvider');
+	}
+	return context;
 }

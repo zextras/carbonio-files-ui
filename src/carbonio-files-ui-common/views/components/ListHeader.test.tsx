@@ -9,13 +9,13 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { map } from 'lodash';
 
-import { SelectionContext } from './SelectionProvider';
+import { SelectionContext, SelectionProvider } from './SelectionProvider';
 import ListHeader from '../../../components/ListHeader';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateParents } from '../../mocks/mockUtils';
 import { buildBreadCrumbRegExp, setup } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { Folder } from '../../types/graphql/types';
+import { File, Folder } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/resolverMocks';
 
 describe('ListHeader', () => {
@@ -29,11 +29,9 @@ describe('ListHeader', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup } = setup(
-				<ListHeader
-					folderId={currentFolder.id}
-					isAllSelected={false}
-					permittedSelectionModeActionsItems={[]}
-				/>,
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<ListHeader folderId={currentFolder.id} permittedSelectionModeActionsItems={[]} />
+				</SelectionProvider>,
 				{ mocks }
 			);
 
@@ -44,7 +42,8 @@ describe('ListHeader', () => {
 		});
 
 		test('by default shows two level (current folder and its parent)', async () => {
-			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
+			const folder = populateFolder();
+			const { node: currentFolder, path } = populateParents(folder, 5);
 			const mocks = {
 				Query: {
 					getPath: mockGetPath(path)
@@ -52,11 +51,9 @@ describe('ListHeader', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup } = setup(
-				<ListHeader
-					folderId={currentFolder.id}
-					isAllSelected={false}
-					permittedSelectionModeActionsItems={[]}
-				/>,
+				<SelectionProvider items={folder.children.nodes as (File | Folder)[]}>
+					<ListHeader folderId={currentFolder.id} permittedSelectionModeActionsItems={[]} />
+				</SelectionProvider>,
 				{ mocks }
 			);
 
@@ -70,7 +67,8 @@ describe('ListHeader', () => {
 		});
 
 		test('consecutive clicks on the cta expand and collapse the path with a single API request to retrieve the full path', async () => {
-			const { node: currentFolder, path } = populateParents(populateFolder(), 5);
+			const folder = populateFolder();
+			const { node: currentFolder, path } = populateParents(folder, 5);
 			const mocks = {
 				Query: {
 					getPath: mockGetPath(path)
@@ -78,11 +76,9 @@ describe('ListHeader', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { findByTextWithMarkup, getByTextWithMarkup, user } = setup(
-				<ListHeader
-					folderId={currentFolder.id}
-					isAllSelected={false}
-					permittedSelectionModeActionsItems={[]}
-				/>,
+				<SelectionProvider items={folder.children.nodes as (File | Folder)[]}>
+					<ListHeader folderId={currentFolder.id} permittedSelectionModeActionsItems={[]} />
+				</SelectionProvider>,
 				{ mocks }
 			);
 
@@ -133,15 +129,12 @@ describe('ListHeader', () => {
 						selectId(id: string): void {},
 						selectedIDs: [],
 						selectedMap: {},
-						unSelectAll(): void {}
+						unSelectAll(): void {},
+						selectedCount,
+						isAllSelected: false
 					}}
 				>
-					<ListHeader
-						folderId={currentFolder.id}
-						permittedSelectionModeActionsItems={[]}
-						isAllSelected={false}
-						selectedCount={selectedCount}
-					/>
+					<ListHeader folderId={currentFolder.id} permittedSelectionModeActionsItems={[]} />
 				</SelectionContext.Provider>,
 				{ mocks: {} }
 			);
@@ -161,15 +154,12 @@ describe('ListHeader', () => {
 						selectId(id: string): void {},
 						selectedIDs: [],
 						selectedMap: {},
-						unSelectAll(): void {}
+						unSelectAll(): void {},
+						selectedCount: 0,
+						isAllSelected: false
 					}}
 				>
-					<ListHeader
-						folderId={currentFolder.id}
-						permittedSelectionModeActionsItems={[]}
-						isAllSelected={false}
-						selectedCount={selectedCount}
-					/>
+					<ListHeader folderId={currentFolder.id} permittedSelectionModeActionsItems={[]} />
 				</SelectionContext.Provider>,
 				{ mocks: {} }
 			);
