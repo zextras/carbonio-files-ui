@@ -6,14 +6,18 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useReactiveVar } from '@apollo/client';
 import { isEqual } from 'lodash';
 
-import { selectionModeVar } from '../../apollo/selectionVar';
+import { RESET_SELECTION_EVENT } from '../../../constants';
 import { useMemoCompare } from '../../hooks/useMemoCompare';
 
 function filterSelectedIDs(selectedIDs: string[], items: { id: string }[]): string[] {
 	return selectedIDs.filter((selectedId) => items.some((item) => item.id === selectedId));
+}
+
+export function resetSelection(): void {
+	const resetSelectionEvent = new CustomEvent(RESET_SELECTION_EVENT);
+	window.dispatchEvent(resetSelectionEvent);
 }
 
 interface SelectionContextType {
@@ -30,13 +34,20 @@ interface SelectionContextType {
 
 export function useSelection(items: Array<{ id: string }>): SelectionContextType {
 	const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
-	const selectionModeActive = useReactiveVar(selectionModeVar);
+	const [isSelectionModeActive, setIsSelectionModeActive] = useState(false);
+
+	const exitSelectionMode = useCallback(() => {
+		setSelectedIDs([]);
+		setIsSelectionModeActive(false);
+	}, []);
 
 	useEffect(() => {
-		if (!selectionModeActive) {
-			setSelectedIDs([]);
-		}
-	}, [selectionModeActive]);
+		window.addEventListener(RESET_SELECTION_EVENT, exitSelectionMode);
+
+		return (): void => {
+			window.removeEventListener(RESET_SELECTION_EVENT, exitSelectionMode);
+		};
+	}, [exitSelectionMode]);
 
 	const memoItems = useMemoCompare(items, (prev, next) => {
 		const prevMap = prev?.map((item) => item.id);
@@ -68,7 +79,7 @@ export function useSelection(items: Array<{ id: string }>): SelectionContextType
 			}
 			return previousIds;
 		});
-		selectionModeVar(true);
+		setIsSelectionModeActive(true);
 	}, []);
 
 	const unSelectAll = useCallback(() => {
@@ -78,18 +89,14 @@ export function useSelection(items: Array<{ id: string }>): SelectionContextType
 	const selectAll = useCallback(() => {
 		const allSelected: string[] = memoItems.map((item) => item.id);
 		setSelectedIDs(allSelected);
-		selectionModeVar(true);
+		setIsSelectionModeActive(true);
 	}, [memoItems]);
-
-	const exitSelectionMode = useCallback(() => {
-		selectionModeVar(false);
-	}, []);
 
 	return {
 		selectedIDs,
 		selectedMap,
 		selectId,
-		isSelectionModeActive: selectionModeActive,
+		isSelectionModeActive,
 		unSelectAll,
 		selectAll,
 		exitSelectionMode,
