@@ -30,13 +30,11 @@ interface SelectionContextType {
 
 export function useSelection(items: Array<{ id: string }>): SelectionContextType {
 	const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
-	const [isSelectionModeActive, setIsSelectionModeActive] = useState(false);
 	const selectionModeActive = useReactiveVar(selectionModeVar);
 
 	useEffect(() => {
 		if (!selectionModeActive) {
 			setSelectedIDs([]);
-			setIsSelectionModeActive(false);
 		}
 	}, [selectionModeActive]);
 
@@ -70,7 +68,6 @@ export function useSelection(items: Array<{ id: string }>): SelectionContextType
 			}
 			return previousIds;
 		});
-		setIsSelectionModeActive(true);
 		selectionModeVar(true);
 	}, []);
 
@@ -81,7 +78,6 @@ export function useSelection(items: Array<{ id: string }>): SelectionContextType
 	const selectAll = useCallback(() => {
 		const allSelected: string[] = memoItems.map((item) => item.id);
 		setSelectedIDs(allSelected);
-		setIsSelectionModeActive(true);
 		selectionModeVar(true);
 	}, [memoItems]);
 
@@ -93,7 +89,7 @@ export function useSelection(items: Array<{ id: string }>): SelectionContextType
 		selectedIDs,
 		selectedMap,
 		selectId,
-		isSelectionModeActive,
+		isSelectionModeActive: selectionModeActive,
 		unSelectAll,
 		selectAll,
 		exitSelectionMode,
