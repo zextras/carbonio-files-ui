@@ -4,19 +4,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { lazy, useEffect, Suspense, useCallback, useMemo } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
 
 import { ApolloProvider } from '@apollo/client';
 import { ModalManager } from '@zextras/carbonio-design-system';
 import {
-	Spinner,
+	ACTION_TYPES,
 	addRoute,
 	addSearchView,
+	NewAction,
 	registerActions,
-	ACTION_TYPES,
-	SecondaryBarComponentProps,
 	SearchViewProps,
-	NewAction
+	SecondaryBarComponentProps,
+	Spinner,
+	useAuthenticated
 } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -65,7 +66,7 @@ const SearchView = (props: SearchViewProps): React.JSX.Element => (
 	</Suspense>
 );
 
-export default function App(): React.JSX.Element {
+export function AuthenticatedApp(): React.JSX.Element {
 	const [t] = useTranslation();
 
 	const beforeunloadCallback = useCallback((e: Event) => {
@@ -146,3 +147,11 @@ export default function App(): React.JSX.Element {
 		</ApolloProvider>
 	);
 }
+
+function App(): React.JSX.Element | null {
+	const isAuthenticated = useAuthenticated();
+
+	return isAuthenticated ? <AuthenticatedApp /> : null;
+}
+
+export default App;
