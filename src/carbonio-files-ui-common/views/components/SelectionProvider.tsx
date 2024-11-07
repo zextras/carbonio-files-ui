@@ -12,6 +12,10 @@ import { isEqual } from 'lodash';
 import { selectionModeVar } from '../../apollo/selectionVar';
 import { useMemoCompare } from '../../hooks/useMemoCompare';
 
+function filterSelectedIDs(selectedIDs: string[], items: { id: string }[]): string[] {
+	return selectedIDs.filter((selectedId) => items.some((item) => item.id === selectedId));
+}
+
 interface SelectionContextType {
 	selectedIDs: string[];
 	selectedMap: { [id: string]: boolean };
@@ -24,7 +28,7 @@ interface SelectionContextType {
 	isAllSelected: boolean;
 }
 
-export function useSelection(nodes: Array<{ id: string }>): SelectionContextType {
+export function useSelection(items: Array<{ id: string }>): SelectionContextType {
 	const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 	const [isSelectionModeActive, setIsSelectionModeActive] = useState(false);
 	const selectionModeActive = useReactiveVar(selectionModeVar);
@@ -36,25 +40,23 @@ export function useSelection(nodes: Array<{ id: string }>): SelectionContextType
 		}
 	}, [selectionModeActive]);
 
-	const memoNodes = useMemoCompare(nodes, (prev, next) => {
+	const memoItems = useMemoCompare(items, (prev, next) => {
 		const prevMap = prev?.map((item) => item.id);
 		const nextMap = next.map((item) => item.id);
 		return isEqual(prevMap, nextMap);
 	});
 
 	useEffect(() => {
-		setSelectedIDs((prevState) =>
-			prevState.filter((selectedId) => memoNodes.some((node) => node.id === selectedId))
-		);
-	}, [memoNodes]);
+		setSelectedIDs((prevState) => filterSelectedIDs(prevState, memoItems));
+	}, [memoItems]);
 
 	const selectedMap = useMemo(
 		() =>
-			memoNodes.reduce<{ [id: string]: boolean }>((accumulator, node) => {
-				accumulator[node.id] = selectedIDs.includes(node.id);
+			memoItems.reduce<{ [id: string]: boolean }>((accumulator, item) => {
+				accumulator[item.id] = selectedIDs.includes(item.id);
 				return accumulator;
 			}, {}),
-		[memoNodes, selectedIDs]
+		[memoItems, selectedIDs]
 	);
 
 	const selectId = useCallback((id: string) => {
@@ -77,11 +79,11 @@ export function useSelection(nodes: Array<{ id: string }>): SelectionContextType
 	}, []);
 
 	const selectAll = useCallback(() => {
-		const allSelected: string[] = memoNodes.map((node) => node.id);
+		const allSelected: string[] = memoItems.map((item) => item.id);
 		setSelectedIDs(allSelected);
 		setIsSelectionModeActive(true);
 		selectionModeVar(true);
-	}, [memoNodes]);
+	}, [memoItems]);
 
 	const exitSelectionMode = useCallback(() => {
 		selectionModeVar(false);
@@ -96,7 +98,7 @@ export function useSelection(nodes: Array<{ id: string }>): SelectionContextType
 		selectAll,
 		exitSelectionMode,
 		selectedCount: selectedIDs.length,
-		isAllSelected: selectedIDs.length === memoNodes.length
+		isAllSelected: selectedIDs.length === memoItems.length
 	};
 }
 

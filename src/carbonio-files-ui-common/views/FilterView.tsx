@@ -14,6 +14,7 @@ import { useLocation, useParams } from 'react-router-dom';
 
 import { Displayer } from './components/Displayer';
 import { List } from './components/List';
+import { SelectionProvider } from './components/SelectionProvider';
 import { SortingComponent } from './components/SortingComponent';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
@@ -31,7 +32,6 @@ import { NodeSort } from '../types/graphql/types';
 import { NonNullableListItem } from '../types/utils';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
-import { SelectionProvider } from './components/SelectionProvider';
 
 const FilterView = (): React.JSX.Element => {
 	const { filter: filterParam } = useParams<URLParams>();

@@ -12,6 +12,7 @@ import { filter, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { OverQuotaBanner } from './components/OverQuotaBanner';
+import { SelectionProvider } from './components/SelectionProvider';
 import { UploadDisplayer } from './components/UploadDisplayer';
 import { UploadList } from './components/UploadList';
 import { ViewLayout } from './ViewLayout';
@@ -26,7 +27,6 @@ import { useUpload } from '../hooks/useUpload';
 import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
-import { SelectionProvider } from './components/SelectionProvider';
 
 const UploadView = (): React.JSX.Element => {
 	const [t] = useTranslation();
