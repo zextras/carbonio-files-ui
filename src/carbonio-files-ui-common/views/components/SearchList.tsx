@@ -11,6 +11,7 @@ import { sample, isEmpty, filter, reduce, isArray } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { useSearch } from '../../../hooks/useSearch';
 import { nodeSortVar } from '../../apollo/nodeSortVar';
 import { ListContext } from '../../contexts';
@@ -85,13 +86,15 @@ export const SearchList = (): React.JSX.Element => {
 	}, [queryCalled, t]);
 
 	return (
-		<List
-			nodes={nodes}
-			loading={loading}
-			hasMore={hasMore}
-			loadMore={loadMore}
-			mainList={false}
-			emptyListMessage={emptyListMessage}
-		/>
+		<SelectionProvider items={nodes}>
+			<List
+				nodes={nodes}
+				loading={loading}
+				hasMore={hasMore}
+				loadMore={loadMore}
+				mainList={false}
+				emptyListMessage={emptyListMessage}
+			/>
+		</SelectionProvider>
 	);
 };

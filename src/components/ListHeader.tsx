@@ -27,20 +27,13 @@ type ListHeaderProps = Omit<
 	folderId?: string;
 	crumbs?: Crumb[];
 	loadingData?: boolean;
-	selectedCount?: number;
 };
 
 const ListHeader = ({
 	folderId,
 	crumbs,
 	loadingData,
-	isSelectionModeActive,
-	unSelectAll,
-	selectAll,
-	permittedSelectionModeActionsItems,
-	exitSelectionMode,
-	isAllSelected,
-	selectedCount
+	permittedSelectionModeActionsItems
 }: ListHeaderProps): React.JSX.Element => {
 	const location = useLocation();
 	const inSearchView = isSearchView(location);
@@ -77,17 +70,11 @@ const ListHeader = ({
 
 	return (
 		<CommonListHeader
-			selectedCount={selectedCount}
-			isSelectionModeActive={isSelectionModeActive}
-			unSelectAll={unSelectAll}
-			selectAll={selectAll}
 			permittedSelectionModeActionsItems={permittedSelectionModeActionsItems}
 			hide={inSearchView}
 			headerEndComponent={headerEndComponent}
 			firstCustomComponent={firstCustomComponent}
 			secondCustomComponent={secondCustomComponent}
-			exitSelectionMode={exitSelectionMode}
-			isAllSelected={isAllSelected}
 		/>
 	);
 };

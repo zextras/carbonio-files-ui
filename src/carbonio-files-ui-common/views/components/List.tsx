@@ -17,6 +17,7 @@ import styled from 'styled-components';
 import { Dropzone } from './Dropzone';
 import { EmptyFolder } from './EmptyFolder';
 import { ListContent } from './ListContent';
+import { useSelectionContext } from './SelectionProvider';
 import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useNavigation } from '../../../hooks/useNavigation';
@@ -45,7 +46,6 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
 import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
-import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { Crumb, Node } from '../../types/common';
 import { File, GetChildrenParentDocument, Maybe, NodeType, Share } from '../../types/graphql/types';
@@ -185,15 +185,7 @@ export const List = ({
 		setIsEmpty(!loading && nodes.length === 0);
 	}, [loading, nodes.length, setIsEmpty]);
 
-	const {
-		selectedIDs,
-		selectedMap,
-		selectId,
-		isSelectionModeActive,
-		unSelectAll,
-		selectAll,
-		exitSelectionMode
-	} = useSelection(nodes);
+	const { exitSelectionMode, selectedIDs } = useSelectionContext();
 
 	const { openMoveNodesModal } = useMoveModal(exitSelectionMode);
 
@@ -695,15 +687,9 @@ export const List = ({
 			background={'gray6'}
 		>
 			<ListHeader
-				selectedCount={selectedNodes.length}
 				folderId={folderId}
 				crumbs={crumbs}
 				loadingData={loading || getChildrenParentLoading}
-				isSelectionModeActive={isSelectionModeActive}
-				isAllSelected={selectedIDs.length === nodes.length}
-				unSelectAll={unSelectAll}
-				selectAll={selectAll}
-				exitSelectionMode={exitSelectionMode}
 				permittedSelectionModeActionsItems={permittedSelectionModeActionsItems}
 			/>
 			<Dropzone
@@ -722,10 +708,6 @@ export const List = ({
 							<NodeAvatarIconContext.Provider value={nodeAvatarIconContextValue}>
 								<ListContent
 									nodes={nodes}
-									selectedMap={selectedMap}
-									selectId={selectId}
-									isSelectionModeActive={isSelectionModeActive}
-									exitSelectionMode={exitSelectionMode}
 									hasMore={hasMore}
 									loadMore={loadMore}
 									selectionContextualMenuActionsItems={permittedSelectionModeActionsItems}

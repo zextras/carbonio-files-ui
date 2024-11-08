@@ -12,7 +12,7 @@ import { EventEmitter } from 'events';
 import { forEach, keyBy } from 'lodash';
 import { graphql, http, HttpResponse, HttpResponseResolver, StrictResponse } from 'msw';
 
-import { UploadList } from './UploadList';
+import { UploadListWrapper } from './UploadList.test';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
 import { REST_ENDPOINT, ROOTS, UPLOAD_PATH } from '../../constants';
@@ -71,7 +71,7 @@ describe('Upload List', () => {
 						getNode: mockGetNode({ getBaseNode: [localRoot] })
 					}
 				} satisfies Partial<Resolvers>;
-				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, {
+				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadListWrapper />, {
 					mocks
 				});
 
@@ -142,7 +142,9 @@ describe('Upload List', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadList />, { mocks });
+				const { user, getByRoleWithIcon, queryByRoleWithIcon } = setup(<UploadListWrapper />, {
+					mocks
+				});
 
 				const dropzone = await screen.findByText(/nothing here/i);
 
@@ -248,7 +250,7 @@ describe('Upload List', () => {
 						)
 					);
 
-					const { user } = setup(<UploadList />, { mocks });
+					const { user } = setup(<UploadListWrapper />, { mocks });
 
 					const dropzone = await screen.findByText(/nothing here/i);
 					await uploadWithDnD(dropzone, dataTransferObj);
@@ -320,7 +322,7 @@ describe('Upload List', () => {
 						)
 					);
 
-					const { user } = setup(<UploadList />, { mocks });
+					const { user } = setup(<UploadListWrapper />, { mocks });
 
 					const dropzone = await screen.findByText(/nothing here/i);
 					await uploadWithDnD(dropzone, dataTransferObj);
@@ -401,7 +403,7 @@ describe('Upload List', () => {
 						)
 					);
 
-					const { user } = setup(<UploadList />, { mocks });
+					const { user } = setup(<UploadListWrapper />, { mocks });
 
 					const dropzone = await screen.findByText(/nothing here/i);
 					await uploadWithDnD(dropzone, dataTransferObj);
@@ -465,7 +467,7 @@ describe('Upload List', () => {
 						)
 					);
 
-					const { user } = setup(<UploadList />, { mocks });
+					const { user } = setup(<UploadListWrapper />, { mocks });
 
 					const dropzone = await screen.findByText(/nothing here/i);
 					await uploadWithDnD(dropzone, dataTransferObj);

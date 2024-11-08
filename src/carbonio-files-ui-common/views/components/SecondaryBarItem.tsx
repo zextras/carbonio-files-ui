@@ -21,9 +21,9 @@ import { map, uniq, find, every } from 'lodash';
 import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
+import { resetSelection } from './SelectionProvider';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { DraggedItem, draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { selectionModeVar } from '../../apollo/selectionVar';
 import { DRAG_TYPES, ROOTS, TIMERS } from '../../constants';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
 import { useTrashNodesMutation } from '../../hooks/graphql/mutations/useTrashNodesMutation';
@@ -94,18 +94,14 @@ export const SecondaryBarItem = ({ item, expanded }: SecondaryBarItemProps): Rea
 			if (item.id.includes(ROOTS.TRASH) && markingForDeletion) {
 				const nodesToMarkForDeletion: Array<PickIdNodeType & DeepPick<Node, 'owner', 'id'>> =
 					JSON.parse(markingForDeletion);
-				markNodesForDeletionMutation(...nodesToMarkForDeletion).then(() => {
-					selectionModeVar(false);
-				});
+				markNodesForDeletionMutation(...nodesToMarkForDeletion).then(resetSelection);
 			} else if (getBaseNodeData?.getNode) {
 				if (isUploadingFiles) {
 					add(getUploadAddType(event.dataTransfer), item.id);
 				} else if (movingNodes) {
 					const nodesToMove: DraggedItem[] = JSON.parse(movingNodes);
 					if (isFolder(getBaseNodeData.getNode)) {
-						moveNodesMutation(getBaseNodeData.getNode, ...nodesToMove).then(() => {
-							selectionModeVar(false);
-						});
+						moveNodesMutation(getBaseNodeData.getNode, ...nodesToMove).then(resetSelection);
 					}
 				}
 			}
