@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
+import { useReactiveVar } from '@apollo/client';
 import { faker } from '@faker-js/faker';
 import {
 	act,
@@ -16,9 +17,10 @@ import {
 	within
 } from '@testing-library/react';
 import { EventEmitter } from 'events';
-import { forEach, find, keyBy } from 'lodash';
+import { forEach, find, keyBy, filter } from 'lodash';
 import { http, HttpResponse, StrictResponse } from 'msw';
 
+import { SelectionProvider } from './SelectionProvider';
 import { UploadList } from './UploadList';
 import server from '../../../mocks/server';
 import { uploadVar } from '../../apollo/uploadVar';
@@ -58,9 +60,28 @@ import {
 import { getChildrenVariables, mockCreateFolder, mockGetNode } from '../../utils/resolverMocks';
 import { UploadQueue } from '../../utils/uploadUtils';
 
+export const UploadListWrapper = (): React.JSX.Element => {
+	const uploadVarData = useReactiveVar(uploadVar);
+
+	const uploadItems = useMemo(
+		() => filter(uploadVarData, (upload) => upload.parentId === null),
+		[uploadVarData]
+	);
+
+	return (
+		<SelectionProvider items={uploadItems}>
+			<UploadList uploadItems={uploadItems} />
+		</SelectionProvider>
+	);
+};
+
 describe('Upload list', () => {
 	test('Show upload crumbs', async () => {
-		const { getByTextWithMarkup } = setup(<UploadList />);
+		const { getByTextWithMarkup } = setup(
+			<SelectionProvider items={[]}>
+				<UploadList uploadItems={[]} />
+			</SelectionProvider>
+		);
 		await screen.findByText(/nothing here/i);
 		expect(getByTextWithMarkup(buildBreadCrumbRegExp('Uploads'))).toBeVisible();
 	});
@@ -90,7 +111,7 @@ describe('Upload list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<UploadList />, { mocks });
+			setup(<UploadListWrapper />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 
@@ -154,7 +175,7 @@ describe('Upload list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<UploadList />, { mocks });
+			setup(<UploadListWrapper />, { mocks });
 
 			// run queries
 			await act(async () => {
@@ -200,7 +221,7 @@ describe('Upload list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<UploadList />, { mocks });
+			setup(<UploadListWrapper />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 
@@ -269,7 +290,7 @@ describe('Upload list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<UploadList />, { mocks });
+			setup(<UploadListWrapper />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 
@@ -356,7 +377,7 @@ describe('Upload list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<UploadList />, { mocks });
+			setup(<UploadListWrapper />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 
@@ -417,7 +438,7 @@ describe('Upload list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { user } = setup(<UploadList />, { mocks });
+			const { user } = setup(<UploadListWrapper />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 
@@ -489,7 +510,7 @@ describe('Upload list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<UploadList />, { mocks });
+			setup(<UploadListWrapper />, { mocks });
 
 			const dropzone1 = await screen.findByText(/nothing here/i);
 			// drag and drop first 4 files
@@ -589,7 +610,7 @@ describe('Upload list', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<UploadList />, { mocks });
+			setup(<UploadListWrapper />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
 
@@ -614,14 +635,24 @@ describe('Upload list', () => {
 		test('should render the badge with the number of selected items', async () => {
 			const uploadItems = populateUploadItems(10);
 			uploadVar(keyBy(uploadItems, (item) => item.id));
-			const { user } = setup(<UploadList />, { mocks: {} });
+			const { user } = setup(
+				<SelectionProvider items={uploadItems}>
+					<UploadList uploadItems={uploadItems} />
+				</SelectionProvider>,
+				{ mocks: {} }
+			);
 			await selectNodes([uploadItems[0].id], user);
 			expect(screen.getByText(1)).toBeInTheDocument();
 		});
 		test('if the user clicks SELECT ALL, the badge renders the length of all nodes', async () => {
 			const uploadItems = populateUploadItems(10);
 			uploadVar(keyBy(uploadItems, (item) => item.id));
-			const { user } = setup(<UploadList />, { mocks: {} });
+			const { user } = setup(
+				<SelectionProvider items={uploadItems}>
+					<UploadList uploadItems={uploadItems} />
+				</SelectionProvider>,
+				{ mocks: {} }
+			);
 			await selectNodes([uploadItems[0].id], user);
 			expect(screen.getByText(1)).toBeInTheDocument();
 			await user.click(screen.getByText(/SELECT ALL/i));

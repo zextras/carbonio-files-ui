@@ -6,10 +6,10 @@
 
 import { act } from '@testing-library/react';
 
-import useSelection from './useSelection';
-import { populateFolder } from '../mocks/mockUtils';
-import { setupHook } from '../tests/utils';
-import { Node } from '../types/graphql/types';
+import { useSelection } from './SelectionProvider';
+import { populateFolder } from '../../mocks/mockUtils';
+import { setupHook } from '../../tests/utils';
+import { Node } from '../../types/graphql/types';
 
 describe('useSelection tests', () => {
 	it('selectAll unSelectAll tests', () => {

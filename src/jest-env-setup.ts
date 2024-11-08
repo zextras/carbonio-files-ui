@@ -19,7 +19,6 @@ import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar
 import { draggedItemsVar } from './carbonio-files-ui-common/apollo/dragAndDropVar';
 import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
-import { selectionModeVar } from './carbonio-files-ui-common/apollo/selectionVar';
 import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
 import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
@@ -66,7 +65,6 @@ beforeEach(() => {
 	// reset apollo client cache
 	global.apolloClient.resetStore();
 	// reset reactive variables
-	selectionModeVar(false);
 	searchParamsVar({});
 	uploadVar({});
 	uploadFunctionsVar({});
