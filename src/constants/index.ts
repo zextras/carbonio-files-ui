@@ -39,3 +39,4 @@ export const FUNCTION_IDS = {
 export const EMAIL_REGEXP = EMAIL_VALIDATION_REGEX;
 
 export const UPDATE_VIEW_EVENT = 'updateView';
+export const RESET_SELECTION_EVENT = 'resetSelection';

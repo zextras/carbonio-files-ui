@@ -11,6 +11,7 @@ import { forEach } from 'lodash';
 import { http, HttpResponse } from 'msw';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import server from '../../../mocks/server';
 import {
 	FILTER_TYPE,
@@ -68,7 +69,12 @@ describe('List', () => {
 
 				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-				setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, { mocks });
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{ mocks }
+				);
 
 				fireEvent.dragEnter(screen.getByText(nodes[0].name), {
 					dataTransfer: dataTransferObj
@@ -117,7 +123,9 @@ describe('List', () => {
 				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 				setup(
-					<List nodes={nodes} mainList emptyListMessage={'Empty list'} folderId={folder.id} />,
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} folderId={folder.id} />
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -151,7 +159,12 @@ describe('List', () => {
 				} satisfies Partial<Resolvers>;
 				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-				setup(<List nodes={nodes} mainList emptyListMessage={'Emtpy list'} />, { mocks });
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Emtpy list'} />
+					</SelectionProvider>,
+					{ mocks }
+				);
 
 				fireEvent.dragEnter(screen.getByText(destinationFolder.name), {
 					dataTransfer: dataTransferObj
@@ -187,9 +200,14 @@ describe('List', () => {
 
 				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-				setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, {
-					mocks
-				});
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{
+						mocks
+					}
+				);
 
 				fireEvent.dragEnter(screen.getByText(destinationFolder.name), {
 					dataTransfer: dataTransferObj
@@ -245,12 +263,14 @@ describe('List', () => {
 				const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
 				setup(
-					<List
-						nodes={currentFolder.children.nodes as (FilesFile | Folder)[]}
-						mainList
-						emptyListMessage={'Empty list'}
-						folderId={currentFolder.id}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (FilesFile | Folder)[]}>
+						<List
+							nodes={currentFolder.children.nodes as (FilesFile | Folder)[]}
+							mainList
+							emptyListMessage={'Empty list'}
+							folderId={currentFolder.id}
+						/>
+					</SelectionProvider>,
 					{
 						mocks
 					}
@@ -300,9 +320,14 @@ describe('List', () => {
 
 				const mocks = { Mutation: { moveNodes: jest.fn() } } satisfies Resolvers;
 
-				setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, {
-					mocks
-				});
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{
+						mocks
+					}
+				);
 
 				const itemToDrag = screen.getByText(nodes[1].name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -336,9 +361,14 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				setup(<List nodes={nodes} mainList emptyListMessage={'Empty folder'} />, {
-					mocks
-				});
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty folder'} />
+					</SelectionProvider>,
+					{
+						mocks
+					}
+				);
 
 				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -382,10 +412,15 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{
+						mocks,
+						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -429,10 +464,15 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{
+						mocks,
+						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				// drag and drop on folder with permissions
@@ -468,9 +508,14 @@ describe('List', () => {
 				const dataTransfer = createMoveDataTransfer();
 
 				const mocks = { Mutation: { moveNodes: jest.fn() } } satisfies Resolvers;
-				setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, {
-					mocks
-				});
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{
+						mocks
+					}
+				);
 
 				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				const destinationItem = screen.getByText(destinationFolder.name);
@@ -500,9 +545,14 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, {
-					mocks: {}
-				});
+				setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{
+						mocks: {}
+					}
+				);
 
 				const itemToDrag = screen.getByText(nodesToDrag[0].name);
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -546,9 +596,14 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				const { user } = setup(<List nodes={nodes} mainList emptyListMessage={'Empty list'} />, {
-					mocks
-				});
+				const { user } = setup(
+					<SelectionProvider items={nodes}>
+						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
+					</SelectionProvider>,
+					{
+						mocks
+					}
+				);
 
 				const itemToDrag = screen.getByText(nodesToDrag[1].name);
 				await selectNodes(

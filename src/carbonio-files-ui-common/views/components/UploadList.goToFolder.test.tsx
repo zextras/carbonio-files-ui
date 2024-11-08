@@ -8,7 +8,7 @@ import React from 'react';
 import { keyBy } from 'lodash';
 import { useLocation } from 'react-router-dom';
 
-import { UploadList } from './UploadList';
+import { UploadListWrapper } from './UploadList.test';
 import { uploadVar } from '../../apollo/uploadVar';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateLocalRoot, populateUploadItems } from '../../mocks/mockUtils';
@@ -39,7 +39,7 @@ describe('Upload List', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<UploadList />, { mocks });
+				const { user } = setup(<UploadListWrapper />, { mocks });
 
 				await selectNodes(Object.keys(uploadMap), user);
 				await screen.findByText(/deselect all/i);
@@ -68,7 +68,7 @@ describe('Upload List', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<UploadList />, { mocks });
+				const { user } = setup(<UploadListWrapper />, { mocks });
 
 				await selectNodes(Object.keys(uploadMap), user);
 				await screen.findByText(/deselect all/i);
@@ -102,7 +102,7 @@ describe('Upload List', () => {
 								Current location: {location.pathname}
 								{location.search}
 							</div>
-							<UploadList />
+							<UploadListWrapper />
 						</>
 					);
 				};

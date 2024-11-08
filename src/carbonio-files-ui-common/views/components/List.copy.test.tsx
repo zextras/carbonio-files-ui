@@ -9,6 +9,7 @@ import React from 'react';
 import { act } from '@testing-library/react';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { ERROR_CODE } from '../../constants';
 import { ACTION_REGEXP, SELECTORS, TIMERS } from '../../constants/test';
 import { populateFile, populateLocalRoot, populateNodePage } from '../../mocks/mockUtils';
@@ -38,9 +39,14 @@ describe('Copy', () => {
 					)
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />, {
-				mocks
-			});
+			const { user } = setup(
+				<SelectionProvider items={[node]}>
+					<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+				</SelectionProvider>,
+				{
+					mocks
+				}
+			);
 			await user.rightClick(screen.getByText(node.name));
 			await screen.findByTestId(SELECTORS.dropdownList);
 			await user.click(screen.getByText(ACTION_REGEXP.copy));
