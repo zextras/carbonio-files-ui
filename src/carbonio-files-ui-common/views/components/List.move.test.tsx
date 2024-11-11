@@ -6,6 +6,7 @@
 import React from 'react';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen } from '../../tests/utils';
@@ -32,11 +33,13 @@ describe('Move', () => {
 			currentFolder.children.nodes.push(folder, node, file);
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as (File | Folder)[]}
-					mainList
-					emptyListMessage={'hint'}
-				/>
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+					/>
+				</SelectionProvider>
 			);
 
 			await screen.findByText(file.name);
@@ -85,12 +88,14 @@ describe('Move', () => {
 			currentFolder.children.nodes.push(folder, file);
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as (File | Folder)[]}
-					mainList
-					emptyListMessage={'hint'}
-					folderId={currentFolder.id}
-				/>
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+						folderId={currentFolder.id}
+					/>
+				</SelectionProvider>
 			);
 
 			await screen.findByText(file.name);
@@ -122,11 +127,13 @@ describe('Move', () => {
 			currentFolder.children.nodes.push(folder, node, file);
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as (File | Folder)[]}
-					mainList
-					emptyListMessage={'hint'}
-				/>
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+					/>
+				</SelectionProvider>
 			);
 
 			// right click to open contextual menu on file without permission
