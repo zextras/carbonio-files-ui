@@ -7,13 +7,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ReactiveVar, useReactiveVar } from '@apollo/client';
-import {
-	Divider,
-	ModalFooter,
-	ModalHeader,
-	Text,
-	TextWithTooltip
-} from '@zextras/carbonio-design-system';
+import { Divider, ModalFooter, ModalHeader, Text, Tooltip } from '@zextras/carbonio-design-system';
 import { find } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
@@ -66,18 +60,24 @@ export const MoveNodesModalContent = ({
 	/** Mutation to move nodes */
 	const { moveNodes, loading: moveNodesMutationLoading } = useMoveNodesMutation();
 
+	const titleLabel = useMemo(
+		() =>
+			t('node.move.modal.title', {
+				defaultValue_one: 'Move {{node.name}}',
+				defaultValue_other: 'Move items',
+				count: nodesToMove.length,
+				replace: { node: nodesToMove.length === 1 && nodesToMove[0] }
+			}),
+		[nodesToMove, t]
+	);
+
 	const title = useMemo(
 		() => (
-			<TextWithTooltip weight="bold">
-				{t('node.move.modal.title', {
-					defaultValue_one: 'Move {{node.name}}',
-					defaultValue_other: 'Move items',
-					count: nodesToMove.length,
-					replace: { node: nodesToMove.length === 1 && nodesToMove[0] }
-				})}
-			</TextWithTooltip>
+			<Tooltip label={titleLabel} overflowTooltip>
+				<Text weight={'bold'}>{titleLabel}</Text>
+			</Tooltip>
 		),
-		[nodesToMove, t]
+		[titleLabel]
 	);
 
 	const movingFile = useMemo(
