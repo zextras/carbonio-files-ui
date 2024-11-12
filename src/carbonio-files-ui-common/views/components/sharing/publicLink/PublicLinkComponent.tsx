@@ -196,7 +196,11 @@ export const PublicLinkComponent = ({
 					linkDescriptionValue,
 					updatedTimestamp !== expiresAt ? (updatedTimestamp ?? 0) : undefined,
 					calculateUpdatedAccessCode(accessCode, newAccessCodeValue, isAccessCodeEnabled)
-				)
+				).then(() => {
+					if (!isAccessCodeEnabled) {
+						reset();
+					}
+				})
 			]),
 		[
 			onEditConfirm,
@@ -206,7 +210,8 @@ export const PublicLinkComponent = ({
 			expiresAt,
 			accessCode,
 			newAccessCodeValue,
-			isAccessCodeEnabled
+			isAccessCodeEnabled,
+			reset
 		]
 	);
 

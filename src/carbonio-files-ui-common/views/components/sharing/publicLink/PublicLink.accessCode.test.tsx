@@ -387,6 +387,34 @@ describe('Access code', () => {
 				);
 				expect(within(accessCodeChip).getByText(accessCodeValue)).toBeVisible();
 			});
+
+			it('should generate a new access code when the user disables the access code, edits the link and enables the access code again', async () => {
+				const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
+				const node = populateNode('Folder');
+				const props = getPublicLinkProps(node);
+				const link = populateLink(node, true);
+				const mocks = {
+					Query: {
+						getLinks: mockGetLinks([link])
+					},
+					Mutation: {
+						updateLink: mockUpdateLink(link)
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+				const oldAccessCode = link.access_code as string;
+				await screen.findByText(link.url as string);
+				await user.click(screen.getByRole('button', { name: /edit/i }));
+				await user.click(screen.getByTestId(ICON_REGEXP.switchOn));
+				await user.click(screen.getByRole('button', { name: /edit link/i }));
+				await user.click(screen.getByRole('button', { name: /edit/i }));
+				await user.click(screen.getByTestId(ICON_REGEXP.switchOff));
+				await user.click(screen.getByTestId(ICON_REGEXP.eyePasswordOff));
+				expect(screen.queryByText(oldAccessCode)).not.toBeInTheDocument();
+				const input = screen.getByRole('textbox', { name: /access code/i });
+				expect(input).not.toHaveValue(oldAccessCode);
+				expect(input).toHaveValue(spy.mock.results.at(-1)?.value);
+			});
 		});
 
 		describe('Undo', () => {
