@@ -13,7 +13,7 @@ import {
 	ModalFooter,
 	ModalHeader,
 	Text,
-	TextWithTooltip
+	Tooltip
 } from '@zextras/carbonio-design-system';
 import { find, every } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -81,18 +81,24 @@ export const CopyNodesModalContent = ({
 
 	const { copyNodes, loading: copyNodesMutationLoading } = useCopyNodesMutation();
 
+	const titleLabel = useMemo(
+		() =>
+			t('node.copy.modal.title', {
+				defaultValue_one: 'Copy {{node.name}}',
+				defaultValue_other: 'Copy items',
+				count: nodesToCopy.length,
+				replace: { node: nodesToCopy.length === 1 && nodesToCopy[0] }
+			}),
+		[nodesToCopy, t]
+	);
+
 	const title = useMemo(
 		() => (
-			<TextWithTooltip weight="bold">
-				{t('node.copy.modal.title', {
-					defaultValue_one: 'Copy {{node.name}}',
-					defaultValue_other: 'Copy items',
-					count: nodesToCopy.length,
-					replace: { node: nodesToCopy.length === 1 && nodesToCopy[0] }
-				})}
-			</TextWithTooltip>
+			<Tooltip label={titleLabel} overflowTooltip>
+				<Text weight={'bold'}>{titleLabel}</Text>
+			</Tooltip>
 		),
-		[nodesToCopy, t]
+		[titleLabel]
 	);
 
 	useEffect(() => {
