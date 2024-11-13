@@ -5,6 +5,9 @@
  */
 import { useCallback, useMemo, useState } from 'react';
 
+import { useSnackbar } from '@zextras/carbonio-design-system';
+import { useTranslation } from 'react-i18next';
+
 import { generateAccessCode } from '../utils/utils';
 
 export function useAccessCode(
@@ -17,6 +20,9 @@ export function useAccessCode(
 	regenerateAccessCode: () => void;
 	reset: (accessCode?: string | null) => void;
 } {
+	const createSnackbar = useSnackbar();
+	const [t] = useTranslation();
+
 	const newAccessCodeValueInitialStateFallback = useMemo(() => generateAccessCode(), []);
 
 	const [newAccessCodeValue, setNewAccessCodeValue] = useState(
@@ -25,7 +31,14 @@ export function useAccessCode(
 
 	const regenerateAccessCode = useCallback(() => {
 		setNewAccessCodeValue(generateAccessCode());
-	}, []);
+		createSnackbar({
+			key: new Date().toLocaleString(),
+			severity: 'info',
+			label: t('snackbar.accessCode.regenerate', 'New access code generated'),
+			replace: true,
+			hideButton: true
+		});
+	}, [createSnackbar, t]);
 
 	const [isAccessCodeEnabled, setIsAccessCodeEnabled] = useState(isAccessCodeEnabledInitialState);
 	const toggleAccessCode = useCallback(() => {

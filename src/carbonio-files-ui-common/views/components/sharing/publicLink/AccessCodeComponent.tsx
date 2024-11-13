@@ -46,6 +46,7 @@ export const AccessCodeComponent = ({ accessCode }: { accessCode: string }): Rea
 				{t('publicLink.accessCode.chip.label', 'Access code:')}
 			</Text>
 			<Chip
+				tooltipPlacement={'top-end'}
 				actions={[
 					{
 						id: 'show',
