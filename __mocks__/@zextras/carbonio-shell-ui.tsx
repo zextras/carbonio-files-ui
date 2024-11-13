@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import * as shell from '@zextras/carbonio-shell-ui';
 import { useHistory } from 'react-router-dom';
@@ -82,5 +82,4 @@ export const registerFunctions: typeof shell.registerFunctions = () => undefined
 export const addRoute: typeof shell.addRoute = () => '';
 export const addSearchView: typeof shell.addSearchView = () => '';
 export const removeActions: typeof shell.removeActions = () => undefined;
-export const Spinner: typeof shell.Spinner = () => <>Spinner component stub</>;
 export const useAuthenticated: typeof shell.useAuthenticated = () => true;

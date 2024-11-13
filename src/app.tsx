@@ -7,7 +7,7 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
 
 import { ApolloProvider } from '@apollo/client';
-import { ModalManager } from '@zextras/carbonio-design-system';
+import { ModalManager, Spinner } from '@zextras/carbonio-design-system';
 import {
 	ACTION_TYPES,
 	addRoute,
@@ -16,7 +16,6 @@ import {
 	registerActions,
 	SearchViewProps,
 	SecondaryBarComponentProps,
-	Spinner,
 	useAuthenticated
 } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +42,7 @@ const LazySearchView = lazy(
 );
 
 const AppView = (): React.JSX.Element => (
-	<Suspense fallback={<Spinner />}>
+	<Suspense fallback={<Spinner color={'primary'} />}>
 		<AppErrorCatcher>
 			<LazyAppView />
 		</AppErrorCatcher>
@@ -51,7 +50,7 @@ const AppView = (): React.JSX.Element => (
 );
 
 const SidebarView = (props: SecondaryBarComponentProps): React.JSX.Element => (
-	<Suspense fallback={<Spinner />}>
+	<Suspense fallback={<Spinner color={'primary'} />}>
 		<AppErrorCatcher>
 			<LazySidebarView {...props} />
 		</AppErrorCatcher>
@@ -59,7 +58,7 @@ const SidebarView = (props: SecondaryBarComponentProps): React.JSX.Element => (
 );
 
 const SearchView = (props: SearchViewProps): React.JSX.Element => (
-	<Suspense fallback={<Spinner />}>
+	<Suspense fallback={<Spinner color={'primary'} />}>
 		<AppErrorCatcher>
 			<LazySearchView {...props} />
 		</AppErrorCatcher>

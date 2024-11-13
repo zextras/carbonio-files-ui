@@ -6,7 +6,7 @@
 
 import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
 
-import { Spinner } from '@zextras/carbonio-shell-ui';
+import { Spinner } from '@zextras/carbonio-design-system';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
@@ -43,7 +43,7 @@ const View = (): React.JSX.Element | null => {
 	return (
 		(`/${params.view}` === INTERNAL_PATH.ROOT && (
 			<Route path={`${path}/:rootId`}>
-				<Suspense fallback={<Spinner />}>
+				<Suspense fallback={<Spinner color={'primary'} />}>
 					<ViewProvidersWrapper>
 						<LazyFolderView />
 					</ViewProvidersWrapper>
@@ -52,7 +52,7 @@ const View = (): React.JSX.Element | null => {
 		)) ||
 		(`/${params.view}` === INTERNAL_PATH.FILTER && (
 			<Route path={`${path}/:filter?`}>
-				<Suspense fallback={<Spinner />}>
+				<Suspense fallback={<Spinner color={'primary'} />}>
 					<ViewProvidersWrapper>
 						<LazyFilterView />
 					</ViewProvidersWrapper>
@@ -60,7 +60,7 @@ const View = (): React.JSX.Element | null => {
 			</Route>
 		)) || (
 			<Route path={path}>
-				<Suspense fallback={<Spinner />}>
+				<Suspense fallback={<Spinner color={'primary'} />}>
 					<ViewProvidersWrapper>
 						<LazyUploadView />
 					</ViewProvidersWrapper>
@@ -95,7 +95,7 @@ const AppView = (): React.JSX.Element => {
 						<View />
 					</Route>
 					<Route path={`${path}/`}>
-						<Suspense fallback={<Spinner />}>
+						<Suspense fallback={<Spinner color={'primary'} />}>
 							<ViewProvidersWrapper>
 								<LazyFileFolderViewSelector />
 							</ViewProvidersWrapper>
