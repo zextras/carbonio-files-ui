@@ -10,7 +10,6 @@ import { useQuery } from '@apollo/client';
 import { Container, Row } from '@zextras/carbonio-design-system';
 import { takeRightWhile } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { CompactListContent, CompactListContentProps } from './CompactListContent';
 import { EmptyFolder } from './EmptyFolder';
@@ -40,10 +39,6 @@ export interface ModalListProps<TNode extends NodeItem = NodeItem> {
 	limitNavigation?: boolean;
 	allowRootNavigation?: boolean;
 }
-
-const ModalContainer = styled(Container)`
-	flex: 1 1 auto;
-`;
 
 export const ModalList = <TNode extends NodeItem = NodeItem>({
 	folderId,
@@ -122,12 +117,15 @@ export const ModalList = <TNode extends NodeItem = NodeItem>({
 	]);
 
 	return (
-		<ModalContainer
+		<Container
 			mainAlignment="flex-start"
 			crossAlignment="flex-start"
 			data-testid={'modal-list'}
 			maxHeight="100%"
 			minHeight={cssCalcBuilder(BREADCRUMB_ROW_HEIGHT, ['+', LIST_ITEM_HEIGHT_COMPACT])}
+			flexBasis={'auto'}
+			flexGrow={1}
+			flexShrink={1}
 		>
 			<OverFlowHiddenRow
 				width="fill"
@@ -164,6 +162,6 @@ export const ModalList = <TNode extends NodeItem = NodeItem>({
 					)
 				)}
 			</Container>
-		</ModalContainer>
+		</Container>
 	);
 };

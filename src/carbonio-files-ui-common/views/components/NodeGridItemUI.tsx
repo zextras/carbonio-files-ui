@@ -43,7 +43,7 @@ export const ContainerCell = styled(Container)<{
 	$showPreview?: boolean;
 }>`
 	${HoverContainer} {
-		background-color: ${({ $disabled, $contextualMenuActive, theme }): false | undefined | string =>
+		background-color: ${({ $disabled, $contextualMenuActive, theme }): undefined | string =>
 			($disabled && getColor('gray6.disabled', theme)) ||
 			($contextualMenuActive && getColor('gray6.hover', theme)) ||
 			undefined};

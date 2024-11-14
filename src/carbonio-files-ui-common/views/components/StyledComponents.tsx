@@ -129,10 +129,6 @@ export const OverFlowHiddenRow = styled(Row)`
 	overflow: hidden;
 `;
 
-export const ItalicText = styled(Text)`
-	font-style: italic;
-`;
-
 export const ShimmerText = styled(Shimmer.Text).attrs<{
 	$size: 'extrasmall' | 'small' | 'medium' | 'large' | 'extralarge';
 }>(({ $size, theme }) => ({
@@ -184,14 +180,14 @@ export const Hint = ({ label, email }: HintProps): React.JSX.Element => (
 	</Container>
 );
 
-const SkeletonTile = styled.div<{ width: string; height: string; radius: string }>`
-	width: ${({ width }): string => width ?? '1rem'};
-	max-width: ${({ width }): string => width ?? '1rem'};
-	min-width: ${({ width }): string => width ?? '1rem'};
-	height: ${({ height }): string => height ?? '1rem'};
-	max-height: ${({ height }): string => height ?? '1rem'};
-	min-height: ${({ height }): string => height ?? '1rem'};
-	border-radius: ${({ radius }): string => radius ?? '0.125rem'};
+const SkeletonTile = styled.div<{ $width: string; $height: string; $radius: string }>`
+	width: ${({ $width }): string => $width ?? '1rem'};
+	max-width: ${({ $width }): string => $width ?? '1rem'};
+	min-width: ${({ $width }): string => $width ?? '1rem'};
+	height: ${({ $height }): string => $height ?? '1rem'};
+	max-height: ${({ $height }): string => $height ?? '1rem'};
+	min-height: ${({ $height }): string => $height ?? '1rem'};
+	border-radius: ${({ $radius }): string => $radius ?? '0.125rem'};
 	background: ${({ theme }): string => theme.palette.gray2.regular};
 `;
 
@@ -204,15 +200,19 @@ export const Loader = (): React.JSX.Element => (
 		minHeight="2rem"
 		data-testid="add-sharing-loader"
 	>
-		<SkeletonTile radius="50%" width="2rem" height="2rem" />
+		<SkeletonTile $radius="50%" $width="2rem" $height="2rem" />
 		<Container orientation="vertical" crossAlignment="flex-start" padding={{ left: 'small' }}>
 			<SkeletonTile
-				radius="0.25rem"
-				width={`${Math.random() * 9.375 + 4}rem`}
-				height="0.875rem"
+				$radius="0.25rem"
+				$width={`${Math.random() * 9.375 + 4}rem`}
+				$height="0.875rem"
 				style={{ marginBottom: '0.25rem' }}
 			/>
-			<SkeletonTile radius="0.25rem" width={`${Math.random() * 9.375 + 4}rem`} height="0.75rem" />
+			<SkeletonTile
+				$radius="0.25rem"
+				$width={`${Math.random() * 9.375 + 4}rem`}
+				$height="0.75rem"
+			/>
 		</Container>
 	</Container>
 );

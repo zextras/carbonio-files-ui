@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React, { useMemo } from 'react';
+import React from 'react';
 
-import { AnyColor, Button, ButtonProps } from '@zextras/carbonio-design-system';
+import { Button, ButtonProps } from '@zextras/carbonio-design-system';
 import styled, { keyframes } from 'styled-components';
 
 const rotate = keyframes`
@@ -23,31 +23,24 @@ const StyledButton = styled(Button)`
 
 export const LoadingIcon = React.forwardRef<
 	HTMLDivElement,
-	Partial<Omit<ButtonProps, 'secondaryAction'>>
+	Partial<Omit<ButtonProps, 'secondaryAction' | 'type'>>
 >(function LoadingIconFn(
 	{
 		onClick = (): void => undefined,
-		type = 'ghost',
 		shape = 'round',
 		color = 'text',
-		labelColor,
-		backgroundColor,
 		...rest
 	}: Partial<Omit<ButtonProps, 'secondaryAction'>>,
 	ref
 ) {
-	const colorAndType = useMemo<
-		| { type: 'ghost'; color: AnyColor }
-		| { type?: 'default' | 'outlined'; labelColor?: AnyColor; backgroundColor?: AnyColor }
-	>(() => {
-		if (type === 'ghost') {
-			return { type, color };
-		}
-		if (type === 'outlined') {
-			return { type, labelColor: labelColor ?? color, backgroundColor };
-		}
-		return { type, labelColor, backgroundColor: backgroundColor ?? color };
-	}, [backgroundColor, color, labelColor, type]);
-
-	return <StyledButton onClick={onClick} shape={shape} {...colorAndType} {...rest} ref={ref} />;
+	return (
+		<StyledButton
+			onClick={onClick}
+			shape={shape}
+			type={'ghost'}
+			color={color}
+			{...rest}
+			ref={ref}
+		/>
+	);
 });

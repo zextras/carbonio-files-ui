@@ -27,6 +27,7 @@ const CollapsingActionsRow = styled(Row)<{ $maxVisible: number | undefined }>`
 	--lh-collapsing-actions-max-width: ${({ $maxVisible }): string =>
 		$maxVisible !== undefined ? cssCalcBuilder('2.25rem', ['*', $maxVisible]) : '100%'};
 	max-width: var(--lh-collapsing-actions-max-width);
+
 	${CustomCollapsingActions} {
 		max-width: var(--lh-collapsing-actions-max-width);
 	}
@@ -79,7 +80,6 @@ export const ListHeader = ({
 						data-testid="list-header"
 						flexShrink={0}
 						flexGrow={1}
-						gap="medium"
 					>
 						{firstCustomComponent}
 						<Row mainAlignment="flex-end" wrap="nowrap" width="auto">
