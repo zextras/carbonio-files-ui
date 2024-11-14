@@ -14,6 +14,7 @@ import { TFunction } from 'i18next';
 import { findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
+import { generateAccessCodeFallback, generateAccessCodeWithCrypto } from './utils.accessCode';
 import { getUserAccount } from '../../utils/utils';
 import {
 	DATE_FORMAT,
@@ -842,3 +843,14 @@ export function nodeToNodeListItemUIProps(
 		trashed: node.rootId === ROOTS.TRASH
 	};
 }
+
+export const generateAccessCode = (length = 10): string => {
+	if (length < 0) {
+		throw new Error('Unexpected length');
+	}
+	try {
+		return generateAccessCodeWithCrypto(length);
+	} catch (e) {
+		return generateAccessCodeFallback(length);
+	}
+};
