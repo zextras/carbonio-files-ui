@@ -6,7 +6,14 @@
 
 import { faker } from '@faker-js/faker';
 
-import { addNodeInSortedList, buildCrumbs, cssCalcBuilder, humanFileSize } from './utils';
+import {
+	addNodeInSortedList,
+	buildCrumbs,
+	cssCalcBuilder,
+	generateAccessCode,
+	humanFileSize
+} from './utils';
+import * as moduleUtils from './utils.accessCode';
 import { populateFile, populateFolder, populateLocalRoot, populateNodes } from '../mocks/mockUtils';
 import { NodeSort } from '../types/graphql/types';
 
@@ -289,5 +296,30 @@ describe('humanFileSize function', () => {
 
 	it('should throw an error if inputSize is equal or greater than 1024 YB', () => {
 		expect(() => humanFileSize(1024 ** 9, undefined)).toThrow('Unsupported inputSize');
+	});
+});
+
+describe('Generate access code', () => {
+	it('should return an access code with length 10 as default', () => {
+		expect(generateAccessCode()).toHaveLength(10);
+	});
+	it('should return an access code with length equals to the parameter', () => {
+		const length = faker.number.int({ min: 1, max: 20 });
+		expect(generateAccessCode(length)).toHaveLength(length);
+	});
+	it('should return an empty string when the length parameter is 0', () => {
+		expect(generateAccessCode(0)).toHaveLength(0);
+	});
+	it('should return an exception when the length parameter is a negative number', () => {
+		expect(() => generateAccessCode(-10)).toThrow('Unexpected length');
+	});
+	it('should call generateAccessCodeFallback when generateAccessCodeWithCrypto throws an error', () => {
+		jest.spyOn(moduleUtils, 'generateAccessCodeWithCrypto').mockImplementation(() => {
+			throw new Error();
+		});
+
+		const generateAccessCodeFallbackSpy = jest.spyOn(moduleUtils, 'generateAccessCodeFallback');
+		generateAccessCode();
+		expect(generateAccessCodeFallbackSpy).toHaveBeenCalled();
 	});
 });
