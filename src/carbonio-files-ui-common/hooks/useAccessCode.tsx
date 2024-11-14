@@ -30,9 +30,10 @@ export function useAccessCode(
 	);
 
 	const regenerateAccessCode = useCallback(() => {
-		setNewAccessCodeValue(generateAccessCode());
+		const newAccessCode = generateAccessCode();
+		setNewAccessCodeValue(newAccessCode);
 		createSnackbar({
-			key: new Date().toLocaleString(),
+			key: newAccessCode,
 			severity: 'info',
 			label: t('snackbar.accessCode.regenerate', 'New access code generated'),
 			replace: true,
