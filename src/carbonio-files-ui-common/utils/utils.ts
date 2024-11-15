@@ -27,6 +27,7 @@ import {
 	TIMERS,
 	UPLOAD_TO_PATH
 } from '../constants';
+import { generateAccessCodeFallback, generateAccessCodeWithCrypto } from './utils.accessCode';
 import {
 	Contact,
 	Crumb,
@@ -862,3 +863,14 @@ export function nodeToNodeListItemUIProps(
 		trashed: node.rootId === ROOTS.TRASH
 	};
 }
+
+export const generateAccessCode = (length = 10): string => {
+	if (length < 0) {
+		throw new Error('Unexpected length');
+	}
+	try {
+		return generateAccessCodeWithCrypto(length);
+	} catch (e) {
+		return generateAccessCodeFallback(length);
+	}
+};

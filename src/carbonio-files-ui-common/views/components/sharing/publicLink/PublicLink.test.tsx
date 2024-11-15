@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React from 'react';
+import React, { ComponentProps } from 'react';
 
 import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
@@ -16,6 +16,7 @@ import { populateLink, populateLinks, populateNode } from '../../../../mocks/moc
 import { generateError, getFirstOfNextMonth, screen, setup, within } from '../../../../tests/utils';
 import { Node } from '../../../../types/common';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
+import { File as FilesFile, Folder } from '../../../../types/graphql/types';
 import {
 	mockCreateLink,
 	mockDeleteLinks,
@@ -23,7 +24,7 @@ import {
 	mockGetLinks,
 	mockUpdateLink
 } from '../../../../utils/resolverMocks';
-import { formatDate, initExpirationDate } from '../../../../utils/utils';
+import { formatDate, initExpirationDate, isFolder } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 
 const getDayBefore = (): number | null => {
@@ -33,53 +34,46 @@ const getDayBefore = (): number | null => {
 	return initExpirationDate(date)?.getTime() ?? null;
 };
 
+function getPublicLinkProps(node: FilesFile | Folder): ComponentProps<typeof PublicLink> {
+	return {
+		linkName: 'Link name',
+		linkTitle: 'Link title',
+		linkDescription: 'Link description',
+		isFolder: isFolder(node),
+		nodeId: node.id,
+		nodeName: node.name
+	};
+}
+
 describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeType) => {
 	it('should render the link section with title and description', async () => {
 		const node = populateNode(nodeType);
-		const linkName = 'Link name';
-		const linkTitle = 'Link title';
-		const linkDescription = 'Link description';
+		const props = getPublicLinkProps(node);
 		const existingLink = populateLink(node);
 		const mocks = {
 			Query: {
 				getLinks: mockGetLinks([existingLink])
 			}
 		} satisfies Partial<Resolvers>;
-		setup(
-			<PublicLink
-				nodeId={node.id}
-				nodeName={node.name}
-				linkName={linkName}
-				linkTitle={linkTitle}
-				linkDescription={linkDescription}
-			/>,
-			{ mocks }
-		);
+		setup(<PublicLink {...props} />, { mocks });
+
 		await screen.findByText(existingLink.url as string);
-		expect(screen.getByText(linkTitle)).toBeVisible();
-		expect(screen.getByText(linkDescription)).toBeVisible();
+		expect(screen.getByText(props.linkTitle)).toBeVisible();
+		expect(screen.getByText(props.linkDescription)).toBeVisible();
 		expect(screen.getByRole('button', { name: /add link/i })).toBeVisible();
 	});
 
 	describe('On add', () => {
 		it('should render the description and expiration date input fields', async () => {
 			const node = populateNode(nodeType);
-			const linkTitle = 'Link title';
+			const props = getPublicLinkProps(node);
 			const mocks = {
 				Query: {
 					getLinks: mockGetLinks([])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={linkTitle}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			const addLinkBtn = screen.getByRole('button', { name: /add link/i });
 			expect(addLinkBtn).toBeVisible();
 			await user.click(addLinkBtn);
@@ -90,9 +84,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 		describe('On generate', () => {
 			it('should render the selected date from the calendar', async () => {
 				const node = populateNode(nodeType);
-				const linkTitle = 'Link title';
-				const linkName = 'Link name';
-				const linkDescription = 'Link description';
+				const props = getPublicLinkProps(node);
 				const link = populateLink(node);
 				const date = new Date();
 				const currentDate = date.getDate();
@@ -106,16 +98,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 						createLink: mockCreateLink(link)
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(
-					<PublicLink
-						nodeId={node.id}
-						nodeName={node.name}
-						linkTitle={linkTitle}
-						linkName={linkName}
-						linkDescription={linkDescription}
-					/>,
-					{ mocks }
-				);
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				await user.click(screen.getByRole('textbox', { name: /expiration date/i }));
 				await user.click(screen.getAllByText(currentDate)[0]);
@@ -132,9 +116,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 			it('should render undo and generate link buttons when a link is created', async () => {
 				const node = populateNode(nodeType);
-				const linkTitle = 'Link title';
-				const linkName = 'Link name';
-				const linkDescription = 'Link description';
+				const props = getPublicLinkProps(node);
 				const link = populateLink(node);
 				const mocks = {
 					Query: {
@@ -144,16 +126,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 						createLink: mockCreateLink(link)
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(
-					<PublicLink
-						nodeId={node.id}
-						nodeName={node.name}
-						linkTitle={linkTitle}
-						linkName={linkName}
-						linkDescription={linkDescription}
-					/>,
-					{ mocks }
-				);
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
 				const addLinkBtn = screen.getByRole('button', { name: /add link/i });
 				expect(addLinkBtn).toBeVisible();
 				await user.click(addLinkBtn);
@@ -163,7 +137,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 			it('should render revoke and edit buttons when a link is generated', async () => {
 				const node = populateNode(nodeType);
-				const linkTitle = 'Link title';
+				const props = getPublicLinkProps(node);
 				const link = populateLink(node);
 				const mocks = {
 					Query: {
@@ -173,17 +147,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 						createLink: mockCreateLink(link)
 					}
 				} satisfies Partial<Resolvers>;
-				const linkName = 'Link name';
-				const { user } = setup(
-					<PublicLink
-						nodeId={node.id}
-						nodeName={node.name}
-						linkTitle={linkTitle}
-						linkName={linkName}
-						linkDescription={'Link description'}
-					/>,
-					{ mocks }
-				);
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
 				await user.click(screen.getByRole('button', { name: /add link/i }));
 				expect(screen.queryByRole('button', { name: /add link/i })).not.toBeInTheDocument();
 				await user.click(screen.getByRole('button', { name: /generate link/i }));
@@ -191,31 +156,21 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 				expect(screen.getByRole('button', { name: /add link/i })).toBeVisible();
 				expect(screen.getByRole('button', { name: /revoke/i })).toBeVisible();
 				expect(screen.getByRole('button', { name: /edit/i })).toBeVisible();
-				const snackbar = await screen.findByText(`New ${linkName} generated`);
+				const snackbar = await screen.findByText(`New ${props.linkName} generated`);
 				expect(snackbar).toBeVisible();
 			});
 		});
 
 		it('should render maximum length error when the description length is greater than 300 characters', async () => {
 			const node = populateNode(nodeType);
-			const linkName = 'Link name';
-			const linkTitle = 'Link title';
-			const linkDescription = 'Link description';
+			const props = getPublicLinkProps(node);
 			const mocks = {
 				Query: {
 					getLinks: mockGetLinks([])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkName={linkName}
-					linkTitle={linkTitle}
-					linkDescription={linkDescription}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByRole('textbox', { name: /link's description/i }));
 			await user.paste(faker.string.alpha(301));
@@ -226,25 +181,15 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 	it('should render limit reached message when the user has created 50 links', async () => {
 		const node = populateNode(nodeType);
-		const linkTitle = 'Link title';
-		const linkName = 'Link name';
-		const linkDescription = 'Link description';
+		const props = getPublicLinkProps(node);
 		const links = populateLinks(node, 50);
 		const mocks = {
 			Query: {
 				getLinks: mockGetLinks(links)
 			}
 		} satisfies Partial<Resolvers>;
-		setup(
-			<PublicLink
-				nodeId={node.id}
-				nodeName={node.name}
-				linkTitle={linkTitle}
-				linkName={linkName}
-				linkDescription={linkDescription}
-			/>,
-			{ mocks }
-		);
+		setup(<PublicLink {...props} />, { mocks });
+
 		await screen.findAllByText(links[0].url as string);
 		expect(screen.getByText(/The maximum amount of public links has been reached/i)).toBeVisible();
 		expect(screen.queryByRole('button', { name: /undo/i })).not.toBeInTheDocument();
@@ -255,24 +200,14 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 	describe('Undo button', () => {
 		it('should hide the create input fields when click on undo button', async () => {
 			const node = populateNode(nodeType);
-			const linkName = 'Link name';
-			const linkTitle = 'Link title';
-			const linkDescription = 'Link description';
+			const props = getPublicLinkProps(node);
 			const mocks = {
 				Query: {
 					getLinks: mockGetLinks([])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkName={linkName}
-					linkTitle={linkTitle}
-					linkDescription={linkDescription}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByRole('button', { name: /undo/i }));
 			expect(
@@ -283,6 +218,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should hide the edit input fields when click on undo button', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			link.expires_at = getDayBefore();
 			const mocks = {
@@ -290,16 +226,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			const editButton = screen.getByRole('button', { name: /edit/i });
 			expect(editButton).toBeVisible();
@@ -315,6 +243,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should not update link description/expiration date', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			const firstOfNextMonth = getFirstOfNextMonth();
 			const expiresAt = initExpirationDate(firstOfNextMonth) as Date;
@@ -326,16 +255,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			const expiresOnDate = formatDate(
 				new Date(
 					firstOfNextMonth.getFullYear(),
@@ -380,7 +301,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 	it('should render the description of the link if present', async () => {
 		const node = populateNode(nodeType);
-		const linkTitle = 'Link title';
+		const props = getPublicLinkProps(node);
 		const link = populateLink(node);
 		link.expires_at = null;
 		link.description = 'This is the description';
@@ -389,16 +310,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 				getLinks: mockGetLinks([link])
 			}
 		} satisfies Partial<Resolvers>;
-		setup(
-			<PublicLink
-				nodeId={node.id}
-				nodeName={node.name}
-				linkTitle={linkTitle}
-				linkName={'Link name'}
-				linkDescription={'Link description'}
-			/>,
-			{ mocks }
-		);
+		setup(<PublicLink {...props} />, { mocks });
+
 		await screen.findByText(link.url as string);
 		expect(screen.getByText(link.description)).toBeVisible();
 	});
@@ -406,7 +319,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 	describe('Expiration message', () => {
 		it('should render "Has no expiration date" message if expiration date is not set', async () => {
 			const node = populateNode(nodeType);
-			const linkTitle = 'Link title';
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			link.expires_at = null;
 			const mocks = {
@@ -414,22 +327,15 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={linkTitle}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			expect(screen.getByText(/has no expiration date/i)).toBeVisible();
 		});
 
 		it('should render the expiration date if expiration date is set', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			const firstOfNextMonth = getFirstOfNextMonth();
 			const expiresAt = initExpirationDate(firstOfNextMonth) as Date;
@@ -439,16 +345,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			const expiresOnDate = formatDate(
 				new Date(
@@ -467,6 +365,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should render the message link has expired if the link is expired', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			// set the date to yesterday at 00:00
 			const date = new Date();
@@ -479,16 +378,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			const expiresOnDate = formatDate(
 				new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59),
@@ -503,6 +394,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 	describe('Copy link', () => {
 		it('can copy the link to clipboard if there is no expiration', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
+
 			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 			const link = populateLink(node);
 			link.expires_at = null;
@@ -512,16 +405,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 				}
 			} satisfies Partial<Resolvers>;
 			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			const urlElement = await screen.findByText(link.url as string);
 			await user.click(urlElement);
 			expect(copyToClipboardFn).toBeCalledWith(link.url);
@@ -530,6 +415,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('can copy the link to clipboard if it is not expired', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 			const link = populateLink(node);
 			const firstOfNextMonth = getFirstOfNextMonth();
@@ -541,16 +427,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 				}
 			} satisfies Partial<Resolvers>;
 			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			const urlElement = await screen.findByText(link.url as string);
 			await user.click(urlElement);
 			expect(copyToClipboardFn).toBeCalledWith(link.url);
@@ -559,6 +437,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('cannot copy the link to clipboard if it is expired', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 			const link = populateLink(node);
 			link.expires_at = getDayBefore();
@@ -567,16 +446,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			const urlElement = await screen.findByText(link.url as string);
 			await user.click(urlElement);
 			expect(copyToClipboardFn).not.toHaveBeenCalledWith(link.url);
@@ -584,7 +455,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should copy the link when click on "COPY LINK" button on the snackbar', async () => {
 			const node = populateNode(nodeType);
-			const linkTitle = 'Link title';
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 			const mocks = {
@@ -595,28 +466,20 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					createLink: mockCreateLink(link)
 				}
 			} satisfies Partial<Resolvers>;
-			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={linkTitle}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByRole('button', { name: /generate link/i }));
 			expect(await screen.findByText(link.url as string)).toBeVisible();
-			expect(await screen.findByText(`New ${linkName} generated`)).toBeVisible();
+			expect(await screen.findByText(`New ${props.linkName} generated`)).toBeVisible();
 			await user.click(screen.getByText(/copy link/i));
 			expect(copyToClipboardFn).toBeCalledWith(link.url);
-			expect(await screen.findByText(`${linkName} copied`)).toBeVisible();
+			expect(await screen.findByText(`${props.linkName} copied`)).toBeVisible();
 		});
 
 		it('should copy the link when click on "COPY LINK" button on the editing snackbar', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
 			const mocks = {
@@ -627,17 +490,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					updateLink: mockUpdateLink(link)
 				}
 			} satisfies Partial<Resolvers>;
-			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			await user.click(
 				screen.getByRoleWithIcon('button', { name: /edit/i, icon: ICON_REGEXP.edit })
@@ -646,17 +500,17 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			await user.clear(inputDescription);
 			await user.type(inputDescription, faker.string.alpha(10));
 			await user.click(await screen.findByRole('button', { name: /edit link/i }));
-			expect(await screen.findByText(`${linkName} updated`)).toBeVisible();
+			expect(await screen.findByText(`${props.linkName} updated`)).toBeVisible();
 			await user.click(screen.getByText(/copy link/i));
 			expect(copyToClipboardFn).toBeCalledWith(link.url);
-			expect(await screen.findByText(`${linkName} copied`)).toBeVisible();
+			expect(await screen.findByText(`${props.linkName} copied`)).toBeVisible();
 		});
 	});
 
 	describe('On error', () => {
 		it('should leave open the fields valued when the call returns an error on create', async () => {
 			const node = populateNode(nodeType);
-			const linkTitle = 'Link title';
+			const props = getPublicLinkProps(node);
 			const description = faker.string.alpha();
 			const mocks = {
 				Query: {
@@ -666,17 +520,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					createLink: mockErrorResolver(generateError('create link error'))
 				}
 			} satisfies Partial<Resolvers>;
-			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={linkTitle}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.type(screen.getByRole('textbox', { name: /link's description/i }), description);
 			await user.click(screen.getByRole('button', { name: /generate link/i }));
@@ -685,7 +530,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should leave open the fields valued when the call returns an error on edit', async () => {
 			const node = populateNode(nodeType);
-			const linkTitle = 'Link title';
+			const props = getPublicLinkProps(node);
 			const description = faker.string.alpha(10);
 			const link = populateLink(node);
 			const firstOfNextMonth = getFirstOfNextMonth();
@@ -699,17 +544,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					updateLink: mockErrorResolver(generateError('update link error'))
 				}
 			} satisfies Partial<Resolvers>;
-			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={linkTitle}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			await user.click(
 				screen.getByRoleWithIcon('button', { name: /edit/i, icon: ICON_REGEXP.edit })
@@ -746,6 +582,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			]
 		])('should open the modal when click on %s button', async (btnName, expDate, icon, message) => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			link.expires_at = expDate;
 			const mocks = {
@@ -753,17 +590,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			await user.click(screen.getByRoleWithIcon('button', { name: btnName, icon }));
 			act(() => {
@@ -772,7 +600,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			});
 			const modal = await screen.findByTestId(SELECTORS.modal);
 			expect(
-				within(modal).getByText(RegExp(`${btnName} ${node.name} ${linkName}`, 'i'))
+				within(modal).getByText(RegExp(`${btnName} ${node.name} ${props.linkName}`, 'i'))
 			).toBeVisible();
 			const resolvedMsg = message.replace('{nodeName}', node.name);
 			expect(screen.getByText(resolvedMsg)).toBeVisible();
@@ -780,23 +608,15 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should close modal when click on X button', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			const mocks = {
 				Query: {
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			await user.click(
 				screen.getByRoleWithIcon('button', { name: /revoke/i, icon: ICON_REGEXP.revoke })
@@ -809,7 +629,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			expect(closeButton).toBeVisible();
 			await user.click(closeButton);
 			expect(screen.queryByTestId(SELECTORS.modal)).not.toBeInTheDocument();
-			expect(screen.queryByText(`Revoke ${node.name} ${linkName}`)).not.toBeInTheDocument();
+			expect(screen.queryByText(`Revoke ${node.name} ${props.linkName}`)).not.toBeInTheDocument();
 			expect(
 				screen.queryByText(
 					`By revoking this link, you are blocking access to ${node.name} for anyone who tries to use the link to access the item.`
@@ -823,6 +643,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 				['Revoke', null, ICON_REGEXP.revoke]
 			])('should delete link when click on %s button', async (btnName, expDate, icon) => {
 				const node = populateNode(nodeType);
+				const props = getPublicLinkProps(node);
 				const link = populateLink(node);
 				link.expires_at = expDate;
 				const mocks = {
@@ -833,24 +654,15 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 						deleteLinks: mockDeleteLinks([link.id])
 					}
 				} satisfies Partial<Resolvers>;
-				const linkName = 'Link name';
-				const { user } = setup(
-					<PublicLink
-						nodeId={node.id}
-						nodeName={node.name}
-						linkTitle={'Link title'}
-						linkName={linkName}
-						linkDescription={'Link description'}
-					/>,
-					{ mocks }
-				);
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
 				await screen.findByText(link.url as string);
 				await user.click(screen.getByRoleWithIcon('button', { name: btnName, icon }));
 				act(() => {
 					// run timers of modal
 					jest.runOnlyPendingTimers();
 				});
-				await screen.findByText(RegExp(`${btnName} ${node.name} ${linkName}`, 'i'));
+				await screen.findByText(RegExp(`${btnName} ${node.name} ${props.linkName}`, 'i'));
 				const modal = await screen.findByTestId(SELECTORS.modal);
 				await user.click(within(modal).getByRole('button', { name: btnName }));
 				expect(screen.queryByText(link.url as string)).not.toBeInTheDocument();
@@ -858,6 +670,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 			it('should close the modal when a link is deleted', async () => {
 				const node = populateNode(nodeType);
+				const props = getPublicLinkProps(node);
 				const link = populateLink(node);
 				const mocks = {
 					Query: {
@@ -867,17 +680,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 						deleteLinks: mockDeleteLinks([link.id])
 					}
 				} satisfies Partial<Resolvers>;
-				const linkName = 'Link name';
-				const { user } = setup(
-					<PublicLink
-						nodeId={node.id}
-						nodeName={node.name}
-						linkTitle={'Link title'}
-						linkName={linkName}
-						linkDescription={'Link description'}
-					/>,
-					{ mocks }
-				);
+				const { user } = setup(<PublicLink {...props} />, { mocks });
+
 				await screen.findByText(link.url as string);
 				await user.click(
 					screen.getByRoleWithIcon('button', { name: /revoke/i, icon: ICON_REGEXP.revoke })
@@ -886,7 +690,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					// run timers of modal
 					jest.runOnlyPendingTimers();
 				});
-				await screen.findByText(`Revoke ${node.name} ${linkName}`);
+				await screen.findByText(`Revoke ${node.name} ${props.linkName}`);
 				const modal = await screen.findByTestId(SELECTORS.modal);
 				const deleteBtn = within(modal).getByRole('button', { name: /revoke/i });
 				await user.click(deleteBtn);
@@ -898,7 +702,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 	describe('Edit link', () => {
 		it('should render the empty input fields when click on edit button if the link has no description nor expiration date', async () => {
 			const node = populateNode(nodeType);
-			const linkTitle = 'Link title';
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			link.expires_at = null;
 			link.description = '';
@@ -910,17 +714,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					createLink: mockCreateLink(link)
 				}
 			} satisfies Partial<Resolvers>;
-			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={linkTitle}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.click(screen.getByRole('button', { name: /generate link/i }));
 			await user.click(screen.getByRole('button', { name: /edit/i }));
@@ -932,7 +727,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should render the populated description and expiration date input fields when click on edit button', async () => {
 			const node = populateNode(nodeType);
-			const linkTitle = 'Link title';
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			const firstOfNextMonth = getFirstOfNextMonth();
 			const expiresAt = initExpirationDate(firstOfNextMonth) as Date;
@@ -943,16 +738,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					getLinks: mockGetLinks([link])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={linkTitle}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			expect(screen.getByText(link.description)).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /edit/i }));
@@ -972,6 +759,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should update the changes when click on "edit link" button', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			link.expires_at = null;
 			link.description = 'This is the description';
@@ -984,17 +772,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					updateLink: mockUpdateLink({ ...link, description: newDescription })
 				}
 			} satisfies Partial<Resolvers>;
-			const linkName = 'Link name';
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={linkName}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			await user.click(
 				screen.getByRoleWithIcon('button', { name: /edit/i, icon: ICON_REGEXP.edit })
@@ -1012,6 +791,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		it('should hide the edit input fields when a link is updated', async () => {
 			const node = populateNode(nodeType);
+			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
 			link.description = 'This is the description';
 			link.expires_at = null;
@@ -1023,16 +803,8 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					updateLink: mockUpdateLink(link)
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(
-				<PublicLink
-					nodeId={node.id}
-					nodeName={node.name}
-					linkTitle={'Link title'}
-					linkName={'Link name'}
-					linkDescription={'Link description'}
-				/>,
-				{ mocks }
-			);
+			const { user } = setup(<PublicLink {...props} />, { mocks });
+
 			await screen.findByText(link.url as string);
 			await user.click(
 				screen.getByRoleWithIcon('button', { name: /edit/i, icon: ICON_REGEXP.edit })
