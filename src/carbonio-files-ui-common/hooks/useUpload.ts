@@ -9,12 +9,12 @@ import { useCallback, useMemo } from 'react';
 import { forEach, map, filter, includes, reduce, noop, partition } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import buildClient from '../apollo';
+import { useCreateFolderMutation } from './graphql/mutations/useCreateFolderMutation';
 import { useUpdateFolderContent } from './graphql/useUpdateFolderContent';
+import buildClient from '../apollo';
 import { nodeSortVar } from '../apollo/nodeSortVar';
 import { UploadFunctions, uploadFunctionsVar, uploadVar } from '../apollo/uploadVar';
 import { UploadFolderItem } from '../types/common';
-import { useCreateFolderMutation } from './graphql/mutations/useCreateFolderMutation';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
 import { File as FilesFile } from '../types/graphql/types';
 import { DeepPick } from '../types/utils';

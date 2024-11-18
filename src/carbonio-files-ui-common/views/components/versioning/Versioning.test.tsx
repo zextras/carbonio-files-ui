@@ -12,6 +12,7 @@ import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
 import { CONFIGS, ERROR_CODE, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS, TIMERS } from '../../../constants/test';
+import * as useOpenWithDocs from '../../../hooks/useOpenWithDocs';
 import {
 	UploadRequestBody,
 	UploadVersionRequestParams,
@@ -302,7 +303,7 @@ describe('Versioning', () => {
 
 	test('open with docs version', async () => {
 		const openNodeWithDocsSpy = jest.fn();
-		jest.spyOn(moduleUtils, 'openNodeWithDocs').mockImplementation(openNodeWithDocsSpy);
+		jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openNodeWithDocsSpy);
 
 		const fileVersion1 = populateFile();
 		fileVersion1.permissions.can_write_file = true;
@@ -792,7 +793,7 @@ describe('Versioning', () => {
 		const versions = [version];
 
 		const openNodeWithDocsSpy = jest.fn();
-		jest.spyOn(moduleUtils, 'openNodeWithDocs').mockImplementation(openNodeWithDocsSpy);
+		jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openNodeWithDocsSpy);
 
 		const mocks = {
 			Query: {

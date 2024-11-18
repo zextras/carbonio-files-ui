@@ -40,8 +40,6 @@ interface FolderSelectionModalContentProps {
 
 type SelectedNode = Pick<Folder, 'id' | 'name'>;
 
-type RootItem = { __typename?: never };
-
 export const FolderSelectionModalContent = ({
 	folderId,
 	cascadeDefault = true,

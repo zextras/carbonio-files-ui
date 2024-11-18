@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.10.0](https://github.com/zextras/carbonio-files-ui/compare/v2.9.0...v2.10.0) (2024-11-18)
+
+
+### Features
+
+* add support to video preview ([17e3661](https://github.com/zextras/carbonio-files-ui/commit/17e36613f4226cdf521d30bc64faac177a94fd1a)), closes [#403](https://github.com/zextras/carbonio-files-ui/issues/403)
+* handle open with docs over size failures ([3eab17f](https://github.com/zextras/carbonio-files-ui/commit/3eab17fda6b323acd0e568fce7400dd4050745c2)), closes [#404](https://github.com/zextras/carbonio-files-ui/issues/404)
+* implement access code for folders ([c5fbb51](https://github.com/zextras/carbonio-files-ui/commit/c5fbb513e76280a0174caa85694d5675bdb6a77c)), closes [#411](https://github.com/zextras/carbonio-files-ui/issues/411)
+* load module only if the user is authenticated ([8b0d722](https://github.com/zextras/carbonio-files-ui/commit/8b0d7228e3c7dc6a5b207c385a44b8dc5481020a)), closes [#413](https://github.com/zextras/carbonio-files-ui/issues/413)
+* update react to v18 ([198a699](https://github.com/zextras/carbonio-files-ui/commit/198a699d3eef3feae35bffe1687754daf8e015f4)), closes [#409](https://github.com/zextras/carbonio-files-ui/issues/409)
+* virtualize list items ([af7f99e](https://github.com/zextras/carbonio-files-ui/commit/af7f99e2ad58b9639b87d3481027f79bfde2fcfb)), closes [#394](https://github.com/zextras/carbonio-files-ui/issues/394)
+
+
+### Bug Fixes
+
+* make drag and drop move dropzone consistent over lists ([1abe377](https://github.com/zextras/carbonio-files-ui/commit/1abe377be048ab63cb4e436c2d6775e0011c02ab)), closes [#401](https://github.com/zextras/carbonio-files-ui/issues/401)
+
 ## [2.9.0](https://github.com/zextras/carbonio-files-ui/compare/v2.8.0...v2.9.0) (2024-08-26)
 
 

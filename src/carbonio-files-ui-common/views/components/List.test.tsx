@@ -9,11 +9,11 @@ import { List } from './List';
 import { SelectionProvider } from './SelectionProvider';
 import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
+import * as useOpenWithDocs from '../../hooks/useOpenWithDocs';
 import { populateFile, populateNodes } from '../../mocks/mockUtils';
 import { selectNodes, setup, screen } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
-import * as utils from '../../utils/utils';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
@@ -106,7 +106,8 @@ describe('List', () => {
 		});
 
 		test('Double click on node that is supported by both preview and docs and has write permissions open document with docs', async () => {
-			const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
+			const openWithDocsFn = jest.fn();
+			jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
 			const node = populateFile();
 			node.permissions.can_write_file = true;
 			node.mime_type = 'application/vnd.oasis.opendocument.text';
@@ -124,7 +125,8 @@ describe('List', () => {
 		});
 
 		test('Double click on node that is supported by both preview and docs but does not have write permissions open document with preview', async () => {
-			const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
+			const openWithDocsFn = jest.fn();
+			jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
 			const node = populateFile();
 			node.permissions.can_write_file = false;
 			node.mime_type = 'application/vnd.oasis.opendocument.text';
@@ -153,7 +155,8 @@ describe('List', () => {
 		});
 
 		test('Double click on node that is not supported by preview nor docs does nothing', async () => {
-			const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
+			const openWithDocsFn = jest.fn();
+			jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
 			const getDocumentPreviewSrcFn = jest.spyOn(previewUtils, 'getDocumentPreviewSrc');
 			const getPdfPreviewSrcFn = jest.spyOn(previewUtils, 'getPdfPreviewSrc');
 			const getImgPreviewSrcFn = jest.spyOn(previewUtils, 'getImgPreviewSrc');

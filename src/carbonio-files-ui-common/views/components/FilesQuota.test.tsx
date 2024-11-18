@@ -17,12 +17,16 @@ import * as useFilesQuotaInfo from '../../hooks/useFilesQuotaInfo';
 import { screen, setup } from '../../tests/utils';
 import { humanFileSize } from '../../utils/utils';
 
-const mockQuota = jest.fn().mockReturnValue(<div>mock Quota</div>);
+let mockQuota: (props: QuotaProps) => React.JSX.Element;
 
 jest.mock('@zextras/carbonio-design-system', () => ({
 	...jest.requireActual('@zextras/carbonio-design-system'),
 	Quota: (props: QuotaProps): unknown => mockQuota(props)
 }));
+
+beforeEach(() => {
+	mockQuota = jest.fn().mockReturnValue(<div>mock Quota</div>);
+});
 
 describe('Files Quota', () => {
 	describe('Unlimited available space (limit = 0)', () => {
