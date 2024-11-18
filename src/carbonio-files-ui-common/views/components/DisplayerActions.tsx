@@ -23,10 +23,11 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { Node } from '../../types/common';
 import { DeepPick } from '../../types/utils';
 import { Action, buildActionItems, getAllPermittedActions } from '../../utils/ActionsFactory';
-import { downloadNode, openNodeWithDocs } from '../../utils/utils';
+import { downloadNode } from '../../utils/utils';
 
 type NodeItem = Node<
 	'id' | 'name' | 'rootId' | 'permissions' | 'type' | 'flagged',
@@ -83,6 +84,8 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 
 	const { sendViaMail } = useSendViaMail();
 
+	const openNodeWithDocs = useOpenWithDocs();
+
 	const sendViaMailCallback = useCallback(() => {
 		sendViaMail(node.id);
 	}, [node, sendViaMail]);
@@ -102,7 +105,7 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 			// if preview is not supported and document can be opened with docs, open editor
 			openNodeWithDocs(node.id);
 		}
-	}, [node.id, permittedDisplayerActions, openPreview]);
+	}, [node.id, permittedDisplayerActions, openPreview, openNodeWithDocs]);
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
@@ -215,6 +218,7 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 			openCopyNodesModal,
 			openDeletePermanentlyModal,
 			openMoveNodesModal,
+			openNodeWithDocs,
 			openRenameModal,
 			preview,
 			restoreNodeCallback,

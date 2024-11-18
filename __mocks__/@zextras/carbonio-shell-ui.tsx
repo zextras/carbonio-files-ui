@@ -83,4 +83,10 @@ export const addRoute: typeof shell.addRoute = () => '';
 export const addSearchView: typeof shell.addSearchView = () => '';
 export const removeActions: typeof shell.removeActions = () => undefined;
 export const Spinner: typeof shell.Spinner = () => <>Spinner component stub</>;
+const noop = (): void => undefined;
+export const useTracker: typeof shell.useTracker = () => ({
+	capture: noop,
+	enableTracker: noop,
+	reset: noop
+});
 export const useAuthenticated: typeof shell.useAuthenticated = () => true;
