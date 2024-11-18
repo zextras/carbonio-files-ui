@@ -19,12 +19,11 @@ import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar
 import { draggedItemsVar } from './carbonio-files-ui-common/apollo/dragAndDropVar';
 import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
-import { selectionModeVar } from './carbonio-files-ui-common/apollo/selectionVar';
 import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
 import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
-import { LOGGED_USER } from './mocks/constants';
+import { LOGGED_USER_ACCOUNT } from './mocks/constants';
 import server from './mocks/server';
 
 dotenv.config();
@@ -66,7 +65,6 @@ beforeEach(() => {
 	// reset apollo client cache
 	global.apolloClient.resetStore();
 	// reset reactive variables
-	selectionModeVar(false);
 	searchParamsVar({});
 	uploadVar({});
 	uploadFunctionsVar({});
@@ -138,7 +136,7 @@ beforeAll(() => {
 		value: noop
 	});
 
-	global.mockedUserLogged = LOGGED_USER;
+	global.mockedUserLogged = LOGGED_USER_ACCOUNT;
 
 	window.resizeTo = function resizeTo(width, height): void {
 		Object.assign(this, {

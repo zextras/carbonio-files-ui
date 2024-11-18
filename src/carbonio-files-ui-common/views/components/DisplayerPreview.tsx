@@ -32,12 +32,12 @@ interface DisplayerPreviewProps {
 	version: number | undefined;
 }
 
-export const DisplayerPreview: React.VFC<DisplayerPreviewProps> = ({
+export const DisplayerPreview = ({
 	id,
 	type,
 	mimeType,
 	version
-}) => {
+}: DisplayerPreviewProps): React.JSX.Element => {
 	const previewContainerRef = useRef<HTMLDivElement>(null);
 	const { openPreview } = useContext(PreviewsManagerContext);
 	const [t] = useTranslation();

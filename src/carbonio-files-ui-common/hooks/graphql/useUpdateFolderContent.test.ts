@@ -19,11 +19,12 @@ import {
 } from '../../mocks/mockUtils';
 import { setupHook } from '../../tests/utils';
 import {
+	File,
 	Folder,
+	GetChildrenDocument,
 	GetChildrenQuery,
 	GetChildrenQueryVariables,
-	Maybe,
-	Node
+	Maybe
 } from '../../types/graphql/types';
 import { getChildrenVariables } from '../../utils/resolverMocks';
 import { addNodeInSortedList } from '../../utils/utils';
@@ -43,13 +44,14 @@ describe('useUpdateFolderContent', () => {
 		sort = NODES_SORT_DEFAULT,
 		pageToken: string | null = null
 	): void {
-		global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
-			query: GET_CHILDREN,
+		global.apolloClient.writeQuery({
+			query: GetChildrenDocument,
 			variables: getChildrenVariables(folder.id, NODES_LOAD_LIMIT, sort),
 			data: {
 				getNode: {
 					...folder,
 					children: {
+						__typename: 'NodePage',
 						nodes: folder.children.nodes.slice(
 							0,
 							Math.min(NODES_LOAD_LIMIT, folder.children.nodes.length)
@@ -95,7 +97,10 @@ describe('useUpdateFolderContent', () => {
 			// extract new elements not loaded in cache to use them as the new
 			// notLoadedElements[0] is the element that will be created
 			// notLoadedElements[1] is the next neighbor
-			const notLoadedElements = folder.children.nodes.splice(NODES_LOAD_LIMIT, 2) as Node[];
+			const notLoadedElements = folder.children.nodes.splice(NODES_LOAD_LIMIT, 2) as (
+				| File
+				| Folder
+			)[];
 
 			prepareCache(folder);
 
@@ -125,9 +130,9 @@ describe('useUpdateFolderContent', () => {
 			sortNodes(folder.children.nodes, sort);
 			// extract the element that will be created from the children so that it will no be written in cache
 			const elementIndex = Math.floor(NODES_LOAD_LIMIT / 2);
-			const element = folder.children.nodes.splice(elementIndex, 1)[0] as Node;
+			const element = folder.children.nodes.splice(elementIndex, 1)[0]!;
 			// the neighbor is at the index where we want to insert the new element
-			const neighbor = folder.children.nodes[elementIndex] as Node;
+			const neighbor = folder.children.nodes[elementIndex]!;
 			// so give to element a name that put it before neighbor
 			element.name = neighbor.name.substring(0, neighbor.name.length - 1);
 
@@ -161,7 +166,7 @@ describe('useUpdateFolderContent', () => {
 			// extract the element that will be created from the children so that it will no be written in cache
 			// the element is the last one of the folder
 			const elementIndex = folder.children.nodes.length - 1;
-			const element = folder.children.nodes.splice(elementIndex, 1)[0] as Node;
+			const element = folder.children.nodes.splice(elementIndex, 1)[0]!;
 
 			prepareCache(folder, sort);
 
@@ -189,10 +194,10 @@ describe('useUpdateFolderContent', () => {
 			// extract the element that will be created from the children so that it will no be written in cache
 			// the element is the last one of the folder
 			const elementIndex = folder.children.nodes.length - 1;
-			const element = folder.children.nodes.splice(elementIndex, 1)[0] as Node;
+			const element = folder.children.nodes.splice(elementIndex, 1)[0]!;
 			// element at position NODES_LOAD_LIMIT will not be written in cache
 			// and should not be present in the list after the update
-			const notLoadedElement = folder.children.nodes[folder.children.nodes.length - 1] as Node;
+			const notLoadedElement = folder.children.nodes[folder.children.nodes.length - 1]!;
 
 			prepareCache(folder);
 
@@ -265,7 +270,7 @@ describe('useUpdateFolderContent', () => {
 			prepareCache(folder);
 
 			// to move a node up take the last element and move it with a rename
-			const element = folder.children.nodes[folder.children.nodes.length - 1] as Node;
+			const element = folder.children.nodes[folder.children.nodes.length - 1]!;
 			element.name =
 				folder.children.nodes[0]?.name.substring(0, folder.children.nodes[0].name.length) || '000';
 			let newPos = addNodeInSortedList(folder.children.nodes, element, NODES_SORT_DEFAULT);
@@ -287,7 +292,7 @@ describe('useUpdateFolderContent', () => {
 			// updated element should be the first element of the list
 			expect(childrenNodes[newPos]?.id).toBe(element.id);
 			// last element of returned list should the second-last of the original list
-			const secondLastElement = folder.children.nodes[folder.children.nodes.length - 2] as Node;
+			const secondLastElement = folder.children.nodes[folder.children.nodes.length - 2]!;
 			expect(childrenNodes[childrenNodes.length - 1]?.id).toBe(secondLastElement.id);
 		});
 
@@ -298,7 +303,7 @@ describe('useUpdateFolderContent', () => {
 
 			prepareCache(folder);
 
-			const element = folder.children.nodes[0] as Node;
+			const element = folder.children.nodes[0]!;
 
 			element.name = `${folder.children.nodes[folder.children.nodes.length - 1]?.name}-last`;
 
@@ -321,7 +326,7 @@ describe('useUpdateFolderContent', () => {
 			// updated element should be the last element of the list
 			expect(childrenNodes[newPos - 1]?.id).toBe(element.id);
 			// first element of returned list should the second of the original list
-			const secondElement = folder.children.nodes[1] as Node;
+			const secondElement = folder.children.nodes[1]!;
 			expect(childrenNodes[0]?.id).toBe(secondElement.id);
 		});
 
@@ -331,10 +336,10 @@ describe('useUpdateFolderContent', () => {
 			// extract the element that will be created from the children so that it will no be written in cache
 			// the element is the last one of the folder
 			const elementIndex = folder.children.nodes.length - 2;
-			const element = folder.children.nodes.splice(elementIndex, 1)[0] as Node;
+			const element = folder.children.nodes.splice(elementIndex, 1)[0]!;
 			// element at position NODES_LOAD_LIMIT will not be written in cache
 			// and should not be present in the list after the update
-			const notLoadedElement = folder.children.nodes[folder.children.nodes.length - 1] as Node;
+			const notLoadedElement = folder.children.nodes[folder.children.nodes.length - 1]!;
 
 			prepareCache(folder);
 
@@ -363,10 +368,7 @@ describe('useUpdateFolderContent', () => {
 			expect(find(childrenNodes, (item) => item?.id === notLoadedElement.id)).not.toBeDefined();
 
 			// rename element to put it as first
-			element.name = (childrenNodes[0] as Node).name.substring(
-				0,
-				(childrenNodes[0] as Node).name.length - 1
-			);
+			element.name = childrenNodes[0]!.name.substring(0, childrenNodes[0]!.name.length - 1);
 
 			newPos = addNodeInSortedList(childrenNodes, element, sort);
 
@@ -380,7 +382,7 @@ describe('useUpdateFolderContent', () => {
 			expect(childrenNodes2[newPos]?.id).toBe(element.id);
 
 			// rename again to move it as last element
-			element.name = `${(childrenNodes2[childrenNodes2.length - 1] as Node).name}-last`;
+			element.name = `${childrenNodes2[childrenNodes2.length - 1]!.name}-last`;
 			newPos = addNodeInSortedList(childrenNodes2, element, sort);
 			newPos = newPos > -1 ? newPos : childrenNodes2.length;
 			// call the hook saying that there are more children to load
@@ -398,11 +400,8 @@ describe('useUpdateFolderContent', () => {
 			const folder = populateFolder(NODES_LOAD_LIMIT + 2);
 			const sort = NODES_SORT_DEFAULT;
 			// extract the last 2 elements that will be added after
-			const last = folder.children.nodes.splice(folder.children.nodes.length - 1, 1)[0] as Node;
-			const secondLastNode = folder.children.nodes.splice(
-				folder.children.nodes.length - 1,
-				1
-			)[0] as Node;
+			const last = folder.children.nodes.splice(folder.children.nodes.length - 1, 1)[0]!;
+			const secondLastNode = folder.children.nodes.splice(folder.children.nodes.length - 1, 1)[0]!;
 			// we need to be sure that it is a file
 			const secondLast = populateFile(secondLastNode.id, secondLastNode.name);
 

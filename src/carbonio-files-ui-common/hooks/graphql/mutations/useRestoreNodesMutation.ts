@@ -15,21 +15,23 @@ import { useLocation } from 'react-router-dom';
 import { useActiveNode } from '../../../../hooks/useActiveNode';
 import { useNavigation } from '../../../../hooks/useNavigation';
 import { ROOTS } from '../../../constants';
-import RESTORE_NODES from '../../../graphql/mutations/restoreNodes.graphql';
 import FIND_NODES from '../../../graphql/queries/findNodes.graphql';
-import { GetNodeParentType, Node } from '../../../types/common';
+import { Node } from '../../../types/common';
 import {
 	FindNodesQuery,
 	QueryGetPathArgs,
+	RestoreNodesDocument,
 	RestoreNodesMutation,
 	RestoreNodesMutationVariables
 } from '../../../types/graphql/types';
+import { DeepPick } from '../../../types/utils';
 import { isSearchView } from '../../../utils/utils';
 import { useErrorHandler } from '../../useErrorHandler';
 import { useUpdateFilterContent } from '../useUpdateFilterContent';
 import { isQueryResult } from '../utils';
 
-type UseRestoreRequiredNodeType = Pick<Node, 'id' | '__typename'> & GetNodeParentType;
+type UseRestoreRequiredNodeType = Node<'id'> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions'>;
 
 export type RestoreType = (
 	...nodes: UseRestoreRequiredNodeType[]
@@ -50,7 +52,7 @@ export function useRestoreNodesMutation(): RestoreType {
 	const [restoreNodesMutation, { error }] = useMutation<
 		RestoreNodesMutation,
 		RestoreNodesMutationVariables
-	>(RESTORE_NODES, {
+	>(RestoreNodesDocument, {
 		errorPolicy: 'all'
 	});
 
@@ -65,7 +67,6 @@ export function useRestoreNodesMutation(): RestoreType {
 					node_ids: nodesIds
 				},
 				optimisticResponse: {
-					__typename: 'Mutation',
 					restoreNodes: map(nodes, (node) => ({ ...node, parent: null, rootId: ROOTS.LOCAL_ROOT }))
 				},
 				update(cache, { data }) {

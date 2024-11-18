@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 import { http, HttpResponse } from 'msw';
 import { DefaultTheme } from 'styled-components';
@@ -50,7 +50,6 @@ describe('Node Details', () => {
 		node.parent = populateFolder();
 		node.last_editor = populateUser();
 		const loadMore = jest.fn();
-		const downloads = 123;
 		setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -62,14 +61,17 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
 				hasMore={false}
 				size={node.size}
-				downloads={downloads}
 				type={node.type}
+				nodes={undefined}
+				rootId={null}
+				version={undefined}
+				mimeType={undefined}
 			/>,
 			{ mocks: {} }
 		);
@@ -108,13 +110,17 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
 				hasMore={false}
 				nodes={children}
 				type={node.type}
+				size={undefined}
+				rootId={null}
+				version={undefined}
+				mimeType={undefined}
 			/>,
 			{ mocks: {} }
 		);
@@ -147,18 +153,21 @@ describe('Node Details', () => {
 				name={node.name}
 				owner={node.owner}
 				creator={node.creator}
-				lastEditor={undefined}
+				lastEditor={null}
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description=""
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={[]}
 				hasMore={false}
 				size={undefined}
-				downloads={undefined}
 				type={node.type}
+				nodes={undefined}
+				rootId={null}
+				version={undefined}
+				mimeType={undefined}
 			/>,
 			{ mocks: {} }
 		);
@@ -189,7 +198,7 @@ describe('Node Details', () => {
 		const loadMore = jest.fn();
 		const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
 			<NodeDetails
-				typeName={undefined}
+				typeName={node.__typename}
 				id={node.id}
 				name={node.name}
 				owner={node.owner}
@@ -198,14 +207,17 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={[]}
 				hasMore={false}
 				size={0}
-				downloads={0}
 				type={node.type}
+				nodes={undefined}
+				rootId={null}
+				version={undefined}
+				mimeType={undefined}
 			/>,
 			{ mocks }
 		);
@@ -251,18 +263,21 @@ describe('Node Details', () => {
 				name={node.name}
 				owner={node.owner}
 				creator={node.owner}
-				lastEditor={undefined}
+				lastEditor={null}
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description=""
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={[share]}
 				hasMore={false}
 				size={undefined}
-				downloads={undefined}
 				type={node.type}
+				nodes={undefined}
+				rootId={null}
+				version={undefined}
+				mimeType={undefined}
 			/>,
 			{ mocks: {} }
 		);
@@ -294,14 +309,17 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description=""
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={[]}
 				hasMore={false}
 				size={undefined}
-				downloads={undefined}
 				type={node.type}
+				nodes={undefined}
+				rootId={null}
+				version={undefined}
+				mimeType={undefined}
 			/>,
 			{ mocks: {} }
 		);
@@ -338,7 +356,7 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
@@ -347,13 +365,14 @@ describe('Node Details', () => {
 				type={node.type}
 				version={node.version}
 				mimeType={node.mime_type}
+				nodes={undefined}
+				rootId={null}
 			/>,
 			{ mocks: {} }
 		);
 		await screen.findByTestId('node-details');
-		expect(healthCache.healthReceived).toBeTruthy();
-		await screen.findByRole('img');
-		expect(screen.getByRole('img')).toBeVisible();
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
+		expect(await screen.findByRole('presentation')).toBeVisible();
 		expect(getPreviewThumbnailSrcFn).toHaveBeenCalled();
 	});
 
@@ -380,7 +399,7 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
@@ -389,14 +408,16 @@ describe('Node Details', () => {
 				type={node.type}
 				version={node.version}
 				mimeType={node.mime_type}
+				nodes={undefined}
+				rootId={null}
 			/>,
 			{ mocks: {} }
 		);
 		await screen.findByTestId('node-details');
-		expect(healthCache.healthReceived).toBeTruthy();
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(getPreviewThumbnailSrcFn).not.toHaveBeenCalled();
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	test('should show preview of gif image with gif format', async () => {
@@ -415,7 +436,7 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
@@ -424,18 +445,19 @@ describe('Node Details', () => {
 				type={node.type}
 				version={node.version}
 				mimeType={node.mime_type}
+				nodes={undefined}
+				rootId={null}
 			/>,
 			{ mocks: {} }
 		);
-		await screen.findByRole('img');
-		expect(screen.getByRole('img')).toBeVisible();
-		expect(screen.getByRole('img')).toHaveAttribute(
+		expect(await screen.findByRole('presentation')).toBeVisible();
+		expect(screen.getByRole('presentation')).toHaveAttribute(
 			'src',
 			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/${node.version}/0x256/thumbnail/?shape=rectangular&quality=high&output_format=gif`
 		);
 	});
 
-	test('Show file preview for pdf', async () => {
+	it('should show file preview for pdf', async () => {
 		const node = populateFile();
 		const loadMore = jest.fn();
 		node.type = NodeType.Text;
@@ -451,7 +473,7 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
@@ -460,11 +482,17 @@ describe('Node Details', () => {
 				type={node.type}
 				version={node.version}
 				mimeType={node.mime_type}
+				nodes={undefined}
+				rootId={null}
 			/>,
 			{ mocks: {} }
 		);
-		await screen.findByRole('img');
-		expect(screen.getByRole('img')).toBeVisible();
+		await screen.findByRole('presentation');
+		expect(screen.getByRole('presentation')).toBeVisible();
+		expect(screen.getByRole('presentation')).toHaveAttribute(
+			'src',
+			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${node.id}/${node.version}/0x256/thumbnail/?shape=rectangular&quality=high&output_format=jpeg`
+		);
 	});
 
 	test('should not show file thumbnail for document', async () => {
@@ -483,7 +511,7 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
@@ -492,11 +520,16 @@ describe('Node Details', () => {
 				type={node.type}
 				version={node.version}
 				mimeType={node.mime_type}
+				nodes={undefined}
+				rootId={null}
 			/>,
 			{ mocks: {} }
 		);
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	test('Do not show file preview for node with unsupported type/mime type', async () => {
@@ -515,7 +548,7 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
@@ -524,11 +557,16 @@ describe('Node Details', () => {
 				type={node.type}
 				version={node.version}
 				mimeType={node.mime_type}
+				nodes={undefined}
+				rootId={null}
 			/>,
 			{ mocks: {} }
 		);
 		expect(screen.getByText(node.name)).toBeVisible();
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
+		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
@@ -553,13 +591,17 @@ describe('Node Details', () => {
 				createdAt={node.created_at}
 				updatedAt={node.updated_at}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 				loadMore={loadMore}
 				loading={false}
 				shares={node.shares}
 				hasMore
 				nodes={nodes}
 				type={node.type}
+				size={undefined}
+				rootId={null}
+				version={undefined}
+				mimeType={undefined}
 			/>,
 			{ mocks: {} }
 		);
@@ -610,13 +652,17 @@ describe('Node Details', () => {
 					createdAt={node.created_at}
 					updatedAt={node.updated_at}
 					description={node.description}
-					canUpsertDescription={canUpsertDescription({ nodes: node })}
+					canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 					loadMore={loadMore}
 					loading={false}
 					shares={node.shares}
 					hasMore
 					nodes={[child]}
 					type={node.type}
+					size={undefined}
+					rootId={null}
+					version={undefined}
+					mimeType={undefined}
 				/>
 			);
 			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();

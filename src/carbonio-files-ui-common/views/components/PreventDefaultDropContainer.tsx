@@ -33,7 +33,9 @@ const preventDefaultDrag = (event: React.DragEvent): void => {
 	}
 };
 
-export const PreventDefaultDropContainer: React.FC = ({ children }) => (
+export const PreventDefaultDropContainer = ({
+	children
+}: React.PropsWithChildren): React.JSX.Element => (
 	<Container
 		onDragEnter={preventDefaultDrag}
 		onDragOver={preventDefaultDrag}

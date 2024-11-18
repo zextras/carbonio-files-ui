@@ -5,37 +5,40 @@
  */
 
 import type { Action as DSAction } from '@zextras/carbonio-design-system';
-import { every, find, forEach, includes, isBoolean, reduce, size, some } from 'lodash';
 
 import { isPreviewDependantOnDocs, isSupportedByPreview } from './previewUtils';
 import { docsHandledMimeTypes, isFile, isFolder } from './utils';
-import { ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT } from '../../constants';
+import { getUserAccount } from '../../utils/utils';
 import { ROOTS } from '../constants';
-import { Action, GetNodeParentType, Node } from '../types/common';
+import { Node } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
-import { File as FilesFile, Folder, MakeOptional, Permissions, Root } from '../types/graphql/types';
-import { OneOrMany } from '../types/utils';
+import { NodeType, Permissions, Root } from '../types/graphql/types';
+import { DeepPick, OneOrMany } from '../types/utils';
 
-export type ActionsFactoryNodeType = Pick<
-	Node,
-	'permissions' | 'flagged' | 'type' | 'owner' | 'id' | 'rootId'
-> &
-	GetNodeParentType &
-	(Pick<FilesFile, '__typename'> | Pick<Folder, '__typename'>) &
-	MakeOptional<Pick<FilesFile, 'mime_type'>, 'mime_type'>;
+export const Action = {
+	Edit: 'EDIT',
+	Preview: 'PREVIEW',
+	SendViaMail: 'SEND_VIA_MAIL',
+	Download: 'DOWNLOAD',
+	ManageShares: 'MANAGE_SHARES',
+	Flag: 'FLAG',
+	UnFlag: 'UNFLAG',
+	OpenWithDocs: 'OPEN_WITH_DOCS',
+	Copy: 'COPY',
+	Move: 'MOVE',
+	Rename: 'RENAME',
+	MoveToTrash: 'MOVE_TO_TRASH',
+	Restore: 'RESTORE',
+	DeletePermanently: 'DELETE_PERMANENTLY',
+	UpsertDescription: 'UPSERT_DESCRIPTION',
+	RemoveUpload: 'REMOVE_UPLOAD',
+	RetryUpload: 'RETRY_UPLOAD',
+	GoToFolder: 'GO_TO_FOLDER'
+} as const;
 
-export type ActionsFactoryUploadItem = Pick<
-	Partial<UploadItem>,
-	'status' | 'parentNodeId' | 'nodeId'
->;
+export type Action = (typeof Action)[keyof typeof Action];
 
-export type ActionsFactoryGlobalType = ActionsFactoryNodeType | ActionsFactoryUploadItem;
-
-export type ActionsFactoryChecker = (nodes: ActionsFactoryGlobalType[]) => boolean;
-
-export type ActionsFactoryCheckerMap = Partial<Record<Action, ActionsFactoryChecker>>;
-
-const hoverBarActions: Action[] = [
+const hoverBarActions = [
 	Action.SendViaMail,
 	Action.Download,
 	Action.ManageShares,
@@ -43,9 +46,9 @@ const hoverBarActions: Action[] = [
 	Action.UnFlag,
 	Action.Restore,
 	Action.DeletePermanently
-];
+] as const satisfies Action[];
 
-const completeListActions: Action[] = [
+const completeListActionsForNode = [
 	Action.Edit,
 	Action.Preview,
 	Action.SendViaMail,
@@ -60,141 +63,135 @@ const completeListActions: Action[] = [
 	Action.MoveToTrash,
 	Action.Restore,
 	Action.DeletePermanently
-];
+] as const satisfies Action[];
 
-const uploadActions: Action[] = [Action.RemoveUpload, Action.RetryUpload, Action.GoToFolder];
+const uploadActions = [
+	Action.RemoveUpload,
+	Action.RetryUpload,
+	Action.GoToFolder
+] as const satisfies Action[];
 
-export function isRoot(node: { __typename?: string }): node is Root {
+export function isRoot<T extends { __typename?: string }>(
+	node: T
+): node is T & Required<Pick<Root, '__typename'>> {
 	return node.__typename === 'Root';
 }
 
+type NodeWritePermissions = Node<'permissions'>;
 export function hasWritePermission(
-	nodes: OneOrMany<ActionsFactoryNodeType>,
+	nodes: OneOrMany<NodeWritePermissions>,
 	actionName: string
 ): boolean {
-	if (!(nodes instanceof Array)) {
-		if (isFile(nodes)) {
-			if (!isBoolean(nodes.permissions.can_write_file)) {
-				throw Error('can_write_file not defined');
-			}
-			return nodes.permissions.can_write_file;
-		}
-		if (isFolder(nodes)) {
-			if (!isBoolean(nodes.permissions.can_write_folder)) {
-				throw Error('can_write_folder not defined');
-			}
-			return nodes.permissions.can_write_folder;
-		}
-		throw Error(`cannot evaluate ${actionName} on UnknownType`);
-	} else {
-		let result = true;
-		// eslint-disable-next-line consistent-return
-		forEach(nodes, (node: ActionsFactoryNodeType) => {
-			const partial = hasWritePermission(node, actionName);
-			if (!partial) {
-				result = false;
-				return false;
-			}
-		});
-		return result;
+	if (nodes instanceof Array) {
+		return nodes.every((node) => hasWritePermission(node, actionName));
 	}
+
+	if (isFile(nodes)) {
+		if (
+			nodes.permissions.can_write_file === undefined ||
+			nodes.permissions.can_write_file === null
+		) {
+			throw Error('can_write_file not defined');
+		}
+		return nodes.permissions.can_write_file;
+	}
+	if (isFolder(nodes)) {
+		if (
+			nodes.permissions.can_write_folder === undefined ||
+			nodes.permissions.can_write_folder === null
+		) {
+			throw Error('can_write_folder not defined');
+		}
+		return nodes.permissions.can_write_folder;
+	}
+	throw Error(`cannot evaluate ${actionName} on UnknownType`);
 }
 
-type ArgsType = {
-	nodes: OneOrMany<ActionsFactoryGlobalType>;
-	loggedUserId?: string;
-	canUsePreview?: boolean;
-	canUseDocs?: boolean;
-};
-
-export function canRename({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canRename on Node type');
-	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	if (size($nodes) === 0) {
+type NodeRename = Node<'rootId'> & NodeWritePermissions;
+export function canRename({ nodes }: { nodes: NodeRename[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canRename on empty nodes array');
 	}
-	if (size($nodes) > 1) {
+	if (nodes.length > 1) {
 		// cannot rename more than one node
 		return false;
 	}
 	// so size(nodes) is 1
-	return hasWritePermission($nodes, 'canRename') && $nodes[0].rootId !== ROOTS.TRASH;
+	const node = nodes[0];
+	return hasWritePermission(node, 'canRename') && node.rootId !== ROOTS.TRASH;
 }
 
-export function canFlag({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canFlag on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeFlag = Node<'flagged' | 'rootId'>;
+export function canFlag({ nodes }: { nodes: NodeFlag[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canFlag on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	const notTrashedNodes = every($nodes, (node) => node.rootId !== ROOTS.TRASH);
+	const notTrashedNodes = nodes.every((node) => node.rootId !== ROOTS.TRASH);
 	if (!notTrashedNodes) {
 		return false;
 	}
-	if (size($nodes) > 1) {
+	if (nodes.length > 1) {
 		// can flag if there is at least 1 unflagged node
-		return find($nodes, (node) => !node.flagged) !== undefined;
+		return nodes.some((node) => !node.flagged);
 	}
 	// so size(nodes) is 1
-	return !$nodes[0].flagged;
+	const node = nodes[0];
+	return !node.flagged;
 }
 
-export function canUnFlag({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canUnFlag on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeUnFlag = Node<'flagged' | 'rootId'>;
+export function canUnFlag({ nodes }: { nodes: NodeUnFlag[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canUnFlag on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	const notTrashedNodes = every($nodes, (node) => node.rootId !== ROOTS.TRASH);
+	const notTrashedNodes = nodes.every((node) => node.rootId !== ROOTS.TRASH);
 	if (!notTrashedNodes) {
 		return false;
 	}
-	if (size($nodes) > 1) {
+	if (nodes.length > 1) {
 		// can unflag if there is at least 1 flagged node
-		return find($nodes, (node) => node.flagged) !== undefined;
+		return nodes.some((node) => node.flagged);
 	}
 	// so size(nodes) is 1
-	return $nodes[0].flagged;
+	const node = nodes[0];
+	return node.flagged;
 }
 
-export function canCreateFolder(
-	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions'>
-): boolean {
+type NodeCreateFolder = Node<'permissions'>;
+export function canCreateFolder(destinationNode: NodeCreateFolder): boolean {
 	if (isFile(destinationNode)) {
 		throw Error('destinationNode must be a Folder');
 	}
-	if (!isBoolean(destinationNode.permissions.can_write_folder)) {
+	if (
+		destinationNode.permissions.can_write_folder === undefined ||
+		destinationNode.permissions.can_write_folder === null
+	) {
 		throw Error('can_write_folder not defined');
 	}
 	return destinationNode.permissions.can_write_folder;
 }
 
-export function canCreateFile(
-	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions'>
-): boolean {
+type NodeCreateFile = Node<'permissions'>;
+export function canCreateFile(destinationNode: NodeCreateFile): boolean {
 	if (isFile(destinationNode)) {
 		throw Error('destinationNode must be a Folder');
 	}
-	if (!isBoolean(destinationNode.permissions.can_write_file)) {
+	if (
+		destinationNode.permissions.can_write_file === undefined ||
+		destinationNode.permissions.can_write_file === null
+	) {
 		throw Error('can_write_file not defined');
 	}
 	return destinationNode.permissions.can_write_file;
 }
 
-export function canUploadFile(
-	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions'>
-): boolean {
+export function canUploadFile(destinationNode: NodeCreateFile): boolean {
 	return canCreateFile(destinationNode);
 }
 
+type NodeWriteDestination = NodeCreateFolder & NodeCreateFile;
 export function canBeWriteNodeDestination(
-	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions'>,
+	destinationNode: NodeWriteDestination,
 	writingFile: boolean,
 	writingFolder: boolean
 ): boolean {
@@ -210,88 +207,63 @@ export function canBeWriteNodeDestination(
 	);
 }
 
-export function canBeMoveDestination(
-	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions' | 'id' | 'owner'>,
-	nodesToMove: Array<Pick<ActionsFactoryNodeType, '__typename' | 'id' | 'owner'>>,
-	loggedUserId: string
-): boolean {
-	const movingFile = find(nodesToMove, (node) => isFile(node)) !== undefined;
-	const movingFolder = find(nodesToMove, (node) => isFolder(node)) !== undefined;
-	// a node can be de destination of a move action if and only if
-	// - has permission to write nodes in it
-	// - is not one of the moving nodes (cannot move a folder inside itself)
-	// - has the same owner of the files that are written (workspace concept)
-	const destinationOwnerId = destinationNode.owner?.id || loggedUserId;
-	const isSameOwner = !some(nodesToMove, (node) => node.owner?.id !== destinationOwnerId);
-	return (
-		canBeWriteNodeDestination(destinationNode, movingFile, movingFolder) &&
-		find(nodesToMove, ['id', destinationNode.id]) === undefined &&
-		isSameOwner
-	);
-}
-
+type NodeCopyDestination = NodeWriteDestination & Node<'id'>;
 export function canBeCopyDestination(
-	destinationNode: Pick<ActionsFactoryNodeType, '__typename' | 'permissions' | 'id'>,
-	nodesToCopy: Array<Pick<ActionsFactoryNodeType, '__typename'>>
+	destinationNode: NodeCopyDestination,
+	nodesToCopy: Node<'id'>[]
 ): boolean {
-	const copyingFile = find(nodesToCopy, (node) => isFile(node)) !== undefined;
-	const copyingFolder = find(nodesToCopy, (node) => isFolder(node)) !== undefined;
+	const copyingFile = nodesToCopy.some((node) => isFile(node));
+	const copyingFolder = nodesToCopy.some((node) => isFolder(node));
 	// a node can be de destination of a copy action if and only if
 	// - has permission to write nodes in it
 	// - is not one of the copying nodes (cannot copy a folder inside itself)
 	return (
 		canBeWriteNodeDestination(destinationNode, copyingFile, copyingFolder) &&
-		find(nodesToCopy, ['id', destinationNode.id]) === undefined
+		nodesToCopy.every((node) => node.id !== destinationNode.id)
 	);
 }
 
-export function canRestore({ nodes }: ArgsType): boolean {
-	let someNotTrashed: boolean;
-	const $nodes = nodes as OneOrMany<ActionsFactoryNodeType>;
-	if ($nodes instanceof Array) {
-		someNotTrashed = some($nodes, (node) => node.rootId !== ROOTS.TRASH);
-	} else {
-		someNotTrashed = $nodes.rootId === ROOTS.TRASH;
-	}
-	return hasWritePermission($nodes, 'canRestore') && !someNotTrashed;
+type NodeRestore = NodeWritePermissions & Node<'rootId'>;
+export function canRestore({ nodes }: { nodes: NodeRestore[] }): boolean {
+	const someNotTrashed = nodes.some((node) => node.rootId !== ROOTS.TRASH);
+	return hasWritePermission(nodes, 'canRestore') && !someNotTrashed;
 }
 
-export function canMarkForDeletion({ nodes }: ArgsType): boolean {
-	let someTrashed: boolean;
-	const $nodes = nodes as OneOrMany<ActionsFactoryNodeType>;
-	if ($nodes instanceof Array) {
-		someTrashed = some($nodes, (node) => node.rootId === ROOTS.TRASH);
-	} else {
-		someTrashed = $nodes.rootId === ROOTS.TRASH;
-	}
-	return hasWritePermission($nodes, 'canMarkForDeletion') && !someTrashed;
+type NodeMarkForDeletion = NodeWritePermissions & Node<'rootId'>;
+export function canMarkForDeletion({ nodes }: { nodes: NodeMarkForDeletion[] }): boolean {
+	const someTrashed = nodes.some((node) => node.rootId === ROOTS.TRASH);
+	return hasWritePermission(nodes, 'canMarkForDeletion') && !someTrashed;
 }
 
-export function canUpsertDescription({ nodes }: ArgsType): boolean {
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	return hasWritePermission($nodes, 'canUpsertDescription');
+export function canUpsertDescription({ nodes }: { nodes: NodeWritePermissions[] }): boolean {
+	return hasWritePermission(nodes, 'canUpsertDescription');
 }
 
-export function canDeletePermanently({ nodes }: ArgsType): boolean {
-	const $nodes = nodes as OneOrMany<ActionsFactoryNodeType>;
-	if (!($nodes instanceof Array)) {
-		if (isFile($nodes) || isFolder($nodes)) {
-			if (!isBoolean($nodes.permissions.can_delete)) {
+type NodeDeletePermanently = Node<'rootId' | 'permissions'>;
+export function canDeletePermanently({ nodes }: { nodes: NodeDeletePermanently[] }): boolean {
+	return nodes.every((node) => {
+		if (isFile(node) || isFolder(node)) {
+			if (node.permissions.can_delete === undefined || node.permissions.can_delete === null) {
 				throw Error('can_delete not defined');
 			}
-			return $nodes.permissions.can_delete && $nodes.rootId === ROOTS.TRASH;
+			return node.permissions.can_delete && node.rootId === ROOTS.TRASH;
 		}
 		throw Error(`cannot evaluate DeletePermanently on UnknownType`);
-	} else {
-		return every($nodes, (node) => canDeletePermanently({ nodes: node }));
-	}
+	});
 }
 
+type NodeMoveCommon = Node<'rootId' | 'permissions'> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
 function canMoveCommonCriteria(
-	node: ActionsFactoryNodeType,
-	permission: keyof Omit<Permissions, '__typename'>,
-	loggedUserId?: string
+	node: NodeMoveCommon,
+	permission: keyof Pick<Permissions, 'can_write_file' | 'can_write_folder'>
 ): boolean {
+	const loggedUserId = getUserAccount().id;
+	// - a folder can be moved if it has can_write_folder permission, and it has a parent which has can_write_folder permission
+	// - a file can be moved if it has can_write_file permission, and it has a parent which has can_write_file permission.
+	// - if a node is shared with me and its parent is the LOCAL_ROOT, then the node cannot be moved (it's a direct share)
+	// - a trashed node cannot be moved
 	return (
 		node.permissions[permission] &&
 		!!node.parent &&
@@ -302,202 +274,221 @@ function canMoveCommonCriteria(
 	);
 }
 
-export function canMove({ nodes, loggedUserId }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canMove on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeMove = NodeMoveCommon & Node<'id'>;
+export function canMove({ nodes }: { nodes: NodeMove[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canMove on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	return every($nodes, (node) => {
-		if (isFile(node)) {
-			if (!isBoolean(node.permissions.can_write_file)) {
+	return nodes.every((node) => {
+		if ('__typename' in node && isFile(node)) {
+			if (
+				node.permissions.can_write_file === undefined ||
+				node.permissions.can_write_file === null
+			) {
 				throw Error('can_write_file not defined');
 			}
-			// a file can be moved if it has can_write_file permission, and it has a parent which has can_write_file permission.
-			// If a node is shared with me and its parent is the LOCAL_ROOT, then the node cannot be moved (it's a direct share)
-			return canMoveCommonCriteria(node, 'can_write_file', loggedUserId);
+			return canMoveCommonCriteria(node, 'can_write_file');
 		}
-		if (isFolder(node)) {
-			if (!isBoolean(node.permissions.can_write_folder)) {
+		if ('__typename' in node && isFolder(node)) {
+			if (
+				node.permissions.can_write_folder === undefined ||
+				node.permissions.can_write_folder === null
+			) {
 				throw Error('can_write_folder not defined');
 			}
-			// a folder can be moved if it has can_write_folder permission, and it has a parent which has can_write_folder permission
-			return canMoveCommonCriteria(node, 'can_write_folder', loggedUserId);
+			return canMoveCommonCriteria(node, 'can_write_folder');
 		}
 		throw Error('cannot evaluate canMove on UnknownType');
 	});
 }
 
-export function canCopy({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canCopy on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeMoveDestination = NodeWriteDestination &
+	Node<'id' | 'rootId'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
+export function canBeMoveDestination(
+	destinationNode: NodeMoveDestination,
+	nodesToMove: NodeMove[]
+): boolean {
+	const loggedUserId = getUserAccount().id;
+	const movingFile = nodesToMove.some((node) => isFile(node));
+	const movingFolder = nodesToMove.some((node) => isFolder(node));
+	// a node can be de destination of a move action if and only if
+	// - has permission to write nodes in it
+	// - is not one of the moving nodes (cannot move a folder inside itself)
+	// - has the same owner of the files that are written (workspace concept)
+	// - is not trashed
+	const destinationOwnerId = destinationNode.owner?.id ?? loggedUserId;
+	const isSameOwner = nodesToMove.every((node) => node.owner?.id === destinationOwnerId);
+	return (
+		canMove({ nodes: nodesToMove }) &&
+		canBeWriteNodeDestination(destinationNode, movingFile, movingFolder) &&
+		nodesToMove.every((node) => node.id !== destinationNode.id) &&
+		isSameOwner &&
+		destinationNode.rootId !== ROOTS.TRASH
+	);
+}
+
+type NodeCopy = Node<'rootId'>;
+export function canCopy({ nodes }: { nodes: NodeCopy[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canCopy on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	return every($nodes, (node) => node.rootId !== ROOTS.TRASH);
+	return nodes.every((node) => node.rootId !== ROOTS.TRASH);
 }
 
-export function canDownload({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canDownload on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeDownload = Node<'rootId'>;
+export function canDownload({ nodes }: { nodes: NodeDownload[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canDownload on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	return size($nodes) === 1 && isFile($nodes[0]) && $nodes[0].rootId !== ROOTS.TRASH;
+	const node = nodes[0];
+	return nodes.length === 1 && isFile(node) && node.rootId !== ROOTS.TRASH;
 }
 
-export function canOpenWithDocs({ nodes, canUseDocs }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canOpenWithDocs on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeOpenWithDocs = Node<'rootId' | 'permissions', 'mime_type'>;
+export function canOpenWithDocs({
+	nodes,
+	canUseDocs = false
+}: {
+	nodes: NodeOpenWithDocs[];
+	canUseDocs?: boolean;
+}): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canOpenWithDocs on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
+	const node = nodes[0];
 	return (
-		!!canUseDocs &&
-		size($nodes) === 1 &&
-		isFile($nodes[0]) &&
-		includes(docsHandledMimeTypes, $nodes[0].mime_type) &&
-		$nodes[0].rootId !== ROOTS.TRASH &&
-		!$nodes[0].permissions.can_write_file &&
-		$nodes[0].permissions.can_read
+		canUseDocs &&
+		nodes.length === 1 &&
+		isFile(node) &&
+		docsHandledMimeTypes.includes(node.mime_type) &&
+		node.rootId !== ROOTS.TRASH &&
+		!node.permissions.can_write_file &&
+		node.permissions.can_read
 	);
 }
 
-export function canOpenVersionWithDocs({ nodes, canUseDocs }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canOpenWithDocs on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeOpenVersion = Node<'rootId', 'mime_type'>;
+export function canOpenVersionWithDocs({
+	nodes,
+	canUseDocs = false
+}: {
+	nodes: NodeOpenVersion[];
+	canUseDocs?: boolean;
+}): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canOpenWithDocs on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
+	const node = nodes[0];
 	return (
-		!!canUseDocs &&
-		size($nodes) === 1 &&
-		isFile($nodes[0]) &&
-		includes(docsHandledMimeTypes, $nodes[0].mime_type) &&
-		$nodes[0].rootId !== ROOTS.TRASH
+		canUseDocs &&
+		nodes.length === 1 &&
+		isFile(node) &&
+		docsHandledMimeTypes.includes(node.mime_type) &&
+		node.rootId !== ROOTS.TRASH
 	);
 }
 
-export function canEdit({ nodes, canUseDocs }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canEdit on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeEdit = Node<'rootId', 'mime_type' | 'permissions'>;
+export function canEdit({
+	nodes,
+	canUseDocs = false
+}: {
+	nodes: NodeEdit[];
+	canUseDocs?: boolean;
+}): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canEdit on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
+	const node = nodes[0];
 	return (
-		!!canUseDocs &&
-		size($nodes) === 1 &&
-		isFile($nodes[0]) &&
-		includes(docsHandledMimeTypes, $nodes[0].mime_type) &&
-		$nodes[0].rootId !== ROOTS.TRASH &&
-		$nodes[0].permissions.can_write_file
+		canUseDocs &&
+		nodes.length === 1 &&
+		isFile(node) &&
+		docsHandledMimeTypes.includes(node.mime_type) &&
+		node.rootId !== ROOTS.TRASH &&
+		node.permissions.can_write_file
 	);
 }
 
-export function canPreview({ nodes, canUseDocs, canUsePreview }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canPreview on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodePreview = Node<'rootId' | 'type', 'mime_type'>;
+export function canPreview({
+	nodes,
+	canUseDocs = false,
+	canUsePreview = false
+}: {
+	nodes: NodePreview[];
+	canUseDocs?: boolean;
+	canUsePreview?: boolean;
+}): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canPreview on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
+	const node = nodes[0];
 	return (
-		size($nodes) === 1 &&
-		isFile($nodes[0]) &&
-		$nodes[0].rootId !== ROOTS.TRASH &&
-		isSupportedByPreview($nodes[0].mime_type, 'preview')[0] &&
-		!!canUsePreview &&
-		(!isPreviewDependantOnDocs($nodes[0].mime_type) || !!canUseDocs)
+		nodes.length === 1 &&
+		isFile(node) &&
+		node.rootId !== ROOTS.TRASH &&
+		((isSupportedByPreview(node.mime_type, 'preview')[0] &&
+			canUsePreview &&
+			(!isPreviewDependantOnDocs(node.mime_type) || canUseDocs)) ||
+			node.type === NodeType.Video)
 	);
 }
 
-export function canRemoveUpload({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canRemoveUpload on Node type');
-	}
-	if (size(nodes) === 0) {
+type UploadRemove = Partial<UploadItem>;
+export function canRemoveUpload({ nodes }: { nodes: UploadRemove[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canRemoveUpload on empty nodes array');
 	}
 	return true;
 }
 
-export function canRetryUpload({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canRetryUpload on Node type');
-	}
-	if (size(nodes) === 0) {
+type UploadRetry = Pick<UploadItem, 'status' | 'parentNodeId'>;
+export function canRetryUpload({ nodes }: { nodes: UploadRetry[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canRetryUpload on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryUploadItem[];
 	// can retry only if all selected nodes are failed
-	return (
-		find(
-			$nodes,
-			(node) =>
-				node.status !== UploadStatus.FAILED ||
-				node.parentNodeId === undefined ||
-				node.parentNodeId === null
-		) === undefined
+	return nodes.every(
+		(node) =>
+			'status' in node &&
+			node.status === UploadStatus.FAILED &&
+			node.parentNodeId !== undefined &&
+			node.parentNodeId !== null
 	);
 }
 
-export function canGoToFolder({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canGoToFolder on Node type');
-	}
-	if (size(nodes) === 0) {
+type UploadGoToFolder = Pick<UploadItem, 'parentNodeId'>;
+export function canGoToFolder({ nodes }: { nodes: UploadGoToFolder[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canGoToFolder on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryUploadItem[];
 	// can go to folder only if all selected nodes have the same parent
-	return every(
-		$nodes,
-		(node, index, array) =>
+	return nodes.every(
+		(node, _index, array) =>
 			node.parentNodeId && array[0].parentNodeId && node.parentNodeId === array[0].parentNodeId
 	);
 }
-
-export function canSendViaMail({ nodes }: ArgsType): boolean {
-	if (includes(ACTIONS_TO_REMOVE_DUE_TO_PRODUCT_CONTEXT, Action.SendViaMail)) {
-		return false;
-	}
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canSendViaMail on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeSendViaMail = Node<'rootId'>;
+export function canSendViaMail({ nodes }: { nodes: NodeSendViaMail[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canSendViaMail on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	return size($nodes) === 1 && isFile($nodes[0]) && $nodes[0].rootId !== ROOTS.TRASH;
+
+	const node = nodes[0];
+	return nodes.length === 1 && isFile(node) && node.rootId !== ROOTS.TRASH;
 }
 
-export function canManageShares({ nodes }: ArgsType): boolean {
-	if (!(nodes instanceof Array)) {
-		throw Error('cannot evaluate canManageShares on Node type');
-	}
-	if (size(nodes) === 0) {
+type NodeManageShares = Node<'rootId'>;
+export function canManageShares({ nodes }: { nodes: NodeManageShares[] }): boolean {
+	if (nodes.length === 0) {
 		throw Error('cannot evaluate canManageShares on empty nodes array');
 	}
-	const $nodes = nodes as ActionsFactoryNodeType[];
-	return size(nodes) === 1 && $nodes[0].rootId !== ROOTS.TRASH;
+	return nodes.length === 1 && nodes[0].rootId !== ROOTS.TRASH;
 }
 
-const actionsCheckMap: {
-	[key in Action]: (args: ArgsType) => boolean;
-} = {
+const ACTION_HANDLERS = {
 	[Action.Edit]: canEdit,
 	[Action.Preview]: canPreview,
 	[Action.SendViaMail]: canSendViaMail,
@@ -516,88 +507,82 @@ const actionsCheckMap: {
 	[Action.GoToFolder]: canGoToFolder,
 	[Action.RetryUpload]: canRetryUpload,
 	[Action.RemoveUpload]: canRemoveUpload
+} as const;
+
+type ActionHandlers = typeof ACTION_HANDLERS;
+
+type ArgsForHandler<TAction extends keyof ActionHandlers> = ActionHandlers[TAction] extends (
+	args: infer TArgs
+) => void
+	? TArgs
+	: never;
+
+type IntersectArgs<TActions extends (keyof ActionHandlers)[]> = TActions extends [
+	infer FirstAction extends keyof ActionHandlers,
+	...infer RestActions extends (keyof ActionHandlers)[]
+]
+	? ArgsForHandler<FirstAction> & IntersectArgs<RestActions>
+	: unknown;
+
+type AtLeastOneAction<TActions extends (keyof ActionHandlers)[]> = [TActions[number], ...TActions];
+
+type CustomCheckers<TActions extends (keyof ActionHandlers)[]> = {
+	[K in keyof ActionHandlers]?: K extends TActions[number]
+		? (nodes: Parameters<ActionHandlers[K]>[0]['nodes']) => boolean
+		: never;
 };
 
-export function getPermittedActions(
-	nodes: ActionsFactoryGlobalType[],
-	actions: Action[],
-	// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-	loggedUserId?: string,
-	canUsePreview?: boolean,
-	canUseDocs?: boolean,
-	customCheckers?: ActionsFactoryCheckerMap
+export type CustomUploadCheckers = CustomCheckers<typeof uploadActions>;
+
+export function getPermittedActions<TActions extends AtLeastOneAction<(keyof ActionHandlers)[]>>(
+	actions: TActions,
+	{ nodes, ...rest }: IntersectArgs<TActions>,
+	customCheckers?: CustomCheckers<TActions>
 ): Action[] {
-	return reduce(
-		actions,
-		(accumulator: Action[], action: Action) => {
-			if (size(nodes) > 0) {
-				let externalCheckerResult = true;
-				const externalChecker = customCheckers?.[action];
-				if (externalChecker) {
-					externalCheckerResult = externalChecker(nodes);
-				}
-				if (
-					actionsCheckMap[action]({ nodes, loggedUserId, canUsePreview, canUseDocs }) &&
-					externalCheckerResult
-				) {
-					accumulator.push(action);
-				}
+	return actions.reduce<Action[]>((accumulator, action) => {
+		if (nodes.length > 0) {
+			let externalCheckerResult = true;
+			const externalChecker = customCheckers?.[action];
+			if (externalChecker) {
+				externalCheckerResult = externalChecker(nodes);
 			}
-			return accumulator;
-		},
-		[]
-	);
+			if (ACTION_HANDLERS[action]({ nodes, ...rest }) && externalCheckerResult) {
+				accumulator.push(action);
+			}
+		}
+		return accumulator;
+	}, []);
 }
 
 export function getAllPermittedActions(
-	nodes: ActionsFactoryNodeType[],
-	// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-	loggedUserId: string,
-	canUsePreview?: boolean,
-	canUseDocs?: boolean,
-	customCheckers?: ActionsFactoryCheckerMap
+	args: IntersectArgs<typeof completeListActionsForNode>,
+	customCheckers?: CustomCheckers<typeof completeListActionsForNode>
 ): Action[] {
-	return getPermittedActions(
-		nodes as ActionsFactoryGlobalType[],
-		completeListActions,
-		loggedUserId,
-		canUsePreview,
-		canUseDocs,
-		customCheckers
-	);
+	return getPermittedActions(completeListActionsForNode, args, customCheckers);
 }
 
-export function getPermittedHoverBarActions(node: ActionsFactoryNodeType): Action[] {
-	return getPermittedActions([node as ActionsFactoryGlobalType], hoverBarActions);
+export function getPermittedHoverBarActions(
+	node: IntersectArgs<typeof hoverBarActions>['nodes'][number]
+): Action[] {
+	return getPermittedActions(hoverBarActions, { nodes: [node] });
 }
 
 export function getPermittedUploadActions(
-	nodes: ActionsFactoryUploadItem[],
-	customCheckers?: ActionsFactoryCheckerMap
+	nodes: IntersectArgs<typeof uploadActions>['nodes'],
+	customCheckers?: CustomCheckers<typeof uploadActions>
 ): Action[] {
-	return getPermittedActions(
-		nodes as ActionsFactoryGlobalType[],
-		uploadActions,
-		undefined,
-		undefined,
-		undefined,
-		customCheckers
-	);
+	return getPermittedActions(uploadActions, { nodes }, customCheckers);
 }
 
 export function buildActionItems(
 	itemsMap: Partial<Record<Action, DSAction>>,
 	actions: Action[] = []
 ): DSAction[] {
-	return reduce<Action, DSAction[]>(
-		actions,
-		(accumulator, action): DSAction[] => {
-			const actionItem = itemsMap[action];
-			if (actionItem) {
-				accumulator.push(actionItem);
-			}
-			return accumulator;
-		},
-		[]
-	);
+	return actions.reduce<DSAction[]>((accumulator, action): DSAction[] => {
+		const actionItem = itemsMap[action];
+		if (actionItem) {
+			accumulator.push(actionItem);
+		}
+		return accumulator;
+	}, []);
 }

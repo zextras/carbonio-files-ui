@@ -9,18 +9,20 @@ import { screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder, populateNode, sortNodes } from '../../mocks/mockUtils';
 import { generateError, renameNode, setup, selectNodes } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { NodeSort } from '../../types/graphql/types';
+import { File, Folder, NodeSort } from '../../types/graphql/types';
 import { mockErrorResolver } from '../../utils/resolverMocks';
+
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
 describe('Rename', () => {
 	describe('Selection mode', () => {
 		test('Rename is hidden when multiple files are selected', async () => {
-			const children: Array<Node> = [];
+			const children: (File | Folder)[] = [];
 			// enable permission to rename
 			for (let i = 0; i < 2; i += 1) {
 				const node = populateNode();
@@ -29,7 +31,11 @@ describe('Rename', () => {
 				children.push(node);
 			}
 
-			const { user } = setup(<List nodes={children} mainList emptyListMessage={'hint'} />);
+			const { user } = setup(
+				<SelectionProvider items={children}>
+					<List nodes={children} mainList emptyListMessage={'hint'} />
+				</SelectionProvider>
+			);
 
 			// activate selection mode by selecting items
 			await selectNodes(
@@ -48,14 +54,18 @@ describe('Rename', () => {
 		});
 
 		test('Rename is hidden if node does not have permissions', async () => {
-			const children: Array<Node> = [];
+			const children: (File | Folder)[] = [];
 			// disable permission to rename
 			const node = populateNode();
 			node.permissions.can_write_file = false;
 			node.permissions.can_write_folder = false;
 			children.push(node);
 
-			const { user } = setup(<List nodes={children} mainList emptyListMessage={'hint'} />);
+			const { user } = setup(
+				<SelectionProvider items={children}>
+					<List nodes={children} mainList emptyListMessage={'hint'} />
+				</SelectionProvider>
+			);
 
 			// activate selection mode by selecting items
 			await selectNodes([node.id], user);
@@ -83,8 +93,8 @@ describe('Rename', () => {
 			sortNodes(currentFolder.children.nodes, sort);
 
 			// rename first element with name of the second one
-			const element = currentFolder.children.nodes[0] as Node;
-			const newName = (currentFolder.children.nodes[1] as Node).name;
+			const element = currentFolder.children.nodes[0]!;
+			const newName = currentFolder.children.nodes[1]!.name;
 
 			const mocks = {
 				Mutation: {
@@ -93,11 +103,13 @@ describe('Rename', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
-					mainList
-					emptyListMessage={'hint'}
-				/>,
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+					/>
+				</SelectionProvider>,
 				{ mocks }
 			);
 
@@ -128,11 +140,13 @@ describe('Rename', () => {
 			currentFolder.children.nodes.push(node);
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
-					mainList
-					emptyListMessage={'hint'}
-				/>
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+					/>
+				</SelectionProvider>
 			);
 
 			// right click to open contextual menu
@@ -152,15 +166,17 @@ describe('Rename', () => {
 					mockedNode.parent = populateFolder(0, currentFolder.id, currentFolder.name);
 				}
 			});
-			const element0 = currentFolder.children.nodes[0] as Node;
-			const element1 = currentFolder.children.nodes[1] as Node;
+			const element0 = currentFolder.children.nodes[0]!;
+			const element1 = currentFolder.children.nodes[1]!;
 
 			const { user } = setup(
-				<List
-					nodes={currentFolder.children.nodes as Array<Node>}
-					mainList
-					emptyListMessage={'hint'}
-				/>
+				<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+					<List
+						nodes={currentFolder.children.nodes as (File | Folder)[]}
+						mainList
+						emptyListMessage={'hint'}
+					/>
+				</SelectionProvider>
 			);
 
 			await selectNodes([element0.id, element1.id], user);

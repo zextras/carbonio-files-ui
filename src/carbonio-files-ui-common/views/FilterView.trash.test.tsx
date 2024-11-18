@@ -32,6 +32,10 @@ import {
 	mockRestoreNodes
 } from '../utils/resolverMocks';
 
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
 describe('Filter view', () => {
 	describe('Trash filter', () => {
 		test('Restore close the displayer from trash views', async () => {

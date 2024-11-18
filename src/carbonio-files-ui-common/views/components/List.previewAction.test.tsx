@@ -9,6 +9,7 @@ import { http, HttpResponse } from 'msw';
 
 import { EmptySpaceFiller } from './EmptySpaceFiller';
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import server from '../../../mocks/server';
 import { HEALTH_PATH, PREVIEW_SERVICE_NAME, REST_ENDPOINT } from '../../constants';
 import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
@@ -16,10 +17,11 @@ import { healthCache } from '../../hooks/useHealthInfo';
 import { HealthResponse } from '../../mocks/handleHealthRequest';
 import { populateFile, populateFolder, populateNodePage } from '../../mocks/mockUtils';
 import { screen, selectNodes, setup } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { Folder, GetChildrenParentDocument, NodeType, User } from '../../types/graphql/types';
+import { File, Folder, GetChildrenParentDocument, NodeType, User } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/resolverMocks';
+
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
 function prepareCache(folder: Folder): void {
 	global.apolloClient.writeQuery({
@@ -61,13 +63,59 @@ describe('List', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={[]} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
+					{ mocks }
+				);
+
+				await screen.findByTextWithMarkup(currentFolder.name);
+				await selectNodes([node.id], user);
+				await user.rightClick(screen.getByText(node.name));
+				await screen.findByTestId(SELECTORS.dropdownList);
+				expect(screen.getByText(ACTION_REGEXP.preview)).toBeVisible();
+			});
+
+			it('should show preview action if preview is not available but NodeType is video', async () => {
+				healthCache.reset();
+				server.use(
+					http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+						HttpResponse.json({ dependencies: [{ name: PREVIEW_SERVICE_NAME, live: false }] })
+					)
+				);
+				const currentFolder = populateFolder(0);
+				currentFolder.permissions.can_write_file = false;
+				currentFolder.permissions.can_write_folder = false;
+				const node = populateFile();
+				node.permissions.can_write_file = true;
+				node.parent = currentFolder;
+				node.owner = currentFolder.owner as User;
+				node.type = NodeType.Video;
+				node.mime_type = 'video/mp4';
+				currentFolder.children = populateNodePage([node]);
+				prepareCache(currentFolder);
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder])
+					}
+				} satisfies Partial<Resolvers>;
+
+				const { user } = setup(
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -105,13 +153,15 @@ describe('List', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={[]} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -149,13 +199,58 @@ describe('List', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={[]} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
+					{ mocks }
+				);
+
+				await screen.findByTextWithMarkup(currentFolder.name);
+				await user.rightClick(screen.getByText(node.name));
+				await screen.findByTestId(SELECTORS.dropdownList);
+				expect(screen.getByText(ACTION_REGEXP.preview)).toBeVisible();
+			});
+
+			it('should show preview action if preview is not available but NodeType is video', async () => {
+				healthCache.reset();
+				server.use(
+					http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+						HttpResponse.json({ dependencies: [{ name: PREVIEW_SERVICE_NAME, live: false }] })
+					)
+				);
+				const currentFolder = populateFolder(0);
+				currentFolder.permissions.can_write_file = true;
+				currentFolder.permissions.can_write_folder = true;
+				const node = populateFile();
+				node.permissions.can_write_file = true;
+				node.parent = currentFolder;
+				node.owner = currentFolder.owner as User;
+				node.type = NodeType.Video;
+				node.mime_type = 'video/mp4';
+				currentFolder.children = populateNodePage([node]);
+				prepareCache(currentFolder);
+				const mocks = {
+					Query: {
+						getPath: mockGetPath([currentFolder])
+					}
+				} satisfies Partial<Resolvers>;
+
+				const { user } = setup(
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -192,13 +287,15 @@ describe('List', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={[]} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 

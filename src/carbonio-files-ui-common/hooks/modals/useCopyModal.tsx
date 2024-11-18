@@ -8,12 +8,13 @@ import React, { useCallback } from 'react';
 
 import { useModal } from '@zextras/carbonio-design-system';
 
-import { GetNodeParentType, Node } from '../../types/common';
+import { Node } from '../../types/common';
+import { DeepPick } from '../../types/utils';
 import { CopyNodesModalContent } from '../../views/components/CopyNodesModalContent';
 import { useDestinationVarManager } from '../useDestinationVarManager';
 
 export type OpenCopyModal = (
-	nodes: Array<Pick<Node, '__typename' | 'id'> & GetNodeParentType>,
+	nodes: Array<Node<'id'> & DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions'>>,
 	fromFolder?: string
 ) => void;
 
@@ -40,7 +41,7 @@ export function useCopyModal(copyNodesActionCallback?: () => void): {
 					children: (
 						<CopyNodesModalContent
 							closeAction={(): void => {
-								copyNodesActionCallback && copyNodesActionCallback();
+								copyNodesActionCallback?.();
 								resetAll();
 								closeModal(modalId);
 							}}

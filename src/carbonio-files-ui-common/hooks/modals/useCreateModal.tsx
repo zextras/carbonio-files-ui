@@ -14,44 +14,53 @@ import { CreateDocsFile } from '../../types/common';
 import { CreateFolderMutation } from '../../types/graphql/types';
 import { UpdateNodeNameModalContent } from '../../views/components/UpdateNodeNameModalContent';
 
-export function useCreateModal(
-	title: string,
-	inputLabel: string,
-	createAction: (
-		parentId: string,
-		newName: string
-	) => Promise<FetchResult<CreateFolderMutation | CreateDocsFile>>,
-	inputCustomIcon?: InputProps['CustomIcon'],
-	createActionCallback?: () => void
-): {
-	openCreateModal: (parentFolderId: string) => void;
+type CreateActionFn = (
+	parentId: string,
+	newName: string
+) => Promise<FetchResult<CreateFolderMutation | CreateDocsFile>>;
+
+type OpenCreateModalFn = (options: {
+	title: string;
+	inputLabel: string;
+	createAction: CreateActionFn;
+	inputCustomIcon?: InputProps['CustomIcon'];
+	createActionCallback?: () => void;
+	parentFolderId: string;
+}) => void;
+
+export function useCreateModal(): {
+	openCreateModal: OpenCreateModalFn;
 } {
 	const { createModal, closeModal } = useModal();
 	const [t] = useTranslation();
 	const modalOpenRef = useRef(false);
+	const modalId = 'files-create-modal';
 
-	const confirmAction = useCallback(
-		(parentId: string, newName: string) => {
-			if (newName) {
-				return createAction(parentId, newName);
-			}
-			return Promise.reject(new Error('name cannot be empty'));
-		},
-		[createAction]
-	);
-
-	const openCreateModal = useCallback(
-		(parentFolderId: string) => {
+	const openCreateModal = useCallback<OpenCreateModalFn>(
+		({
+			title,
+			inputLabel,
+			createAction,
+			inputCustomIcon,
+			createActionCallback,
+			parentFolderId
+		}) => {
 			if (!modalOpenRef.current && parentFolderId) {
-				const modalId = 'files-create-modal';
+				const confirmAction: CreateActionFn = (parentId, newName) => {
+					if (newName) {
+						return createAction(parentId, newName);
+					}
+					return Promise.reject(new Error('name cannot be empty'));
+				};
+				const closeAction = (): void => {
+					createActionCallback?.();
+					closeModal(modalId);
+					modalOpenRef.current = false;
+				};
 				createModal(
 					{
 						id: modalId,
-						onClose: () => {
-							createActionCallback?.();
-							closeModal(modalId);
-							modalOpenRef.current = false;
-						},
+						onClose: closeAction,
 						children: (
 							<UpdateNodeNameModalContent
 								inputLabel={inputLabel}
@@ -59,11 +68,7 @@ export function useCreateModal(
 								confirmAction={confirmAction}
 								confirmLabel={t('folder.create.modal.button.confirm', 'Create')}
 								nodeId={parentFolderId}
-								closeAction={(): void => {
-									createActionCallback?.();
-									closeModal(modalId);
-									modalOpenRef.current = false;
-								}}
+								closeAction={closeAction}
 								title={title}
 								inputCustomIcon={inputCustomIcon}
 							/>
@@ -74,16 +79,7 @@ export function useCreateModal(
 				modalOpenRef.current = true;
 			}
 		},
-		[
-			closeModal,
-			confirmAction,
-			createActionCallback,
-			createModal,
-			inputCustomIcon,
-			inputLabel,
-			t,
-			title
-		]
+		[closeModal, createModal, t]
 	);
 
 	return { openCreateModal };

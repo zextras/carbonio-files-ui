@@ -150,10 +150,7 @@ export const addNodeInCachedChildren = (
 		}
 	});
 
-export const recursiveShareEvict = (
-	cache: ApolloCache<unknown>,
-	node: Pick<Node, 'id' | '__typename'>
-): boolean =>
+export const recursiveShareEvict = (cache: ApolloCache<unknown>, node: Node<'id'>): boolean =>
 	cache.modify<FolderCachedObject>({
 		id: cache.identify(node),
 		fields: {

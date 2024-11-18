@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { useReactiveVar } from '@apollo/client';
 import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
-import { includes, some, debounce, isEmpty } from 'lodash';
+import { includes, some, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { useTheme } from 'styled-components';
@@ -18,6 +18,7 @@ import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { NodeGridItemUI } from './NodeGridItemUI';
 import { NodeHoverBar } from './NodeHoverBar';
 import { NodeListItemUI } from './NodeListItemUI';
+import { useSelectionContext } from './SelectionProvider';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
@@ -43,27 +44,24 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { usePreview } from '../../hooks/usePreview';
 import { useUpload } from '../../hooks/useUpload';
-import { Action, NodeListItemType, URLParams } from '../../types/common';
-import { NodeType } from '../../types/graphql/types';
+import { Node, URLParams } from '../../types/common';
+import { Maybe, NodeType, Share } from '../../types/graphql/types';
+import { DeepPick } from '../../types/utils';
 import {
+	Action,
 	buildActionItems,
 	canBeMoveDestination,
 	canUploadFile,
 	getAllPermittedActions,
 	getPermittedHoverBarActions
 } from '../../utils/ActionsFactory';
-import {
-	getPreviewOutputFormat,
-	getPreviewThumbnailSrc,
-	isPreviewDependantOnDocs,
-	isSupportedByPreview
-} from '../../utils/previewUtils';
+import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import {
 	downloadNode,
-	openNodeWithDocs,
 	isFile,
 	isSearchView,
 	formatDate,
@@ -74,27 +72,34 @@ import {
 	nodeToNodeListItemUIProps
 } from '../../utils/utils';
 
+type NodeItem = Node<
+	| 'id'
+	| 'name'
+	| 'flagged'
+	| 'owner'
+	| 'last_editor'
+	| 'type'
+	| 'rootId'
+	| 'permissions'
+	| 'updated_at',
+	'size' | 'extension' | 'mime_type' | 'version'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> & {
+		shares: Maybe<Pick<Share, '__typename'>>[];
+	};
+
 export interface NodeListItemProps {
-	node: Omit<NodeListItemType, 'disabled' | 'selectable'>;
-	// Selection props
-	isSelected: boolean;
-	isSelectionModeActive: boolean;
-	selectId: (id: string) => void;
-	exitSelectionMode: () => void;
+	node: NodeItem;
 	selectionContextualMenuActionsItems?: DSAction[];
 }
 
 export const NodeListItem = ({
 	node,
-	// Selection props
-	isSelected,
-	isSelectionModeActive,
-	selectId,
-	exitSelectionMode,
 	selectionContextualMenuActionsItems
 }: NodeListItemProps): React.JSX.Element => {
+	const { selectId, isSelectionModeActive, exitSelectionMode, selectedMap } = useSelectionContext();
 	const { viewMode } = useContext(ListContext);
-	const { me, locale } = useUserInfo();
+	const { locale } = useUserInfo();
 
 	const params = useParams<URLParams>();
 	const isATrashFilter = useMemo(() => isTrashView(params), [params]);
@@ -104,13 +109,16 @@ export const NodeListItem = ({
 	const draggedItems = useReactiveVar(draggedItemsVar);
 
 	const [dragging, isDragged] = useMemo(
-		() => [!isEmpty(draggedItems), !!draggedItems && some(draggedItems, ['id', node.id])],
+		() => [
+			!!draggedItems && draggedItems.length > 0,
+			!!draggedItems?.some((item) => item.id === node.id)
+		],
 		[draggedItems, node]
 	);
 	const [t] = useTranslation();
 	const theme = useTheme();
 
-	const props = nodeToNodeListItemUIProps(node, t, me);
+	const props = nodeToNodeListItemUIProps(node, t);
 
 	const mimeType = useMemo(() => (isFile(node) && node.mime_type) || undefined, [node]);
 	const size = useMemo(() => (isFile(node) && node.size) || undefined, [node]);
@@ -170,14 +178,7 @@ export const NodeListItem = ({
 		[node.id, node.type]
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
-
-	const $isSupportedByPreview = useMemo(
-		() =>
-			canUsePreview &&
-			isSupportedByPreview(mimeType, 'preview')[0] &&
-			(!isPreviewDependantOnDocs(mimeType) || canUseDocs),
-		[canUseDocs, canUsePreview, mimeType]
-	);
+	const openNodeWithDocs = useOpenWithDocs();
 
 	// timer to start navigation
 	const navigationTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -190,29 +191,24 @@ export const NodeListItem = ({
 		[]
 	);
 
-	const permittedHoverBarActions = useMemo<Action[]>(
-		() => node.permissions && getPermittedHoverBarActions(node),
-		[node]
-	);
+	const permittedHoverBarActions = useMemo(() => getPermittedHoverBarActions(node), [node]);
 
 	const permittedContextualMenuActions = useMemo(
 		() =>
 			node.permissions &&
-			getAllPermittedActions(
-				[node],
-				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				me,
+			getAllPermittedActions({
+				nodes: [node],
 				canUsePreview,
 				canUseDocs
-			),
-		[canUseDocs, canUsePreview, me, node]
+			}),
+		[canUseDocs, canUsePreview, node]
 	);
 
 	const openNode = useCallback(() => {
 		// remove text selection on double click
 		if (window.getSelection) {
 			const selection = window.getSelection();
-			selection && selection.removeAllRanges();
+			selection?.removeAllRanges();
 		}
 
 		if (!isSelectionModeActive && !isDragged && !trashed) {
@@ -221,7 +217,7 @@ export const NodeListItem = ({
 			} else if (includes(permittedContextualMenuActions, Action.Edit)) {
 				// if node can be opened with docs on edit mode, open editor
 				openNodeWithDocs(node.id);
-			} else if ($isSupportedByPreview) {
+			} else if (includes(permittedContextualMenuActions, Action.Preview)) {
 				openPreview(node.id);
 			} else if (includes(permittedContextualMenuActions, Action.OpenWithDocs)) {
 				// if preview is not supported and document can be opened with docs, open editor
@@ -234,9 +230,9 @@ export const NodeListItem = ({
 		trashed,
 		isNavigable,
 		permittedContextualMenuActions,
-		$isSupportedByPreview,
 		navigateToFolder,
 		node.id,
+		openNodeWithDocs,
 		openPreview
 	]);
 
@@ -364,10 +360,11 @@ export const NodeListItem = ({
 		[
 			t,
 			sendViaMailCallback,
+			openNodeWithDocs,
+			node,
 			openPreview,
 			createSnackbar,
 			setActiveNode,
-			node,
 			toggleFlag,
 			openCopyNodesModal,
 			openMoveNodesModal,
@@ -419,14 +416,14 @@ export const NodeListItem = ({
 
 	const dragMoveHandler = useCallback(() => {
 		const draggedNodes = draggedItemsVar();
-		if (draggedNodes && draggedNodes.length > 0 && canBeMoveDestination(node, draggedNodes, me)) {
+		if (draggedNodes && draggedNodes.length > 0 && canBeMoveDestination(node, draggedNodes)) {
 			navigationTimerRef.current = setTimeout(() => {
 				navigateToFolder(node.id);
 			}, TIMERS.DRAG_NAVIGATION_TRIGGER);
 			return true;
 		}
 		return false;
-	}, [me, navigateToFolder, node]);
+	}, [navigateToFolder, node]);
 
 	const dragUploadHandler = useCallback(() => {
 		navigationTimerRef.current = setTimeout(() => {
@@ -435,7 +432,7 @@ export const NodeListItem = ({
 		return canUploadFile(node);
 	}, [navigateToFolder, node]);
 
-	const dragEnterHandler = useCallback(
+	const dragEnterHandler = useCallback<React.DragEventHandler>(
 		(event) => {
 			// check if node is a valid destination for write inside action
 			setDropzoneEnabled((prevState) => {
@@ -456,7 +453,7 @@ export const NodeListItem = ({
 	}, []);
 
 	const moveNodesAction = useCallback(
-		(event) => {
+		(event: React.DragEvent) => {
 			const movingNodes = JSON.parse(event.dataTransfer.getData(DRAG_TYPES.move) || '{}');
 			if (movingNodes && isFolder(node)) {
 				moveNodesMutation(node, ...movingNodes).then(() => {
@@ -571,7 +568,7 @@ export const NodeListItem = ({
 						nodeAvatarIcon={
 							<NodeAvatarIcon
 								selectionModeActive={isSelectionModeActive}
-								selected={isSelected}
+								selected={selectedMap?.[node.id]}
 								onClick={selectIdCallback}
 								compact={false}
 								disabled={isDragged}
@@ -604,7 +601,7 @@ export const NodeListItem = ({
 						nodeAvatarIcon={
 							<NodeAvatarIcon
 								selectionModeActive={isSelectionModeActive}
-								selected={isSelected}
+								selected={selectedMap?.[node.id]}
 								onClick={selectIdCallback}
 								compact={false}
 								disabled={isDragged}

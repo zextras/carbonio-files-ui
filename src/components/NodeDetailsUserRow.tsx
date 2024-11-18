@@ -20,12 +20,12 @@ import {
 
 type NodeDetailsUserRowProps = Omit<CommonNodeDetailsUserRowProps, 'clickAction' | 'tooltip'>;
 
-export const NodeDetailsUserRow: React.VFC<NodeDetailsUserRowProps> = ({
+export const NodeDetailsUserRow = ({
 	user,
 	label,
 	dateTime,
 	loading
-}) => {
+}: NodeDetailsUserRowProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const tooltip = useMemo(

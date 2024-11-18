@@ -11,11 +11,7 @@ export type OneOrMany<T> = T | T[];
 export type ArrayOneOrMore<T> = [T, ...T[]];
 
 export type DeepPick<T, K extends keyof T, KK extends keyof NonNullable<T[K]>> = {
-	[P in K]: T[P] extends Record<KK, unknown>
-		? T[P] extends null | undefined
-			? Pick<NonNullable<T[P]>, KK> | null | undefined
-			: Pick<NonNullable<T[P]>, KK>
-		: T[P];
+	[P in K]: Pick<NonNullable<T[P]>, KK> | null | undefined;
 };
 
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: T[SubKey] };
@@ -36,9 +32,11 @@ export type NonNullableList<T extends Array<unknown>> = Array<NonNullable<Unwrap
 
 export type NonNullableListItem<T extends Array<unknown>> = Unwrap<NonNullableList<T>>;
 
-export type MakeRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+export type MakeRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
-export type MakeRequiredNonNull<T, K extends keyof T> = T & { [KK in K]-?: NonNullable<T[KK]> };
+export type MakeRequiredNonNull<T, K extends keyof T> = Omit<T, K> & {
+	[KK in K]-?: NonNullable<T[KK]>;
+};
 
 export type MakePartial<T, K extends keyof T> = Omit<T, K> & { [KK in K]: Partial<T[KK]> };
 

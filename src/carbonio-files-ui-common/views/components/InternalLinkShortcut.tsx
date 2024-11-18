@@ -10,12 +10,12 @@ import { useTranslation } from 'react-i18next';
 
 import { HoverSwitchComponent } from './HoverSwitchComponent';
 import { useInternalLink } from '../../../hooks/useInternalLink';
-import { Node } from '../../types/common';
+import { Node as GQLNode } from '../../types/graphql/types';
 import { copyToClipboard } from '../../utils/utils';
 
 interface InternalLinkShortcutProps {
-	id: Node['id'];
-	type: Node['type'];
+	id: GQLNode['id'];
+	type: GQLNode['type'];
 }
 
 export const InternalLinkShortcut = ({

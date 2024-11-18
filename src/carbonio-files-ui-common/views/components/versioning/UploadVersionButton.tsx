@@ -13,11 +13,11 @@ import { File } from '../../../types/graphql/types';
 import { DeepPick } from '../../../types/utils';
 
 export interface UploadVersionButtonProps {
-	node: Pick<File, '__typename' | 'id'> & DeepPick<File, 'parent', 'id'>;
+	node: Pick<File, '__typename' | 'id'> & DeepPick<File, 'parent', 'id' | 'name'>;
 	disabled: boolean;
 }
 
-const UploadVersionButton: React.VFC<UploadVersionButtonProps> = ({ node, disabled }) => {
+const UploadVersionButton = ({ node, disabled }: UploadVersionButtonProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { update } = useUpload();
 	const inputRef = useRef<HTMLInputElement>(null);

@@ -10,6 +10,7 @@ import { http, HttpResponse } from 'msw';
 
 import { EmptySpaceFiller } from './EmptySpaceFiller';
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import server from '../../../mocks/server';
 import {
 	DOCS_SERVICE_NAME,
@@ -22,9 +23,8 @@ import { healthCache } from '../../hooks/useHealthInfo';
 import { HealthResponse } from '../../mocks/handleHealthRequest';
 import { populateFile, populateFolder, populateNodePage } from '../../mocks/mockUtils';
 import { screen, selectNodes, setup } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
-import { Folder, GetChildrenParentDocument, NodeType, User } from '../../types/graphql/types';
+import { File, Folder, GetChildrenParentDocument, NodeType, User } from '../../types/graphql/types';
 import {
 	MIME_TYPE_PREVIEW_SUPPORT,
 	PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS
@@ -43,6 +43,8 @@ function prepareCache(folder: Folder): void {
 		}
 	});
 }
+
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
 describe('List', () => {
 	describe('docs actions', () => {
@@ -75,13 +77,15 @@ describe('List', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={[]} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -124,13 +128,15 @@ describe('List', () => {
 					} satisfies Partial<Resolvers>;
 
 					const { user } = setup(
-						<List
-							folderId={currentFolder.id}
-							fillerWithActions={<EmptySpaceFiller actions={[]} />}
-							nodes={currentFolder.children.nodes as Array<Node>}
-							mainList
-							emptyListMessage={'hint'}
-						/>,
+						<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+							<List
+								folderId={currentFolder.id}
+								fillerWithActions={<EmptySpaceFiller actions={[]} />}
+								nodes={currentFolder.children.nodes as (File | Folder)[]}
+								mainList
+								emptyListMessage={'hint'}
+							/>
+						</SelectionProvider>,
 						{ mocks }
 					);
 
@@ -175,13 +181,15 @@ describe('List', () => {
 					} satisfies Partial<Resolvers>;
 
 					const { user } = setup(
-						<List
-							folderId={currentFolder.id}
-							fillerWithActions={<EmptySpaceFiller actions={[]} />}
-							nodes={currentFolder.children.nodes as Array<Node>}
-							mainList
-							emptyListMessage={'hint'}
-						/>,
+						<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+							<List
+								folderId={currentFolder.id}
+								fillerWithActions={<EmptySpaceFiller actions={[]} />}
+								nodes={currentFolder.children.nodes as (File | Folder)[]}
+								mainList
+								emptyListMessage={'hint'}
+							/>
+						</SelectionProvider>,
 						{ mocks }
 					);
 
@@ -220,13 +228,15 @@ describe('List', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={[]} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 
@@ -268,13 +278,15 @@ describe('List', () => {
 					} satisfies Partial<Resolvers>;
 
 					const { user } = setup(
-						<List
-							folderId={currentFolder.id}
-							fillerWithActions={<EmptySpaceFiller actions={[]} />}
-							nodes={currentFolder.children.nodes as Array<Node>}
-							mainList
-							emptyListMessage={'hint'}
-						/>,
+						<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+							<List
+								folderId={currentFolder.id}
+								fillerWithActions={<EmptySpaceFiller actions={[]} />}
+								nodes={currentFolder.children.nodes as (File | Folder)[]}
+								mainList
+								emptyListMessage={'hint'}
+							/>
+						</SelectionProvider>,
 						{ mocks }
 					);
 
@@ -295,9 +307,14 @@ describe('List', () => {
 				async (mimeType) => {
 					const file = populateFile();
 					file.mime_type = mimeType;
+					file.type = NodeType.Text;
 					file.permissions.can_write_file = true;
 
-					const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+					const { user } = setup(
+						<SelectionProvider items={[file]}>
+							<List nodes={[file]} mainList emptyListMessage="empty list" />
+						</SelectionProvider>
+					);
 
 					await screen.findByText(file.name);
 					await user.rightClick(screen.getByText(file.name));
@@ -313,9 +330,14 @@ describe('List', () => {
 				async (mimeType) => {
 					const file = populateFile();
 					file.mime_type = mimeType;
+					file.type = NodeType.Text;
 					file.permissions.can_write_file = false;
 
-					const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+					const { user } = setup(
+						<SelectionProvider items={[file]}>
+							<List nodes={[file]} mainList emptyListMessage="empty list" />
+						</SelectionProvider>
+					);
 
 					await screen.findByText(file.name);
 					await user.rightClick(screen.getByText(file.name));
@@ -359,13 +381,15 @@ describe('List', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user } = setup(
-					<List
-						folderId={currentFolder.id}
-						fillerWithActions={<EmptySpaceFiller actions={[]} />}
-						nodes={currentFolder.children.nodes as Array<Node>}
-						mainList
-						emptyListMessage={'hint'}
-					/>,
+					<SelectionProvider items={currentFolder.children.nodes as (File | Folder)[]}>
+						<List
+							folderId={currentFolder.id}
+							fillerWithActions={<EmptySpaceFiller actions={[]} />}
+							nodes={currentFolder.children.nodes as (File | Folder)[]}
+							mainList
+							emptyListMessage={'hint'}
+						/>
+					</SelectionProvider>,
 					{ mocks }
 				);
 

@@ -41,7 +41,6 @@ export function useDeleteVersionsMutation(): DeleteVersionsType {
 					versions
 				},
 				optimisticResponse: {
-					__typename: 'Mutation',
 					deleteVersions: versions || []
 				},
 				update(cache, { data }) {

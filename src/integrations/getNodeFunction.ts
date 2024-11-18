@@ -7,47 +7,40 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { registerFunctions } from '@zextras/carbonio-shell-ui';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
-import GET_BASE_NODE from '../carbonio-files-ui-common/graphql/queries/getBaseNode.graphql';
-import { NodeWithMetadata } from '../carbonio-files-ui-common/types/common';
+import { Node } from '../carbonio-files-ui-common/types/common';
 import {
-	GetBaseNodeQuery,
-	GetBaseNodeQueryVariables,
+	GetBaseNodeDocument,
 	GetNodeQueryVariables
 } from '../carbonio-files-ui-common/types/graphql/types';
 import { FUNCTION_IDS } from '../constants';
 import { buildInternalLink } from '../hooks/useInternalLink';
 
 type GetNodeFunctionArgs = [GetNodeQueryVariables['node_id']];
-type GetNodeFunctionReturnType = NodeWithMetadata & { internal_link: string | null };
+type GetNodeFunctionReturnType = Node<
+	'id' | 'name' | 'type' | 'flagged' | 'rootId' | 'permissions',
+	'version' | 'extension' | 'size' | 'mime_type'
+> & { internal_link: string | null };
 
 function getNodeWithClient(
 	apolloClient: ApolloClient<NormalizedCacheObject>
 ): (...args: GetNodeFunctionArgs) => Promise<GetNodeFunctionReturnType> {
-	return (...args) =>
-		new Promise<GetNodeFunctionReturnType>((resolve, reject) => {
-			apolloClient
-				.query<GetBaseNodeQuery, GetBaseNodeQueryVariables>({
-					query: GET_BASE_NODE,
-					variables: {
-						node_id: args[0]
-					},
-					fetchPolicy: 'network-only'
-				})
-				.then((result) => {
-					if (result?.data?.getNode) {
-						const nodeWithMetadata = {
-							...result.data.getNode,
-							internal_link: buildInternalLink(result.data.getNode.id, result.data.getNode.type)
-						};
-						resolve(nodeWithMetadata);
-					} else {
-						reject();
-					}
-				})
-				.catch((error) => {
-					reject(error);
-				});
+	return async (...args) => {
+		const result = await apolloClient.query({
+			query: GetBaseNodeDocument,
+			variables: {
+				node_id: args[0]
+			},
+			fetchPolicy: 'network-only'
 		});
+
+		if (result?.data?.getNode) {
+			return {
+				...result.data.getNode,
+				internal_link: buildInternalLink(result.data.getNode.id, result.data.getNode.type)
+			};
+		}
+		throw new Error('no results');
+	};
 }
 
 export const getNodeFunction = (): Parameters<typeof registerFunctions>[number] => {

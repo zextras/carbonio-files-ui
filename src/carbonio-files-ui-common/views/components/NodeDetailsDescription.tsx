@@ -29,7 +29,7 @@ interface NodeDetailsDescriptionProps {
 	loading?: boolean;
 }
 
-const Label: React.FC = ({ children }) => (
+const Label = ({ children }: React.PropsWithChildren): React.JSX.Element => (
 	<Padding bottom="small">
 		<Text color="secondary" size="small">
 			{children}
@@ -45,12 +45,12 @@ const CustomItalicText = styled(ItalicText)`
 	user-select: none;
 `;
 
-export const NodeDetailsDescription: React.VFC<NodeDetailsDescriptionProps> = ({
+export const NodeDetailsDescription = ({
 	description = '',
 	canUpsertDescription,
 	id,
 	loading
-}) => {
+}: NodeDetailsDescriptionProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const [editingDescription, setEditingDescription] = useState(false);
 	const { updateNodeDescription } = useUpdateNodeDescriptionMutation();

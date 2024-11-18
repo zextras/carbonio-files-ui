@@ -21,9 +21,9 @@ import { map, uniq, find, every } from 'lodash';
 import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
+import { resetSelection } from './SelectionProvider';
 import { useUserInfo } from '../../../hooks/useUserInfo';
-import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { selectionModeVar } from '../../apollo/selectionVar';
+import { DraggedItem, draggedItemsVar } from '../../apollo/dragAndDropVar';
 import { DRAG_TYPES, ROOTS, TIMERS } from '../../constants';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
 import { useTrashNodesMutation } from '../../hooks/graphql/mutations/useTrashNodesMutation';
@@ -53,7 +53,7 @@ interface SecondaryBarItemProps {
 	expanded: boolean;
 }
 
-export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expanded }) => {
+export const SecondaryBarItem = ({ item, expanded }: SecondaryBarItemProps): React.JSX.Element => {
 	const { add } = useUpload();
 	const accordionItemRef = useRef<HTMLDivElement>(null);
 	const { data } = useGetRootsListQuery();
@@ -94,17 +94,15 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 			if (item.id.includes(ROOTS.TRASH) && markingForDeletion) {
 				const nodesToMarkForDeletion: Array<PickIdNodeType & DeepPick<Node, 'owner', 'id'>> =
 					JSON.parse(markingForDeletion);
-				markNodesForDeletionMutation(...nodesToMarkForDeletion).then(() => {
-					selectionModeVar(false);
-				});
+				markNodesForDeletionMutation(...nodesToMarkForDeletion).then(resetSelection);
 			} else if (getBaseNodeData?.getNode) {
 				if (isUploadingFiles) {
 					add(getUploadAddType(event.dataTransfer), item.id);
 				} else if (movingNodes) {
-					const nodesToMove: Array<Partial<Node> & PickIdNodeType> = JSON.parse(movingNodes);
-					moveNodesMutation(getBaseNodeData.getNode as Folder, ...nodesToMove).then(() => {
-						selectionModeVar(false);
-					});
+					const nodesToMove: DraggedItem[] = JSON.parse(movingNodes);
+					if (isFolder(getBaseNodeData.getNode)) {
+						moveNodesMutation(getBaseNodeData.getNode, ...nodesToMove).then(resetSelection);
+					}
 				}
 			}
 		},
@@ -212,10 +210,14 @@ export const SecondaryBarItem: React.VFC<SecondaryBarItemProps> = ({ item, expan
 	);
 };
 
-export const SecondaryBarItemExpanded: React.VFC<{
-	item: AccordionItemType;
-}> = ({ item }) => <SecondaryBarItem item={item} expanded />;
+export const SecondaryBarItemExpanded = ({
+	item
+}: Pick<SecondaryBarItemProps, 'item'>): React.JSX.Element => (
+	<SecondaryBarItem item={item} expanded />
+);
 
-export const SecondaryBarItemNotExpanded: React.VFC<{
-	item: AccordionItemType;
-}> = ({ item }) => <SecondaryBarItem item={item} expanded={false} />;
+export const SecondaryBarItemNotExpanded = ({
+	item
+}: Pick<SecondaryBarItemProps, 'item'>): React.JSX.Element => (
+	<SecondaryBarItem item={item} expanded={false} />
+);

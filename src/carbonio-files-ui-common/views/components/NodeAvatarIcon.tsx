@@ -22,7 +22,7 @@ interface NodeAvatarIconParams {
 	picture?: string;
 }
 
-export const NodeAvatarIcon: React.VFC<NodeAvatarIconParams> = ({
+export const NodeAvatarIcon = ({
 	selectionModeActive,
 	selected,
 	onClick,
@@ -32,7 +32,7 @@ export const NodeAvatarIcon: React.VFC<NodeAvatarIconParams> = ({
 	icon,
 	color = 'gray1',
 	picture
-}) => {
+}: NodeAvatarIconParams): React.JSX.Element => {
 	const { tooltipLabel, tooltipDisabled } = useContext(NodeAvatarIconContext);
 
 	return (

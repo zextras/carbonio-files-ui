@@ -46,7 +46,7 @@ type UploadVarObject = {
 export type UseUploadHook = () => {
 	add: (files: Array<UploadAddType>, destinationId: string) => void;
 	update: (
-		node: Pick<FilesFile, '__typename' | 'id'> & DeepPick<FilesFile, 'parent', 'id'>,
+		node: Pick<FilesFile, '__typename' | 'id'> & DeepPick<FilesFile, 'parent', 'id' | 'name'>,
 		file: File,
 		overwriteVersion?: boolean
 	) => void;

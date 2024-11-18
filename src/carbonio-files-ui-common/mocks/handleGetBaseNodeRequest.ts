@@ -19,7 +19,7 @@ const handleGetBaseNodeRequest: GraphQLResponseResolver<
 	const { node_id: id } = variables;
 
 	let nodeName = faker.word.words();
-	let typename: Node['__typename'];
+	let typename: Node['__typename'] | undefined;
 	if (id.trim() === ROOTS.LOCAL_ROOT) {
 		nodeName = 'ROOT';
 		typename = 'Folder';

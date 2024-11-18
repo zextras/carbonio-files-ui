@@ -26,7 +26,8 @@ import { DropdownListItemContent } from '../../../design_system_fork/DropdownLis
 import { CloneVersionType } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
 import { DeleteVersionsType } from '../../../hooks/graphql/mutations/useDeleteVersionsMutation';
 import { KeepVersionsType } from '../../../hooks/graphql/mutations/useKeepVersionsMutation';
-import { downloadNode, formatDate, humanFileSize, openNodeWithDocs } from '../../../utils/utils';
+import { useOpenWithDocs } from '../../../hooks/useOpenWithDocs';
+import { downloadNode, formatDate, humanFileSize } from '../../../utils/utils';
 import { GridItem } from '../StyledComponents';
 
 const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
@@ -58,7 +59,7 @@ const DropdownItemComponent = ({
 	</Tooltip>
 );
 
-export const VersionRow: React.VFC<{
+interface VersionRowProps {
 	background?: string;
 	canCloneVersion: boolean;
 	cloneVersionTooltip?: string;
@@ -80,7 +81,8 @@ export const VersionRow: React.VFC<{
 	size: number;
 	updatedAt: number;
 	version: number;
-}> = ({
+}
+export const VersionRow = ({
 	background,
 	canCloneVersion,
 	cloneVersionTooltip,
@@ -102,10 +104,11 @@ export const VersionRow: React.VFC<{
 	size,
 	updatedAt,
 	version
-}) => {
+}: VersionRowProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
+	const openNodeWithDocs = useOpenWithDocs();
 
 	const deleteVersionCallback = useCallback(() => {
 		deleteVersions(nodeId, [version]);
@@ -155,7 +158,7 @@ export const VersionRow: React.VFC<{
 
 	const openVersionWithDocsCallback = useCallback(() => {
 		openNodeWithDocs(nodeId, version);
-	}, [nodeId, version]);
+	}, [nodeId, openNodeWithDocs, version]);
 
 	const items = useMemo<DropdownItem[]>(() => {
 		const actions: DropdownItem[] = [
@@ -347,10 +350,14 @@ export const VersionRow: React.VFC<{
 	);
 };
 
-export const SectionRow: React.FC<{
+export const SectionRow = ({
+	rowNumber,
+	background,
+	children
+}: React.PropsWithChildren<{
 	rowNumber: number;
 	background?: string;
-}> = ({ rowNumber, background, children }) => (
+}>): React.JSX.Element => (
 	<GridItem
 		mainAlignment={'flex-start'}
 		orientation={'horizontal'}

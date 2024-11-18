@@ -11,7 +11,6 @@ import FolderView from './FolderView';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import { populateFolder } from '../mocks/mockUtils';
 import { screen, setup } from '../tests/utils';
-import { Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
@@ -22,6 +21,10 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 		</div>
 	)
 }));
+
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
 
 describe('View Mode', () => {
 	it('should switch between list view and grid view', async () => {
@@ -41,7 +44,7 @@ describe('View Mode', () => {
 			mocks
 		});
 
-		await screen.findByText((currentFolder.children.nodes[0] as Node).name);
+		await screen.findByText(currentFolder.children.nodes[0]!.name);
 		const gridModeIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.gridViewMode });
 		expect(gridModeIcon).toBeVisible();
 		expect(screen.getByTestId(SELECTORS.mainList)).toBeVisible();

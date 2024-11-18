@@ -27,21 +27,14 @@ type ListHeaderProps = Omit<
 	folderId?: string;
 	crumbs?: Crumb[];
 	loadingData?: boolean;
-	selectedCount?: number;
 };
 
-const ListHeader: React.VFC<ListHeaderProps> = ({
+const ListHeader = ({
 	folderId,
 	crumbs,
 	loadingData,
-	isSelectionModeActive,
-	unSelectAll,
-	selectAll,
-	permittedSelectionModeActionsItems,
-	exitSelectionMode,
-	isAllSelected,
-	selectedCount
-}) => {
+	permittedSelectionModeActionsItems
+}: ListHeaderProps): React.JSX.Element => {
 	const location = useLocation();
 	const inSearchView = isSearchView(location);
 	const actionComponent = useContext(ListHeaderActionContext);
@@ -77,17 +70,11 @@ const ListHeader: React.VFC<ListHeaderProps> = ({
 
 	return (
 		<CommonListHeader
-			selectedCount={selectedCount}
-			isSelectionModeActive={isSelectionModeActive}
-			unSelectAll={unSelectAll}
-			selectAll={selectAll}
 			permittedSelectionModeActionsItems={permittedSelectionModeActionsItems}
 			hide={inSearchView}
 			headerEndComponent={headerEndComponent}
 			firstCustomComponent={firstCustomComponent}
 			secondCustomComponent={secondCustomComponent}
-			exitSelectionMode={exitSelectionMode}
-			isAllSelected={isAllSelected}
 		/>
 	);
 };

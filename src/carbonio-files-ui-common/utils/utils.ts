@@ -11,16 +11,16 @@ import { NetworkError } from '@apollo/client/errors';
 import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
-import { chain, findIndex, forEach, isEmpty, map, reduce, toLower, trim } from 'lodash';
+import { findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
 import { DefaultTheme } from 'styled-components';
 
+import { generateAccessCodeFallback, generateAccessCodeWithCrypto } from './utils.accessCode';
+import { getUserAccount } from '../../utils/utils';
 import {
 	DATE_FORMAT,
-	DOCS_ENDPOINT,
 	DOCS_EXTENSIONS,
 	DOWNLOAD_PATH,
 	INTERNAL_PATH,
-	OPEN_FILE_PATH,
 	REST_ENDPOINT,
 	ROOTS,
 	TIMERS,
@@ -31,23 +31,22 @@ import {
 	Crumb,
 	CrumbNode,
 	DocsType,
-	NodeListItemType,
+	Node,
 	OrderTrend,
 	OrderType,
 	Role,
-	SortableNode,
 	TargetModule
 } from '../types/common';
 import {
 	File,
 	Folder,
 	Maybe,
-	Node,
+	Node as GQLNode,
 	NodeSort,
 	NodeType,
+	Share,
 	SharePermission
 } from '../types/graphql/types';
-import { MakeRequiredNonNull } from '../types/utils';
 import type { NodeListItemUIProps } from '../views/components/NodeListItemUI';
 
 /**
@@ -167,23 +166,19 @@ export const buildCrumbs = (
 	nodes: Array<Maybe<CrumbNode> | undefined>,
 	clickHandler?: (id: string, event: React.SyntheticEvent | KeyboardEvent) => void,
 	t?: TFunction,
-	nodeClickCondition: (node: Pick<Node, 'id' | 'name' | 'type'>) => boolean = (): boolean => true
+	nodeClickCondition: (node: CrumbNode) => boolean = (): boolean => true
 ): Crumb[] =>
 	// the array can contain null if path is requested for a node with no accessible parent
-	chain(nodes)
+	nodes
 		.filter((node): node is CrumbNode => node !== undefined && node !== null)
-		.map(
-			(node): Crumb => ({
-				id: node.id,
-				/* i18next-extract-disable-next-line */
-				label: t?.('node.alias.name', node.name, { context: node.id }) ?? node.name,
-				onClick:
-					node && clickHandler && nodeClickCondition(node)
-						? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler(node.id, event)
-						: undefined
-			})
-		)
-		.value();
+		.map((node) => ({
+			id: node.id,
+			label: t?.('node.alias.name', node.name, { context: node.id }) ?? node.name,
+			onClick:
+				node && clickHandler && nodeClickCondition(node)
+					? (event: React.SyntheticEvent | KeyboardEvent): void => clickHandler(node.id, event)
+					: undefined
+		}));
 
 export const formatDate = (
 	date: Date | string | number | undefined | null,
@@ -220,8 +215,8 @@ export const initExpirationDate = (date: Date | null | undefined): Date | undefi
 	return endOfDay;
 };
 
-export function takeIfNotEmpty(value: string | undefined): string | undefined {
-	return value !== undefined && !isEmpty(value) ? value : undefined;
+export function takeIfNotEmpty(value: string | null | undefined): string | undefined {
+	return value !== undefined && value !== null && value.trim().length > 0 ? value : undefined;
 }
 
 function decodeGraphQLErrorWithCode(error: GraphQLError, t: TFunction): string | undefined {
@@ -334,24 +329,6 @@ export const downloadNode = (id: string, version?: number): void => {
 	}
 };
 
-const docsTabMap: { [url: string]: Window } = {};
-
-/**
- * Open with docs
- */
-export const openNodeWithDocs = (id: string, version?: number): void => {
-	if (id) {
-		const url = `${DOCS_ENDPOINT}${OPEN_FILE_PATH}/${encodeURIComponent(id)}${
-			version ? `?version=${version}` : ''
-		}`;
-		if (docsTabMap[url] == null || docsTabMap[url]?.closed) {
-			docsTabMap[url] = window.open(url, url) as Window;
-		} else {
-			docsTabMap[url].focus();
-		}
-	}
-};
-
 export const inputElement = ((): HTMLInputElement => {
 	const input = document.createElement('input');
 	if (input) {
@@ -385,6 +362,9 @@ export const scrollToNodeItem = (
 		}, timeout);
 	}
 };
+
+export type SortableNode = Pick<GQLNode, 'id' | 'name' | 'updated_at' | 'type'> &
+	Partial<Pick<File, 'size'>>;
 
 export function propertyComparator<T extends SortableNode[keyof SortableNode]>(
 	nodeA: Maybe<SortableNode> | undefined,
@@ -786,15 +766,15 @@ export function cssCalcBuilder(
 	return `calc(${operationsString})`;
 }
 
-export function isFile(
-	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
-): node is File & MakeRequiredNonNull<File, '__typename'> {
+export function isFile<TNode extends { __typename?: string }>(
+	node: TNode | null | undefined
+): node is TNode & { __typename: NonNullable<File['__typename']> } {
 	return node?.__typename === 'File';
 }
 
-export function isFolder(
-	node: ({ __typename?: string } & Record<string, unknown>) | null | undefined
-): node is Folder & MakeRequiredNonNull<Folder, '__typename'> {
+export function isFolder<TNode extends { __typename?: string }>(
+	node: TNode | null | undefined
+): node is TNode & { __typename: NonNullable<Folder['__typename']> } {
 	return node?.__typename === 'Folder';
 }
 
@@ -829,21 +809,11 @@ export function getDocumentGenericType(
 }
 
 export function nodeToNodeListItemUIProps(
-	node: Pick<
-		NodeListItemType,
-		| 'id'
-		| 'name'
-		| 'flagged'
-		| 'owner'
-		| 'shares'
-		| 'last_editor'
-		| 'type'
-		| 'rootId'
-		| '__typename'
-	> &
-		(Pick<{ __typename: 'File' } & NodeListItemType, 'size' | 'extension'> | Record<never, never>),
-	t: TFunction,
-	me: string
+	node: Node<
+		'id' | 'name' | 'flagged' | 'owner' | 'last_editor' | 'type' | 'rootId',
+		'size' | 'extension'
+	> & { shares: Maybe<Pick<Share, '__typename'>>[] },
+	t: TFunction
 ): Pick<
 	NodeListItemUIProps,
 	| 'id'
@@ -856,6 +826,7 @@ export function nodeToNodeListItemUIProps(
 	| 'size'
 	| 'trashed'
 > {
+	const me = getUserAccount().id;
 	return {
 		id: node.id,
 		name: node.name,
@@ -872,3 +843,14 @@ export function nodeToNodeListItemUIProps(
 		trashed: node.rootId === ROOTS.TRASH
 	};
 }
+
+export const generateAccessCode = (length = 10): string => {
+	if (length < 0) {
+		throw new Error('Unexpected length');
+	}
+	try {
+		return generateAccessCodeWithCrypto(length);
+	} catch (e) {
+		return generateAccessCodeFallback(length);
+	}
+};

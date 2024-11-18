@@ -9,11 +9,14 @@ import React from 'react';
 import { act, screen } from '@testing-library/react';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { PREVIEW_MAX_SIZE } from '../../constants';
 import { ACTION_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
 import { setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
+
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
 describe('Preview action', () => {
 	test('Pdf with size greater than PREVIEW_MAX_SIZE are not previewed and fallback is shown', async () => {
@@ -22,7 +25,11 @@ describe('Preview action', () => {
 		file.mime_type = 'application/pdf';
 		file.size = PREVIEW_MAX_SIZE + 1;
 		file.extension = 'pdf';
-		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
@@ -41,14 +48,18 @@ describe('Preview action', () => {
 		file.mime_type = 'application/pdf';
 		file.size = 0;
 		file.extension = 'pdf';
-		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
 		await screen.findByText(ACTION_REGEXP.preview);
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
 		// fallback is not shown
-		await screen.findByText(/failed to load document preview/i);
+		await screen.findByText(/loading document preview/i);
 		expect(screen.queryByText(/This item cannot be displayed/i)).not.toBeInTheDocument();
 		expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
 	});
@@ -59,14 +70,18 @@ describe('Preview action', () => {
 		file.mime_type = 'application/pdf';
 		file.size = PREVIEW_MAX_SIZE;
 		file.extension = 'pdf';
-		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
 		await screen.findByText(ACTION_REGEXP.preview);
 		await user.click(screen.getByText(ACTION_REGEXP.preview));
 		// fallback is not shown
-		await screen.findByText(/failed to load document preview/i);
+		await screen.findByText(/loading document preview/i);
 		expect(screen.queryByText(/This item cannot be displayed/i)).not.toBeInTheDocument();
 		expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
 	});
@@ -85,29 +100,35 @@ describe('Preview action', () => {
 		const file = populateFile();
 		file.mime_type = mimeType;
 
-		const { user } = setup(<List nodes={[file]} mainList emptyListMessage="empty list" />);
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
+				<List nodes={[file]} mainList emptyListMessage="empty list" />
+			</SelectionProvider>
+		);
 
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
 		expect(await screen.findByText(ACTION_REGEXP.preview)).toBeVisible();
 	});
 
-	test.each([['video/quicktime'], ['text/html'], ['text/plain']])(
-		'mime types %s does not support preview action',
-		async (mimeType) => {
-			const file = populateFile();
-			file.mime_type = mimeType;
-
-			const { user } = setup(
+	test.each([
+		['text/html', NodeType.Text],
+		['text/plain', NodeType.Text]
+	])('mime types %s does not support preview action', async (mimeType, type) => {
+		const file = populateFile();
+		file.mime_type = mimeType;
+		file.type = type;
+		const { user } = setup(
+			<SelectionProvider items={[file]}>
 				<List nodes={[file]} mainList={false} emptyListMessage="empty list" />
-			);
+			</SelectionProvider>
+		);
 
-			await screen.findByText(file.name);
-			await user.rightClick(screen.getByText(file.name));
-			act(() => {
-				jest.runOnlyPendingTimers();
-			});
-			expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
-		}
-	);
+		await screen.findByText(file.name);
+		await user.rightClick(screen.getByText(file.name));
+		act(() => {
+			jest.runOnlyPendingTimers();
+		});
+		expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
+	});
 });

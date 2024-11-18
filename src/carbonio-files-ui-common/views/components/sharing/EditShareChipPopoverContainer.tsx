@@ -43,7 +43,7 @@ interface EditShareChipPopoverContainerProps {
 	closePopover: () => void;
 }
 
-export const EditShareChipPopoverContainer: React.FC<EditShareChipPopoverContainerProps> = ({
+export const EditShareChipPopoverContainer = ({
 	activeRow = 0,
 	disabledRows = [],
 	checkboxValue = false,
@@ -52,7 +52,7 @@ export const EditShareChipPopoverContainer: React.FC<EditShareChipPopoverContain
 	saveDisabled = false,
 	saveOnClick = noop,
 	closePopover = noop
-}) => {
+}: EditShareChipPopoverContainerProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const container0Click = useCallback(() => containerOnClick(0), [containerOnClick]);

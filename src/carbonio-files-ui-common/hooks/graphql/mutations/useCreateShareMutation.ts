@@ -9,18 +9,17 @@ import { useCallback } from 'react';
 import { ApolloError, FetchResult, useMutation } from '@apollo/client';
 
 import { assertCachedObject, recursiveShareEvict } from '../../../apollo/cacheUtils';
-import CREATE_SHARE from '../../../graphql/mutations/createShare.graphql';
 import { NodeCachedObject, ShareCachedObject } from '../../../types/apollo';
 import { Node } from '../../../types/common';
 import {
+	CreateShareDocument,
 	CreateShareMutation,
-	CreateShareMutationVariables,
 	SharePermission
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
 export type CreateShareType = (
-	node: Pick<Node, 'id' | '__typename'>,
+	node: Node<'id'>,
 	shareTargetId: string,
 	permission: SharePermission,
 	customMessage?: string
@@ -33,10 +32,7 @@ export function useCreateShareMutation(): [
 	createShare: CreateShareType,
 	createShareError: ApolloError | undefined
 ] {
-	const [createShareMutation, { error: createShareError }] = useMutation<
-		CreateShareMutation,
-		CreateShareMutationVariables
-	>(CREATE_SHARE);
+	const [createShareMutation, { error: createShareError }] = useMutation(CreateShareDocument);
 
 	const createShare = useCallback<CreateShareType>(
 		(node, shareTargetId, permission, customMessage) =>
@@ -59,6 +55,7 @@ export function useCreateShareMutation(): [
 										data.createShare.share_target && toReference(data.createShare.share_target);
 
 									const newShare: ShareCachedObject = {
+										expires_at: null,
 										...data.createShare,
 										share_target: targetRef,
 										node: nodeRef

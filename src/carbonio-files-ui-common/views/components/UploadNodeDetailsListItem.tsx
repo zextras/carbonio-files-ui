@@ -17,10 +17,10 @@ import { UploadStatusComponent } from './UploadStatusComponent';
 import { LIST_ITEM_AVATAR_HEIGHT_COMPACT } from '../../constants';
 import { Breadcrumbs } from '../../design_system_fork/Breadcrumbs';
 import { useUploadActions } from '../../hooks/useUploadActions';
-import { Action, Crumb } from '../../types/common';
+import { Crumb } from '../../types/common';
 import { UploadItem, UploadStatus } from '../../types/graphql/client-types';
 import { GetUploadItemDocument } from '../../types/graphql/types';
-import { ActionsFactoryCheckerMap, ActionsFactoryUploadItem } from '../../utils/ActionsFactory';
+import { Action, CustomUploadCheckers } from '../../utils/ActionsFactory';
 import { getUploadNodeType, isUploadFolderItem } from '../../utils/uploadUtils';
 import { getIconByFileType } from '../../utils/utils';
 
@@ -55,12 +55,12 @@ export const UploadNodeDetailsListItem = ({
 		[item?.fullPath]
 	);
 
-	const actionCheckers = useMemo<ActionsFactoryCheckerMap>(
+	const actionCheckers = useMemo<CustomUploadCheckers>(
 		() => ({
 			[Action.GoToFolder]: (actionsFactoryUploadItem): boolean =>
-				(actionsFactoryUploadItem[0] as ActionsFactoryUploadItem).nodeId !== null,
+				'nodeId' in actionsFactoryUploadItem[0] && actionsFactoryUploadItem[0].nodeId !== null,
 			[Action.RemoveUpload]: (actionsFactoryUploadItem): boolean =>
-				(actionsFactoryUploadItem[0] as ActionsFactoryUploadItem).status !== UploadStatus.COMPLETED
+				actionsFactoryUploadItem[0].status !== UploadStatus.COMPLETED
 		}),
 		[]
 	);

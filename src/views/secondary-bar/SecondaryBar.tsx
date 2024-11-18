@@ -174,8 +174,8 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 		];
 
 		const fallbackRoots: GetRootsListQuery['getRootsList'] = [
-			{ id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT },
-			{ id: ROOTS.TRASH, name: ROOTS.TRASH }
+			{ id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT, __typename: 'Root' },
+			{ id: ROOTS.TRASH, name: ROOTS.TRASH, __typename: 'Root' }
 		];
 
 		const rootItems = reduce<

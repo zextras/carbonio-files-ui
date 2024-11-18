@@ -26,6 +26,7 @@ export type Scalars = {
 	Boolean: { input: boolean; output: boolean };
 	Int: { input: number; output: number };
 	Float: { input: number; output: number };
+	/** A custom scalar representing a date in a timestamp format */
 	DateTime: { input: number; output: number };
 	/** Define an upload item, with its status and all the required info */
 	UploadItem: { input: ClientTypes.UploadItem; output: ClientTypes.UploadItem };
@@ -33,23 +34,41 @@ export type Scalars = {
 
 export type Account = DistributionList | User;
 
+/**
+ *  Definition of a collaboration link. It represents an internal link that allows a logged user to
+ *  auto-share a specific node with a specific permission.
+ *  Each node can have at maximum 2 CollaborationLink:
+ *   - one that allows to auto-share the node with the READ+SHARE permission;
+ *   - one that allows to auto-share the node with the WRITE+SHARE permission.
+ *  A collaboration link can be generated only if the requester has the <strong>can_share</strong>
+ *  permission on the node.
+ */
 export type CollaborationLink = {
-	__typename?: 'CollaborationLink';
+	__typename: 'CollaborationLink';
+	/**  Link creation timestamp. */
 	created_at: Scalars['DateTime']['output'];
+	/**  Unique identifier of the CollaborationLink. */
 	id: Scalars['ID']['output'];
+	/**  Node on which the share is created when a logged user clicks on the collaboration link. */
 	node: File | Folder;
+	/**  The permission type created/updated when a logged user clicks on the collaboration link. */
 	permission: SharePermission;
+	/**
+	 *  Full URL allowing a logged user to auto-share the related node with the related permission.
+	 *  After the creation/update of the share, the system returns a redirect to the internal url of
+	 *  the shared node.
+	 */
 	url: Scalars['String']['output'];
 };
 
 export type Config = {
-	__typename?: 'Config';
+	__typename: 'Config';
 	name: Scalars['String']['output'];
 	value: Scalars['String']['output'];
 };
 
 export type DistributionList = {
-	__typename?: 'DistributionList';
+	__typename: 'DistributionList';
 	id: Scalars['ID']['output'];
 	name: Scalars['String']['output'];
 	users: Array<Maybe<User>>;
@@ -60,112 +79,228 @@ export type DistributionListUsersArgs = {
 	limit: Scalars['Int']['input'];
 };
 
+/**  Definition of the File type which implements the Node interface */
 export type File = Node & {
-	__typename?: 'File';
-	cloned_from_version?: Maybe<Scalars['Int']['output']>;
+	__typename: 'File';
+	cloned_from_version: Maybe<Scalars['Int']['output']>;
+	/**
+	 *  Returns all the CollaborationLinks of current node.
+	 *  It can be maximum of 2 collaboration links:
+	 *   - one that allows to auto-share the node with the READ+SHARE permission;
+	 *   - one that allows to auto-share the node with the WRITE+SHARE permission.
+	 */
 	collaboration_links: Array<Maybe<CollaborationLink>>;
+	/**  File creation timestamp */
 	created_at: Scalars['DateTime']['output'];
+	/**  Creator of the file */
 	creator: User;
+	/**  Description of the file */
 	description: Scalars['String']['output'];
-	extension?: Maybe<Scalars['String']['output']>;
+	/**  Extension of the file */
+	extension: Maybe<Scalars['String']['output']>;
+	/**  True if the owner has marked the file as favourite, false otherwise */
 	flagged: Scalars['Boolean']['output'];
+	/**  Unique identifier of the file */
 	id: Scalars['ID']['output'];
+	/**  Boolean representing if a version in kept forever or not */
 	keep_forever: Scalars['Boolean']['output'];
-	last_editor?: Maybe<User>;
+	/**  Last user who has edited the file */
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
+	/**  Mime type of the file */
 	mime_type: Scalars['String']['output'];
+	/**  Name of the file */
 	name: Scalars['String']['output'];
-	owner?: Maybe<User>;
-	parent?: Maybe<File | Folder>;
+	/**  Owner of the file */
+	owner: Maybe<User>;
+	/**  Parent folder containing the file */
+	parent: Maybe<File | Folder>;
+	/**  File permissions of the user making the request */
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']['output']>;
-	share?: Maybe<Share>;
+	/**  The top level root where the node resides */
+	rootId: Maybe<Scalars['ID']['output']>;
+	/**  Specific share of the current file with the target user (if exists) */
+	share: Maybe<Share>;
+	/**  List of shares of the current file (if they exist) */
 	shares: Array<Maybe<Share>>;
+	/**  Size of the file */
 	size: Scalars['Float']['output'];
+	/**  Type of the node */
 	type: NodeType;
+	/**  File update timestamp */
 	updated_at: Scalars['DateTime']['output'];
+	/**  Version of the file */
 	version: Scalars['Int']['output'];
 };
 
+/**  Definition of the File type which implements the Node interface */
 export type FileShareArgs = {
 	share_target_id: Scalars['ID']['input'];
 };
 
+/**  Definition of the File type which implements the Node interface */
 export type FileSharesArgs = {
 	cursor?: InputMaybe<Scalars['String']['input']>;
 	limit: Scalars['Int']['input'];
 	sorts?: InputMaybe<Array<ShareSort>>;
 };
 
+/**  Definition of the Folder type which implements the Node interface */
 export type Folder = Node & {
-	__typename?: 'Folder';
+	__typename: 'Folder';
+	/**  List of all child nodes of a folder. */
 	children: NodePage;
+	/**
+	 *  Returns all the CollaborationLinks of current node.
+	 *  It can be maximum of 2 collaboration links:
+	 *   - one that allows to auto-share the node with the READ+SHARE permission;
+	 *   - one that allows to auto-share the node with the WRITE+SHARE permission.
+	 */
 	collaboration_links: Array<Maybe<CollaborationLink>>;
+	/**  Folder creation timestamp */
 	created_at: Scalars['DateTime']['output'];
+	/**  Creator of the folder */
 	creator: User;
+	/**  Description of the folder */
 	description: Scalars['String']['output'];
+	/**  True if the owner has marked the folder as favourite, false otherwise */
 	flagged: Scalars['Boolean']['output'];
+	/**  Unique identifier of the folder */
 	id: Scalars['ID']['output'];
-	last_editor?: Maybe<User>;
+	/**  Last user who has edited the folder */
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
+	/**  Name of the folder */
 	name: Scalars['String']['output'];
-	owner?: Maybe<User>;
-	parent?: Maybe<File | Folder>;
+	/**  Owner of the folder */
+	owner: Maybe<User>;
+	/**  Parent folder containing the folder. The parent can be null when the current folder is the root */
+	parent: Maybe<File | Folder>;
+	/**  Folder permissions of the user making the request */
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']['output']>;
-	share?: Maybe<Share>;
+	/**  The top level root where the node resides */
+	rootId: Maybe<Scalars['ID']['output']>;
+	/**  Specific share of the current folder with the target user (if exists) */
+	share: Maybe<Share>;
+	/**  List of shares of the current folder (if they exist) */
 	shares: Array<Maybe<Share>>;
+	/**  Type of the node */
 	type: NodeType;
+	/**  Folder update timestamp */
 	updated_at: Scalars['DateTime']['output'];
 };
 
+/**  Definition of the Folder type which implements the Node interface */
 export type FolderChildrenArgs = {
 	limit: Scalars['Int']['input'];
 	page_token?: InputMaybe<Scalars['String']['input']>;
 	sort: NodeSort;
 };
 
+/**  Definition of the Folder type which implements the Node interface */
 export type FolderShareArgs = {
 	share_target_id: Scalars['ID']['input'];
 };
 
+/**  Definition of the Folder type which implements the Node interface */
 export type FolderSharesArgs = {
 	cursor?: InputMaybe<Scalars['String']['input']>;
 	limit: Scalars['Int']['input'];
 	sorts?: InputMaybe<Array<ShareSort>>;
 };
 
+/**
+ *  Definition of the Link type. It represents a public link of a specific node.
+ *  Temporarily only a file can have a link
+ */
 export type Link = {
-	__typename?: 'Link';
+	__typename: 'Link';
+	/**  Link access code. It must be 10 characters long. */
+	access_code: Maybe<Scalars['String']['output']>;
+	/**  Link creation timestamp. */
 	created_at: Scalars['DateTime']['output'];
-	description?: Maybe<Scalars['String']['output']>;
-	expires_at?: Maybe<Scalars['DateTime']['output']>;
+	/**  Link description. It must be shorter than 300 characters. */
+	description: Maybe<Scalars['String']['output']>;
+	/**  Link expiration timestamp. */
+	expires_at: Maybe<Scalars['DateTime']['output']>;
+	/**  Unique identifier of the link. */
 	id: Scalars['ID']['output'];
+	/**  Node related to this link. */
 	node: File | Folder;
-	url?: Maybe<Scalars['String']['output']>;
+	/**
+	 *  Full URL to access the related node. It will be returned only if the requester has the
+	 *  <strong>can_share<strong> permission on the node. However anyone who has this link can
+	 *  download the node.
+	 */
+	url: Maybe<Scalars['String']['output']>;
 };
 
 export type Mutation = {
-	__typename?: 'Mutation';
+	__typename: 'Mutation';
 	cloneVersion: File;
-	copyNodes?: Maybe<Array<File | Folder>>;
+	/**  Allows to copy a list of Nodes into a specified Folder. */
+	copyNodes: Maybe<Array<File | Folder>>;
+	/**
+	 *  Allows to create a collaboration link for an existing node. A collaboration link can be created
+	 *  only if the requester has the <strong>can_share<strong> permission on the specified node.
+	 *  If the collaboration link already exists the system returns the already created one.
+	 */
 	createCollaborationLink: CollaborationLink;
+	/**  <strong>Creates a new folder</strong> */
 	createFolder: File | Folder;
+	/**
+	 *  Allows to create a public link for an existing node. A link can be created only if the requester has the
+	 *  <strong>can_share<strong> permission on the specified node.
+	 *  Optionally, an expiration timestamp and/or a description can be set.
+	 */
 	createLink: Link;
+	/**
+	 *  Allows to share an existing node to a user specifying the user permissions on that node,
+	 *  and, optionally, an expiration timestamp.
+	 */
 	createShare: Share;
+	/**
+	 *  Allows to delete a list of collaboration links in batch. It returns:
+	 *   - an array of IDs for each collaboration link removed;
+	 *   - a list of errors for each collaboration link that could not be removed.
+	 */
 	deleteCollaborationLinks: Array<Maybe<Scalars['ID']['output']>>;
+	/**
+	 *  Allows to delete a list of links in batch. It returns an array of IDs for each removed link and
+	 *  a list of errors for each link that could not be removed.
+	 */
 	deleteLinks: Array<Maybe<Scalars['ID']['output']>>;
-	deleteNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	/**
+	 *  Allows to delete a list of nodes. If the node is a folder then this operation removes the node and all its children,
+	 *  if the node is a file then it removes all the related versions. This operation requires can_delete permission on
+	 *  every node that should be deleted and it cannot be reverted.
+	 */
+	deleteNodes: Maybe<Array<Scalars['ID']['output']>>;
 	deleteShare: Scalars['Boolean']['output'];
+	/** TODO doc */
 	deleteVersions: Array<Maybe<Scalars['Int']['output']>>;
-	flagNodes?: Maybe<Array<Scalars['ID']['output']>>;
+	/**  Allows to flag a list of nodes. */
+	flagNodes: Maybe<Array<Scalars['ID']['output']>>;
 	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
-	moveNodes?: Maybe<Array<File | Folder>>;
-	restoreNodes?: Maybe<Array<Maybe<File | Folder>>>;
-	trashNodes?: Maybe<Array<Scalars['ID']['output']>>;
-	updateLink?: Maybe<Link>;
+	/**
+	 *  Allows to move a list of nodes into a folder destination. This operation requires write permissions on each file
+	 *  should be moved and write permission on the destination folder otherwise it fails.
+	 */
+	moveNodes: Maybe<Array<File | Folder>>;
+	/**  Restores a list of nodes. */
+	restoreNodes: Maybe<Array<Maybe<File | Folder>>>;
+	/**  Trashes a list of nodes. */
+	trashNodes: Maybe<Array<Scalars['ID']['output']>>;
+	/**
+	 *  Allows to update the expiration timestamp and/or the description of an existing link.
+	 *  An existing link can be updated only if the requester has the <strong>can_share<strong>
+	 *  permission on the specified node.
+	 */
+	updateLink: Maybe<Link>;
+	/**  <strong>Update an existing node</strong> */
 	updateNode: File | Folder;
-	updateShare?: Maybe<Share>;
+	/**  Allows to update the SharePermissions and the expiration timestamp of an existing share. */
+	updateShare: Maybe<Share>;
 };
 
 export type MutationCloneVersionArgs = {
@@ -189,6 +324,7 @@ export type MutationCreateFolderArgs = {
 };
 
 export type MutationCreateLinkArgs = {
+	access_code?: InputMaybe<Scalars['String']['input']>;
 	description?: InputMaybe<Scalars['String']['input']>;
 	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
 	node_id: Scalars['ID']['input'];
@@ -249,6 +385,7 @@ export type MutationTrashNodesArgs = {
 };
 
 export type MutationUpdateLinkArgs = {
+	access_code?: InputMaybe<Scalars['String']['input']>;
 	description?: InputMaybe<Scalars['String']['input']>;
 	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
 	link_id: Scalars['ID']['input'];
@@ -268,30 +405,54 @@ export type MutationUpdateShareArgs = {
 	share_target_id: Scalars['ID']['input'];
 };
 
+/**  Definition of the Node interface */
 export type Node = {
+	/**
+	 *  Returns all the CollaborationLinks of current node.
+	 *  It can be maximum of 2 collaboration links:
+	 *   - one that allows to auto-share the node with the READ+SHARE permission;
+	 *   - one that allows to auto-share the node with the WRITE+SHARE permission.
+	 */
 	collaboration_links: Array<Maybe<CollaborationLink>>;
+	/**  Node creation timestamp */
 	created_at: Scalars['DateTime']['output'];
+	/**  Creator of the node (it will be a User type when it will be implemented) */
 	creator: User;
+	/**  Description of the file/folder */
 	description: Scalars['String']['output'];
+	/**  True if the owner has marked the node as favourite, false otherwise */
 	flagged: Scalars['Boolean']['output'];
+	/**  Unique identifier of the node */
 	id: Scalars['ID']['output'];
-	last_editor?: Maybe<User>;
+	/**  Last user who has edited the node (it will be a User type when it will be implemented) */
+	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
+	/**  Name of the file/folder */
 	name: Scalars['String']['output'];
-	owner?: Maybe<User>;
-	parent?: Maybe<File | Folder>;
+	/**  Owner of the node (it will be a User type when it will be implemented) */
+	owner: Maybe<User>;
+	/**  Parent folder containing the node. The parent can be null when the current node is the root folder */
+	parent: Maybe<File | Folder>;
+	/**  Node permissions of the user making the request */
 	permissions: Permissions;
-	rootId?: Maybe<Scalars['ID']['output']>;
-	share?: Maybe<Share>;
+	/**  The top level root where the node resides */
+	rootId: Maybe<Scalars['ID']['output']>;
+	/**  Specific share of the current node with the target user (if exists) */
+	share: Maybe<Share>;
+	/**  List of shares of the current node (if they exist) */
 	shares: Array<Maybe<Share>>;
+	/**  Type of the node */
 	type: NodeType;
+	/**  Node update timestamp */
 	updated_at: Scalars['DateTime']['output'];
 };
 
+/**  Definition of the Node interface */
 export type NodeShareArgs = {
 	share_target_id: Scalars['ID']['input'];
 };
 
+/**  Definition of the Node interface */
 export type NodeSharesArgs = {
 	cursor?: InputMaybe<Scalars['String']['input']>;
 	limit: Scalars['Int']['input'];
@@ -299,11 +460,14 @@ export type NodeSharesArgs = {
 };
 
 export type NodePage = {
-	__typename?: 'NodePage';
+	__typename: 'NodePage';
+	/** The list of nodes of the requested page */
 	nodes: Array<Maybe<File | Folder>>;
-	page_token?: Maybe<Scalars['String']['output']>;
+	/**  The token to use as a cursor for requesting the next page of nodes */
+	page_token: Maybe<Scalars['String']['output']>;
 };
 
+/**  Definition of the NodeSort enumerator. This is useful for sorting the result of a list of nodes. */
 export enum NodeSort {
 	LastEditorAsc = 'LAST_EDITOR_ASC',
 	LastEditorDesc = 'LAST_EDITOR_DESC',
@@ -319,6 +483,7 @@ export enum NodeSort {
 	UpdatedAtDesc = 'UPDATED_AT_DESC'
 }
 
+/** Definition of NodeType enumerator. This is used for discriminating the specific type of a node */
 export enum NodeType {
 	Application = 'APPLICATION',
 	Audio = 'AUDIO',
@@ -333,8 +498,37 @@ export enum NodeType {
 	Video = 'VIDEO'
 }
 
+/**
+ * +---------------------------------+-------------------------------------------------------+
+ * | Operation                       | Permission                                            |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Create folder                   | Destination folder: Write and not trashed             |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Upload node                     | Destination folder: Write and not trashed             |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Copy node                       | Node to copy: Read                                    |
+ * |                                 | Destination folder: Write and not trashed             |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Move node                       | Node to move: Write                                   |
+ * |                                 | Destination folder: Write and not trashed             |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Download node                   | Read                                                  |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Delete node                     | Only the owner can delete a node                      |
+ * +---------------------------------+-------------------------------------------------------+
+ * | List folder                     | Read Folder                                           |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Get metadata                    | Read                                                  |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Update metadata                 | Write                                                 |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Trash/Untrash a node            | Write                                                 |
+ * +---------------------------------+-------------------------------------------------------+
+ * | Flag/Unflag a node              | Read                                                  |
+ * +---------------------------------+-------------------------------------------------------+
+ */
 export type Permissions = {
-	__typename?: 'Permissions';
+	__typename: 'Permissions';
 	can_add_version: Scalars['Boolean']['output'];
 	can_change_link: Scalars['Boolean']['output'];
 	can_change_share: Scalars['Boolean']['output'];
@@ -348,19 +542,37 @@ export type Permissions = {
 };
 
 export type Query = {
-	__typename?: 'Query';
-	findNodes?: Maybe<NodePage>;
-	getAccountByEmail?: Maybe<Account>;
+	__typename: 'Query';
+	/** <strong> Returns a NodePage based on the given criteria </strong> */
+	findNodes: Maybe<NodePage>;
+	getAccountByEmail: Maybe<Account>;
 	getAccountsByEmail: Array<Maybe<Account>>;
+	/**
+	 *  Returns all the CollaborationLinks of the specified node.
+	 *  The response is not paginated because each node can have a maximum of 2 collaboration links:
+	 *   - one that allows to auto-share the node with the READ+SHARE permission;
+	 *   - one that allows to auto-share the node with the WRITE+SHARE permission.
+	 */
 	getCollaborationLinks: Array<Maybe<CollaborationLink>>;
 	getConfigs: Array<Maybe<Config>>;
+	/**
+	 *  Returns all the links of the specified node.
+	 *  The response is not paginated because each node can have a maximum of 50 links.
+	 */
 	getLinks: Array<Maybe<Link>>;
-	getNode?: Maybe<File | Folder>;
+	/**  <strong>Returns the attributes of the node specified by ID</strong> */
+	getNode: Maybe<File | Folder>;
+	/**
+	 *  <strong> Returns the list of nodes corresponding to the path of a node</strong>
+	 *  The path is ordered and returns from the highest visible one to the requested node.
+	 */
 	getPath: Array<Maybe<File | Folder>>;
+	/**  Returns the list of all root folders */
 	getRootsList: Array<Maybe<Root>>;
-	getShare?: Maybe<Share>;
-	getUploadItem?: Maybe<Scalars['UploadItem']['output']>;
-	getUserById?: Maybe<User>;
+	/**  Returns the attributes of the specified share */
+	getShare: Maybe<Share>;
+	getUploadItem: Maybe<Scalars['UploadItem']['output']>;
+	getUserById: Maybe<User>;
 	getVersions: Array<Maybe<File>>;
 };
 
@@ -422,21 +634,31 @@ export type QueryGetVersionsArgs = {
 	versions?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
+/**  Definition of the type Root. Represents a root folder */
 export type Root = {
-	__typename?: 'Root';
+	__typename: 'Root';
+	/**  Unique identifier of the root */
 	id: Scalars['ID']['output'];
+	/**  Name of the root */
 	name: Scalars['String']['output'];
 };
 
+/**  Definition of the Share type. It represents a share between a node and a user. */
 export type Share = {
-	__typename?: 'Share';
+	__typename: 'Share';
+	/**  Share creation timestamp */
 	created_at: Scalars['DateTime']['output'];
-	expires_at?: Maybe<Scalars['DateTime']['output']>;
+	/**  Share expiration timestamp */
+	expires_at: Maybe<Scalars['DateTime']['output']>;
+	/**  Node shared */
 	node: File | Folder;
+	/**  User permission for the node */
 	permission: SharePermission;
-	share_target?: Maybe<SharedTarget>;
+	/**  User to whom a node has been shared */
+	share_target: Maybe<SharedTarget>;
 };
 
+/**  The SharePermissions enumerator represents the permissions of a node shared with a user */
 export enum SharePermission {
 	ReadAndShare = 'READ_AND_SHARE',
 	ReadAndWrite = 'READ_AND_WRITE',
@@ -444,36 +666,45 @@ export enum SharePermission {
 	ReadWriteAndShare = 'READ_WRITE_AND_SHARE'
 }
 
+/**  Definition of the ShareSort enumerator. This is useful for sorting the result of a list of shares. */
 export enum ShareSort {
 	CreationAsc = 'CREATION_ASC',
 	CreationDesc = 'CREATION_DESC',
 	ExpirationAsc = 'EXPIRATION_ASC',
 	ExpirationDesc = 'EXPIRATION_DESC',
+	/**  The order is ascending: this means that first are shown the shares with fewer permissions. */
 	SharePermissionsAsc = 'SHARE_PERMISSIONS_ASC',
+	/**  The order is descending: this means that first are shown the shares with more permissions. */
 	SharePermissionsDesc = 'SHARE_PERMISSIONS_DESC',
+	/**  The order is based on the target user identifier and not on his email or display name. */
 	TargetUserAsc = 'TARGET_USER_ASC',
+	/**  The order is based on the target user identifier and not on his email or display name. */
 	TargetUserDesc = 'TARGET_USER_DESC'
 }
 
 export type SharedTarget = DistributionList | User;
 
+/**  Definition of the User type */
 export type User = {
-	__typename?: 'User';
+	__typename: 'User';
+	/**  Email of the user */
 	email: Scalars['String']['output'];
+	/**  Full name of the user */
 	full_name: Scalars['String']['output'];
+	/**  Unique identifier of the folder */
 	id: Scalars['ID']['output'];
 };
 
 export type BaseNode_File_Fragment = {
 	size: number;
 	mime_type: string;
-	extension?: string | null;
+	extension: string | null;
 	version: number;
 	id: string;
 	name: string;
 	type: NodeType;
 	flagged: boolean;
-	rootId?: string | null;
+	rootId: string | null;
 	permissions: {
 		can_read: boolean;
 		can_write_file: boolean;
@@ -485,15 +716,15 @@ export type BaseNode_File_Fragment = {
 		can_share: boolean;
 		can_read_share: boolean;
 		can_change_share: boolean;
-	} & { __typename?: 'Permissions' };
-} & { __typename?: 'File' };
+	} & { __typename: 'Permissions' };
+} & { __typename: 'File' };
 
 export type BaseNode_Folder_Fragment = {
 	id: string;
 	name: string;
 	type: NodeType;
 	flagged: boolean;
-	rootId?: string | null;
+	rootId: string | null;
 	permissions: {
 		can_read: boolean;
 		can_write_file: boolean;
@@ -505,8 +736,8 @@ export type BaseNode_Folder_Fragment = {
 		can_share: boolean;
 		can_read_share: boolean;
 		can_change_share: boolean;
-	} & { __typename?: 'Permissions' };
-} & { __typename?: 'Folder' };
+	} & { __typename: 'Permissions' };
+} & { __typename: 'Folder' };
 
 export type BaseNodeFragment = BaseNode_File_Fragment | BaseNode_Folder_Fragment;
 
@@ -514,25 +745,25 @@ export type Child_File_Fragment = {
 	updated_at: number;
 	size: number;
 	mime_type: string;
-	extension?: string | null;
+	extension: string | null;
 	version: number;
 	id: string;
 	name: string;
 	type: NodeType;
 	flagged: boolean;
-	rootId?: string | null;
-	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+	rootId: string | null;
+	owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+	last_editor: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 	shares: Array<
 		| ({
 				permission: SharePermission;
 				created_at: number;
-				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-				share_target?:
-					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+				node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+				share_target:
+					| ({ id: string; name: string } & { __typename: 'DistributionList' })
+					| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 					| null;
-		  } & { __typename?: 'Share' })
+		  } & { __typename: 'Share' })
 		| null
 	>;
 	permissions: {
@@ -546,8 +777,8 @@ export type Child_File_Fragment = {
 		can_share: boolean;
 		can_read_share: boolean;
 		can_change_share: boolean;
-	} & { __typename?: 'Permissions' };
-} & { __typename?: 'File' };
+	} & { __typename: 'Permissions' };
+} & { __typename: 'File' };
 
 export type Child_Folder_Fragment = {
 	updated_at: number;
@@ -555,19 +786,19 @@ export type Child_Folder_Fragment = {
 	name: string;
 	type: NodeType;
 	flagged: boolean;
-	rootId?: string | null;
-	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+	rootId: string | null;
+	owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+	last_editor: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 	shares: Array<
 		| ({
 				permission: SharePermission;
 				created_at: number;
-				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-				share_target?:
-					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+				node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+				share_target:
+					| ({ id: string; name: string } & { __typename: 'DistributionList' })
+					| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 					| null;
-		  } & { __typename?: 'Share' })
+		  } & { __typename: 'Share' })
 		| null
 	>;
 	permissions: {
@@ -581,8 +812,8 @@ export type Child_Folder_Fragment = {
 		can_share: boolean;
 		can_read_share: boolean;
 		can_change_share: boolean;
-	} & { __typename?: 'Permissions' };
-} & { __typename?: 'Folder' };
+	} & { __typename: 'Permissions' };
+} & { __typename: 'Folder' };
 
 export type ChildFragment = Child_File_Fragment | Child_Folder_Fragment;
 
@@ -590,33 +821,34 @@ export type ChildWithParent_File_Fragment = {
 	updated_at: number;
 	size: number;
 	mime_type: string;
-	extension?: string | null;
+	extension: string | null;
 	version: number;
 	id: string;
 	name: string;
 	type: NodeType;
 	flagged: boolean;
-	rootId?: string | null;
-	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+	rootId: string | null;
+	owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+	last_editor: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 	shares: Array<
 		| ({
 				permission: SharePermission;
 				created_at: number;
-				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-				share_target?:
-					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+				node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+				share_target:
+					| ({ id: string; name: string } & { __typename: 'DistributionList' })
+					| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 					| null;
-		  } & { __typename?: 'Share' })
+		  } & { __typename: 'Share' })
 		| null
 	>;
-	parent?:
+	parent:
 		| ({
 				id: string;
 				name: string;
 				type: NodeType;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+				rootId: string | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -628,8 +860,8 @@ export type ChildWithParent_File_Fragment = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' | 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' | 'Folder' })
 		| null;
 	permissions: {
 		can_read: boolean;
@@ -642,8 +874,8 @@ export type ChildWithParent_File_Fragment = {
 		can_share: boolean;
 		can_read_share: boolean;
 		can_change_share: boolean;
-	} & { __typename?: 'Permissions' };
-} & { __typename?: 'File' };
+	} & { __typename: 'Permissions' };
+} & { __typename: 'File' };
 
 export type ChildWithParent_Folder_Fragment = {
 	updated_at: number;
@@ -651,27 +883,28 @@ export type ChildWithParent_Folder_Fragment = {
 	name: string;
 	type: NodeType;
 	flagged: boolean;
-	rootId?: string | null;
-	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-	last_editor?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+	rootId: string | null;
+	owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+	last_editor: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 	shares: Array<
 		| ({
 				permission: SharePermission;
 				created_at: number;
-				node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-				share_target?:
-					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+				node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+				share_target:
+					| ({ id: string; name: string } & { __typename: 'DistributionList' })
+					| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 					| null;
-		  } & { __typename?: 'Share' })
+		  } & { __typename: 'Share' })
 		| null
 	>;
-	parent?:
+	parent:
 		| ({
 				id: string;
 				name: string;
 				type: NodeType;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+				rootId: string | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -683,8 +916,8 @@ export type ChildWithParent_Folder_Fragment = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' | 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' | 'Folder' })
 		| null;
 	permissions: {
 		can_read: boolean;
@@ -697,8 +930,8 @@ export type ChildWithParent_Folder_Fragment = {
 		can_share: boolean;
 		can_read_share: boolean;
 		can_change_share: boolean;
-	} & { __typename?: 'Permissions' };
-} & { __typename?: 'Folder' };
+	} & { __typename: 'Permissions' };
+} & { __typename: 'Folder' };
 
 export type ChildWithParentFragment =
 	| ChildWithParent_File_Fragment
@@ -709,25 +942,27 @@ export type CollaborationLinkFragment = {
 	url: string;
 	permission: SharePermission;
 	created_at: number;
-	node: { id: string } & { __typename?: 'File' | 'Folder' };
-} & { __typename?: 'CollaborationLink' };
+	node: { id: string } & { __typename: 'File' | 'Folder' };
+} & { __typename: 'CollaborationLink' };
 
 export type LinkFragment = {
 	id: string;
-	url?: string | null;
-	description?: string | null;
-	expires_at?: number | null;
+	url: string | null;
+	description: string | null;
+	access_code: string | null;
+	expires_at: number | null;
 	created_at: number;
-	node: { id: string } & { __typename?: 'File' | 'Folder' };
-} & { __typename?: 'Link' };
+	node: { id: string } & { __typename: 'File' | 'Folder' };
+} & { __typename: 'Link' };
 
 export type NodeParentFragment = {
-	parent?:
+	parent:
 		| ({
 				id: string;
 				name: string;
 				type: NodeType;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+				rootId: string | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -739,16 +974,17 @@ export type NodeParentFragment = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' | 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' | 'Folder' })
 		| null;
-} & { __typename?: 'File' | 'Folder' };
+} & { __typename: 'File' | 'Folder' };
 
 export type ParentFragment = {
 	id: string;
 	name: string;
 	type: NodeType;
-	owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+	rootId: string | null;
+	owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 	permissions: {
 		can_read: boolean;
 		can_write_file: boolean;
@@ -760,12 +996,12 @@ export type ParentFragment = {
 		can_share: boolean;
 		can_read_share: boolean;
 		can_change_share: boolean;
-	} & { __typename?: 'Permissions' };
-} & { __typename?: 'File' | 'Folder' };
+	} & { __typename: 'Permissions' };
+} & { __typename: 'File' | 'Folder' };
 
 export type ParentIdFragment = {
-	parent?: ({ id: string } & { __typename?: 'File' | 'Folder' }) | null;
-} & { __typename?: 'File' | 'Folder' };
+	parent: ({ id: string } & { __typename: 'File' | 'Folder' }) | null;
+} & { __typename: 'File' | 'Folder' };
 
 export type PermissionsFragment = {
 	permissions: {
@@ -779,19 +1015,19 @@ export type PermissionsFragment = {
 		can_share: boolean;
 		can_read_share: boolean;
 		can_change_share: boolean;
-	} & { __typename?: 'Permissions' };
-} & { __typename?: 'File' | 'Folder' };
+	} & { __typename: 'Permissions' };
+} & { __typename: 'File' | 'Folder' };
 
 export type ShareFragment = {
 	permission: SharePermission;
 	created_at: number;
-	share_target?:
-		| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-		| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+	share_target:
+		| ({ id: string; name: string } & { __typename: 'DistributionList' })
+		| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 		| null;
-} & { __typename?: 'Share' };
+} & { __typename: 'Share' };
 
-export type ShareTargetFragment = { id: string } & { __typename?: 'DistributionList' | 'User' };
+export type ShareTargetFragment = { id: string } & { __typename: 'DistributionList' | 'User' };
 
 export type CloneVersionMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -804,12 +1040,10 @@ export type CloneVersionMutation = {
 		size: number;
 		updated_at: number;
 		keep_forever: boolean;
-		cloned_from_version?: number | null;
-		last_editor?:
-			| ({ full_name: string; email: string; id: string } & { __typename?: 'User' })
-			| null;
-	} & { __typename?: 'File' };
-} & { __typename?: 'Mutation' };
+		cloned_from_version: number | null;
+		last_editor: ({ full_name: string; email: string; id: string } & { __typename: 'User' }) | null;
+	} & { __typename: 'File' };
+};
 
 export type CopyNodesMutationVariables = Exact<{
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
@@ -818,33 +1052,33 @@ export type CopyNodesMutationVariables = Exact<{
 }>;
 
 export type CopyNodesMutation = {
-	copyNodes?: Array<
+	copyNodes: Array<
 		| ({
 				updated_at: number;
 				size: number;
 				mime_type: string;
-				extension?: string | null;
+				extension: string | null;
 				version: number;
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
-				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-				last_editor?:
-					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+				rootId: string | null;
+				parent: ({ id: string; name: string } & { __typename: 'File' | 'Folder' }) | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+				last_editor:
+					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 					| null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
 				permissions: {
@@ -858,30 +1092,30 @@ export type CopyNodesMutation = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' })
 		| ({
 				updated_at: number;
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
-				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-				last_editor?:
-					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+				rootId: string | null;
+				parent: ({ id: string; name: string } & { __typename: 'File' | 'Folder' }) | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+				last_editor:
+					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 					| null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
 				permissions: {
@@ -895,10 +1129,10 @@ export type CopyNodesMutation = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'Folder' })
 	> | null;
-} & { __typename?: 'Mutation' };
+};
 
 export type CreateCollaborationLinkMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -911,9 +1145,9 @@ export type CreateCollaborationLinkMutation = {
 		url: string;
 		permission: SharePermission;
 		created_at: number;
-		node: { id: string } & { __typename?: 'File' | 'Folder' };
-	} & { __typename?: 'CollaborationLink' };
-} & { __typename?: 'Mutation' };
+		node: { id: string } & { __typename: 'File' | 'Folder' };
+	} & { __typename: 'CollaborationLink' };
+};
 
 export type CreateFolderMutationVariables = Exact<{
 	destination_id: Scalars['String']['input'];
@@ -927,28 +1161,28 @@ export type CreateFolderMutation = {
 				updated_at: number;
 				size: number;
 				mime_type: string;
-				extension?: string | null;
+				extension: string | null;
 				version: number;
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
-				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-				last_editor?:
-					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+				rootId: string | null;
+				parent: ({ id: string; name: string } & { __typename: 'File' | 'Folder' }) | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+				last_editor:
+					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 					| null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
 				permissions: {
@@ -962,30 +1196,30 @@ export type CreateFolderMutation = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' })
 		| ({
 				updated_at: number;
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
-				parent?: ({ id: string; name: string } & { __typename?: 'File' | 'Folder' }) | null;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-				last_editor?:
-					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+				rootId: string | null;
+				parent: ({ id: string; name: string } & { __typename: 'File' | 'Folder' }) | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+				last_editor:
+					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 					| null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
 				permissions: {
@@ -999,26 +1233,28 @@ export type CreateFolderMutation = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' });
-} & { __typename?: 'Mutation' };
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'Folder' });
+};
 
 export type CreateLinkMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
 	description?: InputMaybe<Scalars['String']['input']>;
 	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	access_code?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 export type CreateLinkMutation = {
 	createLink: {
 		id: string;
-		url?: string | null;
-		description?: string | null;
-		expires_at?: number | null;
+		url: string | null;
+		description: string | null;
+		access_code: string | null;
+		expires_at: number | null;
 		created_at: number;
-		node: { id: string } & { __typename?: 'File' | 'Folder' };
-	} & { __typename?: 'Link' };
-} & { __typename?: 'Mutation' };
+		node: { id: string } & { __typename: 'File' | 'Folder' };
+	} & { __typename: 'Link' };
+};
 
 export type CreateShareMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1031,60 +1267,52 @@ export type CreateShareMutation = {
 	createShare: {
 		permission: SharePermission;
 		created_at: number;
-		share_target?:
-			| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-			| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+		share_target:
+			| ({ id: string; name: string } & { __typename: 'DistributionList' })
+			| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 			| null;
-		node: { id: string } & { __typename?: 'File' | 'Folder' };
-	} & { __typename?: 'Share' };
-} & { __typename?: 'Mutation' };
+		node: { id: string } & { __typename: 'File' | 'Folder' };
+	} & { __typename: 'Share' };
+};
 
 export type DeleteCollaborationLinksMutationVariables = Exact<{
 	collaboration_link_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
-export type DeleteCollaborationLinksMutation = {
-	deleteCollaborationLinks: Array<string | null>;
-} & { __typename?: 'Mutation' };
+export type DeleteCollaborationLinksMutation = { deleteCollaborationLinks: Array<string | null> };
 
 export type DeleteLinksMutationVariables = Exact<{
 	link_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
-export type DeleteLinksMutation = { deleteLinks: Array<string | null> } & {
-	__typename?: 'Mutation';
-};
+export type DeleteLinksMutation = { deleteLinks: Array<string | null> };
 
 export type DeleteNodesMutationVariables = Exact<{
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
-export type DeleteNodesMutation = { deleteNodes?: Array<string> | null } & {
-	__typename?: 'Mutation';
-};
+export type DeleteNodesMutation = { deleteNodes: Array<string> | null };
 
 export type DeleteShareMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
 	share_target_id: Scalars['ID']['input'];
 }>;
 
-export type DeleteShareMutation = { deleteShare: boolean } & { __typename?: 'Mutation' };
+export type DeleteShareMutation = { deleteShare: boolean };
 
 export type DeleteVersionsMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
 	versions?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
 }>;
 
-export type DeleteVersionsMutation = { deleteVersions: Array<number | null> } & {
-	__typename?: 'Mutation';
-};
+export type DeleteVersionsMutation = { deleteVersions: Array<number | null> };
 
 export type FlagNodesMutationVariables = Exact<{
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 	flag: Scalars['Boolean']['input'];
 }>;
 
-export type FlagNodesMutation = { flagNodes?: Array<string> | null } & { __typename?: 'Mutation' };
+export type FlagNodesMutation = { flagNodes: Array<string> | null };
 
 export type KeepVersionsMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1092,9 +1320,7 @@ export type KeepVersionsMutationVariables = Exact<{
 	keep_forever: Scalars['Boolean']['input'];
 }>;
 
-export type KeepVersionsMutation = { keepVersions: Array<number | null> } & {
-	__typename?: 'Mutation';
-};
+export type KeepVersionsMutation = { keepVersions: Array<number | null> };
 
 export type MoveNodesMutationVariables = Exact<{
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
@@ -1102,53 +1328,53 @@ export type MoveNodesMutationVariables = Exact<{
 }>;
 
 export type MoveNodesMutation = {
-	moveNodes?: Array<
-		{ id: string; parent?: ({ id: string } & { __typename?: 'File' | 'Folder' }) | null } & {
-			__typename?: 'File' | 'Folder';
+	moveNodes: Array<
+		{ id: string; parent: ({ id: string } & { __typename: 'File' | 'Folder' }) | null } & {
+			__typename: 'File' | 'Folder';
 		}
 	> | null;
-} & { __typename?: 'Mutation' };
+};
 
 export type RestoreNodesMutationVariables = Exact<{
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
 export type RestoreNodesMutation = {
-	restoreNodes?: Array<
+	restoreNodes: Array<
 		| ({
 				id: string;
-				rootId?: string | null;
-				parent?: ({ id: string } & { __typename?: 'File' | 'Folder' }) | null;
-		  } & { __typename?: 'File' | 'Folder' })
+				rootId: string | null;
+				parent: ({ id: string } & { __typename: 'File' | 'Folder' }) | null;
+		  } & { __typename: 'File' | 'Folder' })
 		| null
 	> | null;
-} & { __typename?: 'Mutation' };
+};
 
 export type TrashNodesMutationVariables = Exact<{
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
 }>;
 
-export type TrashNodesMutation = { trashNodes?: Array<string> | null } & {
-	__typename?: 'Mutation';
-};
+export type TrashNodesMutation = { trashNodes: Array<string> | null };
 
 export type UpdateLinkMutationVariables = Exact<{
 	link_id: Scalars['ID']['input'];
 	description?: InputMaybe<Scalars['String']['input']>;
 	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	access_code?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 export type UpdateLinkMutation = {
-	updateLink?:
+	updateLink:
 		| ({
 				id: string;
-				url?: string | null;
-				description?: string | null;
-				expires_at?: number | null;
+				url: string | null;
+				description: string | null;
+				expires_at: number | null;
 				created_at: number;
-		  } & { __typename?: 'Link' })
+				access_code: string | null;
+		  } & { __typename: 'Link' })
 		| null;
-} & { __typename?: 'Mutation' };
+};
 
 export type UpdateNodeMutationVariables = Exact<{
 	node_id: Scalars['String']['input'];
@@ -1161,9 +1387,9 @@ export type UpdateNodeMutation = {
 		id: string;
 		name: string;
 		description: string;
-		parent?: ({ id: string } & { __typename?: 'File' | 'Folder' }) | null;
-	} & { __typename?: 'File' | 'Folder' };
-} & { __typename?: 'Mutation' };
+		parent: ({ id: string } & { __typename: 'File' | 'Folder' }) | null;
+	} & { __typename: 'File' | 'Folder' };
+};
 
 export type UpdateNodeDescriptionMutationVariables = Exact<{
 	node_id: Scalars['String']['input'];
@@ -1171,8 +1397,8 @@ export type UpdateNodeDescriptionMutationVariables = Exact<{
 }>;
 
 export type UpdateNodeDescriptionMutation = {
-	updateNode: { id: string; description: string } & { __typename?: 'File' | 'Folder' };
-} & { __typename?: 'Mutation' };
+	updateNode: { id: string; description: string } & { __typename: 'File' | 'Folder' };
+};
 
 export type UpdateShareMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1181,26 +1407,24 @@ export type UpdateShareMutationVariables = Exact<{
 }>;
 
 export type UpdateShareMutation = {
-	updateShare?:
+	updateShare:
 		| ({
 				permission: SharePermission;
 				created_at: number;
-				share_target?:
-					| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-					| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+				share_target:
+					| ({ id: string; name: string } & { __typename: 'DistributionList' })
+					| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 					| null;
-				node: { id: string } & { __typename?: 'File' | 'Folder' };
-		  } & { __typename?: 'Share' })
+				node: { id: string } & { __typename: 'File' | 'Folder' };
+		  } & { __typename: 'Share' })
 		| null;
-} & { __typename?: 'Mutation' };
+};
 
 export type GetUploadItemQueryVariables = Exact<{
 	id: Scalars['ID']['input'];
 }>;
 
-export type GetUploadItemQuery = { getUploadItem?: ClientTypes.UploadItem | null } & {
-	__typename?: 'Query';
-};
+export type GetUploadItemQuery = { getUploadItem: ClientTypes.UploadItem | null };
 
 export type FindNodesQueryVariables = Exact<{
 	keywords?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -1219,46 +1443,47 @@ export type FindNodesQueryVariables = Exact<{
 }>;
 
 export type FindNodesQuery = {
-	findNodes?:
+	findNodes:
 		| ({
-				page_token?: string | null;
+				page_token: string | null;
 				nodes: Array<
 					| ({
 							updated_at: number;
 							size: number;
 							mime_type: string;
-							extension?: string | null;
+							extension: string | null;
 							version: number;
 							id: string;
 							name: string;
 							type: NodeType;
 							flagged: boolean;
-							rootId?: string | null;
-							owner?:
-								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+							rootId: string | null;
+							owner:
+								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 								| null;
-							last_editor?:
-								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+							last_editor:
+								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 								| null;
 							shares: Array<
 								| ({
 										permission: SharePermission;
 										created_at: number;
-										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-										share_target?:
-											| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-											| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+										node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+										share_target:
+											| ({ id: string; name: string } & { __typename: 'DistributionList' })
+											| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 											| null;
-								  } & { __typename?: 'Share' })
+								  } & { __typename: 'Share' })
 								| null
 							>;
-							parent?:
+							parent:
 								| ({
 										id: string;
 										name: string;
 										type: NodeType;
-										owner?:
-											| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+										rootId: string | null;
+										owner:
+											| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 											| null;
 										permissions: {
 											can_read: boolean;
@@ -1271,8 +1496,8 @@ export type FindNodesQuery = {
 											can_share: boolean;
 											can_read_share: boolean;
 											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'File' | 'Folder' })
+										} & { __typename: 'Permissions' };
+								  } & { __typename: 'File' | 'Folder' })
 								| null;
 							permissions: {
 								can_read: boolean;
@@ -1285,40 +1510,41 @@ export type FindNodesQuery = {
 								can_share: boolean;
 								can_read_share: boolean;
 								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' })
+							} & { __typename: 'Permissions' };
+					  } & { __typename: 'File' })
 					| ({
 							updated_at: number;
 							id: string;
 							name: string;
 							type: NodeType;
 							flagged: boolean;
-							rootId?: string | null;
-							owner?:
-								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+							rootId: string | null;
+							owner:
+								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 								| null;
-							last_editor?:
-								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+							last_editor:
+								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 								| null;
 							shares: Array<
 								| ({
 										permission: SharePermission;
 										created_at: number;
-										node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-										share_target?:
-											| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-											| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+										node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+										share_target:
+											| ({ id: string; name: string } & { __typename: 'DistributionList' })
+											| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 											| null;
-								  } & { __typename?: 'Share' })
+								  } & { __typename: 'Share' })
 								| null
 							>;
-							parent?:
+							parent:
 								| ({
 										id: string;
 										name: string;
 										type: NodeType;
-										owner?:
-											| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+										rootId: string | null;
+										owner:
+											| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 											| null;
 										permissions: {
 											can_read: boolean;
@@ -1331,8 +1557,8 @@ export type FindNodesQuery = {
 											can_share: boolean;
 											can_read_share: boolean;
 											can_change_share: boolean;
-										} & { __typename?: 'Permissions' };
-								  } & { __typename?: 'File' | 'Folder' })
+										} & { __typename: 'Permissions' };
+								  } & { __typename: 'File' | 'Folder' })
 								| null;
 							permissions: {
 								can_read: boolean;
@@ -1345,21 +1571,21 @@ export type FindNodesQuery = {
 								can_share: boolean;
 								can_read_share: boolean;
 								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'Folder' })
+							} & { __typename: 'Permissions' };
+					  } & { __typename: 'Folder' })
 					| null
 				>;
-		  } & { __typename?: 'NodePage' })
+		  } & { __typename: 'NodePage' })
 		| null;
-} & { __typename?: 'Query' };
+};
 
 export type GetAccountByEmailQueryVariables = Exact<{
 	email: Scalars['String']['input'];
 }>;
 
 export type GetAccountByEmailQuery = {
-	getAccountByEmail?: ({ id: string } & { __typename?: 'DistributionList' | 'User' }) | null;
-} & { __typename?: 'Query' };
+	getAccountByEmail: ({ id: string } & { __typename: 'DistributionList' | 'User' }) | null;
+};
 
 export type GetAccountsByEmailQueryVariables = Exact<{
 	emails: Array<Scalars['String']['input']> | Scalars['String']['input'];
@@ -1367,28 +1593,28 @@ export type GetAccountsByEmailQueryVariables = Exact<{
 
 export type GetAccountsByEmailQuery = {
 	getAccountsByEmail: Array<
-		| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-		| ({ id: string; email: string; full_name: string } & { __typename?: 'User' })
+		| ({ id: string; name: string } & { __typename: 'DistributionList' })
+		| ({ id: string; email: string; full_name: string } & { __typename: 'User' })
 		| null
 	>;
-} & { __typename?: 'Query' };
+};
 
 export type GetBaseNodeQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetBaseNodeQuery = {
-	getNode?:
+	getNode:
 		| ({
 				size: number;
 				mime_type: string;
-				extension?: string | null;
+				extension: string | null;
 				version: number;
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
+				rootId: string | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1400,14 +1626,14 @@ export type GetBaseNodeQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' })
 		| ({
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
+				rootId: string | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1419,10 +1645,10 @@ export type GetBaseNodeQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'Folder' })
 		| null;
-} & { __typename?: 'Query' };
+};
 
 export type GetChildQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1430,41 +1656,42 @@ export type GetChildQueryVariables = Exact<{
 }>;
 
 export type GetChildQuery = {
-	getNode?:
+	getNode:
 		| ({
 				updated_at: number;
 				size: number;
 				mime_type: string;
-				extension?: string | null;
+				extension: string | null;
 				version: number;
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-				last_editor?:
-					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+				rootId: string | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+				last_editor:
+					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 					| null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
-				parent?:
+				parent:
 					| ({
 							id: string;
 							name: string;
 							type: NodeType;
-							owner?:
-								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+							rootId: string | null;
+							owner:
+								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 								| null;
 							permissions: {
 								can_read: boolean;
@@ -1477,8 +1704,8 @@ export type GetChildQuery = {
 								can_share: boolean;
 								can_read_share: boolean;
 								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
+							} & { __typename: 'Permissions' };
+					  } & { __typename: 'File' | 'Folder' })
 					| null;
 				permissions: {
 					can_read: boolean;
@@ -1491,38 +1718,39 @@ export type GetChildQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' })
 		| ({
 				updated_at: number;
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
-				last_editor?:
-					| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+				rootId: string | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
+				last_editor:
+					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 					| null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
-				parent?:
+				parent:
 					| ({
 							id: string;
 							name: string;
 							type: NodeType;
-							owner?:
-								| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+							rootId: string | null;
+							owner:
+								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 								| null;
 							permissions: {
 								can_read: boolean;
@@ -1535,8 +1763,8 @@ export type GetChildQuery = {
 								can_share: boolean;
 								can_read_share: boolean;
 								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
+							} & { __typename: 'Permissions' };
+					  } & { __typename: 'File' | 'Folder' })
 					| null;
 				permissions: {
 					can_read: boolean;
@@ -1549,10 +1777,10 @@ export type GetChildQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'Folder' })
 		| null;
-} & { __typename?: 'Query' };
+};
 
 export type GetChildrenQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1563,12 +1791,13 @@ export type GetChildrenQueryVariables = Exact<{
 }>;
 
 export type GetChildrenQuery = {
-	getNode?:
+	getNode:
 		| ({
 				id: string;
 				name: string;
 				type: NodeType;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+				rootId: string | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1580,54 +1809,56 @@ export type GetChildrenQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' })
 		| ({
 				id: string;
 				name: string;
 				type: NodeType;
+				rootId: string | null;
 				children: {
-					page_token?: string | null;
+					page_token: string | null;
 					nodes: Array<
 						| ({
 								updated_at: number;
 								size: number;
 								mime_type: string;
-								extension?: string | null;
+								extension: string | null;
 								version: number;
 								id: string;
 								name: string;
 								type: NodeType;
 								flagged: boolean;
-								rootId?: string | null;
-								owner?:
-									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								rootId: string | null;
+								owner:
+									| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 									| null;
-								last_editor?:
-									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								last_editor:
+									| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 									| null;
 								shares: Array<
 									| ({
 											permission: SharePermission;
 											created_at: number;
-											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-											share_target?:
-												| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+											node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+											share_target:
+												| ({ id: string; name: string } & { __typename: 'DistributionList' })
 												| ({ email: string; full_name: string; id: string } & {
-														__typename?: 'User';
+														__typename: 'User';
 												  })
 												| null;
-									  } & { __typename?: 'Share' })
+									  } & { __typename: 'Share' })
 									| null
 								>;
-								parent?:
+								parent:
 									| ({
 											id: string;
 											name: string;
 											type: NodeType;
-											owner?:
+											rootId: string | null;
+											owner:
 												| ({ id: string; full_name: string; email: string } & {
-														__typename?: 'User';
+														__typename: 'User';
 												  })
 												| null;
 											permissions: {
@@ -1641,8 +1872,8 @@ export type GetChildrenQuery = {
 												can_share: boolean;
 												can_read_share: boolean;
 												can_change_share: boolean;
-											} & { __typename?: 'Permissions' };
-									  } & { __typename?: 'File' | 'Folder' })
+											} & { __typename: 'Permissions' };
+									  } & { __typename: 'File' | 'Folder' })
 									| null;
 								permissions: {
 									can_read: boolean;
@@ -1655,43 +1886,44 @@ export type GetChildrenQuery = {
 									can_share: boolean;
 									can_read_share: boolean;
 									can_change_share: boolean;
-								} & { __typename?: 'Permissions' };
-						  } & { __typename?: 'File' })
+								} & { __typename: 'Permissions' };
+						  } & { __typename: 'File' })
 						| ({
 								updated_at: number;
 								id: string;
 								name: string;
 								type: NodeType;
 								flagged: boolean;
-								rootId?: string | null;
-								owner?:
-									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								rootId: string | null;
+								owner:
+									| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 									| null;
-								last_editor?:
-									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								last_editor:
+									| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 									| null;
 								shares: Array<
 									| ({
 											permission: SharePermission;
 											created_at: number;
-											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-											share_target?:
-												| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+											node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+											share_target:
+												| ({ id: string; name: string } & { __typename: 'DistributionList' })
 												| ({ email: string; full_name: string; id: string } & {
-														__typename?: 'User';
+														__typename: 'User';
 												  })
 												| null;
-									  } & { __typename?: 'Share' })
+									  } & { __typename: 'Share' })
 									| null
 								>;
-								parent?:
+								parent:
 									| ({
 											id: string;
 											name: string;
 											type: NodeType;
-											owner?:
+											rootId: string | null;
+											owner:
 												| ({ id: string; full_name: string; email: string } & {
-														__typename?: 'User';
+														__typename: 'User';
 												  })
 												| null;
 											permissions: {
@@ -1705,8 +1937,8 @@ export type GetChildrenQuery = {
 												can_share: boolean;
 												can_read_share: boolean;
 												can_change_share: boolean;
-											} & { __typename?: 'Permissions' };
-									  } & { __typename?: 'File' | 'Folder' })
+											} & { __typename: 'Permissions' };
+									  } & { __typename: 'File' | 'Folder' })
 									| null;
 								permissions: {
 									can_read: boolean;
@@ -1719,12 +1951,12 @@ export type GetChildrenQuery = {
 									can_share: boolean;
 									can_read_share: boolean;
 									can_change_share: boolean;
-								} & { __typename?: 'Permissions' };
-						  } & { __typename?: 'Folder' })
+								} & { __typename: 'Permissions' };
+						  } & { __typename: 'Folder' })
 						| null
 					>;
-				} & { __typename?: 'NodePage' };
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+				} & { __typename: 'NodePage' };
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1736,22 +1968,23 @@ export type GetChildrenQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'Folder' })
 		| null;
-} & { __typename?: 'Query' };
+};
 
 export type GetChildrenParentQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetChildrenParentQuery = {
-	getNode?:
+	getNode:
 		| ({
 				id: string;
 				name: string;
 				type: NodeType;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+				rootId: string | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -1763,10 +1996,10 @@ export type GetChildrenParentQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' | 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' | 'Folder' })
 		| null;
-} & { __typename?: 'Query' };
+};
 
 export type GetCollaborationLinksQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1779,17 +2012,17 @@ export type GetCollaborationLinksQuery = {
 				url: string;
 				permission: SharePermission;
 				created_at: number;
-				node: { id: string } & { __typename?: 'File' | 'Folder' };
-		  } & { __typename?: 'CollaborationLink' })
+				node: { id: string } & { __typename: 'File' | 'Folder' };
+		  } & { __typename: 'CollaborationLink' })
 		| null
 	>;
-} & { __typename?: 'Query' };
+};
 
 export type GetConfigsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetConfigsQuery = {
-	getConfigs: Array<({ name: string; value: string } & { __typename?: 'Config' }) | null>;
-} & { __typename?: 'Query' };
+	getConfigs: Array<({ name: string; value: string } & { __typename: 'Config' }) | null>;
+};
 
 export type GetLinksQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1799,15 +2032,16 @@ export type GetLinksQuery = {
 	getLinks: Array<
 		| ({
 				id: string;
-				url?: string | null;
-				description?: string | null;
-				expires_at?: number | null;
+				url: string | null;
+				description: string | null;
+				access_code: string | null;
+				expires_at: number | null;
 				created_at: number;
-				node: { id: string } & { __typename?: 'File' | 'Folder' };
-		  } & { __typename?: 'Link' })
+				node: { id: string } & { __typename: 'File' | 'Folder' };
+		  } & { __typename: 'Link' })
 		| null
 	>;
-} & { __typename?: 'Query' };
+};
 
 export type GetNodeQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1820,26 +2054,26 @@ export type GetNodeQueryVariables = Exact<{
 }>;
 
 export type GetNodeQuery = {
-	getNode?:
+	getNode:
 		| ({
 				description: string;
 				created_at: number;
 				updated_at: number;
 				size: number;
 				mime_type: string;
-				extension?: string | null;
+				extension: string | null;
 				version: number;
 				id: string;
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
-				owner?: ({ id: string; email: string; full_name: string } & { __typename?: 'User' }) | null;
-				creator: { id: string; email: string; full_name: string } & { __typename?: 'User' };
-				last_editor?:
-					| ({ id: string; email: string; full_name: string } & { __typename?: 'User' })
+				rootId: string | null;
+				owner: ({ id: string; email: string; full_name: string } & { __typename: 'User' }) | null;
+				creator: { id: string; email: string; full_name: string } & { __typename: 'User' };
+				last_editor:
+					| ({ id: string; email: string; full_name: string } & { __typename: 'User' })
 					| null;
-				parent?:
+				parent:
 					| ({
 							id: string;
 							name: string;
@@ -1854,19 +2088,19 @@ export type GetNodeQuery = {
 								can_share: boolean;
 								can_read_share: boolean;
 								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
+							} & { __typename: 'Permissions' };
+					  } & { __typename: 'File' | 'Folder' })
 					| null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
 				permissions: {
@@ -1880,8 +2114,8 @@ export type GetNodeQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' })
 		| ({
 				description: string;
 				created_at: number;
@@ -1890,49 +2124,50 @@ export type GetNodeQuery = {
 				name: string;
 				type: NodeType;
 				flagged: boolean;
-				rootId?: string | null;
+				rootId: string | null;
 				children: {
-					page_token?: string | null;
+					page_token: string | null;
 					nodes: Array<
 						| ({
 								updated_at: number;
 								size: number;
 								mime_type: string;
-								extension?: string | null;
+								extension: string | null;
 								version: number;
 								id: string;
 								name: string;
 								type: NodeType;
 								flagged: boolean;
-								rootId?: string | null;
-								owner?:
-									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								rootId: string | null;
+								owner:
+									| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 									| null;
-								last_editor?:
-									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								last_editor:
+									| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 									| null;
 								shares: Array<
 									| ({
 											permission: SharePermission;
 											created_at: number;
-											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-											share_target?:
-												| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+											node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+											share_target:
+												| ({ id: string; name: string } & { __typename: 'DistributionList' })
 												| ({ email: string; full_name: string; id: string } & {
-														__typename?: 'User';
+														__typename: 'User';
 												  })
 												| null;
-									  } & { __typename?: 'Share' })
+									  } & { __typename: 'Share' })
 									| null
 								>;
-								parent?:
+								parent:
 									| ({
 											id: string;
 											name: string;
 											type: NodeType;
-											owner?:
+											rootId: string | null;
+											owner:
 												| ({ id: string; full_name: string; email: string } & {
-														__typename?: 'User';
+														__typename: 'User';
 												  })
 												| null;
 											permissions: {
@@ -1946,8 +2181,8 @@ export type GetNodeQuery = {
 												can_share: boolean;
 												can_read_share: boolean;
 												can_change_share: boolean;
-											} & { __typename?: 'Permissions' };
-									  } & { __typename?: 'File' | 'Folder' })
+											} & { __typename: 'Permissions' };
+									  } & { __typename: 'File' | 'Folder' })
 									| null;
 								permissions: {
 									can_read: boolean;
@@ -1960,43 +2195,44 @@ export type GetNodeQuery = {
 									can_share: boolean;
 									can_read_share: boolean;
 									can_change_share: boolean;
-								} & { __typename?: 'Permissions' };
-						  } & { __typename?: 'File' })
+								} & { __typename: 'Permissions' };
+						  } & { __typename: 'File' })
 						| ({
 								updated_at: number;
 								id: string;
 								name: string;
 								type: NodeType;
 								flagged: boolean;
-								rootId?: string | null;
-								owner?:
-									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								rootId: string | null;
+								owner:
+									| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 									| null;
-								last_editor?:
-									| ({ id: string; full_name: string; email: string } & { __typename?: 'User' })
+								last_editor:
+									| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
 									| null;
 								shares: Array<
 									| ({
 											permission: SharePermission;
 											created_at: number;
-											node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-											share_target?:
-												| ({ id: string; name: string } & { __typename?: 'DistributionList' })
+											node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+											share_target:
+												| ({ id: string; name: string } & { __typename: 'DistributionList' })
 												| ({ email: string; full_name: string; id: string } & {
-														__typename?: 'User';
+														__typename: 'User';
 												  })
 												| null;
-									  } & { __typename?: 'Share' })
+									  } & { __typename: 'Share' })
 									| null
 								>;
-								parent?:
+								parent:
 									| ({
 											id: string;
 											name: string;
 											type: NodeType;
-											owner?:
+											rootId: string | null;
+											owner:
 												| ({ id: string; full_name: string; email: string } & {
-														__typename?: 'User';
+														__typename: 'User';
 												  })
 												| null;
 											permissions: {
@@ -2010,8 +2246,8 @@ export type GetNodeQuery = {
 												can_share: boolean;
 												can_read_share: boolean;
 												can_change_share: boolean;
-											} & { __typename?: 'Permissions' };
-									  } & { __typename?: 'File' | 'Folder' })
+											} & { __typename: 'Permissions' };
+									  } & { __typename: 'File' | 'Folder' })
 									| null;
 								permissions: {
 									can_read: boolean;
@@ -2024,17 +2260,17 @@ export type GetNodeQuery = {
 									can_share: boolean;
 									can_read_share: boolean;
 									can_change_share: boolean;
-								} & { __typename?: 'Permissions' };
-						  } & { __typename?: 'Folder' })
+								} & { __typename: 'Permissions' };
+						  } & { __typename: 'Folder' })
 						| null
 					>;
-				} & { __typename?: 'NodePage' };
-				owner?: ({ id: string; email: string; full_name: string } & { __typename?: 'User' }) | null;
-				creator: { id: string; email: string; full_name: string } & { __typename?: 'User' };
-				last_editor?:
-					| ({ id: string; email: string; full_name: string } & { __typename?: 'User' })
+				} & { __typename: 'NodePage' };
+				owner: ({ id: string; email: string; full_name: string } & { __typename: 'User' }) | null;
+				creator: { id: string; email: string; full_name: string } & { __typename: 'User' };
+				last_editor:
+					| ({ id: string; email: string; full_name: string } & { __typename: 'User' })
 					| null;
-				parent?:
+				parent:
 					| ({
 							id: string;
 							name: string;
@@ -2049,19 +2285,19 @@ export type GetNodeQuery = {
 								can_share: boolean;
 								can_read_share: boolean;
 								can_change_share: boolean;
-							} & { __typename?: 'Permissions' };
-					  } & { __typename?: 'File' | 'Folder' })
+							} & { __typename: 'Permissions' };
+					  } & { __typename: 'File' | 'Folder' })
 					| null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
 				permissions: {
@@ -2075,10 +2311,10 @@ export type GetNodeQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'Folder' })
 		| null;
-} & { __typename?: 'Query' };
+};
 
 export type GetPathQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -2090,7 +2326,8 @@ export type GetPathQuery = {
 				id: string;
 				name: string;
 				type: NodeType;
-				owner?: ({ id: string; full_name: string; email: string } & { __typename?: 'User' }) | null;
+				rootId: string | null;
+				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				permissions: {
 					can_read: boolean;
 					can_write_file: boolean;
@@ -2102,18 +2339,18 @@ export type GetPathQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' | 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' | 'Folder' })
 		| null
 	>;
-} & { __typename?: 'Query' };
+};
 
 export type GetPermissionsQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
 }>;
 
 export type GetPermissionsQuery = {
-	getNode?:
+	getNode:
 		| ({
 				id: string;
 				permissions: {
@@ -2127,16 +2364,16 @@ export type GetPermissionsQuery = {
 					can_share: boolean;
 					can_read_share: boolean;
 					can_change_share: boolean;
-				} & { __typename?: 'Permissions' };
-		  } & { __typename?: 'File' | 'Folder' })
+				} & { __typename: 'Permissions' };
+		  } & { __typename: 'File' | 'Folder' })
 		| null;
-} & { __typename?: 'Query' };
+};
 
 export type GetRootsListQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetRootsListQuery = {
-	getRootsList: Array<({ id: string; name: string } & { __typename?: 'Root' }) | null>;
-} & { __typename?: 'Query' };
+	getRootsList: Array<({ id: string; name: string } & { __typename: 'Root' }) | null>;
+};
 
 export type GetSharesQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -2146,7 +2383,7 @@ export type GetSharesQueryVariables = Exact<{
 }>;
 
 export type GetSharesQuery = {
-	getNode?:
+	getNode:
 		| ({
 				id: string;
 				type: NodeType;
@@ -2154,17 +2391,17 @@ export type GetSharesQuery = {
 					| ({
 							permission: SharePermission;
 							created_at: number;
-							node: { id: string; type: NodeType } & { __typename?: 'File' | 'Folder' };
-							share_target?:
-								| ({ id: string; name: string } & { __typename?: 'DistributionList' })
-								| ({ email: string; full_name: string; id: string } & { __typename?: 'User' })
+							node: { id: string; type: NodeType } & { __typename: 'File' | 'Folder' };
+							share_target:
+								| ({ id: string; name: string } & { __typename: 'DistributionList' })
+								| ({ email: string; full_name: string; id: string } & { __typename: 'User' })
 								| null;
-					  } & { __typename?: 'Share' })
+					  } & { __typename: 'Share' })
 					| null
 				>;
-		  } & { __typename?: 'File' | 'Folder' })
+		  } & { __typename: 'File' | 'Folder' })
 		| null;
-} & { __typename?: 'Query' };
+};
 
 export type GetVersionsQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -2178,14 +2415,14 @@ export type GetVersionsQuery = {
 				size: number;
 				updated_at: number;
 				keep_forever: boolean;
-				cloned_from_version?: number | null;
-				last_editor?:
-					| ({ full_name: string; email: string; id: string } & { __typename?: 'User' })
+				cloned_from_version: number | null;
+				last_editor:
+					| ({ full_name: string; email: string; id: string } & { __typename: 'User' })
 					| null;
-		  } & { __typename?: 'File' })
+		  } & { __typename: 'File' })
 		| null
 	>;
-} & { __typename?: 'Query' };
+};
 
 export const PermissionsFragmentDoc = {
 	kind: 'Document',
@@ -2536,6 +2773,7 @@ export const ParentFragmentDoc = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
@@ -2643,6 +2881,7 @@ export const NodeParentFragmentDoc = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
@@ -2791,6 +3030,7 @@ export const ChildWithParentFragmentDoc = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
@@ -2920,6 +3160,7 @@ export const LinkFragmentDoc = {
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'access_code' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
 					{
@@ -3652,6 +3893,11 @@ export const CreateLinkDocument = {
 					kind: 'VariableDefinition',
 					variable: { kind: 'Variable', name: { kind: 'Name', value: 'expires_at' } },
 					type: { kind: 'NamedType', name: { kind: 'Name', value: 'DateTime' } }
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'access_code' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 				}
 			],
 			selectionSet: {
@@ -3675,6 +3921,11 @@ export const CreateLinkDocument = {
 								kind: 'Argument',
 								name: { kind: 'Name', value: 'expires_at' },
 								value: { kind: 'Variable', name: { kind: 'Name', value: 'expires_at' } }
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'access_code' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'access_code' } }
 							}
 						],
 						selectionSet: {
@@ -3695,6 +3946,7 @@ export const CreateLinkDocument = {
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'access_code' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
 					{
@@ -4363,6 +4615,11 @@ export const UpdateLinkDocument = {
 					kind: 'VariableDefinition',
 					variable: { kind: 'Variable', name: { kind: 'Name', value: 'expires_at' } },
 					type: { kind: 'NamedType', name: { kind: 'Name', value: 'DateTime' } }
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'access_code' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 				}
 			],
 			selectionSet: {
@@ -4386,6 +4643,11 @@ export const UpdateLinkDocument = {
 								kind: 'Argument',
 								name: { kind: 'Name', value: 'expires_at' },
 								value: { kind: 'Variable', name: { kind: 'Name', value: 'expires_at' } }
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'access_code' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'access_code' } }
 							}
 						],
 						selectionSet: {
@@ -4395,7 +4657,8 @@ export const UpdateLinkDocument = {
 								{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
 								{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
-								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } }
+								{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'access_code' } }
 							]
 						}
 					}
@@ -5041,6 +5304,7 @@ export const FindNodesDocument = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
@@ -5546,6 +5810,7 @@ export const GetChildDocument = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
@@ -5835,6 +6100,7 @@ export const GetChildrenDocument = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
@@ -6013,6 +6279,7 @@ export const GetChildrenParentDocument = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
@@ -6157,6 +6424,7 @@ export const GetLinksDocument = {
 					{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'url' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'description' } },
+					{ kind: 'Field', name: { kind: 'Name', value: 'access_code' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'expires_at' } },
 					{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
 					{
@@ -6535,6 +6803,7 @@ export const GetNodeDocument = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}
@@ -6713,6 +6982,7 @@ export const GetPathDocument = {
 							]
 						}
 					},
+					{ kind: 'Field', name: { kind: 'Name', value: 'rootId' } },
 					{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'Permissions' } }
 				]
 			}

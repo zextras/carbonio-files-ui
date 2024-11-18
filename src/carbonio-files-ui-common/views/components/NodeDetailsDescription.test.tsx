@@ -13,8 +13,8 @@ import { NodeDetailsDescription } from './NodeDetailsDescription';
 import { ICON_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
 import { generateError, setup, screen } from '../../tests/utils';
-import { Node } from '../../types/common';
 import { Resolvers } from '../../types/graphql/resolvers-types';
+import { File, Folder } from '../../types/graphql/types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockErrorResolver, mockUpdateNode } from '../../utils/resolverMocks';
 
@@ -27,7 +27,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks: {} }
 		);
@@ -43,7 +43,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks: {} }
 		);
@@ -60,7 +60,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks: {} }
 		);
@@ -78,7 +78,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks: {} }
 		);
@@ -98,7 +98,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks: {} }
 		);
@@ -138,7 +138,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks: {} }
 		);
@@ -175,7 +175,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks: {} }
 		);
@@ -225,7 +225,7 @@ describe('NodeDetailsDescription component', () => {
 					mockUpdateNode({
 						...node,
 						description: newDescription
-					}) as (...args: unknown[]) => Node
+					}) as (...args: unknown[]) => File | Folder
 				)
 			}
 		} satisfies Partial<Resolvers>;
@@ -234,7 +234,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks }
 		);
@@ -282,7 +282,7 @@ describe('NodeDetailsDescription component', () => {
 			<NodeDetailsDescription
 				id={node.id}
 				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: node })}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
 			/>,
 			{ mocks }
 		);

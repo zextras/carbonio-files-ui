@@ -308,14 +308,14 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 		// navigate inside local root
 		await user.dblClick(filesHome);
-		await screen.findByText((localRoot.children.nodes[0] as Node).name);
+		await screen.findByText(localRoot.children.nodes[0]!.name);
 		await waitFor(() =>
 			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
 		);
 		let breadcrumb = await findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
 		expect(breadcrumb).toBeVisible();
-		expect(screen.getByText((localRoot.children.nodes[0] as Node).name)).toBeVisible();
-		expect(screen.getByText((localRoot.children.nodes[1] as Node).name)).toBeVisible();
+		expect(screen.getByText(localRoot.children.nodes[0]!.name)).toBeVisible();
+		expect(screen.getByText(localRoot.children.nodes[1]!.name)).toBeVisible();
 		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 
 		// go back to roots list
@@ -806,7 +806,7 @@ describe('Copy Nodes Modal', () => {
 			{ mocks }
 		);
 
-		await screen.findByText((currentFolder.children.nodes[0] as Node).name);
+		await screen.findByText(currentFolder.children.nodes[0]!.name);
 		let breadcrumbRegexp = buildBreadCrumbRegExp('Files', ...map(path, (node) => node.name));
 		await waitFor(() =>
 			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()

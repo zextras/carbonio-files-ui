@@ -31,6 +31,10 @@ import {
 import { UPDATE_VIEW_EVENT } from '../constants';
 import server from '../mocks/server';
 
+jest.mock<typeof import('../carbonio-files-ui-common/views/components/VirtualizedNodeListItem')>(
+	'../carbonio-files-ui-common/views/components/VirtualizedNodeListItem'
+);
+
 describe('AppView', () => {
 	describe('on update view', () => {
 		it('should show new child ', async () => {
@@ -245,10 +249,9 @@ describe('AppView', () => {
 				)
 			);
 			setup(<AppView />, { initialRouterEntries: [`/?folder=${folder.id}`] });
-			await screen.findByTestId(SELECTORS.listHeader);
-			await screen.findByTestId(SELECTORS.displayer);
-			await screen.findByText(node1.name);
-			await screen.findByText(folder.name);
+			await within(screen.getByTestId(SELECTORS.list(folder.id))).findByText(node1.name);
+			await within(screen.getByTestId(SELECTORS.listHeader)).findByText(folder.name);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries
@@ -290,10 +293,10 @@ describe('AppView', () => {
 				),
 				graphql.query(
 					GetPathDocument,
-					() =>
+					({ variables }) =>
 						HttpResponse.json({
 							data: {
-								getPath: [folder]
+								getPath: variables.node_id === folder.id ? [folder] : [folder, node1]
 							}
 						}),
 					{ once: true }
@@ -322,10 +325,10 @@ describe('AppView', () => {
 						}
 					})
 				),
-				graphql.query(GetPathDocument, () =>
+				graphql.query(GetPathDocument, ({ variables }) =>
 					HttpResponse.json({
 						data: {
-							getPath: [folderUpdated]
+							getPath: variables.node_id === folder.id ? [folder] : [folder, node1]
 						}
 					})
 				),
@@ -340,11 +343,13 @@ describe('AppView', () => {
 			setup(<AppView />, {
 				initialRouterEntries: [`/?folder=${folder.id}&node=${node1.id}`]
 			});
-			await screen.findByTestId(SELECTORS.listHeader);
-			await screen.findByTestId(SELECTORS.displayer);
-			await screen.findAllByText(node1.name);
-			await screen.findAllByText(folder.name);
-			await screen.findByText(/details/i);
+			// run all queries
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			expect(
+				within(screen.getByTestId(SELECTORS.displayerHeader)).getByText(node1.name)
+			).toBeVisible();
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries
@@ -415,8 +420,8 @@ describe('AppView', () => {
 			setup(<AppView />, {
 				initialRouterEntries: [`/?folder=${folder.id}&node=${node1.id}`]
 			});
+			// run all queries
 			await act(async () => {
-				// run network queries
 				await jest.advanceTimersToNextTimerAsync();
 			});
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));

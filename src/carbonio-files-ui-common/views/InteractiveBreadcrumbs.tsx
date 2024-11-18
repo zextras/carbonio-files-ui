@@ -39,7 +39,10 @@ const CustomBreadcrumbs = styled(Breadcrumbs)`
 	}
 `;
 
-export const InteractiveBreadcrumbs: React.VFC<BreadcrumbsProps> = ({ crumbs, ...props }) => {
+export const InteractiveBreadcrumbs = ({
+	crumbs,
+	...props
+}: BreadcrumbsProps): React.JSX.Element => {
 	const interactiveCrumbs = useMemo(
 		() =>
 			map(crumbs, (crumb) => ({

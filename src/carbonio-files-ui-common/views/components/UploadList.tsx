@@ -6,7 +6,6 @@
 
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 
-import { useReactiveVar } from '@apollo/client';
 import { Button, Container, useSnackbar } from '@zextras/carbonio-design-system';
 import { map, filter, includes, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -14,31 +13,23 @@ import { useTranslation } from 'react-i18next';
 import { Dropzone } from './Dropzone';
 import { EmptyFolder } from './EmptyFolder';
 import { ScrollContainer } from './ScrollContainer';
+import { useSelectionContext } from './SelectionProvider';
 import { UploadListItemWrapper } from './UploadListItemWrapper';
 import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
-import { uploadVar } from '../../apollo/uploadVar';
 import { DRAG_TYPES, ROOTS } from '../../constants';
 import { ListContext, ListHeaderActionContext } from '../../contexts';
 import { usePrevious } from '../../hooks/usePrevious';
-import useSelection from '../../hooks/useSelection';
 import { useUpload } from '../../hooks/useUpload';
 import { useUploadActions } from '../../hooks/useUploadActions';
-import { Action } from '../../types/common';
 import { UploadItem } from '../../types/graphql/client-types';
+import { Action } from '../../utils/ActionsFactory';
 import { getUploadAddType, isUploadFolderItem } from '../../utils/uploadUtils';
 
-export const UploadList: React.VFC = () => {
+export const UploadList = ({ uploadItems }: { uploadItems: UploadItem[] }): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	const { add, removeAllCompleted } = useUpload();
-
-	const uploadVarData = useReactiveVar(uploadVar);
-
-	const uploadItems = useMemo(
-		() => filter(uploadVarData, (upload) => upload.parentId === null),
-		[uploadVarData]
-	);
 
 	const uploadStatusSizeIsZero = useMemo(() => uploadItems.length === 0, [uploadItems]);
 
@@ -72,15 +63,8 @@ export const UploadList: React.VFC = () => {
 		[t]
 	);
 
-	const {
-		selectedIDs,
-		selectedMap,
-		selectId,
-		isSelectionModeActive,
-		unSelectAll,
-		selectAll,
-		exitSelectionMode
-	} = useSelection(uploadItems);
+	const { selectedIDs, selectedMap, selectId, isSelectionModeActive, exitSelectionMode } =
+		useSelectionContext();
 
 	const selectedItems = useMemo(
 		() => filter(uploadItems, (item) => includes(selectedIDs, item.id)),
@@ -93,7 +77,7 @@ export const UploadList: React.VFC = () => {
 				<UploadListItemWrapper
 					key={item.id}
 					node={item}
-					isSelected={selectedMap && selectedMap[item.id]}
+					isSelected={selectedMap?.[item.id]}
 					isSelectionModeActive={isSelectionModeActive}
 					selectId={selectId}
 				/>
@@ -164,16 +148,7 @@ export const UploadList: React.VFC = () => {
 			background={'gray6'}
 		>
 			<ListHeaderActionContext.Provider value={headerAction}>
-				<ListHeader
-					selectedCount={size(selectedIDs)}
-					crumbs={crumbs}
-					isSelectionModeActive={isSelectionModeActive}
-					unSelectAll={unSelectAll}
-					selectAll={selectAll}
-					permittedSelectionModeActionsItems={uploadActions}
-					exitSelectionMode={exitSelectionMode}
-					isAllSelected={size(selectedIDs) === size(items)}
-				/>
+				<ListHeader crumbs={crumbs} permittedSelectionModeActionsItems={uploadActions} />
 			</ListHeaderActionContext.Provider>
 			<Dropzone
 				onDrop={uploadWithDragAndDrop}

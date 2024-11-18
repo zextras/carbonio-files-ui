@@ -33,7 +33,10 @@ export interface HeaderBreadcrumbsProps {
 	crumbs?: Crumb[];
 }
 
-export const HeaderBreadcrumbs: React.VFC<HeaderBreadcrumbsProps> = ({ folderId, crumbs }) => {
+export const HeaderBreadcrumbs = ({
+	folderId,
+	crumbs
+}: HeaderBreadcrumbsProps): React.JSX.Element => {
 	const { navigateToFolder } = useNavigation();
 	const [t] = useTranslation();
 
@@ -57,15 +60,15 @@ export const HeaderBreadcrumbs: React.VFC<HeaderBreadcrumbsProps> = ({ folderId,
 	}, [expanded, toggleExpanded]);
 
 	const onDropdownOpen = useCallback(() => {
-		dropdownProps.onOpen && dropdownProps.onOpen();
+		dropdownProps.onOpen?.();
 		const collapser = document.querySelector('.breadcrumbCollapser');
-		collapser && collapser.classList.add('active');
+		collapser?.classList.add('active');
 	}, [dropdownProps]);
 
 	const onDropdownClose = useCallback(() => {
-		dropdownProps.onClose && dropdownProps.onClose();
+		dropdownProps.onClose?.();
 		const collapser = document.querySelector('.breadcrumbCollapser');
-		collapser && collapser.classList.remove('active');
+		collapser?.classList.remove('active');
 	}, [dropdownProps]);
 
 	return (
@@ -79,7 +82,6 @@ export const HeaderBreadcrumbs: React.VFC<HeaderBreadcrumbsProps> = ({ folderId,
 		>
 			{folderId && expandable && (
 				<Tooltip
-					/* i18next-extract-disable-next-line */
 					label={t(
 						`breadcrumb.expander.${expanded ? 'hide' : 'show'}`,
 						expanded ? 'Hide previous folders' : 'Show previous folders'

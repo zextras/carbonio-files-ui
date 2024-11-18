@@ -9,19 +9,19 @@ import React, { useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useGetNodeQuery } from '../../hooks/graphql/queries/useGetNodeQuery';
-import { NodeListItemType } from '../../types/common';
 
 interface FileListProps {
 	fileId: string;
 	canUploadFile: boolean;
 }
 
-const FileList: React.VFC<FileListProps> = ({ fileId, canUploadFile }) => {
+const FileList = ({ fileId, canUploadFile }: FileListProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { data: nodeData, loading, loadMore, hasMore } = useGetNodeQuery(fileId);
-	const node = useMemo(() => nodeData?.getNode || null, [nodeData]);
+	const node = useMemo(() => nodeData?.getNode ?? null, [nodeData]);
 
 	const { setActiveNode, tab } = useActiveNode();
 
@@ -29,7 +29,7 @@ const FileList: React.VFC<FileListProps> = ({ fileId, canUploadFile }) => {
 		setActiveNode(fileId, tab);
 	}, [fileId, setActiveNode, tab]);
 
-	const nodes = useMemo<NodeListItemType[]>(() => {
+	const nodes = useMemo(() => {
 		if (node) {
 			return [node];
 		}
@@ -37,15 +37,17 @@ const FileList: React.VFC<FileListProps> = ({ fileId, canUploadFile }) => {
 	}, [node]);
 
 	return (
-		<List
-			nodes={nodes}
-			hasMore={hasMore}
-			loadMore={loadMore}
-			loading={loading}
-			canUpload={canUploadFile}
-			emptyListMessage={t('empty.folder.hint', "It looks like there's nothing here.")}
-			mainList={false}
-		/>
+		<SelectionProvider items={nodes}>
+			<List
+				nodes={nodes}
+				hasMore={hasMore}
+				loadMore={loadMore}
+				loading={loading}
+				canUpload={canUploadFile}
+				emptyListMessage={t('empty.folder.hint', "It looks like there's nothing here.")}
+				mainList={false}
+			/>
+		</SelectionProvider>
 	);
 };
 

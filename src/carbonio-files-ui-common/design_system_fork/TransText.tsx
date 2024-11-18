@@ -7,37 +7,26 @@
 import React from 'react';
 
 import { Text, TextProps } from '@zextras/carbonio-design-system';
-import type { TOptions } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 
-interface TransTextProps extends TextProps {
-	// i18next Trans props
-	i18nKey: string;
-	components?: readonly React.ReactNode[] | { readonly [tagName: string]: React.ReactNode };
-	count?: number;
-	tOptions?: TOptions;
-	defaults?: string;
-	values?: Record<string, string>;
-}
+type TransTextProps = Pick<TextProps, 'weight' | 'size' | 'color' | 'overflow' | 'disabled'> &
+	React.ComponentProps<typeof Trans>;
 
-export const TransText: React.FC<TransTextProps> = ({
+export const TransText = ({
 	weight,
 	size,
 	color,
 	overflow,
 	disabled,
 	// i18next Trans props
-	i18nKey,
-	count,
-	tOptions,
-	values,
-	children
-}) => {
+	children,
+	...rest
+}: TransTextProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	return (
 		<Text weight={weight} size={size} color={color} overflow={overflow} disabled={disabled}>
-			<Trans t={t} i18nKey={i18nKey} count={count} tOptions={tOptions} values={values}>
+			<Trans t={t} {...rest}>
 				{children}
 			</Trans>
 		</Text>

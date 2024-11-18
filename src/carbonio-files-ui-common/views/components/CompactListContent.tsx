@@ -6,31 +6,41 @@
 
 import React, { useMemo } from 'react';
 
-import { ListV2 } from '@zextras/carbonio-design-system';
+import { List } from '@zextras/carbonio-design-system';
 import { map } from 'lodash';
 
-import { CompactNodeListItem } from './CompactNodeListItem';
+import { CompactNodeListItem, CompactNodeListItemProps } from './CompactNodeListItem';
 import { ROOTS } from '../../constants';
-import { NodeListItemType } from '../../types/common';
+import { File, Folder, Node as GQLNode } from '../../types/graphql/types';
 import { OneOrMany } from '../../types/utils';
 
-interface ListContentProps {
-	nodes: NodeListItemType[];
-	activeNodes?: OneOrMany<string>;
-	setActiveNode?: (node: NodeListItemType, event: React.SyntheticEvent) => void;
-	navigateTo?: (id: string, event?: React.SyntheticEvent | Event) => void;
+type NodeItem = Pick<GQLNode, 'id' | 'name' | 'type'> &
+	(
+		| Pick<File, '__typename' | 'mime_type' | 'rootId'>
+		| Pick<Folder, '__typename' | 'rootId'>
+		| { __typename?: never; rootId?: never }
+	) & {
+		disabled?: boolean;
+		selectable?: boolean;
+	};
+
+export interface CompactListContentProps<TNode extends NodeItem = NodeItem> {
+	nodes: TNode[];
+	activeNodes: OneOrMany<string> | undefined;
+	setActiveNode: CompactNodeListItemProps<TNode>['setActive'];
+	navigateTo: CompactNodeListItemProps<TNode>['navigateTo'];
 	hasMore?: boolean;
 	loadMore?: () => void;
 }
 
-export const CompactListContent = ({
+export const CompactListContent = <TNode extends NodeItem = NodeItem>({
 	nodes,
 	activeNodes,
 	setActiveNode,
 	navigateTo,
 	hasMore = false,
 	loadMore = (): void => undefined
-}: ListContentProps): React.JSX.Element => {
+}: CompactListContentProps<TNode>): React.JSX.Element => {
 	const intersectionObserverInitOptions = useMemo(() => ({ threshold: 0.5 }), []);
 
 	const items = useMemo(
@@ -54,7 +64,7 @@ export const CompactListContent = ({
 	);
 
 	return (
-		<ListV2
+		<List
 			maxHeight={'100%'}
 			height={'auto'}
 			data-testid="main-list"
@@ -63,6 +73,6 @@ export const CompactListContent = ({
 			intersectionObserverInitOptions={intersectionObserverInitOptions}
 		>
 			{items}
-		</ListV2>
+		</List>
 	);
 };

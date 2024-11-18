@@ -6,16 +6,15 @@
 
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { registerFunctions } from '@zextras/carbonio-shell-ui';
-import { map, find } from 'lodash';
+import { map } from 'lodash';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
 import LINK from '../carbonio-files-ui-common/graphql/fragments/link.graphql';
 import { NodeCachedObject } from '../carbonio-files-ui-common/types/apollo';
-import { NodeWithMetadata } from '../carbonio-files-ui-common/types/common';
+import { Node } from '../carbonio-files-ui-common/types/common';
 import {
 	CreateLinkDocument,
 	CreateLinkMutation,
-	CreateLinkMutationVariables,
 	GetLinksDocument,
 	GetLinksQuery,
 	GetLinksQueryVariables,
@@ -23,15 +22,16 @@ import {
 } from '../carbonio-files-ui-common/types/graphql/types';
 import { FUNCTION_IDS } from '../constants';
 
+type LinkNode = { __typename: Node['__typename']; id: Node<'id'>['id'] };
 type CreateLinkType = {
-	node: Pick<NodeWithMetadata, 'id' | '__typename'>;
+	node: LinkNode;
 	description?: string;
 	expiresAt?: number;
 	type: 'createLink';
 };
 
 type GetLinksInfoType = {
-	node: Pick<NodeWithMetadata, 'id' | '__typename'>;
+	node: LinkNode;
 	type: 'getLinksInfo';
 	linkIds?: Array<string>;
 };
@@ -61,7 +61,7 @@ async function createLink(
 	{ node, description, expiresAt }: CreateLinkType
 ): Promise<CreateLinkMutation['createLink']> {
 	const { id, __typename } = node;
-	const value = await apolloClient.mutate<CreateLinkMutation, CreateLinkMutationVariables>({
+	const value = await apolloClient.mutate({
 		mutation: CreateLinkDocument,
 		variables: {
 			node_id: id,
@@ -102,14 +102,14 @@ async function getLinksInfo(
 		}
 	});
 	if (value?.data?.getLinks) {
-		const links = value?.data?.getLinks;
+		const links = value.data.getLinks;
 		if (linkIds) {
 			return map(linkIds, (id) => {
-				const link = find(links, (item) => item?.id === id);
+				const link = links.find((item) => item?.id === id);
 				return link ?? null;
 			});
 		}
-		return value.data.getLinks;
+		return links;
 	}
 	throw new Error('no data has been returned by query');
 }

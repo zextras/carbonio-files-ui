@@ -47,7 +47,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const StyledWrapper: React.FC = ({ children }) => (
+const StyledWrapper = ({ children }: React.PropsWithChildren): React.JSX.Element => (
 	<ThemeProvider loadDefaultFont={false} extension={themeOverride}>
 		<GlobalStyle />
 		{children}

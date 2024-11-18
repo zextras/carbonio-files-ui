@@ -13,5 +13,6 @@ fragment Parent on Node {
 		full_name
 		email
 	}
+	rootId
 	...Permissions
 }

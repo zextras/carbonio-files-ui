@@ -11,6 +11,7 @@ import { http, HttpResponse } from 'msw';
 
 import UploadView from './UploadView';
 import { ACTION_IDS } from '../../constants';
+import { NewAction } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import { uploadVar } from '../apollo/uploadVar';
 import {
@@ -38,7 +39,6 @@ import {
 	within,
 	spyOnUseCreateOptions
 } from '../tests/utils';
-import { Node } from '../types/common';
 import { UploadStatus } from '../types/graphql/client-types';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, GetChildrenDocument } from '../types/graphql/types';
@@ -99,6 +99,7 @@ describe('Upload view', () => {
 			setup(<UploadView />, { mocks });
 
 			const dropzone = await screen.findByText(/nothing here/i);
+			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			await uploadWithDnD(dropzone, dataTransferObj);
 			await screen.findByText(otherUploads[0].name);
 			// wait for the displayer to open
@@ -109,8 +110,8 @@ describe('Upload view', () => {
 			await screen.findAllByTestId(ICON_REGEXP.uploadCompleted);
 			expect(screen.getByText(/path/i)).toBeVisible();
 			expect(screen.getByText(/content/i)).toBeVisible();
-			expect(screen.getByText((folder.children.nodes[0] as Node).name)).toBeVisible();
-			expect(screen.getByText((folder.children.nodes[1] as Node).name)).toBeVisible();
+			expect(screen.getByText(folder.children.nodes[0]!.name)).toBeVisible();
+			expect(screen.getByText(folder.children.nodes[1]!.name)).toBeVisible();
 		});
 
 		test('When the first item uploaded is a folder, but the upload list is not empty, does not open displayer', async () => {
@@ -194,7 +195,7 @@ describe('Upload view', () => {
 		});
 		actions.forEach((action) => {
 			const actionIsDisabled = action.id !== ACTION_IDS.UPLOAD_FILE;
-			expect(action.action(undefined).disabled).toBe(actionIsDisabled);
+			expect((action.action(undefined) as NewAction).disabled).toBe(actionIsDisabled);
 		});
 	});
 
@@ -204,7 +205,7 @@ describe('Upload view', () => {
 		const { user } = setup(<UploadView />);
 		await screen.findByText(/nothing here/i);
 		const uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
-		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
+		uploadAction?.action('').execute(new KeyboardEvent(''));
 		await user.upload(inputElement, file);
 		expect(await screen.findByText(/Upload occurred in Files' Home/i)).toBeVisible();
 	});
@@ -232,7 +233,7 @@ describe('Upload view', () => {
 		const { user } = setup(<UploadView />, { mocks });
 		await screen.findByText(/nothing here/i);
 		const uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
-		uploadAction?.action('').onClick?.(new KeyboardEvent(''));
+		uploadAction?.action('').execute(new KeyboardEvent(''));
 		await user.upload(inputElement, file);
 		await waitFor(() => {
 			const localRootData = apolloClient.cache.readQuery({
@@ -256,9 +257,7 @@ describe('Upload view', () => {
 			)
 		);
 		setup(<UploadView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);
@@ -279,9 +278,7 @@ describe('Upload view', () => {
 			)
 		);
 		setup(<UploadView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);

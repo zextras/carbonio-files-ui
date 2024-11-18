@@ -7,7 +7,7 @@
 import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { Container, Row } from '@zextras/carbonio-design-system';
-import { forEach, isEmpty, reduce } from 'lodash';
+import { forEach, isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -24,22 +24,33 @@ import {
 	ROOTS
 } from '../../constants';
 import { useFindNodesQuery } from '../../hooks/graphql/queries/useFindNodesQuery';
-import { Crumb, NodeListItemType, RootListItemType } from '../../types/common';
-import { MakeOptional, NodeType } from '../../types/graphql/types';
+import { Crumb, Node } from '../../types/common';
+import { NodeType } from '../../types/graphql/types';
 import { OneOrMany } from '../../types/utils';
 import { cssCalcBuilder } from '../../utils/utils';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
 
+type NodeItem = Node<'id' | 'name' | 'type' | 'rootId' | 'permissions', 'mime_type'> & {
+	disabled?: boolean;
+	selectable?: boolean;
+};
+
+type RootItem = {
+	__typename?: never;
+	id: string;
+	name: string;
+	type: NodeType.Root;
+	disabled?: boolean;
+	selectable?: boolean;
+};
+
 interface RootsListProps {
-	activeNodes?: OneOrMany<string>;
-	setActiveNode: (
-		node: NodeListItemType | RootListItemType,
-		event: React.SyntheticEvent | Event
-	) => void;
+	activeNodes: OneOrMany<string> | undefined;
+	setActiveNode: (node: NodeItem | RootItem, event: React.SyntheticEvent | Event) => void;
 	navigateTo: (id: string, event?: React.SyntheticEvent | Event) => void;
 	showTrash?: boolean;
-	checkDisabled: (node: NodeListItemType | RootListItemType) => boolean;
-	checkSelectable: (node: NodeListItemType | RootListItemType) => boolean;
+	checkDisabled: (node: NodeItem | RootItem) => boolean;
+	checkSelectable: (node: NodeItem | RootItem) => boolean;
 }
 
 const ModalContainer = styled(Container)`
@@ -51,16 +62,16 @@ type FilterQueryParams = Pick<
 	'flagged' | 'sharedWithMe' | 'folderId' | 'cascade' | 'directShare'
 >;
 
-export const ModalRootsList: React.VFC<RootsListProps> = ({
+export const ModalRootsList = ({
 	activeNodes,
 	setActiveNode,
 	navigateTo,
 	showTrash = false,
 	checkDisabled,
 	checkSelectable
-}) => {
+}: RootsListProps): React.JSX.Element => {
 	const [t] = useTranslation();
-	const [filterQueryParams, setFilterQueryParam] = useState<FilterQueryParams>({});
+	const [filterQueryParams, setFilterQueryParams] = useState<FilterQueryParams>({});
 	const {
 		data: findNodesData,
 		loading,
@@ -72,7 +83,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 
 	useLayoutEffect(() => {
 		// scroll list container to top when folderId changes
-		listRef.current && listRef.current.scrollTo(0, 0);
+		listRef.current?.scrollTo(0, 0);
 	}, [filterQueryParams]);
 
 	const crumbs = useMemo<Crumb[]>(() => {
@@ -81,7 +92,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 			id: ROOTS.ENTRY_POINT,
 			label: t('modal.roots.rootsList', 'Files'),
 			onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
-				setFilterQueryParam({});
+				setFilterQueryParams({});
 				navigateTo('', event);
 			}
 		});
@@ -93,7 +104,7 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 					id: 'sharedWithMe',
 					label: sharedWithMeLabel,
 					onClick: (event: React.SyntheticEvent | KeyboardEvent) => {
-						setFilterQueryParam(FILTER_PARAMS.sharedWithMe);
+						setFilterQueryParams(FILTER_PARAMS.sharedWithMe);
 						setActiveNode(
 							{
 								id: ROOTS.SHARED_WITH_ME,
@@ -115,35 +126,22 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 
 	const nodes = useMemo(() => {
 		if (!isEmpty(filterQueryParams) && findNodesData?.findNodes) {
-			return reduce(
-				findNodesData?.findNodes.nodes,
-				(result: NodeListItemType[], node) => {
-					if (node) {
-						result.push({
-							...node,
-							disabled: checkDisabled(node),
-							selectable: checkSelectable(node)
-						});
-					}
-					return result;
-				},
-				[]
-			);
+			return findNodesData?.findNodes.nodes.reduce<NodeItem[]>((result, node) => {
+				if (node) {
+					result.push({
+						...node,
+						disabled: checkDisabled(node),
+						selectable: checkSelectable(node)
+					});
+				}
+				return result;
+			}, []);
 		}
 		return undefined;
 	}, [checkDisabled, checkSelectable, filterQueryParams, findNodesData?.findNodes]);
 
-	const rootNodes = useMemo<NodeListItemType[]>(() => {
-		const roots: Array<
-			| RootListItemType
-			| MakeOptional<
-					Pick<
-						NodeListItemType,
-						'id' | 'name' | 'type' | '__typename' | 'permissions' | 'disabled' | 'selectable'
-					>,
-					'permissions'
-			  >
-		> = [];
+	const rootNodes = useMemo<(NodeItem | RootItem)[]>(() => {
+		const roots: (NodeItem | RootItem)[] = [];
 		roots.push(
 			{
 				id: ROOTS.LOCAL_ROOT,
@@ -164,7 +162,8 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 					can_read_link: false,
 					can_read_share: false,
 					can_share: false
-				}
+				},
+				rootId: null
 			},
 			{
 				id: ROOTS.SHARED_WITH_ME,
@@ -185,18 +184,18 @@ export const ModalRootsList: React.VFC<RootsListProps> = ({
 			root.selectable = checkSelectable(root);
 		});
 
-		return roots as NodeListItemType[];
+		return roots;
 	}, [checkDisabled, checkSelectable, showTrash, t]);
 
 	const rootNavigationHandler = useCallback<typeof navigateTo>(
 		(id, event) => {
 			switch (id) {
 				case ROOTS.LOCAL_ROOT:
-					setFilterQueryParam({});
+					setFilterQueryParams({});
 					navigateTo(id, event);
 					break;
 				case ROOTS.SHARED_WITH_ME:
-					setFilterQueryParam(FILTER_PARAMS.sharedWithMe);
+					setFilterQueryParams(FILTER_PARAMS.sharedWithMe);
 					break;
 				default:
 					break;

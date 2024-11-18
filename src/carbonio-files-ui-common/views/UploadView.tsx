@@ -6,17 +6,20 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { useReactiveVar } from '@apollo/client';
 import { Snackbar } from '@zextras/carbonio-design-system';
-import { noop } from 'lodash';
+import { filter, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { OverQuotaBanner } from './components/OverQuotaBanner';
+import { SelectionProvider } from './components/SelectionProvider';
 import { UploadDisplayer } from './components/UploadDisplayer';
 import { UploadList } from './components/UploadList';
 import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
-import { useCreateOptions } from '../../hooks/useCreateOptions';
+import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
+import { uploadVar } from '../apollo/uploadVar';
 import { FILES_APP_ID, ROOTS, VIEW_MODE } from '../constants';
 import { ListContext } from '../contexts';
 import { useHealthInfo } from '../hooks/useHealthInfo';
@@ -25,7 +28,7 @@ import { DocsType } from '../types/common';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
-const UploadView: React.VFC = () => {
+const UploadView = (): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 	const { navigateToFolder } = useNavigation();
@@ -58,7 +61,7 @@ const UploadView: React.VFC = () => {
 	const { canUseDocs } = useHealthInfo();
 
 	useEffect(() => {
-		setCreateOptions(
+		setCreateOptions<NewAction>(
 			{
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
@@ -68,8 +71,8 @@ const UploadView: React.VFC = () => {
 					primary: true,
 					label: t('create.options.new.upload', 'Upload'),
 					icon: 'CloudUploadOutline',
-					onClick: (event): void => {
-						event && event.stopPropagation();
+					execute: (event): void => {
+						event?.stopPropagation();
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
 					},
@@ -85,7 +88,7 @@ const UploadView: React.VFC = () => {
 					label: t('create.options.new.folder', 'New folder'),
 					icon: 'FolderOutline',
 					disabled: true,
-					onClick: noop
+					execute: noop
 				})
 			},
 			...(canUseDocs
@@ -99,18 +102,16 @@ const UploadView: React.VFC = () => {
 								label: t('create.options.new.document', 'New document'),
 								icon: 'FileTextOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -125,18 +126,16 @@ const UploadView: React.VFC = () => {
 								label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 								icon: 'FileCalcOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -151,18 +150,16 @@ const UploadView: React.VFC = () => {
 								label: t('create.options.new.presentation', 'New presentation'),
 								icon: 'FilePresentationOutline',
 								disabled: true,
-								onClick: noop,
+								execute: noop,
 								items: [
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
 										label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-										onClick: noop,
 										disabled: true
 									},
 									{
 										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
 										label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-										onClick: noop,
 										disabled: true
 									}
 								]
@@ -195,11 +192,27 @@ const UploadView: React.VFC = () => {
 		[]
 	);
 
+	const uploadVarData = useReactiveVar(uploadVar);
+
+	const uploadItems = useMemo(
+		() => filter(uploadVarData, (upload) => upload.parentId === null),
+		[uploadVarData]
+	);
+
+	const ListComponent = useMemo(
+		() => (
+			<SelectionProvider items={uploadItems}>
+				<UploadList uploadItems={uploadItems} />
+			</SelectionProvider>
+		),
+		[uploadItems]
+	);
+
 	return (
 		<>
 			<OverQuotaBanner />
 			<ViewLayout
-				listComponent={<UploadList />}
+				listComponent={ListComponent}
 				displayerComponent={
 					<UploadDisplayer
 						translationKey="displayer.uploads"
@@ -211,7 +224,7 @@ const UploadView: React.VFC = () => {
 			<Snackbar
 				open={showUploadSnackbar}
 				onClose={closeUploadSnackbar}
-				type="info"
+				severity="info"
 				label={t('uploads.destination.home', "Upload occurred in Files' Home")}
 				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
 				onActionClick={uploadSnackbarAction}

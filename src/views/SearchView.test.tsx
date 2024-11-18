@@ -24,6 +24,10 @@ import server from '../mocks/server';
 
 jest.mock<typeof import('../hooks/useCreateOptions')>('../hooks/useCreateOptions');
 
+jest.mock<typeof import('../carbonio-files-ui-common/views/components/VirtualizedNodeListItem')>(
+	'../carbonio-files-ui-common/views/components/VirtualizedNodeListItem'
+);
+
 let updateQueryMock = jest.fn();
 
 beforeEach(() => {

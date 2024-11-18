@@ -22,6 +22,7 @@ let mockedUserLogged: User;
 
 beforeEach(() => {
 	mockedUserLogged = {
+		__typename: 'User',
 		id: global.mockedUserLogged.id,
 		full_name: global.mockedUserLogged.name || '',
 		email: faker.internet.email()

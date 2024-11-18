@@ -30,7 +30,7 @@ import { OwnerChipInput } from './OwnerChipInput';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { ROOTS } from '../../constants';
 import { useDestinationVarManager } from '../../hooks/useDestinationVarManager';
-import { AdvancedFilters, NodeListItemType } from '../../types/common';
+import { AdvancedFilters, Node } from '../../types/common';
 import { Folder } from '../../types/graphql/types';
 
 const FolderChipInput = styled(ChipInput)`
@@ -46,20 +46,17 @@ interface AdvancedSearchModalContentProps {
 	searchAdvancedFilters: (advancedFilters: AdvancedFilters) => void;
 }
 
-export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentProps> = ({
+export const AdvancedSearchModalContent = ({
 	filters,
 	closeAction,
 	searchAdvancedFilters
-}) => {
+}: AdvancedSearchModalContentProps): React.JSX.Element => {
 	const { activeNodeId, removeActiveNode } = useActiveNode();
 	const [t] = useTranslation();
 	const [currentFilters, setCurrentFilters] = useState<AdvancedFilters>(filters);
 	const [keywordsHasTextContent, setKeywordsHasTextContent] = useState<boolean>(false);
 	const folderChipInputRef = useRef<HTMLInputElement>(null);
-	const { resetAll, resetCurrent } = useDestinationVarManager<Pick<
-		NodeListItemType,
-		'id' | 'name'
-	> | null>();
+	const { resetAll, resetCurrent } = useDestinationVarManager<Node<'id' | 'name'> | null>();
 
 	const keywords = useMemo<ChipItem[]>(() => {
 		if (currentFilters.keywords) {
@@ -128,19 +125,16 @@ export const AdvancedSearchModalContent: React.VFC<AdvancedSearchModalContentPro
 		[updateFilter]
 	);
 
-	const keywordsOnAdd = useCallback<NonNullable<ChipInputProps['onAdd']>>(
-		(keyword: string | unknown) => {
-			if (typeof keyword === 'string') {
-				return {
-					label: keyword,
-					hasAvatar: false,
-					value: keyword
-				};
-			}
-			throw new Error('invalid keywords received');
-		},
-		[]
-	);
+	const keywordsOnAdd = useCallback<NonNullable<ChipInputProps['onAdd']>>((keyword) => {
+		if (typeof keyword === 'string') {
+			return {
+				label: keyword,
+				hasAvatar: false,
+				value: keyword
+			};
+		}
+		throw new Error('invalid keywords received');
+	}, []);
 
 	const keywordsOnType = useCallback<NonNullable<ChipInputProps['onInputType']>>(
 		({ textContent }) => {

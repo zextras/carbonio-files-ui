@@ -158,7 +158,7 @@ export function getPreviewOutputFormat(
 }
 
 export function getPreviewSrc(
-	node: File,
+	node: Pick<File, 'id' | 'version' | 'mime_type'>,
 	documentType: ReturnType<typeof isSupportedByPreview>[1]
 ): string {
 	return (

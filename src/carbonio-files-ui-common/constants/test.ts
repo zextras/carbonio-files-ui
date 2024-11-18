@@ -83,7 +83,10 @@ export const ICON_REGEXP = {
 	openedAdvancedFilters: 'icon: ChevronUp',
 	closedAdvancedFilters: 'icon: ChevronDown',
 	listViewMode: 'icon: ListOutline',
-	gridViewMode: 'icon: GridOutline'
+	gridViewMode: 'icon: GridOutline',
+	eyePasswordOff: 'icon: EyeOffOutline',
+	eyePasswordOn: 'icon: EyeOutline',
+	regenerateAccessCode: 'icon: Refresh'
 } as const;
 
 export const SELECTORS = {
@@ -133,7 +136,9 @@ export const SELECTORS = {
 	popper: 'popper',
 	mainList: 'main-list',
 	mainGrid: 'main-grid',
-	gridCellThumbnail: 'grid-cell-thumbnail'
+	gridCellThumbnail: 'grid-cell-thumbnail',
+	virtualizedNodeListItem: 'virtualized-node-list-item',
+	snackbar: 'snackbar'
 };
 
 export const EMITTER_CODES = {
@@ -169,7 +174,8 @@ export const COLORS = {
 
 export const TIMERS = {
 	modalDelayOpen: 1,
-	snackbarHide: 4000
+	snackbarHide: 4000,
+	dropdownListeners: 1
 };
 export const DISPLAYER_EMPTY_MESSAGE = 'View files and folders, share them with your contacts.';
 export const LIST_EMPTY_MESSAGE = "It looks like there's nothing here.";

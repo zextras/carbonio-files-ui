@@ -29,7 +29,7 @@ import {
 import { getDocumentGenericType, isFolder, scrollToNodeItem } from '../utils/utils';
 
 type UseCreateDocsFileReturnType = (
-	parentFolder: Pick<Folder, '__typename' | 'id' | 'children'>,
+	parentFolder: Pick<Folder, '__typename' | 'id'>,
 	name: string,
 	type: DocsType
 ) => Promise<FetchResult<CreateDocsFile> | undefined>;
@@ -78,11 +78,7 @@ export const useCreateDocsFile = (): UseCreateDocsFileReturnType => {
 	);
 
 	return useCallback<UseCreateDocsFileReturnType>(
-		async (
-			parentFolder: Pick<Folder, '__typename' | 'id' | 'children'>,
-			name: string,
-			type: DocsType
-		) => {
+		async (parentFolder: Pick<Folder, '__typename' | 'id'>, name: string, type: DocsType) => {
 			const url = `${DOCS_ENDPOINT}${CREATE_FILE_PATH}`;
 			const file = { name, type, parentId: parentFolder.id };
 			const response = await fetch(url, {

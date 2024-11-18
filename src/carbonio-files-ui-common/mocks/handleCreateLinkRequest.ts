@@ -7,17 +7,16 @@
 import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateLink } from './mockUtils';
-import { Node } from '../types/common';
-import { CreateLinkMutation, CreateLinkMutationVariables } from '../types/graphql/types';
+import { CreateLinkMutation, CreateLinkMutationVariables, Link } from '../types/graphql/types';
 
 const handleCreateLinkRequest: GraphQLResponseResolver<
 	CreateLinkMutation,
 	CreateLinkMutationVariables
 > = ({ variables }) => {
 	const { node_id: nodeId, description, expires_at: expiresAt } = variables;
-	const link = populateLink({ id: nodeId } as Node);
-	link.expires_at = expiresAt;
-	link.description = description;
+	const link = populateLink({ id: nodeId } as Link['node']);
+	link.expires_at = expiresAt ?? null;
+	link.description = description ?? null;
 
 	return HttpResponse.json({
 		data: {

@@ -8,108 +8,80 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
-import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
-import { HeaderAction } from '@zextras/carbonio-ui-preview/lib/preview/Header';
-import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
-import { TFunction } from 'i18next';
-import { isEmpty, find, filter, includes, reduce, size, some } from 'lodash';
+import { PreviewItem, PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
 import { EmptyFolder } from './EmptyFolder';
 import { ListContent } from './ListContent';
+import { useSelectionContext } from './SelectionProvider';
 import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
-import { useUserInfo } from '../../../hooks/useUserInfo';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
-import { DISPLAYER_TABS, DRAG_TYPES, PREVIEW_MAX_SIZE, PREVIEW_TYPE, ROOTS } from '../../constants';
+import {
+	DISPLAYER_TABS,
+	DOWNLOAD_PATH,
+	DRAG_TYPES,
+	PREVIEW_MAX_SIZE,
+	PREVIEW_TYPE,
+	REST_ENDPOINT,
+	ROOTS
+} from '../../constants';
 import { ListContext, NodeAvatarIconContext } from '../../contexts';
 import {
 	DeleteNodesType,
 	useDeleteNodesMutation
 } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
-import {
-	FlagNodesType,
-	useFlagNodesMutation
-} from '../../hooks/graphql/mutations/useFlagNodesMutation';
+import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
 import { useMoveNodesMutation } from '../../hooks/graphql/mutations/useMoveNodesMutation';
-import {
-	RestoreType,
-	useRestoreNodesMutation
-} from '../../hooks/graphql/mutations/useRestoreNodesMutation';
-import {
-	TrashNodesType,
-	useTrashNodesMutation
-} from '../../hooks/graphql/mutations/useTrashNodesMutation';
+import { useRestoreNodesMutation } from '../../hooks/graphql/mutations/useRestoreNodesMutation';
+import { useTrashNodesMutation } from '../../hooks/graphql/mutations/useTrashNodesMutation';
 import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
 import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useHeaderActions } from '../../hooks/useHeaderActions';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
-import useSelection from '../../hooks/useSelection';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { useUpload } from '../../hooks/useUpload';
-import { Action, Crumb, NodeListItemType } from '../../types/common';
-import { File, Folder, GetChildrenParentDocument } from '../../types/graphql/types';
+import { Crumb, Node } from '../../types/common';
+import { GetChildrenParentDocument, Maybe, NodeType, Share } from '../../types/graphql/types';
+import { DeepPick } from '../../types/utils';
 import {
-	ActionsFactoryChecker,
-	ActionsFactoryCheckerMap,
+	Action,
 	buildActionItems,
 	canBeMoveDestination,
-	canEdit,
-	canOpenWithDocs,
 	getAllPermittedActions
 } from '../../utils/ActionsFactory';
 import { getPreviewSrc, isSupportedByPreview } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
-import { downloadNode, humanFileSize, isFile, isFolder, openNodeWithDocs } from '../../utils/utils';
+import { downloadNode, humanFileSize, isFile, isFolder } from '../../utils/utils';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};
 `;
 
-function getHeaderActions(
-	t: TFunction,
-	setActiveNode: ReturnType<typeof useActiveNode>['setActiveNode'],
-	node: File,
-	canUseDocs: boolean
-): Array<HeaderAction> {
-	const actions: Array<HeaderAction> = [
-		{
-			icon: 'ShareOutline',
-			id: 'ShareOutline',
-			tooltipLabel: t('preview.actions.tooltip.manageShares', 'Manage shares'),
-			onClick: (): void => setActiveNode(node.id, DISPLAYER_TABS.sharing)
-		},
-		{
-			icon: 'DownloadOutline',
-			tooltipLabel: t('preview.actions.tooltip.download', 'Download'),
-			id: 'DownloadOutline',
-			onClick: (): void => downloadNode(node.id)
-		}
-	];
-	if (canEdit({ nodes: [node], canUseDocs })) {
-		actions.unshift({
-			icon: 'Edit2Outline',
-			id: 'Edit',
-			onClick: (): void => openNodeWithDocs(node.id),
-			tooltipLabel: t('preview.actions.tooltip.edit', 'Edit')
-		});
-	} else if (canOpenWithDocs({ nodes: [node], canUseDocs })) {
-		actions.unshift({
-			id: 'OpenWithDocs',
-			icon: 'BookOpenOutline',
-			tooltipLabel: t('actions.openWithDocs', 'Open document'),
-			onClick: (): void => openNodeWithDocs(node.id)
-		});
-	}
-	return actions;
-}
+type NodeItem = Node<
+	| 'id'
+	| 'name'
+	| 'permissions'
+	| 'type'
+	| 'rootId'
+	| 'flagged'
+	| 'updated_at'
+	| 'owner'
+	| 'last_editor',
+	'mime_type' | 'extension' | 'size' | 'version'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> & {
+		shares: Maybe<Pick<Share, '__typename'>>[];
+	};
 
 interface ListProps {
-	nodes: NodeListItemType[];
+	nodes: NodeItem[];
 	loading?: boolean;
 	hasMore?: boolean;
 	loadMore?: () => void;
@@ -121,7 +93,7 @@ interface ListProps {
 	fillerWithActions?: React.JSX.Element;
 }
 
-export const List: React.VFC<ListProps> = ({
+export const List = ({
 	nodes,
 	loading,
 	hasMore,
@@ -132,7 +104,7 @@ export const List: React.VFC<ListProps> = ({
 	emptyListMessage,
 	canUpload = true,
 	fillerWithActions
-}) => {
+}: ListProps): React.JSX.Element => {
 	const { navigateToFolder } = useNavigation();
 	const { setActiveNode } = useActiveNode();
 	const [t] = useTranslation();
@@ -154,7 +126,7 @@ export const List: React.VFC<ListProps> = ({
 		icons?: string[];
 	}>();
 
-	const folderNode = useMemo<Pick<Folder, '__typename' | 'id' | 'owner' | 'permissions'> | null>(
+	const folderNode = useMemo(
 		() =>
 			getChildrenParentData?.getNode &&
 			getChildrenParentData?.getNode.id === folderId &&
@@ -173,57 +145,26 @@ export const List: React.VFC<ListProps> = ({
 		setIsEmpty(!loading && nodes.length === 0);
 	}, [loading, nodes.length, setIsEmpty]);
 
-	const {
-		selectedIDs,
-		selectedMap,
-		selectId,
-		isSelectionModeActive,
-		unSelectAll,
-		selectAll,
-		exitSelectionMode
-	} = useSelection(nodes);
+	const { exitSelectionMode, selectedIDs } = useSelectionContext();
 
 	const { openMoveNodesModal } = useMoveModal(exitSelectionMode);
 
 	const { openCopyNodesModal } = useCopyModal(exitSelectionMode);
 
 	const selectedNodes = useMemo(
-		() => filter(nodes, (node) => includes(selectedIDs, node.id)),
+		() => nodes.filter((node) => selectedIDs.includes(node.id)),
 		[nodes, selectedIDs]
 	);
-
-	const { me } = useUserInfo();
-
-	const moveCheckFunction = useCallback<ActionsFactoryChecker>(
-		(nodesToMove) => {
-			// move for multiple selection is permitted only inside folders because of the workspace concept,
-			// which limits the tree where the user can move a node into, considering shares and permissions
-			const selectedSize = size(nodesToMove);
-			return !!folderId || selectedSize === 1;
-		},
-		[folderId]
-	);
-
+	const openNodeWithDocs = useOpenWithDocs();
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
-	const actionCheckers = useMemo<ActionsFactoryCheckerMap>(
-		() => ({
-			[Action.Move]: moveCheckFunction
-		}),
-		[moveCheckFunction]
-	);
-
 	const permittedSelectionModeActions = useMemo(
-		() =>
-			// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-			getAllPermittedActions(selectedNodes, me, canUsePreview, canUseDocs, actionCheckers),
-		[actionCheckers, canUseDocs, canUsePreview, me, selectedNodes]
+		() => getAllPermittedActions({ nodes: selectedNodes, canUsePreview, canUseDocs }),
+		[canUseDocs, canUsePreview, selectedNodes]
 	);
 
-	const setActiveNodeHandler = useCallback<
-		(node: Pick<NodeListItemType, 'id'>, event?: React.SyntheticEvent) => void
-	>(
-		(node, event) => {
+	const setActiveNodeHandler = useCallback(
+		(node: { id: string }, event?: React.SyntheticEvent) => {
 			if (!event?.defaultPrevented) {
 				setActiveNode(node.id);
 			}
@@ -244,32 +185,29 @@ export const List: React.VFC<ListProps> = ({
 	 * Set flagValue for selected nodes.
 	 * @param {boolean} flagValue - value to set
 	 */
-	const toggleFlagSelection = useCallback<FlagNodesType>(
-		(flagValue) =>
+	const toggleFlagSelection = useCallback(
+		(flagValue: boolean) => {
 			toggleFlag(flagValue, ...selectedNodes).then((result) => {
 				exitSelectionMode();
 				return result;
-			}),
+			});
+		},
 		[toggleFlag, selectedNodes, exitSelectionMode]
 	);
 
-	const markForDeletionSelection = useCallback<() => ReturnType<TrashNodesType>>(
-		() =>
-			markNodesForDeletion(...selectedNodes).then((result) => {
-				exitSelectionMode();
-				return result;
-			}),
-		[markNodesForDeletion, selectedNodes, exitSelectionMode]
-	);
+	const markForDeletionSelection = useCallback<() => void>(() => {
+		markNodesForDeletion(...selectedNodes).then((result) => {
+			exitSelectionMode();
+			return result;
+		});
+	}, [markNodesForDeletion, selectedNodes, exitSelectionMode]);
 
-	const restoreSelection = useCallback<() => ReturnType<RestoreType>>(
-		() =>
-			restore(...selectedNodes).then((result) => {
-				exitSelectionMode();
-				return result;
-			}),
-		[restore, selectedNodes, exitSelectionMode]
-	);
+	const restoreSelection = useCallback<() => void>(() => {
+		restore(...selectedNodes).then((result) => {
+			exitSelectionMode();
+			return result;
+		});
+	}, [restore, selectedNodes, exitSelectionMode]);
 
 	const deletePermanentlySelection = useCallback<DeleteNodesType>(
 		() => deletePermanently(...selectedNodes),
@@ -309,7 +247,7 @@ export const List: React.VFC<ListProps> = ({
 	const createSnackbar = useSnackbar();
 
 	const downloadSelection = useCallback(() => {
-		const nodeToDownload = find(nodes, (node) => node.id === selectedIDs[0]);
+		const nodeToDownload = nodes.find((node) => node.id === selectedIDs[0]);
 		if (nodeToDownload) {
 			// download node without version to be sure last version is downloaded
 			downloadNode(nodeToDownload.id);
@@ -328,7 +266,7 @@ export const List: React.VFC<ListProps> = ({
 
 	const sendViaMailCallback = useCallback(() => {
 		exitSelectionMode();
-		const nodeToSend = find(nodes, (node) => node.id === selectedIDs[0]);
+		const nodeToSend = nodes.find((node) => node.id === selectedIDs[0]);
 		if (nodeToSend) {
 			sendViaMail(nodeToSend.id);
 		}
@@ -336,69 +274,85 @@ export const List: React.VFC<ListProps> = ({
 
 	const manageSharesSelection = useCallback(() => {
 		exitSelectionMode();
-		const nodeToShare = find(nodes, (node) => node.id === selectedIDs[0]);
+		const nodeToShare = nodes.find((node) => node.id === selectedIDs[0]);
 		if (nodeToShare) {
 			setActiveNode(nodeToShare.id, DISPLAYER_TABS.sharing);
 		}
 	}, [exitSelectionMode, nodes, selectedIDs, setActiveNode]);
 
 	const openWithDocsSelection = useCallback(() => {
-		const nodeToOpen = find(nodes, (node) => node.id === selectedIDs[0]);
+		const nodeToOpen = nodes.find((node) => node.id === selectedIDs[0]);
 		if (nodeToOpen) {
 			openNodeWithDocs(nodeToOpen.id);
 			exitSelectionMode();
 		}
-	}, [nodes, selectedIDs, exitSelectionMode]);
+	}, [nodes, selectedIDs, openNodeWithDocs, exitSelectionMode]);
 
 	const { initPreview, emptyPreview, openPreview } = useContext(PreviewsManagerContext);
 
+	const getHeaderActions = useHeaderActions();
+
 	const nodesForPreview = useMemo(
 		() =>
-			reduce(
-				nodes,
-				(accumulator: Parameters<PreviewManagerContextType['initPreview']>[0], node) => {
-					if (!isFile(node)) {
-						return accumulator;
-					}
-					const [$isSupportedByPreview, documentType] = isSupportedByPreview(
-						node.mime_type,
-						'preview'
-					);
-					if (!$isSupportedByPreview) {
-						return accumulator;
-					}
-					const item = {
-						filename: node.name,
-						extension: node.extension ?? undefined,
-						size: (node.size !== undefined && humanFileSize(node.size, t)) || undefined,
-						actions: getHeaderActions(t, setActiveNode, node, canUseDocs),
-						closeAction: {
-							id: 'close-action',
-							icon: 'ArrowBackOutline',
-							tooltipLabel: t('preview.close.tooltip', 'Close')
-						},
-						src: getPreviewSrc(node, documentType),
-						id: node.id
-					};
-
-					if (documentType === PREVIEW_TYPE.IMAGE) {
-						accumulator.push({
-							...item,
-							previewType: 'image'
-						});
-					} else {
-						accumulator.push({
-							...item,
-							forceCache: false,
-							previewType: 'pdf',
-							useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE
-						});
-					}
+			nodes.reduce<PreviewItem[]>((accumulator, node) => {
+				if (!isFile(node)) {
 					return accumulator;
-				},
-				[]
-			),
-		[canUseDocs, nodes, setActiveNode, t]
+				}
+				const item = {
+					filename: node.name,
+					extension: node.extension ?? undefined,
+					size: (node.size !== undefined && humanFileSize(node.size, t)) || undefined,
+					actions: getHeaderActions(node),
+					closeAction: {
+						id: 'close-action',
+						icon: 'ArrowBackOutline',
+						tooltipLabel: t('preview.close.tooltip', 'Close')
+					},
+					id: node.id
+				};
+
+				if (node.type === NodeType.Video) {
+					const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(node.id)}${
+						node.version ? `/${node.version}` : ''
+					}`;
+					accumulator.push({
+						...item,
+						mimeType: node.mime_type,
+						src: url,
+						previewType: 'video',
+						errorLabel: t(
+							'preview.video.errorLabel',
+							'This video cannot be played. Try to reproduce it using another browser'
+						)
+					});
+					return accumulator;
+				}
+				const [$isSupportedByPreview, documentType] = isSupportedByPreview(
+					node.mime_type,
+					'preview'
+				);
+				if (!$isSupportedByPreview) {
+					return accumulator;
+				}
+
+				if (documentType === PREVIEW_TYPE.IMAGE) {
+					accumulator.push({
+						...item,
+						src: getPreviewSrc(node, documentType),
+						previewType: 'image'
+					});
+				} else {
+					accumulator.push({
+						...item,
+						src: getPreviewSrc(node, documentType),
+						forceCache: false,
+						previewType: 'pdf',
+						useFallback: node.size !== undefined && node.size > PREVIEW_MAX_SIZE
+					});
+				}
+				return accumulator;
+			}, []),
+		[getHeaderActions, nodes, t]
 	);
 
 	useEffect(() => {
@@ -407,16 +361,16 @@ export const List: React.VFC<ListProps> = ({
 	}, [emptyPreview, initPreview, nodesForPreview]);
 
 	const previewSelection = useCallback(() => {
-		const nodeToPreview = find(nodes, (node) => node.id === selectedIDs[0]);
-		const { id, mime_type: mimeType } = nodeToPreview as File;
-		const [$isSupportedByPreview] = isSupportedByPreview(mimeType, 'preview');
-		if ($isSupportedByPreview) {
-			openPreview(id);
-		} else if (includes(permittedSelectionModeActions, Action.OpenWithDocs)) {
-			// if preview is not supported and document can be opened with docs, open editor
-			openNodeWithDocs(id);
+		const nodeToPreview = nodes.find((node) => node.id === selectedIDs[0]);
+		if (nodeToPreview) {
+			if (permittedSelectionModeActions.includes(Action.Preview)) {
+				openPreview(nodeToPreview.id);
+			} else if (permittedSelectionModeActions.includes(Action.OpenWithDocs)) {
+				// if preview is not supported and document can be opened with docs, open editor
+				openNodeWithDocs(nodeToPreview.id);
+			}
 		}
-	}, [nodes, permittedSelectionModeActions, selectedIDs, openPreview]);
+	}, [nodes, permittedSelectionModeActions, selectedIDs, openPreview, openNodeWithDocs]);
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
@@ -536,7 +490,7 @@ export const List: React.VFC<ListProps> = ({
 	const uploadWithDragAndDrop = useCallback<React.DragEventHandler>(
 		(event) => {
 			if (canUpload) {
-				add(getUploadAddType(event.dataTransfer), folderId || ROOTS.LOCAL_ROOT);
+				add(getUploadAddType(event.dataTransfer), folderId ?? ROOTS.LOCAL_ROOT);
 				if (!folderId) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
@@ -569,28 +523,28 @@ export const List: React.VFC<ListProps> = ({
 		[exitSelectionMode, folderNode, moveNodesMutation]
 	);
 
-	const [dragging, isDragged] = useMemo(
+	const [isDraggingNodes, isCurrentFolderDragged] = useMemo<[boolean, boolean]>(
 		() => [
-			!isEmpty(draggedItems),
-			!!folderId && !!draggedItems && some(draggedItems, (item) => item.id === folderId)
+			!!draggedItems && draggedItems.length > 0,
+			!!folderId && !!draggedItems?.some((item) => item.id === folderId)
 		],
 		[draggedItems, folderId]
 	);
 
 	const dropTypes = useMemo(() => {
 		const types = [DRAG_TYPES.upload];
-		if (!isDragged) {
+		if (!isCurrentFolderDragged) {
 			types.push(DRAG_TYPES.move);
 		}
 		return types;
-	}, [isDragged]);
+	}, [isCurrentFolderDragged]);
 
 	const dropEffect = useMemo(() => {
-		if (!isDragged) {
-			return dragging ? 'move' : 'copy';
+		if (!isCurrentFolderDragged) {
+			return isDraggingNodes ? 'move' : 'copy';
 		}
 		return 'none';
-	}, [dragging, isDragged]);
+	}, [isDraggingNodes, isCurrentFolderDragged]);
 
 	const dragMoveHandler = useCallback(() => {
 		const draggedNodes = draggedItemsVar();
@@ -598,7 +552,7 @@ export const List: React.VFC<ListProps> = ({
 			draggedNodes !== null &&
 			draggedNodes.length > 0 &&
 			folderNode !== null &&
-			canBeMoveDestination(folderNode, draggedNodes, me);
+			canBeMoveDestination(folderNode, draggedNodes);
 		setDropzoneModal(
 			canMove
 				? {
@@ -619,7 +573,7 @@ export const List: React.VFC<ListProps> = ({
 					}
 		);
 		return canMove;
-	}, [folderNode, me, t]);
+	}, [folderNode, t]);
 
 	const dragUploadHandler = useCallback(() => {
 		setDropzoneModal(
@@ -695,21 +649,15 @@ export const List: React.VFC<ListProps> = ({
 			background={'gray6'}
 		>
 			<ListHeader
-				selectedCount={size(selectedNodes)}
 				folderId={folderId}
 				crumbs={crumbs}
 				loadingData={loading || getChildrenParentLoading}
-				isSelectionModeActive={isSelectionModeActive}
-				isAllSelected={size(selectedIDs) === size(nodes)}
-				unSelectAll={unSelectAll}
-				selectAll={selectAll}
-				exitSelectionMode={exitSelectionMode}
 				permittedSelectionModeActionsItems={permittedSelectionModeActionsItems}
 			/>
 			<Dropzone
 				onDrop={dropHandler}
 				onDragEnter={dragEnterHandler}
-				disabled={isDragged || !dropzoneEnabled}
+				disabled={isCurrentFolderDragged || !dropzoneEnabled}
 				effect={dropEffect}
 				types={dropTypes}
 				title={dropzoneModal?.title}
@@ -722,13 +670,8 @@ export const List: React.VFC<ListProps> = ({
 							<NodeAvatarIconContext.Provider value={nodeAvatarIconContextValue}>
 								<ListContent
 									nodes={nodes}
-									selectedMap={selectedMap}
-									selectId={selectId}
-									isSelectionModeActive={isSelectionModeActive}
-									exitSelectionMode={exitSelectionMode}
 									hasMore={hasMore}
 									loadMore={loadMore}
-									customCheckers={actionCheckers}
 									selectionContextualMenuActionsItems={permittedSelectionModeActionsItems}
 									fillerWithActions={fillerWithActions}
 								/>

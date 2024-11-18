@@ -4,18 +4,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { lazy, useEffect, Suspense, useCallback, useMemo } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
 
 import { ApolloProvider } from '@apollo/client';
 import { ModalManager } from '@zextras/carbonio-design-system';
 import {
-	Spinner,
+	ACTION_TYPES,
 	addRoute,
 	addSearchView,
+	NewAction,
 	registerActions,
-	ACTION_TYPES,
+	SearchViewProps,
 	SecondaryBarComponentProps,
-	SearchViewProps
+	Spinner,
+	useAuthenticated
 } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -64,7 +66,7 @@ const SearchView = (props: SearchViewProps): React.JSX.Element => (
 	</Suspense>
 );
 
-export default function App(): React.JSX.Element {
+export function AuthenticatedApp(): React.JSX.Element {
 	const [t] = useTranslation();
 
 	const beforeunloadCallback = useCallback((e: Event) => {
@@ -99,6 +101,19 @@ export default function App(): React.JSX.Element {
 		inputElement.onchange = inputElementOnchange;
 	}, [inputElementOnchange]);
 
+	const newAction = useMemo(
+		(): NewAction => ({
+			id: 'upload-file',
+			label: t('create.options.new.upload', 'Upload'),
+			icon: 'CloudUploadOutline',
+			execute: uploadClick,
+			disabled: false,
+			primary: true,
+			group: FILES_APP_ID
+		}),
+		[t, uploadClick]
+	);
+
 	useEffect(() => {
 		addRoute({
 			route: FILES_ROUTE,
@@ -114,20 +129,12 @@ export default function App(): React.JSX.Element {
 			component: SearchView,
 			label: t('label.app_name', 'Files')
 		});
-		registerActions({
-			action: () => ({
-				id: 'upload-file',
-				label: t('create.options.new.upload', 'Upload'),
-				icon: 'CloudUploadOutline',
-				onClick: uploadClick,
-				disabled: false,
-				primary: true,
-				group: FILES_APP_ID
-			}),
+		registerActions<NewAction>({
+			action: () => newAction,
 			id: 'upload-file',
 			type: ACTION_TYPES.NEW
 		});
-	}, [uploadClick, t]);
+	}, [t, newAction]);
 
 	const apolloClient = useMemo(() => buildClient(), []);
 
@@ -140,3 +147,11 @@ export default function App(): React.JSX.Element {
 		</ApolloProvider>
 	);
 }
+
+function App(): React.JSX.Element | null {
+	const isAuthenticated = useAuthenticated();
+
+	return isAuthenticated ? <AuthenticatedApp /> : null;
+}
+
+export default App;

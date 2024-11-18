@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { GridContainer } from './GridElements';
-import UploadVersionButton, { UploadVersionButtonProps } from './UploadVersionButton';
+import UploadVersionButton from './UploadVersionButton';
 import { SectionRow, VersionRow } from './VersionRow';
 import { CONFIGS } from '../../../constants';
 import { useCloneVersionMutation } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
@@ -23,9 +23,9 @@ import { useGetConfigsQuery } from '../../../hooks/graphql/queries/useGetConfigs
 import { useGetVersionsQuery } from '../../../hooks/graphql/queries/useGetVersionsQuery';
 import { useConfirmationModal } from '../../../hooks/useConfirmationModal';
 import { useHealthInfo } from '../../../hooks/useHealthInfo';
-import { DeleteVersionsMutation, GetVersionsQuery } from '../../../types/graphql/types';
-import { NonNullableList, NonNullableListItem } from '../../../types/utils';
-import { ActionsFactoryNodeType, canOpenVersionWithDocs } from '../../../utils/ActionsFactory';
+import { DeleteVersionsMutation, File, GetVersionsQuery } from '../../../types/graphql/types';
+import { DeepPick, NonNullableList, NonNullableListItem } from '../../../types/utils';
+import { canOpenVersionWithDocs } from '../../../utils/ActionsFactory';
 import { cssCalcBuilder, getChipLabel } from '../../../utils/utils';
 
 type Version = NonNullableListItem<GetVersionsQuery['getVersions']>;
@@ -35,15 +35,16 @@ const MainContainer = styled(Container)`
 	overflow-y: auto;
 `;
 
+type NodeItem = Pick<File, '__typename' | 'id' | 'permissions' | 'rootId' | 'mime_type'> &
+	DeepPick<File, 'parent', 'id' | 'name'>;
 interface VersioningProps {
-	node: ActionsFactoryNodeType;
+	node: NodeItem;
 }
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
+export const Versioning = ({ node }: VersioningProps): React.JSX.Element => {
 	const [t] = useTranslation();
-
 	const deleteVersions = useDeleteVersionsMutation();
 	const keepVersions = useKeepVersionsMutation();
 	const cloneVersion = useCloneVersionMutation();
@@ -336,10 +337,7 @@ export const Versioning: React.VFC<VersioningProps> = ({ node }) => {
 					orientation="horizontal"
 					height="fit"
 				>
-					<UploadVersionButton
-						node={node as UploadVersionButtonProps['node']}
-						disabled={!node.permissions.can_write_file}
-					/>
+					<UploadVersionButton node={node} disabled={!node.permissions.can_write_file} />
 					<Padding right="small" />
 					<Button
 						type="outlined"

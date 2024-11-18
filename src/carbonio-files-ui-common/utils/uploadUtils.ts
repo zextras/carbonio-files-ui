@@ -453,13 +453,7 @@ export function upload(
 	xhr.setRequestHeader('Filename', encodeBase64(fileEnriched.file.name));
 	xhr.setRequestHeader('ParentId', fileEnriched.parentNodeId);
 
-	// check for upload existence in order to be able to test the upload with msw
-	// see https://github.com/mswjs/interceptors/issues/187
-	if (xhr.upload?.addEventListener) {
-		xhr.upload.addEventListener('progress', (ev: ProgressEvent) =>
-			updateProgress(ev, fileEnriched)
-		);
-	}
+	xhr.upload.addEventListener('progress', (ev: ProgressEvent) => updateProgress(ev, fileEnriched));
 
 	const uploadCompletedListener = (): void =>
 		uploadCompleted(xhr, fileEnriched, apolloClient, nodeSort, addNodeToFolder, false);

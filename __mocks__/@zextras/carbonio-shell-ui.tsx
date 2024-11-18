@@ -10,7 +10,7 @@ import * as shell from '@zextras/carbonio-shell-ui';
 import { useHistory } from 'react-router-dom';
 
 import { FILES_APP_ID, FILES_ROUTE } from '../../src/carbonio-files-ui-common/constants';
-import { LOGGED_USER } from '../../src/mocks/constants';
+import { LOGGED_USER_ACCOUNT } from '../../src/mocks/constants';
 
 export const useReplaceHistoryCallback: typeof shell.useReplaceHistoryCallback = () => {
 	const history = useHistory();
@@ -54,8 +54,8 @@ export const soapFetch: typeof shell.soapFetch = (req, body) =>
 		)
 	);
 
-export const useUserAccount: typeof shell.useUserAccount = () => LOGGED_USER;
-export const getUserAccount: typeof shell.getUserAccount = () => LOGGED_USER;
+export const useUserAccount: typeof shell.useUserAccount = () => LOGGED_USER_ACCOUNT;
+export const getUserAccount: typeof shell.getUserAccount = () => LOGGED_USER_ACCOUNT;
 export const report: typeof shell.report = () => '';
 export const ACTION_TYPES: Partial<typeof shell.ACTION_TYPES> = {
 	NEW: 'new'
@@ -78,5 +78,15 @@ export const EMAIL_VALIDATION_REGEX =
 	/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
 export const registerActions: typeof shell.registerActions = () => undefined;
+export const registerFunctions: typeof shell.registerFunctions = () => undefined;
+export const addRoute: typeof shell.addRoute = () => '';
+export const addSearchView: typeof shell.addSearchView = () => '';
 export const removeActions: typeof shell.removeActions = () => undefined;
 export const Spinner: typeof shell.Spinner = () => <>Spinner component stub</>;
+const noop = (): void => undefined;
+export const useTracker: typeof shell.useTracker = () => ({
+	capture: noop,
+	enableTracker: noop,
+	reset: noop
+});
+export const useAuthenticated: typeof shell.useAuthenticated = () => true;

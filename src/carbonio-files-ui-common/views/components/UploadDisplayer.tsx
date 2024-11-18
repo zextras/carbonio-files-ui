@@ -19,7 +19,10 @@ export interface DisplayerProps {
 	icons?: string[];
 }
 
-export const UploadDisplayer: React.VFC<DisplayerProps> = ({ translationKey, icons = [] }) => {
+export const UploadDisplayer = ({
+	translationKey,
+	icons = []
+}: DisplayerProps): React.JSX.Element => {
 	const { activeNodeId } = useActiveNode();
 	const { data } = useQuery(GetUploadItemDocument, {
 		variables: { id: activeNodeId || '' },

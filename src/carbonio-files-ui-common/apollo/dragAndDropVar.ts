@@ -6,6 +6,17 @@
 
 import { makeVar } from '@apollo/client';
 
-import { NodeListItemType } from '../types/common';
+import { Node } from '../types/common';
+import { DeepPick } from '../types/utils';
 
-export const draggedItemsVar = makeVar<NodeListItemType[] | null>(null);
+export type DraggedItem = Node<'id' | 'permissions' | 'rootId'> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
+
+declare global {
+	interface Window {
+		draggedItem?: DraggedItem[];
+	}
+}
+
+export const draggedItemsVar = makeVar<DraggedItem[] | null>(null);

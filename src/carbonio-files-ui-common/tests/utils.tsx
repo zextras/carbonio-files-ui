@@ -12,32 +12,30 @@ import { addMocksToSchema } from '@graphql-tools/mock';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
 	act,
-	ByRoleMatcher,
-	ByRoleOptions,
 	fireEvent,
-	GetAllBy,
-	queries,
-	queryHelpers,
 	render,
 	RenderOptions,
 	RenderResult,
 	screen as rtlScreen,
 	waitFor,
 	within as rtlWithin,
-	type Screen
+	type Screen,
+	RenderHookOptions,
+	RenderHookResult,
+	renderHook
 } from '@testing-library/react';
-import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
 import { ModalManager, SnackbarManager } from '@zextras/carbonio-design-system';
 import { PreviewManager } from '@zextras/carbonio-ui-preview';
 import { EventEmitter } from 'events';
 import { GraphQLError } from 'graphql';
-import { forEach, map, filter, reduce, merge, noop } from 'lodash';
+import { forEach, map, reduce, merge, noop } from 'lodash';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router-dom';
 
-import { CreateOption } from '../../hooks/useCreateOptions';
+import { queriesExtended } from './queries';
 import * as useCreateOptionsModule from '../../hooks/useCreateOptions';
+import { CreateOption } from '../../hooks/useCreateOptions';
 import I18nFactory from '../../mocks/i18n-test-factory';
 import StyledWrapper from '../../StyledWrapper';
 import { ERROR_CODE } from '../constants';
@@ -45,109 +43,13 @@ import { ICON_REGEXP, SELECTORS } from '../constants/test';
 import GRAPHQL_SCHEMA from '../graphql/schema.graphql';
 import { AdvancedFilters, Node } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
-import { File as FilesFile, Folder } from '../types/graphql/types';
+import { Folder } from '../types/graphql/types';
 import { resolvers } from '../utils/resolvers';
 import { asyncForEach, isFile, isFolder } from '../utils/utils';
 
 export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
 	readonly rightClick: (target: Element) => Promise<void>;
 };
-
-/**
- * Matcher function to search a string in more html elements and not just in a single element.
- */
-const queryAllByTextWithMarkup: GetAllBy<[string | RegExp]> = (container, text) =>
-	// eslint-disable-next-line testing-library/prefer-screen-queries
-	rtlScreen.queryAllByText((_content, element) => {
-		if (element && element instanceof HTMLElement) {
-			const hasText = (singleNode: Element): boolean => {
-				const regExp = RegExp(text);
-				return singleNode.textContent != null && regExp.test(singleNode.textContent);
-			};
-			// eslint-disable-next-line testing-library/no-node-access
-			const childrenDontHaveText = Array.from(element.children).every((child) => !hasText(child));
-			return hasText(element) && childrenDontHaveText;
-		}
-		return false;
-	});
-
-const getByTextWithMarkupMultipleError = (
-	container: Element | null,
-	text: string | RegExp
-): string => `Found multiple elements with text: ${text}`;
-const getByTextWithMarkupMissingError = (
-	container: Element | null,
-	text: string | RegExp
-): string => `Unable to find an element with text: ${text}`;
-
-type ByRoleWithIconOptions = ByRoleOptions & {
-	icon: string | RegExp;
-};
-/**
- * Matcher function to search an icon button through the icon data-testid
- */
-const queryAllByRoleWithIcon: GetAllBy<[ByRoleMatcher, ByRoleWithIconOptions]> = (
-	container,
-	role,
-	{ icon, ...options }
-) =>
-	filter(
-		rtlWithin(container).queryAllByRole(role, options),
-		(element) => rtlWithin(element).queryByTestId(icon) !== null
-	);
-const printRole = (role: ByRoleMatcher): string =>
-	typeof role === 'string' ? role : `unprintable matcher function ${JSON.stringify(role)}`;
-const getByRoleWithIconMultipleError = (
-	container: Element | null,
-	role: ByRoleMatcher,
-	options: ByRoleWithIconOptions
-): string => `Found multiple elements with role ${printRole(role)} and icon ${options.icon}`;
-const getByRoleWithIconMissingError = (
-	container: Element | null,
-	role: ByRoleMatcher,
-	options: ByRoleWithIconOptions
-): string => `Unable to find an element with role ${printRole(role)} and icon ${options.icon}`;
-
-const [
-	queryByTextWithMarkup,
-	getAllByTextWithMarkup,
-	getByTextWithMarkup,
-	findAllByTextWithMarkup,
-	findByTextWithMarkup
-] = queryHelpers.buildQueries<[string | RegExp]>(
-	queryAllByTextWithMarkup,
-	getByTextWithMarkupMultipleError,
-	getByTextWithMarkupMissingError
-);
-
-const [
-	queryByRoleWithIcon,
-	getAllByRoleWithIcon,
-	getByRoleWithIcon,
-	findAllByRoleWithIcon,
-	findByRoleWithIcon
-] = queryHelpers.buildQueries<[ByRoleMatcher, ByRoleWithIconOptions]>(
-	queryAllByRoleWithIcon,
-	getByRoleWithIconMultipleError,
-	getByRoleWithIconMissingError
-);
-
-const customQueries = {
-	// byTextWithMarkup
-	queryByTextWithMarkup,
-	getAllByTextWithMarkup,
-	getByTextWithMarkup,
-	findAllByTextWithMarkup,
-	findByTextWithMarkup,
-	// byRoleWithIcon
-	queryByRoleWithIcon,
-	getAllByRoleWithIcon,
-	getByRoleWithIcon,
-	findAllByRoleWithIcon,
-	findByRoleWithIcon
-};
-
-const queriesExtended = { ...queries, ...customQueries };
 
 export function within(
 	element: Parameters<typeof rtlWithin<typeof queriesExtended>>[0]
@@ -273,7 +175,7 @@ function customRender(
 				{children}
 			</Wrapper>
 		),
-		queries: { ...queries, ...customQueries },
+		queries: queriesExtended,
 		...options
 	});
 }
@@ -297,7 +199,7 @@ export const setup = (
 	ui: ReactElement,
 	options?: SetupOptions
 ): { user: UserEvent } & ReturnType<typeof customRender> => ({
-	user: setupUserEvent({ advanceTimers: jest.advanceTimersByTime, ...options?.setupOptions }),
+	user: setupUserEvent({ advanceTimers: jest.advanceTimersByTimeAsync, ...options?.setupOptions }),
 	...customRender(ui, {
 		initialRouterEntries: options?.initialRouterEntries,
 		mocks: options?.mocks,
@@ -311,8 +213,8 @@ export const setup = (
 export function setupHook<TProps, TResult>(
 	hook: (props: TProps) => TResult,
 	options?: Pick<WrapperProps, 'initialRouterEntries' | 'mocks'> & RenderHookOptions<TProps>
-): RenderHookResult<TProps, TResult> {
-	const view = renderHook<TProps, TResult>(hook, {
+): RenderHookResult<TResult, TProps> {
+	const view = renderHook<TResult, TProps>(hook, {
 		wrapper: ({ children }: Pick<WrapperProps, 'children'>) => (
 			<Wrapper {...options}>{children}</Wrapper>
 		)
@@ -323,40 +225,115 @@ export function setupHook<TProps, TResult>(
 	return view;
 }
 
-export async function triggerLoadMore(): Promise<void> {
-	expect(screen.getByTestId(ICON_REGEXP.queryLoading)).toBeVisible();
-	const { calls } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>).mock;
-	const [onChange] = calls[calls.length - 1];
-	// trigger the intersection on the observed element
-	await waitFor(() =>
-		onChange([
-			{
-				target: screen.getByTestId(ICON_REGEXP.queryLoading),
-				intersectionRatio: 0,
-				isIntersecting: true
-			}
-		])
-	);
-}
-
-export function triggerListLoadMore(callsIndex?: number, isIntersecting = true): void {
-	const { calls, instances } = (window.IntersectionObserver as jest.Mock<IntersectionObserver>)
-		.mock;
-
+export function triggerLoadMore(
+	{
+		target = screen.getByTestId(ICON_REGEXP.queryLoading),
+		...intersectionOptions
+	}: Partial<IntersectionObserverEntry> = {},
+	callsIndex: number = 0
+): void {
+	const { calls, instances } = jest.mocked(window.IntersectionObserver).mock;
 	const [onChange] = calls[callsIndex ?? calls.length - 1];
-	const instance = instances[instances.length - 1];
 	// trigger the intersection on the observed element
 	act(() => {
 		onChange(
 			[
 				{
-					target: screen.getByTestId('list-bottom-element'),
-					intersectionRatio: 0.5,
-					isIntersecting
-				} as unknown as IntersectionObserverEntry
+					target,
+					intersectionRatio: 0,
+					isIntersecting: true,
+					boundingClientRect: {
+						bottom: 0,
+						height: 0,
+						left: 0,
+						right: 0,
+						top: 0,
+						width: 0,
+						x: 0,
+						y: 0,
+						toJSON: (): string => {
+							throw new Error('Function not implemented.');
+						}
+					},
+					intersectionRect: {
+						bottom: 0,
+						height: 0,
+						left: 0,
+						right: 0,
+						top: 0,
+						width: 0,
+						x: 0,
+						y: 0,
+						toJSON: (): string => {
+							throw new Error('Function not implemented.');
+						}
+					},
+					rootBounds: null,
+					time: 0,
+					...intersectionOptions
+				}
 			],
-			instance
+			instances[instances.length - 1]
 		);
+	});
+}
+
+export function triggerListLoadMore(callsIndex?: number, isIntersecting = true): void {
+	triggerLoadMore(
+		{
+			target: screen.getByTestId('list-bottom-element'),
+			intersectionRatio: 0.5,
+			isIntersecting
+		},
+		callsIndex
+	);
+}
+
+export function makeListItemsVisible(): void {
+	const { calls, instances } = jest.mocked(window.IntersectionObserver).mock;
+	calls.forEach((call, index) => {
+		const [onChange] = call;
+		// trigger the intersection on the observed element
+		act(() => {
+			onChange(
+				[
+					{
+						intersectionRatio: 0,
+						isIntersecting: true,
+						boundingClientRect: {
+							bottom: 0,
+							height: 0,
+							left: 0,
+							right: 0,
+							top: 0,
+							width: 0,
+							x: 0,
+							y: 0,
+							toJSON: (): string => {
+								throw new Error('Function not implemented.');
+							}
+						},
+						intersectionRect: {
+							bottom: 0,
+							height: 0,
+							left: 0,
+							right: 0,
+							top: 0,
+							width: 0,
+							x: 0,
+							y: 0,
+							toJSON: (): string => {
+								throw new Error('Function not implemented.');
+							}
+						},
+						rootBounds: null,
+						target: document.documentElement,
+						time: 0
+					}
+				],
+				instances[index]
+			);
+		});
 	});
 }
 
@@ -395,8 +372,14 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 }
 
 export async function moveNode(destinationFolder: Folder, user: UserEvent): Promise<void> {
-	const moveAction = await screen.findByText('Move');
-	expect(moveAction).toBeVisible();
+	let moveAction = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.move });
+	if (!moveAction) {
+		const moreVertical = screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.moreVertical });
+		if (moreVertical) {
+			await user.click(moreVertical);
+		}
+		moveAction = await screen.findByText('Move');
+	}
 	await user.click(moveAction);
 	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
@@ -410,7 +393,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	await waitFor(() =>
 		expect(screen.queryByRole('button', { name: /move/i })).not.toBeInTheDocument()
 	);
-	expect(screen.queryByText('Move')).not.toBeInTheDocument();
+	expect(moveAction).not.toBeInTheDocument();
 }
 
 export function buildChipsFromKeywords(keywords: string[]): AdvancedFilters['keywords'] {
@@ -480,10 +463,9 @@ function createFileSystemDirectoryEntryReader(
 }
 
 function createFileSystemEntry(
-	node: Pick<Node, '__typename' | 'name'> &
-		(Pick<FilesFile, 'mime_type'> | Pick<Folder, '__typename'>),
+	node: Node<'name', 'mime_type', 'children'>,
 	file?: File
-): FileSystemEntry {
+): FileSystemDirectoryEntry | FileSystemFileEntry {
 	const baseEntry: FileSystemEntry = {
 		name: node.name,
 		fullPath: `/${node.name}`,
@@ -497,30 +479,33 @@ function createFileSystemEntry(
 	};
 	if (isFolder(node)) {
 		const reader = createFileSystemDirectoryEntryReader(node);
-		const directoryEntry: FileSystemDirectoryEntry = {
+		return {
 			...baseEntry,
 			createReader: () => reader,
 			getFile: noop,
 			getDirectory: noop
-		};
-		return directoryEntry;
+		} satisfies FileSystemDirectoryEntry;
 	}
-	const fileEntry: FileSystemFileEntry = {
+	return {
 		...baseEntry,
-		file(successCallback: FileCallback, errorCallback?: ErrorCallback) {
+		file(
+			successCallback: FileCallback,
+			errorCallback?: ErrorCallback
+		): ReturnType<FileSystemFileEntry['file']> {
 			if (file) {
 				successCallback(file);
 			} else if (errorCallback) {
 				errorCallback(new DOMException('no file provided', 'createFileSystemEntry'));
 			}
 		}
-	};
-	return fileEntry;
+	} satisfies FileSystemFileEntry;
 }
 
-export function createUploadDataTransfer(nodes: Array<Node>): DataTransferUploadStub {
+export function createUploadDataTransfer(
+	nodes: Array<Node<'name', 'mime_type', 'children'>>
+): DataTransferUploadStub {
 	const fileBlobs: File[] = [];
-	const items = map<Node, { webkitGetAsEntry: () => Partial<FileSystemEntry> }>(nodes, (node) => {
+	const items = nodes.map((node) => {
 		const fileBlob = new File(['(⌐□_□)😂😂😂😂'], node.name, {
 			type: (isFile(node) && node.mime_type) || undefined
 		});
@@ -571,16 +556,16 @@ export async function uploadWithDnD(
 	fireEvent.dragEnter(dropzoneElement, {
 		dataTransfer: dataTransferObj
 	});
-
 	await screen.findByTestId(SELECTORS.dropzone);
 	expect(
 		screen.getByText(/Drop here your attachments to quick-add them to your Home/m)
 	).toBeVisible();
-
 	fireEvent.drop(dropzoneElement, {
 		dataTransfer: dataTransferObj
 	});
-
+	await act(async () => {
+		await jest.advanceTimersToNextTimerAsync();
+	});
 	if (dataTransferObj.files.length > 0) {
 		// use find all to make this work also when there is the displayer open
 		await screen.findAllByText(dataTransferObj.files[0].name);
@@ -595,7 +580,11 @@ export function spyOnUseCreateOptions(): CreateOption[] {
 			createOptionsCollector.splice(0, createOptionsCollector.length, ...options);
 		},
 		removeCreateOptions: (...ids: string[]): void => {
-			createOptionsCollector.filter((option) => !ids.includes(option.id));
+			createOptionsCollector.splice(
+				0,
+				createOptionsCollector.length,
+				...createOptionsCollector.filter((option) => !ids.includes(option.id))
+			);
 		}
 	});
 	return createOptionsCollector;

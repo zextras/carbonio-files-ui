@@ -9,9 +9,8 @@ import {
 	OpenNodesSelectionModal,
 	useNodesSelectionModal
 } from '../carbonio-files-ui-common/hooks/modals/useNodesSelectionModal';
-import { RootListItemType } from '../carbonio-files-ui-common/types/common';
-import { BaseNodeFragment } from '../carbonio-files-ui-common/types/graphql/types';
 import { isFile, isFolder } from '../carbonio-files-ui-common/utils/utils';
+import { NodeForSelection } from '../carbonio-files-ui-common/views/components/NodesSelectionModalContent';
 
 export type OpenSelectNodesModalArgs = Parameters<OpenNodesSelectionModal>[number] & {
 	allowFolders?: boolean;
@@ -30,7 +29,7 @@ export const useSelectNodes = (): ((args: OpenSelectNodesModalArgs) => void) => 
 			isValidSelection,
 			...rest
 		}: OpenSelectNodesModalArgs): void => {
-			const checkIfNodeIsSelectable = (node: BaseNodeFragment | RootListItemType): boolean =>
+			const checkIfNodeIsSelectable = (node: NodeForSelection): boolean =>
 				(((allowFolders && isFolder(node)) || (allowFiles && isFile(node))) &&
 					(isValidSelection === undefined || isValidSelection(node))) ||
 				false;

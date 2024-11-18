@@ -12,15 +12,17 @@ import { size } from 'lodash';
 
 import buildClient from '../../apollo';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
-import { NodeWithMetadata } from '../../types/common';
-import { NodesSelectionModalContent } from '../../views/components/NodesSelectionModalContent';
+import {
+	NodeForSelection,
+	NodesSelectionModalContent
+} from '../../views/components/NodesSelectionModalContent';
 import { useDestinationVarManager } from '../useDestinationVarManager';
 
 export type OpenNodesSelectionModal = (
 	args: Omit<React.ComponentPropsWithoutRef<typeof NodesSelectionModalContent>, 'closeAction'>
 ) => void;
 
-const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeWithMetadata[]>>;
+const getDestinationVar = destinationVar as ReactiveVar<DestinationVar<NodeForSelection[]>>;
 
 export function useNodesSelectionModal(): {
 	openNodesSelectionModal: OpenNodesSelectionModal;
@@ -28,7 +30,7 @@ export function useNodesSelectionModal(): {
 	const { createModal, closeModal } = useModal();
 	const apolloClient = buildClient();
 
-	const { resetAll, resetCurrent } = useDestinationVarManager<NodeWithMetadata[]>();
+	const { resetAll, resetCurrent } = useDestinationVarManager<NodeForSelection[]>();
 
 	const openModal = useCallback<OpenNodesSelectionModal>(
 		(props) => {

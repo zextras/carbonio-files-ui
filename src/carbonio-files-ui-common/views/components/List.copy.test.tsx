@@ -9,12 +9,15 @@ import React from 'react';
 import { act } from '@testing-library/react';
 
 import { List } from './List';
+import { SelectionProvider } from './SelectionProvider';
 import { ERROR_CODE } from '../../constants';
-import { ACTION_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, SELECTORS, TIMERS } from '../../constants/test';
 import { populateFile, populateLocalRoot, populateNodePage } from '../../mocks/mockUtils';
 import { generateError, screen, setup, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockErrorResolver, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
+
+jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
 describe('Copy', () => {
 	describe('Failure for over quota', () => {
@@ -36,15 +39,20 @@ describe('Copy', () => {
 					)
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<List nodes={[node]} mainList emptyListMessage={'Empty list'} />, {
-				mocks
-			});
+			const { user } = setup(
+				<SelectionProvider items={[node]}>
+					<List nodes={[node]} mainList emptyListMessage={'Empty list'} />
+				</SelectionProvider>,
+				{
+					mocks
+				}
+			);
 			await user.rightClick(screen.getByText(node.name));
 			await screen.findByTestId(SELECTORS.dropdownList);
 			await user.click(screen.getByText(ACTION_REGEXP.copy));
-			act(() => {
+			await act(async () => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				await jest.advanceTimersByTimeAsync(TIMERS.modalDelayOpen);
 			});
 			await user.click(screen.getByRole('button', { name: /copy/i }));
 			const snackbar = await screen.findByTestId('snackbar');

@@ -13,8 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
-import { useUserInfo } from '../../../hooks/useUserInfo';
-import { DISPLAYER_TABS, PREVIEW_TYPE } from '../../constants';
+import { DISPLAYER_TABS } from '../../constants';
 import { useDeleteNodesMutation } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
 import { useFlagNodesMutation } from '../../hooks/graphql/mutations/useFlagNodesMutation';
 import { useRestoreNodesMutation } from '../../hooks/graphql/mutations/useRestoreNodesMutation';
@@ -24,24 +23,23 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
-import { Action, GetNodeParentType } from '../../types/common';
-import { File, MakeOptional, Node } from '../../types/graphql/types';
-import {
-	ActionsFactoryNodeType,
-	buildActionItems,
-	getAllPermittedActions
-} from '../../utils/ActionsFactory';
-import { isSupportedByPreview } from '../../utils/previewUtils';
-import { downloadNode, isFile, openNodeWithDocs } from '../../utils/utils';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
+import { Node } from '../../types/common';
+import { DeepPick } from '../../types/utils';
+import { Action, buildActionItems, getAllPermittedActions } from '../../utils/ActionsFactory';
+import { downloadNode } from '../../utils/utils';
 
+type NodeItem = Node<
+	'id' | 'name' | 'rootId' | 'permissions' | 'type' | 'flagged',
+	'version' | 'mime_type'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
 interface DisplayerActionsParams {
-	node: ActionsFactoryNodeType &
-		Pick<Node, 'rootId' | 'id' | 'name'> &
-		GetNodeParentType &
-		MakeOptional<Pick<File, 'version'>, 'version'>;
+	node: NodeItem;
 }
 
-export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) => {
+export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.Element => {
 	const [t] = useTranslation();
 
 	/** Mutation to update the flag status */
@@ -71,19 +69,11 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 
 	const { openDeletePermanentlyModal } = useDeletePermanentlyModal(deletePermanentlyCallback);
 
-	const { me } = useUserInfo();
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
 	const permittedDisplayerActions: Action[] = useMemo(
-		() =>
-			getAllPermittedActions(
-				[node],
-				// TODO: REMOVE CHECK ON ROOT WHEN BE WILL NOT RETURN LOCAL_ROOT AS PARENT FOR SHARED NODES
-				me,
-				canUsePreview,
-				canUseDocs
-			),
-		[canUseDocs, canUsePreview, me, node]
+		() => getAllPermittedActions({ nodes: [node], canUsePreview, canUseDocs }),
+		[canUseDocs, canUsePreview, node]
 	);
 
 	const { openMoveNodesModal } = useMoveModal();
@@ -93,6 +83,8 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 	const { openRenameModal } = useRenameModal();
 
 	const { sendViaMail } = useSendViaMail();
+
+	const openNodeWithDocs = useOpenWithDocs();
 
 	const sendViaMailCallback = useCallback(() => {
 		sendViaMail(node.id);
@@ -106,18 +98,14 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 
 	const { openPreview } = useContext(PreviewsManagerContext);
 
-	const [$isSupportedByPreview] = useMemo<
-		[boolean, (typeof PREVIEW_TYPE)[keyof typeof PREVIEW_TYPE] | undefined]
-	>(() => isSupportedByPreview((isFile(node) && node.mime_type) || undefined, 'preview'), [node]);
-
 	const preview = useCallback(() => {
-		if ($isSupportedByPreview) {
+		if (includes(permittedDisplayerActions, Action.Preview)) {
 			openPreview(node.id);
 		} else if (includes(permittedDisplayerActions, Action.OpenWithDocs)) {
 			// if preview is not supported and document can be opened with docs, open editor
 			openNodeWithDocs(node.id);
 		}
-	}, [$isSupportedByPreview, permittedDisplayerActions, openPreview, node.id]);
+	}, [node.id, permittedDisplayerActions, openPreview, openNodeWithDocs]);
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
@@ -230,6 +218,7 @@ export const DisplayerActions: React.VFC<DisplayerActionsParams> = ({ node }) =>
 			openCopyNodesModal,
 			openDeletePermanentlyModal,
 			openMoveNodesModal,
+			openNodeWithDocs,
 			openRenameModal,
 			preview,
 			restoreNodeCallback,

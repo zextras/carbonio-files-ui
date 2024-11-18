@@ -15,15 +15,14 @@ import { DefaultTheme, useTheme } from 'styled-components';
 import { useMoveNodesMutation } from './graphql/mutations/useMoveNodesMutation';
 import { useUpload } from './useUpload';
 import { useNavigation } from '../../hooks/useNavigation';
-import { useUserInfo } from '../../hooks/useUserInfo';
 import { draggedItemsVar } from '../apollo/dragAndDropVar';
-import { selectionModeVar } from '../apollo/selectionVar';
 import { DRAG_TYPES, TIMERS } from '../constants';
-import { Crumb, DroppableCrumb, NodeListItemType } from '../types/common';
+import { Crumb, DroppableCrumb, Node as FilesNode } from '../types/common';
 import { ParentFragmentDoc } from '../types/graphql/types';
 import { canBeMoveDestination, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddType } from '../utils/uploadUtils';
 import { hexToRGBA, isFolder } from '../utils/utils';
+import { resetSelection } from '../views/components/SelectionProvider';
 
 function setDropzoneActive(color: string, element: HTMLElement, theme: DefaultTheme): void;
 function setDropzoneActive(color: '', element: HTMLElement): void;
@@ -48,7 +47,6 @@ export function useDroppableCrumbs(
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const dropdownListRef = useRef<HTMLDivElement>(null);
 	const apolloClient = useApolloClient();
-	const { me } = useUserInfo();
 	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
 	const { add } = useUpload();
 	const createSnackbar = useSnackbar();
@@ -80,7 +78,7 @@ export function useDroppableCrumbs(
 				event.preventDefault();
 				closeDropdownTimer.current && clearTimeout(closeDropdownTimer.current);
 				closeDropdownTimer.current = setTimeout(() => {
-					containerRef.current && containerRef.current.click();
+					containerRef.current?.click();
 					openRef.current = false;
 				}, delay);
 			}
@@ -98,8 +96,10 @@ export function useDroppableCrumbs(
 			apolloClient.readFragment({
 				fragment: ParentFragmentDoc,
 				fragmentName: 'Parent',
-				// FIXME: remove hardcoded typename
-				id: apolloClient.cache.identify({ __typename: 'Folder', id: crumb.id })
+				id: apolloClient.cache.identify({
+					__typename: 'Folder',
+					id: crumb.id
+				} satisfies FilesNode<'id'>)
 			}),
 		[apolloClient]
 	);
@@ -113,7 +113,7 @@ export function useDroppableCrumbs(
 				// (current folder/parent cannot trigger navigation nor be destination of the move)
 				if (crumb.id !== currentFolderId || parents.length !== 1 || parents[0] !== crumb.id) {
 					const node = getNodeFromCrumb(crumb);
-					const validDestination = node && canBeMoveDestination(node, draggedNodes, me);
+					const validDestination = node && canBeMoveDestination(node, draggedNodes);
 					setDropzoneActive(validDestination ? 'primary' : 'secondary', event.currentTarget, theme);
 					event.dataTransfer.dropEffect = 'move';
 					if (validDestination && !actionTimer.current) {
@@ -127,7 +127,7 @@ export function useDroppableCrumbs(
 				}
 			}
 		},
-		[currentFolderId, getNodeFromCrumb, me, theme]
+		[currentFolderId, getNodeFromCrumb, theme]
 	);
 
 	const dragUploadHandler = useCallback(
@@ -193,7 +193,7 @@ export function useDroppableCrumbs(
 
 	const moveNodesAction = useCallback(
 		(
-			node: Pick<NodeListItemType, '__typename' | 'permissions' | 'id' | 'owner'>,
+			node: FilesNode<'permissions' | 'id' | 'owner' | 'rootId'>,
 			event: React.DragEvent<HTMLElement>
 		) => {
 			const movingNodes = JSON.parse(event.dataTransfer.getData(DRAG_TYPES.move) || '{}');
@@ -203,21 +203,16 @@ export function useDroppableCrumbs(
 				(node.id !== currentFolderId || parents.length !== 1 || parents[0] !== node.id) &&
 				isFolder(node) &&
 				!isEmpty(movingNodes) &&
-				canBeMoveDestination(node, movingNodes, me)
+				canBeMoveDestination(node, movingNodes)
 			) {
-				moveNodesMutation(node, ...movingNodes).then(() => {
-					selectionModeVar(false);
-				});
+				moveNodesMutation(node, ...movingNodes).then(resetSelection);
 			}
 		},
-		[currentFolderId, me, moveNodesMutation]
+		[currentFolderId, moveNodesMutation]
 	);
 
 	const uploadAction = useCallback(
-		(
-			node: Pick<NodeListItemType, '__typename' | 'id' | 'name' | 'permissions'>,
-			event: React.DragEvent<HTMLElement>
-		) => {
+		(node: FilesNode<'id' | 'name' | 'permissions'>, event: React.DragEvent<HTMLElement>) => {
 			if (node && canUploadFile(node)) {
 				add(getUploadAddType(event.dataTransfer), node.id);
 				createSnackbar({

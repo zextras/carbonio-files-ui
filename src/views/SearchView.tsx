@@ -21,7 +21,7 @@ import { SearchView as CommonSearchView } from '../carbonio-files-ui-common/view
 import { UpdateQueryContext } from '../constants';
 import { fromQueryChipsToAdvancedFilters } from '../hooks/useSearch';
 
-const SearchView: React.VFC<SearchViewProps> = ({ useQuery, ResultsHeader }) => {
+const SearchView = ({ useQuery, ResultsHeader }: SearchViewProps): React.JSX.Element => {
 	const [query, updateQuery] = useQuery();
 	const [t] = useTranslation();
 
