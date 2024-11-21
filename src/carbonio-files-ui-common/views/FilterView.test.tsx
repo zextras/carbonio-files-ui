@@ -7,25 +7,16 @@
 import React from 'react';
 
 import { act, screen, waitFor, within } from '@testing-library/react';
-import { graphql, http, HttpResponse } from 'msw';
+import { graphql } from 'msw';
 import { Link, Route, Switch } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
 import server from '../../mocks/server';
-import {
-	DOCS_SERVICE_NAME,
-	FILTER_TYPE,
-	HEALTH_PATH,
-	INTERNAL_PATH,
-	NODES_LOAD_LIMIT,
-	REST_ENDPOINT
-} from '../constants';
+import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
-import { healthCache } from '../hooks/useHealthInfo';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
-import { HealthResponse } from '../mocks/handleHealthRequest';
 import { populateFolder, populateNode, populateNodes } from '../mocks/mockUtils';
 import { selectNodes, setup, spyOnUseCreateOptions, triggerListLoadMore } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
@@ -50,14 +41,14 @@ describe('Filter view', () => {
 		expect(mockedRequestHandler).not.toHaveBeenCalled();
 	});
 
-	test('Create folder option is always disabled', async () => {
+	it('should not contain create folder option', async () => {
 		const createOptions = spyOnUseCreateOptions();
 		setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
 			initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 		});
 		await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-		expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
+		expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER })
 		);
 	});
 
@@ -182,39 +173,11 @@ describe('Filter view', () => {
 		expect(screen.getByTestId(SELECTORS.nodeItem(node.id))).toBe(nodesItems[1]);
 	});
 
-	it('should show docs creation actions if docs is available', async () => {
-		healthCache.reset();
+	it('should not show docs creation actions', async () => {
 		const createOptions = spyOnUseCreateOptions();
-		server.use(
-			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
-			)
-		);
-		setup(<FilterView />);
-		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
-		expect(createOptions).toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
-		);
-		expect(createOptions).toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
-		);
-		expect(createOptions).toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
-		);
-	});
 
-	it('should not show docs creation actions if docs is not available', async () => {
-		healthCache.reset();
-		const createOptions = spyOnUseCreateOptions();
-		server.use(
-			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
-			)
-		);
 		setup(<FilterView />);
-		await waitFor(() =>
-			expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }))
-		);
+		await waitFor(() => expect(createOptions.length).toBeGreaterThan(0));
 		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);
