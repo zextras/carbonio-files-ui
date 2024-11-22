@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import { Displayer } from './components/Displayer';
 import { EmptySpaceFiller } from './components/EmptySpaceFiller';
 import { List } from './components/List';
+import { SelectionProvider } from './components/SelectionProvider';
 import { SortingComponent } from './components/SortingComponent';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
@@ -325,17 +326,19 @@ const FolderView = (): React.JSX.Element => {
 	const ListComponent = useMemo(
 		() => (
 			<ListHeaderActionContext.Provider value={listHeaderActionValue}>
-				<List
-					nodes={nodes}
-					folderId={currentFolderId}
-					hasMore={hasMore}
-					loadMore={loadMore}
-					loading={loading}
-					canUpload={isCanUploadFile}
-					fillerWithActions={<EmptySpaceFiller actions={actionAsDropdownItems} />}
-					emptyListMessage={t('empty.folder.hint', "It looks like there's nothing here.")}
-					mainList={isCanUploadFile}
-				/>
+				<SelectionProvider items={nodes}>
+					<List
+						nodes={nodes}
+						folderId={currentFolderId}
+						hasMore={hasMore}
+						loadMore={loadMore}
+						loading={loading}
+						canUpload={isCanUploadFile}
+						fillerWithActions={<EmptySpaceFiller actions={actionAsDropdownItems} />}
+						emptyListMessage={t('empty.folder.hint', "It looks like there's nothing here.")}
+						mainList={isCanUploadFile}
+					/>
+				</SelectionProvider>
 			</ListHeaderActionContext.Provider>
 		),
 		[

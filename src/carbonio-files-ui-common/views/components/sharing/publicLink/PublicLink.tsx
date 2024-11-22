@@ -28,6 +28,7 @@ import { NonNullableListItem } from '../../../../types/utils';
 import { copyToClipboard } from '../../../../utils/utils';
 
 interface PublicLinkProps {
+	isFolder: boolean;
 	nodeId: string;
 	nodeName: string;
 	linkName: string;
@@ -36,6 +37,7 @@ interface PublicLinkProps {
 }
 
 export const PublicLink = ({
+	isFolder,
 	nodeId,
 	nodeName,
 	linkName,
@@ -75,11 +77,23 @@ export const PublicLink = ({
 		setThereIsOpenRow(false);
 	}, []);
 
+	const createLinkCopiedSnackbar = useCallback(() => {
+		createSnackbar({
+			key: new Date().toLocaleString(),
+			severity: 'info',
+			label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
+				replace: { linkName }
+			}),
+			replace: true,
+			hideButton: true
+		});
+	}, [createSnackbar, linkName, t]);
+
 	const onGenerate = useCallback(
-		(description?: string, expiresAt?: Date) => {
+		(description?: string, expiresAt?: Date, accessCode?: string) => {
 			setAddPublicLinkStatus(PublicLinkRowStatus.CLOSED);
 			setThereIsOpenRow(false);
-			return createLink(description, expiresAt?.getTime())
+			return createLink(description, expiresAt?.getTime(), accessCode)
 				.then(({ data }) => {
 					if (data) {
 						createSnackbar({
@@ -94,17 +108,7 @@ export const PublicLink = ({
 							),
 							replace: true,
 							onActionClick: () => {
-								copyToClipboard(data.createLink.url as string).then(() => {
-									createSnackbar({
-										key: new Date().toLocaleString(),
-										severity: 'info',
-										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
-											replace: { linkName }
-										}),
-										replace: true,
-										hideButton: true
-									});
-								});
+								copyToClipboard(data.createLink.url as string).then(createLinkCopiedSnackbar);
 							},
 							actionLabel: t('snackbar.publicLink.actionLabel.copyLink', 'Copy Link')
 						});
@@ -117,7 +121,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createLink, createSnackbar, t, linkName]
+		[createLink, createSnackbar, t, linkName, createLinkCopiedSnackbar]
 	);
 
 	/** PublicLinkComponent callbacks */
@@ -179,10 +183,10 @@ export const PublicLink = ({
 	);
 
 	const onEditConfirm = useCallback(
-		(linkId: string, description?: string, expiresAt?: number) => {
+		(linkId: string, description?: string | null, expiresAt?: number, accessCode?: string) => {
 			setOpenLinkId(undefined);
 			setThereIsOpenRow(false);
-			return updateLink(linkId, description, expiresAt)
+			return updateLink(linkId, description, expiresAt, accessCode)
 				.then(({ data }) => {
 					if (data) {
 						createSnackbar({
@@ -193,17 +197,7 @@ export const PublicLink = ({
 							}),
 							replace: true,
 							onActionClick: () => {
-								copyToClipboard(data.updateLink?.url as string).then(() => {
-									createSnackbar({
-										key: new Date().toLocaleString(),
-										severity: 'info',
-										label: t('snackbar.publicLink.copyLink', '{{linkName}} copied', {
-											replace: { linkName }
-										}),
-										replace: true,
-										hideButton: true
-									});
-								});
+								copyToClipboard(data.updateLink?.url as string).then(createLinkCopiedSnackbar);
 							},
 							actionLabel: t('snackbar.publicLink.actionLabel.copyLink', 'Copy Link')
 						});
@@ -215,7 +209,7 @@ export const PublicLink = ({
 					throw reason;
 				});
 		},
-		[createSnackbar, t, updateLink, linkName]
+		[updateLink, createSnackbar, t, linkName, createLinkCopiedSnackbar]
 	);
 
 	const linkComponents = useMemo(() => {
@@ -231,10 +225,12 @@ export const PublicLink = ({
 				if (link) {
 					accumulator.push(
 						<PublicLinkComponent
+							isFolder={isFolder}
 							key={link.id}
 							id={link.id}
 							url={link.url}
 							description={link.description}
+							accessCode={link.access_code}
 							status={getLinkStatus(link.id)}
 							expiresAt={link.expires_at}
 							onEdit={onEdit}
@@ -252,12 +248,13 @@ export const PublicLink = ({
 		);
 	}, [
 		links,
+		openLinkId,
+		thereIsOpenRow,
+		isFolder,
 		onEdit,
 		onEditConfirm,
 		onEditUndo,
 		onRevokeOrRemove,
-		openLinkId,
-		thereIsOpenRow,
 		linkName
 	]);
 
@@ -280,6 +277,7 @@ export const PublicLink = ({
 			background={'gray6'}
 		>
 			<AddPublicLinkComponent
+				isFolder={isFolder}
 				status={addPublicLinkComputedStatus}
 				onAddLink={onAddLink}
 				onUndo={onAddUndo}

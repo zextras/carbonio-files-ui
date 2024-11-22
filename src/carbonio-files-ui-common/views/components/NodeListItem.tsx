@@ -18,6 +18,7 @@ import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { NodeGridItemUI } from './NodeGridItemUI';
 import { NodeHoverBar } from './NodeHoverBar';
 import { NodeListItemUI } from './NodeListItemUI';
+import { useSelectionContext } from './SelectionProvider';
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
@@ -43,6 +44,7 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
+import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { usePreview } from '../../hooks/usePreview';
 import { useUpload } from '../../hooks/useUpload';
 import { Node, URLParams } from '../../types/common';
@@ -60,15 +62,14 @@ import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/prev
 import { getUploadAddType } from '../../utils/uploadUtils';
 import {
 	downloadNode,
+	isFile,
+	isSearchView,
 	formatDate,
 	getIconByFileType,
 	getIconColorByFileType,
-	isFile,
 	isFolder,
-	isSearchView,
 	isTrashView,
-	nodeToNodeListItemUIProps,
-	openNodeWithDocs
+	nodeToNodeListItemUIProps
 } from '../../utils/utils';
 
 type NodeItem = Node<
@@ -89,23 +90,14 @@ type NodeItem = Node<
 
 export interface NodeListItemProps {
 	node: NodeItem;
-	// Selection props
-	isSelected: boolean;
-	isSelectionModeActive: boolean;
-	selectId: (id: string) => void;
-	exitSelectionMode: () => void;
 	selectionContextualMenuActionsItems?: DSAction[];
 }
 
 export const NodeListItem = ({
 	node,
-	// Selection props
-	isSelected,
-	isSelectionModeActive,
-	selectId,
-	exitSelectionMode,
 	selectionContextualMenuActionsItems
 }: NodeListItemProps): React.JSX.Element => {
+	const { selectId, isSelectionModeActive, exitSelectionMode, selectedMap } = useSelectionContext();
 	const { viewMode } = useContext(ListContext);
 	const { locale } = useUserInfo();
 
@@ -186,6 +178,7 @@ export const NodeListItem = ({
 		[node.id, node.type]
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
+	const openNodeWithDocs = useOpenWithDocs();
 
 	// timer to start navigation
 	const navigationTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -237,8 +230,9 @@ export const NodeListItem = ({
 		trashed,
 		isNavigable,
 		permittedContextualMenuActions,
-		node,
 		navigateToFolder,
+		node.id,
+		openNodeWithDocs,
 		openPreview
 	]);
 
@@ -366,10 +360,11 @@ export const NodeListItem = ({
 		[
 			t,
 			sendViaMailCallback,
+			openNodeWithDocs,
+			node,
 			openPreview,
 			createSnackbar,
 			setActiveNode,
-			node,
 			toggleFlag,
 			openCopyNodesModal,
 			openMoveNodesModal,
@@ -573,7 +568,7 @@ export const NodeListItem = ({
 						nodeAvatarIcon={
 							<NodeAvatarIcon
 								selectionModeActive={isSelectionModeActive}
-								selected={isSelected}
+								selected={selectedMap?.[node.id]}
 								onClick={selectIdCallback}
 								compact={false}
 								disabled={isDragged}
@@ -606,7 +601,7 @@ export const NodeListItem = ({
 						nodeAvatarIcon={
 							<NodeAvatarIcon
 								selectionModeActive={isSelectionModeActive}
-								selected={isSelected}
+								selected={selectedMap?.[node.id]}
 								onClick={selectIdCallback}
 								compact={false}
 								disabled={isDragged}

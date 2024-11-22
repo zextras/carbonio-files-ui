@@ -12,6 +12,7 @@ import styled, { css } from 'styled-components';
 import { Draggable } from './Draggable';
 import { NodeListItem, NodeListItemProps } from './NodeListItem';
 import { NodeListItemDragImage } from './NodeListItemDragImage';
+import { useSelectionContext } from './SelectionProvider';
 import { GridItem } from './StyledComponents';
 import { VirtualizedNodeListItem } from './VirtualizedNodeListItem';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
@@ -50,10 +51,6 @@ type NodeItem = NodeListItemProps['node'];
 
 interface ListContentProps {
 	nodes: NodeItem[];
-	selectedMap: Record<string, boolean>;
-	selectId: (id: string) => void;
-	isSelectionModeActive: boolean;
-	exitSelectionMode: () => void;
 	hasMore?: boolean;
 	loadMore?: () => void;
 	selectionContextualMenuActionsItems?: DSAction[];
@@ -66,16 +63,13 @@ const GridRowFiller = (): React.JSX.Element => (
 
 export const ListContent = ({
 	nodes,
-	selectedMap,
-	selectId,
-	isSelectionModeActive,
-	exitSelectionMode,
 	hasMore = false,
 	loadMore = (): void => undefined,
 	selectionContextualMenuActionsItems,
 	fillerWithActions
 }: ListContentProps): React.JSX.Element => {
 	const { viewMode } = useContext(ListContext);
+	const { isSelectionModeActive, selectedMap } = useSelectionContext();
 	const listRef = useRef<HTMLDivElement>(null);
 
 	const dragImageRef = useRef<HTMLDivElement>(null);
@@ -173,10 +167,6 @@ export const ListContent = ({
 					>
 						<NodeListItem
 							node={node}
-							isSelected={selectedMap?.[node.id]}
-							isSelectionModeActive={isSelectionModeActive}
-							selectId={selectId}
-							exitSelectionMode={exitSelectionMode}
 							selectionContextualMenuActionsItems={
 								selectedMap?.[node.id] ? selectionContextualMenuActionsItems : undefined
 							}
@@ -204,9 +194,6 @@ export const ListContent = ({
 		dragStartHandler,
 		dragEndHandler,
 		selectedMap,
-		isSelectionModeActive,
-		selectId,
-		exitSelectionMode,
 		selectionContextualMenuActionsItems
 	]);
 

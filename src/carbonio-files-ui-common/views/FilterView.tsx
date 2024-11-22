@@ -14,6 +14,7 @@ import { useLocation, useParams } from 'react-router-dom';
 
 import { Displayer } from './components/Displayer';
 import { List } from './components/List';
+import { SelectionProvider } from './components/SelectionProvider';
 import { SortingComponent } from './components/SortingComponent';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
@@ -330,16 +331,18 @@ const FilterView = (): React.JSX.Element => {
 		() =>
 			filterParam ? (
 				<ListHeaderActionContext.Provider value={ActionComponent}>
-					<List
-						nodes={nodes}
-						loading={loading}
-						hasMore={hasMore}
-						loadMore={loadMore}
-						crumbs={crumbs}
-						canUpload={canUploadFile}
-						mainList={false}
-						emptyListMessage={emptyListMessage}
-					/>
+					<SelectionProvider items={nodes}>
+						<List
+							nodes={nodes}
+							loading={loading}
+							hasMore={hasMore}
+							loadMore={loadMore}
+							crumbs={crumbs}
+							canUpload={canUploadFile}
+							mainList={false}
+							emptyListMessage={emptyListMessage}
+						/>
+					</SelectionProvider>
 				</ListHeaderActionContext.Provider>
 			) : (
 				<Container data-testid="missing-filter">{emptyListMessage}</Container>

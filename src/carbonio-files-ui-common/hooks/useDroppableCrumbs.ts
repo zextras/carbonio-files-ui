@@ -16,13 +16,13 @@ import { useMoveNodesMutation } from './graphql/mutations/useMoveNodesMutation';
 import { useUpload } from './useUpload';
 import { useNavigation } from '../../hooks/useNavigation';
 import { draggedItemsVar } from '../apollo/dragAndDropVar';
-import { selectionModeVar } from '../apollo/selectionVar';
 import { DRAG_TYPES, TIMERS } from '../constants';
 import { Crumb, DroppableCrumb, Node as FilesNode } from '../types/common';
 import { ParentFragmentDoc } from '../types/graphql/types';
 import { canBeMoveDestination, canUploadFile } from '../utils/ActionsFactory';
 import { getUploadAddType } from '../utils/uploadUtils';
 import { hexToRGBA, isFolder } from '../utils/utils';
+import { resetSelection } from '../views/components/SelectionProvider';
 
 function setDropzoneActive(color: string, element: HTMLElement, theme: DefaultTheme): void;
 function setDropzoneActive(color: '', element: HTMLElement): void;
@@ -205,9 +205,7 @@ export function useDroppableCrumbs(
 				!isEmpty(movingNodes) &&
 				canBeMoveDestination(node, movingNodes)
 			) {
-				moveNodesMutation(node, ...movingNodes).then(() => {
-					selectionModeVar(false);
-				});
+				moveNodesMutation(node, ...movingNodes).then(resetSelection);
 			}
 		},
 		[currentFolderId, moveNodesMutation]

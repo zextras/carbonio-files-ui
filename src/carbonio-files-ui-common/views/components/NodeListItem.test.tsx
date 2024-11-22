@@ -9,7 +9,8 @@ import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { DefaultTheme } from 'styled-components';
 
-import { NodeListItem, NodeListItemProps } from './NodeListItem';
+import { NodeListItem } from './NodeListItem';
+import { SelectionProvider } from './SelectionProvider';
 import * as useNavigation from '../../../hooks/useNavigation';
 import {
 	DATE_FORMAT_SHORT,
@@ -23,6 +24,7 @@ import {
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { ListContext } from '../../contexts';
 import * as useHealthInfo from '../../hooks/useHealthInfo';
+import * as useOpenWithDocs from '../../hooks/useOpenWithDocs';
 import * as usePreview from '../../hooks/usePreview';
 import {
 	populateFile,
@@ -39,19 +41,6 @@ import {
 } from '../../utils/previewUtils';
 import { formatDate, humanFileSize } from '../../utils/utils';
 import 'jest-styled-components';
-import * as utils from '../../utils/utils';
-
-export function getMissingProps(): Pick<
-	NodeListItemProps,
-	'isSelected' | 'isSelectionModeActive' | 'selectId' | 'exitSelectionMode'
-> {
-	return {
-		isSelected: false,
-		isSelectionModeActive: false,
-		selectId: jest.fn(),
-		exitSelectionMode: jest.fn()
-	};
-}
 
 let mockedUserLogged: User;
 
@@ -113,7 +102,8 @@ describe('Node List Item', () => {
 			])(
 				`should %s when canUsePreview is %s, canUseDocs is %s, canWriteFile is %s, mime_type is %s `,
 				async (action, canUsePreview, canUseDocs, canWriteFile, mimeType, type) => {
-					const openWithDocsFn = jest.spyOn(utils, 'openNodeWithDocs');
+					const openWithDocsFn = jest.fn();
+					jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
 					const openPreview = jest.fn();
 
 					jest.spyOn(usePreview, 'usePreview').mockReturnValue({
@@ -134,9 +124,11 @@ describe('Node List Item', () => {
 					node.mime_type = mimeType;
 
 					const { user } = setup(
-						<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-							<NodeListItem node={node} {...getMissingProps()} />
-						</ListContext.Provider>
+						<SelectionProvider items={[node]}>
+							<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+								<NodeListItem node={node} />
+							</ListContext.Provider>
+						</SelectionProvider>
 					);
 
 					await user.dblClick(screen.getByText(node.name));
@@ -161,9 +153,11 @@ describe('Node List Item', () => {
 			node.owner = mockedUserLogged;
 			node.last_editor = mockedUserLogged;
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 
 			expect(screen.getByText(node.name)).toBeVisible();
@@ -176,9 +170,11 @@ describe('Node List Item', () => {
 		test('render a folder item in the list', () => {
 			const node = populateFolder();
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByText(/folder/i)).toBeInTheDocument();
 			expect(screen.getByText(/folder/i)).toBeVisible();
@@ -188,9 +184,11 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.shares = populateShares(node, 1);
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.sharedByMe)).toBeVisible();
@@ -201,9 +199,11 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.owner = populateUser();
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.sharedWithMe)).toBeVisible();
@@ -214,9 +214,11 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.shares = [];
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.queryByTestId(ICON_REGEXP.sharedWithMe)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
@@ -226,9 +228,11 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.flagged = true;
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.flagged)).toBeVisible();
@@ -238,9 +242,11 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.flagged = false;
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 		});
@@ -248,9 +254,11 @@ describe('Node List Item', () => {
 		test('render a file item in the list', () => {
 			const node = populateFile();
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByText(node.extension as string)).toBeVisible();
 			expect(screen.getByText(humanFileSize(node.size, undefined))).toBeVisible();
@@ -261,9 +269,11 @@ describe('Node List Item', () => {
 			node.owner = populateUser();
 			node.last_editor = node.owner;
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByText(node.owner.full_name)).toBeVisible();
 		});
@@ -271,9 +281,11 @@ describe('Node List Item', () => {
 		test('last modifier is visible if node is shared', () => {
 			const node = populateNode();
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByText((node.last_editor as User).full_name)).toBeVisible();
 		});
@@ -291,9 +303,11 @@ describe('Node List Item', () => {
 
 			const node = populateFolder(0);
 			const { user } = setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(mockedUseNavigationHook.navigateToFolder).toHaveBeenCalledTimes(1);
@@ -310,9 +324,11 @@ describe('Node List Item', () => {
 			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 			const node = populateFolder(0);
 			const { user } = setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} isSelectionModeActive />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(mockedUseNavigationHook.navigateTo).not.toHaveBeenCalled();
@@ -328,9 +344,11 @@ describe('Node List Item', () => {
 			const node = populateFolder(0);
 			node.rootId = ROOTS.TRASH;
 			const { user } = setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(mockedUseNavigationHook.navigateTo).not.toHaveBeenCalled();
@@ -345,9 +363,11 @@ describe('Node List Item', () => {
 			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 			const node = populateFolder(0);
 			const { user } = setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			await user.dblClick(screen.getByText(node.name));
 			expect(mockedUseNavigationHook.navigateTo).not.toHaveBeenCalled();
@@ -357,9 +377,11 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.rootId = ROOTS.TRASH;
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>,
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>,
 				{
 					initialRouterEntries: [INTERNAL_PATH.SEARCH]
 				}
@@ -372,9 +394,11 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			node.rootId = ROOTS.TRASH;
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByText(node.name)).toBeVisible();
 			expect(screen.queryByTestId(ICON_REGEXP.trash)).not.toBeInTheDocument();
@@ -383,9 +407,11 @@ describe('Node List Item', () => {
 		test('Trash icon is not visible if node is not trashed and is search view', () => {
 			const node = populateNode();
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>,
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>,
 				{
 					initialRouterEntries: [INTERNAL_PATH.SEARCH]
 				}
@@ -420,9 +446,11 @@ describe('Node List Item', () => {
 				node.type = type;
 				node.mime_type = mimeType ?? '';
 				setup(
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-						<NodeListItem node={node} {...getMissingProps()} />
-					</ListContext.Provider>
+					<SelectionProvider items={[node]}>
+						<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+							<NodeListItem node={node} />
+						</ListContext.Provider>
+					</SelectionProvider>
 				);
 				expect(
 					within(screen.getByTestId(SELECTORS.nodeAvatar)).getByTestId(`icon: ${icon}`)
@@ -438,9 +466,11 @@ describe('Node List Item', () => {
 			node.type = NodeType.Image;
 			node.mime_type = 'image/gif';
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByTestId(SELECTORS.nodeAvatar)).toHaveStyle({
 				background: expect.stringContaining(
@@ -456,9 +486,11 @@ describe('Node List Item', () => {
 			const node = populateFolder(undefined, rootType);
 			node.type = NodeType.Root;
 			setup(
-				<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
-					<NodeListItem node={node} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[node]}>
+					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<NodeListItem node={node} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
 			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
@@ -469,11 +501,13 @@ describe('Node List Item', () => {
 		node.flagged = true;
 
 		setup(
-			<ListContext.Provider
-				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
-			>
-				<NodeListItem node={node} {...getMissingProps()} />
-			</ListContext.Provider>
+			<SelectionProvider items={[node]}>
+				<ListContext.Provider
+					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
+				>
+					<NodeListItem node={node} />
+				</ListContext.Provider>
+			</SelectionProvider>
 		);
 		expect(screen.getByTestId(ICON_REGEXP.unflag)).toBeInTheDocument();
 		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
@@ -483,11 +517,13 @@ describe('Node List Item', () => {
 		const node = populateNode();
 		node.flagged = false;
 		setup(
-			<ListContext.Provider
-				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
-			>
-				<NodeListItem node={node} {...getMissingProps()} />
-			</ListContext.Provider>
+			<SelectionProvider items={[node]}>
+				<ListContext.Provider
+					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
+				>
+					<NodeListItem node={node} />
+				</ListContext.Provider>
+			</SelectionProvider>
 		);
 		expect(screen.getByTestId(ICON_REGEXP.flag)).toBeInTheDocument();
 		expect(screen.queryByTestId(ICON_REGEXP.unflag)).not.toBeInTheDocument();
@@ -496,11 +532,13 @@ describe('Node List Item', () => {
 	it('should not show preview image when node is a folder', () => {
 		const folder = populateFolder();
 		setup(
-			<ListContext.Provider
-				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
-			>
-				<NodeListItem node={folder} {...getMissingProps()} />
-			</ListContext.Provider>
+			<SelectionProvider items={[folder]}>
+				<ListContext.Provider
+					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+				>
+					<NodeListItem node={folder} />
+				</ListContext.Provider>
+			</SelectionProvider>
 		);
 		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
@@ -511,11 +549,13 @@ describe('Node List Item', () => {
 			const file = populateFile();
 			file.mime_type = mimeType;
 			setup(
-				<ListContext.Provider
-					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
-				>
-					<NodeListItem node={file} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[file]}>
+					<ListContext.Provider
+						value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+					>
+						<NodeListItem node={file} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.getByRole('presentation')).toBeVisible();
 		}
@@ -527,11 +567,13 @@ describe('Node List Item', () => {
 			const file = populateFile();
 			file.mime_type = mimeType;
 			setup(
-				<ListContext.Provider
-					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
-				>
-					<NodeListItem node={file} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[file]}>
+					<ListContext.Provider
+						value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+					>
+						<NodeListItem node={file} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 		}
@@ -555,11 +597,13 @@ describe('Node List Item', () => {
 			file.mime_type = mimeType;
 			file.type = type;
 			setup(
-				<ListContext.Provider
-					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
-				>
-					<NodeListItem node={file} {...getMissingProps()} />
-				</ListContext.Provider>
+				<SelectionProvider items={[file]}>
+					<ListContext.Provider
+						value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+					>
+						<NodeListItem node={file} />
+					</ListContext.Provider>
+				</SelectionProvider>
 			);
 			expect(
 				within(screen.getByTestId(SELECTORS.gridCellThumbnail)).getByTestId(`icon: ${icon}`)
@@ -571,11 +615,13 @@ describe('Node List Item', () => {
 		const file = populateFile();
 		file.mime_type = 'image/jpeg';
 		setup(
-			<ListContext.Provider
-				value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
-			>
-				<NodeListItem node={file} {...getMissingProps()} />
-			</ListContext.Provider>
+			<SelectionProvider items={[file]}>
+				<ListContext.Provider
+					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+				>
+					<NodeListItem node={file} />
+				</ListContext.Provider>
+			</SelectionProvider>
 		);
 		fireEvent.error(screen.getByRole('presentation'));
 		expect(await screen.findByText('Failed to load image')).toBeVisible();

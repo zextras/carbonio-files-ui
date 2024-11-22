@@ -83,7 +83,10 @@ export const ICON_REGEXP = {
 	openedAdvancedFilters: 'icon: ChevronUp',
 	closedAdvancedFilters: 'icon: ChevronDown',
 	listViewMode: 'icon: ListOutline',
-	gridViewMode: 'icon: GridOutline'
+	gridViewMode: 'icon: GridOutline',
+	eyePasswordOff: 'icon: EyeOffOutline',
+	eyePasswordOn: 'icon: EyeOutline',
+	regenerateAccessCode: 'icon: Refresh'
 } as const;
 
 export const SELECTORS = {

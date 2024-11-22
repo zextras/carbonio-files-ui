@@ -6,17 +6,20 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { useReactiveVar } from '@apollo/client';
 import { Snackbar } from '@zextras/carbonio-design-system';
-import { noop } from 'lodash';
+import { filter, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { OverQuotaBanner } from './components/OverQuotaBanner';
+import { SelectionProvider } from './components/SelectionProvider';
 import { UploadDisplayer } from './components/UploadDisplayer';
 import { UploadList } from './components/UploadList';
 import { ViewLayout } from './ViewLayout';
 import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
 import { useNavigation } from '../../hooks/useNavigation';
+import { uploadVar } from '../apollo/uploadVar';
 import { FILES_APP_ID, ROOTS, VIEW_MODE } from '../constants';
 import { ListContext } from '../contexts';
 import { useHealthInfo } from '../hooks/useHealthInfo';
@@ -189,11 +192,27 @@ const UploadView = (): React.JSX.Element => {
 		[]
 	);
 
+	const uploadVarData = useReactiveVar(uploadVar);
+
+	const uploadItems = useMemo(
+		() => filter(uploadVarData, (upload) => upload.parentId === null),
+		[uploadVarData]
+	);
+
+	const ListComponent = useMemo(
+		() => (
+			<SelectionProvider items={uploadItems}>
+				<UploadList uploadItems={uploadItems} />
+			</SelectionProvider>
+		),
+		[uploadItems]
+	);
+
 	return (
 		<>
 			<OverQuotaBanner />
 			<ViewLayout
-				listComponent={<UploadList />}
+				listComponent={ListComponent}
 				displayerComponent={
 					<UploadDisplayer
 						translationKey="displayer.uploads"
