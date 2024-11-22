@@ -23,14 +23,9 @@ const StyledButton = styled(Button)`
 
 export const LoadingIcon = React.forwardRef<
 	HTMLDivElement,
-	Partial<Omit<ButtonProps, 'secondaryAction' | 'type'>>
+	Partial<Omit<ButtonProps, 'secondaryAction' | 'type' | 'labelColor' | 'backgroundColor'>>
 >(function LoadingIconFn(
-	{
-		onClick = (): void => undefined,
-		shape = 'round',
-		color = 'text',
-		...rest
-	}: Partial<Omit<ButtonProps, 'secondaryAction'>>,
+	{ onClick = (): void => undefined, shape = 'round', color = 'text', ...rest },
 	ref
 ) {
 	return (
