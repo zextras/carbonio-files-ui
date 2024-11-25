@@ -15,12 +15,12 @@ import { UploadDisplayer } from './components/UploadDisplayer';
 import { UploadList } from './components/UploadList';
 import { ViewLayout } from './ViewLayout';
 import { uploadVar } from '../apollo/uploadVar';
-import { VIEW_MODE } from '../constants';
+import { ROOTS, VIEW_MODE } from '../constants';
 import { ListContext } from '../contexts';
 import { useUploadFileNewAction } from '../hooks/useUploadFileNewAction';
 
 const UploadView = (): React.JSX.Element => {
-	useUploadFileNewAction(true);
+	useUploadFileNewAction(true, ROOTS.LOCAL_ROOT);
 
 	const listContextValue = useMemo<Partial<React.ContextType<typeof ListContext>>>(
 		() => ({

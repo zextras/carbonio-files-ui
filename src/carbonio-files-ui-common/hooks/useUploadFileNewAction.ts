@@ -16,7 +16,11 @@ import { FILES_APP_ID, ROOTS } from '../constants';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { inputElement } from '../utils/utils';
 
-export const useUploadFileNewAction = (isAvailable: boolean): void => {
+export const useUploadFileNewAction = (
+	isAvailable: boolean,
+	destinationId: string,
+	disabled = false
+): void => {
 	const { add } = useUpload();
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
@@ -27,7 +31,7 @@ export const useUploadFileNewAction = (isAvailable: boolean): void => {
 		(ev: Event) => {
 			if (ev.currentTarget instanceof HTMLInputElement) {
 				if (ev.currentTarget.files) {
-					add(getUploadAddTypeFromInput(ev.currentTarget.files), ROOTS.LOCAL_ROOT);
+					add(getUploadAddTypeFromInput(ev.currentTarget.files), destinationId);
 					createSnackbar({
 						key: new Date().toLocaleString(),
 						severity: 'info',
@@ -43,7 +47,7 @@ export const useUploadFileNewAction = (isAvailable: boolean): void => {
 				ev.currentTarget.value = '';
 			}
 		},
-		[add, createSnackbar, navigateToFolder, t]
+		[add, createSnackbar, destinationId, navigateToFolder, t]
 	);
 
 	useEffect(() => {
@@ -62,8 +66,7 @@ export const useUploadFileNewAction = (isAvailable: boolean): void => {
 						inputElement.click();
 						inputElement.onchange = inputElementOnchange;
 					},
-
-					disabled: false
+					disabled
 				})
 			});
 			return (): void => undefined;
@@ -88,5 +91,5 @@ export const useUploadFileNewAction = (isAvailable: boolean): void => {
 				})
 			});
 		};
-	}, [isAvailable, inputElementOnchange, removeCreateOptions, setCreateOptions, t]);
+	}, [isAvailable, inputElementOnchange, removeCreateOptions, setCreateOptions, t, disabled]);
 };

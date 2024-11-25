@@ -11,7 +11,7 @@ import { Container } from '@zextras/carbonio-design-system';
 import { Displayer } from './components/Displayer';
 import { SearchList } from './components/SearchList';
 import { ViewLayout } from './ViewLayout';
-import { VIEW_MODE } from '../constants';
+import { ROOTS, VIEW_MODE } from '../constants';
 import { ListContext } from '../contexts';
 import { useUploadFileNewAction } from '../hooks/useUploadFileNewAction';
 
@@ -21,7 +21,7 @@ interface SearchViewProps {
 
 export const SearchView = ({ resultsHeader }: SearchViewProps): React.JSX.Element => {
 	const [searchExecuted, setSearchExecuted] = useState(false);
-	useUploadFileNewAction(true);
+	useUploadFileNewAction(true, ROOTS.LOCAL_ROOT);
 
 	const listContextValue = useMemo<Partial<React.ContextType<typeof ListContext>>>(
 		() => ({

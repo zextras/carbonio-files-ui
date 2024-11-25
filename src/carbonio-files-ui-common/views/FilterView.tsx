@@ -18,7 +18,7 @@ import { SortingComponent } from './components/SortingComponent';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
 import { nodeSortVar } from '../apollo/nodeSortVar';
-import { FILTER_PARAMS, FILTER_TYPE } from '../constants';
+import { FILTER_PARAMS, FILTER_TYPE, ROOTS } from '../constants';
 import { ListHeaderActionContext } from '../contexts';
 import { useFindNodesQuery } from '../hooks/graphql/queries/useFindNodesQuery';
 import { useUploadFileNewAction } from '../hooks/useUploadFileNewAction';
@@ -37,7 +37,7 @@ const FilterView = (): React.JSX.Element => {
 
 	const [t] = useTranslation();
 
-	useUploadFileNewAction(true);
+	useUploadFileNewAction(true, ROOTS.LOCAL_ROOT);
 
 	const displayerPlaceholdersKey = useMemo(() => {
 		const filterKey = filterParam?.includes('Trash') ? 'trash' : filterParam;
