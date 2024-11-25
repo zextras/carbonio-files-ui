@@ -6,7 +6,6 @@
 
 import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
 
-import { Spinner } from '@zextras/carbonio-shell-ui';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
@@ -17,6 +16,7 @@ import {
 	GlobalProvidersWrapper,
 	ViewProvidersWrapper
 } from '../carbonio-files-ui-common/views/components/ProvidersWrapper';
+import { Spinner } from '../components/Spinner';
 import { UPDATE_VIEW_EVENT } from '../constants';
 
 const LazyFileFolderViewSelector = lazy(

@@ -16,7 +16,6 @@ import {
 	registerActions,
 	SearchViewProps,
 	SecondaryBarComponentProps,
-	Spinner,
 	useAuthenticated
 } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +29,7 @@ import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uplo
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
 import { PrimaryBadgeUpdater } from './components/PrimaryBadgeUpdater';
+import { Spinner } from './components/Spinner';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
