@@ -25,7 +25,7 @@ jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem
 describe('Contextual menu actions', () => {
 	describe('on empty space', () => {
 		describe('in a folder with few nodes', () => {
-			test('when isCanCreateFolder and isCanCreateFolder are true', async () => {
+			test('when canCreateFolder and canCreateFolder are true', async () => {
 				const currentFolder = populateFolder();
 				const node1 = populateFile();
 				const node2 = populateFile();
@@ -37,8 +37,8 @@ describe('Contextual menu actions', () => {
 				const createDocumentAction = jest.fn();
 				const createSpreadsheetAction = jest.fn();
 				const createPresentationAction = jest.fn();
-				const isCanCreateFolder = true;
-				const isCanCreateFile = true;
+				const canCreateFolder = true;
+				const canCreateFile = true;
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
@@ -46,28 +46,28 @@ describe('Contextual menu actions', () => {
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
-						disabled: !isCanCreateFolder
+						disabled: !canCreateFolder
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					}
 				];
 
@@ -133,7 +133,7 @@ describe('Contextual menu actions', () => {
 				expect(createPresentationAction).toHaveBeenCalledTimes(1);
 			});
 
-			test('when isCanCreateFolder and isCanCreateFolder are false', async () => {
+			test('when canCreateFolder and canCreateFolder are false', async () => {
 				const currentFolder = populateFolder();
 				const node1 = populateFile();
 				const node2 = populateFile();
@@ -145,8 +145,8 @@ describe('Contextual menu actions', () => {
 				const createDocumentAction = jest.fn();
 				const createSpreadsheetAction = jest.fn();
 				const createPresentationAction = jest.fn();
-				const isCanCreateFolder = false;
-				const isCanCreateFile = false;
+				const canCreateFolder = false;
+				const canCreateFile = false;
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
@@ -154,28 +154,28 @@ describe('Contextual menu actions', () => {
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
-						disabled: !isCanCreateFolder
+						disabled: !canCreateFolder
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					}
 				];
 
@@ -243,15 +243,15 @@ describe('Contextual menu actions', () => {
 		});
 
 		describe('in a folder with no nodes', () => {
-			test('when isCanCreateFolder and isCanCreateFolder are true', async () => {
+			test('when canCreateFolder and canCreateFolder are true', async () => {
 				const currentFolder = populateFolder();
 
 				const createFolderAction = jest.fn();
 				const createDocumentAction = jest.fn();
 				const createSpreadsheetAction = jest.fn();
 				const createPresentationAction = jest.fn();
-				const isCanCreateFolder = true;
-				const isCanCreateFile = true;
+				const canCreateFolder = true;
+				const canCreateFile = true;
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
@@ -259,28 +259,28 @@ describe('Contextual menu actions', () => {
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
-						disabled: !isCanCreateFolder
+						disabled: !canCreateFolder
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					}
 				];
 
@@ -346,15 +346,15 @@ describe('Contextual menu actions', () => {
 				expect(createPresentationAction).toHaveBeenCalledTimes(1);
 			});
 
-			test('when isCanCreateFolder and isCanCreateFolder are false', async () => {
+			test('when canCreateFolder and canCreateFolder are false', async () => {
 				const currentFolder = populateFolder();
 
 				const createFolderAction = jest.fn();
 				const createDocumentAction = jest.fn();
 				const createSpreadsheetAction = jest.fn();
 				const createPresentationAction = jest.fn();
-				const isCanCreateFolder = false;
-				const isCanCreateFile = false;
+				const canCreateFolder = false;
+				const canCreateFile = false;
 
 				const actions: ContextualMenuProps['actions'] = [
 					{
@@ -362,28 +362,28 @@ describe('Contextual menu actions', () => {
 						label: 'New Folder',
 						icon: 'FolderOutline',
 						onClick: createFolderAction,
-						disabled: !isCanCreateFolder
+						disabled: !canCreateFolder
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
 						label: 'New Document',
 						icon: 'FileTextOutline',
 						onClick: createDocumentAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
 						label: 'New Spreadsheet',
 						icon: 'FileCalcOutline',
 						onClick: createSpreadsheetAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					},
 					{
 						id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
 						label: 'New Presentation',
 						icon: 'FilePresentationOutline',
 						onClick: createPresentationAction,
-						disabled: !isCanCreateFile
+						disabled: !canCreateFile
 					}
 				];
 

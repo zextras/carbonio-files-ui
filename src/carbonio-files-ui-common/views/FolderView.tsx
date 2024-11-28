@@ -43,27 +43,27 @@ const FolderView = (): React.JSX.Element => {
 
 	const { data: permissionsData } = useGetPermissionsQuery(currentFolderId);
 
-	const isCanUploadFile = useMemo(
+	const isUploadFilePermitted = useMemo(
 		() => !!permissionsData?.getNode && canUploadFile(permissionsData.getNode),
 		[permissionsData]
 	);
 
-	const isCanCreateFolder = useMemo(
+	const isCreateFolderPermitted = useMemo(
 		() => !!permissionsData?.getNode && canCreateFolder(permissionsData.getNode),
 		[permissionsData]
 	);
 
-	const isCanCreateFile = useMemo(
+	const isCreateFilePermitted = useMemo(
 		() => !!permissionsData?.getNode && canCreateFile(permissionsData.getNode),
 		[permissionsData]
 	);
 
-	useUploadFileNewAction(isCanUploadFile, currentFolderId);
+	useUploadFileNewAction(isUploadFilePermitted, currentFolderId);
 	const actions = useCreateNewActions(
 		currentFolderId,
 		currentFolder,
-		isCanCreateFolder,
-		isCanCreateFile
+		isCreateFolderPermitted,
+		isCreateFilePermitted
 	);
 
 	const nodes = useMemo(() => {
@@ -102,10 +102,10 @@ const FolderView = (): React.JSX.Element => {
 						hasMore={hasMore}
 						loadMore={loadMore}
 						loading={loading}
-						canUpload={isCanUploadFile}
+						canUpload={isUploadFilePermitted}
 						fillerWithActions={<EmptySpaceFiller actions={actions} />}
 						emptyListMessage={t('empty.folder.hint', "It looks like there's nothing here.")}
-						mainList={isCanUploadFile}
+						mainList={isUploadFilePermitted}
 					/>
 				</SelectionProvider>
 			</ListHeaderActionContext.Provider>
@@ -114,7 +114,7 @@ const FolderView = (): React.JSX.Element => {
 			actions,
 			currentFolderId,
 			hasMore,
-			isCanUploadFile,
+			isUploadFilePermitted,
 			listHeaderActionValue,
 			loadMore,
 			loading,
