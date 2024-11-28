@@ -16,11 +16,7 @@ import { FILES_APP_ID, ROOTS } from '../constants';
 import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
 import { inputElement } from '../utils/utils';
 
-export const useUploadFileNewAction = (
-	isAvailable: boolean,
-	destinationId: string,
-	disabled = false
-): void => {
+export const useUploadFileNewAction = (isAvailable: boolean, destinationId: string): void => {
 	const { add } = useUpload();
 	const [t] = useTranslation();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
@@ -50,39 +46,36 @@ export const useUploadFileNewAction = (
 		[add, createSnackbar, destinationId, navigateToFolder, t]
 	);
 
-	const uploadAction = useMemo<NewAction>(
+	const uploadAction = useMemo(
 		() => ({
-			group: FILES_APP_ID,
+			type: ACTION_TYPES.NEW,
 			id: ACTION_IDS.UPLOAD_FILE,
-			primary: true,
-			label: t('create.options.new.upload', 'Upload'),
-			icon: 'CloudUploadOutline',
-			execute: (event): void => {
-				event?.stopPropagation();
-				inputElement.click();
-				inputElement.onchange = inputElementOnchange;
-			}
+			action: () =>
+				({
+					group: FILES_APP_ID,
+					id: ACTION_IDS.UPLOAD_FILE,
+					primary: true,
+					label: t('create.options.new.upload', 'Upload'),
+					icon: 'CloudUploadOutline',
+					execute: (event): void => {
+						event?.stopPropagation();
+						inputElement.click();
+						inputElement.onchange = inputElementOnchange;
+					}
+				}) satisfies NewAction
 		}),
 		[inputElementOnchange, t]
 	);
 
 	useEffect(() => {
 		if (isAvailable) {
-			setCreateOptions<NewAction>({
-				type: ACTION_TYPES.NEW,
-				id: ACTION_IDS.UPLOAD_FILE,
-				action: () => ({ ...uploadAction, disabled })
-			});
+			setCreateOptions<NewAction>(uploadAction);
 			return (): void => undefined;
 		}
 
-		removeCreateOptions(ACTION_IDS.UPLOAD_FILE);
+		removeCreateOptions(uploadAction.id);
 		return (): void => {
-			setCreateOptions<NewAction>({
-				type: ACTION_TYPES.NEW,
-				id: ACTION_IDS.UPLOAD_FILE,
-				action: () => uploadAction
-			});
+			setCreateOptions<NewAction>(uploadAction);
 		};
-	}, [disabled, isAvailable, removeCreateOptions, setCreateOptions, uploadAction]);
+	}, [isAvailable, removeCreateOptions, setCreateOptions, uploadAction]);
 };

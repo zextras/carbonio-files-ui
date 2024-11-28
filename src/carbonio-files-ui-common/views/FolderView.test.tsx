@@ -66,7 +66,7 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 
 describe('Folder View', () => {
 	describe('Create Folder', () => {
-		test('Create folder option is disabled if current folder has not can_write_folder permission', async () => {
+		test('Create folder option is hidden if current folder has not can_write_folder permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = false;
 			currentFolder.permissions.can_write_file = false;
@@ -83,8 +83,8 @@ describe('Folder View', () => {
 			});
 			await screen.findByText(/nothing here/i);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
-			expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
-				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: true })
+			expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
+				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER })
 			);
 		});
 
@@ -105,7 +105,7 @@ describe('Folder View', () => {
 			});
 			await screen.findByText(/nothing here/i);
 			expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
-				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER, disabled: false })
+				expect.objectContaining({ id: ACTION_IDS.CREATE_FOLDER })
 			);
 		});
 	});
@@ -268,7 +268,7 @@ describe('Folder View', () => {
 	});
 
 	describe('Create docs files', () => {
-		test('Create file options are disabled if current folder has not can_write_file permission', async () => {
+		test('Create file options are hidden if current folder has not can_write_file permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = false;
 			const createOptions = spyOnUseCreateOptions();
@@ -283,12 +283,14 @@ describe('Folder View', () => {
 				mocks
 			});
 			await screen.findByText(/nothing here/i);
-			expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: true }),
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: true }),
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: true })
-				])
+			expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+			);
+			expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+			);
+			expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
 			);
 		});
 
@@ -309,9 +311,9 @@ describe('Folder View', () => {
 			await screen.findByText(/nothing here/i);
 			expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
 				expect.arrayContaining([
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: false }),
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: false }),
-					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: false })
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET }),
+					expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
 				])
 			);
 		});

@@ -58,7 +58,7 @@ const FolderView = (): React.JSX.Element => {
 		[permissionsData]
 	);
 
-	useUploadFileNewAction(true, currentFolderId, !isCanUploadFile);
+	useUploadFileNewAction(isCanUploadFile, currentFolderId);
 	const actions = useCreateNewActions(
 		currentFolderId,
 		currentFolder,
