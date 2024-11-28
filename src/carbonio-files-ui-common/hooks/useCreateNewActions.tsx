@@ -51,7 +51,7 @@ export const useCreateNewActions = (
 
 	const createFolderAction = useCallback(
 		(event: React.SyntheticEvent | KeyboardEvent) => {
-			event?.stopPropagation();
+			event.stopPropagation();
 			openCreateFolderModal({
 				title: t('folder.create.modal.title', 'Create new folder'),
 				inputLabel: t('folder.create.modal.input.label.name', 'Folder name'),
