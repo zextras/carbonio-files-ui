@@ -6,7 +6,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { Text } from '@zextras/carbonio-design-system';
-import { map, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { useCreateFolderMutation } from './graphql/mutations/useCreateFolderMutation';
@@ -121,7 +120,7 @@ export const useCreateNewActions = (
 				? [
 						{
 							id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-							execute: noop,
+							execute: () => undefined,
 							label: t('create.options.new.document', 'New document'),
 							icon: 'FileTextOutline',
 							disabled: !isCanCreateFile,
@@ -142,7 +141,7 @@ export const useCreateNewActions = (
 						},
 						{
 							id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-							execute: noop,
+							execute: () => undefined,
 							label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 							icon: 'FileCalcOutline',
 							disabled: !isCanCreateFile,
@@ -163,7 +162,7 @@ export const useCreateNewActions = (
 						},
 						{
 							id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-							execute: noop,
+							execute: () => undefined,
 							label: t('create.options.new.presentation', 'New presentation'),
 							icon: 'FilePresentationOutline',
 							disabled: !isCanCreateFile,
@@ -189,7 +188,7 @@ export const useCreateNewActions = (
 	);
 
 	useEffect(() => {
-		const createActions = map(actions, (action) => ({
+		const createActions = actions.map((action) => ({
 			type: ACTION_TYPES.NEW,
 			id: action.id,
 			action: () => ({
@@ -201,7 +200,7 @@ export const useCreateNewActions = (
 		setCreateOptions<NewAction>(...createActions);
 
 		return (): void => {
-			removeCreateOptions(...map(createActions, (action) => action.id));
+			removeCreateOptions(...createActions.map((action) => action.id));
 		};
 	}, [
 		actions,

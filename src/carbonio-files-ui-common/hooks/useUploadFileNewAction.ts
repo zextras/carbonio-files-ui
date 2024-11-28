@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
@@ -50,46 +50,39 @@ export const useUploadFileNewAction = (
 		[add, createSnackbar, destinationId, navigateToFolder, t]
 	);
 
+	const uploadAction = useMemo<NewAction>(
+		() => ({
+			group: FILES_APP_ID,
+			id: ACTION_IDS.UPLOAD_FILE,
+			primary: true,
+			label: t('create.options.new.upload', 'Upload'),
+			icon: 'CloudUploadOutline',
+			execute: (event): void => {
+				event?.stopPropagation();
+				inputElement.click();
+				inputElement.onchange = inputElementOnchange;
+			}
+		}),
+		[inputElementOnchange, t]
+	);
+
 	useEffect(() => {
 		if (isAvailable) {
 			setCreateOptions<NewAction>({
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
-				action: () => ({
-					group: FILES_APP_ID,
-					id: ACTION_IDS.UPLOAD_FILE,
-					primary: true,
-					label: t('create.options.new.upload', 'Upload'),
-					icon: 'CloudUploadOutline',
-					execute: (event): void => {
-						event?.stopPropagation();
-						inputElement.click();
-						inputElement.onchange = inputElementOnchange;
-					},
-					disabled
-				})
+				action: () => ({ ...uploadAction, disabled })
 			});
 			return (): void => undefined;
 		}
+
 		removeCreateOptions(ACTION_IDS.UPLOAD_FILE);
 		return (): void => {
 			setCreateOptions<NewAction>({
 				type: ACTION_TYPES.NEW,
 				id: ACTION_IDS.UPLOAD_FILE,
-				action: () => ({
-					id: ACTION_IDS.UPLOAD_FILE,
-					primary: true,
-					group: FILES_APP_ID,
-					label: t('create.options.new.upload', 'Upload'),
-					icon: 'CloudUploadOutline',
-					execute: (event): void => {
-						event?.stopPropagation();
-						inputElement.click();
-						inputElement.onchange = inputElementOnchange;
-					},
-					disabled: false
-				})
+				action: () => uploadAction
 			});
 		};
-	}, [isAvailable, inputElementOnchange, removeCreateOptions, setCreateOptions, t, disabled]);
+	}, [disabled, isAvailable, removeCreateOptions, setCreateOptions, uploadAction]);
 };
