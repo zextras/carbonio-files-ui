@@ -23,8 +23,8 @@ import { getDocumentGenericType, getNewDocumentActionLabel, isFolder } from '../
 export const useCreateNewActions = (
 	currentFolderId: string,
 	currentFolder: GetChildrenQuery | undefined,
-	isCanCreateFolder: boolean,
-	isCanCreateFile: boolean
+	canCreateFolder: boolean,
+	canCreateFile: boolean
 ): NewAction[] => {
 	const { setActiveNode } = useActiveNode();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
@@ -63,7 +63,7 @@ export const useCreateNewActions = (
 	);
 
 	const createFolderNewActions = useMemo<NewAction[]>(() => {
-		if (isCanCreateFolder) {
+		if (canCreateFolder) {
 			return [
 				{
 					id: ACTION_IDS.CREATE_FOLDER,
@@ -74,7 +74,7 @@ export const useCreateNewActions = (
 			];
 		}
 		return [];
-	}, [createFolderAction, isCanCreateFolder, t]);
+	}, [createFolderAction, canCreateFolder, t]);
 
 	const createDocsFile = useCreateDocsFile();
 
@@ -122,7 +122,7 @@ export const useCreateNewActions = (
 	const { canUseDocs } = useHealthInfo();
 
 	const createDocsFileNewActions = useMemo<NewAction[]>(() => {
-		if (canUseDocs && isCanCreateFile) {
+		if (canUseDocs && canCreateFile) {
 			return [
 				{
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
@@ -181,7 +181,7 @@ export const useCreateNewActions = (
 			];
 		}
 		return [];
-	}, [canUseDocs, createDocsAction, isCanCreateFile, t]);
+	}, [canUseDocs, createDocsAction, canCreateFile, t]);
 
 	const actions = useMemo(
 		() => [...createFolderNewActions, ...createDocsFileNewActions],
