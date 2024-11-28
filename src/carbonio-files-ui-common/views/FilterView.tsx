@@ -4,13 +4,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { Container, Snackbar } from '@zextras/carbonio-design-system';
-import { noop } from 'lodash';
+import { Container } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Displayer } from './components/Displayer';
 import { List } from './components/List';
@@ -18,20 +17,14 @@ import { SelectionProvider } from './components/SelectionProvider';
 import { SortingComponent } from './components/SortingComponent';
 import { ViewModeComponent } from './components/ViewModeComponent';
 import { ViewLayout } from './ViewLayout';
-import { ACTION_IDS, ACTION_TYPES } from '../../constants';
-import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
-import { useNavigation } from '../../hooks/useNavigation';
 import { nodeSortVar } from '../apollo/nodeSortVar';
-import { FILES_APP_ID, FILTER_PARAMS, FILTER_TYPE, ROOTS } from '../constants';
+import { FILTER_PARAMS, FILTER_TYPE, ROOTS } from '../constants';
 import { ListHeaderActionContext } from '../contexts';
 import { useFindNodesQuery } from '../hooks/graphql/queries/useFindNodesQuery';
-import { useHealthInfo } from '../hooks/useHealthInfo';
-import { useUpload } from '../hooks/useUpload';
-import { Crumb, DocsType, URLParams } from '../types/common';
+import { useUploadFileNewAction } from '../hooks/useUploadFileNewAction';
+import { Crumb, URLParams } from '../types/common';
 import { NodeSort } from '../types/graphql/types';
 import { NonNullableListItem } from '../types/utils';
-import { getUploadAddTypeFromInput } from '../utils/uploadUtils';
-import { getNewDocumentActionLabel, inputElement } from '../utils/utils';
 
 const FilterView = (): React.JSX.Element => {
 	const { filter: filterParam } = useParams<URLParams>();
@@ -42,163 +35,9 @@ const FilterView = (): React.JSX.Element => {
 	const isSharedWithMeFilter = `/${filterParam}` === FILTER_TYPE.sharedWithMe;
 	const isRecentsFilter = `/${filterParam}` === FILTER_TYPE.recents;
 
-	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 	const [t] = useTranslation();
 
-	const { pathname, search } = useLocation();
-
-	const { add } = useUpload();
-	const { navigateToFolder } = useNavigation();
-	const [showUploadSnackbar, setShowUploadSnackbar] = useState(false);
-
-	const closeUploadSnackbar = useCallback(() => {
-		setShowUploadSnackbar(false);
-	}, []);
-
-	const uploadSnackbarAction = useCallback(() => {
-		navigateToFolder(ROOTS.LOCAL_ROOT);
-	}, [navigateToFolder]);
-
-	const inputElementOnchange = useCallback(
-		(ev: Event) => {
-			if (ev.currentTarget instanceof HTMLInputElement) {
-				if (ev.currentTarget.files) {
-					add(getUploadAddTypeFromInput(ev.currentTarget.files), ROOTS.LOCAL_ROOT);
-					setShowUploadSnackbar(true);
-				}
-				// required to select 2 times the same file/files
-				ev.currentTarget.value = '';
-			}
-		},
-		[add]
-	);
-	const { canUseDocs } = useHealthInfo();
-
-	useEffect(() => {
-		setCreateOptions<NewAction>(
-			{
-				id: ACTION_IDS.UPLOAD_FILE,
-				type: ACTION_TYPES.NEW,
-				action: () => ({
-					id: ACTION_IDS.UPLOAD_FILE,
-					primary: true,
-					group: FILES_APP_ID,
-					label: t('create.options.new.upload', 'Upload'),
-					icon: 'CloudUploadOutline',
-					execute: (event): void => {
-						event?.stopPropagation();
-						inputElement.click();
-						inputElement.onchange = inputElementOnchange;
-					}
-				})
-			},
-			{
-				id: ACTION_IDS.CREATE_FOLDER,
-				type: ACTION_TYPES.NEW,
-				action: () => ({
-					id: ACTION_IDS.CREATE_FOLDER,
-					group: FILES_APP_ID,
-					label: t('create.options.new.folder', 'New folder'),
-					icon: 'FolderOutline',
-					disabled: true,
-					execute: noop
-				})
-			},
-			...(canUseDocs
-				? [
-						{
-							id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-							type: ACTION_TYPES.NEW,
-							action: () => ({
-								id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-								group: FILES_APP_ID,
-								label: t('create.options.new.document', 'New document'),
-								icon: 'FileTextOutline',
-								disabled: true,
-								execute: noop,
-								items: [
-									{
-										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-libre`,
-										label: getNewDocumentActionLabel(t, DocsType.LIBRE_DOCUMENT),
-										disabled: true
-									},
-									{
-										id: `${ACTION_IDS.CREATE_DOCS_DOCUMENT}-ms`,
-										label: getNewDocumentActionLabel(t, DocsType.MS_DOCUMENT),
-										disabled: true
-									}
-								]
-							})
-						},
-						{
-							id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-							type: ACTION_TYPES.NEW,
-							action: () => ({
-								id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-								group: FILES_APP_ID,
-								label: t('create.options.new.spreadsheet', 'New spreadsheet'),
-								icon: 'FileCalcOutline',
-								disabled: true,
-								execute: noop,
-								items: [
-									{
-										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-libre`,
-										label: getNewDocumentActionLabel(t, DocsType.LIBRE_SPREADSHEET),
-										disabled: true
-									},
-									{
-										id: `${ACTION_IDS.CREATE_DOCS_SPREADSHEET}-ms`,
-										label: getNewDocumentActionLabel(t, DocsType.MS_SPREADSHEET),
-										disabled: true
-									}
-								]
-							})
-						},
-						{
-							id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-							type: ACTION_TYPES.NEW,
-							action: () => ({
-								id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-								group: FILES_APP_ID,
-								label: t('create.options.new.presentation', 'New presentation'),
-								icon: 'FilePresentationOutline',
-								disabled: true,
-								execute: noop,
-								items: [
-									{
-										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-libre`,
-										label: getNewDocumentActionLabel(t, DocsType.LIBRE_PRESENTATION),
-										disabled: true
-									},
-									{
-										id: `${ACTION_IDS.CREATE_DOCS_PRESENTATION}-ms`,
-										label: getNewDocumentActionLabel(t, DocsType.MS_PRESENTATION),
-										disabled: true
-									}
-								]
-							})
-						}
-					]
-				: [])
-		);
-		return (): void => {
-			removeCreateOptions(
-				ACTION_IDS.CREATE_FOLDER,
-				ACTION_IDS.CREATE_DOCS_DOCUMENT,
-				ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-				ACTION_IDS.CREATE_DOCS_PRESENTATION
-			);
-		};
-	}, [
-		canUseDocs,
-		filterParam,
-		inputElementOnchange,
-		pathname,
-		removeCreateOptions,
-		search,
-		setCreateOptions,
-		t
-	]);
+	useUploadFileNewAction(true, ROOTS.LOCAL_ROOT);
 
 	const displayerPlaceholdersKey = useMemo(() => {
 		const filterKey = filterParam?.includes('Trash') ? 'trash' : filterParam;
@@ -361,20 +200,10 @@ const FilterView = (): React.JSX.Element => {
 	);
 
 	return (
-		<>
-			<ViewLayout
-				listComponent={ListComponent}
-				displayerComponent={<Displayer translationKey={displayerPlaceholdersKey} />}
-			/>
-			<Snackbar
-				open={showUploadSnackbar}
-				onClose={closeUploadSnackbar}
-				severity="info"
-				label={t('uploads.destination.home', "Upload occurred in Files' Home")}
-				actionLabel={t('snackbar.upload.goToFolder', 'Go to folder')}
-				onActionClick={uploadSnackbarAction}
-			/>
-		</>
+		<ViewLayout
+			listComponent={ListComponent}
+			displayerComponent={<Displayer translationKey={displayerPlaceholdersKey} />}
+		/>
 	);
 };
 

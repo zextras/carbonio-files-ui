@@ -7,23 +7,13 @@ import React from 'react';
 
 import { waitFor } from '@testing-library/react';
 import { keyBy } from 'lodash';
-import { http, HttpResponse } from 'msw';
 
 import UploadView from './UploadView';
 import { ACTION_IDS } from '../../constants';
 import { NewAction } from '../../hooks/useCreateOptions';
-import server from '../../mocks/server';
 import { uploadVar } from '../apollo/uploadVar';
-import {
-	DOCS_SERVICE_NAME,
-	HEALTH_PATH,
-	NODES_LOAD_LIMIT,
-	NODES_SORT_DEFAULT,
-	REST_ENDPOINT
-} from '../constants';
+import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
-import { healthCache } from '../hooks/useHealthInfo';
-import { HealthResponse } from '../mocks/handleHealthRequest';
 import {
 	populateFile,
 	populateFolder,
@@ -185,18 +175,14 @@ describe('Upload view', () => {
 		});
 	});
 
-	it('should show all actions disabled, except the upload', async () => {
-		const actionIds = Object.values(ACTION_IDS);
+	it('should show only upload file action', async () => {
 		const actions = spyOnUseCreateOptions();
 		setup(<UploadView />);
 		await screen.findByText(/nothing here/i);
-		await waitFor(() => {
-			expect(actions).toHaveLength(actionIds.length);
-		});
-		actions.forEach((action) => {
-			const actionIsDisabled = action.id !== ACTION_IDS.UPLOAD_FILE;
-			expect((action.action(undefined) as NewAction).disabled).toBe(actionIsDisabled);
-		});
+		await waitFor(() => expect(actions.length).toBeGreaterThan(0));
+		expect(actions).toHaveLength(1);
+		expect((actions[0].action(undefined) as NewAction).disabled).toBeFalsy();
+		expect(actions[0].id).toBe(ACTION_IDS.UPLOAD_FILE);
 	});
 
 	it('should show snackbar on upload through new action', async () => {
@@ -246,47 +232,5 @@ describe('Upload view', () => {
 			});
 			return expect((localRootData?.getNode as Folder | null)?.children.nodes).toHaveLength(1);
 		});
-	});
-
-	it('should show docs creation actions if docs is available', async () => {
-		healthCache.reset();
-		const createOptions = spyOnUseCreateOptions();
-		server.use(
-			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
-			)
-		);
-		setup(<UploadView />);
-		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
-		expect(createOptions).toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
-		);
-		expect(createOptions).toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
-		);
-		expect(createOptions).toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
-		);
-	});
-
-	it('should not show docs creation actions if docs is not available', async () => {
-		healthCache.reset();
-		const createOptions = spyOnUseCreateOptions();
-		server.use(
-			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
-				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
-			)
-		);
-		setup(<UploadView />);
-		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
-		expect(createOptions).not.toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
-		);
-		expect(createOptions).not.toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
-		);
-		expect(createOptions).not.toContainEqual(
-			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
-		);
 	});
 });
