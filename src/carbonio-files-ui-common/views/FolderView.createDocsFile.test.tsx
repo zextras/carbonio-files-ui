@@ -90,7 +90,7 @@ async function createNode(newNode: { name: string }, user: UserEvent): Promise<v
 }
 
 describe('Create docs file', () => {
-	it('should show docs creation actions if docs is available', async () => {
+	it('should show docs creation actions if docs is available and folder has write permissions', async () => {
 		healthCache.reset();
 		const createOptions = spyOnUseCreateOptions();
 		server.use(
@@ -98,7 +98,16 @@ describe('Create docs file', () => {
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
 			)
 		);
-		setup(<FolderView />);
+		const currentFolder = populateFolder(0);
+		currentFolder.permissions.can_write_folder = true;
+		currentFolder.permissions.can_write_file = true;
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
+		setup(<FolderView />, { mocks, initialRouterEntries: [`/?folder=${currentFolder.id}`] });
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
 		});
@@ -121,7 +130,16 @@ describe('Create docs file', () => {
 				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: false }] })
 			)
 		);
-		setup(<FolderView />);
+		const currentFolder = populateFolder();
+		currentFolder.permissions.can_write_file = true;
+		currentFolder.permissions.can_write_folder = true;
+		const mocks = {
+			Query: {
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+				getPath: mockGetPath([currentFolder])
+			}
+		} satisfies Partial<Resolvers>;
+		setup(<FolderView />, { mocks, initialRouterEntries: [`/?folder=${currentFolder.id}`] });
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
 		});
@@ -144,6 +162,8 @@ describe('Create docs file', () => {
 			)
 		);
 		const currentFolder = populateFolder(0);
+		currentFolder.permissions.can_write_file = true;
+		currentFolder.permissions.can_write_folder = true;
 		const mocks = {
 			Query: {
 				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -169,6 +189,8 @@ describe('Create docs file', () => {
 			)
 		);
 		const currentFolder = populateFolder(0);
+		currentFolder.permissions.can_write_file = true;
+		currentFolder.permissions.can_write_folder = true;
 		const mocks = {
 			Query: {
 				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
@@ -186,9 +208,10 @@ describe('Create docs file', () => {
 		expect(within(dropdown).queryByText(ACTION_REGEXP.newPresentation)).not.toBeInTheDocument();
 	});
 
-	test('Create file options are disabled if current folder has not can_write_file permission', async () => {
+	test('Create file options are hidden if current folder has not can_write_file permission', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = false;
+		currentFolder.permissions.can_write_folder = true;
 		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
@@ -201,18 +224,21 @@ describe('Create docs file', () => {
 			mocks
 		});
 		await screen.findByText(/nothing here/i);
-		expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: true }),
-				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: true }),
-				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: true })
-			])
+		expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
+		);
+		expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
+		);
+		expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
+			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
 		);
 	});
 
 	test('Create docs files options are active if current folder has can_write_file permission', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
+		currentFolder.permissions.can_write_folder = true;
 		const createOptions = spyOnUseCreateOptions();
 		const mocks = {
 			Query: {
@@ -227,9 +253,9 @@ describe('Create docs file', () => {
 		await screen.findByText(/nothing here/i);
 		expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
 			expect.arrayContaining([
-				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT, disabled: false }),
-				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET, disabled: false }),
-				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION, disabled: false })
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT }),
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET }),
+				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
 			])
 		);
 	});
@@ -237,6 +263,7 @@ describe('Create docs file', () => {
 	test('Create docs file operation fail shows an error in the modal and does not close it', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
+		currentFolder.permissions.can_write_folder = true;
 		const node1 = populateFile('n1', 'first');
 		const node2 = populateFile('n2', 'second');
 		const node3 = populateFile('n3', 'third');
@@ -288,6 +315,7 @@ describe('Create docs file', () => {
 	test('Create docs add file node at folder content, showing the element in the ordered list if neighbor is already loaded and ordered', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
+		currentFolder.permissions.can_write_folder = true;
 		const node1 = populateFile('n1', 'first');
 		const node2 = populateFile('n2', 'second');
 		node2.parent = currentFolder;
@@ -343,6 +371,7 @@ describe('Create docs file', () => {
 		currentFolder.children = populateNodePage(populateNodes(NODES_LOAD_LIMIT, 'Folder'));
 		sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);
 		currentFolder.permissions.can_write_folder = true;
+		currentFolder.permissions.can_write_file = true;
 		const node1 = populateFile('n1', `zzzz-new-file-n1`);
 		node1.parent = currentFolder;
 		const node2 = populateFile('n2', `zzzz-new-file-n2`);
@@ -446,7 +475,19 @@ describe('Create docs file', () => {
 	describe('Extension new item', () => {
 		test('should render .ods extension when click createLibreDocument button', async () => {
 			const createOptions = spyOnUseCreateOptions();
-			setup(<FolderView />);
+			const currentFolder = populateFolder();
+			currentFolder.permissions.can_write_file = true;
+			currentFolder.permissions.can_write_folder = true;
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<FolderView />, { mocks, initialRouterEntries: [`/?folder=${currentFolder.id}`] });
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 			act(() => {
 				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
@@ -456,7 +497,19 @@ describe('Create docs file', () => {
 
 		test('should render .docx extension when click createMsDocument button', async () => {
 			const createOptions = spyOnUseCreateOptions();
-			setup(<FolderView />);
+			const currentFolder = populateFolder();
+			currentFolder.permissions.can_write_file = true;
+			currentFolder.permissions.can_write_folder = true;
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] }),
+					getPath: mockGetPath([currentFolder])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<FolderView />, { mocks, initialRouterEntries: [`/?folder=${currentFolder.id}`] });
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
 			clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'ms');
 			act(() => {
 				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
@@ -467,6 +520,8 @@ describe('Create docs file', () => {
 
 	it('should show a permanent error snackbar if the creation of a document fails because of the over quota', async () => {
 		const currentFolder = populateFolder();
+		currentFolder.permissions.can_write_file = true;
+		currentFolder.permissions.can_write_folder = true;
 		const mocks = {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
@@ -519,6 +574,8 @@ describe('Create docs file', () => {
 		'should show specific over quota message if creating a %s %s',
 		async (expectedString, docType, action) => {
 			const currentFolder = populateFolder();
+			currentFolder.permissions.can_write_file = true;
+			currentFolder.permissions.can_write_folder = true;
 			const mocks = {
 				Query: {
 					getPath: mockGetPath([currentFolder]),
