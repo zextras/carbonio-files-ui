@@ -5,14 +5,13 @@
  */
 
 import { JSNS, soapFetch as shellSoapFetch } from '@zextras/carbonio-shell-ui';
-import { ValueOf } from '@zextras/carbonio-shell-ui/lib/utils/typeUtils';
 
 import { RequestName } from '../carbonio-files-ui-common/types/network';
 
 export const soapFetch = <Req, Res extends Record<string, unknown>>(
 	request: RequestName,
 	args: Req,
-	nameSpaceValue: ValueOf<typeof JSNS> = JSNS.mail
+	nameSpaceValue: (typeof JSNS)[keyof typeof JSNS] = JSNS.mail
 ): Promise<Res> =>
 	shellSoapFetch<Req, Res>(request, {
 		_jsns: nameSpaceValue,

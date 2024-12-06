@@ -6,7 +6,7 @@
 
 import React, { useEffect } from 'react';
 
-import type { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
+import type { SearchViewProps } from '@zextras/carbonio-search-ui';
 import { size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
@@ -39,7 +39,7 @@ const SearchView = ({ useQuery, ResultsHeader }: SearchViewProps): React.JSX.Ele
 		<PreventDefaultDropContainer>
 			<GlobalProvidersWrapper>
 				<ViewProvidersWrapper>
-					<UpdateQueryContext.Provider value={updateQuery as (args: QueryChip[]) => void}>
+					<UpdateQueryContext.Provider value={updateQuery}>
 						<CommonSearchView
 							resultsHeader={<ResultsHeader label={t('search.resultsFor', 'Results for:')} />}
 						/>

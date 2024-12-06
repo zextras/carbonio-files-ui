@@ -7,11 +7,12 @@
 import React from 'react';
 
 import { act } from '@testing-library/react';
+import type * as searchUI from '@zextras/carbonio-search-ui';
 import * as shell from '@zextras/carbonio-shell-ui';
 import { ACTION_TYPES } from '@zextras/carbonio-shell-ui';
 
 import App from './app';
-import { FILES_ROUTE } from './carbonio-files-ui-common/constants';
+import { FILES_APP_ID, FILES_ROUTE } from './carbonio-files-ui-common/constants';
 import { setup } from './carbonio-files-ui-common/tests/utils';
 import { FUNCTION_IDS } from './constants';
 
@@ -25,11 +26,14 @@ describe('App', () => {
 			});
 			expect(addRouteMock).toHaveBeenCalledWith<Parameters<typeof shell.addRoute>>(
 				expect.objectContaining({
+					id: FILES_APP_ID,
+					app: FILES_APP_ID,
 					route: FILES_ROUTE,
+					label: 'Files',
 					position: 500,
 					visible: true,
-					label: 'Files',
 					primaryBar: 'DriveOutline',
+					icon: 'DriveOutline',
 					secondaryBar: expect.anything(),
 					appView: expect.anything()
 				})
@@ -37,12 +41,18 @@ describe('App', () => {
 		});
 
 		it('should call addSearchView', async () => {
-			const addSearchViewMock = jest.spyOn(shell, 'addSearchView');
+			const addSearchViewMock = jest.fn();
+			jest.spyOn(shell, 'useIntegratedFunction').mockImplementation((id) => {
+				if (id === 'search-add-view') {
+					return [addSearchViewMock, true];
+				}
+				return [(): void => undefined, false];
+			});
 			setup(<App />);
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
 			});
-			expect(addSearchViewMock).toHaveBeenCalledWith<Parameters<typeof shell.addSearchView>>(
+			expect(addSearchViewMock).toHaveBeenCalledWith<Parameters<typeof searchUI.addSearchView>>(
 				expect.objectContaining({
 					route: FILES_ROUTE,
 					component: expect.anything(),
@@ -90,7 +100,13 @@ describe('App', () => {
 	it('should not register the route, searchView, actions and functions if the user is not authenticated', async () => {
 		jest.spyOn(shell, 'useAuthenticated').mockReturnValue(false);
 		const addRouteMock = jest.spyOn(shell, 'addRoute');
-		const addSearchViewMock = jest.spyOn(shell, 'addSearchView');
+		const addSearchViewMock = jest.fn();
+		jest.spyOn(shell, 'useIntegratedFunction').mockImplementation((id) => {
+			if (id === 'search-add-view') {
+				return [addSearchViewMock, true];
+			}
+			return [(): void => undefined, false];
+		});
 		const registerActionsMock = jest.spyOn(shell, 'registerActions');
 		const registerFunctionsMock = jest.spyOn(shell, 'registerFunctions');
 		setup(<App />);

@@ -66,7 +66,7 @@ export const getCurrentRoute: typeof shell.getCurrentRoute = () => ({
 	app: 'carbonio-files-ui'
 });
 
-export const getIntegratedFunction: typeof shell.getIntegratedFunction = () => [
+export const getIntegratedFunction: typeof shell.getIntegratedFunction<() => void> = () => [
 	(): void => undefined,
 	false
 ];
@@ -80,7 +80,6 @@ export const EMAIL_VALIDATION_REGEX =
 export const registerActions: typeof shell.registerActions = () => undefined;
 export const registerFunctions: typeof shell.registerFunctions = () => undefined;
 export const addRoute: typeof shell.addRoute = () => '';
-export const addSearchView: typeof shell.addSearchView = () => '';
 export const removeActions: typeof shell.removeActions = () => undefined;
 const noop = (): void => undefined;
 export const useTracker: typeof shell.useTracker = () => ({
@@ -89,3 +88,7 @@ export const useTracker: typeof shell.useTracker = () => ({
 	reset: noop
 });
 export const useAuthenticated: typeof shell.useAuthenticated = () => true;
+export const useIntegratedFunction: typeof shell.useIntegratedFunction = <T,>() => [
+	((): void => undefined) as T,
+	false
+];

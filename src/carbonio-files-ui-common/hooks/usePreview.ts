@@ -3,9 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { useContext } from 'react';
 
-import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
-import { PreviewManagerContextType } from '@zextras/carbonio-ui-preview/lib/preview/PreviewManager';
+import { usePreview } from '@zextras/carbonio-ui-preview';
 
-export const usePreview = (): PreviewManagerContextType => useContext(PreviewsManagerContext);
+const usePreviewProxy = usePreview;
+export { usePreviewProxy as usePreview };
