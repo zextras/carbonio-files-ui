@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 
 import { Container, Icon, Padding, Text } from '@zextras/carbonio-design-system';
 import { map } from 'lodash';
-import styled, { css, FlattenSimpleInterpolation, SimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { cssCalcBuilder } from '../../utils/utils';
 
@@ -23,8 +23,7 @@ const BackDropLayoutInnerBox = styled(Container)`
 const BackDropLayoutContentBox = styled(Container)<{ $disabled?: boolean }>`
 	border-radius: 0.625rem;
 	box-sizing: border-box;
-	//box-sizing: border-box;
-	background-image: ${({ $disabled }): FlattenSimpleInterpolation =>
+	background-image: ${({ $disabled }): ReturnType<typeof css> =>
 		$disabled
 			? css`url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='%23828282FF' stroke-width='3' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e")`
 			: css`url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='%232B73D2FF' stroke-width='3' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e")`};
@@ -47,8 +46,8 @@ const DetailText = styled(Text)`
 `;
 
 const CustomIcon = styled(Icon)<{ $size?: string }>`
-	height: ${({ $size }): SimpleInterpolation => $size};
-	width: ${({ $size }): SimpleInterpolation => $size};
+	height: ${({ $size }): string | undefined => $size};
+	width: ${({ $size }): string | undefined => $size};
 `;
 
 interface DropzoneModalProps {

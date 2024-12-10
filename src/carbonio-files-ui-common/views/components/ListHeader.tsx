@@ -16,7 +16,7 @@ import {
 	CollapsingActions
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled, { SimpleInterpolation } from 'styled-components';
+import styled from 'styled-components';
 
 import { useSelectionContext } from './SelectionProvider';
 import { BREADCRUMB_ROW_HEIGHT } from '../../constants';
@@ -25,9 +25,10 @@ import { cssCalcBuilder } from '../../utils/utils';
 const CustomCollapsingActions = styled(CollapsingActions)``;
 
 const CollapsingActionsRow = styled(Row)<{ $maxVisible: number | undefined }>`
-	--lh-collapsing-actions-max-width: ${({ $maxVisible }): SimpleInterpolation =>
+	--lh-collapsing-actions-max-width: ${({ $maxVisible }): string =>
 		$maxVisible !== undefined ? cssCalcBuilder('2.25rem', ['*', $maxVisible]) : '100%'};
 	max-width: var(--lh-collapsing-actions-max-width);
+
 	${CustomCollapsingActions} {
 		max-width: var(--lh-collapsing-actions-max-width);
 	}
@@ -77,7 +78,6 @@ export const ListHeader = ({
 						data-testid="list-header"
 						flexShrink={0}
 						flexGrow={1}
-						gap="medium"
 					>
 						{firstCustomComponent}
 						<Row mainAlignment="flex-end" wrap="nowrap" width="auto">

@@ -134,6 +134,7 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 					padding={{ all: 'small' }}
 					width="fill"
 					background={isActive ? 'highlight' : 'gray6'}
+					data-testid={'hover-container'}
 				>
 					<NodeAvatarIcon
 						selectionModeActive={false}

@@ -83,6 +83,7 @@ export const UploadNodeDetailsListItem = ({
 					background={'gray6'}
 					orientation={'horizontal'}
 					gap={'0.5rem'}
+					data-testid={'hover-container'}
 				>
 					<NodeAvatarIcon
 						selectionModeActive={false}

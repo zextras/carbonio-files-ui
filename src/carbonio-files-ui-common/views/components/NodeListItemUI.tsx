@@ -102,6 +102,7 @@ export const NodeListItemUI = ({
 					padding={{ all: 'small' }}
 					width="fill"
 					background={hoverContainerBackground}
+					data-testid={'hover-container'}
 				>
 					{nodeAvatarIcon}
 					<Container

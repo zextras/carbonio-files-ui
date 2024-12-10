@@ -12,14 +12,12 @@ import 'jest-styled-components';
 import { ReactiveVar } from '@apollo/client';
 import { act, waitFor } from '@testing-library/react';
 import { forEach, noop, size } from 'lodash';
-import { find as findStyled } from 'styled-components/test-utils';
 
 import {
 	NodeForSelection,
 	NodesSelectionModalContent,
 	NodesSelectionModalContentProps
 } from './NodesSelectionModalContent';
-import { HoverContainer } from './StyledComponents';
 import { DestinationVar, destinationVar } from '../../apollo/destinationVar';
 import { ROOTS } from '../../constants';
 import { ICON_REGEXP, COLORS, SELECTORS, TIMERS } from '../../constants/test';
@@ -30,7 +28,7 @@ import {
 	populateNodePage,
 	populateNodes
 } from '../../mocks/mockUtils';
-import { buildBreadCrumbRegExp, generateError, setup, screen } from '../../tests/utils';
+import { buildBreadCrumbRegExp, generateError, setup, screen, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import {
 	GetRootsListDocument,
@@ -733,7 +731,9 @@ describe('Nodes Selection Modal Content', () => {
 				// confirm button becomes enabled because local root is a valid selection
 				await waitFor(() => expect(confirmButton).toBeEnabled());
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(localRoot.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledWith(
@@ -791,7 +791,9 @@ describe('Nodes Selection Modal Content', () => {
 				await user.click(folderElement);
 				await waitFor(() =>
 					expect(
-						findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+						within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
+							SELECTORS.hoverContainer
+						)
 					).toHaveStyle({ background: COLORS.highlight.regular })
 				);
 				await user.dblClick(folderElement);
@@ -806,7 +808,9 @@ describe('Nodes Selection Modal Content', () => {
 				expect(confirmButton).toBeEnabled();
 				// folder item is not visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledWith(
@@ -870,7 +874,9 @@ describe('Nodes Selection Modal Content', () => {
 				// ugly but it's the only way to check the item is visibly active
 				await waitFor(() =>
 					expect(
-						findStyled(screen.getByTestId(SELECTORS.nodeItem(localRoot.id)), HoverContainer)
+						within(screen.getByTestId(SELECTORS.nodeItem(localRoot.id))).getByTestId(
+							SELECTORS.hoverContainer
+						)
 					).toHaveStyle({ background: COLORS.highlight.regular })
 				);
 				await user.dblClick(screen.getByText(/home/i));
@@ -1736,12 +1742,16 @@ describe('Nodes Selection Modal Content', () => {
 				await user.click(screen.getByText(file.name));
 				// both nodes are visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(file.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({
 					background: COLORS.highlight.regular
 				});
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 				await user.click(confirmButton);
@@ -1812,12 +1822,16 @@ describe('Nodes Selection Modal Content', () => {
 				await user.click(screen.getByText(folder.name));
 				// file remains visibly active, folder returns normal
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(file.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({
 					background: COLORS.highlight.regular
 				});
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledWith([expect.objectContaining({ id: file.id })]);
@@ -1882,7 +1896,9 @@ describe('Nodes Selection Modal Content', () => {
 				// click again on folder item to deselect it
 				await user.click(screen.getByText(folder.name));
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				// confirm button becomes disabled since opened folder is not valid
 				expect(confirmButton).toBeDisabled();
@@ -2024,11 +2040,15 @@ describe('Nodes Selection Modal Content', () => {
 				expect(confirmButton).toBeEnabled();
 				// file 1 is still active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file1.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(file1.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				// folder is not visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				// number of selected node is not changed
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
@@ -2038,15 +2058,21 @@ describe('Nodes Selection Modal Content', () => {
 				expect(confirmButton).toBeEnabled();
 				// file 1 is still active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file1.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(file1.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				// folder is not visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				// file 2 is now also active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file2.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(file2.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				await user.click(confirmButton);
 				expect(confirmAction).toHaveBeenCalledWith([
@@ -2133,7 +2159,9 @@ describe('Nodes Selection Modal Content', () => {
 				expect(confirmButton).toBeEnabled();
 				// folder 1 is visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder1.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder1.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				// number of selected element is not changed because folder item from list has replaced opened folder in selection
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
@@ -2143,11 +2171,15 @@ describe('Nodes Selection Modal Content', () => {
 				expect(confirmButton).toBeEnabled();
 				// folder 1 is visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder1.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder1.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				// file is not visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(file.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				// number of selected element is not changed because folder item from list has replaced opened folder in selection
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
@@ -2155,15 +2187,21 @@ describe('Nodes Selection Modal Content', () => {
 				await user.click(screen.getByText(folder2.name));
 				// folder 2 is now also active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder2.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder2.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				// folder 1 is visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(folder1.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(folder1.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				// file is not visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(file.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(file.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				// number of selected element is changed
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
@@ -2257,7 +2295,9 @@ describe('Nodes Selection Modal Content', () => {
 				expect(confirmButton).toBeEnabled();
 				// valid folder is visibly active
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFolder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(validFolder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				// click on invalid folder does not change selection
@@ -2265,39 +2305,57 @@ describe('Nodes Selection Modal Content', () => {
 				expect(confirmButton).toBeEnabled();
 				expect(screen.getByText(/1 element selected/i)).toBeVisible();
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFolder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(validFolder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				// click on valid file change selection
 				await user.click(screen.getByText(validFile.name));
 				expect(confirmButton).toBeEnabled();
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFolder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(validFolder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFile.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(validFile.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				// click on invalid file does not change selection
 				await user.click(screen.getByText(invalidFile.name));
 				expect(confirmButton).toBeEnabled();
 				expect(screen.getByText(/2 elements selected/i)).toBeVisible();
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFolder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(validFolder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(invalidFolder.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(validFile.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(validFile.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).toHaveStyle({ background: COLORS.highlight.regular });
 				expect(
-					findStyled(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id)), HoverContainer)
+					within(screen.getByTestId(SELECTORS.nodeItem(invalidFile.id))).getByTestId(
+						SELECTORS.hoverContainer
+					)
 				).not.toHaveStyle({ background: COLORS.highlight.regular });
 				// call confirm action
 				await user.click(confirmButton);

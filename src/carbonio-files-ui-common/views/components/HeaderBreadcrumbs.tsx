@@ -8,7 +8,7 @@ import React, { useCallback } from 'react';
 
 import { getColor, Icon, Row, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled, { css, SimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { OverFlowHiddenRow } from './StyledComponents';
 import { useNavigation } from '../../../hooks/useNavigation';
@@ -18,7 +18,7 @@ import { Crumb } from '../../types/common';
 import { InteractiveBreadcrumbs } from '../InteractiveBreadcrumbs';
 
 const Cta = styled(Row)<{ $disabled?: boolean }>`
-	${({ $disabled, theme }): SimpleInterpolation =>
+	${({ $disabled, theme }): false | ReturnType<typeof css> =>
 		!$disabled &&
 		css`
 			&:hover {

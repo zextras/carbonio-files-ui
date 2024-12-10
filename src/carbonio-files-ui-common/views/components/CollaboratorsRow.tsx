@@ -16,7 +16,7 @@ import { DistributionList, Maybe, Share, User } from '../../types/graphql/types'
 import { NonNullableListItem } from '../../types/utils';
 import { getChipLabel } from '../../utils/utils';
 
-const CustomAvatar = styled(Avatar).attrs({ 'data-testid': 'avatar' })`
+const CustomAvatar = styled(Avatar)`
 	margin-right: -0.25rem;
 	cursor: pointer;
 `;
