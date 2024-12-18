@@ -186,7 +186,11 @@ export const SecondaryBarItem = ({ item, expanded }: SecondaryBarItemProps): Rea
 						<Row gap="0.25rem">
 							{item.isUploadFailed && <Icon icon="AlertCircle" size="large" color={'error'} />}
 							{item.completeTotalBadgeCounter && (
-								<Badge value={item.completeTotalBadgeCounter} type={item.badgeType} />
+								<Badge
+									value={item.completeTotalBadgeCounter}
+									backgroundColor={(item.badgeType === 'unread' && 'primary') || 'gray2'}
+									color={(item.badgeType === 'unread' && 'gray6') || 'gray0'}
+								/>
 							)}
 						</Row>
 					</CustomAccordionItem>

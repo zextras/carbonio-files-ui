@@ -131,7 +131,7 @@ export const ListHeader = ({
 				</Row>
 				<Row mainAlignment="flex-end" flexShrink={1} flexGrow={1} gap="0.25rem" flexBasis="auto">
 					{selectedCount !== undefined && selectedCount > 0 && (
-						<Badge value={selectedCount} type="unread" />
+						<Badge value={selectedCount} backgroundColor="primary" color="gray6" />
 					)}
 				</Row>
 				<CollapsingActionsRow
