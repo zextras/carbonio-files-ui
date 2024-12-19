@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import type { QueryChip } from '@zextras/carbonio-shell-ui';
+import type { QueryChip } from '@zextras/carbonio-search-ui';
 import {
 	ACTION_TYPES as SHELL_ACTION_TYPES,
 	EMAIL_VALIDATION_REGEX

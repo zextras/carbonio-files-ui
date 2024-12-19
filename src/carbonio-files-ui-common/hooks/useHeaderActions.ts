@@ -5,7 +5,7 @@
  */
 import { useCallback } from 'react';
 
-import { HeaderAction } from '@zextras/carbonio-ui-preview/lib/preview/Header';
+import { PreviewWrapperProps } from '@zextras/carbonio-ui-preview';
 import { useTranslation } from 'react-i18next';
 
 import { useHealthInfo } from './useHealthInfo';
@@ -16,9 +16,11 @@ import { File } from '../types/graphql/types';
 import { canEdit, canOpenWithDocs } from '../utils/ActionsFactory';
 import { downloadNode } from '../utils/utils';
 
+type PreviewHeaderAction = NonNullable<PreviewWrapperProps['actions']>[number];
+
 export function useHeaderActions(): (
 	node: Pick<File, '__typename' | 'id' | 'permissions' | 'rootId' | 'mime_type'>
-) => Array<HeaderAction> {
+) => Array<PreviewHeaderAction> {
 	const [t] = useTranslation();
 	const openNodeWithDocs = useOpenWithDocs();
 	const { setActiveNode } = useActiveNode();
@@ -26,7 +28,7 @@ export function useHeaderActions(): (
 
 	return useCallback(
 		(node) => {
-			const actions: Array<HeaderAction> = [
+			const actions: Array<PreviewHeaderAction> = [
 				{
 					icon: 'ShareOutline',
 					id: 'ShareOutline',

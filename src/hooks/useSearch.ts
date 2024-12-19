@@ -7,7 +7,7 @@
 import { useCallback, useContext } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import type { QueryChip } from '@zextras/carbonio-shell-ui';
+import type { QueryChip } from '@zextras/carbonio-search-ui';
 import { forEach, map, partition } from 'lodash';
 
 import { searchParamsVar } from '../carbonio-files-ui-common/apollo/searchVar';
@@ -96,7 +96,13 @@ export function fromQueryChipsToAdvancedFilters(queryChips: Array<QueryChip>): A
 	);
 	let updatedValue: AdvancedFilters = {};
 	if (keywords.length > 0) {
-		updatedValue.keywords = map(keywords, (k) => ({ ...k, value: k.label }));
+		updatedValue.keywords = keywords.map(
+			(k) =>
+				({
+					...k,
+					value: k.label
+				}) as NonNullable<AdvancedFilters['keywords']>[number]
+		);
 	}
 	forEach(advanced, (value) => {
 		if (value.queryChipsToAdvancedFiltersValue) {

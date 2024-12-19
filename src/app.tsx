@@ -8,15 +8,15 @@ import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
 
 import { ApolloProvider } from '@apollo/client';
 import { ModalManager } from '@zextras/carbonio-design-system';
+import type { SearchViewProps } from '@zextras/carbonio-search-ui';
 import {
 	ACTION_TYPES,
 	addRoute,
-	addSearchView,
 	NewAction,
 	registerActions,
-	SearchViewProps,
 	SecondaryBarComponentProps,
-	useAuthenticated
+	useAuthenticated,
+	useIntegratedFunction
 } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -68,6 +68,21 @@ const SearchView = (props: SearchViewProps): React.JSX.Element => (
 
 export function AuthenticatedApp(): React.JSX.Element {
 	const [t] = useTranslation();
+	const [addSearchView, isAddSearchViewAvailable] = useIntegratedFunction('search-add-view');
+	const [removeSearchView, isRemoveSearchViewAvailable] =
+		useIntegratedFunction('search-remove-view');
+
+	const appInfo = useMemo(
+		() => ({
+			id: FILES_APP_ID,
+			app: FILES_APP_ID,
+			route: FILES_ROUTE,
+			label: t('label.app_name', 'Files'),
+			icon: 'DriveOutline',
+			position: 500
+		}),
+		[t]
+	);
 
 	const beforeunloadCallback = useCallback((e: Event) => {
 		if (
@@ -116,25 +131,39 @@ export function AuthenticatedApp(): React.JSX.Element {
 
 	useEffect(() => {
 		addRoute({
-			route: FILES_ROUTE,
-			position: 500,
-			visible: true,
-			label: t('label.app_name', 'Files'),
+			...appInfo,
 			primaryBar: 'DriveOutline',
+			visible: true,
 			secondaryBar: SidebarView,
 			appView: AppView
-		});
-		addSearchView({
-			route: FILES_ROUTE,
-			component: SearchView,
-			label: t('label.app_name', 'Files')
 		});
 		registerActions<NewAction>({
 			action: () => newAction,
 			id: 'upload-file',
 			type: ACTION_TYPES.NEW
 		});
-	}, [t, newAction]);
+	}, [newAction, appInfo]);
+
+	useEffect(() => {
+		if (isAddSearchViewAvailable) {
+			addSearchView({
+				...appInfo,
+				component: SearchView
+			});
+		}
+
+		return () => {
+			if (isRemoveSearchViewAvailable) {
+				removeSearchView();
+			}
+		};
+	}, [
+		addSearchView,
+		appInfo,
+		isAddSearchViewAvailable,
+		isRemoveSearchViewAvailable,
+		removeSearchView
+	]);
 
 	const apolloClient = useMemo(() => buildClient(), []);
 

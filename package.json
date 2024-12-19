@@ -53,7 +53,8 @@
 		"@types/react-router-dom": "^5.3.3",
 		"@types/styled-components": "^5.1.34",
 		"@types/uuid": "^10.0.0",
-		"@zextras/carbonio-ui-configs": "^1.0.3",
+		"@zextras/carbonio-search-ui": "github:zextras/carbonio-search-ui#devel",
+		"@zextras/carbonio-ui-configs": "^2.0.1",
 		"@zextras/carbonio-ui-sdk": "^1.7.10",
 		"babel-plugin-styled-components": "^2.1.4",
 		"babel-plugin-transform-import-meta": "^2.2.1",
@@ -78,7 +79,7 @@
 	"dependencies": {
 		"@apollo/client": "3.10.8",
 		"@zextras/carbonio-design-system": "9.0.0-devel.11",
-		"@zextras/carbonio-shell-ui": "devel",
+		"@zextras/carbonio-shell-ui": "9.0.0-devel.1734599897864",
 		"@zextras/carbonio-ui-preview": "^3.1.0",
 		"core-js": "^3.38.1",
 		"date-fns": "^4.1.0",

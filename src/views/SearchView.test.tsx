@@ -6,7 +6,7 @@
 import React, { useCallback, useState } from 'react';
 
 import { act, screen, waitFor } from '@testing-library/react';
-import { QueryChip, SearchViewProps } from '@zextras/carbonio-shell-ui';
+import type { QueryChip, SearchViewProps } from '@zextras/carbonio-search-ui';
 import { graphql, HttpResponse } from 'msw';
 
 import SearchView from './SearchView';
@@ -34,9 +34,9 @@ beforeEach(() => {
 	updateQueryMock = jest.fn();
 });
 
-const useQuery: SearchViewProps['useQuery'] = () => {
+const useQuery = (): ReturnType<SearchViewProps['useQuery']> => {
 	const [query, setQuery] = useState<QueryChip[]>([]);
-	const updateQuery = useCallback((chips: QueryChip[]) => {
+	const updateQuery = useCallback((chips: Parameters<typeof setQuery>[0]) => {
 		setQuery(chips);
 		updateQueryMock(chips);
 	}, []);
