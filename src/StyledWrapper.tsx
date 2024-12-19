@@ -6,14 +6,21 @@
 
 import React from 'react';
 
-import { ThemeProvider } from '@zextras/carbonio-design-system';
-import type { Theme as DSTheme } from '@zextras/carbonio-design-system';
-import { createGlobalStyle, DefaultTheme } from 'styled-components';
+import { ThemeColorObj, ThemeProvider } from '@zextras/carbonio-design-system';
+import type { Theme } from '@zextras/carbonio-design-system';
+import { createGlobalStyle } from 'styled-components';
 
 import { AnimatedLoader } from './carbonio-files-ui-common/views/components/icons/AnimatedLoader';
 import { AnimatedUpload } from './carbonio-files-ui-common/views/components/icons/AnimatedUpload';
 
-const themeOverride = (theme: DSTheme): DefaultTheme => ({
+const themeOverride = (
+	theme: Omit<Theme, 'palette'> & {
+		palette: Omit<Theme['palette'], 'linked' | 'shared'> & {
+			shared?: ThemeColorObj;
+			linked?: ThemeColorObj;
+		};
+	}
+): Theme => ({
 	...theme,
 	palette: {
 		shared: {
@@ -35,8 +42,8 @@ const themeOverride = (theme: DSTheme): DefaultTheme => ({
 	icons: {
 		...theme.icons,
 		AnimatedLoader,
-		AnimatedUpload
-	} as DefaultTheme['icons'] // FIXME check how to remove this cast
+		AnimatedUpload: AnimatedUpload as Theme['icons'][string]
+	}
 });
 
 const GlobalStyle = createGlobalStyle`
