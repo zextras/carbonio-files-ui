@@ -13,6 +13,10 @@ export const VirtualizedNodeListItem: typeof ActualVirtualizedNodeListItem = ({
 	children,
 	listRef: _listRef,
 	type: _type,
+	activeBackground: _activeBackground,
+	selectedBackground: _selectedBackground,
+	active: _active,
+	selected: _selected,
 	...props
 }) => (
 	<Container height={'auto'} width={'auto'} {...props}>

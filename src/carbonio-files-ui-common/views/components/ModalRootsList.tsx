@@ -9,7 +9,6 @@ import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from '
 import { Container, Row } from '@zextras/carbonio-design-system';
 import { forEach, isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { CompactListContent } from './CompactListContent';
 import { EmptyFolder } from './EmptyFolder';
@@ -52,10 +51,6 @@ interface RootsListProps {
 	checkDisabled: (node: NodeItem | RootItem) => boolean;
 	checkSelectable: (node: NodeItem | RootItem) => boolean;
 }
-
-const ModalContainer = styled(Container)`
-	flex: 1 1 auto;
-`;
 
 type FilterQueryParams = Pick<
 	Parameters<typeof useFindNodesQuery>[0],
@@ -205,12 +200,15 @@ export const ModalRootsList = ({
 	);
 
 	return (
-		<ModalContainer
+		<Container
 			mainAlignment="flex-start"
 			crossAlignment="flex-start"
 			data-testid="modal-list"
 			maxHeight="100%"
 			minHeight={cssCalcBuilder(BREADCRUMB_ROW_HEIGHT, ['+', LIST_ITEM_HEIGHT_COMPACT])}
+			flexBasis={'auto'}
+			flexShrink={1}
+			flexGrow={1}
 		>
 			<OverFlowHiddenRow
 				width="fill"
@@ -265,6 +263,6 @@ export const ModalRootsList = ({
 						</ScrollContainer>
 					))}
 			</Container>
-		</ModalContainer>
+		</Container>
 	);
 };

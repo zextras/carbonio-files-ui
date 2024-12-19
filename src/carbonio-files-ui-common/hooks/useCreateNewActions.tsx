@@ -5,7 +5,7 @@
  */
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Text } from '@zextras/carbonio-design-system';
+import { DropdownItem, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { useCreateFolderMutation } from './graphql/mutations/useCreateFolderMutation';
@@ -25,7 +25,7 @@ export const useCreateNewActions = (
 	currentFolder: GetChildrenQuery | undefined,
 	canCreateFolder: boolean,
 	canCreateFile: boolean
-): NewAction[] => {
+): DropdownItem[] => {
 	const { setActiveNode } = useActiveNode();
 	const { setCreateOptions, removeCreateOptions } = useCreateOptions();
 	const [t] = useTranslation();
@@ -205,5 +205,12 @@ export const useCreateNewActions = (
 		};
 	}, [actions, removeCreateOptions, setCreateOptions]);
 
-	return actions;
+	return useMemo(
+		() =>
+			actions.map(({ execute, group: _group, primary: _primary, ...action }) => ({
+				onClick: execute,
+				...action
+			})),
+		[actions]
+	);
 };

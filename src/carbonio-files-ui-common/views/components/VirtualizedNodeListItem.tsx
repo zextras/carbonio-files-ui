@@ -5,7 +5,12 @@
  */
 import React, { useContext } from 'react';
 
-import { Container, ContainerProps, useIsVisible } from '@zextras/carbonio-design-system';
+import {
+	Container,
+	ContainerProps,
+	ListItemProps,
+	useIsVisible
+} from '@zextras/carbonio-design-system';
 
 import { ContainerCell } from './NodeGridItemUI';
 import { GRID_ITEM_MIN_HEIGHT, LIST_ITEM_HEIGHT, VIEW_MODE } from '../../constants';
@@ -22,8 +27,7 @@ const NodeListItemPlaceholder = ({ type }: { type: NodeType }): React.JSX.Elemen
 	);
 };
 
-interface VirtualizedNodeListItemProps extends ContainerProps {
-	listRef: React.RefObject<HTMLDivElement>;
+interface VirtualizedNodeListItemProps extends ContainerProps, Omit<ListItemProps, 'children'> {
 	type: NodeType;
 }
 
@@ -31,6 +35,10 @@ export const VirtualizedNodeListItem = ({
 	listRef,
 	children,
 	type,
+	activeBackground: _activeBackground,
+	selectedBackground: _selectedBackground,
+	active: _active,
+	selected: _selected,
 	...props
 }: VirtualizedNodeListItemProps): React.JSX.Element => {
 	const [isVisible, itemRef] = useIsVisible<HTMLDivElement>(listRef);

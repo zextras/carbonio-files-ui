@@ -216,7 +216,7 @@ export const AddPublicLinkComponent = ({
 					<DateTimePicker
 						width="fill"
 						label={t('publicLink.dateTimePicker.label', 'Expiration date')}
-						includeTime={false}
+						showTimeSelect={false}
 						enableChips
 						dateFormat="P"
 						chipProps={{ hasAvatar: false }}

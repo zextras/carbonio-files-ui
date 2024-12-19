@@ -53,8 +53,8 @@
 		"@types/react-router-dom": "^5.3.3",
 		"@types/styled-components": "^5.1.34",
 		"@types/uuid": "^10.0.0",
-		"@zextras/carbonio-search-ui": "github:zextras/carbonio-search-ui#SHELL-260-separate-search-module",
-		"@zextras/carbonio-ui-configs": "file:zextras-carbonio-ui-configs-0.0.0-semantically-released.tgz",
+		"@zextras/carbonio-search-ui": "github:zextras/carbonio-search-ui#devel",
+		"@zextras/carbonio-ui-configs": "^2.0.1",
 		"@zextras/carbonio-ui-sdk": "^1.7.10",
 		"babel-plugin-styled-components": "^2.1.4",
 		"babel-plugin-transform-import-meta": "^2.2.1",
@@ -78,10 +78,11 @@
 	},
 	"dependencies": {
 		"@apollo/client": "3.10.8",
-		"@zextras/carbonio-design-system": "^8.1.0",
-		"@zextras/carbonio-shell-ui": "file:zextras-carbonio-shell-ui-9.0.0.tgz",
+		"@zextras/carbonio-design-system": "9.0.0-devel.11",
+		"@zextras/carbonio-shell-ui": "9.0.0-devel.1734433884138",
 		"@zextras/carbonio-ui-preview": "^3.1.0",
 		"core-js": "^3.38.1",
+		"date-fns": "^4.1.0",
 		"graphql": "^16.9.0",
 		"i18next": "^22.5.1",
 		"lodash": "^4.17.21",
@@ -89,7 +90,7 @@
 		"react-dom": "^18.3.1",
 		"react-i18next": "^12.3.1",
 		"react-router-dom": "^5.3.4",
-		"styled-components": "^5.3.11",
+		"styled-components": "^6.1.13",
 		"uuid": "^10.0.0"
 	},
 	"browserslist": [
