@@ -1,6 +1,6 @@
 version = 1
 SPDX-PackageName = "carbonio-files-ui"
-SPDX-PackageSupplier = "<>"
+SPDX-PackageSupplier = "Zextras <https://www.zextras.com>"
 
 [[annotations]]
 path = "**.json"
