@@ -23,7 +23,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.26.0",
 		"@babel/preset-env": "^7.26.0",
-		"@babel/preset-react": "^7.25.9",
+		"@babel/preset-react": "^7.26.3",
 		"@babel/preset-typescript": "^7.26.0",
 		"@commitlint/cli": "^19.6.1",
 		"@commitlint/config-conventional": "^19.6.0",
@@ -57,7 +57,7 @@
 		"@zextras/carbonio-ui-configs": "^2.0.1",
 		"@zextras/carbonio-ui-sdk": "^1.7.10",
 		"babel-plugin-styled-components": "^2.1.4",
-		"babel-plugin-transform-import-meta": "^2.2.1",
+		"babel-plugin-transform-import-meta": "^2.3.2",
 		"dotenv": "^16.4.5",
 		"eslint-plugin-no-autofix": "^2.1.0",
 		"eslint-plugin-notice": "^1.0.0",
