@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../constants';
-import { File, NodeType } from '../types/graphql/types';
+import { File } from '../types/graphql/types';
 
 type ThumbnailType = 'thumbnail' | 'thumbnail_detail';
 type PreviewOptions = {
 	width: number;
 	height: number;
+	version?: number;
 	quality?: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
 	outputFormat?: 'jpeg' | 'png' | 'gif';
 };
@@ -126,21 +127,24 @@ export function isSupportedByPreview(
 	return [false, undefined];
 }
 
-export function getImgPreviewSrc(id: string, version: number, options: PreviewOptions): string {
+export function getImgPreviewSrc(id: string, options: PreviewOptions): string {
 	const optionalParams = [];
 	options.quality && optionalParams.push(`quality=${options.quality}`);
 	options.outputFormat && optionalParams.push(`output_format=${options.outputFormat}`);
-	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${version}/${options.width}x${
+	options.version && optionalParams.push(`version=${options.version}`);
+	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${id}/${options.width}x${
 		options.height
 	}?${optionalParams.join('&')}`;
 }
 
 export function getPdfPreviewSrc(id: string, version?: number): string {
-	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}/${version}`;
+	const queryParamsString = version ? `?version=${version}` : '';
+	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${id}${queryParamsString}`;
 }
 
 export function getDocumentPreviewSrc(id: string, version?: number): string {
-	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}/${version}`;
+	const queryParamsString = version ? `?version=${version}` : '';
+	return `${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.DOCUMENT}/${id}${queryParamsString}`;
 }
 
 export function getPreviewOutputFormat(
@@ -166,7 +170,8 @@ export function getPreviewSrc(
 			((documentType === PREVIEW_TYPE.PDF && getPdfPreviewSrc(node.id, node.version)) ||
 				(documentType === PREVIEW_TYPE.DOCUMENT && getDocumentPreviewSrc(node.id, node.version)) ||
 				(documentType === PREVIEW_TYPE.IMAGE &&
-					getImgPreviewSrc(node.id, node.version, {
+					getImgPreviewSrc(node.id, {
+						version: node.version,
 						width: 0,
 						height: 0,
 						quality: 'high',
@@ -178,20 +183,19 @@ export function getPreviewSrc(
 
 export function getPreviewThumbnailSrc(
 	id: string,
-	version: number | undefined,
-	type: NodeType,
 	mimeType: string | undefined,
 	options: ThumbnailOptions,
 	thumbnailType: ThumbnailType
 ): string | undefined {
 	const [isSupported, previewType] = isSupportedByPreview(mimeType, thumbnailType);
-	if (version && mimeType && isSupported) {
+	if (mimeType && isSupported) {
 		const optionalParams = [];
 		options.shape && optionalParams.push(`shape=${options.shape}`);
 		options.quality && optionalParams.push(`quality=${options.quality}`);
 		options.outputFormat && optionalParams.push(`output_format=${options.outputFormat}`);
+		options.version && optionalParams.push(`version=${options.version}`);
 		const optionalParamsStr = (optionalParams.length > 0 && `?${optionalParams.join('&')}`) || '';
-		return `${REST_ENDPOINT}${PREVIEW_PATH}/${previewType}/${id}/${version}/${options.width}x${options.height}/thumbnail/${optionalParamsStr}`;
+		return `${REST_ENDPOINT}${PREVIEW_PATH}/${previewType}/${id}/${options.width}x${options.height}/thumbnail${optionalParamsStr}`;
 	}
 	return undefined;
 }

@@ -453,7 +453,7 @@ describe('Node Details', () => {
 		expect(await screen.findByRole('presentation')).toBeVisible();
 		expect(screen.getByRole('presentation')).toHaveAttribute(
 			'src',
-			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/${node.version}/0x256/thumbnail/?shape=rectangular&quality=high&output_format=gif`
+			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/0x256/thumbnail?shape=rectangular&quality=high&output_format=gif&version=${node.version}`
 		);
 	});
 
@@ -491,7 +491,7 @@ describe('Node Details', () => {
 		expect(screen.getByRole('presentation')).toBeVisible();
 		expect(screen.getByRole('presentation')).toHaveAttribute(
 			'src',
-			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${node.id}/${node.version}/0x256/thumbnail/?shape=rectangular&quality=high&output_format=jpeg`
+			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${node.id}/0x256/thumbnail?shape=rectangular&quality=high&output_format=jpeg&version=${node.version}`
 		);
 	});
 

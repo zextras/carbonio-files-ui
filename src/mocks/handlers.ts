@@ -124,11 +124,8 @@ handlers.push(
 	http.post(`${DOCS_ENDPOINT}${CREATE_FILE_PATH}`, handleCreateDocsFileRequest),
 	http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, handleUploadFileRequest),
 	http.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, handleUploadVersionRequest),
-	http.get(
-		`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:version/:area/:thumbnail`,
-		handleGetPreviewRequest
-	),
-	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:version`, handleGetPreviewRequest),
+	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:area/:thumbnail`, handleGetPreviewRequest),
+	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id`, handleGetPreviewRequest),
 	http.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, handleMySelfQuotaRequest),
 	http.get(`${REST_ENDPOINT}${HEALTH_PATH}`, handleHealthRequest)
 );

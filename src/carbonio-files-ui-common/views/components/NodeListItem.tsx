@@ -521,14 +521,12 @@ export const NodeListItem = ({
 			canUsePreview
 				? getPreviewThumbnailSrc(
 						node.id,
-						version,
-						node.type,
 						mimeType,
-						{ ...args, outputFormat: getPreviewOutputFormat(mimeType) },
+						{ ...args, outputFormat: getPreviewOutputFormat(mimeType), version },
 						'thumbnail'
 					)
 				: undefined,
-		[canUsePreview, mimeType, node.id, node.type, version]
+		[canUsePreview, mimeType, node.id, version]
 	);
 
 	return (
