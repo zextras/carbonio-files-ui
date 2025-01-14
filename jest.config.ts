@@ -165,6 +165,7 @@ const config: Config = {
 	 * fields
 	 * @see https://mswjs.io/docs/migrations/1.x-to-2.x#requestresponsetextencoder-is-not-defined-jest
 	 * @see https://github.com/mswjs/msw/issues/1916#issuecomment-1919965699
+	 * @see https://github.com/mswjs/msw/issues/2344#issuecomment-2473081151
 	 */
 	testEnvironment: '<rootDir>/src/carbonio-files-ui-common/tests/jsdom-extended.ts',
 
