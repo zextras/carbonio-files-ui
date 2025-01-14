@@ -29,14 +29,12 @@ interface DisplayerPreviewProps {
 	id: string;
 	type: NodeType;
 	mimeType: string | undefined;
-	version: number | undefined;
 }
 
 export const DisplayerPreview = ({
 	id,
 	type,
-	mimeType,
-	version
+	mimeType
 }: DisplayerPreviewProps): React.JSX.Element => {
 	const previewContainerRef = useRef<HTMLDivElement>(null);
 	const { openPreview } = useContext(PreviewsManagerContext);
@@ -72,15 +70,14 @@ export const DisplayerPreview = ({
 					height: previewHeight,
 					shape: 'rectangular',
 					quality: 'high',
-					outputFormat: getPreviewOutputFormat(mimeType),
-					version
+					outputFormat: getPreviewOutputFormat(mimeType)
 				},
 				'thumbnail_detail'
 			);
 			setPreviewSrc(src);
 			currentSrcRef.current = src;
 		}
-	}, [id, mimeType, previewHeight, version]);
+	}, [id, mimeType, previewHeight]);
 
 	const handleResize = useMemo(
 		() =>

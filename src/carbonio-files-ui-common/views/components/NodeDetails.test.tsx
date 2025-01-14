@@ -70,7 +70,6 @@ describe('Node Details', () => {
 				type={node.type}
 				nodes={undefined}
 				rootId={null}
-				version={undefined}
 				mimeType={undefined}
 			/>,
 			{ mocks: {} }
@@ -119,7 +118,6 @@ describe('Node Details', () => {
 				type={node.type}
 				size={undefined}
 				rootId={null}
-				version={undefined}
 				mimeType={undefined}
 			/>,
 			{ mocks: {} }
@@ -166,7 +164,6 @@ describe('Node Details', () => {
 				type={node.type}
 				nodes={undefined}
 				rootId={null}
-				version={undefined}
 				mimeType={undefined}
 			/>,
 			{ mocks: {} }
@@ -216,7 +213,6 @@ describe('Node Details', () => {
 				type={node.type}
 				nodes={undefined}
 				rootId={null}
-				version={undefined}
 				mimeType={undefined}
 			/>,
 			{ mocks }
@@ -276,7 +272,6 @@ describe('Node Details', () => {
 				type={node.type}
 				nodes={undefined}
 				rootId={null}
-				version={undefined}
 				mimeType={undefined}
 			/>,
 			{ mocks: {} }
@@ -318,7 +313,6 @@ describe('Node Details', () => {
 				type={node.type}
 				nodes={undefined}
 				rootId={null}
-				version={undefined}
 				mimeType={undefined}
 			/>,
 			{ mocks: {} }
@@ -363,7 +357,6 @@ describe('Node Details', () => {
 				hasMore={false}
 				size={node.size}
 				type={node.type}
-				version={node.version}
 				mimeType={node.mime_type}
 				nodes={undefined}
 				rootId={null}
@@ -406,7 +399,6 @@ describe('Node Details', () => {
 				hasMore={false}
 				size={node.size}
 				type={node.type}
-				version={node.version}
 				mimeType={node.mime_type}
 				nodes={undefined}
 				rootId={null}
@@ -443,7 +435,6 @@ describe('Node Details', () => {
 				hasMore={false}
 				size={node.size}
 				type={node.type}
-				version={node.version}
 				mimeType={node.mime_type}
 				nodes={undefined}
 				rootId={null}
@@ -453,7 +444,7 @@ describe('Node Details', () => {
 		expect(await screen.findByRole('presentation')).toBeVisible();
 		expect(screen.getByRole('presentation')).toHaveAttribute(
 			'src',
-			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/0x256/thumbnail?shape=rectangular&quality=high&output_format=gif&version=${node.version}`
+			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/0x256/thumbnail?shape=rectangular&quality=high&output_format=gif`
 		);
 	});
 
@@ -480,7 +471,6 @@ describe('Node Details', () => {
 				hasMore={false}
 				size={node.size}
 				type={node.type}
-				version={node.version}
 				mimeType={node.mime_type}
 				nodes={undefined}
 				rootId={null}
@@ -491,7 +481,7 @@ describe('Node Details', () => {
 		expect(screen.getByRole('presentation')).toBeVisible();
 		expect(screen.getByRole('presentation')).toHaveAttribute(
 			'src',
-			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${node.id}/0x256/thumbnail?shape=rectangular&quality=high&output_format=jpeg&version=${node.version}`
+			`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.PDF}/${node.id}/0x256/thumbnail?shape=rectangular&quality=high&output_format=jpeg`
 		);
 	});
 
@@ -518,7 +508,6 @@ describe('Node Details', () => {
 				hasMore={false}
 				size={node.size}
 				type={node.type}
-				version={node.version}
 				mimeType={node.mime_type}
 				nodes={undefined}
 				rootId={null}
@@ -555,7 +544,6 @@ describe('Node Details', () => {
 				hasMore={false}
 				size={node.size}
 				type={node.type}
-				version={node.version}
 				mimeType={node.mime_type}
 				nodes={undefined}
 				rootId={null}
@@ -600,7 +588,6 @@ describe('Node Details', () => {
 				type={node.type}
 				size={undefined}
 				rootId={null}
-				version={undefined}
 				mimeType={undefined}
 			/>,
 			{ mocks: {} }
@@ -661,7 +648,6 @@ describe('Node Details', () => {
 					type={node.type}
 					size={undefined}
 					rootId={null}
-					version={undefined}
 					mimeType={undefined}
 				/>
 			);

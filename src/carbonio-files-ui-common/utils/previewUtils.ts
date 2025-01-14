@@ -167,11 +167,10 @@ export function getPreviewSrc(
 ): string {
 	return (
 		(node.version &&
-			((documentType === PREVIEW_TYPE.PDF && getPdfPreviewSrc(node.id, node.version)) ||
-				(documentType === PREVIEW_TYPE.DOCUMENT && getDocumentPreviewSrc(node.id, node.version)) ||
+			((documentType === PREVIEW_TYPE.PDF && getPdfPreviewSrc(node.id)) ||
+				(documentType === PREVIEW_TYPE.DOCUMENT && getDocumentPreviewSrc(node.id)) ||
 				(documentType === PREVIEW_TYPE.IMAGE &&
 					getImgPreviewSrc(node.id, {
-						version: node.version,
 						width: 0,
 						height: 0,
 						quality: 'high',
