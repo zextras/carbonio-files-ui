@@ -18,9 +18,7 @@ import {
 	LIST_ITEM_HEIGHT_COMPACT,
 	ROOTS
 } from '../../constants';
-import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { File, Folder, Node as GQLNode, NodeType } from '../../types/graphql/types';
-import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';
 import {
 	getIconByFileType,
 	cssCalcBuilder,
@@ -39,7 +37,6 @@ export interface CompactNodeListItemProps<TNode extends NodeItem = NodeItem> {
 	disabled?: boolean;
 	selectable?: boolean;
 	trashed?: boolean;
-	version?: number;
 }
 
 export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
@@ -49,8 +46,7 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 	navigateTo = (): void => undefined,
 	disabled = false,
 	selectable = true,
-	trashed,
-	version
+	trashed
 }: CompactNodeListItemProps<TNode>): React.JSX.Element => {
 	const theme = useTheme();
 
@@ -61,7 +57,6 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 			some(ROOTS, (rootId) => rootId === node.id),
 		[node.id, node.type]
 	);
-	const { canUsePreview } = useHealthInfo();
 
 	const openNode = useCallback(
 		(event: React.SyntheticEvent | KeyboardEvent) => {
@@ -144,18 +139,6 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 						selectable={selectable}
 						icon={getIconByFileType(node.type, mimeType ?? node.id)}
 						color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
-						picture={
-							canUsePreview
-								? getPreviewThumbnailSrc(
-										node.id,
-										version,
-										node.type,
-										mimeType,
-										{ width: 80, height: 80, outputFormat: getPreviewOutputFormat(mimeType) },
-										'thumbnail'
-									)
-								: undefined
-						}
 					/>
 					<Container
 						orientation="vertical"

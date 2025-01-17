@@ -122,7 +122,6 @@ export const NodeListItem = ({
 
 	const mimeType = useMemo(() => (isFile(node) && node.mime_type) || undefined, [node]);
 	const size = useMemo(() => (isFile(node) && node.size) || undefined, [node]);
-	const version = useMemo(() => (isFile(node) && node.version) || undefined, [node]);
 	const trashed = useMemo(() => node.rootId === ROOTS.TRASH, [node.rootId]);
 	const icon = useMemo(
 		() => getIconByFileType(node.type, mimeType ?? node.id),
@@ -521,14 +520,12 @@ export const NodeListItem = ({
 			canUsePreview
 				? getPreviewThumbnailSrc(
 						node.id,
-						version,
-						node.type,
 						mimeType,
 						{ ...args, outputFormat: getPreviewOutputFormat(mimeType) },
 						'thumbnail'
 					)
 				: undefined,
-		[canUsePreview, mimeType, node.id, node.type, version]
+		[canUsePreview, mimeType, node.id]
 	);
 
 	return (
