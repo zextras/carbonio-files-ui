@@ -75,7 +75,7 @@ describe('List', () => {
 				expect(screen.getByRole('img')).toBeVisible();
 				expect(screen.getByRole('img')).toHaveAttribute(
 					'src',
-					`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/${node.version}/0x0?quality=high&output_format=${outputFormat}`
+					`${REST_ENDPOINT}${PREVIEW_PATH}/${PREVIEW_TYPE.IMAGE}/${node.id}/0x0?quality=high&output_format=${outputFormat}`
 				);
 			}
 		);

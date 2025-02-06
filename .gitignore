@@ -12,5 +12,5 @@ old.codegen.yml
 sdk/package-lock.json
 /dist
 /LICENSES
-zextras-carbonio-*.tgz
+*.tgz
 .env

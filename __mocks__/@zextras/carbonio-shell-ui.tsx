@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import * as shell from '@zextras/carbonio-shell-ui';
 import { useHistory } from 'react-router-dom';
@@ -66,8 +66,8 @@ export const getCurrentRoute: typeof shell.getCurrentRoute = () => ({
 	app: 'carbonio-files-ui'
 });
 
-export const getIntegratedFunction: typeof shell.getIntegratedFunction = () => [
-	(): void => undefined,
+export const getIntegratedFunction: typeof shell.getIntegratedFunction = <T,>() => [
+	((): void => undefined) as T,
 	false
 ];
 
@@ -80,9 +80,7 @@ export const EMAIL_VALIDATION_REGEX =
 export const registerActions: typeof shell.registerActions = () => undefined;
 export const registerFunctions: typeof shell.registerFunctions = () => undefined;
 export const addRoute: typeof shell.addRoute = () => '';
-export const addSearchView: typeof shell.addSearchView = () => '';
 export const removeActions: typeof shell.removeActions = () => undefined;
-export const Spinner: typeof shell.Spinner = () => <>Spinner component stub</>;
 const noop = (): void => undefined;
 export const useTracker: typeof shell.useTracker = () => ({
 	capture: noop,
@@ -90,3 +88,7 @@ export const useTracker: typeof shell.useTracker = () => ({
 	reset: noop
 });
 export const useAuthenticated: typeof shell.useAuthenticated = () => true;
+export const useIntegratedFunction: typeof shell.useIntegratedFunction = <T,>() => [
+	((): void => undefined) as T,
+	false
+];

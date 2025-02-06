@@ -210,7 +210,9 @@ export const AdvancedSearchModalContent = ({
 
 	const [folderSelectionModalOpen, setFolderSelectionModalOpen] = useState(false);
 
-	const openFolderSelectionModal = useCallback((event: React.SyntheticEvent) => {
+	const openFolderSelectionModal = useCallback<
+		NonNullable<ChipInputProps['iconAction']> & NonNullable<ChipInputProps['onClick']>
+	>((event) => {
 		event.stopPropagation();
 		setFolderSelectionModalOpen(true);
 	}, []);

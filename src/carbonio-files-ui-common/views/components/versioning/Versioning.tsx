@@ -350,7 +350,7 @@ export const Versioning = ({ node }: VersioningProps): React.JSX.Element => {
 				</Container>
 			</Container>
 			<GridContainer
-				sectionsRows={[lastVersion.length, lastWeekVersions.length, olderVersions.length]}
+				$sectionsRows={[lastVersion.length, lastWeekVersions.length, olderVersions.length]}
 			>
 				{lastVersion.length > 0 && (
 					<>

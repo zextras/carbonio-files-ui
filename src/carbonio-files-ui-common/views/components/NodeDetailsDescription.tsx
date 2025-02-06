@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { RouteLeavingGuard } from './RouteLeavingGuard';
-import { ItalicText, ShimmerText } from './StyledComponents';
+import { ShimmerText } from './StyledComponents';
 import { useUpdateNodeDescriptionMutation } from '../../hooks/graphql/mutations/useUpdateNodeDescriptionMutation';
 
 interface NodeDetailsDescriptionProps {
@@ -41,7 +41,7 @@ const CustomIconButton = styled(Button)`
 	outline: none;
 `;
 
-const CustomItalicText = styled(ItalicText)`
+const CustomItalicText = styled(Text)`
 	user-select: none;
 `;
 
@@ -208,7 +208,7 @@ export const NodeDetailsDescription = ({
 						<Text size="medium" overflow="break-word">
 							{description ||
 								(canUpsertDescription && (
-									<CustomItalicText color="secondary" size="medium" overflow="break-word">
+									<CustomItalicText color="secondary" size="medium" overflow="break-word" italic>
 										{t(
 											'displayer.details.missingDescription',
 											'Click the edit button to add a description'

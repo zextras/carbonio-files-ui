@@ -52,7 +52,7 @@ startxref
 379
 %%EOF`;
 
-function pdfToArrayBuffer(pdf: string): ArrayBufferLike {
+function pdfToArrayBuffer(pdf: string): ArrayBuffer {
 	const binaryString = atob(pdf);
 	const len = binaryString.length;
 	const bytes = new Uint8Array(len);

@@ -22,6 +22,9 @@ class JSDOMEnvironmentExtended extends JSDOMEnvironment {
 		this.global.Response = Response;
 		this.global.fetch = fetch;
 		this.global.structuredClone = structuredClone;
+
+		this.global.BroadcastChannel = BroadcastChannel;
+		this.global.TransformStream = TransformStream;
 	}
 }
 

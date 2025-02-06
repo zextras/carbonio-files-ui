@@ -561,7 +561,7 @@ describe('Search view', () => {
 		});
 	});
 
-	it('should show docs creation actions if docs is available', async () => {
+	it('should not show docs creation actions if docs is available', async () => {
 		healthCache.reset();
 		const createOptions = spyOnUseCreateOptions();
 		server.use(
@@ -572,13 +572,13 @@ describe('Search view', () => {
 		setup(<SearchView />);
 		await waitFor(() => expect(healthCache.healthReceived).toBeTruthy());
 		expect(createOptions).toContainEqual(expect.objectContaining({ id: ACTION_IDS.UPLOAD_FILE }));
-		expect(createOptions).toContainEqual(
+		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
 		);
-		expect(createOptions).toContainEqual(
+		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_SPREADSHEET })
 		);
-		expect(createOptions).toContainEqual(
+		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_PRESENTATION })
 		);
 	});

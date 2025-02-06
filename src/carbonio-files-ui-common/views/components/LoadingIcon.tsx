@@ -21,13 +21,21 @@ const StyledButton = styled(Button)`
 	animation: ${rotate} 1s linear infinite;
 `;
 
-export const LoadingIcon = React.forwardRef<HTMLDivElement, Partial<ButtonProps>>(
-	function LoadingIconFn(
-		{ onClick = (): void => undefined, type = 'ghost', shape = 'round', color = 'text', ...rest },
-		ref
-	) {
-		return (
-			<StyledButton onClick={onClick} type={type} shape={shape} color={color} {...rest} ref={ref} />
-		);
-	}
-);
+export const LoadingIcon = React.forwardRef<
+	HTMLDivElement,
+	Partial<Omit<ButtonProps, 'secondaryAction' | 'type' | 'labelColor' | 'backgroundColor'>>
+>(function LoadingIconFn(
+	{ onClick = (): void => undefined, shape = 'round', color = 'text', ...rest },
+	ref
+) {
+	return (
+		<StyledButton
+			onClick={onClick}
+			shape={shape}
+			type={'ghost'}
+			color={color}
+			{...rest}
+			ref={ref}
+		/>
+	);
+});

@@ -138,7 +138,8 @@ export const SELECTORS = {
 	mainGrid: 'main-grid',
 	gridCellThumbnail: 'grid-cell-thumbnail',
 	virtualizedNodeListItem: 'virtualized-node-list-item',
-	snackbar: 'snackbar'
+	snackbar: 'snackbar',
+	hoverContainer: 'hover-container'
 };
 
 export const EMITTER_CODES = {

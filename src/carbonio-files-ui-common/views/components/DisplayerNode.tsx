@@ -130,7 +130,6 @@ export const DisplayerNode = ({
 							shares={node.shares}
 							type={node.type}
 							rootId={node.rootId}
-							version={isFile(node) ? node.version : undefined}
 							mimeType={isFile(node) ? node.mime_type : undefined}
 						/>
 					)}

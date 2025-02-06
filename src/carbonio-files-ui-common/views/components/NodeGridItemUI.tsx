@@ -16,7 +16,7 @@ import {
 	Text
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled, { css, SimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
 import { GridItem, UppercaseText } from './StyledComponents';
@@ -36,29 +36,19 @@ const FooterGrid = styled(Container)`
 	justify-content: space-between;
 `;
 
-export const ContainerCell = styled(Container).attrs<
-	{
-		$contextualMenuActive?: boolean;
-		$disabled?: boolean;
-		$disableHover?: boolean;
-		$showPreview?: boolean;
-	},
-	{ backgroundColor?: string }
->(({ $contextualMenuActive, $disabled, theme }) => ({
-	backgroundColor:
-		($disabled && getColor('gray6.disabled', theme)) ||
-		($contextualMenuActive && getColor('gray6.hover', theme)) ||
-		undefined
-}))<{
+export const ContainerCell = styled(Container)<{
 	$contextualMenuActive?: boolean;
 	$disabled?: boolean;
 	$disableHover?: boolean;
 	$showPreview?: boolean;
 }>`
 	${HoverContainer} {
-		background-color: ${({ backgroundColor }): SimpleInterpolation => backgroundColor};
+		background-color: ${({ $disabled, $contextualMenuActive, theme }): undefined | string =>
+			($disabled && getColor('gray6.disabled', theme)) ||
+			($contextualMenuActive && getColor('gray6.hover', theme)) ||
+			undefined};
 	}
-	${({ $disableHover, theme }): SimpleInterpolation =>
+	${({ $disableHover, theme }): false | ReturnType<typeof css> =>
 		!$disableHover &&
 		css`
 			&:hover {
@@ -67,19 +57,19 @@ export const ContainerCell = styled(Container).attrs<
 				}
 			}
 		`}
-	${({ $disabled }): SimpleInterpolation =>
+	${({ $disabled }): false | ReturnType<typeof css> =>
 		!$disabled &&
 		css`
 			cursor: pointer;
 		`};
-	${({ $showPreview }): SimpleInterpolation =>
+	${({ $showPreview }): false | undefined | ReturnType<typeof css> =>
 		$showPreview &&
 		css`
 			aspect-ratio: 1/1;
 		`};
 	overflow: hidden;
 	border-radius: 5px;
-	border: 1px solid ${({ theme }): SimpleInterpolation => theme.palette.gray2.disabled};
+	border: 1px solid ${({ theme }): string => theme.palette.gray2.disabled};
 `;
 
 const Preview = styled(Container)`

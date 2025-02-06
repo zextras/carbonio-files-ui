@@ -194,7 +194,7 @@ export const PublicLinkComponent = ({
 				onEditConfirm(
 					id,
 					linkDescriptionValue,
-					updatedTimestamp !== expiresAt ? updatedTimestamp ?? 0 : undefined,
+					updatedTimestamp !== expiresAt ? (updatedTimestamp ?? 0) : undefined,
 					calculateUpdatedAccessCode(accessCode, newAccessCodeValue, isAccessCodeEnabled)
 				).then(() => {
 					if (!isAccessCodeEnabled) {
@@ -365,7 +365,7 @@ export const PublicLinkComponent = ({
 					<DateTimePicker
 						width="fill"
 						label={t('publicLink.dateTimePicker.label', 'Expiration date')}
-						includeTime={false}
+						showTimeSelect={false}
 						enableChips
 						dateFormat="P"
 						chipProps={{ hasAvatar: false }}

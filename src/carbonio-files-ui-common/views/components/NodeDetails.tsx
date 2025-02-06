@@ -45,7 +45,6 @@ interface NodeDetailsProps {
 	shares: CollaboratorsRowProps['shares'];
 	type: NodeType;
 	rootId: string | null;
-	version: number | undefined;
 	mimeType: string | undefined;
 }
 
@@ -68,7 +67,6 @@ export const NodeDetails = ({
 	shares,
 	type,
 	rootId,
-	version,
 	mimeType
 }: NodeDetailsProps): React.JSX.Element => {
 	const [t] = useTranslation();
@@ -113,7 +111,7 @@ export const NodeDetails = ({
 			<Container background={'gray6'} height={'auto'}>
 				{canUsePreview && $isSupportedByPreview && previewType && (
 					<Container padding={{ all: 'small' }} height={'auto'}>
-						<DisplayerPreview id={id} version={version} type={type} mimeType={mimeType} />
+						<DisplayerPreview id={id} type={type} mimeType={mimeType} />
 					</Container>
 				)}
 				<DisplayerContentContainer
