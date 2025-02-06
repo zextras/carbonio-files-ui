@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.11.0](https://github.com/zextras/carbonio-files-ui/compare/v2.10.0...v2.11.0) (2025-02-06)
+
+
+### Features
+
+* hide creation actions when they are not permitted ([fac3307](https://github.com/zextras/carbonio-files-ui/commit/fac33074558ddfb469f29d89e8dcc022795d9d55)), closes [#427](https://github.com/zextras/carbonio-files-ui/issues/427)
+* update preview and thumbnail api ([466e870](https://github.com/zextras/carbonio-files-ui/commit/466e87000e99a90381d0179f7aa3605672041c1b)), closes [#441](https://github.com/zextras/carbonio-files-ui/issues/441)
+
 ## [2.10.0](https://github.com/zextras/carbonio-files-ui/compare/v2.9.0...v2.10.0) (2024-11-18)
 
 
