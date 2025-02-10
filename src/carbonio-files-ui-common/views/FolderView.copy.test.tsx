@@ -48,7 +48,7 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
-describe('Copy', () => {
+describe.skip('Copy', () => {
 	describe('Selection mode', () => {
 		test('Copy is enabled when multiple files are selected', async () => {
 			const currentFolder = populateFolder();

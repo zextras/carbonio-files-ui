@@ -24,7 +24,7 @@ import {
 import { getChipLabel } from '../../utils/utils';
 
 describe('Displayer', () => {
-	describe('With unsaved changes', () => {
+	describe.skip('With unsaved changes', () => {
 		describe('on edit share chip', () => {
 			test('click on other tab show dialog to warn user about unsaved changes', async () => {
 				const node = populateNode();

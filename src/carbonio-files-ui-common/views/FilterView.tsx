@@ -153,7 +153,7 @@ const FilterView = (): React.JSX.Element => {
 		hasMore,
 		loadMore
 	} = useFindNodesQuery({
-		...FILTER_PARAMS[filterParam],
+		...FILTER_PARAMS[filterParam as URLParams['filter']],
 		sort
 	});
 

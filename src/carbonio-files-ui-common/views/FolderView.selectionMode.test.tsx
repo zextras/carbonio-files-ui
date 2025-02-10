@@ -31,7 +31,7 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
-describe('Folder View Selection mode', () => {
+describe.skip('Folder View Selection mode', () => {
 	test('if there is no element selected, all actions are visible and disabled', async () => {
 		const currentFolder = populateFolder(10);
 

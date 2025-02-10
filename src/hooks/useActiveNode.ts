@@ -7,7 +7,7 @@
 import { useCallback } from 'react';
 
 import { includes } from 'lodash';
-import { useHistory, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useNavigation } from './useNavigation';
 import { DISPLAYER_TABS } from '../carbonio-files-ui-common/constants';
@@ -27,50 +27,41 @@ export function useActiveNode(): {
 } {
 	const { navigateTo } = useNavigation();
 
+	const location = useLocation();
+	const navigate = useNavigate();
 	const activeNodeId = useQueryParam('node');
 	const tab = useQueryParam('tab');
 
 	const { rootId, filter, view = '' } = useParams<URLParams>();
 	const folderId = useQueryParam('folder');
 	const fileId = useQueryParam('file');
-	const history = useHistory();
-	const inSearchView = isSearchView(history.location);
+	const inSearchView = isSearchView(location);
 
 	const setActiveNode = useCallback(
 		(newId: string, newTab?: string) => {
-			let queryParams = '?';
+			const queryParams: string[] = [];
 			if (folderId) {
-				queryParams += `folder=${folderId}&`;
+				queryParams.push(`folder=${folderId}`);
 			} else if (fileId) {
-				queryParams += `file=${fileId}&`;
+				queryParams.push(`file=${fileId}`);
 			}
-			queryParams += `node=${newId}`;
+			queryParams.push(`node=${newId}`);
 
 			if (newTab) {
-				queryParams += `&tab=${newTab}`;
+				queryParams.push(`tab=${newTab}`);
 			}
 
-			if (inSearchView) {
-				const destination = `${history.location.pathname}${queryParams}`;
-				history.replace(destination);
-			} else {
-				let params = '';
-				if (rootId) {
-					params += `/${rootId}`;
-				} else if (filter) {
-					params += `/${filter}/`;
-				}
-				const destination = `/${view}${params}${queryParams}`;
-				navigateTo(destination, true);
-			}
+			navigate({ search: queryParams.join('&') }, { replace: true });
 		},
-		[fileId, filter, folderId, history, inSearchView, navigateTo, rootId, view]
+		[fileId, folderId, navigate]
 	);
 
 	const removeActiveNode = useCallback(() => {
+		// TODO maybe this can be simplified
+		// navigate({ search: '' }, { replace: true });
 		if (inSearchView) {
-			const destination = `${history.location.pathname}`;
-			history.replace(destination);
+			const destination = `${location.pathname}`;
+			navigate(destination, { replace: true });
 		} else {
 			let params = '';
 			if (rootId) {
@@ -85,7 +76,7 @@ export function useActiveNode(): {
 			const destination = `/${view}${params}${queryParams}`;
 			navigateTo(destination, true);
 		}
-	}, [filter, folderId, history, inSearchView, navigateTo, rootId, view]);
+	}, [inSearchView, location.pathname, navigate, rootId, filter, folderId, view, navigateTo]);
 
 	return {
 		activeNodeId,

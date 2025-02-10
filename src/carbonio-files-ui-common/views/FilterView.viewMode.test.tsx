@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { DisplayerProps } from './components/Displayer';
 import FilterView from './FilterView';
@@ -40,10 +40,15 @@ describe('View Mode', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${filter}`],
-				mocks
-			});
+			const { user } = setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${filter}`],
+					mocks
+				}
+			);
 
 			await screen.findByText(nodes[0].name);
 			const gridModeIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.gridViewMode });

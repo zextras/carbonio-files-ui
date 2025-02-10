@@ -6,7 +6,7 @@
 
 import React, { lazy } from 'react';
 
-import { Redirect, useRouteMatch } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { ROOTS } from '../constants';
 import useQueryParam from '../hooks/useQueryParam';
@@ -18,7 +18,6 @@ const LazyFileView = lazy(() => import(/* webpackChunkName: "fileView" */ './Fil
 const FileFolderViewSelector = (): React.JSX.Element => {
 	const folderId = useQueryParam('folder');
 	const fileId = useQueryParam('file');
-	const { path } = useRouteMatch();
 
 	if (folderId) {
 		return <LazyFolderView />;
@@ -26,7 +25,7 @@ const FileFolderViewSelector = (): React.JSX.Element => {
 	if (fileId) {
 		return <LazyFileView />;
 	}
-	return <Redirect to={`${path}root/${ROOTS.LOCAL_ROOT}`} />;
+	return <Navigate to={`root/${ROOTS.LOCAL_ROOT}`} replace />;
 };
 
 export default FileFolderViewSelector;

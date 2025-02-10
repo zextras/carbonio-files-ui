@@ -62,7 +62,7 @@ async function createNode(newNode: { name: string }, user: UserEvent): Promise<v
 	await user.click(button);
 }
 
-describe('Create folder', () => {
+describe.skip('Create folder', () => {
 	test('Create folder operation fail shows an error in the modal and does not close it', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_folder = true;

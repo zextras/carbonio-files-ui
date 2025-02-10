@@ -166,12 +166,12 @@ export const PREVIEW_TYPE = {
 } as const;
 // internal paths
 export const INTERNAL_PATH: {
-	[K in Uppercase<NonNullable<URLParams['view']>>]: `/${Lowercase<K>}`;
+	[K in Uppercase<NonNullable<URLParams['view']>>]: `${Lowercase<K>}`;
 } = {
-	ROOT: '/root',
-	UPLOADS: '/uploads',
-	SEARCH: '/search',
-	FILTER: '/filter'
+	ROOT: 'root',
+	UPLOADS: 'uploads',
+	SEARCH: 'search',
+	FILTER: 'filter'
 } as const;
 export const FILTER_TYPE = {
 	flagged: '/flagged',

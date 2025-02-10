@@ -10,7 +10,7 @@ import { Modal, Button } from '@zextras/carbonio-design-system';
 import type { Location } from 'history';
 import { filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Prompt, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type RouteLeavingGuardProps = React.PropsWithChildren<{
 	when?: boolean;
@@ -23,8 +23,9 @@ export const RouteLeavingGuard = ({
 	onSave,
 	dataHasError = false
 }: RouteLeavingGuardProps): React.JSX.Element => {
-	const history = useHistory();
-	const lastLocationInitial = useMemo(() => history.location, [history]);
+	const navigate = useNavigate();
+	const location = useLocation();
+	const lastLocationInitial = useMemo(() => location, [location]);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [lastLocation, setLastLocation] = useState<Location>(lastLocationInitial);
 	const [confirmedNavigation, setConfirmedNavigation] = useState(false);
@@ -38,7 +39,7 @@ export const RouteLeavingGuard = ({
 		if (
 			!confirmedNavigation &&
 			`${nextLocation.pathname}${nextLocation.search || ''}` !==
-				`${history.location.pathname}${history.location.search}`
+				`${location.pathname}${location.search}`
 		) {
 			setModalVisible(true);
 			setLastLocation(nextLocation);
@@ -76,13 +77,13 @@ export const RouteLeavingGuard = ({
 	useEffect(() => {
 		if (confirmedNavigation && lastLocation) {
 			// Navigate to the previous blocked location with your navigate function
-			history.push(lastLocation);
+			navigate(lastLocation);
+			// history.push(lastLocation);
 		}
-	}, [confirmedNavigation, history, lastLocation]);
+	}, [navigate, confirmedNavigation, lastLocation]);
 
 	return (
 		<>
-			<Prompt when={when} message={handleBlockedNavigation} />
 			{/* Your own alert/dialog/modal component */}
 			<Modal
 				showCloseIcon

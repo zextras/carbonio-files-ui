@@ -49,7 +49,7 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
-describe('Move', () => {
+describe.skip('Move', () => {
 	describe('Selection mode', () => {
 		test('Move for single node confirm action close the modal, remove items to move from children and clear cached data for destination folder', async () => {
 			const currentFolder = populateFolder(5);

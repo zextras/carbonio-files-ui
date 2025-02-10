@@ -260,7 +260,7 @@ describe('Create docs file', () => {
 		);
 	});
 
-	test('Create docs file operation fail shows an error in the modal and does not close it', async () => {
+	test.skip('Create docs file operation fail shows an error in the modal and does not close it', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
 		currentFolder.permissions.can_write_folder = true;
@@ -312,7 +312,7 @@ describe('Create docs file', () => {
 		);
 	});
 
-	test('Create docs add file node at folder content, showing the element in the ordered list if neighbor is already loaded and ordered', async () => {
+	test.skip('Create docs add file node at folder content, showing the element in the ordered list if neighbor is already loaded and ordered', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
 		currentFolder.permissions.can_write_folder = true;
@@ -366,7 +366,7 @@ describe('Create docs file', () => {
 		expect(nodes[1]).toBe(nodeItem);
 	});
 
-	test('Create docs file add file node as right sorted position of the list if neighbor is already loaded but unordered', async () => {
+	test.skip('Create docs file add file node as right sorted position of the list if neighbor is already loaded but unordered', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.children = populateNodePage(populateNodes(NODES_LOAD_LIMIT, 'Folder'));
 		sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);

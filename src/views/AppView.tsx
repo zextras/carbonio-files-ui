@@ -6,11 +6,10 @@
 
 import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
 
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
 import { INTERNAL_PATH } from '../carbonio-files-ui-common/constants';
-import { URLParams } from '../carbonio-files-ui-common/types/common';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
 import {
 	GlobalProvidersWrapper,
@@ -38,41 +37,7 @@ const LazyUploadView = lazy(
 	() => import(/* webpackChunkName: "uploadView" */ '../carbonio-files-ui-common/views/UploadView')
 );
 
-const View = (): React.JSX.Element | null => {
-	const { path, params } = useRouteMatch<URLParams>();
-	return (
-		(`/${params.view}` === INTERNAL_PATH.ROOT && (
-			<Route path={`${path}/:rootId`}>
-				<Suspense fallback={<Spinner />}>
-					<ViewProvidersWrapper>
-						<LazyFolderView />
-					</ViewProvidersWrapper>
-				</Suspense>
-			</Route>
-		)) ||
-		(`/${params.view}` === INTERNAL_PATH.FILTER && (
-			<Route path={`${path}/:filter?`}>
-				<Suspense fallback={<Spinner />}>
-					<ViewProvidersWrapper>
-						<LazyFilterView />
-					</ViewProvidersWrapper>
-				</Suspense>
-			</Route>
-		)) || (
-			<Route path={path}>
-				<Suspense fallback={<Spinner />}>
-					<ViewProvidersWrapper>
-						<LazyUploadView />
-					</ViewProvidersWrapper>
-				</Suspense>
-			</Route>
-		)
-	);
-};
-
 const AppView = (): React.JSX.Element => {
-	const { path } = useRouteMatch<URLParams>();
-
 	const apolloClient = useMemo(() => buildClient(), []);
 
 	const clearApolloCache = useCallback(() => {
@@ -90,18 +55,49 @@ const AppView = (): React.JSX.Element => {
 	return (
 		<PreventDefaultDropContainer>
 			<GlobalProvidersWrapper>
-				<Switch>
-					<Route path={`${path}/:view`}>
-						<View />
-					</Route>
-					<Route path={`${path}/`}>
-						<Suspense fallback={<Spinner />}>
-							<ViewProvidersWrapper>
-								<LazyFileFolderViewSelector />
-							</ViewProvidersWrapper>
-						</Suspense>
-					</Route>
-				</Switch>
+				<Routes>
+					<Route
+						path={`${INTERNAL_PATH.ROOT}/:rootId`}
+						element={
+							<Suspense fallback={<Spinner />}>
+								<ViewProvidersWrapper>
+									<LazyFolderView />
+								</ViewProvidersWrapper>
+							</Suspense>
+						}
+					/>
+					<Route
+						path={`${INTERNAL_PATH.FILTER}/:filter`}
+						element={
+							<Suspense fallback={<Spinner />}>
+								<ViewProvidersWrapper>
+									<LazyFilterView />
+								</ViewProvidersWrapper>
+							</Suspense>
+						}
+					/>
+					<Route
+						path={`${INTERNAL_PATH.UPLOADS}`}
+						element={
+							<Suspense fallback={<Spinner />}>
+								<ViewProvidersWrapper>
+									<LazyUploadView />
+								</ViewProvidersWrapper>
+							</Suspense>
+						}
+					/>
+					)
+					<Route
+						path={`/`}
+						element={
+							<Suspense fallback={<Spinner />}>
+								<ViewProvidersWrapper>
+									<LazyFileFolderViewSelector />
+								</ViewProvidersWrapper>
+							</Suspense>
+						}
+					/>
+				</Routes>
 			</GlobalProvidersWrapper>
 		</PreventDefaultDropContainer>
 	);

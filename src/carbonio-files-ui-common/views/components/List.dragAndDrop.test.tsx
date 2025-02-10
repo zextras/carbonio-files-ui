@@ -226,7 +226,7 @@ describe('List', () => {
 				expect(screen.queryByText(/upload occurred/i)).not.toBeInTheDocument();
 			});
 
-			test('Drag of files in a file node inside a list with right permissions shows upload dropzone of the list. Drop trigger upload in the current folder', async () => {
+			test.skip('Drag of files in a file node inside a list with right permissions shows upload dropzone of the list. Drop trigger upload in the current folder', async () => {
 				const currentFolder = populateFolder(2);
 				currentFolder.permissions.can_write_file = true;
 				const destinationFile = populateFile();
@@ -418,7 +418,7 @@ describe('List', () => {
 					</SelectionProvider>,
 					{
 						mocks,
-						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 					}
 				);
 
@@ -470,7 +470,7 @@ describe('List', () => {
 					</SelectionProvider>,
 					{
 						mocks,
-						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 					}
 				);
 

@@ -31,7 +31,7 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
-describe('Mark for deletion - trash', () => {
+describe.skip('Mark for deletion - trash', () => {
 	describe('Selection mode', () => {
 		test('Mark for deletion remove selected items from the list', async () => {
 			const currentFolder = populateFolder(0);

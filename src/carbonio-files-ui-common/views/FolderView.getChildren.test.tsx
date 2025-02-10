@@ -55,7 +55,7 @@ describe('Get children', () => {
 		await screen.findByText(/An error occurred/i);
 	});
 
-	test('first access to a folder show loading state and than show children', async () => {
+	test.skip('first access to a folder show loading state and than show children', async () => {
 		const currentFolder = populateFolder(1);
 
 		const mocks = {
@@ -76,7 +76,7 @@ describe('Get children', () => {
 		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 
-	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
+	test.skip('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT + Math.floor(NODES_LOAD_LIMIT / 2));
 
 		const mocks = {

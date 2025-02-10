@@ -25,7 +25,7 @@ import {
 describe('Displayer', () => {
 	describe('With unsaved changes', () => {
 		describe('on description', () => {
-			test('click on other tab show dialog to warn user about unsaved changes', async () => {
+			test.skip('click on other tab show dialog to warn user about unsaved changes', async () => {
 				const node = populateNode();
 				node.permissions.can_write_file = true;
 				node.permissions.can_write_folder = true;

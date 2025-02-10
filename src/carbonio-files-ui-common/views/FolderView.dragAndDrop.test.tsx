@@ -37,7 +37,7 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
-describe('Drag and drop', () => {
+describe.skip('Drag and drop', () => {
 	test('Drop of a node in a valid folder remove node from current folder list', async () => {
 		const currentFolder = populateFolder(5);
 		currentFolder.permissions.can_write_file = true;

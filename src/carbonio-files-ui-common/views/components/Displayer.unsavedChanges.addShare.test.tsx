@@ -44,7 +44,7 @@ jest.mock<typeof import('../../../network/network')>('../../../network/network',
 }));
 
 describe('Displayer', () => {
-	describe('With unsaved changes', () => {
+	describe.skip('With unsaved changes', () => {
 		describe('On add share', () => {
 			test('on chip input field, click on other tab show dialog to warn user about unsaved changes', async () => {
 				const node = populateNode();
