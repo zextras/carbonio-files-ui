@@ -433,13 +433,16 @@ export const NodeListItem = ({
 
 	const dragEnterHandler = useCallback<React.DragEventHandler>(
 		(event) => {
+			// deep copy dataTransfer types to avoid dataTransfer types being modified
+			const types = [...event.dataTransfer.types];
+
 			// check if node is a valid destination for write inside action
 			setDropzoneEnabled((prevState) => {
 				navigationTimerRef.current && clearTimeout(navigationTimerRef.current);
-				if (prevState && event.dataTransfer.types.includes(DRAG_TYPES.move)) {
+				if (prevState && types.includes(DRAG_TYPES.move)) {
 					return dragMoveHandler();
 				}
-				if (event.dataTransfer.types.includes(DRAG_TYPES.upload)) {
+				if (types.includes(DRAG_TYPES.upload)) {
 					return dragUploadHandler();
 				}
 				return false;
