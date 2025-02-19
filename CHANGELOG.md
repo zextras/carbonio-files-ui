@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.1](https://github.com/zextras/carbonio-files-ui/compare/v2.11.0...v2.11.1) (2025-02-18)
+
+
+### Bug Fixes
+
+* fix dragAndDrop on list folder item ([f94a1b0](https://github.com/zextras/carbonio-files-ui/commit/f94a1b0d3f57f6dde394687856ad4c40c1846663)), closes [#450](https://github.com/zextras/carbonio-files-ui/issues/450)
+
 ## [2.11.0](https://github.com/zextras/carbonio-files-ui/compare/v2.10.0...v2.11.0) (2025-02-06)
 
 
