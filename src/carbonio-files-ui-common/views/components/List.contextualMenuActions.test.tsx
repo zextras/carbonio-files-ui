@@ -22,6 +22,8 @@ import { mockGetPath } from '../../utils/resolverMocks';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
+jest.mock<typeof import('./NodeHoverBar')>('./NodeHoverBar');
+
 describe('Contextual menu actions', () => {
 	describe('on empty space', () => {
 		describe('in a folder with few nodes', () => {
@@ -452,7 +454,7 @@ describe('Contextual menu actions', () => {
 	});
 
 	describe('with selection active', () => {
-		it.skip('should show only actions that can be performed on multiple nodes when 2 nodes are selected', async () => {
+		it('should show only actions that can be performed on multiple nodes when 2 nodes are selected', async () => {
 			const currentFolder = populateFolder(5);
 			// enable permission to mark for deletion
 			forEach(currentFolder.children.nodes, (mockedNode) => {
@@ -499,7 +501,7 @@ describe('Contextual menu actions', () => {
 			expect(screen.queryByText(ACTION_REGEXP.unflag)).not.toBeInTheDocument();
 		});
 
-		it.skip('should not open on nodes that are not selected', async () => {
+		it('should not open on nodes that are not selected', async () => {
 			const currentFolder = populateFolder(5);
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;

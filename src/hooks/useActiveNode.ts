@@ -7,13 +7,10 @@
 import { useCallback } from 'react';
 
 import { includes } from 'lodash';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { useNavigation } from './useNavigation';
 import { DISPLAYER_TABS } from '../carbonio-files-ui-common/constants';
 import useQueryParam from '../carbonio-files-ui-common/hooks/useQueryParam';
-import { URLParams } from '../carbonio-files-ui-common/types/common';
-import { isSearchView } from '../carbonio-files-ui-common/utils/utils';
 
 export function useActiveNode(): {
 	activeNodeId?: string;
@@ -25,17 +22,14 @@ export function useActiveNode(): {
 	isVersioningTab: boolean;
 	isExistingTab: boolean;
 } {
-	const { navigateTo } = useNavigation();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	const location = useLocation();
 	const navigate = useNavigate();
 	const activeNodeId = useQueryParam('node');
 	const tab = useQueryParam('tab');
 
-	const { rootId, filter, view = '' } = useParams<URLParams>();
 	const folderId = useQueryParam('folder');
 	const fileId = useQueryParam('file');
-	const inSearchView = isSearchView(location);
 
 	const setActiveNode = useCallback(
 		(newId: string, newTab?: string) => {
@@ -57,26 +51,9 @@ export function useActiveNode(): {
 	);
 
 	const removeActiveNode = useCallback(() => {
-		// TODO maybe this can be simplified
-		// navigate({ search: '' }, { replace: true });
-		if (inSearchView) {
-			const destination = `${location.pathname}`;
-			navigate(destination, { replace: true });
-		} else {
-			let params = '';
-			if (rootId) {
-				params += `/${rootId}`;
-			} else if (filter) {
-				params += `/${filter}/`;
-			}
-			let queryParams = '?';
-			if (folderId) {
-				queryParams += `folder=${folderId}`;
-			}
-			const destination = `/${view}${params}${queryParams}`;
-			navigateTo(destination, true);
-		}
-	}, [inSearchView, location.pathname, navigate, rootId, filter, folderId, view, navigateTo]);
+		searchParams.delete('node');
+		setSearchParams(searchParams);
+	}, [searchParams, setSearchParams]);
 
 	return {
 		activeNodeId,

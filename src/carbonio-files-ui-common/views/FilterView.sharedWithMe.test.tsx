@@ -94,7 +94,7 @@ describe('Filter view', () => {
 			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 
-		test.skip('Node is removed from the list if user remove his share', async () => {
+		test('Node is removed from the list if user remove his share', async () => {
 			const currentFilter = populateNodes(2);
 			const node = currentFilter[0];
 			node.owner = populateUser();
@@ -117,12 +117,12 @@ describe('Filter view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
-				<Route path={`/:view/:filter?`}>
-					<FilterView />
-				</Route>,
+				<Routes>
+					<Route path={`/:view/:filter?`} element={<FilterView />} />
+				</Routes>,
 				{
 					initialRouterEntries: [
-						`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}/?node=${node.id}&tab=sharing`
+						`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}/?node=${node.id}&tab=sharing`
 					],
 					mocks
 				}

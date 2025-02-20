@@ -38,7 +38,7 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 
 describe('Filter view', () => {
 	describe('Trash filter', () => {
-		test.skip('Restore close the displayer from trash views', async () => {
+		test('Restore close the displayer from trash views', async () => {
 			const nodes = populateNodes(10);
 			nodes.forEach((node) => {
 				node.rootId = ROOTS.TRASH;
@@ -90,7 +90,7 @@ describe('Filter view', () => {
 			expect(screen.getByText(DISPLAYER_EMPTY_MESSAGE)).toBeVisible();
 		});
 
-		test.skip('Delete permanently close the displayer from trash views', async () => {
+		test('Delete permanently close the displayer from trash views', async () => {
 			const node = populateNode();
 			node.rootId = ROOTS.TRASH;
 			node.permissions.can_write_file = true;

@@ -96,7 +96,7 @@ describe('Filter view', () => {
 			expect(screen.queryByTestId(SELECTORS.missingFilter)).not.toBeInTheDocument();
 		});
 
-		test.skip('Deletion of all collaborators remove node from list. Displayer is closed', async () => {
+		test('Deletion of all collaborators remove node from list. Displayer is closed', async () => {
 			const nodes = populateNodes(2);
 			const nodeWithShares = populateFile();
 			const shares = populateShares(nodeWithShares, 2);
@@ -117,9 +117,9 @@ describe('Filter view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
-				<Route path={`/:view/:filter`}>
-					<FilterView />
-				</Route>,
+				<Routes>
+					<Route path={`/:view/:filter`} element={<FilterView />} />
+				</Routes>,
 				{
 					initialRouterEntries: [
 						`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}/?node=${nodeWithShares.id}&tab=sharing`
