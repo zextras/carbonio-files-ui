@@ -59,6 +59,8 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+
 function clickOnCreateDocsAction(
 	createOptions: CreateOption[],
 	type: (typeof ACTION_IDS)[keyof Pick<
@@ -260,7 +262,7 @@ describe('Create docs file', () => {
 		);
 	});
 
-	test.skip('Create docs file operation fail shows an error in the modal and does not close it', async () => {
+	test('Create docs file operation fail shows an error in the modal and does not close it', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
 		currentFolder.permissions.can_write_folder = true;
@@ -312,7 +314,7 @@ describe('Create docs file', () => {
 		);
 	});
 
-	test.skip('Create docs add file node at folder content, showing the element in the ordered list if neighbor is already loaded and ordered', async () => {
+	test('Create docs add file node at folder content, showing the element in the ordered list if neighbor is already loaded and ordered', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_file = true;
 		currentFolder.permissions.can_write_folder = true;
@@ -366,7 +368,7 @@ describe('Create docs file', () => {
 		expect(nodes[1]).toBe(nodeItem);
 	});
 
-	test.skip('Create docs file add file node as right sorted position of the list if neighbor is already loaded but unordered', async () => {
+	test('Create docs file add file node as right sorted position of the list if neighbor is already loaded but unordered', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.children = populateNodePage(populateNodes(NODES_LOAD_LIMIT, 'Folder'));
 		sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);

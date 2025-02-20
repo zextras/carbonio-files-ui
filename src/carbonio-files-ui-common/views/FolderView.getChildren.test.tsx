@@ -28,6 +28,7 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
 
 describe('Get children', () => {
 	test('access to a folder with network error response show an error page', async () => {
@@ -55,7 +56,7 @@ describe('Get children', () => {
 		await screen.findByText(/An error occurred/i);
 	});
 
-	test.skip('first access to a folder show loading state and than show children', async () => {
+	test('first access to a folder show loading state and than show children', async () => {
 		const currentFolder = populateFolder(1);
 
 		const mocks = {
@@ -76,7 +77,7 @@ describe('Get children', () => {
 		expect(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 	});
 
-	test.skip('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
+	test('intersectionObserver trigger the fetchMore function to load more elements when observed element is intersected', async () => {
 		const currentFolder = populateFolder(NODES_LOAD_LIMIT + Math.floor(NODES_LOAD_LIMIT / 2));
 
 		const mocks = {

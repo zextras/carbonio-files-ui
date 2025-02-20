@@ -67,7 +67,7 @@ const AppView = (): React.JSX.Element => {
 						}
 					/>
 					<Route
-						path={`${INTERNAL_PATH.FILTER}/:filter`}
+						path={`${INTERNAL_PATH.FILTER}/:filter?`}
 						element={
 							<Suspense fallback={<Spinner />}>
 								<ViewProvidersWrapper>

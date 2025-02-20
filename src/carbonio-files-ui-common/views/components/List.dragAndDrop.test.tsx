@@ -41,6 +41,7 @@ import {
 } from '../../utils/resolverMocks';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+jest.mock<typeof import('./NodeHoverBar')>('./NodeHoverBar');
 
 describe('List', () => {
 	describe('Drag and drop', () => {
@@ -226,7 +227,7 @@ describe('List', () => {
 				expect(screen.queryByText(/upload occurred/i)).not.toBeInTheDocument();
 			});
 
-			test.skip('Drag of files in a file node inside a list with right permissions shows upload dropzone of the list. Drop trigger upload in the current folder', async () => {
+			test('Drag of files in a file node inside a list with right permissions shows upload dropzone of the list. Drop trigger upload in the current folder', async () => {
 				const currentFolder = populateFolder(2);
 				currentFolder.permissions.can_write_file = true;
 				const destinationFile = populateFile();

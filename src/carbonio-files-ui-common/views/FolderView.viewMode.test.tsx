@@ -26,8 +26,10 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+
 describe('View Mode', () => {
-	it.skip('should switch between list view and grid view', async () => {
+	it('should switch between list view and grid view', async () => {
 		const currentFolder = populateFolder(1, 'currentFolderId');
 		const mocks = {
 			Query: {

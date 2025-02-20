@@ -44,6 +44,7 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
 
 function clickOnCreateFolderAction(createOptions: CreateOption[]): void {
 	const createFolder = createOptions.find((option) => option.id === ACTION_IDS.CREATE_FOLDER);
@@ -62,7 +63,7 @@ async function createNode(newNode: { name: string }, user: UserEvent): Promise<v
 	await user.click(button);
 }
 
-describe.skip('Create folder', () => {
+describe('Create folder', () => {
 	test('Create folder operation fail shows an error in the modal and does not close it', async () => {
 		const currentFolder = populateFolder();
 		currentFolder.permissions.can_write_folder = true;

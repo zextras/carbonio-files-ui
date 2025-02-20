@@ -28,14 +28,14 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 );
 
 describe('Filter view', () => {
-	test.skip('No url param render a "Missing filter" message', async () => {
+	test('No url param render a "Missing filter" message', async () => {
 		const mockedRequestHandler = jest.fn(handleFindNodesRequest);
 		server.use(
 			graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 		);
 		setup(
 			<Routes>
-				<Route path={`filter/:filter`} element={<FilterView />} />
+				<Route path={`filter/:filter?`} element={<FilterView />} />
 			</Routes>,
 			{
 				initialRouterEntries: [`/${INTERNAL_PATH.FILTER}/`]

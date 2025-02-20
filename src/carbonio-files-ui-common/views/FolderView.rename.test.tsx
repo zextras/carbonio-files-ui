@@ -31,9 +31,11 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+
 describe('Rename', () => {
 	describe('Selection mode', () => {
-		test.skip('Rename change node name and update the content of the folder, showing the element at its new position', async () => {
+		test('Rename change node name and update the content of the folder, showing the element at its new position', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(populateNodes(5, 'Folder'));
 			sortNodes(currentFolder.children.nodes, NODES_SORT_DEFAULT);
@@ -100,7 +102,7 @@ describe('Rename', () => {
 		});
 	});
 
-	describe.skip('Contextual menu actions', () => {
+	describe('Contextual menu actions', () => {
 		test('Rename change node name and update the content of the folder, showing the element at its new position', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(populateNodes(5, 'Folder'));

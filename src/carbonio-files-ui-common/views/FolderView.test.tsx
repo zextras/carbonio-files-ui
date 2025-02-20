@@ -63,6 +63,7 @@ jest.mock<typeof import('../../network/network')>('../../network/network', () =>
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
 
 describe('Folder View', () => {
 	describe('Create Folder', () => {
@@ -189,7 +190,7 @@ describe('Folder View', () => {
 			expect(screen.queryByTestId(SELECTORS.displayer)).not.toBeInTheDocument();
 		});
 
-		test.skip('Single click on a node opens the details tab on displayer', async () => {
+		test('Single click on a node opens the details tab on displayer', async () => {
 			const currentFolder = populateFolder(2);
 			const mocks = {
 				Query: {
@@ -217,7 +218,7 @@ describe('Folder View', () => {
 			).toBeVisible();
 		});
 
-		test.skip('Move action close the displayer if node is removed from the main list', async () => {
+		test('Move action close the displayer if node is removed from the main list', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;
@@ -319,7 +320,7 @@ describe('Folder View', () => {
 		});
 	});
 
-	test.skip('should show the list of valid nodes even if the children include some invalid node', async () => {
+	test('should show the list of valid nodes even if the children include some invalid node', async () => {
 		const folder = populateFolder(2);
 		const node = populateFile();
 		folder.children.nodes.push(null, node);
@@ -335,7 +336,7 @@ describe('Folder View', () => {
 		expect(screen.getByText(node.name)).toBeVisible();
 	});
 
-	describe.skip('propagation of shares changes', () => {
+	describe('propagation of shares changes', () => {
 		function findChipWithText(text: string | RegExp): HTMLElement | undefined {
 			return find(
 				screen.queryAllByTestId(SELECTORS.chipWithPopover),
