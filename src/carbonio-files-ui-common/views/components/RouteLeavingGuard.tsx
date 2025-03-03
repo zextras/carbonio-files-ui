@@ -4,16 +4,20 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React from 'react';
 
+import { BlockerFunction } from '@remix-run/router/router';
 import { Modal, Button } from '@zextras/carbonio-design-system';
-import type { Location } from 'history';
 import { filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useBlocker, Location } from 'react-router-dom';
+
+function areLocationsDifferent(loc1: Location, loc2: Location): boolean {
+	return loc1.pathname !== loc2.pathname || loc1.search !== loc2.search || loc1.hash !== loc2.hash;
+}
 
 type RouteLeavingGuardProps = React.PropsWithChildren<{
-	when?: boolean;
+	when: boolean;
 	onSave: () => Promise<PromiseSettledResult<Awaited<unknown>>[]>;
 	dataHasError?: boolean;
 }>;
@@ -23,29 +27,18 @@ export const RouteLeavingGuard = ({
 	onSave,
 	dataHasError = false
 }: RouteLeavingGuardProps): React.JSX.Element => {
-	const navigate = useNavigate();
-	const location = useLocation();
-	const lastLocationInitial = useMemo(() => location, [location]);
-	const [modalVisible, setModalVisible] = useState(false);
-	const [lastLocation, setLastLocation] = useState<Location>(lastLocationInitial);
-	const [confirmedNavigation, setConfirmedNavigation] = useState(false);
 	const [t] = useTranslation();
-	const cancel = (): void => {
-		setModalVisible(false);
-		setConfirmedNavigation(false);
+
+	const blockerFunction: BlockerFunction = ({ currentLocation, nextLocation }) => {
+		const areDifferent = areLocationsDifferent(currentLocation, nextLocation);
+		return when && areDifferent;
 	};
 
-	const handleBlockedNavigation = (nextLocation: Location): boolean => {
-		if (
-			!confirmedNavigation &&
-			`${nextLocation.pathname}${nextLocation.search || ''}` !==
-				`${location.pathname}${location.search}`
-		) {
-			setModalVisible(true);
-			setLastLocation(nextLocation);
-			return false;
-		}
-		return true;
+	// Block navigating elsewhere when data has been entered into the input
+	const blocker = useBlocker(blockerFunction);
+
+	const cancel = (): void => {
+		blocker.reset?.();
 	};
 
 	const onConfirm = (): void => {
@@ -59,8 +52,7 @@ export const RouteLeavingGuard = ({
 					console.error(rejected);
 					cancel();
 				} else {
-					setModalVisible(false);
-					setConfirmedNavigation(true);
+					blocker.proceed?.();
 				}
 			})
 			.catch((reason) => {
@@ -70,56 +62,44 @@ export const RouteLeavingGuard = ({
 	};
 
 	const onSecondaryAction = (): void => {
-		setModalVisible(false);
-		setConfirmedNavigation(true);
+		blocker.proceed?.();
 	};
 
-	useEffect(() => {
-		if (confirmedNavigation && lastLocation) {
-			// Navigate to the previous blocked location with your navigate function
-			navigate(lastLocation);
-			// history.push(lastLocation);
-		}
-	}, [navigate, confirmedNavigation, lastLocation]);
-
 	return (
-		<>
-			{/* Your own alert/dialog/modal component */}
-			<Modal
-				showCloseIcon
-				closeIconTooltip={t('modal.close.tooltip', 'Close')}
-				open={modalVisible}
-				title={
-					dataHasError
-						? t('modal.unsaved_changes.title.cannot_saved_changes', 'Some changes cannot be saved')
-						: t('modal.unsaved_changes.title.unsaved_changes', 'You have unsaved changes')
-				}
-				onClose={cancel}
-				onConfirm={dataHasError ? onSecondaryAction : onConfirm}
-				confirmLabel={
-					dataHasError
-						? t('modal.unsaved_changes.button.leave_anyway', 'Leave anyway')
-						: t('modal.unsaved_changes.button.save_and_leave', 'Save and leave')
-				}
-				onSecondaryAction={dataHasError ? cancel : onSecondaryAction}
-				secondaryActionLabel={
-					dataHasError
-						? t('modal.button.cancel', 'Cancel')
-						: t('modal.unsaved_changes.button.leave_anyway', 'Leave anyway')
-				}
-				optionalFooter={
-					!dataHasError ? (
-						<Button
-							color="secondary"
-							type="outlined"
-							label={t('modal.button.cancel', 'Cancel')}
-							onClick={cancel}
-						/>
-					) : undefined
-				}
-			>
-				{children}
-			</Modal>
-		</>
+		<Modal
+			showCloseIcon
+			closeIconTooltip={t('modal.close.tooltip', 'Close')}
+			open={blocker.state === 'blocked'}
+			title={
+				dataHasError
+					? t('modal.unsaved_changes.title.cannot_saved_changes', 'Some changes cannot be saved')
+					: t('modal.unsaved_changes.title.unsaved_changes', 'You have unsaved changes')
+			}
+			onClose={cancel}
+			onConfirm={dataHasError ? onSecondaryAction : onConfirm}
+			confirmLabel={
+				dataHasError
+					? t('modal.unsaved_changes.button.leave_anyway', 'Leave anyway')
+					: t('modal.unsaved_changes.button.save_and_leave', 'Save and leave')
+			}
+			onSecondaryAction={dataHasError ? cancel : onSecondaryAction}
+			secondaryActionLabel={
+				dataHasError
+					? t('modal.button.cancel', 'Cancel')
+					: t('modal.unsaved_changes.button.leave_anyway', 'Leave anyway')
+			}
+			optionalFooter={
+				!dataHasError ? (
+					<Button
+						color="secondary"
+						type="outlined"
+						label={t('modal.button.cancel', 'Cancel')}
+						onClick={cancel}
+					/>
+				) : undefined
+			}
+		>
+			{children}
+		</Modal>
 	);
 };
