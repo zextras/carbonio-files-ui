@@ -6,11 +6,10 @@
 
 import React from 'react';
 
-import { BlockerFunction } from '@remix-run/router/router';
 import { Modal, Button } from '@zextras/carbonio-design-system';
 import { filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useBlocker, Location } from 'react-router-dom';
+import { useBlocker, Location, BlockerFunction } from 'react-router-dom';
 
 function areLocationsDifferent(loc1: Location, loc2: Location): boolean {
 	return loc1.pathname !== loc2.pathname || loc1.search !== loc2.search || loc1.hash !== loc2.hash;
