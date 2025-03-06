@@ -90,7 +90,7 @@
 		"react-dom": "^18.3.1",
 		"react-i18next": "^12.3.1",
 		"react-router-dom": "^5.3.4",
-		"styled-components": "^6.1.14",
+		"styled-components": "^6.1.15",
 		"uuid": "^11.0.5"
 	},
 	"browserslist": [
