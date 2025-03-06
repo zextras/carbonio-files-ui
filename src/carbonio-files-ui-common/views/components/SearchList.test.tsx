@@ -369,7 +369,7 @@ describe('Search list', () => {
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<SearchList />, {
 				mocks,
-				initialRouterEntries: [INTERNAL_PATH.SEARCH]
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`]
 			});
 			await screen.findByText(nodes[0].name);
 			await screen.findByText(/[1-9] advanced filter(s)?/i);
@@ -615,7 +615,7 @@ describe('Search list', () => {
 
 			const { user } = setup(<SearchList />, {
 				mocks,
-				initialRouterEntries: [INTERNAL_PATH.SEARCH]
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`]
 			});
 
 			await screen.findByText(firstPage[0].name);
