@@ -59,7 +59,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -110,7 +110,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -161,7 +161,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -227,7 +227,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -292,7 +292,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -353,7 +353,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -464,7 +464,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -499,7 +499,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);

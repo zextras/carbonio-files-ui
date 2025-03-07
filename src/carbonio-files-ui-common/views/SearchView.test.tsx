@@ -84,7 +84,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [`${INTERNAL_PATH.SEARCH}/?node=${nodeWithShares.id}&tab=sharing`],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}/?node=${nodeWithShares.id}&tab=sharing`],
 				mocks
 			});
 			// render of the list
@@ -154,7 +154,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup, user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 			expect(screen.queryByText('Previous view')).not.toBeInTheDocument();
@@ -215,7 +215,7 @@ describe('Search view', () => {
 			const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
 				<SearchView />,
 				{
-					initialRouterEntries: [INTERNAL_PATH.SEARCH],
+					initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 					mocks
 				}
 			);
@@ -292,7 +292,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 
@@ -355,7 +355,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 
@@ -435,7 +435,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 
@@ -517,7 +517,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 

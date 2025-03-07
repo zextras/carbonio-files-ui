@@ -7,7 +7,7 @@ import React from 'react';
 
 import { act, screen } from '@testing-library/react';
 import { graphql } from 'msw';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import server from '../../mocks/server';
@@ -37,9 +37,14 @@ describe('Filter View', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 			);
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`]
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`]
+				}
+			);
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const expectedVariables = {
 				folder_id: ROOTS.LOCAL_ROOT,
@@ -67,10 +72,15 @@ describe('Filter View', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`],
-				mocks
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`],
+					mocks
+				}
+			);
 
 			await screen.findByText(nodes[0].name);
 			expect(screen.queryByTestId(ICON_REGEXP.sortAsc)).not.toBeInTheDocument();

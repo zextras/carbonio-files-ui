@@ -116,7 +116,9 @@ describe('Upload List', () => {
 				await selectNodes(Object.keys(uploadMap), user);
 				await screen.findByText(/deselect all/i);
 				await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.goToFolder }));
-				await screen.findByText(`current location: /?folder=${localRoot.id}`, { exact: false });
+				await screen.findByText(`current location: /files?folder=${localRoot.id}`, {
+					exact: false
+				});
 				expect(screen.queryByText(/select all/i)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(SELECTORS.uncheckedAvatar)).not.toBeInTheDocument();

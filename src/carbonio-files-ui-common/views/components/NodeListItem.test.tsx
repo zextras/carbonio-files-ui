@@ -383,7 +383,7 @@ describe('Node List Item', () => {
 					</ListContext.Provider>
 				</SelectionProvider>,
 				{
-					initialRouterEntries: [INTERNAL_PATH.SEARCH]
+					initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`]
 				}
 			);
 			expect(screen.getByText(node.name)).toBeVisible();
@@ -413,7 +413,7 @@ describe('Node List Item', () => {
 					</ListContext.Provider>
 				</SelectionProvider>,
 				{
-					initialRouterEntries: [INTERNAL_PATH.SEARCH]
+					initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`]
 				}
 			);
 			expect(screen.getByText(node.name)).toBeVisible();

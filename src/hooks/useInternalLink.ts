@@ -6,7 +6,6 @@
 
 import { useMemo } from 'react';
 
-import { getCurrentRoute } from '@zextras/carbonio-shell-ui';
 import { head, split } from 'lodash';
 
 import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
@@ -20,8 +19,7 @@ export type UseInternalLinkHook = (
 };
 
 export function buildInternalLink(id: string, type: NodeType): string | null {
-	const appRoute = getCurrentRoute()?.route;
-	const path = head(split(window.location.pathname, appRoute));
+	const path = head(split(window.location.pathname, FILES_ROUTE));
 
 	if (type === NodeType.Root) {
 		return null;

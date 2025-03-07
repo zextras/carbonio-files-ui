@@ -7,7 +7,7 @@ import React from 'react';
 
 import { fireEvent, screen } from '@testing-library/react';
 import { forEach } from 'lodash';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../constants';
@@ -61,10 +61,15 @@ describe('Filter View', () => {
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				mocks,
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					mocks,
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+				}
+			);
 
 			await screen.findByText(currentFilter[0].name);
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
@@ -116,10 +121,15 @@ describe('Filter View', () => {
 
 			const dataTransferObj = createUploadDataTransfer(uploadedFiles);
 
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				mocks,
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					mocks,
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+				}
+			);
 
 			await screen.findByText(destinationFolder.name);
 
@@ -167,10 +177,15 @@ describe('Filter View', () => {
 
 			const dataTransfer = createMoveDataTransfer();
 
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				mocks,
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					mocks,
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+				}
+			);
 
 			const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });

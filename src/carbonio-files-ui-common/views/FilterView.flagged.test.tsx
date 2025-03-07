@@ -7,7 +7,7 @@ import React from 'react';
 
 import { act } from '@testing-library/react';
 import { graphql } from 'msw';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import server from '../../mocks/server';
@@ -50,19 +50,29 @@ describe('Filter view', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
-				mocks
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
+					mocks
+				}
+			);
 
 			await screen.findByText(nodes[0].name);
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc })).toBeVisible();
 		});
 
 		test('Flagged filter has flagged=true and excludes trashed nodes', async () => {
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+				}
+			);
 
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const expectedVariables = {
@@ -93,9 +103,11 @@ describe('Filter view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup } = setup(
-				<Route path={`/:view/:filter?`} component={FilterView} />,
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
 				{
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
 					mocks
 				}
 			);

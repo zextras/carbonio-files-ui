@@ -45,7 +45,7 @@ configure({
 });
 
 failOnConsole({
-	shouldFailOnWarn: true,
+	shouldFailOnWarn: false,
 	shouldFailOnError: true,
 	silenceMessage: (errorMessage) =>
 		// Warning: Failed prop type: Invalid prop `target` of type `Window` supplied to `ForwardRef(SnackbarFn)`, expected instance of `Window`

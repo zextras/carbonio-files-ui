@@ -63,6 +63,7 @@ jest.mock<typeof import('../../network/network')>('../../network/network', () =>
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
 
 describe('Folder View', () => {
 	describe('Create Folder', () => {

@@ -7,7 +7,7 @@ import React from 'react';
 
 import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
 import { map } from 'lodash';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
@@ -34,11 +34,11 @@ describe('Filter View', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const { getByTextWithMarkup, user } = setup(
-				<Route path={`/:view/:filter?`}>
-					<FilterView />
-				</Route>,
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
 				{
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
 					mocks
 				}
 			);
@@ -91,11 +91,11 @@ describe('Filter View', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
-				<Route path={`/:view/:filter?`}>
-					<FilterView />
-				</Route>,
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
 				{
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`],
 					mocks
 				}
 			);

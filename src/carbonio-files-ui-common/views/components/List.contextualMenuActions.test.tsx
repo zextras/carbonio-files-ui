@@ -22,6 +22,8 @@ import { mockGetPath } from '../../utils/resolverMocks';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
+jest.mock<typeof import('./NodeHoverBar')>('./NodeHoverBar');
+
 describe('Contextual menu actions', () => {
 	describe('on empty space', () => {
 		describe('in a folder with few nodes', () => {

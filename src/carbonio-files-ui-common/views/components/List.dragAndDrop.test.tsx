@@ -41,6 +41,7 @@ import {
 } from '../../utils/resolverMocks';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+jest.mock<typeof import('./NodeHoverBar')>('./NodeHoverBar');
 
 describe('List', () => {
 	describe('Drag and drop', () => {
@@ -418,7 +419,7 @@ describe('List', () => {
 					</SelectionProvider>,
 					{
 						mocks,
-						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 					}
 				);
 
@@ -470,7 +471,7 @@ describe('List', () => {
 					</SelectionProvider>,
 					{
 						mocks,
-						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 					}
 				);
 
