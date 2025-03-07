@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useUpload } from './useUpload';
 import { useNavigation } from '../../hooks/useNavigation';
+import { FILES_ROUTE } from '../constants';
 import { UploadItem } from '../types/graphql/client-types';
 import {
 	Action,
@@ -59,7 +60,7 @@ export function useUploadActions(
 		if (node?.parentNodeId) {
 			if (nodes.length === 1) {
 				if (node.nodeId) {
-					const destination = `/?folder=${node.parentNodeId}&node=${node.nodeId}`;
+					const destination = `/${FILES_ROUTE}?folder=${node.parentNodeId}&node=${node.nodeId}`;
 					navigateTo(destination);
 					scrollToNodeItem(node.nodeId);
 				} else {

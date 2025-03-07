@@ -8,6 +8,8 @@ import { useCallback } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
+import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
+
 export type UseNavigationHook = () => {
 	navigateToFolder: (id: string) => void;
 	navigateTo: (location: string, replace?: boolean) => void;
@@ -15,12 +17,11 @@ export type UseNavigationHook = () => {
 };
 
 export const useNavigation: UseNavigationHook = () => {
-	// TODO check usage
 	const navigate = useNavigate();
 
 	const navigateToFolder = useCallback<(id: string) => void>(
 		(id) => {
-			navigate({ search: `folder=${id}`, pathname: '..' });
+			navigate({ search: `folder=${id}`, pathname: `/${FILES_ROUTE}` });
 		},
 		[navigate]
 	);
