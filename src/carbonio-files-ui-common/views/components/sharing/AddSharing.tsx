@@ -437,18 +437,20 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 
 	return (
 		<Container padding={{ top: 'large' }}>
-			<RouteLeavingGuard
-				when={isDirty}
-				onSave={createShareCallback}
-				dataHasError={thereAreInvalidChips || (isDirty && chips.length === 0)}
-			>
-				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
-				</Text>
-				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
-				</Text>
-			</RouteLeavingGuard>
+			{isDirty && (
+				<RouteLeavingGuard
+					when={isDirty}
+					onSave={createShareCallback}
+					dataHasError={thereAreInvalidChips || (isDirty && chips.length === 0)}
+				>
+					<Text overflow="break-word">
+						{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
+					</Text>
+					<Text overflow="break-word">
+						{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
+					</Text>
+				</RouteLeavingGuard>
+			)}
 			<Container data-testid="add-shares-input-container">
 				<ChipInput
 					inputRef={inputRef}

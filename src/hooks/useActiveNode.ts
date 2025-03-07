@@ -52,7 +52,7 @@ export function useActiveNode(): {
 
 	const removeActiveNode = useCallback(() => {
 		searchParams.delete('node');
-		setSearchParams(searchParams);
+		setSearchParams(searchParams, { replace: true });
 	}, [searchParams, setSearchParams]);
 
 	return {

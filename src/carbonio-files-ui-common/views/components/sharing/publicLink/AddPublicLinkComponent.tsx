@@ -126,18 +126,20 @@ export const AddPublicLinkComponent = ({
 
 	return (
 		<Container>
-			<RouteLeavingGuard
-				when={isSomethingChanged}
-				onSave={onGenerateCallback}
-				dataHasError={moreThan300Characters}
-			>
-				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
-				</Text>
-				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
-				</Text>
-			</RouteLeavingGuard>
+			{isSomethingChanged && (
+				<RouteLeavingGuard
+					when={isSomethingChanged}
+					onSave={onGenerateCallback}
+					dataHasError={moreThan300Characters}
+				>
+					<Text overflow="break-word">
+						{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
+					</Text>
+					<Text overflow="break-word">
+						{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
+					</Text>
+				</RouteLeavingGuard>
+			)}
 			<Container orientation="horizontal" mainAlignment="space-between">
 				<Container
 					mainAlignment="flex-start"
