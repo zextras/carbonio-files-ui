@@ -27,7 +27,6 @@ import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 import { TextWithLineHeight } from '../../StyledComponents';
 
 interface AddPublicLinkComponentProps {
-	isFolder: boolean;
 	status: PublicLinkRowStatus;
 	onAddLink: () => void;
 	onUndo: () => void;
@@ -42,7 +41,6 @@ interface AddPublicLinkComponentProps {
 }
 
 export const AddPublicLinkComponent = ({
-	isFolder,
 	status,
 	onAddLink,
 	onUndo,
@@ -239,14 +237,12 @@ export const AddPublicLinkComponent = ({
 							</Text>
 						</Row>
 					)}
-					{isFolder && (
-						<AccessCodeSection
-							accessCode={newAccessCodeValue}
-							isAccessCodeEnabled={isAccessCodeEnabled}
-							regenerateAccessCode={regenerateAccessCode}
-							toggleAccessCode={toggleAccessCode}
-						/>
-					)}
+					<AccessCodeSection
+						accessCode={newAccessCodeValue}
+						isAccessCodeEnabled={isAccessCodeEnabled}
+						regenerateAccessCode={regenerateAccessCode}
+						toggleAccessCode={toggleAccessCode}
+					/>
 					<span ref={scrollToElementRef} />
 				</>
 			)}
