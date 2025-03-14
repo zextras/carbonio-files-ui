@@ -67,6 +67,30 @@ jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar
 
 describe('Folder View', () => {
 	describe('Create Folder', () => {
+		it('should open the modal if the user wants to create a folder on right click', async () => {
+			const currentFolder = populateFolder();
+			currentFolder.permissions.can_write_folder = true;
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+				}
+			} satisfies Partial<Resolvers>;
+
+			const { user } = setup(<FolderView />, {
+				initialRouterEntries: [`/?folder=${currentFolder.id}`],
+				mocks
+			});
+			await screen.findByText(/nothing here/i);
+			await user.rightClick(screen.getByTestId('emptyFolder'));
+			await user.click(screen.getByText(/new folder/i));
+			act(() => {
+				// run timers of modal
+				jest.advanceTimersToNextTimer();
+			});
+			const modal = await screen.findByTestId('modal');
+			expect(within(modal).getByText(/create new folder/i)).toBeVisible();
+		});
+
 		test('Create folder option is hidden if current folder has not can_write_folder permission', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_folder = false;
