@@ -24,7 +24,7 @@ import {
 	mockGetLinks,
 	mockUpdateLink
 } from '../../../../utils/resolverMocks';
-import { formatDate, initExpirationDate, isFolder } from '../../../../utils/utils';
+import { formatDate, initExpirationDate } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 
 const getDayBefore = (): number | null => {
@@ -39,7 +39,6 @@ function getPublicLinkProps(node: FilesFile | Folder): ComponentProps<typeof Pub
 		linkName: 'Link name',
 		linkTitle: 'Link title',
 		linkDescription: 'Link description',
-		isFolder: isFolder(node),
 		nodeId: node.id,
 		nodeName: node.name
 	};
