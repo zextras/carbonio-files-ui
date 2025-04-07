@@ -104,11 +104,6 @@
 		"priority": 9,
 		"attrKey": "carbonioFeatureFilesEnabled",
 		"icon": "DriveOutline",
-		"type": "carbonio",
-		"sentryDsn": "https://733fc9332b0e48f1a39b595296fc2280@feedback.zextras.tools/11",
-		"translations_repository": "git@github.com:Zextras/carbonio-files-ui-i18n.git"
-	},
-	"config": {
-		"translations_repository": "git@github.com:Zextras/carbonio-files-ui-i18n.git"
+		"type": "carbonio"
 	}
 }
