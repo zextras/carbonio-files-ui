@@ -89,7 +89,7 @@
 		"react-dom": "^18.3.1",
 		"react-i18next": "^12.3.1",
 		"react-router-dom": "^6.29.0",
-		"styled-components": "^6.1.15",
+		"styled-components": "^6.1.16",
 		"uuid": "^11.0.5"
 	},
 	"browserslist": [
@@ -104,11 +104,6 @@
 		"priority": 9,
 		"attrKey": "carbonioFeatureFilesEnabled",
 		"icon": "DriveOutline",
-		"type": "carbonio",
-		"sentryDsn": "https://733fc9332b0e48f1a39b595296fc2280@feedback.zextras.tools/11",
-		"translations_repository": "git@github.com:Zextras/carbonio-files-ui-i18n.git"
-	},
-	"config": {
-		"translations_repository": "git@github.com:Zextras/carbonio-files-ui-i18n.git"
+		"type": "carbonio"
 	}
 }
