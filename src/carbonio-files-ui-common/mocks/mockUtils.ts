@@ -356,6 +356,37 @@ export function populateFile(id?: string, name?: string): MakeRequiredNonNull<GQ
 	return file;
 }
 
+export function populateImgFile(id?: string, name?: string): MakeRequiredNonNull<GQLFile, 'owner'> {
+	const imageMimeTypes = [
+		'image/jpeg',
+		'image/png',
+		'image/gif',
+		'image/svg+xml',
+		'image/webp',
+		'image/bmp',
+		'image/tiff'
+	];
+
+	const mimeType = faker.helpers.arrayElement(imageMimeTypes);
+	const types = filter(
+		Object.values(NodeType),
+		(t) => t !== NodeType.Root && t !== NodeType.Folder
+	);
+	const file: MakeRequiredNonNull<GQLFile, 'owner'> = {
+		...populateNodeFields(faker.helpers.arrayElement(types), id, name),
+		mime_type: mimeType,
+		size: faker.number.int(),
+		extension: faker.system.fileExt(mimeType),
+		version: 1,
+		parent: populateFolder(),
+		keep_forever: faker.datatype.boolean(),
+		cloned_from_version: null,
+		__typename: 'File'
+	};
+	file.shares = populateShares(file, faker.number.int(10));
+	return file;
+}
+
 export function populateContact(
 	fullName?: string,
 	email?: string
