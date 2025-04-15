@@ -104,7 +104,7 @@ export const UploadList = ({ uploadItems }: { uploadItems: UploadItem[] }): Reac
 			createSnackbar({
 				key: new Date().toLocaleString(),
 				severity: 'info',
-				label: t('uploads.destination.home', "Upload occurred in Files' Home"),
+				label: t('uploads.destination.home', "Upload started in Files' Home"),
 				actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
 				replace: false,
 				hideButton: true
