@@ -10,7 +10,7 @@ import { SelectionProvider } from './SelectionProvider';
 import { PREVIEW_PATH, PREVIEW_TYPE, REST_ENDPOINT } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import * as useOpenWithDocs from '../../hooks/useOpenWithDocs';
-import { populateFile, populateNodes } from '../../mocks/mockUtils';
+import { populateFile, populateImgFile, populateNodes } from '../../mocks/mockUtils';
 import { selectNodes, setup, screen } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
@@ -174,6 +174,57 @@ describe('List', () => {
 			expect(getPdfPreviewSrcFn).not.toHaveBeenCalled();
 			expect(getImgPreviewSrcFn).not.toHaveBeenCalled();
 			expect(openWithDocsFn).not.toHaveBeenCalled();
+		});
+
+		describe('Preview load more without exit from preview', () => {
+			test('should call loadMore when reaching the second-last preview item', async () => {
+				const nodes = Array.from({ length: 10 }, () => populateImgFile());
+				const loadMore = jest.fn();
+
+				const { user } = setup(
+					<SelectionProvider items={nodes}>
+						<List
+							nodes={nodes}
+							mainList
+							emptyListMessage={'No items'}
+							loadMore={loadMore}
+							hasMore
+						/>
+					</SelectionProvider>
+				);
+
+				await user.dblClick(screen.getByText(nodes[0].name));
+				const navigationPromises = Array.from({ length: 7 }, () => user.keyboard('{ArrowRight}'));
+				await Promise.all(navigationPromises);
+
+				expect(loadMore).not.toHaveBeenCalled();
+
+				await user.keyboard('{ArrowRight}');
+				expect(loadMore).toHaveBeenCalled();
+			});
+
+			test('should not call loadMore if hasMore is false', async () => {
+				const nodes = Array.from({ length: 10 }, () => populateImgFile());
+				const loadMore = jest.fn();
+
+				const { user } = setup(
+					<SelectionProvider items={nodes}>
+						<List
+							nodes={nodes}
+							mainList
+							emptyListMessage={'No items'}
+							loadMore={loadMore}
+							hasMore={false}
+						/>
+					</SelectionProvider>
+				);
+
+				await user.dblClick(screen.getByText(nodes[0].name));
+				const navigationPromises = nodes.map(() => user.keyboard('{ArrowRight}'));
+				await Promise.all(navigationPromises);
+
+				expect(loadMore).not.toHaveBeenCalled();
+			});
 		});
 	});
 });

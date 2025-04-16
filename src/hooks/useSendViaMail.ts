@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 
 import { uploadToTargetModule } from '../carbonio-files-ui-common/utils/utils';
 import { getComposePrefillMessageFunction } from '../integrations/functions';
-import { captureException } from '../utils/utils';
 
 export function useSendViaMail(): {
 	sendViaMail: (nodeId: string) => void;
@@ -29,7 +28,6 @@ export function useSendViaMail(): {
 					}
 				},
 				(reason) => {
-					captureException(new Error(`Failure on uploadToTargetModule`));
 					console.error(reason);
 					createSnackbar({
 						key: new Date().toLocaleString(),
