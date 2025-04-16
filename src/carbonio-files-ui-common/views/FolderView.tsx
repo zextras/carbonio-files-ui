@@ -23,6 +23,7 @@ import { useGetChildrenQuery } from '../hooks/graphql/queries/useGetChildrenQuer
 import { useGetPermissionsQuery } from '../hooks/graphql/queries/useGetPermissionsQuery';
 import { useCreateNewActions } from '../hooks/useCreateNewActions';
 import useQueryParam from '../hooks/useQueryParam';
+import { useUploadFileNewAction } from '../hooks/useUploadFileNewAction';
 import { URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
@@ -57,6 +58,7 @@ const FolderView = (): React.JSX.Element => {
 		[permissionsData]
 	);
 
+	useUploadFileNewAction(isUploadFilePermitted, currentFolderId);
 	const actions = useCreateNewActions(
 		currentFolderId,
 		currentFolder,

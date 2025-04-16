@@ -28,16 +28,18 @@ export const useUploadFileNewAction = (isAvailable: boolean, destinationId: stri
 			if (ev.currentTarget instanceof HTMLInputElement) {
 				if (ev.currentTarget.files) {
 					add(getUploadAddTypeFromInput(ev.currentTarget.files), destinationId);
-					createSnackbar({
-						key: new Date().toLocaleString(),
-						severity: 'info',
-						label: t('uploads.destination.home', "Upload started in Files' Home"),
-						actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
-						onActionClick: () => {
-							navigateToFolder(ROOTS.LOCAL_ROOT);
-						},
-						replace: true
-					});
+					if (destinationId === ROOTS.LOCAL_ROOT) {
+						createSnackbar({
+							key: new Date().toLocaleString(),
+							severity: 'info',
+							label: t('uploads.destination.home', "Upload started in Files' Home"),
+							actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
+							onActionClick: () => {
+								navigateToFolder(ROOTS.LOCAL_ROOT);
+							},
+							replace: true
+						});
+					}
 				}
 				// required to select 2 times the same file/files
 				ev.currentTarget.value = '';
