@@ -110,7 +110,9 @@ describe('Node List Item', () => {
 						openPreview,
 						initPreview: () => undefined,
 						emptyPreview: () => undefined,
-						createPreview: () => undefined
+						createPreview: () => undefined,
+						currentIndex: -1,
+						previews: []
 					});
 
 					jest.spyOn(useHealthInfo, 'useHealthInfo').mockReturnValue({

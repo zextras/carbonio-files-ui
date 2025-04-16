@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
@@ -288,7 +288,21 @@ export const List = ({
 		}
 	}, [nodes, selectedIDs, openNodeWithDocs, exitSelectionMode]);
 
-	const { initPreview, emptyPreview, openPreview } = useContext(PreviewsManagerContext);
+	const { initPreview, emptyPreview, openPreview, previews, currentIndex } =
+		useContext(PreviewsManagerContext);
+
+	const lastPreviewLength = useRef(0);
+	useEffect(() => {
+		if (
+			hasMore &&
+			currentIndex !== -1 &&
+			currentIndex + 1 >= previews.length - 1 &&
+			lastPreviewLength.current !== previews.length
+		) {
+			lastPreviewLength.current = previews.length;
+			loadMore?.();
+		}
+	}, [currentIndex, hasMore, loadMore, previews.length]);
 
 	const getHeaderActions = useHeaderActions();
 
@@ -357,8 +371,9 @@ export const List = ({
 
 	useEffect(() => {
 		initPreview(nodesForPreview);
-		return emptyPreview;
-	}, [emptyPreview, initPreview, nodesForPreview]);
+	}, [initPreview, nodesForPreview]);
+
+	useEffect(() => emptyPreview, [emptyPreview]);
 
 	const previewSelection = useCallback(() => {
 		const nodeToPreview = nodes.find((node) => node.id === selectedIDs[0]);
