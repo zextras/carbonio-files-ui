@@ -180,3 +180,8 @@ afterEach(() => {
 		window.resizeTo(1024, 768);
 	});
 });
+// mock a simplified crypto
+Object.defineProperty(window.crypto, 'randomUUID', {
+	writable: true,
+	value: jest.fn(() => Math.random().toString())
+});
