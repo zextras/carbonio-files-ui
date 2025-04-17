@@ -116,4 +116,46 @@ describe('useOpenWithDocs hook', () => {
 			expect.objectContaining<CreateSnackbarFnArgs>({ label })
 		);
 	});
+
+	it('should include the correct offset_from_utc query parameter in the request', async () => {
+		const offsetFromUtcToVerify = -new Date().getTimezoneOffset();
+		let offsetFromUtc: string | null = null;
+		const fileOpenUrl = faker.internet.url();
+		server.use(
+			http.get<Record<string, string>, never, OpenWithDocsResponse>(
+				`${DOCS_ENDPOINT}${OPEN_FILE_PATH}/:id`,
+				(req) => {
+					const url = new URL(req.request.url);
+					offsetFromUtc = url.searchParams.get('offset_from_utc');
+					return HttpResponse.json({ fileOpenUrl });
+				}
+			)
+		);
+		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
+		const { result } = setupHook(() => useOpenWithDocs());
+		await result.current('id');
+		expect(offsetFromUtc).toBe(offsetFromUtcToVerify.toString());
+		expect(spyWindowOpen).toHaveBeenCalledWith(fileOpenUrl, fileOpenUrl);
+	});
+
+	it('should include the version query parameter in the request if provided', async () => {
+		const fileOpenUrl = faker.internet.url();
+		let versionParam: string | null = null;
+		const version = 1;
+		server.use(
+			http.get<Record<string, string>, never, OpenWithDocsResponse>(
+				`${DOCS_ENDPOINT}${OPEN_FILE_PATH}/:id`,
+				(req) => {
+					const url = new URL(req.request.url);
+					versionParam = url.searchParams.get('version');
+					return HttpResponse.json({ fileOpenUrl });
+				}
+			)
+		);
+		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
+		const { result } = setupHook(() => useOpenWithDocs());
+		await result.current('id', version);
+		expect(versionParam).toBe(version.toString());
+		expect(spyWindowOpen).toHaveBeenCalledWith(fileOpenUrl, fileOpenUrl);
+	});
 });
