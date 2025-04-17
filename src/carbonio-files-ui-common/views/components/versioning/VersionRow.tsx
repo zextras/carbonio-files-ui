@@ -16,13 +16,11 @@ import {
 	useSnackbar,
 	DropdownItem
 } from '@zextras/carbonio-design-system';
-import { forEach } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { DATE_TIME_FORMAT } from '../../../constants';
-import { DropdownListItemContent } from '../../../design_system_fork/DropdownListItemComponent';
 import { CloneVersionType } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
 import { DeleteVersionsType } from '../../../hooks/graphql/mutations/useDeleteVersionsMutation';
 import { KeepVersionsType } from '../../../hooks/graphql/mutations/useKeepVersionsMutation';
@@ -33,31 +31,6 @@ import { GridItem } from '../StyledComponents';
 const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
 	line-height: 1.5;
 `;
-
-interface DropdownItemComponentProps {
-	label?: string;
-	icon?: string;
-	disabled?: boolean;
-	selected?: boolean;
-	tooltipLabel?: string;
-}
-
-const DropdownItemComponent = ({
-	label,
-	icon,
-	disabled,
-	selected,
-	tooltipLabel
-}: DropdownItemComponentProps): React.JSX.Element => (
-	<Tooltip
-		disabled={!disabled || !tooltipLabel}
-		label={tooltipLabel}
-		placement="bottom-end"
-		maxWidth="100%"
-	>
-		<DropdownListItemContent label={label} selected={selected} disabled={disabled} icon={icon} />
-	</Tooltip>
-);
 
 interface VersionRowProps {
 	background?: string;
@@ -160,8 +133,8 @@ export const VersionRow = ({
 		openNodeWithDocs(nodeId, version);
 	}, [nodeId, openNodeWithDocs, version]);
 
-	const items = useMemo<DropdownItem[]>(() => {
-		const actions: DropdownItem[] = [
+	const items = useMemo<DropdownItem[]>(
+		() => [
 			{
 				id: 'openDocumentVersion',
 				label: t('displayer.version.actions.openDocumentVersion', 'Open document version'),
@@ -202,38 +175,25 @@ export const VersionRow = ({
 				disabled: !canDelete,
 				tooltipLabel: deleteTooltip
 			}
-		];
-
-		forEach(actions, (action) => {
-			action.customComponent = (
-				<DropdownItemComponent
-					label={action.label}
-					disabled={action.disabled}
-					icon={action.icon}
-					selected={action.selected}
-					tooltipLabel={action.tooltipLabel}
-				/>
-			);
-		});
-
-		return actions;
-	}, [
-		canCloneVersion,
-		canDelete,
-		canKeepVersion,
-		canOpenWithDocs,
-		cloneVersionCallback,
-		cloneVersionTooltip,
-		deleteTooltip,
-		deleteVersionCallback,
-		downloadVersionCallback,
-		keepVersionCallback,
-		keepVersionTooltip,
-		keepVersionValue,
-		openVersionWithDocsCallback,
-		openWithDocsTooltip,
-		t
-	]);
+		],
+		[
+			canCloneVersion,
+			canDelete,
+			canKeepVersion,
+			canOpenWithDocs,
+			cloneVersionCallback,
+			cloneVersionTooltip,
+			deleteTooltip,
+			deleteVersionCallback,
+			downloadVersionCallback,
+			keepVersionCallback,
+			keepVersionTooltip,
+			keepVersionValue,
+			openVersionWithDocsCallback,
+			openWithDocsTooltip,
+			t
+		]
+	);
 
 	return (
 		<>
