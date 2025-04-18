@@ -193,7 +193,7 @@ describe('Upload view', () => {
 		const uploadAction = options.find((action) => action.id === ACTION_IDS.UPLOAD_FILE);
 		uploadAction?.action('').execute(new KeyboardEvent(''));
 		await user.upload(inputElement, file);
-		expect(await screen.findByText(/Upload occurred in Files' Home/i)).toBeVisible();
+		expect(await screen.findByText(/Upload started in Files' Home/i)).toBeVisible();
 	});
 
 	it('should upload item inside local root', async () => {

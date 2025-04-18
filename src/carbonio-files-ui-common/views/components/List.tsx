@@ -539,7 +539,7 @@ export const List = ({
 					createSnackbar({
 						key: new Date().toLocaleString(),
 						severity: 'info',
-						label: t('uploads.destination.home', "Upload occurred in Files' Home"),
+						label: t('uploads.destination.home', "Upload started in Files' Home"),
 						actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
 						onActionClick: () => {
 							navigateToFolder(ROOTS.LOCAL_ROOT);

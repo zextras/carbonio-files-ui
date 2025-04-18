@@ -90,7 +90,7 @@ describe('List', () => {
 					dataTransfer: dataTransferObj
 				});
 
-				await screen.findByText(/upload occurred in Files' home/i);
+				await screen.findByText(/upload started in Files' home/i);
 
 				expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 
