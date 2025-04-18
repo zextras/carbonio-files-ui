@@ -322,7 +322,36 @@ export const List = ({
 						icon: 'ArrowBackOutline',
 						tooltipLabel: t('preview.close.tooltip', 'Close')
 					},
-					id: node.id
+					id: node.id,
+					errorLabel: t('preview.document.errorLabel', 'Failed to load document preview.'),
+					loadingLabel: t('preview.document.loadingLabel', 'Loading document preview…'),
+					printActionTooltipLabel: t('preview.print.tooltip', 'Print'),
+					pageLabel: t('preview.page.label', 'Page'),
+					previousTooltip: t('preview.previous.tooltip', 'Previous'),
+					nextTooltip: t('preview.next.tooltip', 'Next'),
+					fitToWidthLabel: t('preview.fitWidth.label', 'Fit to width'),
+					lowerLimitReachedLabel: t(
+						'preview.minimumZoomReached.tooltip',
+						'Minimum zoom level reached'
+					),
+					upperLimitReachedLabel: t(
+						'preview.maximumZoomReached.tooltip',
+						'Maximum zoom level reached'
+					),
+					resetZoomLabel: t('preview.resetZoom.tooltip', 'Reset zoom'),
+					zoomInLabel: t('preview.zoomIn.tooltip', 'Zoom in'),
+					zoomOutLabel: t('preview.zoomOut.tooltip', 'Zoom out'),
+					titleLabel: t('preview.fileSizeExceeded.title', 'This item cannot be displayed'),
+					contentLabel: t(
+						'preview.fileSizeExceeded.content',
+						'The file size exceeds the limit allowed and cannot be displayed'
+					),
+					downloadLabel: t('preview.fileSizeExceeded.download', 'DOWNLOAD FILE'),
+					openLabel: t('preview.fileSizeExceeded.openTab', 'OPEN IN A SEPARATE TAB'),
+					noteLabel: t(
+						'preview.fileSizeExceeded.note',
+						'Please, download it or open it in a separate tab'
+					)
 				};
 
 				if (node.type === NodeType.Video) {
