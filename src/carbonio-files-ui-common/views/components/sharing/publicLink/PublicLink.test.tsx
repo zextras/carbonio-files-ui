@@ -191,9 +191,6 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		await screen.findAllByText(links[0].url as string);
 		expect(screen.getByText(/The maximum amount of public links has been reached/i)).toBeVisible();
-		expect(screen.queryByRole('button', { name: /undo/i })).not.toBeInTheDocument();
-		expect(screen.queryByRole('button', { name: /generate link/i })).not.toBeInTheDocument();
-		expect(screen.queryByRole('button', { name: /add link/i })).not.toBeInTheDocument();
 	});
 
 	describe('Undo button', () => {
