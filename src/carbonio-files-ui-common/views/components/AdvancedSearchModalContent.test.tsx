@@ -238,7 +238,6 @@ describe('Advanced search modal content', () => {
 	});
 
 	describe('keywords param', () => {
-		// check again
 		test('in keywords input comma, semicolon and tab are the splitter for the keywords. Space has its default behaviour', async () => {
 			const filters = {};
 			const closeAction = jest.fn();
