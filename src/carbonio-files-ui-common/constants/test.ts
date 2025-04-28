@@ -86,7 +86,9 @@ export const ICON_REGEXP = {
 	gridViewMode: 'icon: GridOutline',
 	eyePasswordOff: 'icon: EyeOffOutline',
 	eyePasswordOn: 'icon: EyeOutline',
-	regenerateAccessCode: 'icon: Refresh'
+	regenerateAccessCode: 'icon: Refresh',
+	filesNotifications: 'icon: FilesNotificationsOutline',
+	refreshNotification: 'icon: Refresh'
 } as const;
 
 export const SELECTORS = {

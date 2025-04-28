@@ -12,6 +12,7 @@ import type { SearchViewProps } from '@zextras/carbonio-search-ui';
 import {
 	ACTION_TYPES,
 	addRoute,
+	addUtilityView,
 	NewAction,
 	registerActions,
 	SecondaryBarComponentProps,
@@ -22,11 +23,17 @@ import { useTranslation } from 'react-i18next';
 
 import buildClient from './carbonio-files-ui-common/apollo';
 import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
-import { FILES_APP_ID, FILES_ROUTE, ROOTS } from './carbonio-files-ui-common/constants';
+import {
+	FILES_APP_ID,
+	FILES_ROUTE,
+	NOTIFICATIONS_UTILITY_VIEW_ID,
+	ROOTS
+} from './carbonio-files-ui-common/constants';
 import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
 import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-types';
 import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uploadUtils';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
+import { NotificationsWrapper } from './carbonio-files-ui-common/views/components/notifications/Notifications';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
 import { PrimaryBadgeUpdater } from './components/PrimaryBadgeUpdater';
 import { Spinner } from './components/Spinner';
@@ -164,6 +171,15 @@ export function AuthenticatedApp(): React.JSX.Element {
 		isRemoveSearchViewAvailable,
 		removeSearchView
 	]);
+
+	useEffect(() => {
+		addUtilityView({
+			label: 'Notifications',
+			button: NotificationsWrapper,
+			id: NOTIFICATIONS_UTILITY_VIEW_ID,
+			panelVisible: false
+		});
+	}, []);
 
 	const apolloClient = useMemo(() => buildClient(), []);
 

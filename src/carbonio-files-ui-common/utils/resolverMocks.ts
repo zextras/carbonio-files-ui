@@ -292,3 +292,15 @@ export function mockDeleteLinks(
 ): MutationMock<GQLTypes.DeleteLinksMutation> {
 	return () => shiftData(link);
 }
+
+export function mockGetNotifications(
+	...notifications: GQLTypes.Notification[][]
+): QueryMock<GQLTypes.GetNotificationsQuery> {
+	return () => ({
+		notifications: shiftData(notifications),
+		unread: notifications.length,
+		__typename: 'NotificationPage',
+		last_seen: Date.now(),
+		page_token: 'next_page_token'
+	});
+}
