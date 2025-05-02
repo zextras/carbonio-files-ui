@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { Divider } from '@zextras/carbonio-design-system';
+import { Container, Divider, Text } from '@zextras/carbonio-design-system';
 
 import {
 	AddedNode,
@@ -17,6 +17,7 @@ import {
 
 type NotificationItemProps = {
 	notification: Notification;
+	isUnread: boolean;
 };
 
 export function isNewShareNotification(notification: Notification): notification is NewShare {
@@ -31,31 +32,41 @@ export function isRemovedNodeNotification(notification: Notification): notificat
 	return notification.notification_type === NotificationType.RemovedNode;
 }
 
-export const NotificationItem = ({ notification }: NotificationItemProps): React.JSX.Element => {
+export const NotificationItem = ({
+	notification,
+	isUnread
+}: NotificationItemProps): React.JSX.Element => {
 	if (isNewShareNotification(notification)) {
 		return (
-			<>
-				<div>{`${notification.triggering_user.email} shared "${notification.node.name}" with you`}</div>
+			<Container>
+				<Text
+					overflow={'break-word'}
+					color={isUnread ? 'info' : 'text'}
+				>{`${notification.triggering_user.email} shared ${notification.node.name} with you`}</Text>
 				<Divider />
-			</>
+			</Container>
 		);
 	}
 	if (isAddedNodeNotification(notification)) {
 		return (
-			<>
-				<div>{`${notification.triggering_user.email} added "${notification.added_node.name}" in ${notification.destination_folder.name}`}</div>
-				<div>{`${notification.added_node_type} ${notification.added_node.folder_id}`}</div>
+			<Container>
+				<Text
+					overflow={'break-word'}
+					color={isUnread ? 'info' : 'text'}
+				>{`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`}</Text>
 				<Divider />
-			</>
+			</Container>
 		);
 	}
 	if (isRemovedNodeNotification(notification)) {
 		return (
-			<>
-				<div>{`${notification.triggering_user.email} removed "${notification.removed_node.name}" in ${notification.origin_folder.name}`}</div>
-				<div>{`${notification.removed_node_type} ${notification.removed_node.folder_id}`}</div>
+			<Container>
+				<Text
+					overflow={'break-word'}
+					color={isUnread ? 'info' : 'text'}
+				>{`${notification.triggering_user.email} removed ${notification.removed_node.name} from ${notification.origin_folder.name}`}</Text>
 				<Divider />
-			</>
+			</Container>
 		);
 	}
 

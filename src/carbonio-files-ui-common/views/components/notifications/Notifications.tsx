@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
 	Badge,
@@ -28,6 +28,10 @@ const CustomPopover = styled(Popover)`
 	}
 `;
 
+const CustomList = styled(List)`
+	display: flex;
+`;
+
 const MiniBadge = styled(Badge)`
 	position: absolute;
 	top: 10%;
@@ -46,12 +50,22 @@ const MiniBadge = styled(Badge)`
 `;
 
 export const Notification = (): React.JSX.Element => {
-	const intersectionObserverInitOptions = useMemo(() => ({ threshold: 0.5 }), []);
-	const { data } = useGetNotificationsQuery();
-	const [showBadge, setShowBadge] = useState(true);
+	const { notifications, hasMore, loadMore, lastSeen, unread, refetch } =
+		useGetNotificationsQuery();
 
 	const [open, setOpen] = useState(false);
+	const prevOpenRef = useRef(open);
+	const [popoverClosed, setPopoverClosed] = useState(false);
 	const anchorRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (prevOpenRef.current && !open) {
+			setPopoverClosed(true);
+		}
+		prevOpenRef.current = open;
+	}, [open]);
+
+	const [showBadge, setShowBadge] = useState(true);
 
 	const handleClick = (): void => {
 		setOpen((prevState) => !prevState);
@@ -60,24 +74,36 @@ export const Notification = (): React.JSX.Element => {
 
 	const items = useMemo(
 		() =>
-			data?.getNotifications?.notifications.map((notification) => {
-				if (notification !== null) {
-					return <NotificationItem key={notification?.id} notification={notification} />;
+			notifications?.reduce((accumulator, notification) => {
+				if (notification !== null && lastSeen) {
+					accumulator.push(
+						<NotificationItem
+							key={notification?.id}
+							notification={notification}
+							isUnread={popoverClosed ? false : notification.created_at - lastSeen > 0}
+						/>
+					);
 				}
-				return <div key={Math.random()} />;
-			}) ?? [],
-		[data]
+				return accumulator;
+			}, [] as Array<React.JSX.Element>) ?? [],
+		[notifications, lastSeen, popoverClosed]
 	);
+
+	const refetchCallback = useCallback(() => {
+		refetch().then(() => {
+			setPopoverClosed(false);
+		});
+	}, [refetch]);
 
 	return (
 		<>
 			<Container width={'3rem'} height={'3rem'} style={{ position: 'relative' }}>
-				{showBadge && !!data?.getNotifications?.unread && (
+				{showBadge && !!unread && (
 					<MiniBadge
 						color={'gray6'}
 						backgroundColor={'primary'}
 						data-testid={'badge-counter'}
-						value={data.getNotifications.unread}
+						value={unread}
 					/>
 				)}
 				<Button
@@ -96,7 +122,7 @@ export const Notification = (): React.JSX.Element => {
 				placement="bottom-end"
 				onClose={() => setOpen(false)}
 			>
-				<Container minWidth={'24rem'} padding={'0.5rem'} height={'auto'} maxHeight={'50vh'}>
+				<Container minWidth={'24rem'} maxWidth={'40rem'} padding={'0.5rem'}>
 					<Container orientation={'row'} mainAlignment={'space-between'}>
 						<Text weight={'bold'} size={'medium'}>
 							Notifications
@@ -105,21 +131,22 @@ export const Notification = (): React.JSX.Element => {
 							<Button
 								icon={'Refresh'}
 								type={'ghost'}
-								onClick={() => console.log('refresh')}
+								onClick={refetchCallback}
 								size={'large'}
 								color={'text'}
 							/>
 						</Tooltip>
 					</Container>
 					<Divider />
-					<List
+					<CustomList
+						height={'auto'}
+						maxHeight={'50vh'}
 						data-testid="main-list"
 						background={'gray6'}
-						onListBottom={undefined}
-						intersectionObserverInitOptions={intersectionObserverInitOptions}
+						onListBottom={hasMore ? loadMore : undefined}
 					>
 						{items}
-					</List>
+					</CustomList>
 				</Container>
 			</CustomPopover>
 		</>

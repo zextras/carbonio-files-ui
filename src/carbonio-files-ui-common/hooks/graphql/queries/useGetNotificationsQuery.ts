@@ -11,27 +11,32 @@ import { ApolloQueryResult, QueryResult, useQuery } from '@apollo/client';
 import {
 	GetNotificationsDocument,
 	GetNotificationsQuery,
-	GetNotificationsQueryVariables
+	GetNotificationsQueryVariables,
+	Notification
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
-export interface GetNotificationsQueryHookReturnType
-	extends QueryResult<GetNotificationsQuery, GetNotificationsQueryVariables> {
+export interface GetNotificationsQueryHookReturnType {
+	notifications: Array<Notification | null> | undefined;
 	hasMore: boolean;
 	loadMore: () => Promise<ApolloQueryResult<GetNotificationsQuery>>;
 	pageToken: string | null | undefined;
+	error: QueryResult['error'] | undefined;
+	lastSeen: number | null | undefined;
+	unread: number | null | undefined;
+	refetch: () => Promise<ApolloQueryResult<GetNotificationsQuery>>;
 }
 
 export function useGetNotificationsQuery(): GetNotificationsQueryHookReturnType {
-	const { data, fetchMore, error, ...queryResult } = useQuery<
+	const { data, fetchMore, error, refetch } = useQuery<
 		GetNotificationsQuery,
 		GetNotificationsQueryVariables
 	>(GetNotificationsDocument, {
 		variables: {
 			update_last_seen: true
 		},
-		// skip: !nodeId,
-		notifyOnNetworkStatusChange: true,
+		fetchPolicy: 'cache-first',
+		nextFetchPolicy: 'cache-only',
 		errorPolicy: 'all',
 		returnPartialData: true
 	});
@@ -52,13 +57,13 @@ export function useGetNotificationsQuery(): GetNotificationsQueryHookReturnType 
 	);
 
 	return {
-		...queryResult,
-		// TODO
-		fetchMore,
+		notifications: data?.getNotifications?.notifications,
 		hasMore: data?.getNotifications?.page_token !== null,
 		pageToken: data?.getNotifications?.page_token,
-		data,
 		error,
-		loadMore
+		loadMore,
+		lastSeen: data?.getNotifications?.last_seen,
+		unread: data?.getNotifications?.unread,
+		refetch
 	};
 }
