@@ -8,7 +8,7 @@ import { GraphQLError } from 'graphql';
 import { findIndex, last } from 'lodash';
 
 import { NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, ROOTS, SHARES_LOAD_LIMIT } from '../constants';
-import { populateConfigs, populateNodePage } from '../mocks/mockUtils';
+import { populateGetNotifications, populateConfigs, populateNodePage } from '../mocks/mockUtils';
 import { MutationResolvers, QueryResolvers } from '../types/graphql/resolvers-types';
 import type * as GQLTypes from '../types/graphql/types';
 import { Maybe, NodePage } from '../types/graphql/types';
@@ -294,13 +294,11 @@ export function mockDeleteLinks(
 }
 
 export function mockGetNotifications(
+	unread: number,
 	...notifications: GQLTypes.Notification[][]
 ): QueryMock<GQLTypes.GetNotificationsQuery> {
-	return () => ({
-		notifications: shiftData(notifications),
-		unread: notifications.length,
-		__typename: 'NotificationPage',
-		last_seen: Date.now(),
-		page_token: 'next_page_token'
-	});
+	return () => {
+		const nodes = shiftData(notifications);
+		return populateGetNotifications(nodes, unread);
+	};
 }

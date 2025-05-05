@@ -41,5 +41,8 @@ export const resolvers = {
 	},
 	Account: {
 		__resolveType: resolveByTypename
+	},
+	Notification: {
+		__resolveType: resolveByTypename
 	}
 } satisfies Resolvers;

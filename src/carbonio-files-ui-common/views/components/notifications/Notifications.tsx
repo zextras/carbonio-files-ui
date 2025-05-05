@@ -106,14 +106,16 @@ export const Notification = (): React.JSX.Element => {
 						value={unread}
 					/>
 				)}
-				<Button
-					ref={anchorRef}
-					icon={'FilesNotificationsOutline'}
-					type={'ghost'}
-					onClick={handleClick}
-					size={'large'}
-					color={'text'}
-				/>
+				<Tooltip label={'Notifications'} placement="top">
+					<Button
+						ref={anchorRef}
+						icon={'FilesNotificationsOutline'}
+						type={'ghost'}
+						onClick={handleClick}
+						size={'large'}
+						color={'text'}
+					/>
+				</Tooltip>
 			</Container>
 			<CustomPopover
 				open={open}

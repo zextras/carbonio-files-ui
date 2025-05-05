@@ -12,7 +12,11 @@ import * as shell from '@zextras/carbonio-shell-ui';
 import { ACTION_TYPES } from '@zextras/carbonio-shell-ui';
 
 import App from './app';
-import { FILES_APP_ID, FILES_ROUTE } from './carbonio-files-ui-common/constants';
+import {
+	FILES_APP_ID,
+	FILES_ROUTE,
+	NOTIFICATIONS_UTILITY_VIEW_ID
+} from './carbonio-files-ui-common/constants';
 import { setup } from './carbonio-files-ui-common/tests/utils';
 import { FUNCTION_IDS } from './constants';
 
@@ -95,6 +99,20 @@ describe('App', () => {
 				{ id: FUNCTION_IDS.UPDATE_LINK, fn: expect.anything() }
 			);
 		});
+
+		it('should call addUtilityView', async () => {
+			const addUtilityViewMock = jest.spyOn(shell, 'addUtilityView');
+			setup(<App />);
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			expect(addUtilityViewMock).toHaveBeenCalledWith<Parameters<typeof shell.addUtilityView>>({
+				label: 'Notifications',
+				button: expect.anything(),
+				id: NOTIFICATIONS_UTILITY_VIEW_ID,
+				panelVisible: false
+			});
+		});
 	});
 
 	it('should not register the route, searchView, actions and functions if the user is not authenticated', async () => {
@@ -109,6 +127,7 @@ describe('App', () => {
 		});
 		const registerActionsMock = jest.spyOn(shell, 'registerActions');
 		const registerFunctionsMock = jest.spyOn(shell, 'registerFunctions');
+		const addUtilityViewMock = jest.spyOn(shell, 'addUtilityView');
 		setup(<App />);
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
@@ -117,5 +136,6 @@ describe('App', () => {
 		expect(addSearchViewMock).not.toHaveBeenCalled();
 		expect(registerActionsMock).not.toHaveBeenCalled();
 		expect(registerFunctionsMock).not.toHaveBeenCalled();
+		expect(addUtilityViewMock).not.toHaveBeenCalled();
 	});
 });

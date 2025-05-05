@@ -40,6 +40,7 @@ export const EMAIL_VALIDATION_REGEX =
 export const registerActions: typeof shell.registerActions = () => undefined;
 export const registerFunctions: typeof shell.registerFunctions = () => undefined;
 export const addRoute: typeof shell.addRoute = () => '';
+export const addUtilityView: typeof shell.addUtilityView = () => '';
 export const removeActions: typeof shell.removeActions = () => undefined;
 const noop = (): void => undefined;
 export const useTracker: typeof shell.useTracker = () => ({
