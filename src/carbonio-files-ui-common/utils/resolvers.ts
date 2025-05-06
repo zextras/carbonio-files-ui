@@ -5,7 +5,6 @@
  */
 
 import { NODES_LOAD_LIMIT } from '../constants';
-import { populateNodePage } from '../mocks/mockUtils';
 import { FolderResolvers, NodeResolvers, Resolvers } from '../types/graphql/resolvers-types';
 
 function resolveByTypename<T>(obj: { __typename?: T }): T {
@@ -19,10 +18,15 @@ const defaultSharesResolver: NodeResolvers['shares'] = (parent, args) =>
 	parent.shares.slice(0, args.limit);
 
 const defaultChildrenResolver: FolderResolvers['children'] = (parent, args) => {
-	if (args.page_token !== undefined && args.page_token !== null) {
-		return populateNodePage(parent.children.nodes.slice(NODES_LOAD_LIMIT, NODES_LOAD_LIMIT * 2));
-	}
-	return populateNodePage(parent.children.nodes.slice(0, NODES_LOAD_LIMIT));
+	const nodes =
+		args.page_token !== undefined && args.page_token !== null
+			? parent.children.nodes.slice(NODES_LOAD_LIMIT, NODES_LOAD_LIMIT * 2)
+			: parent.children.nodes.slice(0, NODES_LOAD_LIMIT);
+	return {
+		...parent.children,
+		nodes,
+		page_token: nodes.length === NODES_LOAD_LIMIT ? 'next_page_token' : null
+	};
 };
 
 export const resolvers = {
