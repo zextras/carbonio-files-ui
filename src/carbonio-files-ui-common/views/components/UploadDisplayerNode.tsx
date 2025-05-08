@@ -5,8 +5,8 @@
  */
 import React, { useMemo } from 'react';
 
-import { CollapsingActions, Container } from '@zextras/carbonio-design-system';
-import { map, isEqual, drop } from 'lodash';
+import { Banner, CollapsingActions, Container } from '@zextras/carbonio-design-system';
+import { drop, isEqual, map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { DisplayerHeader } from './DisplayerHeader';
@@ -16,6 +16,7 @@ import { DisplayerContentContainer } from './StyledComponents';
 import { TextRowWithShim } from './TextRowWithShim';
 import { UploadNodeDetailsListItem } from './UploadNodeDetailsListItem';
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { HTTP_STATUS_CODE } from '../../constants';
 import { useGetBaseNodeQuery } from '../../hooks/graphql/queries/useGetBaseNodeQuery';
 import { useMemoCompare } from '../../hooks/useMemoCompare';
 import { useUploadActions } from '../../hooks/useUploadActions';
@@ -52,6 +53,12 @@ function UploadDisplayerNodeContent({ id }: Readonly<{ id: string }>): React.JSX
 		</NodeContent>
 	);
 }
+
+export const handledErrors = [
+	HTTP_STATUS_CODE.fileSizeExceeded,
+	HTTP_STATUS_CODE.maxVersionReached,
+	HTTP_STATUS_CODE.aborted
+] as Array<number>;
 
 export const UploadDisplayerNode = ({
 	uploadItem
@@ -136,6 +143,31 @@ export const UploadDisplayerNode = ({
 						padding={{ all: 'large' }}
 						background={'gray6'}
 					>
+						{uploadItem.statusCode !== undefined &&
+							handledErrors.includes(uploadItem.statusCode) && (
+								<Banner
+									severity={'error'}
+									type={'standard'}
+									description={
+										(uploadItem.statusCode === HTTP_STATUS_CODE.aborted &&
+											t(
+												'displayer.upload.error.aborted',
+												'The upload was interrupted or blocked. Please try again or check your connection.'
+											)) ||
+										(uploadItem.statusCode === HTTP_STATUS_CODE.maxVersionReached &&
+											t(
+												'displayer.upload.error.maxVersionReached',
+												'The file could not be uploaded because the maximum number of versions has been reached.'
+											)) ||
+										(uploadItem.statusCode === HTTP_STATUS_CODE.fileSizeExceeded &&
+											t(
+												'displayer.upload.error.fileSizeExceeded',
+												'The file could not be uploaded because it exceeds the allowed limit.'
+											)) ||
+										''
+									}
+								/>
+							)}
 						{uploadItem.file?.type && (
 							<TextRowWithShim
 								loading={false}

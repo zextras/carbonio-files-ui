@@ -6,29 +6,35 @@
 
 import React, { useMemo } from 'react';
 
-import { useQuery } from '@apollo/client';
+import { useQuery, useReactiveVar } from '@apollo/client';
 import { Container } from '@zextras/carbonio-design-system';
+import { some } from 'lodash';
 
 import { EmptyDisplayer } from './EmptyDisplayer';
-import { UploadDisplayerNode } from './UploadDisplayerNode';
+import { handledErrors, UploadDisplayerNode } from './UploadDisplayerNode';
+import { UploadFailureEmptyDisplayer } from './UploadFailureEmptyDisplayer';
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { uploadVar } from '../../apollo/uploadVar';
 import { GetUploadItemDocument } from '../../types/graphql/types';
 
-export interface DisplayerProps {
-	translationKey: string;
-	icons?: string[];
-}
-
-export const UploadDisplayer = ({
-	translationKey,
-	icons = []
-}: DisplayerProps): React.JSX.Element => {
+export const UploadDisplayer = (): React.JSX.Element => {
 	const { activeNodeId } = useActiveNode();
 	const { data } = useQuery(GetUploadItemDocument, {
 		variables: { id: activeNodeId || '' },
 		skip: !activeNodeId
 	});
 	const node = useMemo(() => data?.getUploadItem, [data]);
+
+	const uploadVarData = useReactiveVar(uploadVar);
+
+	const showFailureDisplayer = useMemo(
+		() =>
+			some(
+				uploadVarData,
+				(upload) => upload.statusCode !== undefined && handledErrors.includes(upload.statusCode)
+			),
+		[uploadVarData]
+	);
 
 	return (
 		<Container
@@ -37,11 +43,13 @@ export const UploadDisplayer = ({
 			crossAlignment="flex-start"
 			data-testid="displayer"
 		>
-			{node ? (
-				<UploadDisplayerNode uploadItem={node} />
-			) : (
-				<EmptyDisplayer icons={icons} translationKey={translationKey} />
-			)}
+			{(node && <UploadDisplayerNode uploadItem={node} />) ||
+				(showFailureDisplayer && <UploadFailureEmptyDisplayer />) || (
+					<EmptyDisplayer
+						icons={['ImageOutline', 'FileAddOutline', 'FilmOutline']}
+						translationKey={'displayer.uploads'}
+					/>
+				)}
 		</Container>
 	);
 };
