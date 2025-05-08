@@ -23,7 +23,7 @@ export const UploadDisplayer = (): React.JSX.Element => {
 		variables: { id: activeNodeId || '' },
 		skip: !activeNodeId
 	});
-	const node = useMemo(() => data?.getUploadItem, [data]);
+	const uploadItem = useMemo(() => data?.getUploadItem, [data]);
 
 	const uploadVarData = useReactiveVar(uploadVar);
 
@@ -43,7 +43,7 @@ export const UploadDisplayer = (): React.JSX.Element => {
 			crossAlignment="flex-start"
 			data-testid="displayer"
 		>
-			{(node && <UploadDisplayerNode uploadItem={node} />) ||
+			{(uploadItem && <UploadDisplayerNode uploadItem={uploadItem} />) ||
 				(showFailureDisplayer && <UploadFailureEmptyDisplayer />) || (
 					<EmptyDisplayer
 						icons={['ImageOutline', 'FileAddOutline', 'FilmOutline']}

@@ -88,7 +88,7 @@ export const EmptyDisplayer = ({
 	}, [placeholders, updatePlaceholder]);
 
 	return (
-		<Container>
+		<Container data-testid="emptyDisplayer">
 			<Row>{iconItems}</Row>
 			<Padding all="medium">
 				<CenteredText color="gray1" overflow="break-word" weight="bold" size="large">
