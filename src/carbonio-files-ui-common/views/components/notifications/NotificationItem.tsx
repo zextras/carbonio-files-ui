@@ -7,7 +7,6 @@ import React from 'react';
 
 import { Avatar, Container, Divider, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import {
 	AddedNode,
@@ -16,13 +15,6 @@ import {
 	NotificationType,
 	RemovedNode
 } from '../../../types/graphql/types';
-
-{
-	/* wordBreak serve per fixare la width quando la stringa e' troppo lunga */
-}
-const StyledText = styled(Text)`
-	word-break: 'break-word';
-`;
 
 type NotificationItemProps = {
 	notification: Notification;
@@ -75,11 +67,12 @@ export const NotificationItem = ({
 				>
 					<Avatar label={notification.triggering_user.email} />
 					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
-						<StyledText
+						<Text
 							overflow={'break-word'}
 							color={isUnread ? 'info' : 'text'}
 							lineHeight={1.3125}
-						>{`${notification.triggering_user.email} shared ${notification.node.name} with you`}</StyledText>
+							style={{ wordBreak: 'break-word' }}
+						>{`${notification.triggering_user.email} shared ${notification.node.name} with you`}</Text>
 						<Text color={'secondary'} size={'small'}>
 							{date}
 						</Text>
@@ -101,7 +94,12 @@ export const NotificationItem = ({
 				>
 					<Avatar label={notification.triggering_user.email} />
 					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
-						<Text overflow={'break-word'} color={isUnread ? 'info' : 'text'} lineHeight={1.3125}>
+						<Text
+							overflow={'break-word'}
+							color={isUnread ? 'info' : 'text'}
+							lineHeight={1.3125}
+							style={{ wordBreak: 'break-word' }}
+						>
 							{`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`}
 						</Text>
 						<Text color={'secondary'} size={'small'}>
@@ -125,7 +123,12 @@ export const NotificationItem = ({
 				>
 					<Avatar label={notification.triggering_user.email} />
 					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
-						<Text overflow={'break-word'} color={isUnread ? 'info' : 'text'} lineHeight={1.5}>
+						<Text
+							overflow={'break-word'}
+							color={isUnread ? 'info' : 'text'}
+							lineHeight={1.5}
+							style={{ wordBreak: 'break-word' }}
+						>
 							{`${notification.triggering_user.email} removed ${notification.removed_node.name} from ${notification.origin_folder.name}`}
 						</Text>
 						<Text color={'secondary'} size={'small'}>
