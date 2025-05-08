@@ -20,6 +20,7 @@ import styled from 'styled-components';
 
 import { useGetNotificationsQuery } from '../../../hooks/graphql/queries/useGetNotificationsQuery';
 import { GlobalProvidersWrapper } from '../ProvidersWrapper';
+import { EmptyNotifications } from './EmptyNotifications';
 import { NotificationItem } from './NotificationItem';
 
 const CustomPopover = styled(Popover)`
@@ -74,7 +75,7 @@ export const Notification = (): React.JSX.Element => {
 
 	const items = useMemo(
 		() =>
-			notifications?.reduce((accumulator, notification) => {
+			notifications?.reduce((accumulator, notification, id) => {
 				if (notification !== null && lastSeen) {
 					accumulator.push(
 						<NotificationItem
@@ -122,11 +123,13 @@ export const Notification = (): React.JSX.Element => {
 				placement="bottom-end"
 				onClose={() => setOpen(false)}
 			>
-				<Container minWidth={'24rem'} maxWidth={'40rem'} padding={'0.5rem'}>
-					<Container orientation={'row'} mainAlignment={'space-between'}>
-						<Text weight={'bold'} size={'medium'}>
-							Notifications
-						</Text>
+				<Container minWidth={'24rem'} maxWidth={'20rem'} padding={'0.5rem'}>
+					<Container
+						orientation={'row'}
+						mainAlignment={'space-between'}
+						padding={{ bottom: '0.5rem' }}
+					>
+						<Text weight={'bold'}>Notifications</Text>
 						<Tooltip label={'Refresh'} placement="top">
 							<Button
 								icon={'Refresh'}
@@ -138,15 +141,19 @@ export const Notification = (): React.JSX.Element => {
 						</Tooltip>
 					</Container>
 					<Divider />
-					<CustomList
-						height={'auto'}
-						maxHeight={'50vh'}
-						data-testid="main-list"
-						background={'gray6'}
-						onListBottom={hasMore ? loadMore : undefined}
-					>
-						{items}
-					</CustomList>
+					{notifications?.length === 0 ? (
+						<EmptyNotifications />
+					) : (
+						<CustomList
+							height={'auto'}
+							maxHeight={'50vh'}
+							data-testid="main-list"
+							background={'gray6'}
+							onListBottom={hasMore ? loadMore : undefined}
+						>
+							{items}
+						</CustomList>
+					)}
 				</Container>
 			</CustomPopover>
 		</>

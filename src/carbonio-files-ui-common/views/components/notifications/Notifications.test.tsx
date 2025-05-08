@@ -7,6 +7,7 @@ import React from 'react';
 
 import { act } from '@testing-library/react';
 
+import { getDateNotification } from './NotificationItem';
 import { Notification } from './Notifications';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
@@ -99,7 +100,7 @@ describe('Notifications', () => {
 			await user.click(
 				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 			);
-			expect(screen.getByText(/notifications/i)).toBeVisible();
+			expect(screen.getByText('Notifications')).toBeVisible();
 			expect(
 				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
 			).toBeVisible();
@@ -132,8 +133,6 @@ describe('Notifications', () => {
 			});
 
 			it.todo('should close the popover when clicks outside the popover');
-
-			it.todo('should close the popover when clicks on an item inside the popover (?)');
 		});
 
 		describe('List of notifications', () => {
@@ -149,20 +148,14 @@ describe('Notifications', () => {
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
-				// expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
+				expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
 				expect(
 					screen.getByText(
 						`${notification.triggering_user.email} shared ${notification.node.name} with you`
 					)
 				).toBeVisible();
-				const date = new Date(notification.created_at);
-				const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-				const time = date.toLocaleTimeString('en-US', {
-					hour: '2-digit',
-					minute: '2-digit',
-					hour12: false
-				});
-				// expect(screen.getByText(`${weekday} at ${time}`)).toBeVisible();
+				const date = getDateNotification(notification.created_at);
+				expect(screen.getByText(date)).toBeVisible();
 			});
 
 			it.each([AddedNodeType.Create, AddedNodeType.Upload, AddedNodeType.Copy, AddedNodeType.Move])(
@@ -179,20 +172,14 @@ describe('Notifications', () => {
 					await user.click(
 						screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 					);
-					// expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
+					expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
 					expect(
 						screen.getByText(
 							`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
 						)
 					).toBeVisible();
-					const date = new Date(notification.created_at);
-					const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-					const time = date.toLocaleTimeString('en-US', {
-						hour: '2-digit',
-						minute: '2-digit',
-						hour12: false
-					});
-					// expect(screen.getByText(`${weekday} at ${time}`)).toBeVisible();
+					const date = getDateNotification(notification.created_at);
+					expect(screen.getByText(date)).toBeVisible();
 				}
 			);
 
@@ -210,21 +197,14 @@ describe('Notifications', () => {
 					await user.click(
 						screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 					);
-					// expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
-
+					expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
 					expect(
 						screen.getByText(
 							`${notification.triggering_user.email} removed ${notification.removed_node.name} from ${notification.origin_folder.name}`
 						)
 					).toBeVisible();
-					const date = new Date(notification.created_at);
-					const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-					const time = date.toLocaleTimeString('en-US', {
-						hour: '2-digit',
-						minute: '2-digit',
-						hour12: false
-					});
-					// expect(screen.getByText(`${weekday} at ${time}`)).toBeVisible();
+					const date = getDateNotification(notification.created_at);
+					expect(screen.getByText(date)).toBeVisible();
 				}
 			);
 
@@ -243,7 +223,7 @@ describe('Notifications', () => {
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
-				// expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(3);
+				expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(3);
 				expect(
 					screen.getByText(
 						`${removedNode.triggering_user.email} removed ${removedNode.removed_node.name} from ${removedNode.origin_folder.name}`
@@ -261,6 +241,7 @@ describe('Notifications', () => {
 				).toBeVisible();
 			});
 
+			// fix test for pagination
 			it('pagination', async () => {
 				const notifications = Array.from({ length: 26 }, () => populateAddedNodeNotification());
 				const mocks = {
@@ -285,7 +266,11 @@ describe('Notifications', () => {
 						`${secondToLastNotification.triggering_user.email} added ${secondToLastNotification.added_node.name} in ${secondToLastNotification.destination_folder.name}`
 					)
 				).toBeVisible();
-				expect(screen.queryByText(lastNotification.triggering_user.email)).not.toBeInTheDocument();
+				expect(
+					screen.queryByText(
+						`${lastNotification.triggering_user.email} added ${lastNotification.added_node.name} in ${lastNotification.destination_folder.name}`
+					)
+				).not.toBeInTheDocument();
 				triggerListLoadMore();
 				expect(
 					await screen.findByText(
@@ -329,7 +314,7 @@ describe('Notifications', () => {
 				});
 			});
 
-			it('should remove the Primary (Regular) color and make it in Text (Regular) when the user opens the notification popover, close it and opens it again', async () => {
+			it('should remove the Info (Regular) color and make it in Text (Regular) when the user opens the notification popover, close it and opens it again', async () => {
 				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
 				const mocks = {
 					Query: {
@@ -341,14 +326,6 @@ describe('Notifications', () => {
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
-				// questo si potrebbe togliere perche' e' gia' testato nel test prima
-				expect(
-					screen.getByText(
-						`${notifications[0].triggering_user.email} added "${notifications[0].added_node.name}" in "${notifications[0].destination_folder.name}"`
-					)
-				).toHaveStyle({
-					color: COLORS.primary.regular
-				});
 				// close the notification popover
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
@@ -359,15 +336,18 @@ describe('Notifications', () => {
 				);
 				expect(
 					screen.getByText(
-						`${notifications[0].triggering_user.email} added "${notifications[0].added_node.name}" in "${notifications[0].destination_folder.name}"`
+						`${notifications[0].triggering_user.email} added ${notifications[0].added_node.name} in ${notifications[0].destination_folder.name}`
 					)
 				).toHaveStyle({
 					color: COLORS.text.regular
 				});
 			});
 
-			it('should keep the unread notifications in Primary (Regular) color if you reach a new pagination', async () => {
+			// fix test for pagination
+			it('should keep the unread notifications in Info (Regular) color if you reach a new pagination', async () => {
 				const notifications = Array.from({ length: 26 }, () => populateAddedNodeNotification());
+				const secondToLastNotification = notifications[notifications.length - 2];
+				const lastNotification = notifications[notifications.length - 1];
 				const mocks = {
 					Query: {
 						getNotifications: mockGetNotifications(0, notifications)
@@ -378,19 +358,25 @@ describe('Notifications', () => {
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
-				expect(screen.getByText(notifications[0].triggering_user.email)).toBeVisible();
 				expect(
-					screen.getByText(notifications[notifications.length - 2].triggering_user.email)
-				).toBeInTheDocument();
+					screen.getByText(
+						`${notifications[0].triggering_user.email} added ${notifications[0].added_node.name} in ${notifications[0].destination_folder.name}`
+					)
+				).toBeVisible();
 				expect(
-					screen.queryByText(notifications[notifications.length - 1].triggering_user.email)
-				).not.toBeInTheDocument();
+					screen.getByText(
+						`${secondToLastNotification.triggering_user.email} added ${secondToLastNotification.added_node.name} in ${secondToLastNotification.destination_folder.name}`
+					)
+				).toBeVisible();
+				expect(screen.queryByText(lastNotification.triggering_user.email)).not.toBeInTheDocument();
 				triggerListLoadMore();
 				expect(
-					await screen.findByText(notifications[notifications.length - 1].triggering_user.email)
+					screen.getByText(
+						`${lastNotification.triggering_user.email} added ${lastNotification.added_node.name} in ${lastNotification.destination_folder.name}`
+					)
 				).toBeVisible();
 				expect(screen.getByText(notifications[0].triggering_user.email)).toHaveStyle({
-					color: COLORS.primary.regular
+					color: COLORS.info.regular
 				});
 			});
 		});
@@ -414,13 +400,36 @@ describe('Notifications', () => {
 				expect(await screen.findByText(/refresh/i)).toBeVisible();
 			});
 
-			it('should render the new notifications when the user clicks on the refresh button', async () => {});
+			// understand how to do it
+			it('should render the new notifications when the user clicks on the refresh button', async () => {
+				const notification = populateAddedNodeNotification(AddedNodeType.Create);
+				const getNotificationsMock = jest
+					.fn()
+					.mockReturnValueOnce(mockGetNotifications(0, [])) // initial empty
+					.mockReturnValueOnce(mockGetNotifications(1, [notification])); // after refresh
+				const mocks = {
+					Query: {
+						getNotifications: getNotificationsMock
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notification />, { mocks });
+				await user.click(
+					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+				);
+				await user.click(
+					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
+				);
+				expect(screen.getByText('Notifications')).toBeVisible();
+				expect(
+					await screen.findByText(
+						`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
+					)
+				).toBeVisible();
+			});
 
 			it.todo(
 				'should keep the unread notifications in Primary (Regular) color if you reach a new pagination (after refreshing)'
 			);
 		});
-
-		it.todo('operazione move AddedNode + RemovedNode stringa specifica');
 	});
 });
