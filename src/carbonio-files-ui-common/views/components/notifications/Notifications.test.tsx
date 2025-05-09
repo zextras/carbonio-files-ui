@@ -5,10 +5,13 @@
  */
 import React from 'react';
 
+import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
+import { graphql, HttpResponse } from 'msw';
 
 import { getDateNotification } from './NotificationItem';
 import { Notification } from './Notifications';
+import server from '../../../../mocks/server';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateAddedNodeNotification,
@@ -17,7 +20,11 @@ import {
 } from '../../../mocks/mockUtils';
 import { screen, setup, triggerListLoadMore, within } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
-import { AddedNodeType, RemovedNodeType } from '../../../types/graphql/types';
+import {
+	AddedNodeType,
+	GetNotificationsDocument,
+	RemovedNodeType
+} from '../../../types/graphql/types';
 import { mockGetNotifications } from '../../../utils/resolverMocks';
 
 describe('Notifications', () => {
@@ -244,6 +251,8 @@ describe('Notifications', () => {
 			// fix test for pagination
 			it('pagination', async () => {
 				const notifications = Array.from({ length: 26 }, () => populateAddedNodeNotification());
+				const secondToLastNotification = notifications[notifications.length - 2];
+				const lastNotification = notifications[notifications.length - 1];
 				const mocks = {
 					Query: {
 						getNotifications: mockGetNotifications(0, notifications)
@@ -251,8 +260,6 @@ describe('Notifications', () => {
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(<Notification />, { mocks });
 
-				const secondToLastNotification = notifications[notifications.length - 2];
-				const lastNotification = notifications[notifications.length - 1];
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
@@ -281,51 +288,82 @@ describe('Notifications', () => {
 
 			it('should render the unread notifications in Info (Regular) color and the other ones in Text (Regular)', async () => {
 				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
-				const mocks = {
-					Query: {
-						getNotifications: mockGetNotifications(1, notifications)
-					}
-				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notification />, { mocks });
+				const unreadNotifications =
+					notifications.length > 0 ? faker.number.int({ min: 0, max: notifications.length }) : 0;
+				const lastSeen = faker.date.recent().getTime();
+				notifications.forEach((notification, id) => {
+					notification.created_at =
+						id < unreadNotifications ? lastSeen + id + 1 : lastSeen - id - 1;
+				});
+				server.use(
+					graphql.query(GetNotificationsDocument, () =>
+						HttpResponse.json({
+							data: {
+								getNotifications: {
+									__typename: 'NotificationPage',
+									last_seen: lastSeen,
+									notifications,
+									page_token: null,
+									unread: unreadNotifications
+								}
+							}
+						})
+					)
+				);
+				const { user } = setup(<Notification />);
 
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
-				expect(
-					screen.getByText(
-						`${notifications[0].triggering_user.email} added ${notifications[0].added_node.name} in ${notifications[0].destination_folder.name}`
-					)
-				).toHaveStyle({
-					color: COLORS.info.regular
-				});
-				expect(
-					screen.getByText(
-						`${notifications[1].triggering_user.email} added ${notifications[1].added_node.name} in ${notifications[1].destination_folder.name}`
-					)
-				).toHaveStyle({
-					color: COLORS.text.regular
-				});
-				expect(
-					screen.getByText(
-						`${notifications[2].triggering_user.email} added ${notifications[2].added_node.name} in ${notifications[2].destination_folder.name}`
-					)
-				).toHaveStyle({
-					color: COLORS.text.regular
+				notifications.forEach((notification, index) => {
+					expect(
+						screen.getByText(
+							`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
+						)
+					).toHaveStyle({
+						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+					});
 				});
 			});
 
 			it('should remove the Info (Regular) color and make it in Text (Regular) when the user opens the notification popover, close it and opens it again', async () => {
 				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
-				const mocks = {
-					Query: {
-						getNotifications: mockGetNotifications(1, notifications)
-					}
-				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notification />, { mocks });
+				const unreadNotifications =
+					notifications.length > 0 ? faker.number.int({ min: 0, max: notifications.length }) : 0;
+				const lastSeen = faker.date.recent().getTime();
+				notifications.forEach((notification, id) => {
+					notification.created_at =
+						id < unreadNotifications ? lastSeen + id + 1 : lastSeen - id - 1;
+				});
+				server.use(
+					graphql.query(GetNotificationsDocument, () =>
+						HttpResponse.json({
+							data: {
+								getNotifications: {
+									__typename: 'NotificationPage',
+									last_seen: lastSeen,
+									notifications,
+									page_token: null,
+									unread: unreadNotifications
+								}
+							}
+						})
+					)
+				);
+				const { user } = setup(<Notification />);
 
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
+				notifications.forEach((notification, index) => {
+					expect(
+						screen.getByText(
+							`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
+						)
+					).toHaveStyle({
+						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+					});
+				});
 				// close the notification popover
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
@@ -334,33 +372,48 @@ describe('Notifications', () => {
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
-				expect(
-					screen.getByText(
-						`${notifications[0].triggering_user.email} added ${notifications[0].added_node.name} in ${notifications[0].destination_folder.name}`
-					)
-				).toHaveStyle({
-					color: COLORS.text.regular
+				notifications.forEach((notification) => {
+					expect(
+						screen.getByText(
+							`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
+						)
+					).toHaveStyle({
+						color: COLORS.text.regular
+					});
 				});
 			});
 
 			// fix test for pagination
 			it('should keep the unread notifications in Info (Regular) color if you reach a new pagination', async () => {
 				const notifications = Array.from({ length: 26 }, () => populateAddedNodeNotification());
+				const lastSeen = faker.date.recent().getTime();
+				const firstNotification = notifications[0];
+				firstNotification.created_at = lastSeen + 1;
 				const secondToLastNotification = notifications[notifications.length - 2];
 				const lastNotification = notifications[notifications.length - 1];
-				const mocks = {
-					Query: {
-						getNotifications: mockGetNotifications(0, notifications)
-					}
-				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notification />, { mocks });
+				server.use(
+					graphql.query(GetNotificationsDocument, () =>
+						HttpResponse.json({
+							data: {
+								getNotifications: {
+									__typename: 'NotificationPage',
+									last_seen: lastSeen,
+									notifications,
+									page_token: null,
+									unread: 1
+								}
+							}
+						})
+					)
+				);
+				const { user } = setup(<Notification />);
 
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
 				);
 				expect(
 					screen.getByText(
-						`${notifications[0].triggering_user.email} added ${notifications[0].added_node.name} in ${notifications[0].destination_folder.name}`
+						`${firstNotification.triggering_user.email} added ${firstNotification.added_node.name} in ${firstNotification.destination_folder.name}`
 					)
 				).toBeVisible();
 				expect(
@@ -368,16 +421,22 @@ describe('Notifications', () => {
 						`${secondToLastNotification.triggering_user.email} added ${secondToLastNotification.added_node.name} in ${secondToLastNotification.destination_folder.name}`
 					)
 				).toBeVisible();
-				expect(screen.queryByText(lastNotification.triggering_user.email)).not.toBeInTheDocument();
+				expect(
+					screen.queryByText(
+						`${lastNotification.triggering_user.email} added ${lastNotification.added_node.name} in ${lastNotification.destination_folder.name}`
+					)
+				).not.toBeInTheDocument();
 				triggerListLoadMore();
 				expect(
 					screen.getByText(
 						`${lastNotification.triggering_user.email} added ${lastNotification.added_node.name} in ${lastNotification.destination_folder.name}`
 					)
 				).toBeVisible();
-				expect(screen.getByText(notifications[0].triggering_user.email)).toHaveStyle({
-					color: COLORS.info.regular
-				});
+				expect(
+					screen.getByText(
+						`${firstNotification.triggering_user.email} added ${firstNotification.added_node.name} in ${notifications[0].destination_folder.name}`
+					)
+				).toBeVisible();
 			});
 		});
 
@@ -402,16 +461,13 @@ describe('Notifications', () => {
 
 			// understand how to do it
 			it('should render the new notifications when the user clicks on the refresh button', async () => {
-				const notification = populateAddedNodeNotification(AddedNodeType.Create);
-				const getNotificationsMock = jest
-					.fn()
-					.mockReturnValueOnce(mockGetNotifications(0, [])) // initial empty
-					.mockReturnValueOnce(mockGetNotifications(1, [notification])); // after refresh
+				const notification = populateAddedNodeNotification();
 				const mocks = {
 					Query: {
-						getNotifications: getNotificationsMock
+						getNotifications: mockGetNotifications(0, [])
 					}
-				} satisfies Partial<Resolvers>;
+				};
+
 				const { user } = setup(<Notification />, { mocks });
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })

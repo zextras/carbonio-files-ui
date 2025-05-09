@@ -16,6 +16,7 @@ import {
 	Divider,
 	List
 } from '@zextras/carbonio-design-system';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { useGetNotificationsQuery } from '../../../hooks/graphql/queries/useGetNotificationsQuery';
@@ -53,7 +54,7 @@ const MiniBadge = styled(Badge)`
 export const Notification = (): React.JSX.Element => {
 	const { notifications, hasMore, loadMore, lastSeen, unread, refetch } =
 		useGetNotificationsQuery();
-
+	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
 	const prevOpenRef = useRef(open);
 	const [popoverClosed, setPopoverClosed] = useState(false);
@@ -81,7 +82,7 @@ export const Notification = (): React.JSX.Element => {
 						<NotificationItem
 							key={notification?.id}
 							notification={notification}
-							isUnread={popoverClosed ? false : notification.created_at - lastSeen > 0}
+							isUnread={popoverClosed ? false : notification.created_at > lastSeen}
 						/>
 					);
 				}
@@ -98,64 +99,68 @@ export const Notification = (): React.JSX.Element => {
 
 	return (
 		<>
-			<Container width={'3rem'} height={'3rem'} style={{ position: 'relative' }}>
-				{showBadge && !!unread && (
-					<MiniBadge
-						color={'gray6'}
-						backgroundColor={'primary'}
-						data-testid={'badge-counter'}
-						value={unread}
-					/>
-				)}
-				<Button
-					ref={anchorRef}
-					icon={'FilesNotificationsOutline'}
-					type={'ghost'}
-					onClick={handleClick}
-					size={'large'}
-					color={'text'}
-				/>
-			</Container>
-			<CustomPopover
-				open={open}
-				anchorEl={anchorRef}
-				styleAsModal
-				placement="bottom-end"
-				onClose={() => setOpen(false)}
-			>
-				<Container minWidth={'24rem'} maxWidth={'20rem'} padding={'0.5rem'}>
-					<Container
-						orientation={'row'}
-						mainAlignment={'space-between'}
-						padding={{ bottom: '0.5rem' }}
-					>
-						<Text weight={'bold'}>Notifications</Text>
-						<Tooltip label={'Refresh'} placement="top">
-							<Button
-								icon={'Refresh'}
-								type={'ghost'}
-								onClick={refetchCallback}
-								size={'large'}
-								color={'text'}
+			<Tooltip label={t('notifications.button.tooltip', 'Notifications')}>
+				<div>
+					<Container width={'3rem'} height={'3rem'} style={{ position: 'relative' }}>
+						{showBadge && !!unread && (
+							<MiniBadge
+								color={'gray6'}
+								backgroundColor={'primary'}
+								data-testid={'badge-counter'}
+								value={unread}
 							/>
-						</Tooltip>
+						)}
+						<Button
+							ref={anchorRef}
+							icon={'FilesNotificationsOutline'}
+							type={'ghost'}
+							onClick={handleClick}
+							size={'large'}
+							color={'text'}
+						/>
 					</Container>
-					<Divider />
-					{notifications?.length === 0 ? (
-						<EmptyNotifications />
-					) : (
-						<CustomList
-							height={'auto'}
-							maxHeight={'50vh'}
-							data-testid="main-list"
-							background={'gray6'}
-							onListBottom={hasMore ? loadMore : undefined}
-						>
-							{items}
-						</CustomList>
-					)}
-				</Container>
-			</CustomPopover>
+					<CustomPopover
+						open={open}
+						anchorEl={anchorRef}
+						styleAsModal
+						placement="bottom-end"
+						onClose={() => setOpen(false)}
+					>
+						<Container minWidth={'24rem'} maxWidth={'20rem'} padding={'0.5rem'}>
+							<Container
+								orientation={'row'}
+								mainAlignment={'space-between'}
+								padding={{ bottom: '0.5rem' }}
+							>
+								<Text weight={'bold'}>Notifications</Text>
+								<Tooltip label={'Refresh'} placement="top">
+									<Button
+										icon={'Refresh'}
+										type={'ghost'}
+										onClick={refetchCallback}
+										size={'large'}
+										color={'text'}
+									/>
+								</Tooltip>
+							</Container>
+							<Divider />
+							{notifications?.length === 0 ? (
+								<EmptyNotifications />
+							) : (
+								<CustomList
+									height={'auto'}
+									maxHeight={'50vh'}
+									data-testid="main-list"
+									background={'gray6'}
+									onListBottom={hasMore ? loadMore : undefined}
+								>
+									{items}
+								</CustomList>
+							)}
+						</Container>
+					</CustomPopover>
+				</div>
+			</Tooltip>
 		</>
 	);
 };
