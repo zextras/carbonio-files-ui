@@ -132,8 +132,8 @@ export const Notification = (): React.JSX.Element => {
 								mainAlignment={'space-between'}
 								padding={{ bottom: '0.5rem' }}
 							>
-								<Text weight={'bold'}>Notifications</Text>
-								<Tooltip label={'Refresh'} placement="top">
+								<Text weight={'bold'}>{t('notifications.title', 'Notifications')}</Text>
+								<Tooltip label={t('notifications.refresh', 'Refresh')} placement="top">
 									<Button
 										icon={'Refresh'}
 										type={'ghost'}

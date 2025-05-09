@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Avatar, Container, Divider, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
@@ -52,94 +52,61 @@ export const NotificationItem = ({
 	const {
 		i18n: { language }
 	} = useTranslation();
+	const [t] = useTranslation();
 	const date = getDateNotification(notification.created_at, language);
 
-	if (isNewShareNotification(notification)) {
-		return (
-			<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
-				{/* right 0.25rem serve per evitare che la scritta della notifica sia attaccata allo scrollbar */}
-				<Container
-					orientation={'horizontal'}
-					gap={'0.5rem'}
-					mainAlignment={'flex-start'}
-					crossAlignment={'flex-start'}
-					padding={{ vertical: '1rem', right: '0.25rem' }}
-				>
-					<Avatar label={notification.triggering_user.email} />
-					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
-						<Text
-							overflow={'break-word'}
-							color={isUnread ? 'info' : 'text'}
-							lineHeight={1.3125}
-							style={{ wordBreak: 'break-word' }}
-						>{`${notification.triggering_user.email} shared ${notification.node.name} with you`}</Text>
-						<Text color={'secondary'} size={'small'}>
-							{date}
-						</Text>
-					</Container>
-				</Container>
-				<Divider />
-			</Container>
-		);
-	}
-	if (isAddedNodeNotification(notification)) {
-		return (
-			<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
-				<Container
-					orientation={'horizontal'}
-					gap={'0.5rem'}
-					mainAlignment={'flex-start'}
-					crossAlignment={'flex-start'}
-					padding={{ vertical: '1rem', right: '0.25rem' }}
-				>
-					<Avatar label={notification.triggering_user.email} />
-					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
-						<Text
-							overflow={'break-word'}
-							color={isUnread ? 'info' : 'text'}
-							lineHeight={1.3125}
-							style={{ wordBreak: 'break-word' }}
-						>
-							{`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`}
-						</Text>
-						<Text color={'secondary'} size={'small'}>
-							{date}
-						</Text>
-					</Container>
-				</Container>
-				<Divider />
-			</Container>
-		);
-	}
-	if (isRemovedNodeNotification(notification)) {
-		return (
-			<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
-				<Container
-					orientation={'horizontal'}
-					gap={'0.5rem'}
-					mainAlignment={'flex-start'}
-					crossAlignment={'flex-start'}
-					padding={{ vertical: '1rem', right: '0.25rem' }}
-				>
-					<Avatar label={notification.triggering_user.email} />
-					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
-						<Text
-							overflow={'break-word'}
-							color={isUnread ? 'info' : 'text'}
-							lineHeight={1.5}
-							style={{ wordBreak: 'break-word' }}
-						>
-							{`${notification.triggering_user.email} removed ${notification.removed_node.name} from ${notification.origin_folder.name}`}
-						</Text>
-						<Text color={'secondary'} size={'small'}>
-							{date}
-						</Text>
-					</Container>
-				</Container>
-				<Divider />
-			</Container>
-		);
-	}
+	const notificationMessage = useMemo(() => {
+		if (isNewShareNotification(notification)) {
+			return t('notifications.newShare.message', '{{email}} shared {{node}} with you', {
+				replace: { email: notification.triggering_user.email, node: notification.node.name }
+			});
+		}
+		if (isAddedNodeNotification(notification)) {
+			return t('notifications.addedNode.message', '{{email}} added {{node}} in {{folder}}', {
+				replace: {
+					email: notification.triggering_user.email,
+					node: notification.added_node.name,
+					folder: notification.destination_folder.name
+				}
+			});
+		}
+		if (isRemovedNodeNotification(notification)) {
+			return t('notifications.removedNode.message', '{{email}} removed {{node}} from {{folder}}', {
+				replace: {
+					email: notification.triggering_user.email,
+					node: notification.removed_node.name,
+					folder: notification.origin_folder.name
+				}
+			});
+		}
+		return null;
+	}, [notification, t]);
 
-	return <div>Unknown</div>;
+	return (
+		<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
+			<Container
+				orientation={'horizontal'}
+				gap={'0.5rem'}
+				mainAlignment={'flex-start'}
+				crossAlignment={'flex-start'}
+				padding={{ vertical: '1rem', right: '0.25rem' }}
+			>
+				<Avatar label={notification.triggering_user.email} />
+				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
+					<Text
+						overflow={'break-word'}
+						color={isUnread ? 'info' : 'text'}
+						lineHeight={1.3125}
+						style={{ wordBreak: 'break-word' }}
+					>
+						{notificationMessage}
+					</Text>
+					<Text color={'secondary'} size={'small'}>
+						{date}
+					</Text>
+				</Container>
+			</Container>
+			<Divider />
+		</Container>
+	);
 };
