@@ -13,13 +13,16 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { isNotificationsBadgeCounterShownVar } from '../../carbonio-files-ui-common/apollo/isNotificationsBadgeCounterShownVar';
 import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secondaryBarItemVar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-common/constants';
+import { useGetNotificationsQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetNotificationsQuery';
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
 import { FilesQuota } from '../../carbonio-files-ui-common/views/components/FilesQuota';
+import { Notifications } from '../../carbonio-files-ui-common/views/components/notifications/Notifications';
 import {
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
@@ -30,6 +33,7 @@ type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
 	completeTotalBadgeCounter?: string;
 	isUploadFailed?: boolean;
+	CustomElement?: () => React.JSX.Element;
 };
 
 const CustomAccordion = styled(Accordion)`
@@ -42,6 +46,8 @@ interface SecondaryBarProps {
 }
 
 export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element => {
+	const { unread } = useGetNotificationsQuery();
+	const isNotificationsBadgeCounterShown = useReactiveVar(isNotificationsBadgeCounterShownVar);
 	const { navigateTo } = useNavigation();
 	const [t] = useTranslation();
 	const { data } = useGetRootsListQuery();
@@ -173,6 +179,19 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			}
 		];
 
+		// todo: capire il priority
+		const notificationsItems: AccordionItemWithPriority = {
+			id: 'Notifications',
+			priority: -1,
+			icon: 'BellOutline',
+			label: t('', 'Notifications'),
+			CustomElement: Notifications,
+			CustomComponent: SecondaryBarItemExpanded,
+			completeTotalBadgeCounter:
+				unread !== 0 && isNotificationsBadgeCounterShown ? `${unread}` : undefined,
+			badgeType: 'unread'
+		};
+
 		const fallbackRoots: GetRootsListQuery['getRootsList'] = [
 			{ id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT, __typename: 'Root' },
 			{ id: ROOTS.TRASH, name: ROOTS.TRASH, __typename: 'Root' }
@@ -243,8 +262,22 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			[]
 		);
 
-		return orderBy([...rootItems, ...filters, uploads], ['priority'], ['asc']);
-	}, [t, uploadsInfo, data, forceTrashOpen, navigateTo, expanded, location]);
+		return orderBy([...rootItems, ...filters, uploads, notificationsItems], ['priority'], ['asc']);
+	}, [
+		t,
+		location.pathname,
+		location.search,
+		uploadsInfo.isUploading,
+		uploadsInfo.uploadsCounter,
+		uploadsInfo.uploadsCompletedCounter,
+		uploadsInfo.isFailed,
+		unread,
+		isNotificationsBadgeCounterShown,
+		data?.getRootsList,
+		navigateTo,
+		forceTrashOpen,
+		expanded
+	]);
 
 	return expanded ? (
 		<Container mainAlignment={'space-between'}>

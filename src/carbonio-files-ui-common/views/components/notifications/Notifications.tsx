@@ -7,7 +7,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-	Badge,
 	Button,
 	Container,
 	Popover,
@@ -19,10 +18,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { useGetNotificationsQuery } from '../../../hooks/graphql/queries/useGetNotificationsQuery';
-import { GlobalProvidersWrapper } from '../ProvidersWrapper';
 import { EmptyNotifications } from './EmptyNotifications';
 import { NotificationItem } from './NotificationItem';
+import { isNotificationsBadgeCounterShownVar } from '../../../apollo/isNotificationsBadgeCounterShownVar';
+import { useGetNotificationsQuery } from '../../../hooks/graphql/queries/useGetNotificationsQuery';
 
 const CustomPopover = styled(Popover)`
 	& > div > div {
@@ -34,26 +33,8 @@ const CustomList = styled(List)`
 	display: flex;
 `;
 
-const MiniBadge = styled(Badge)`
-	position: absolute;
-	top: 10%;
-	right: 25%;
-	transform: translate(30%, 30%);
-	min-width: 1rem;
-	min-height: 1rem;
-	pointer-events: none;
-	z-index: 99;
-	padding: 0.125rem;
-
-	& > div {
-		font-size: 0.625rem;
-		line-height: normal;
-	}
-`;
-
-export const Notification = (): React.JSX.Element => {
-	const { notifications, hasMore, loadMore, lastSeen, unread, refetch } =
-		useGetNotificationsQuery();
+export const Notifications = (): React.JSX.Element => {
+	const { notifications, hasMore, loadMore, lastSeen, refetch } = useGetNotificationsQuery();
 	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
 	const prevOpenRef = useRef(open);
@@ -67,20 +48,18 @@ export const Notification = (): React.JSX.Element => {
 		prevOpenRef.current = open;
 	}, [open]);
 
-	const [showBadge, setShowBadge] = useState(true);
-
 	const handleClick = (): void => {
 		setOpen((prevState) => !prevState);
-		setShowBadge(false);
+		isNotificationsBadgeCounterShownVar(false);
 	};
 
 	const items = useMemo(
 		() =>
-			notifications?.reduce((accumulator, notification) => {
+			notifications?.reduce((accumulator, notification, id) => {
 				if (notification !== null && lastSeen) {
 					accumulator.push(
 						<NotificationItem
-							key={notification?.id}
+							key={`${notification?.id}-${id}`}
 							notification={notification}
 							isUnread={popoverClosed ? false : notification.created_at > lastSeen}
 						/>
@@ -99,74 +78,54 @@ export const Notification = (): React.JSX.Element => {
 
 	return (
 		<>
-			<Tooltip label={t('notifications.button.tooltip', 'Notifications')}>
-				<div>
-					<Container width={'3rem'} height={'3rem'} style={{ position: 'relative' }}>
-						{showBadge && !!unread && (
-							<MiniBadge
-								color={'gray6'}
-								backgroundColor={'primary'}
-								data-testid={'badge-counter'}
-								value={unread}
-							/>
-						)}
-						<Button
-							ref={anchorRef}
-							icon={'FilesNotificationsOutline'}
-							type={'ghost'}
-							onClick={handleClick}
-							size={'large'}
-							color={'text'}
-						/>
-					</Container>
-					<CustomPopover
-						open={open}
-						anchorEl={anchorRef}
-						styleAsModal
-						placement="bottom-end"
-						onClose={() => setOpen(false)}
+			<Button
+				ref={anchorRef}
+				onClick={handleClick}
+				icon={open ? 'ChevronLeft' : 'ChevronRight'}
+				type={'ghost'}
+				color={'text'}
+				size={'large'}
+			/>
+			<CustomPopover
+				open={open}
+				anchorEl={anchorRef}
+				styleAsModal
+				placement="right-start"
+				onClose={() => setOpen(false)}
+			>
+				<Container minWidth={'24rem'} maxWidth={'20rem'} padding={'0.5rem'}>
+					<Container
+						orientation={'row'}
+						mainAlignment={'space-between'}
+						padding={{ bottom: '0.5rem' }}
 					>
-						<Container minWidth={'24rem'} maxWidth={'20rem'} padding={'0.5rem'}>
-							<Container
-								orientation={'row'}
-								mainAlignment={'space-between'}
-								padding={{ bottom: '0.5rem' }}
-							>
-								<Text weight={'bold'}>{t('notifications.title', 'Notifications')}</Text>
-								<Tooltip label={t('notifications.refresh', 'Refresh')} placement="top">
-									<Button
-										icon={'Refresh'}
-										type={'ghost'}
-										onClick={refetchCallback}
-										size={'large'}
-										color={'text'}
-									/>
-								</Tooltip>
-							</Container>
-							<Divider />
-							{notifications?.length === 0 ? (
-								<EmptyNotifications />
-							) : (
-								<CustomList
-									height={'auto'}
-									maxHeight={'50vh'}
-									data-testid="main-list"
-									background={'gray6'}
-									onListBottom={hasMore ? loadMore : undefined}
-								>
-									{items}
-								</CustomList>
-							)}
-						</Container>
-					</CustomPopover>
-				</div>
-			</Tooltip>
+						<Text weight={'bold'}>{t('notifications.title', 'Notifications')}</Text>
+						<Tooltip label={t('notifications.refresh', 'Refresh')} placement="top">
+							<Button
+								icon={'Refresh'}
+								type={'ghost'}
+								onClick={refetchCallback}
+								size={'large'}
+								color={'text'}
+							/>
+						</Tooltip>
+					</Container>
+					<Divider />
+					{notifications?.length === 0 ? (
+						<EmptyNotifications />
+					) : (
+						<CustomList
+							height={'auto'}
+							maxHeight={'50vh'}
+							data-testid="main-list"
+							background={'gray6'}
+							onListBottom={hasMore ? loadMore : undefined}
+						>
+							{items}
+						</CustomList>
+					)}
+				</Container>
+			</CustomPopover>
 		</>
 	);
 };
-
-export const NotificationsWrapper = (): React.JSX.Element => (
-	<GlobalProvidersWrapper>
-		<Notification />
-	</GlobalProvidersWrapper>
-);

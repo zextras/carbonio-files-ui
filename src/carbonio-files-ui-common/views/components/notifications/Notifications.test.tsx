@@ -6,11 +6,10 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act } from '@testing-library/react';
 import { graphql, HttpResponse } from 'msw';
 
 import { getDateNotification } from './NotificationItem';
-import { Notification } from './Notifications';
+import { Notifications } from './Notifications';
 import server from '../../../../mocks/server';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
@@ -18,7 +17,7 @@ import {
 	populateNewShareNotification,
 	populateRemovedNodeNotification
 } from '../../../mocks/mockUtils';
-import { screen, setup, triggerListLoadMore, within } from '../../../tests/utils';
+import { screen, setup, triggerListLoadMore } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
 	AddedNodeType,
@@ -28,84 +27,44 @@ import {
 import { mockGetNotifications } from '../../../utils/resolverMocks';
 
 describe('Notifications', () => {
-	it('should render the notification button without the counter badge if there are no notifications (unread is 0)', async () => {
+	it('should change the icon everytime the user clicks on the chevron', async () => {
 		const mocks = {
 			Query: {
 				getNotifications: mockGetNotifications(0, [])
 			}
 		} satisfies Partial<Resolvers>;
-		setup(<Notification />, { mocks });
+		const { user } = setup(<Notifications />, { mocks });
 
-		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+		const chevronRight = screen.getByRoleWithIcon('button', {
+			icon: ICON_REGEXP.chevronRightNotifications
 		});
+		expect(chevronRight).toBeVisible();
+		await user.click(chevronRight);
 		expect(
-			screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
-		).toBeVisible();
-		expect(screen.queryByTestId(SELECTORS.badgeCounter)).not.toBeInTheDocument();
-	});
-
-	it('should render the notification button with the counter badge if there are notifications (unread is not 0)', async () => {
-		const notification = populateAddedNodeNotification();
-		const unreadNotifications = 1;
-		const mocks = {
-			Query: {
-				getNotifications: mockGetNotifications(unreadNotifications, [notification])
-			}
-		} satisfies Partial<Resolvers>;
-		setup(<Notification />, { mocks });
-
-		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			screen.queryByRoleWithIcon('button', {
+				icon: ICON_REGEXP.chevronRightNotifications
+			})
+		).not.toBeInTheDocument();
+		const chevronLeft = screen.queryByRoleWithIcon('button', {
+			icon: ICON_REGEXP.chevronLeftNotifications
 		});
-		expect(
-			screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
-		).toBeVisible();
-		const badgeCounter = screen.getByTestId(SELECTORS.badgeCounter);
-		expect(within(badgeCounter).getByText(unreadNotifications)).toBeVisible();
+		expect(chevronLeft).toBeVisible();
+		await user.click(chevronRight);
+		expect(chevronRight).toBeVisible();
 	});
-
-	it('should remove the counter badge when the user clicks on the notification button', async () => {
-		const notification = populateAddedNodeNotification();
-		const mocks = {
-			Query: {
-				getNotifications: mockGetNotifications(1, [notification])
-			}
-		} satisfies Partial<Resolvers>;
-		const { user } = setup(<Notification />, { mocks });
-
-		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
-		});
-		// the badge counter is visible
-		expect(screen.getByTestId(SELECTORS.badgeCounter)).toBeVisible();
-		await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications }));
-		expect(screen.queryByTestId(SELECTORS.badgeCounter)).not.toBeInTheDocument();
-	});
-
-	it('should render the tooltip of the notification button', async () => {
-		const mocks = {
-			Query: {
-				getNotifications: mockGetNotifications(0, [])
-			}
-		} satisfies Partial<Resolvers>;
-		const { user } = setup(<Notification />, { mocks });
-
-		await user.hover(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications }));
-		expect(await screen.findByText(/notifications/i)).toBeVisible();
-	});
-
 	describe('Notification Popover', () => {
-		it('should render the popover with the empty message if there are no notifications', async () => {
+		it('should open the notifications popover with the empty message if there are no notifications', async () => {
 			const mocks = {
 				Query: {
 					getNotifications: mockGetNotifications(0, [])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<Notification />, { mocks });
+			const { user } = setup(<Notifications />, { mocks });
 
 			await user.click(
-				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+				screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.chevronRightNotifications
+				})
 			);
 			expect(screen.getByText('Notifications')).toBeVisible();
 			expect(
@@ -123,15 +82,19 @@ describe('Notifications', () => {
 						getNotifications: mockGetNotifications(0, [])
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notification />, { mocks });
+				const { user } = setup(<Notifications />, { mocks });
 
-				// click on the notification button to open the popover
+				// click on the chevron to open the popover
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
-				// click on the notification button to close the popover
+				// click on the chevron to close the popover
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronLeftNotifications
+					})
 				);
 				expect(screen.queryByText(/notifications/i)).not.toBeInTheDocument();
 				expect(
@@ -150,10 +113,12 @@ describe('Notifications', () => {
 						getNotifications: mockGetNotifications(0, [notification])
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notification />, { mocks });
+				const { user } = setup(<Notifications />, { mocks });
 
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
 				expect(
@@ -174,10 +139,12 @@ describe('Notifications', () => {
 							getNotifications: mockGetNotifications(0, [notification])
 						}
 					} satisfies Partial<Resolvers>;
-					const { user } = setup(<Notification />, { mocks });
+					const { user } = setup(<Notifications />, { mocks });
 
 					await user.click(
-						screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+						screen.getByRoleWithIcon('button', {
+							icon: ICON_REGEXP.chevronRightNotifications
+						})
 					);
 					expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
 					expect(
@@ -199,10 +166,12 @@ describe('Notifications', () => {
 							getNotifications: mockGetNotifications(0, [notification])
 						}
 					} satisfies Partial<Resolvers>;
-					const { user } = setup(<Notification />, { mocks });
+					const { user } = setup(<Notifications />, { mocks });
 
 					await user.click(
-						screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+						screen.getByRoleWithIcon('button', {
+							icon: ICON_REGEXP.chevronRightNotifications
+						})
 					);
 					expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
 					expect(
@@ -225,10 +194,12 @@ describe('Notifications', () => {
 						getNotifications: mockGetNotifications(0, [newShare, addedNode, removedNode])
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notification />, { mocks });
+				const { user } = setup(<Notifications />, { mocks });
 
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(3);
 				expect(
@@ -258,10 +229,12 @@ describe('Notifications', () => {
 						getNotifications: mockGetNotifications(0, notifications)
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notification />, { mocks });
+				const { user } = setup(<Notifications />, { mocks });
 
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				expect(
 					screen.getByText(
@@ -310,10 +283,12 @@ describe('Notifications', () => {
 						})
 					)
 				);
-				const { user } = setup(<Notification />);
+				const { user } = setup(<Notifications />);
 
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				notifications.forEach((notification, index) => {
 					expect(
@@ -350,10 +325,12 @@ describe('Notifications', () => {
 						})
 					)
 				);
-				const { user } = setup(<Notification />);
+				const { user } = setup(<Notifications />);
 
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				notifications.forEach((notification, index) => {
 					expect(
@@ -366,11 +343,15 @@ describe('Notifications', () => {
 				});
 				// close the notification popover
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				// open the notification popover again
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronLeftNotifications
+					})
 				);
 				notifications.forEach((notification) => {
 					expect(
@@ -406,10 +387,12 @@ describe('Notifications', () => {
 						})
 					)
 				);
-				const { user } = setup(<Notification />);
+				const { user } = setup(<Notifications />);
 
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				expect(
 					screen.getByText(
@@ -448,10 +431,12 @@ describe('Notifications', () => {
 						getNotifications: mockGetNotifications(0, [notification])
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notification />, { mocks });
+				const { user } = setup(<Notifications />, { mocks });
 
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				await user.hover(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
@@ -467,10 +452,12 @@ describe('Notifications', () => {
 						getNotifications: mockGetNotifications(0, [])
 					}
 				};
+				const { user } = setup(<Notifications />, { mocks });
 
-				const { user } = setup(<Notification />, { mocks });
 				await user.click(
-					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.filesNotifications })
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
 				);
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })

@@ -49,6 +49,7 @@ interface SecondaryBarItemProps {
 	item: AccordionItemType & {
 		completeTotalBadgeCounter?: string;
 		isUploadFailed?: boolean;
+		CustomElement?: () => React.JSX.Element;
 	};
 	expanded: boolean;
 }
@@ -192,6 +193,7 @@ export const SecondaryBarItem = ({ item, expanded }: SecondaryBarItemProps): Rea
 									color={(item.badgeType === 'unread' && 'gray6') || 'gray0'}
 								/>
 							)}
+							{item.CustomElement && <item.CustomElement />}
 						</Row>
 					</CustomAccordionItem>
 				) : (

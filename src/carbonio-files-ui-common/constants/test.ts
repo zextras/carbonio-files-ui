@@ -87,9 +87,11 @@ export const ICON_REGEXP = {
 	eyePasswordOff: 'icon: EyeOffOutline',
 	eyePasswordOn: 'icon: EyeOutline',
 	regenerateAccessCode: 'icon: Refresh',
-	filesNotifications: 'icon: FilesNotificationsOutline',
 	refreshNotification: 'icon: Refresh',
-	noNotificationsIcon: 'icon: BellOffOutline'
+	noNotificationsIcon: 'icon: BellOffOutline',
+	secondaryBarNotifications: 'icon: BellOutline',
+	chevronRightNotifications: 'icon: ChevronRight',
+	chevronLeftNotifications: 'icon: ChevronLeft'
 } as const;
 
 export const SELECTORS = {
@@ -142,8 +144,7 @@ export const SELECTORS = {
 	gridCellThumbnail: 'grid-cell-thumbnail',
 	virtualizedNodeListItem: 'virtualized-node-list-item',
 	snackbar: 'snackbar',
-	hoverContainer: 'hover-container',
-	badgeCounter: 'badge-counter'
+	hoverContainer: 'hover-container'
 };
 
 export const EMITTER_CODES = {
