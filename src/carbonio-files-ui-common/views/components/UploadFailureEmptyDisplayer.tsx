@@ -33,7 +33,7 @@ export const UploadFailureEmptyDisplayer = (): React.JSX.Element => {
 			<CenteredText size="small" color="gray1" overflow="break-word" $width="60%">
 				{t(
 					'displayer.uploadFailure.message',
-					'Here you can find all the items that are currently uploading, if a file failed to upload, click on it to see more details.'
+					'Here you can find all the items that are currently uploading. If a file failed to upload, click on it to see more details.'
 				)}
 			</CenteredText>
 		</Container>
