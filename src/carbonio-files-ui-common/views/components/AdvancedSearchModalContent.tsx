@@ -84,6 +84,8 @@ export const AdvancedSearchModalContent = ({
 		[currentFilters, filters, keywordsHasTextContent]
 	);
 
+	const isResetButtonDisabled = useMemo(() => isEmpty(currentFilters), [currentFilters]);
+
 	const confirmHandler = useCallback(() => {
 		searchAdvancedFilters(currentFilters);
 		if (activeNodeId) {
@@ -330,6 +332,7 @@ export const AdvancedSearchModalContent = ({
 						confirmLabel={t('search.advancedSearch.modal.button.confirm', 'Search')}
 						cancelHandler={resetFilters}
 						cancelLabel={t('search.advancedSearch.modal.button.reset', 'Reset filters')}
+						cancelDisabled={isResetButtonDisabled}
 					/>
 				}
 			/>
