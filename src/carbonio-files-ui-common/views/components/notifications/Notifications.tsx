@@ -38,7 +38,6 @@ export const Notifications = (): React.JSX.Element => {
 		useGetNotificationsQuery();
 	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
-	const hasRefetched = useRef(false);
 	const prevOpenRef = useRef(open);
 	const [popoverClosed, setPopoverClosed] = useState(false);
 	const anchorRef = useRef<HTMLDivElement>(null);
@@ -50,14 +49,10 @@ export const Notifications = (): React.JSX.Element => {
 		prevOpenRef.current = open;
 	}, [open]);
 
-	const handleClick = useCallback(() => {
+	const handleClick = (): void => {
 		setOpen((prevState) => !prevState);
 		isNotificationsBadgeCounterShownVar(false);
-		if (!hasRefetched.current && unread && unread > 0) {
-			refetch({ update_last_seen: true }).then(() => setPopoverClosed(false));
-		}
-		hasRefetched.current = true;
-	}, [refetch, unread]);
+	};
 
 	const items = useMemo(
 		() =>
@@ -77,7 +72,7 @@ export const Notifications = (): React.JSX.Element => {
 	);
 
 	const refetchCallback = useCallback(() => {
-		refetch({ update_last_seen: true }).then(() => {
+		refetch().then(() => {
 			setPopoverClosed(false);
 		});
 	}, [refetch]);

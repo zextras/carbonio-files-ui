@@ -24,9 +24,7 @@ export interface GetNotificationsQueryHookReturnType {
 	error: QueryResult['error'] | undefined;
 	lastSeen: number | null | undefined;
 	unread: number | null | undefined;
-	refetch: (
-		variables?: GetNotificationsQueryVariables
-	) => Promise<ApolloQueryResult<GetNotificationsQuery>>;
+	refetch: () => Promise<ApolloQueryResult<GetNotificationsQuery>>;
 }
 
 export function useGetNotificationsQuery(): GetNotificationsQueryHookReturnType {
@@ -35,7 +33,7 @@ export function useGetNotificationsQuery(): GetNotificationsQueryHookReturnType 
 		GetNotificationsQueryVariables
 	>(GetNotificationsDocument, {
 		variables: {
-			update_last_seen: false
+			update_last_seen: true
 		},
 		fetchPolicy: 'cache-first',
 		nextFetchPolicy: 'cache-only',
