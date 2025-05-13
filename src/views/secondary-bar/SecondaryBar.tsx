@@ -188,7 +188,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			CustomElement: Notifications,
 			CustomComponent: SecondaryBarItemExpanded,
 			completeTotalBadgeCounter:
-				unread !== 0 && isNotificationsBadgeCounterShown ? `${unread}` : undefined,
+				!!unread && isNotificationsBadgeCounterShown ? `${unread}` : undefined,
 			badgeType: 'unread'
 		};
 

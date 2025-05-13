@@ -52,6 +52,7 @@ describe('Notifications', () => {
 		await user.click(chevronRight);
 		expect(chevronRight).toBeVisible();
 	});
+
 	describe('Notification Popover', () => {
 		it('should open the notifications popover with the empty message if there are no notifications', async () => {
 			const mocks = {
@@ -447,12 +448,35 @@ describe('Notifications', () => {
 			// understand how to do it
 			it('should render the new notifications when the user clicks on the refresh button', async () => {
 				const notification = populateAddedNodeNotification();
-				const mocks = {
-					Query: {
-						getNotifications: mockGetNotifications(0, [])
-					}
-				};
-				const { user } = setup(<Notifications />, { mocks });
+				server.use(
+					graphql.query(GetNotificationsDocument, () =>
+						HttpResponse.json({
+							data: {
+								getNotifications: {
+									__typename: 'NotificationPage',
+									last_seen: faker.date.recent().getTime(),
+									notifications: [],
+									page_token: null,
+									unread: 0
+								}
+							}
+						})
+					),
+					graphql.query(GetNotificationsDocument, () =>
+						HttpResponse.json({
+							data: {
+								getNotifications: {
+									__typename: 'NotificationPage',
+									last_seen: faker.date.recent().getTime(),
+									notifications: [notification],
+									page_token: null,
+									unread: 1
+								}
+							}
+						})
+					)
+				);
+				const { user } = setup(<Notifications />);
 
 				await user.click(
 					screen.getByRoleWithIcon('button', {

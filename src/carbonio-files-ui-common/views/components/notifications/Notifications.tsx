@@ -34,9 +34,11 @@ const CustomList = styled(List)`
 `;
 
 export const Notifications = (): React.JSX.Element => {
-	const { notifications, hasMore, loadMore, lastSeen, refetch } = useGetNotificationsQuery();
+	const { notifications, hasMore, loadMore, lastSeen, refetch, unread } =
+		useGetNotificationsQuery();
 	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
+	const hasRefetched = useRef(false);
 	const prevOpenRef = useRef(open);
 	const [popoverClosed, setPopoverClosed] = useState(false);
 	const anchorRef = useRef<HTMLDivElement>(null);
@@ -48,10 +50,14 @@ export const Notifications = (): React.JSX.Element => {
 		prevOpenRef.current = open;
 	}, [open]);
 
-	const handleClick = (): void => {
+	const handleClick = useCallback(() => {
 		setOpen((prevState) => !prevState);
 		isNotificationsBadgeCounterShownVar(false);
-	};
+		if (!hasRefetched.current && unread && unread > 0) {
+			refetch({ update_last_seen: true }).then(() => setPopoverClosed(false));
+		}
+		hasRefetched.current = true;
+	}, [refetch, unread]);
 
 	const items = useMemo(
 		() =>
@@ -71,7 +77,7 @@ export const Notifications = (): React.JSX.Element => {
 	);
 
 	const refetchCallback = useCallback(() => {
-		refetch().then(() => {
+		refetch({ update_last_seen: true }).then(() => {
 			setPopoverClosed(false);
 		});
 	}, [refetch]);
