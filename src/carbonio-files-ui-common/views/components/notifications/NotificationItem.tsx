@@ -96,7 +96,6 @@ export const NotificationItem = ({
 					<Text
 						overflow={'break-word'}
 						color={isUnread ? 'info' : 'text'}
-						lineHeight={1.3125}
 						style={{ wordBreak: 'break-word' }}
 					>
 						{notificationMessage}

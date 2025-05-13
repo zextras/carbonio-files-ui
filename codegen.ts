@@ -30,7 +30,7 @@ const typescriptPluginConfig: TypeScriptPluginConfig = {
 
 const config: CodegenConfig = {
 	schema: {
-		'https://raw.githubusercontent.com/zextras/carbonio-files-ce/refs/heads/FILES-929-BE-Track-news-events-and-implement-get-news-endpoint/core/src/main/resources/api/schema.graphql':
+		'https://raw.githubusercontent.com/Zextras/carbonio-files-ce/develop/core/src/main/resources/api/schema.graphql':
 			{
 				headers: {
 					Cookie: ''
