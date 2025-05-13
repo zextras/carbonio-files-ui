@@ -6,7 +6,7 @@
 import React, { useMemo } from 'react';
 
 import { Avatar, Container, Divider, Text } from '@zextras/carbonio-design-system';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import {
 	AddedNode,
@@ -15,6 +15,7 @@ import {
 	NotificationType,
 	RemovedNode
 } from '../../../types/graphql/types';
+import { InlineText } from '../StyledComponents';
 
 type NotificationItemProps = {
 	notification: Notification;
@@ -57,30 +58,57 @@ export const NotificationItem = ({
 
 	const notificationMessage = useMemo(() => {
 		if (isNewShareNotification(notification)) {
-			return t('notifications.newShare.message', '{{email}} shared {{node}} with you', {
-				replace: { email: notification.triggering_user.email, node: notification.node.name }
-			});
+			return (
+				<Trans
+					t={t}
+					i18nKey="notifications.newShare.message"
+					defaults="<bold>{{email}}</bold> shared <bold>{{node}}</bold> with you"
+					values={{
+						email: notification.triggering_user.email,
+						node: notification.node.name
+					}}
+					components={{
+						bold: <InlineText weight="bold" color={isUnread ? 'info' : 'text'} />
+					}}
+				/>
+			);
 		}
 		if (isAddedNodeNotification(notification)) {
-			return t('notifications.addedNode.message', '{{email}} added {{node}} in {{folder}}', {
-				replace: {
-					email: notification.triggering_user.email,
-					node: notification.added_node.name,
-					folder: notification.destination_folder.name
-				}
-			});
+			return (
+				<Trans
+					t={t}
+					i18nKey="notifications.addedNode.message"
+					defaults="<bold>{{email}}</bold> added <bold>{{node}}</bold> in <bold>{{folder}}</bold>"
+					values={{
+						email: notification.triggering_user.email,
+						node: notification.added_node.name,
+						folder: notification.destination_folder.name
+					}}
+					components={{
+						bold: <InlineText weight="bold" color={isUnread ? 'info' : 'text'} />
+					}}
+				/>
+			);
 		}
 		if (isRemovedNodeNotification(notification)) {
-			return t('notifications.removedNode.message', '{{email}} removed {{node}} from {{folder}}', {
-				replace: {
-					email: notification.triggering_user.email,
-					node: notification.removed_node.name,
-					folder: notification.origin_folder.name
-				}
-			});
+			return (
+				<Trans
+					t={t}
+					i18nKey="notifications.removedNode.message"
+					defaults="<bold>{{email}}</bold> removed <bold>{{node}}</bold> from <bold>{{folder}}</bold>"
+					values={{
+						email: notification.triggering_user.email,
+						node: notification.removed_node.name,
+						folder: notification.origin_folder.name
+					}}
+					components={{
+						bold: <InlineText weight="bold" color={isUnread ? 'info' : 'text'} />
+					}}
+				/>
+			);
 		}
 		return null;
-	}, [notification, t]);
+	}, [isUnread, notification, t]);
 
 	return (
 		<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
