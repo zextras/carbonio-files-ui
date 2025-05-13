@@ -49,7 +49,7 @@ interface SecondaryBarItemProps {
 	item: AccordionItemType & {
 		completeTotalBadgeCounter?: string;
 		isUploadFailed?: boolean;
-		CustomElement?: () => React.JSX.Element;
+		CustomElement?: React.ComponentType;
 	};
 	expanded: boolean;
 }

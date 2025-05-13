@@ -55,11 +55,11 @@ export const Notifications = (): React.JSX.Element => {
 
 	const items = useMemo(
 		() =>
-			notifications?.reduce((accumulator, notification, id) => {
+			notifications?.reduce((accumulator, notification) => {
 				if (notification !== null && lastSeen) {
 					accumulator.push(
 						<NotificationItem
-							key={`${notification?.id}-${id}`}
+							key={notification?.id}
 							notification={notification}
 							isUnread={popoverClosed ? false : notification.created_at > lastSeen}
 						/>
