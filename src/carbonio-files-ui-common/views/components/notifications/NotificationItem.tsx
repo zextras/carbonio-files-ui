@@ -68,7 +68,13 @@ export const NotificationItem = ({
 						node: notification.node.name
 					}}
 					components={{
-						bold: <InlineText weight="bold" color={isUnread ? 'info' : 'text'} />
+						bold: (
+							<InlineText
+								overflow={'break-word'}
+								weight="bold"
+								color={isUnread ? 'info' : 'text'}
+							/>
+						)
 					}}
 				/>
 			);
@@ -85,7 +91,13 @@ export const NotificationItem = ({
 						folder: notification.destination_folder.name
 					}}
 					components={{
-						bold: <InlineText weight="bold" color={isUnread ? 'info' : 'text'} />
+						bold: (
+							<InlineText
+								overflow={'break-word'}
+								weight="bold"
+								color={isUnread ? 'info' : 'text'}
+							/>
+						)
 					}}
 				/>
 			);
@@ -102,7 +114,13 @@ export const NotificationItem = ({
 						folder: notification.origin_folder.name
 					}}
 					components={{
-						bold: <InlineText weight="bold" color={isUnread ? 'info' : 'text'} />
+						bold: (
+							<InlineText
+								overflow={'break-word'}
+								weight="bold"
+								color={isUnread ? 'info' : 'text'}
+							/>
+						)
 					}}
 				/>
 			);
