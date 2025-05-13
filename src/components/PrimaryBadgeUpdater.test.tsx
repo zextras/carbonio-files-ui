@@ -13,7 +13,7 @@ import { graphql, HttpResponse } from 'msw';
 
 import { PrimaryBadgeUpdater } from './PrimaryBadgeUpdater';
 import { uploadVar } from '../carbonio-files-ui-common/apollo/uploadVar';
-import { FILES_ROUTE } from '../carbonio-files-ui-common/constants';
+import { FILES_APP_ID } from '../carbonio-files-ui-common/constants';
 import {
 	populateAddedNodeNotification,
 	populateUploadItems
@@ -37,7 +37,7 @@ describe('PrimaryBarElement', () => {
 				icon: 'AlertCircle',
 				show: true
 			},
-			FILES_ROUTE
+			FILES_APP_ID
 		);
 		act(() => {
 			uploadVar({
@@ -47,11 +47,9 @@ describe('PrimaryBarElement', () => {
 		});
 		expect(updatePrimaryBadgeSpy).toHaveBeenLastCalledWith(
 			{
-				color: 'error',
-				icon: 'AlertCircle',
 				show: false
 			},
-			FILES_ROUTE
+			FILES_APP_ID
 		);
 	});
 
@@ -85,7 +83,7 @@ describe('PrimaryBarElement', () => {
 				count: unread,
 				showCount: true
 			},
-			FILES_ROUTE
+			FILES_APP_ID
 		);
 	});
 });

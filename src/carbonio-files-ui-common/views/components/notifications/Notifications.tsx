@@ -20,7 +20,7 @@ import styled from 'styled-components';
 
 import { EmptyNotifications } from './EmptyNotifications';
 import { NotificationItem } from './NotificationItem';
-import { isNotificationsBadgeCounterShownVar } from '../../../apollo/isNotificationsBadgeCounterShownVar';
+import { showNotificationsBadgeVar } from '../../../apollo/showNotificationsBadgeVar';
 import { useGetNotificationsQuery } from '../../../hooks/graphql/queries/useGetNotificationsQuery';
 
 const CustomPopover = styled(Popover)`
@@ -34,8 +34,7 @@ const CustomList = styled(List)`
 `;
 
 export const Notifications = (): React.JSX.Element => {
-	const { notifications, hasMore, loadMore, lastSeen, refetch, unread } =
-		useGetNotificationsQuery();
+	const { notifications, hasMore, loadMore, lastSeen, refetch } = useGetNotificationsQuery();
 	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
 	const prevOpenRef = useRef(open);
@@ -51,7 +50,7 @@ export const Notifications = (): React.JSX.Element => {
 
 	const handleClick = (): void => {
 		setOpen((prevState) => !prevState);
-		isNotificationsBadgeCounterShownVar(false);
+		showNotificationsBadgeVar(false);
 	};
 
 	const items = useMemo(

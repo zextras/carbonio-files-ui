@@ -13,8 +13,8 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { isNotificationsBadgeCounterShownVar } from '../../carbonio-files-ui-common/apollo/isNotificationsBadgeCounterShownVar';
 import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secondaryBarItemVar';
+import { showNotificationsBadgeVar } from '../../carbonio-files-ui-common/apollo/showNotificationsBadgeVar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-common/constants';
 import { useGetNotificationsQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetNotificationsQuery';
@@ -47,7 +47,7 @@ interface SecondaryBarProps {
 
 export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element => {
 	const { unread } = useGetNotificationsQuery();
-	const isNotificationsBadgeCounterShown = useReactiveVar(isNotificationsBadgeCounterShownVar);
+	const isNotificationsBadgeCounterShown = useReactiveVar(showNotificationsBadgeVar);
 	const { navigateTo } = useNavigation();
 	const [t] = useTranslation();
 	const { data } = useGetRootsListQuery();

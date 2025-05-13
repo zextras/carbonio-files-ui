@@ -132,7 +132,6 @@ export function AuthenticatedApp(): React.JSX.Element {
 	useEffect(() => {
 		addRoute({
 			...appInfo,
-			id: FILES_ROUTE,
 			primaryBar: 'DriveOutline',
 			visible: true,
 			secondaryBar: SidebarView,
@@ -149,7 +148,6 @@ export function AuthenticatedApp(): React.JSX.Element {
 		if (isAddSearchViewAvailable) {
 			addSearchView({
 				...appInfo,
-				id: FILES_APP_ID,
 				component: SearchView
 			});
 		}

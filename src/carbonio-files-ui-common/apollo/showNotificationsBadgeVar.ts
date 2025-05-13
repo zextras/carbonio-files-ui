@@ -6,4 +6,4 @@
 
 import { makeVar } from '@apollo/client';
 
-export const isNotificationsBadgeCounterShownVar = makeVar(true);
+export const showNotificationsBadgeVar = makeVar(true);
