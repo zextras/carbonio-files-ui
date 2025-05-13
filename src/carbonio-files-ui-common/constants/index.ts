@@ -184,7 +184,6 @@ export const FILTER_TYPE = {
 
 export const FILES_ROUTE = 'files';
 export const FILES_APP_ID = 'carbonio-files-ui';
-export const NOTIFICATIONS_UTILITY_VIEW_ID = 'notifications-utility-view';
 
 export const TRACKER_EVENT = {
 	openDocumentWithDocs: 'Open document with Docs'

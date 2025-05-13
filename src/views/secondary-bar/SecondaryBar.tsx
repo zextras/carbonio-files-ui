@@ -184,7 +184,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			id: 'Notifications',
 			priority: -1,
 			icon: 'BellOutline',
-			label: t('', 'Notifications'),
+			label: t('notifications.title', 'Notifications'),
 			CustomElement: Notifications,
 			CustomComponent: SecondaryBarItemExpanded,
 			completeTotalBadgeCounter:
