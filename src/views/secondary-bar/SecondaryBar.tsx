@@ -84,7 +84,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 		const filters: AccordionItemWithPriority[] = [
 			{
 				id: 'Recents',
-				priority: 1,
+				priority: 2,
 				icon: 'ClockOutline',
 				label: t('secondaryBar.filtersList.recents', 'Recents'),
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
@@ -96,7 +96,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			},
 			{
 				id: 'Flagged',
-				priority: 2,
+				priority: 3,
 				icon: 'FlagOutline',
 				iconColor: 'error',
 				label: t('secondaryBar.filtersList.flagged', 'Flagged'),
@@ -109,7 +109,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			},
 			{
 				id: 'SharedWithMe',
-				priority: 3,
+				priority: 4,
 				icon: 'ArrowCircleLeftOutline',
 				iconColor: 'linked',
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
@@ -122,7 +122,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			},
 			{
 				id: 'SharedByMe',
-				priority: 4,
+				priority: 5,
 				icon: 'ArrowCircleRightOutline',
 				iconColor: 'warning',
 				label: t('secondaryBar.filtersList.sharedByMe', 'Shared by me'),
@@ -137,7 +137,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 
 		const uploads: AccordionItemWithPriority = {
 			id: 'Uploads',
-			priority: 5,
+			priority: 6,
 			label: t('secondaryBar.uploads', 'Uploads'),
 			icon: !uploadsInfo.isUploading ? 'CloudUploadOutline' : 'AnimatedUpload',
 			onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
@@ -179,10 +179,9 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			}
 		];
 
-		// todo: capire il priority
 		const notificationsItems: AccordionItemWithPriority = {
 			id: 'Notifications',
-			priority: -1,
+			priority: 0,
 			icon: 'BellOutline',
 			label: t('notifications.title', 'Notifications'),
 			CustomElement: Notifications,
@@ -207,7 +206,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 					switch (root.id) {
 						case ROOTS.LOCAL_ROOT: {
 							acc.push({
-								priority: 0,
+								priority: 1,
 								id: root.id,
 								label: t('secondaryBar.filesHome', 'Home'),
 								icon: 'FolderOutline',
@@ -226,7 +225,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 							acc.push({
 								open: forceTrashOpen,
 								id: root.id,
-								priority: 6,
+								priority: 7,
 								icon: 'Trash2Outline',
 								label: t('secondaryBar.filtersList.trash', 'Trash'),
 								onClick: (): void => {
@@ -265,18 +264,14 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 		return orderBy([...rootItems, ...filters, uploads, notificationsItems], ['priority'], ['asc']);
 	}, [
 		t,
-		location.pathname,
-		location.search,
-		uploadsInfo.isUploading,
-		uploadsInfo.uploadsCounter,
-		uploadsInfo.uploadsCompletedCounter,
-		uploadsInfo.isFailed,
-		unread,
-		isNotificationsBadgeCounterShown,
-		data?.getRootsList,
-		navigateTo,
+		uploadsInfo,
+		data,
 		forceTrashOpen,
-		expanded
+		navigateTo,
+		expanded,
+		location,
+		isNotificationsBadgeCounterShown,
+		unread
 	]);
 
 	return expanded ? (
