@@ -13,10 +13,11 @@ import {
 	Text,
 	Tooltip,
 	Divider,
-	List
+	List,
+	Theme
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { EmptyNotifications } from './EmptyNotifications';
 import { NotificationItem } from './NotificationItem';
@@ -31,6 +32,27 @@ const CustomPopover = styled(Popover)`
 
 const CustomList = styled(List)`
 	display: flex;
+`;
+
+const StyledButton = styled(Button)<{
+	$iconSize?: keyof Theme['sizes']['icon'];
+	$paddingSize?: string;
+}>`
+	${({ $iconSize, theme }): ReturnType<typeof css> | undefined | string =>
+		$iconSize &&
+		css`
+			svg {
+				width: ${theme.sizes.icon[$iconSize]};
+				min-width: ${theme.sizes.icon[$iconSize]};
+				height: ${theme.sizes.icon[$iconSize]};
+				min-height: ${theme.sizes.icon[$iconSize]};
+			}
+		`};
+	${({ $paddingSize }): ReturnType<typeof css> | undefined | string =>
+		$paddingSize &&
+		css`
+			padding: ${$paddingSize};
+		`};
 `;
 
 export const Notifications = (): React.JSX.Element => {
@@ -78,13 +100,14 @@ export const Notifications = (): React.JSX.Element => {
 
 	return (
 		<>
-			<Button
+			<StyledButton
+				$iconSize={'large'}
+				$paddingSize={'0'}
 				ref={anchorRef}
 				onClick={handleClick}
 				icon={open ? 'ChevronLeft' : 'ChevronRight'}
 				type={'ghost'}
 				color={'text'}
-				size={'large'}
 			/>
 			<CustomPopover
 				open={open}
