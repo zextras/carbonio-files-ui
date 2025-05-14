@@ -8,7 +8,13 @@ import { faker } from '@faker-js/faker';
 import { filter, find, map, some } from 'lodash';
 
 import { LOGGED_USER } from '../../mocks/constants';
-import { CONFIGS, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, ROOTS } from '../constants';
+import {
+	CONFIGS,
+	NODES_LOAD_LIMIT,
+	NODES_SORT_DEFAULT,
+	NOTIFICATIONS_LOAD_LIMIT,
+	ROOTS
+} from '../constants';
 import { Node, UploadFolderItem } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
 import {
@@ -659,7 +665,7 @@ export function populateGetNotifications(
 		__typename: 'NotificationPage',
 		last_seen: faker.date.recent().getTime(),
 		notifications,
-		page_token: notifications.length >= 25 ? 'page_token' : null,
+		page_token: notifications.length >= NOTIFICATIONS_LOAD_LIMIT ? 'page_token' : null,
 		unread
 	};
 }

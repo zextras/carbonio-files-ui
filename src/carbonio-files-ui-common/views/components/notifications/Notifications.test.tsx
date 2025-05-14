@@ -11,6 +11,7 @@ import { graphql, HttpResponse } from 'msw';
 import { getDateNotification } from './NotificationItem';
 import { Notifications } from './Notifications';
 import server from '../../../../mocks/server';
+import { NOTIFICATIONS_LOAD_LIMIT } from '../../../constants';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateAddedNodeNotification,
@@ -76,34 +77,30 @@ describe('Notifications', () => {
 			expect(screen.getByText(/you don’t have any notifications at the moment/i)).toBeVisible();
 		});
 
-		describe('Close popover', () => {
-			it('should close the popover when the user clicks on the notification button if the popover is opened', async () => {
-				const mocks = {
-					Query: {
-						getNotifications: mockGetNotifications(0, [])
-					}
-				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notifications />, { mocks });
+		it('should close the popover when the user clicks on the notification button if the popover is opened', async () => {
+			const mocks = {
+				Query: {
+					getNotifications: mockGetNotifications(0, [])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<Notifications />, { mocks });
 
-				// click on the chevron to open the popover
-				await user.click(
-					screen.getByRoleWithIcon('button', {
-						icon: ICON_REGEXP.chevronRightNotifications
-					})
-				);
-				// click on the chevron to close the popover
-				await user.click(
-					screen.getByRoleWithIcon('button', {
-						icon: ICON_REGEXP.chevronLeftNotifications
-					})
-				);
-				expect(screen.queryByText(/notifications/i)).not.toBeInTheDocument();
-				expect(
-					screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
-				).not.toBeInTheDocument();
-			});
-
-			it.todo('should close the popover when clicks outside the popover');
+			// click on the chevron to open the popover
+			await user.click(
+				screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.chevronRightNotifications
+				})
+			);
+			// click on the chevron to close the popover
+			await user.click(
+				screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.chevronLeftNotifications
+				})
+			);
+			expect(screen.queryByText(/notifications/i)).not.toBeInTheDocument();
+			expect(
+				screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
+			).not.toBeInTheDocument();
 		});
 
 		describe('List of notifications', () => {
@@ -122,11 +119,9 @@ describe('Notifications', () => {
 					})
 				);
 				expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
-				expect(
-					screen.getByText(
-						`${notification.triggering_user.email} shared ${notification.node.name} with you`
-					)
-				).toBeVisible();
+				expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
+				expect(screen.getByText(notification.node.name)).toBeVisible();
+				expect(screen.getByText(/shared with you/i)).toBeVisible();
 				const date = getDateNotification(notification.created_at);
 				expect(screen.getByText(date)).toBeVisible();
 			});
@@ -148,11 +143,10 @@ describe('Notifications', () => {
 						})
 					);
 					expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
-					expect(
-						screen.getByText(
-							`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
-						)
-					).toBeVisible();
+					expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
+					expect(screen.getByText(notification.added_node.name)).toBeVisible();
+					expect(screen.getByText(notification.destination_folder.name)).toBeVisible();
+					expect(screen.getByText(/added in/i));
 					const date = getDateNotification(notification.created_at);
 					expect(screen.getByText(date)).toBeVisible();
 				}
@@ -175,90 +169,14 @@ describe('Notifications', () => {
 						})
 					);
 					expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
-					expect(
-						screen.getByText(
-							`${notification.triggering_user.email} removed ${notification.removed_node.name} from ${notification.origin_folder.name}`
-						)
-					).toBeVisible();
+					expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
+					expect(screen.getByText(notification.removed_node.name)).toBeVisible();
+					expect(screen.getByText(notification.origin_folder.name)).toBeVisible();
+					expect(screen.getByText(/removed from/i)).toBeVisible();
 					const date = getDateNotification(notification.created_at);
 					expect(screen.getByText(date)).toBeVisible();
 				}
 			);
-
-			// test potenzialmente da togliere
-			it('test renderizza tutti e tre i tipi contemporaneamente', async () => {
-				const newShare = populateNewShareNotification();
-				const addedNode = populateAddedNodeNotification();
-				const removedNode = populateRemovedNodeNotification();
-				const mocks = {
-					Query: {
-						getNotifications: mockGetNotifications(0, [newShare, addedNode, removedNode])
-					}
-				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notifications />, { mocks });
-
-				await user.click(
-					screen.getByRoleWithIcon('button', {
-						icon: ICON_REGEXP.chevronRightNotifications
-					})
-				);
-				expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(3);
-				expect(
-					screen.getByText(
-						`${removedNode.triggering_user.email} removed ${removedNode.removed_node.name} from ${removedNode.origin_folder.name}`
-					)
-				).toBeVisible();
-				expect(
-					screen.getByText(
-						`${addedNode.triggering_user.email} added ${addedNode.added_node.name} in ${addedNode.destination_folder.name}`
-					)
-				).toBeVisible();
-				expect(
-					screen.getByText(
-						`${newShare.triggering_user.email} shared ${newShare.node.name} with you`
-					)
-				).toBeVisible();
-			});
-
-			// fix test for pagination
-			it('pagination', async () => {
-				const notifications = Array.from({ length: 26 }, () => populateAddedNodeNotification());
-				const secondToLastNotification = notifications[notifications.length - 2];
-				const lastNotification = notifications[notifications.length - 1];
-				const mocks = {
-					Query: {
-						getNotifications: mockGetNotifications(0, notifications)
-					}
-				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notifications />, { mocks });
-
-				await user.click(
-					screen.getByRoleWithIcon('button', {
-						icon: ICON_REGEXP.chevronRightNotifications
-					})
-				);
-				expect(
-					screen.getByText(
-						`${notifications[0].triggering_user.email} added ${notifications[0].added_node.name} in ${notifications[0].destination_folder.name}`
-					)
-				).toBeVisible();
-				expect(
-					screen.getByText(
-						`${secondToLastNotification.triggering_user.email} added ${secondToLastNotification.added_node.name} in ${secondToLastNotification.destination_folder.name}`
-					)
-				).toBeVisible();
-				expect(
-					screen.queryByText(
-						`${lastNotification.triggering_user.email} added ${lastNotification.added_node.name} in ${lastNotification.destination_folder.name}`
-					)
-				).not.toBeInTheDocument();
-				triggerListLoadMore();
-				expect(
-					await screen.findByText(
-						`${lastNotification.triggering_user.email} added ${lastNotification.added_node.name} in ${lastNotification.destination_folder.name}`
-					)
-				).toBeVisible();
-			});
 
 			it('should render the unread notifications in Info (Regular) color and the other ones in Text (Regular)', async () => {
 				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
@@ -292,12 +210,20 @@ describe('Notifications', () => {
 					})
 				);
 				notifications.forEach((notification, index) => {
-					expect(
-						screen.getByText(
-							`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
-						)
-					).toHaveStyle({
+					expect(screen.getByText(notification.triggering_user.email)).toHaveStyle({
 						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+					});
+					expect(screen.getByText(notification.added_node.name)).toHaveStyle({
+						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+					});
+					expect(screen.getByText(notification.destination_folder.name)).toHaveStyle({
+						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+					});
+				});
+				const addedInElements = screen.getAllByText(/added in/i);
+				addedInElements.forEach((el, id) => {
+					expect(el).toHaveStyle({
+						color: id < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
 					});
 				});
 			});
@@ -334,93 +260,152 @@ describe('Notifications', () => {
 					})
 				);
 				notifications.forEach((notification, index) => {
-					expect(
-						screen.getByText(
-							`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
-						)
-					).toHaveStyle({
+					expect(screen.getByText(notification.triggering_user.email)).toHaveStyle({
+						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+					});
+					expect(screen.getByText(notification.added_node.name)).toHaveStyle({
+						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+					});
+					expect(screen.getByText(notification.destination_folder.name)).toHaveStyle({
 						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
 					});
 				});
 				// close the notification popover
 				await user.click(
 					screen.getByRoleWithIcon('button', {
-						icon: ICON_REGEXP.chevronRightNotifications
+						icon: ICON_REGEXP.chevronLeftNotifications
 					})
 				);
 				// open the notification popover again
 				await user.click(
 					screen.getByRoleWithIcon('button', {
-						icon: ICON_REGEXP.chevronLeftNotifications
+						icon: ICON_REGEXP.chevronRightNotifications
 					})
 				);
 				notifications.forEach((notification) => {
-					expect(
-						screen.getByText(
-							`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
-						)
-					).toHaveStyle({
+					expect(screen.getByText(notification.triggering_user.email)).toHaveStyle({
+						color: COLORS.text.regular
+					});
+					expect(screen.getByText(notification.added_node.name)).toHaveStyle({
+						color: COLORS.text.regular
+					});
+					expect(screen.getByText(notification.destination_folder.name)).toHaveStyle({
 						color: COLORS.text.regular
 					});
 				});
 			});
 
-			// fix test for pagination
-			it('should keep the unread notifications in Info (Regular) color if you reach a new pagination', async () => {
-				const notifications = Array.from({ length: 26 }, () => populateAddedNodeNotification());
-				const lastSeen = faker.date.recent().getTime();
-				const firstNotification = notifications[0];
-				firstNotification.created_at = lastSeen + 1;
-				const secondToLastNotification = notifications[notifications.length - 2];
-				const lastNotification = notifications[notifications.length - 1];
-				server.use(
-					graphql.query(GetNotificationsDocument, () =>
-						HttpResponse.json({
-							data: {
-								getNotifications: {
-									__typename: 'NotificationPage',
-									last_seen: lastSeen,
-									notifications,
-									page_token: null,
-									unread: 1
-								}
+			describe('Pagination', () => {
+				it('should render new pagination if the user reaches the list bottom element', async () => {
+					const notifications = Array.from({ length: NOTIFICATIONS_LOAD_LIMIT + 5 }, () =>
+						populateAddedNodeNotification()
+					);
+					const firstPage = notifications.slice(0, NOTIFICATIONS_LOAD_LIMIT);
+					const secondPage = notifications.slice(NOTIFICATIONS_LOAD_LIMIT);
+					server.use(
+						graphql.query(GetNotificationsDocument, ({ variables }) => {
+							if (!variables?.page_token) {
+								return HttpResponse.json({
+									data: {
+										getNotifications: {
+											__typename: 'NotificationPage',
+											last_seen: faker.date.recent().getTime(),
+											notifications: firstPage,
+											page_token: firstPage[firstPage.length - 1].id,
+											unread: 0
+										}
+									}
+								});
 							}
+							return HttpResponse.json({
+								data: {
+									getNotifications: {
+										__typename: 'NotificationPage',
+										last_seen: faker.date.recent().getTime(),
+										notifications: secondPage,
+										page_token: null,
+										unread: 0
+									}
+								}
+							});
 						})
-					)
-				);
-				const { user } = setup(<Notifications />);
+					);
+					const { user } = setup(<Notifications />);
 
-				await user.click(
-					screen.getByRoleWithIcon('button', {
-						icon: ICON_REGEXP.chevronRightNotifications
-					})
-				);
-				expect(
-					screen.getByText(
-						`${firstNotification.triggering_user.email} added ${firstNotification.added_node.name} in ${firstNotification.destination_folder.name}`
-					)
-				).toBeVisible();
-				expect(
-					screen.getByText(
-						`${secondToLastNotification.triggering_user.email} added ${secondToLastNotification.added_node.name} in ${secondToLastNotification.destination_folder.name}`
-					)
-				).toBeVisible();
-				expect(
-					screen.queryByText(
-						`${lastNotification.triggering_user.email} added ${lastNotification.added_node.name} in ${lastNotification.destination_folder.name}`
-					)
-				).not.toBeInTheDocument();
-				triggerListLoadMore();
-				expect(
-					screen.getByText(
-						`${lastNotification.triggering_user.email} added ${lastNotification.added_node.name} in ${lastNotification.destination_folder.name}`
-					)
-				).toBeVisible();
-				expect(
-					screen.getByText(
-						`${firstNotification.triggering_user.email} added ${firstNotification.added_node.name} in ${notifications[0].destination_folder.name}`
-					)
-				).toBeVisible();
+					await user.click(
+						screen.getByRoleWithIcon('button', {
+							icon: ICON_REGEXP.chevronRightNotifications
+						})
+					);
+					firstPage.forEach((notification) => {
+						expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
+					});
+					secondPage.forEach((notification) => {
+						expect(screen.queryByText(notification.triggering_user.email)).not.toBeInTheDocument();
+					});
+					triggerListLoadMore();
+					await screen.findByText(secondPage[0].triggering_user.email);
+					firstPage.forEach((notification) => {
+						expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
+					});
+					secondPage.forEach((notification) => {
+						expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
+					});
+				});
+
+				it('should keep the unread notifications in Info (Regular) color if the user reaches a new pagination', async () => {
+					const notifications = Array.from({ length: NOTIFICATIONS_LOAD_LIMIT + 1 }, () =>
+						populateAddedNodeNotification()
+					);
+					const firstPage = notifications.slice(0, NOTIFICATIONS_LOAD_LIMIT);
+					const secondPage = notifications.slice(NOTIFICATIONS_LOAD_LIMIT);
+					const lastSeen = faker.date.recent().getTime();
+					const firstNotification = notifications[0];
+					firstNotification.created_at = lastSeen + 1;
+					server.use(
+						graphql.query(GetNotificationsDocument, ({ variables }) => {
+							if (!variables?.page_token) {
+								return HttpResponse.json({
+									data: {
+										getNotifications: {
+											__typename: 'NotificationPage',
+											last_seen: lastSeen,
+											notifications: firstPage,
+											page_token: firstPage[firstPage.length - 1].id,
+											unread: 1
+										}
+									}
+								});
+							}
+							return HttpResponse.json({
+								data: {
+									getNotifications: {
+										__typename: 'NotificationPage',
+										last_seen: lastSeen,
+										notifications: secondPage,
+										page_token: null,
+										unread: 0
+									}
+								}
+							});
+						})
+					);
+					const { user } = setup(<Notifications />);
+
+					await user.click(
+						screen.getByRoleWithIcon('button', {
+							icon: ICON_REGEXP.chevronRightNotifications
+						})
+					);
+					expect(screen.getByText(firstNotification.triggering_user.email)).toHaveStyle({
+						color: COLORS.info.regular
+					});
+					triggerListLoadMore();
+					await screen.findByText(secondPage[0].triggering_user.email);
+					expect(screen.getByText(firstNotification.triggering_user.email)).toHaveStyle({
+						color: COLORS.info.regular
+					});
+				});
 			});
 		});
 
@@ -445,36 +430,37 @@ describe('Notifications', () => {
 				expect(await screen.findByText(/refresh/i)).toBeVisible();
 			});
 
-			// understand how to do it
 			it('should render the new notifications when the user clicks on the refresh button', async () => {
-				const notification = populateAddedNodeNotification();
+				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
+				let calledOnce = false;
 				server.use(
-					graphql.query(GetNotificationsDocument, () =>
-						HttpResponse.json({
-							data: {
-								getNotifications: {
-									__typename: 'NotificationPage',
-									last_seen: faker.date.recent().getTime(),
-									notifications: [],
-									page_token: null,
-									unread: 0
+					graphql.query(GetNotificationsDocument, () => {
+						if (!calledOnce) {
+							calledOnce = true;
+							return HttpResponse.json({
+								data: {
+									getNotifications: {
+										__typename: 'NotificationPage',
+										last_seen: faker.date.recent().getTime(),
+										notifications: [],
+										page_token: null,
+										unread: 0
+									}
 								}
-							}
-						})
-					),
-					graphql.query(GetNotificationsDocument, () =>
-						HttpResponse.json({
+							});
+						}
+						return HttpResponse.json({
 							data: {
 								getNotifications: {
 									__typename: 'NotificationPage',
 									last_seen: faker.date.recent().getTime(),
-									notifications: [notification],
+									notifications,
 									page_token: null,
 									unread: 1
 								}
 							}
-						})
-					)
+						});
+					})
 				);
 				const { user } = setup(<Notifications />);
 
@@ -486,17 +472,10 @@ describe('Notifications', () => {
 				await user.click(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
 				);
-				expect(screen.getByText('Notifications')).toBeVisible();
-				expect(
-					await screen.findByText(
-						`${notification.triggering_user.email} added ${notification.added_node.name} in ${notification.destination_folder.name}`
-					)
-				).toBeVisible();
+				notifications.forEach((notification) => {
+					expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
+				});
 			});
-
-			it.todo(
-				'should keep the unread notifications in Primary (Regular) color if you reach a new pagination (after refreshing)'
-			);
 		});
 	});
 });

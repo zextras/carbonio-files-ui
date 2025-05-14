@@ -29,7 +29,7 @@ const handleGetNotificationsRequest: GraphQLResponseResolver<
 	const pageToken =
 		slicedNotifications.length > 25 ? notifications[notifications.length - 1].id : null;
 
-	HttpResponse.json({
+	return HttpResponse.json({
 		data: {
 			getNotifications: {
 				__typename: 'NotificationPage',
