@@ -146,7 +146,7 @@ describe('Notifications', () => {
 					expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
 					expect(screen.getByText(notification.added_node.name)).toBeVisible();
 					expect(screen.getByText(notification.destination_folder.name)).toBeVisible();
-					expect(screen.getByText(/added in/i));
+					expect(screen.getByText(/added in/i)).toBeVisible();
 					const date = getDateNotification(notification.created_at);
 					expect(screen.getByText(date)).toBeVisible();
 				}
