@@ -72,7 +72,7 @@ export const NotificationItem = ({
 							<InlineText
 								overflow={'break-word'}
 								weight="bold"
-								color={isUnread ? 'info' : 'text'}
+								color={isUnread ? 'primary' : 'text'}
 							/>
 						)
 					}}
@@ -95,7 +95,7 @@ export const NotificationItem = ({
 							<InlineText
 								overflow={'break-word'}
 								weight="bold"
-								color={isUnread ? 'info' : 'text'}
+								color={isUnread ? 'primary' : 'text'}
 							/>
 						)
 					}}
@@ -118,7 +118,7 @@ export const NotificationItem = ({
 							<InlineText
 								overflow={'break-word'}
 								weight="bold"
-								color={isUnread ? 'info' : 'text'}
+								color={isUnread ? 'primary' : 'text'}
 							/>
 						)
 					}}
@@ -141,7 +141,7 @@ export const NotificationItem = ({
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
 					<Text
 						overflow={'break-word'}
-						color={isUnread ? 'info' : 'text'}
+						color={isUnread ? 'primary' : 'text'}
 						style={{ wordBreak: 'break-word' }}
 					>
 						{notificationMessage}
