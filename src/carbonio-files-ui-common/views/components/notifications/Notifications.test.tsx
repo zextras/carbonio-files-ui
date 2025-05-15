@@ -178,7 +178,7 @@ describe('Notifications', () => {
 				}
 			);
 
-			it('should render the unread notifications in Info (Regular) color and the other ones in Text (Regular)', async () => {
+			it('should render the unread notifications in Primary (Regular) color and the other ones in Text (Regular)', async () => {
 				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
 				const unreadNotifications =
 					notifications.length > 0 ? faker.number.int({ min: 0, max: notifications.length }) : 0;
@@ -211,24 +211,24 @@ describe('Notifications', () => {
 				);
 				notifications.forEach((notification, index) => {
 					expect(screen.getByText(notification.triggering_user.email)).toHaveStyle({
-						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+						color: index < unreadNotifications ? COLORS.primary.regular : COLORS.text.regular
 					});
 					expect(screen.getByText(notification.added_node.name)).toHaveStyle({
-						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+						color: index < unreadNotifications ? COLORS.primary.regular : COLORS.text.regular
 					});
 					expect(screen.getByText(notification.destination_folder.name)).toHaveStyle({
-						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+						color: index < unreadNotifications ? COLORS.primary.regular : COLORS.text.regular
 					});
 				});
 				const addedInElements = screen.getAllByText(/added in/i);
 				addedInElements.forEach((el, id) => {
 					expect(el).toHaveStyle({
-						color: id < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+						color: id < unreadNotifications ? COLORS.primary.regular : COLORS.text.regular
 					});
 				});
 			});
 
-			it('should remove the Info (Regular) color and make it in Text (Regular) when the user opens the notification popover, close it and opens it again', async () => {
+			it('should remove the primary (Regular) color and make it in Text (Regular) when the user opens the notification popover, close it and opens it again', async () => {
 				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
 				const unreadNotifications =
 					notifications.length > 0 ? faker.number.int({ min: 0, max: notifications.length }) : 0;
@@ -261,13 +261,13 @@ describe('Notifications', () => {
 				);
 				notifications.forEach((notification, index) => {
 					expect(screen.getByText(notification.triggering_user.email)).toHaveStyle({
-						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+						color: index < unreadNotifications ? COLORS.primary.regular : COLORS.text.regular
 					});
 					expect(screen.getByText(notification.added_node.name)).toHaveStyle({
-						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+						color: index < unreadNotifications ? COLORS.primary.regular : COLORS.text.regular
 					});
 					expect(screen.getByText(notification.destination_folder.name)).toHaveStyle({
-						color: index < unreadNotifications ? COLORS.info.regular : COLORS.text.regular
+						color: index < unreadNotifications ? COLORS.primary.regular : COLORS.text.regular
 					});
 				});
 				// close the notification popover
@@ -353,7 +353,7 @@ describe('Notifications', () => {
 					});
 				});
 
-				it('should keep the unread notifications in Info (Regular) color if the user reaches a new pagination', async () => {
+				it('should keep the unread notifications in primary (Regular) color if the user reaches a new pagination', async () => {
 					const notifications = Array.from({ length: NOTIFICATIONS_LOAD_LIMIT + 1 }, () =>
 						populateAddedNodeNotification()
 					);
@@ -398,12 +398,12 @@ describe('Notifications', () => {
 						})
 					);
 					expect(screen.getByText(firstNotification.triggering_user.email)).toHaveStyle({
-						color: COLORS.info.regular
+						color: COLORS.primary.regular
 					});
 					triggerListLoadMore();
 					await screen.findByText(secondPage[0].triggering_user.email);
 					expect(screen.getByText(firstNotification.triggering_user.email)).toHaveStyle({
-						color: COLORS.info.regular
+						color: COLORS.primary.regular
 					});
 				});
 			});
