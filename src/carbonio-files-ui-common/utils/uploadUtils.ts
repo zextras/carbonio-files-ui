@@ -416,7 +416,8 @@ export function uploadCompleted(
 			HTTP_STATUS_CODE.maxVersionReached,
 			HTTP_STATUS_CODE.internalServerError,
 			HTTP_STATUS_CODE.aborted,
-			HTTP_STATUS_CODE.overQuota
+			HTTP_STATUS_CODE.overQuota,
+			HTTP_STATUS_CODE.fileSizeExceeded
 		];
 		if (xhr.readyState !== XMLHttpRequest.UNSENT && !handledStatuses.includes(xhr.status)) {
 			console.error('upload error: unhandled status', xhr.status, fileEnriched);
