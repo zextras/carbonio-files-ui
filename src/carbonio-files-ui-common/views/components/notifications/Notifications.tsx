@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
+import { useReactiveVar } from '@apollo/client';
 import {
 	Button,
 	Container,
@@ -21,6 +22,7 @@ import styled, { css } from 'styled-components';
 
 import { EmptyNotifications } from './EmptyNotifications';
 import { NotificationItem } from './NotificationItem';
+import { lastSeenNotificationsVar } from '../../../apollo/lastSeenNotificationsVar';
 import { showNotificationsBadgeVar } from '../../../apollo/showNotificationsBadgeVar';
 import { useGetNotificationsQuery } from '../../../hooks/graphql/queries/useGetNotificationsQuery';
 
@@ -57,18 +59,23 @@ const StyledButton = styled(Button)<{
 
 export const Notifications = (): React.JSX.Element => {
 	const { notifications, hasMore, loadMore, lastSeen, refetch } = useGetNotificationsQuery();
+	const lastSeenVar = useReactiveVar(lastSeenNotificationsVar);
 	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
 	const prevOpenRef = useRef(open);
-	const [popoverClosed, setPopoverClosed] = useState(false);
 	const anchorRef = useRef<HTMLDivElement>(null);
 
+	const nonNullNotifications = useMemo(
+		() => notifications?.filter((notification) => notification !== null),
+		[notifications]
+	);
+
 	useEffect(() => {
-		if (prevOpenRef.current && !open) {
-			setPopoverClosed(true);
+		if (prevOpenRef.current && !open && nonNullNotifications) {
+			lastSeenNotificationsVar(nonNullNotifications[0].created_at);
 		}
 		prevOpenRef.current = open;
-	}, [open]);
+	}, [nonNullNotifications, open]);
 
 	const handleClick = (): void => {
 		setOpen((prevState) => !prevState);
@@ -77,26 +84,20 @@ export const Notifications = (): React.JSX.Element => {
 
 	const items = useMemo(
 		() =>
-			notifications?.reduce((accumulator, notification) => {
-				if (notification !== null && lastSeen) {
+			nonNullNotifications?.reduce((accumulator, notification) => {
+				if (lastSeen) {
 					accumulator.push(
 						<NotificationItem
 							key={notification?.id}
 							notification={notification}
-							isUnread={popoverClosed ? false : notification.created_at > lastSeen}
+							isUnread={notification.created_at > Math.max(lastSeen, lastSeenVar)}
 						/>
 					);
 				}
 				return accumulator;
 			}, [] as Array<React.JSX.Element>) ?? [],
-		[notifications, lastSeen, popoverClosed]
+		[nonNullNotifications, lastSeen, lastSeenVar]
 	);
-
-	const refetchCallback = useCallback(() => {
-		refetch().then(() => {
-			setPopoverClosed(false);
-		});
-	}, [refetch]);
 
 	return (
 		<>
@@ -127,7 +128,7 @@ export const Notifications = (): React.JSX.Element => {
 							<Button
 								icon={'Refresh'}
 								type={'ghost'}
-								onClick={refetchCallback}
+								onClick={refetch}
 								size={'large'}
 								color={'text'}
 							/>
