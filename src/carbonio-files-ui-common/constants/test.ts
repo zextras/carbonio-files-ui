@@ -175,9 +175,6 @@ export const COLORS = {
 		disabled: '#828282', // secondary.regular
 		enabled: '#333333', // text.regular
 		active: '#2b73d2' // primary.regular
-	},
-	info: {
-		regular: '#2196d3'
 	}
 };
 
