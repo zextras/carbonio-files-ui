@@ -528,13 +528,11 @@ export type SharedTarget = DistributionList | User;
 export type SnapshotNode = {
 	__typename: 'SnapshotNode';
 	created_at: Scalars['DateTime']['output'];
-	folder_id: Maybe<Scalars['ID']['output']>;
 	name: Scalars['String']['output'];
 	node_id: Scalars['ID']['output'];
-	owner_id: Scalars['ID']['output'];
+	owner_id: Maybe<Scalars['ID']['output']>;
 	snapshot_node_id: Scalars['ID']['output'];
 	type: NodeType;
-	updated_at: Scalars['DateTime']['output'];
 };
 
 export type SnapshotUser = {
@@ -1296,13 +1294,11 @@ export type SnapshotNodeResolvers<
 	ParentType extends ResolversParentTypes['SnapshotNode'] = ResolversParentTypes['SnapshotNode']
 > = {
 	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-	folder_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 	node_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-	owner_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	owner_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 	snapshot_node_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
-	updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

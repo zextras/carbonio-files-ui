@@ -21,23 +21,19 @@ query getNotifications($limit: Int, $page_token: String, $update_last_seen: Bool
 				added_node {
 					node_id
 					name
-					folder_id
 					type
 					created_at
 					owner_id
 					snapshot_node_id
-					updated_at
 				}
 				added_node_type
 				destination_folder {
 					name
 					node_id
-					folder_id
 					type
 					created_at
 					owner_id
 					snapshot_node_id
-					updated_at
 				}
 			}
 			... on NewShare {
@@ -53,12 +49,10 @@ query getNotifications($limit: Int, $page_token: String, $update_last_seen: Bool
 				node {
 					node_id
 					name
-					folder_id
 					type
 					created_at
 					owner_id
 					snapshot_node_id
-					updated_at
 				}
 			}
 			... on RemovedNode {
@@ -74,22 +68,18 @@ query getNotifications($limit: Int, $page_token: String, $update_last_seen: Bool
 				origin_folder {
 					node_id
 					name
-					folder_id
 					type
 					created_at
 					owner_id
 					snapshot_node_id
-					updated_at
 				}
 				removed_node {
 					node_id
 					name
-					folder_id
 					type
 					created_at
 					owner_id
 					snapshot_node_id
-					updated_at
 				}
 				removed_node_type
 			}

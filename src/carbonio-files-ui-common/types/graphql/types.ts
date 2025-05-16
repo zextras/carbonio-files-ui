@@ -534,13 +534,11 @@ export type SharedTarget = DistributionList | User;
 export type SnapshotNode = {
 	__typename: 'SnapshotNode';
 	created_at: Scalars['DateTime']['output'];
-	folder_id: Maybe<Scalars['ID']['output']>;
 	name: Scalars['String']['output'];
 	node_id: Scalars['ID']['output'];
-	owner_id: Scalars['ID']['output'];
+	owner_id: Maybe<Scalars['ID']['output']>;
 	snapshot_node_id: Scalars['ID']['output'];
 	type: NodeType;
-	updated_at: Scalars['DateTime']['output'];
 };
 
 export type SnapshotUser = {
@@ -2206,22 +2204,18 @@ export type GetNotificationsQuery = {
 							added_node: {
 								node_id: string;
 								name: string;
-								folder_id: string | null;
 								type: NodeType;
 								created_at: number;
-								owner_id: string;
+								owner_id: string | null;
 								snapshot_node_id: string;
-								updated_at: number;
 							} & { __typename: 'SnapshotNode' };
 							destination_folder: {
 								name: string;
 								node_id: string;
-								folder_id: string | null;
 								type: NodeType;
 								created_at: number;
-								owner_id: string;
+								owner_id: string | null;
 								snapshot_node_id: string;
-								updated_at: number;
 							} & { __typename: 'SnapshotNode' };
 					  } & { __typename: 'AddedNode' })
 					| ({
@@ -2237,12 +2231,10 @@ export type GetNotificationsQuery = {
 							node: {
 								node_id: string;
 								name: string;
-								folder_id: string | null;
 								type: NodeType;
 								created_at: number;
-								owner_id: string;
+								owner_id: string | null;
 								snapshot_node_id: string;
-								updated_at: number;
 							} & { __typename: 'SnapshotNode' };
 					  } & { __typename: 'NewShare' })
 					| ({
@@ -2259,22 +2251,18 @@ export type GetNotificationsQuery = {
 							origin_folder: {
 								node_id: string;
 								name: string;
-								folder_id: string | null;
 								type: NodeType;
 								created_at: number;
-								owner_id: string;
+								owner_id: string | null;
 								snapshot_node_id: string;
-								updated_at: number;
 							} & { __typename: 'SnapshotNode' };
 							removed_node: {
 								node_id: string;
 								name: string;
-								folder_id: string | null;
 								type: NodeType;
 								created_at: number;
-								owner_id: string;
+								owner_id: string | null;
 								snapshot_node_id: string;
-								updated_at: number;
 							} & { __typename: 'SnapshotNode' };
 					  } & { __typename: 'RemovedNode' })
 					| null
@@ -6958,15 +6946,13 @@ export const GetNotificationsDocument = {
 																selections: [
 																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
-																	{ kind: 'Field', name: { kind: 'Name', value: 'folder_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
 																	{
 																		kind: 'Field',
 																		name: { kind: 'Name', value: 'snapshot_node_id' }
-																	},
-																	{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } }
+																	}
 																]
 															}
 														},
@@ -6979,15 +6965,13 @@ export const GetNotificationsDocument = {
 																selections: [
 																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
-																	{ kind: 'Field', name: { kind: 'Name', value: 'folder_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
 																	{
 																		kind: 'Field',
 																		name: { kind: 'Name', value: 'snapshot_node_id' }
-																	},
-																	{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } }
+																	}
 																]
 															}
 														}
@@ -7030,15 +7014,13 @@ export const GetNotificationsDocument = {
 																selections: [
 																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
-																	{ kind: 'Field', name: { kind: 'Name', value: 'folder_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
 																	{
 																		kind: 'Field',
 																		name: { kind: 'Name', value: 'snapshot_node_id' }
-																	},
-																	{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } }
+																	}
 																]
 															}
 														}
@@ -7081,15 +7063,13 @@ export const GetNotificationsDocument = {
 																selections: [
 																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
-																	{ kind: 'Field', name: { kind: 'Name', value: 'folder_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
 																	{
 																		kind: 'Field',
 																		name: { kind: 'Name', value: 'snapshot_node_id' }
-																	},
-																	{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } }
+																	}
 																]
 															}
 														},
@@ -7101,15 +7081,13 @@ export const GetNotificationsDocument = {
 																selections: [
 																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
-																	{ kind: 'Field', name: { kind: 'Name', value: 'folder_id' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
 																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
 																	{
 																		kind: 'Field',
 																		name: { kind: 'Name', value: 'snapshot_node_id' }
-																	},
-																	{ kind: 'Field', name: { kind: 'Name', value: 'updated_at' } }
+																	}
 																]
 															}
 														},

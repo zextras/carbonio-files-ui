@@ -302,13 +302,11 @@ union SharedTarget = DistributionList | User
 
 type SnapshotNode {
 	created_at: DateTime!
-	folder_id: ID
 	name: String!
 	node_id: ID!
-	owner_id: ID!
+	owner_id: ID
 	snapshot_node_id: ID!
 	type: NodeType!
-	updated_at: DateTime!
 }
 
 type SnapshotUser {
