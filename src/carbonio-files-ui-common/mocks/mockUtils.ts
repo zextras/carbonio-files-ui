@@ -600,13 +600,11 @@ function populateSnapshotNode(): SnapshotNode {
 	return {
 		__typename: 'SnapshotNode',
 		created_at: faker.date.past().getTime(),
-		folder_id: faker.string.uuid(),
 		name: faker.system.fileName(),
 		node_id: faker.string.uuid(),
 		owner_id: faker.string.uuid(),
 		snapshot_node_id: faker.string.uuid(),
-		type: NodeType.Text,
-		updated_at: faker.date.recent().getTime()
+		type: NodeType.Text
 	};
 }
 

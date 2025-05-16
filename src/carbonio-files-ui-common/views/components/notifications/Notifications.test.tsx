@@ -11,6 +11,7 @@ import { graphql, HttpResponse } from 'msw';
 import { getDateNotification } from './NotificationItem';
 import { Notifications } from './Notifications';
 import server from '../../../../mocks/server';
+import { lastSeenNotificationsVar } from '../../../apollo/lastSeenNotificationsVar';
 import { NOTIFICATIONS_LOAD_LIMIT } from '../../../constants';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
@@ -28,6 +29,10 @@ import {
 import { mockGetNotifications } from '../../../utils/resolverMocks';
 
 describe('Notifications', () => {
+	beforeEach(() => {
+		lastSeenNotificationsVar(0);
+	});
+
 	it('should change the icon everytime the user clicks on the chevron', async () => {
 		const mocks = {
 			Query: {

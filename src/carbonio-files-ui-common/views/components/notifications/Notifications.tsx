@@ -71,8 +71,8 @@ export const Notifications = (): React.JSX.Element => {
 	);
 
 	useEffect(() => {
-		if (prevOpenRef.current && !open && nonNullNotifications) {
-			lastSeenNotificationsVar(nonNullNotifications[0]?.created_at);
+		if (prevOpenRef.current && !open && nonNullNotifications && nonNullNotifications.length > 0) {
+			lastSeenNotificationsVar(nonNullNotifications[0].created_at);
 		}
 		prevOpenRef.current = open;
 	}, [nonNullNotifications, open]);
