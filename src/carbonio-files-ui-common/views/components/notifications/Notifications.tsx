@@ -72,7 +72,7 @@ export const Notifications = (): React.JSX.Element => {
 
 	useEffect(() => {
 		if (prevOpenRef.current && !open && nonNullNotifications) {
-			lastSeenNotificationsVar(nonNullNotifications[0].created_at);
+			lastSeenNotificationsVar(nonNullNotifications[0]?.created_at);
 		}
 		prevOpenRef.current = open;
 	}, [nonNullNotifications, open]);
@@ -128,7 +128,7 @@ export const Notifications = (): React.JSX.Element => {
 							<Button
 								icon={'Refresh'}
 								type={'ghost'}
-								onClick={refetch}
+								onClick={() => refetch()}
 								size={'large'}
 								color={'text'}
 							/>

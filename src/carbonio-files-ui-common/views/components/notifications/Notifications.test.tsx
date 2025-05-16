@@ -46,11 +46,11 @@ describe('Notifications', () => {
 				icon: ICON_REGEXP.chevronRightNotifications
 			})
 		).not.toBeInTheDocument();
-		const chevronLeft = screen.queryByRoleWithIcon('button', {
+		const chevronLeft = screen.getByRoleWithIcon('button', {
 			icon: ICON_REGEXP.chevronLeftNotifications
 		});
 		expect(chevronLeft).toBeVisible();
-		await user.click(chevronRight);
+		await user.click(chevronLeft);
 		expect(chevronRight).toBeVisible();
 	});
 
