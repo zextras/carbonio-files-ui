@@ -86,7 +86,12 @@ export const ICON_REGEXP = {
 	gridViewMode: 'icon: GridOutline',
 	eyePasswordOff: 'icon: EyeOffOutline',
 	eyePasswordOn: 'icon: EyeOutline',
-	regenerateAccessCode: 'icon: Refresh'
+	regenerateAccessCode: 'icon: Refresh',
+	refreshNotification: 'icon: Refresh',
+	noNotificationsIcon: 'icon: BellOffOutline',
+	secondaryBarNotifications: 'icon: BellOutline',
+	chevronRightNotifications: 'icon: ChevronRight',
+	chevronLeftNotifications: 'icon: ChevronLeft'
 } as const;
 
 export const SELECTORS = {

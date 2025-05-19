@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2024 Zextras <https://www.zextras.com>
+ * SPDX-FileCopyrightText: 2025 Zextras <https://www.zextras.com>
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -14,6 +14,7 @@ const result: PossibleTypesResultData = {
 	possibleTypes: {
 		Account: ['DistributionList', 'User'],
 		Node: ['File', 'Folder'],
+		Notification: ['AddedNode', 'NewShare', 'RemovedNode'],
 		SharedTarget: ['DistributionList', 'User']
 	}
 };

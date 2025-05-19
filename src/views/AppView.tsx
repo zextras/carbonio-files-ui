@@ -10,6 +10,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import buildClient from '../carbonio-files-ui-common/apollo';
 import { INTERNAL_PATH } from '../carbonio-files-ui-common/constants';
+import { GetNotificationsDocument } from '../carbonio-files-ui-common/types/graphql/types';
 import { PreventDefaultDropContainer } from '../carbonio-files-ui-common/views/components/PreventDefaultDropContainer';
 import {
 	GlobalProvidersWrapper,
@@ -40,8 +41,15 @@ const LazyUploadView = lazy(
 const AppView = (): React.JSX.Element => {
 	const apolloClient = useMemo(() => buildClient(), []);
 
-	const clearApolloCache = useCallback(() => {
-		apolloClient.resetStore();
+	const clearApolloCache = useCallback(async () => {
+		await apolloClient.resetStore();
+		apolloClient.query({
+			query: GetNotificationsDocument,
+			variables: {
+				update_last_seen: false
+			},
+			fetchPolicy: 'network-only'
+		});
 	}, [apolloClient]);
 
 	useEffect(() => {
