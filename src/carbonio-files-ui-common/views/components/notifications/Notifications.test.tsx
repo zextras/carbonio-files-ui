@@ -432,7 +432,7 @@ describe('Notifications', () => {
 				await user.hover(
 					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
 				);
-				expect(await screen.findByText(/refresh/i)).toBeVisible();
+				expect(await screen.findByText(/Check for updates/i)).toBeVisible();
 			});
 
 			it('should render the new notifications when the user clicks on the refresh button', async () => {
