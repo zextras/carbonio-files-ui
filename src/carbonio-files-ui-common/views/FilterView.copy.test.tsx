@@ -7,7 +7,7 @@ import React from 'react';
 
 import { act } from '@testing-library/react';
 import { forEach, map } from 'lodash';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../constants';
@@ -56,10 +56,15 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				const { user } = setup(
+					<Routes>
+						<Route path={`/filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{
+						mocks,
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				await screen.findByText(file.name);
 				await selectNodes([file.id, folder.id], user);
@@ -103,8 +108,10 @@ describe('Filter View', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
-					<Route path={`/:view/:filter?`} component={FilterView} />,
-					{ mocks, initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
+					<Routes>
+						<Route path={`/filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{ mocks, initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
 				);
 
 				await screen.findByText(nodeToCopy.name);
@@ -208,8 +215,10 @@ describe('Filter View', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { findByTextWithMarkup, user } = setup(
-					<Route path={`/:view/:filter?`} component={FilterView} />,
-					{ mocks, initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{ mocks, initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
 				);
 
 				await screen.findByText(nodesToCopy[0].name);
@@ -306,8 +315,10 @@ describe('Filter View', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, user } = setup(
-					<Route path={`/:view/:filter?`} component={FilterView} />,
-					{ mocks, initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{ mocks, initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
 				);
 
 				await screen.findByText(nodesToCopy[0].name);
@@ -409,8 +420,10 @@ describe('Filter View', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
-					<Route path={`/:view/:filter?`} component={FilterView} />,
-					{ mocks, initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{ mocks, initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
 				);
 
 				await screen.findByText(nodeToCopy.name);

@@ -7,7 +7,7 @@ import React from 'react';
 
 import { waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { forEach, map, last } from 'lodash';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH, NODES_LOAD_LIMIT, ROOTS } from '../constants';
@@ -44,10 +44,15 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				const { user } = setup(
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{
+						mocks,
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
@@ -91,10 +96,15 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				const { user } = setup(
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{
+						mocks,
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
@@ -124,10 +134,15 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				const { user } = setup(
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{
+						mocks,
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				// wait for the load to be completed
 				await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
@@ -164,10 +179,15 @@ describe('Filter View', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				mocks,
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-			});
+			const { user } = setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					mocks,
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+				}
+			);
 
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();

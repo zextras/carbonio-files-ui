@@ -8,7 +8,7 @@ import React from 'react';
 import { act } from '@testing-library/react';
 import { find } from 'lodash';
 import { graphql } from 'msw';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import server from '../../mocks/server';
@@ -48,10 +48,15 @@ describe('Filter view', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`],
-				mocks
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter?`} element={<FilterView />} />
+				</Routes>,
+				{
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`],
+					mocks
+				}
+			);
 
 			await screen.findByText(nodes[0].name);
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc })).toBeVisible();
@@ -62,9 +67,14 @@ describe('Filter view', () => {
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 			);
-			setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-				initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`]
-			});
+			setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`]
+				}
+			);
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			const expectedVariables = {
 				folder_id: ROOTS.LOCAL_ROOT,
@@ -107,12 +117,12 @@ describe('Filter view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(
-				<Route path={`/:view/:filter`}>
-					<FilterView />
-				</Route>,
+				<Routes>
+					<Route path={`/:view/:filter`} element={<FilterView />} />
+				</Routes>,
 				{
 					initialRouterEntries: [
-						`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}/?node=${nodeWithShares.id}&tab=sharing`
+						`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}/?node=${nodeWithShares.id}&tab=sharing`
 					],
 					mocks
 				}

@@ -10,7 +10,6 @@ import { ApolloError } from '@apollo/client';
 import { SnackbarProps, useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { captureException } from '../../utils/utils';
 import { ERROR_CODE } from '../constants';
 import { decodeError } from '../utils/utils';
 
@@ -38,7 +37,6 @@ export function useErrorHandler(
 				const isOverQuotaReached =
 					err.graphQLErrors.length > 0 &&
 					err.graphQLErrors[0].extensions?.errorCode === ERROR_CODE.overQuotaReached;
-				captureException(new Error(`Failure on ${consoleErrorName}`));
 				console.error(`${consoleErrorName}: `, { ...err });
 				if (showSnackbar) {
 					createSnackbar({

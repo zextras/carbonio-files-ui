@@ -41,6 +41,7 @@ import {
 } from '../../utils/resolverMocks';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+jest.mock<typeof import('./NodeHoverBar')>('./NodeHoverBar');
 
 describe('List', () => {
 	describe('Drag and drop', () => {
@@ -89,7 +90,7 @@ describe('List', () => {
 					dataTransfer: dataTransferObj
 				});
 
-				await screen.findByText(/upload occurred in Files' home/i);
+				await screen.findByText(/upload started in Files' home/i);
 
 				expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 
@@ -418,7 +419,7 @@ describe('List', () => {
 					</SelectionProvider>,
 					{
 						mocks,
-						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 					}
 				);
 
@@ -470,7 +471,7 @@ describe('List', () => {
 					</SelectionProvider>,
 					{
 						mocks,
-						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 					}
 				);
 

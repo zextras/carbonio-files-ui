@@ -5,28 +5,44 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { map, find, filter, some } from 'lodash';
+import { filter, find, map, some } from 'lodash';
 
 import { LOGGED_USER } from '../../mocks/constants';
-import { CONFIGS, NODES_LOAD_LIMIT, NODES_SORT_DEFAULT, ROOTS } from '../constants';
+import {
+	CONFIGS,
+	NODES_LOAD_LIMIT,
+	NODES_SORT_DEFAULT,
+	NOTIFICATIONS_LOAD_LIMIT,
+	ROOTS
+} from '../constants';
 import { Node, UploadFolderItem } from '../types/common';
 import { UploadItem, UploadStatus } from '../types/graphql/client-types';
 import {
+	AddedNode,
+	AddedNodeType,
+	CollaborationLink,
 	Config,
 	DistributionList,
-	Node as GQLNodeWithOptionals,
 	File as GQLFileWithOptionals,
 	Folder as GQLFolderWithOptionals,
-	CollaborationLink,
+	GetNotificationsQuery,
 	Link,
 	Maybe,
+	NewShare,
+	Node as GQLNodeWithOptionals,
 	NodePage,
 	NodeSort,
 	NodeType,
+	Notification,
+	NotificationType,
 	Permissions,
+	RemovedNode,
+	RemovedNodeType,
 	Share,
 	SharedTarget,
 	SharePermission,
+	SnapshotNode,
+	SnapshotUser,
 	User
 } from '../types/graphql/types';
 import {
@@ -356,6 +372,37 @@ export function populateFile(id?: string, name?: string): MakeRequiredNonNull<GQ
 	return file;
 }
 
+export function populateImgFile(id?: string, name?: string): MakeRequiredNonNull<GQLFile, 'owner'> {
+	const imageMimeTypes = [
+		'image/jpeg',
+		'image/png',
+		'image/gif',
+		'image/svg+xml',
+		'image/webp',
+		'image/bmp',
+		'image/tiff'
+	];
+
+	const mimeType = faker.helpers.arrayElement(imageMimeTypes);
+	const types = filter(
+		Object.values(NodeType),
+		(t) => t !== NodeType.Root && t !== NodeType.Folder
+	);
+	const file: MakeRequiredNonNull<GQLFile, 'owner'> = {
+		...populateNodeFields(faker.helpers.arrayElement(types), id, name),
+		mime_type: mimeType,
+		size: faker.number.int(),
+		extension: faker.system.fileExt(mimeType),
+		version: 1,
+		parent: populateFolder(),
+		keep_forever: faker.datatype.boolean(),
+		cloned_from_version: null,
+		__typename: 'File'
+	};
+	file.shares = populateShares(file, faker.number.int(10));
+	return file;
+}
+
 export function populateContact(
 	fullName?: string,
 	email?: string
@@ -547,4 +594,76 @@ export function populateUploadItems(limit?: number, type?: Node['__typename']): 
 		items.push(item);
 	}
 	return items;
+}
+
+function populateSnapshotNode(): SnapshotNode {
+	return {
+		__typename: 'SnapshotNode',
+		created_at: faker.date.past().getTime(),
+		name: faker.system.fileName(),
+		node_id: faker.string.uuid(),
+		owner_id: faker.string.uuid(),
+		snapshot_node_id: faker.string.uuid(),
+		type: NodeType.Text
+	};
+}
+
+function populateTriggeringUser(): SnapshotUser {
+	return {
+		__typename: 'SnapshotUser',
+		email: faker.internet.email(),
+		full_name: faker.person.fullName(),
+		snapshot_user_id: faker.string.uuid(),
+		user_id: faker.string.uuid()
+	};
+}
+
+export function populateAddedNodeNotification(type?: AddedNodeType): AddedNode {
+	return {
+		__typename: 'AddedNode',
+		added_node: populateSnapshotNode(),
+		added_node_type: type ?? AddedNodeType.Create,
+		created_at: faker.date.past().getTime(),
+		destination_folder: populateSnapshotNode(),
+		id: faker.string.uuid(),
+		notification_type: NotificationType.AddedNode,
+		triggering_user: populateTriggeringUser()
+	};
+}
+
+export function populateNewShareNotification(): NewShare {
+	return {
+		__typename: 'NewShare',
+		created_at: faker.date.past().getTime(),
+		id: faker.string.uuid(),
+		node: populateSnapshotNode(),
+		notification_type: NotificationType.NewShare,
+		triggering_user: populateTriggeringUser()
+	};
+}
+
+export function populateRemovedNodeNotification(type?: RemovedNodeType): RemovedNode {
+	return {
+		__typename: 'RemovedNode',
+		created_at: faker.date.past().getTime(),
+		id: faker.string.uuid(),
+		notification_type: NotificationType.RemovedNode,
+		origin_folder: populateSnapshotNode(),
+		removed_node: populateSnapshotNode(),
+		removed_node_type: type ?? RemovedNodeType.Delete,
+		triggering_user: populateTriggeringUser()
+	};
+}
+
+export function populateGetNotifications(
+	notifications: Notification[],
+	unread: number
+): GetNotificationsQuery['getNotifications'] {
+	return {
+		__typename: 'NotificationPage',
+		last_seen: faker.date.recent().getTime(),
+		notifications,
+		page_token: notifications.length >= NOTIFICATIONS_LOAD_LIMIT ? 'page_token' : null,
+		unread
+	};
 }

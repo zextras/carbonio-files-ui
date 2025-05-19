@@ -39,10 +39,14 @@ export const useOpenWithDocs = (): OpenWithDocsFn => {
 	return useCallback(
 		async (id, version) => {
 			try {
+				const offsetFromUtc = -new Date().getTimezoneOffset();
+				const queryParams = new URLSearchParams({
+					...(version && { version: version.toString() }),
+					offset_from_utc: offsetFromUtc.toString()
+				});
+
 				const response = await fetch(
-					`${DOCS_ENDPOINT}${OPEN_FILE_PATH}/${encodeURIComponent(id)}${
-						version ? `?version=${version}` : ''
-					}`,
+					`${DOCS_ENDPOINT}${OPEN_FILE_PATH}/${encodeURIComponent(id)}?${queryParams}`,
 					{
 						method: 'GET',
 						headers: {

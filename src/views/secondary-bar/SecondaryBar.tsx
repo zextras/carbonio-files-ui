@@ -14,12 +14,15 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secondaryBarItemVar';
+import { showNotificationsBadgeVar } from '../../carbonio-files-ui-common/apollo/showNotificationsBadgeVar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-common/constants';
+import { useGetNotificationsQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetNotificationsQuery';
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
 import { FilesQuota } from '../../carbonio-files-ui-common/views/components/FilesQuota';
+import { Notifications } from '../../carbonio-files-ui-common/views/components/notifications/Notifications';
 import {
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
@@ -30,6 +33,7 @@ type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
 	completeTotalBadgeCounter?: string;
 	isUploadFailed?: boolean;
+	CustomElement?: React.ComponentType;
 };
 
 const CustomAccordion = styled(Accordion)`
@@ -42,6 +46,8 @@ interface SecondaryBarProps {
 }
 
 export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element => {
+	const { unread } = useGetNotificationsQuery();
+	const isNotificationsBadgeCounterShown = useReactiveVar(showNotificationsBadgeVar);
 	const { navigateTo } = useNavigation();
 	const [t] = useTranslation();
 	const { data } = useGetRootsListQuery();
@@ -78,7 +84,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 		const filters: AccordionItemWithPriority[] = [
 			{
 				id: 'Recents',
-				priority: 1,
+				priority: 2,
 				icon: 'ClockOutline',
 				label: t('secondaryBar.filtersList.recents', 'Recents'),
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
@@ -90,7 +96,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			},
 			{
 				id: 'Flagged',
-				priority: 2,
+				priority: 3,
 				icon: 'FlagOutline',
 				iconColor: 'error',
 				label: t('secondaryBar.filtersList.flagged', 'Flagged'),
@@ -103,7 +109,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			},
 			{
 				id: 'SharedWithMe',
-				priority: 3,
+				priority: 4,
 				icon: 'ArrowCircleLeftOutline',
 				iconColor: 'linked',
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
@@ -116,7 +122,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			},
 			{
 				id: 'SharedByMe',
-				priority: 4,
+				priority: 5,
 				icon: 'ArrowCircleRightOutline',
 				iconColor: 'warning',
 				label: t('secondaryBar.filtersList.sharedByMe', 'Shared by me'),
@@ -131,7 +137,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 
 		const uploads: AccordionItemWithPriority = {
 			id: 'Uploads',
-			priority: 5,
+			priority: 6,
 			label: t('secondaryBar.uploads', 'Uploads'),
 			icon: !uploadsInfo.isUploading ? 'CloudUploadOutline' : 'AnimatedUpload',
 			onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
@@ -173,6 +179,17 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			}
 		];
 
+		const notificationsItems: AccordionItemWithPriority = {
+			id: 'Notifications',
+			priority: 0,
+			icon: 'BellOutline',
+			label: t('notifications.title', 'Notifications'),
+			CustomElement: Notifications,
+			CustomComponent: SecondaryBarItemExpanded,
+			badgeCounter: !!unread && isNotificationsBadgeCounterShown ? unread : undefined,
+			badgeType: 'unread'
+		};
+
 		const fallbackRoots: GetRootsListQuery['getRootsList'] = [
 			{ id: ROOTS.LOCAL_ROOT, name: ROOTS.LOCAL_ROOT, __typename: 'Root' },
 			{ id: ROOTS.TRASH, name: ROOTS.TRASH, __typename: 'Root' }
@@ -188,7 +205,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 					switch (root.id) {
 						case ROOTS.LOCAL_ROOT: {
 							acc.push({
-								priority: 0,
+								priority: 1,
 								id: root.id,
 								label: t('secondaryBar.filesHome', 'Home'),
 								icon: 'FolderOutline',
@@ -207,7 +224,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 							acc.push({
 								open: forceTrashOpen,
 								id: root.id,
-								priority: 6,
+								priority: 7,
 								icon: 'Trash2Outline',
 								label: t('secondaryBar.filtersList.trash', 'Trash'),
 								onClick: (): void => {
@@ -243,8 +260,18 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			[]
 		);
 
-		return orderBy([...rootItems, ...filters, uploads], ['priority'], ['asc']);
-	}, [t, uploadsInfo, data, forceTrashOpen, navigateTo, expanded, location]);
+		return orderBy([...rootItems, ...filters, uploads, notificationsItems], ['priority'], ['asc']);
+	}, [
+		t,
+		uploadsInfo,
+		data,
+		forceTrashOpen,
+		navigateTo,
+		expanded,
+		location,
+		isNotificationsBadgeCounterShown,
+		unread
+	]);
 
 	return expanded ? (
 		<Container mainAlignment={'space-between'}>

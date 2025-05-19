@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
-import { map, find } from 'lodash';
+import { map } from 'lodash';
 import { http, HttpResponse } from 'msw';
 
 import { SearchView } from './SearchView';
@@ -62,12 +62,12 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 
 describe('Search view', () => {
 	describe('Shared by me param', () => {
-		test('Deletion of all collaborators does not remove node from list. Displayer is kept open', async () => {
+		it('should not remove the node from the list and keep the displayer opened if the user remove all the collaborators', async () => {
 			const searchParams: AdvancedFilters = { sharedByMe: { label: 'shared', value: true } };
 			searchParamsVar(searchParams);
 			const nodes = populateNodes(2);
 			const nodeWithShares = populateFile();
-			const shares = populateShares(nodeWithShares, 2);
+			const shares = populateShares(nodeWithShares);
 			nodeWithShares.shares = shares;
 			nodeWithShares.permissions.can_share = true;
 			nodes.push(nodeWithShares);
@@ -82,56 +82,26 @@ describe('Search view', () => {
 					deleteShare: mockDeleteShare(true, true)
 				}
 			} satisfies Partial<Resolvers>;
-
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [`${INTERNAL_PATH.SEARCH}/?node=${nodeWithShares.id}&tab=sharing`],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}/?node=${nodeWithShares.id}&tab=sharing`],
 				mocks
 			});
-			// render of the list
-			await screen.findByText(nodes[0].name);
-			// render of the displayer
-			await screen.findByText(/sharing/i);
-			// render of the sharing tab
-			await screen.findByText(/collaborators/i);
-			// render of the collaborators
-			await screen.findByText(getChipLabel(shares[0].share_target));
-			// there should be 2 chips for collaborators
-			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
-			expect(chipItems).toHaveLength(2);
-			const share1Item = find(
-				chipItems,
-				(chipItem) => within(chipItem).queryByText(getChipLabel(shares[0].share_target)) !== null
-			);
-			const share2Item = find(
-				chipItems,
-				(chipItem) => within(chipItem).queryByText(getChipLabel(shares[1].share_target)) !== null
-			);
+
+			expect(await screen.findByText(nodes[0].name)).toBeVisible();
+			// render the collaborator
+			const collaboratorChipItem = screen.getByTestId(SELECTORS.chipWithPopover);
+			expect(
+				within(collaboratorChipItem).getByText(getChipLabel(shares[0].share_target))
+			).toBeVisible();
+			// remove the collaborator
+			await user.click(within(collaboratorChipItem as HTMLElement).getByTestId(ICON_REGEXP.close));
+			await user.click(screen.getByRole('button', { name: /remove/i }));
+			expect(collaboratorChipItem).not.toBeInTheDocument();
+			// the node is kept in the main list, but the share icon is removed
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodeWithShares.id));
-			expect(nodeItem).toBeVisible();
-			expect(within(nodeItem).getByTestId(ICON_REGEXP.sharedByMe)).toBeVisible();
-			expect(share1Item).toBeDefined();
-			expect(share2Item).toBeDefined();
-			expect(share1Item).toBeVisible();
-			expect(share2Item).toBeVisible();
-			const list = screen.getByTestId(SELECTORS.list());
-			// delete first share
-			await user.click(within(share1Item as HTMLElement).getByTestId(ICON_REGEXP.close));
-			await screen.findByRole('button', { name: /remove/i });
-			await user.click(screen.getByRole('button', { name: /remove/i }));
-			expect(screen.queryByText(getChipLabel(shares[0].share_target))).not.toBeInTheDocument();
-			await screen.findByText(/success/i);
-			expect(share2Item).toBeVisible();
-			expect(within(list).getByText(nodeWithShares.name)).toBeVisible();
-			// delete second share
-			await user.click(within(share2Item as HTMLElement).getByTestId(ICON_REGEXP.close));
-			await screen.findByRole('button', { name: /remove/i });
-			await user.click(screen.getByRole('button', { name: /remove/i }));
-			expect(screen.queryByText(getChipLabel(shares[1].share_target))).not.toBeInTheDocument();
-			await screen.findByText(/success/i);
-			// node is kept in main list but share icon is removed
-			expect(nodeItem).toBeVisible();
+			expect(within(nodeItem).getByText(nodeWithShares.name)).toBeVisible();
 			expect(within(nodeItem).queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
-			// displayer remains open
+			// the displayer remains opened
 			expect(
 				within(screen.getByTestId(SELECTORS.displayer)).getByText(nodeWithShares.name)
 			).toBeVisible();
@@ -154,7 +124,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { getByTextWithMarkup, user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 			expect(screen.queryByText('Previous view')).not.toBeInTheDocument();
@@ -215,7 +185,7 @@ describe('Search view', () => {
 			const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
 				<SearchView />,
 				{
-					initialRouterEntries: [INTERNAL_PATH.SEARCH],
+					initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 					mocks
 				}
 			);
@@ -292,7 +262,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 
@@ -355,7 +325,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 
@@ -435,7 +405,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 
@@ -517,7 +487,7 @@ describe('Search view', () => {
 			} satisfies Partial<Resolvers>;
 
 			const { user } = setup(<SearchView />, {
-				initialRouterEntries: [INTERNAL_PATH.SEARCH],
+				initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`],
 				mocks
 			});
 

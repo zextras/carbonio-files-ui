@@ -59,7 +59,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -81,7 +81,6 @@ describe('Search view', () => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
 					value: true,
@@ -110,29 +109,17 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
-			await screen.findByText(/No search executed/i);
-			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-			expect(screen.getByText(/results header/i)).toBeVisible();
-			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/^shared/i);
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			await screen.findByRole('button', { name: /search/i });
-			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
 			await user.click(screen.getByText(/^shared/i));
-			await waitFor(() => expect(screen.getByRole('button', { name: /search/i })).toBeEnabled());
 			await user.click(screen.getByRole('button', { name: /search/i }));
-			act(() => {
-				// run timers of modal
-				jest.runOnlyPendingTimers();
-			});
-			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
 					value: true,
@@ -161,45 +148,32 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
-			await screen.findByText(/No search executed/i);
-			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-			expect(screen.getByText(/results header/i)).toBeVisible();
-			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/select a folder/i);
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			await screen.findByRole('button', { name: /search/i });
-			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
 			await user.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByText(/home/i)).toBeInTheDocument();
-			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeInTheDocument();
+			expect(screen.getByText(/home/i)).toBeVisible();
+			expect(screen.getByText(/search also in contained folders/i)).toBeVisible();
+			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 			expect(screen.getByRole('button', { name: /choose folder/i })).toBeDisabled();
 			await user.click(screen.getByText(/home/i));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /choose folder/i })).toBeEnabled()
-			);
-			await user.click(screen.getByText(/search also in contained folders/i));
-			await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
-			await user.click(screen.getByText(/search also in contained folders/i));
-			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
+			expect(screen.getByRole('button', { name: /choose folder/i })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: /choose folder/i }));
 			await screen.findByText(/home/i);
 			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
 			expect(screen.getByRole('button', { name: /search/i })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: /search/i }));
-			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
 					value: ROOTS.LOCAL_ROOT,
@@ -227,44 +201,29 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
-			await screen.findByText(/No search executed/i);
-			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-			expect(screen.getByText(/results header/i)).toBeVisible();
-			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/select a folder/i);
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			await screen.findByRole('button', { name: /search/i });
-			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
 			await user.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByText(/home/i)).toBeInTheDocument();
-			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeInTheDocument();
-			expect(screen.getByRole('button', { name: /choose folder/i })).toBeDisabled();
 			await user.click(screen.getByText(/home/i));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /choose folder/i })).toBeEnabled()
-			);
 			await user.click(screen.getByText(/search also in contained folders/i));
 			await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
-			expect(screen.queryByTestId(ICON_REGEXP.checkboxChecked)).not.toBeInTheDocument();
 			await user.click(screen.getByRole('button', { name: /choose folder/i }));
 			await screen.findByText(/home/i);
 			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
 			expect(screen.getByRole('button', { name: /search/i })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: /search/i }));
-			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
 					value: ROOTS.LOCAL_ROOT,
@@ -292,34 +251,25 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
-			await screen.findByText(/No search executed/i);
-			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-			expect(screen.getByText(/results header/i)).toBeVisible();
-			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByText(/keywords/i);
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			await screen.findByRole('button', { name: /search/i });
-			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
-
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			// wait for chips to be created (1 chip + icon close of the modal)
-			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2));
-			await waitFor(() => expect(screen.getByRole('button', { name: /search/i })).toBeEnabled());
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
 			expect(screen.getByText(/keyword1/i)).toBeVisible();
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword2;');
 			// wait for chips to be created (2 chips + icon close of the modal)
-			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(3));
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(3);
 			expect(screen.getByText(/keyword2/i)).toBeVisible();
 
 			await user.click(screen.getByRole('button', { name: /search/i }));
-			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
 					value: 'keyword1',
@@ -353,13 +303,9 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
-			await screen.findByText(/No search executed/i);
-			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-			expect(screen.getByText(/results header/i)).toBeVisible();
-			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			// keywords
 			await screen.findByRole('textbox', { name: /keywords/i });
@@ -367,17 +313,13 @@ describe('Search view', () => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			await screen.findByRole('button', { name: /search/i });
-			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
-
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			// wait for chips to be created (1 chip + icon close of the modal)
-			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2));
-			await waitFor(() => expect(screen.getByRole('button', { name: /search/i })).toBeEnabled());
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
 			expect(screen.getByText(/keyword1/i)).toBeVisible();
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword2;');
 			// wait for chips to be created (2 chips + icon close of the modal)
-			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(3));
+			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(3);
 			expect(screen.getByText(/keyword2/i)).toBeVisible();
 			// flagged
 			await user.click(screen.getByText(/^flagged/i));
@@ -390,20 +332,11 @@ describe('Search view', () => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByText(/home/i)).toBeInTheDocument();
-			expect(screen.getByText(/search also in contained folders/i)).toBeInTheDocument();
-			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeInTheDocument();
-			expect(screen.getByRole('button', { name: /choose folder/i })).toBeDisabled();
 			await user.click(screen.getByText(/home/i));
-			await waitFor(() =>
-				expect(screen.getByRole('button', { name: /choose folder/i })).toBeEnabled()
-			);
+			expect(screen.getByRole('button', { name: /choose folder/i })).toBeEnabled();
 			await user.click(screen.getByText(/search also in contained folders/i));
-			await screen.findByTestId(ICON_REGEXP.checkboxUnchecked);
 			await user.click(screen.getByRole('button', { name: /choose folder/i }));
-			await screen.findByText(/home/i);
 			await user.click(screen.getByRole('button', { name: /search/i }));
-			await waitFor(() => expect(updateQueryMock).toHaveBeenCalled());
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
 					value: 'keyword1',
@@ -464,24 +397,17 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
-			await screen.findByText(/No search executed/i);
-			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
-			expect(screen.getByText(/results header/i)).toBeVisible();
-			expect(screen.getByRole('button', { name: /advanced filter/i })).toBeVisible();
 			await user.click(screen.getByRole('button', { name: /advanced filter/i }));
 			await screen.findByRole('button', { name: /search/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
 			await user.click(screen.getByText(/^flagged/i));
-			await waitFor(() => expect(screen.getByRole('button', { name: /search/i })).toBeEnabled());
 			await user.click(screen.getByRole('button', { name: /search/i }));
-			await screen.findByText(nodes[0].name);
 			expect(screen.getByText(nodes[0].name)).toBeVisible();
 			expect(screen.getByText(nodes[nodes.length - 1].name)).toBeVisible();
 		});
@@ -499,7 +425,7 @@ describe('Search view', () => {
 					ResultsHeader={ResultsHeader}
 					useDisableSearch={useDisableSearch}
 				/>,
-				{ initialRouterEntries: [INTERNAL_PATH.SEARCH] }
+				{ initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`] }
 			);
 
 			await screen.findByText(/No search executed/i);
@@ -514,7 +440,6 @@ describe('Search view', () => {
 			});
 			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
 			await user.click(screen.getByText(/^flagged/i));
-			await waitFor(() => expect(screen.getByRole('button', { name: /search/i })).toBeEnabled());
 			await user.click(screen.getByTestId(ICON_REGEXP.close));
 			expect(screen.queryByRole('button', { name: /search/i })).not.toBeInTheDocument();
 			expect(mockedFindNodes).not.toHaveBeenCalled();

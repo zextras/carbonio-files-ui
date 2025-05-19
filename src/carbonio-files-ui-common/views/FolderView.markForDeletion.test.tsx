@@ -30,6 +30,7 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
 
 describe('Mark for deletion - trash', () => {
 	describe('Selection mode', () => {

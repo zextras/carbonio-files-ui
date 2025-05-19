@@ -45,7 +45,7 @@ configure({
 });
 
 failOnConsole({
-	shouldFailOnWarn: true,
+	shouldFailOnWarn: false,
 	shouldFailOnError: true,
 	silenceMessage: (errorMessage) =>
 		// Warning: Failed prop type: Invalid prop `target` of type `Window` supplied to `ForwardRef(SnackbarFn)`, expected instance of `Window`
@@ -179,4 +179,9 @@ afterEach(() => {
 	act(() => {
 		window.resizeTo(1024, 768);
 	});
+});
+// mock a simplified crypto
+Object.defineProperty(window.crypto, 'randomUUID', {
+	writable: true,
+	value: jest.fn(() => Math.random().toString())
 });

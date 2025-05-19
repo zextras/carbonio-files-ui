@@ -7,7 +7,7 @@ import React from 'react';
 
 import { act, screen, within } from '@testing-library/react';
 import { forEach, map } from 'lodash';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
 import { FILTER_TYPE, INTERNAL_PATH } from '../constants';
@@ -67,10 +67,15 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				const { user } = setup(
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{
+						mocks,
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				await screen.findByText(file.name);
 				// activate selection mode by selecting items
@@ -114,10 +119,12 @@ describe('Filter View', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { user, queryByRoleWithIcon } = setup(
-					<Route path={`/:view/:filter?`} component={FilterView} />,
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
 					{
 						mocks,
-						initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
 					}
 				);
 
@@ -156,10 +163,15 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				const { user } = setup(
+					<Routes>
+						<Route path={`filter/:filter?`} element={<FilterView />} />
+					</Routes>,
+					{
+						mocks,
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				await screen.findByText(file.name);
 				// activate selection mode by selecting items
@@ -232,8 +244,10 @@ describe('Filter View', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
-					<Route path={`/:view/:filter?`} component={FilterView} />,
-					{ mocks, initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{ mocks, initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
 				);
 
 				await screen.findByText(nodeToMove.name);
@@ -321,10 +335,15 @@ describe('Filter View', () => {
 					}
 				} satisfies Partial<Resolvers>;
 
-				const { user } = setup(<Route path={`/:view/:filter?`} component={FilterView} />, {
-					mocks,
-					initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
-				});
+				const { user } = setup(
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{
+						mocks,
+						initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`]
+					}
+				);
 
 				// right click to open contextual menu on file without permission
 				const fileItem = await screen.findByText(file.name);
@@ -388,8 +407,10 @@ describe('Filter View', () => {
 				} satisfies Partial<Resolvers>;
 
 				const { getByTextWithMarkup, findByTextWithMarkup, user } = setup(
-					<Route path={`/:view/:filter?`} component={FilterView} />,
-					{ mocks, initialRouterEntries: [`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
+					<Routes>
+						<Route path={`filter/:filter`} element={<FilterView />} />
+					</Routes>,
+					{ mocks, initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`] }
 				);
 
 				await screen.findByText(nodeToMove.name);

@@ -26,6 +26,7 @@ export const DISPLAYER_WIDTH = '60%';
 export const FULL_SHARES_LOAD_LIMIT = 100;
 export const SHARES_LOAD_LIMIT = 6;
 export const DOUBLE_CLICK_DELAY = 200;
+export const NOTIFICATIONS_LOAD_LIMIT = 25;
 export const DISPLAYER_TABS = {
 	details: 'details',
 	sharing: 'sharing',
@@ -135,7 +136,9 @@ export const HTTP_STATUS_CODE = {
 	/** aborted or blocked request */
 	aborted: 0,
 	overQuota: 422,
-	docsFileSizeExceeded: 403
+	docsFileSizeExceeded: 403,
+	/** file size exceeded quota */
+	fileSizeExceeded: 413
 } as const;
 
 export const ERROR_CODE = {
@@ -166,12 +169,12 @@ export const PREVIEW_TYPE = {
 } as const;
 // internal paths
 export const INTERNAL_PATH: {
-	[K in Uppercase<NonNullable<URLParams['view']>>]: `/${Lowercase<K>}`;
+	[K in Uppercase<NonNullable<URLParams['view']>>]: `${Lowercase<K>}`;
 } = {
-	ROOT: '/root',
-	UPLOADS: '/uploads',
-	SEARCH: '/search',
-	FILTER: '/filter'
+	ROOT: 'root',
+	UPLOADS: 'uploads',
+	SEARCH: 'search',
+	FILTER: 'filter'
 } as const;
 export const FILTER_TYPE = {
 	flagged: '/flagged',

@@ -29,6 +29,8 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+
 describe('Flag', () => {
 	describe('Selection mode', () => {
 		test('Flag/Unflag action marks all and only selected items as flagged/unflagged', async () => {

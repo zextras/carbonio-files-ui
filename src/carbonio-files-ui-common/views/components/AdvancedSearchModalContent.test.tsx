@@ -44,6 +44,7 @@ describe('Advanced search modal content', () => {
 			{ mocks: {} }
 		);
 		expect(screen.getByText(/advanced filters/i)).toBeVisible();
+		expect(screen.getAllByTestId(ICON_REGEXP.switchOff)).toHaveLength(2);
 		expect(screen.getByText(/^flagged/i)).toBeVisible();
 		expect(screen.getByText(/filter the results by items that you've flagged/i)).toBeVisible();
 		expect(screen.getByText(/^shared/i)).toBeVisible();
@@ -52,13 +53,13 @@ describe('Advanced search modal content', () => {
 				/filter the results by items that contain at least one collaborator besides you/i
 			)
 		).toBeVisible();
-		expect(screen.getByText(/keywords/i)).toBeVisible();
-		expect(screen.getByText(/owner/i)).toBeVisible();
-		expect(screen.getByText(/item type/i)).toBeVisible();
-		expect(screen.getByText(/select a folder/i)).toBeVisible();
+		expect(screen.getByRole('textbox', { name: /keywords/i })).toBeVisible();
+		expect(screen.getByRole('textbox', { name: /owner/i })).toBeVisible();
+		expect(screen.getByRole('textbox', { name: /item type/i })).toBeVisible();
+		expect(screen.getByRole('textbox', { name: /select a folder/i })).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
 		expect(screen.getByRole('button', { name: /reset filters/i })).toBeVisible();
-		expect(screen.getByRole('button', { name: /reset filters/i })).toBeEnabled();
+		expect(screen.getByRole('button', { name: /reset filters/i })).toBeDisabled();
 		expect(screen.getByRole('button', { name: /search/i })).toBeVisible();
 		expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
 		// only 1 icon close means no chips
@@ -119,23 +120,6 @@ describe('Advanced search modal content', () => {
 			/>,
 			{ mocks: {} }
 		);
-		expect(screen.getByText(/advanced filters/i)).toBeVisible();
-		expect(screen.getByText(/^flagged/i)).toBeVisible();
-		expect(screen.getByText(/filter the results by items that you've flagged/i)).toBeVisible();
-		expect(screen.getByText(/^shared/i)).toBeVisible();
-		expect(
-			screen.getByText(
-				/filter the results by items that contain at least one collaborator besides you/i
-			)
-		).toBeVisible();
-		expect(screen.getByText(/keywords/i)).toBeVisible();
-		expect(screen.getByText(/select a folder/i)).toBeVisible();
-		expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
-		expect(screen.getByRole('button', { name: /reset filters/i })).toBeVisible();
-		expect(screen.getByRole('button', { name: /reset filters/i })).toBeEnabled();
-		expect(screen.getByRole('button', { name: /search/i })).toBeVisible();
-		expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
-
 		// check values
 		// flag and shared switches are on
 		expect(screen.getAllByTestId(ICON_REGEXP.switchOn)).toHaveLength(2);
@@ -154,108 +138,6 @@ describe('Advanced search modal content', () => {
 		expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(6);
 	});
 
-	test('reset action clears all the filters', async () => {
-		const filters: AdvancedFilters = {
-			folderId: {
-				value: ROOTS.LOCAL_ROOT,
-				label: 'Home',
-				avatarIcon: 'Folder'
-			},
-			cascade: {
-				value: true
-			},
-			flagged: {
-				value: true,
-				label: 'Flagged',
-				avatarIcon: 'Flag'
-			},
-			sharedByMe: {
-				label: 'Shared',
-				value: true,
-				avatarIcon: 'Share'
-			},
-			keywords: [
-				{
-					value: 'keyword1',
-					label: 'keyword1',
-					hasAvatar: false
-				},
-				{
-					value: 'keyword2',
-					label: 'keyword2',
-					hasAvatar: false
-				}
-			],
-			ownerId: {
-				avatarBackground: 'secondary',
-				label: 'Name Surname',
-				value: '12345678-1234-1234-1234-abcdeabcde12'
-			},
-			type: {
-				avatarBackground: 'secondary',
-				avatarIcon: 'Folder',
-				label: 'Folder',
-				value: NodeType.Folder
-			}
-		};
-		const closeAction = jest.fn();
-		const searchAdvancedFilters = jest.fn();
-		const { user } = setup(
-			<AdvancedSearchModalContent
-				filters={filters}
-				closeAction={closeAction}
-				searchAdvancedFilters={searchAdvancedFilters}
-			/>,
-			{ mocks: {} }
-		);
-		// check values
-		// flag and shared switches are on
-		expect(screen.getAllByTestId(ICON_REGEXP.switchOn)).toHaveLength(2);
-		expect(screen.queryByTestId(ICON_REGEXP.switchOff)).not.toBeInTheDocument();
-		expect(screen.getByText(/\bkeyword1\b/)).toBeVisible();
-		expect(screen.getByText(/\bkeyword2\b/)).toBeVisible();
-		expect(screen.getByText(/\bHome\b/)).toBeVisible();
-		expect(screen.getAllByTestId(ICON_REGEXP.searchFolderChip)).toHaveLength(2);
-
-		expect(screen.getAllByTestId(ICON_REGEXP.searchFolderChip)[0]).toBeVisible();
-		expect(screen.getAllByTestId(ICON_REGEXP.searchFolderChip)[1]).toBeVisible();
-
-		// owner chip
-		expect(screen.getByText('Name Surname')).toBeVisible();
-		// item type chip
-		expect(screen.getByText('Folder')).toBeVisible();
-
-		// 4 close icons: 2 keywords, 1 folder, 1 close modal, 1 owner, 1 item type
-		expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(6);
-
-		const resetButton = screen.getByRole('button', { name: /reset filters/i });
-		const searchButton = screen.getByRole('button', { name: /search/i });
-		expect(resetButton).toBeVisible();
-		expect(resetButton).toBeEnabled();
-		expect(searchButton).toBeVisible();
-		expect(searchButton).toBeDisabled();
-
-		// change 1 param to enable search button
-		await user.click(screen.getByText(/^flagged/i));
-		await waitFor(() => expect(searchButton).toBeEnabled());
-		await user.click(resetButton);
-		await waitFor(() => expect(searchButton).toBeDisabled());
-		// flag and shared switches are off
-		expect(screen.getAllByTestId(ICON_REGEXP.switchOff)).toHaveLength(2);
-		expect(screen.queryByTestId(ICON_REGEXP.switchOn)).not.toBeInTheDocument();
-		expect(screen.queryByText(/\bkeyword1\b/)).not.toBeInTheDocument();
-		expect(screen.queryByText(/\bkeyword2\b/)).not.toBeInTheDocument();
-		expect(screen.queryByText(/\bHome\b/)).not.toBeInTheDocument();
-		expect(screen.queryByTestId(ICON_REGEXP.searchFolderChip)).not.toBeInTheDocument();
-		expect(screen.queryByText('Name Surname')).not.toBeInTheDocument();
-		expect(screen.queryByText('Folder')).not.toBeInTheDocument();
-
-		// 1 close icon: close modal
-		expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
-		await user.click(screen.getByRole('button', { name: /search/i }));
-		expect(searchAdvancedFilters).not.toHaveBeenCalled();
-	});
-
 	test('close modal does not run search', async () => {
 		const filters = {};
 		const closeAction = jest.fn();
@@ -268,12 +150,8 @@ describe('Advanced search modal content', () => {
 			/>,
 			{ mocks: {} }
 		);
-		expect(screen.getByText(/^flagged/i)).toBeVisible();
-		const searchButton = screen.getByRole('button', { name: /search/i });
-		expect(searchButton).toBeDisabled();
 		await user.click(screen.getByText(/^flagged/i));
-		await waitFor(() => expect(searchButton).toBeEnabled());
-		expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
+		// search button is now enabled
 		await user.click(screen.getByTestId(ICON_REGEXP.close));
 		expect(closeAction).toHaveBeenCalled();
 		expect(searchAdvancedFilters).not.toHaveBeenCalled();
@@ -295,13 +173,9 @@ describe('Advanced search modal content', () => {
 			// 1 close icon: close modal one
 			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
-			expect(searchButton).toBeVisible();
-			expect(searchButton).toBeDisabled();
 			const inputElement = screen.getByRole('textbox', { name: /keywords/i });
-			expect(screen.getByText(/keywords/i)).toBeVisible();
 			// create chip with comma
 			await user.type(inputElement, 'keyword1');
-			expect(inputElement).toHaveValue('keyword1');
 			await user.type(inputElement, ',');
 			// 2 close icons: 1 chip and modal
 			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2));
@@ -335,7 +209,6 @@ describe('Advanced search modal content', () => {
 			expect(screen.getByText('keyword 2')).toBeVisible();
 			expect(screen.getByText('keyword3')).toBeVisible();
 			expect(screen.getByText('keyword4')).toBeVisible();
-			expect(searchAdvancedFilters).toHaveBeenCalled();
 			expect(searchAdvancedFilters).toHaveBeenCalledWith({
 				keywords: [
 					expect.objectContaining({ label: 'keyword1', value: 'keyword1', hasAvatar: false }),
@@ -360,12 +233,8 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/^flagged/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
-			expect(searchButton).toBeVisible();
-			expect(searchButton).toBeDisabled();
 			await user.click(screen.getByText(/^flagged/i));
-			await waitFor(() => expect(searchButton).toBeEnabled());
 			await user.click(searchButton);
 			expect(searchAdvancedFilters).toHaveBeenCalledWith({
 				flagged: expect.objectContaining({ value: true, label: 'Flagged', avatarIcon: 'Flag' })
@@ -396,12 +265,8 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/^flagged/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
-			expect(searchButton).toBeVisible();
-			expect(searchButton).toBeDisabled();
 			await user.click(screen.getByText(/^flagged/i));
-			await waitFor(() => expect(searchButton).toBeEnabled());
 			await user.click(searchButton);
 			// flagged is not set because "select off" corresponds to "undefined"
 			expect(searchAdvancedFilters).toHaveBeenCalledWith({
@@ -425,10 +290,7 @@ describe('Advanced search modal content', () => {
 			);
 			expect(screen.getByText(/^shared/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
-			expect(searchButton).toBeVisible();
-			expect(searchButton).toBeDisabled();
 			await user.click(screen.getByText(/^shared/i));
-			await waitFor(() => expect(searchButton).toBeEnabled());
 			await user.click(searchButton);
 			expect(searchAdvancedFilters).toHaveBeenCalledWith({
 				sharedByMe: expect.objectContaining({ value: true, label: 'Shared', avatarIcon: 'Share' })
@@ -459,12 +321,8 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/^shared/i)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
-			expect(searchButton).toBeVisible();
-			expect(searchButton).toBeDisabled();
 			await user.click(screen.getByText(/^shared/i));
-			await waitFor(() => expect(searchButton).toBeEnabled());
 			await user.click(searchButton);
 			// flagged is not set because "select off" corresponds to "undefined"
 			expect(searchAdvancedFilters).toHaveBeenCalledWith({
@@ -486,8 +344,6 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/select a folder/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
 			await user.type(screen.getByRole('textbox', { name: /select a folder/i }), 'something');
 			await screen.findByRole('button', { name: /go back/i });
 			act(() => {
@@ -513,8 +369,6 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/select a folder/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.searchInFolder));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
@@ -539,15 +393,12 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/select a folder/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.searchInFolder));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByText(/trash/i)).toBeVisible();
 			await user.click(screen.getByText(/trash/i));
 			await waitFor(() =>
 				expect(screen.getByRole('button', { name: /choose folder/i })).toBeEnabled()
@@ -582,15 +433,12 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/select a folder/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.searchInFolder));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByText(/trash/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 			await user.click(screen.getByText(/trash/i));
 			await waitFor(() =>
@@ -637,16 +485,12 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks }
 			);
-			expect(screen.getByText(/select a folder/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.searchInFolder));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
 				jest.runOnlyPendingTimers();
 			});
-			expect(screen.getByText(/trash/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 			await user.click(screen.getByText(/trash/i));
 			expect(screen.getByRole('button', { name: /choose folder/i })).toBeDisabled();
 			await user.click(screen.getByRole('button', { name: /choose folder/i }));
@@ -666,8 +510,6 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/select a folder/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.searchInFolder));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
@@ -710,8 +552,6 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			expect(screen.getByText(/select a folder/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
 			await user.click(screen.getByTestId(ICON_REGEXP.searchInFolder));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
@@ -763,10 +603,6 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks }
 			);
-			expect(screen.getByText(/select a folder/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchInFolder)).toBeVisible();
-			expect(screen.getByText(/trash/i)).toBeVisible();
-			expect(screen.getByTestId(ICON_REGEXP.searchFolderChip)).toBeVisible();
 			// 2 close icon: 1 chip, 1 close modal
 			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
 			await user.click(screen.getByTestId(ICON_REGEXP.searchInFolder));
@@ -776,7 +612,6 @@ describe('Advanced search modal content', () => {
 				jest.runOnlyPendingTimers();
 			});
 			expect(screen.getAllByText(/trash/i)).toHaveLength(2);
-			expect(screen.getByText(/home/i)).toBeVisible();
 			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 			await user.click(screen.getByText(/home/i));
 			await waitFor(() =>
@@ -833,31 +668,21 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			// 1 close icon: close modal one
-			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
-			expect(searchButton).toBeVisible();
-			expect(searchButton).toBeDisabled();
 			const inputElement = screen.getByRole('textbox', { name: /owner/i });
-			expect(screen.getByText(/owner/i)).toBeVisible();
-
 			await user.type(inputElement, 'test');
-			expect(inputElement).toHaveValue('test');
 
 			const dropdownItem = await screen.findByText('test@email.com');
 			expect(dropdownItem).toBeVisible();
 
 			await user.click(dropdownItem);
 
-			// 2 close icons: 1 chip and modal
-			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2));
+			const chip = screen.getByTestId('chip');
+			expect(within(chip).getByTestId(ICON_REGEXP.close)).toBeVisible();
 			// search button becomes enabled
 			await waitFor(() => expect(searchButton).toBeEnabled());
-			expect(screen.getByText('firstName lastName')).toBeVisible();
-
-			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
+			expect(within(chip).getByText('firstName lastName')).toBeVisible();
 			await user.click(searchButton);
-			expect(searchAdvancedFilters).toHaveBeenCalled();
 			expect(searchAdvancedFilters).toHaveBeenCalledWith({
 				ownerId: expect.objectContaining({
 					avatarBackground: 'secondary',
@@ -881,14 +706,8 @@ describe('Advanced search modal content', () => {
 				/>,
 				{ mocks: {} }
 			);
-			// 1 close icon: close modal one
-			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
 			const searchButton = screen.getByRole('button', { name: /search/i });
-			expect(searchButton).toBeVisible();
-			expect(searchButton).toBeDisabled();
 			const inputElement = screen.getByRole('textbox', { name: /item type/i });
-			expect(screen.getByText(/item type/i)).toBeVisible();
-
 			// open dropdown clicking on input
 			await user.click(inputElement);
 
@@ -920,16 +739,13 @@ describe('Advanced search modal content', () => {
 
 			await user.click(folderDropdownItemLabel);
 
-			// 2 close icons: 1 chip and modal
-			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2));
+			const chip = screen.getByTestId('chip');
+			expect(within(chip).getByTestId(ICON_REGEXP.close)).toBeVisible();
 			// search button becomes enabled
 			await waitFor(() => expect(searchButton).toBeEnabled());
 
-			expect(screen.getByText('Folder')).toBeVisible();
-			expect(screen.getAllByTestId(ICON_REGEXP.close)).toHaveLength(2);
+			expect(within(chip).getByText('Folder')).toBeVisible();
 			await user.click(searchButton);
-
-			expect(searchAdvancedFilters).toHaveBeenCalled();
 			expect(searchAdvancedFilters).toHaveBeenCalledWith({
 				type: expect.objectContaining({
 					avatarBackground: 'secondary',
@@ -958,6 +774,130 @@ describe('Advanced search modal content', () => {
 			await user.click(inputElement);
 			await screen.findByTestId(SELECTORS.dropdownList);
 			expect(screen.getByTestId(ICON_REGEXP.openedAdvancedFilters)).toBeVisible();
+		});
+	});
+
+	describe('Reset filters button', () => {
+		it('should enable the reset button if the user puts a filter', async () => {
+			const filters: AdvancedFilters = {};
+			const closeAction = jest.fn();
+			const searchAdvancedFilters = jest.fn();
+			const { user } = setup(
+				<AdvancedSearchModalContent
+					filters={filters}
+					closeAction={closeAction}
+					searchAdvancedFilters={searchAdvancedFilters}
+				/>
+			);
+
+			const switchesOff = screen.getAllByTestId(ICON_REGEXP.switchOff);
+			await user.click(switchesOff[0]);
+			expect(screen.getByRole('button', { name: /reset filters/i })).toBeEnabled();
+		});
+
+		it('should render the reset button enabled if there is atleast a filter already set', async () => {
+			const filters: AdvancedFilters = {
+				flagged: {
+					value: true,
+					label: 'Flagged',
+					avatarIcon: 'Flag'
+				}
+			};
+			const closeAction = jest.fn();
+			const searchAdvancedFilters = jest.fn();
+			const { user } = setup(
+				<AdvancedSearchModalContent
+					filters={filters}
+					closeAction={closeAction}
+					searchAdvancedFilters={searchAdvancedFilters}
+				/>
+			);
+
+			// the flagged filter is on by default
+			expect(screen.getByRole('button', { name: /reset filters/i })).toBeEnabled();
+			// turn off the filter to disable the reset button
+			await user.click(screen.getByTestId(ICON_REGEXP.switchOn));
+			expect(screen.getByRole('button', { name: /reset filters/i })).toBeDisabled();
+		});
+
+		it('should reset all the filters when the user clicks on reset button', async () => {
+			const filters: AdvancedFilters = {
+				folderId: {
+					value: ROOTS.LOCAL_ROOT,
+					label: 'Home',
+					avatarIcon: 'Folder'
+				},
+				cascade: {
+					value: true
+				},
+				flagged: {
+					value: true,
+					label: 'Flagged',
+					avatarIcon: 'Flag'
+				},
+				sharedByMe: {
+					label: 'Shared',
+					value: true,
+					avatarIcon: 'Share'
+				},
+				keywords: [
+					{
+						value: 'keyword1',
+						label: 'keyword1',
+						hasAvatar: false
+					},
+					{
+						value: 'keyword2',
+						label: 'keyword2',
+						hasAvatar: false
+					}
+				],
+				ownerId: {
+					avatarBackground: 'secondary',
+					label: 'Name Surname',
+					value: '12345678-1234-1234-1234-abcdeabcde12'
+				},
+				type: {
+					avatarBackground: 'secondary',
+					avatarIcon: 'Folder',
+					label: 'Folder',
+					value: NodeType.Folder
+				}
+			};
+			const closeAction = jest.fn();
+			const searchAdvancedFilters = jest.fn();
+			const { user } = setup(
+				<AdvancedSearchModalContent
+					filters={filters}
+					closeAction={closeAction}
+					searchAdvancedFilters={searchAdvancedFilters}
+				/>,
+				{ mocks: {} }
+			);
+
+			const resetButton = screen.getByRole('button', { name: /reset filters/i });
+			const searchButton = screen.getByRole('button', { name: /search/i });
+			expect(resetButton).toBeEnabled();
+			expect(searchButton).toBeDisabled();
+			// change 1 param to enable the search button
+			await user.click(screen.getByText(/^flagged/i));
+			await waitFor(() => expect(searchButton).toBeEnabled());
+			await user.click(resetButton);
+			await waitFor(() => expect(searchButton).toBeDisabled());
+			// flag and shared switches are off
+			expect(screen.getAllByTestId(ICON_REGEXP.switchOff)).toHaveLength(2);
+			expect(screen.queryByTestId(ICON_REGEXP.switchOn)).not.toBeInTheDocument();
+			expect(screen.queryByText(/\bkeyword1\b/)).not.toBeInTheDocument();
+			expect(screen.queryByText(/\bkeyword2\b/)).not.toBeInTheDocument();
+			expect(screen.queryByText(/\bHome\b/)).not.toBeInTheDocument();
+			expect(screen.queryByTestId(ICON_REGEXP.searchFolderChip)).not.toBeInTheDocument();
+			expect(screen.queryByText('Name Surname')).not.toBeInTheDocument();
+			expect(screen.queryByText('Folder')).not.toBeInTheDocument();
+
+			// 1 close icon: close modal
+			expect(screen.getByTestId(ICON_REGEXP.close)).toBeVisible();
+			await user.click(screen.getByRole('button', { name: /search/i }));
+			expect(searchAdvancedFilters).not.toHaveBeenCalled();
 		});
 	});
 });

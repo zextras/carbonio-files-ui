@@ -49,6 +49,8 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+
 describe('Move', () => {
 	describe('Selection mode', () => {
 		test('Move for single node confirm action close the modal, remove items to move from children and clear cached data for destination folder', async () => {

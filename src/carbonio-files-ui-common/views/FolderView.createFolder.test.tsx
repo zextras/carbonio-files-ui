@@ -44,6 +44,7 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
 
 function clickOnCreateFolderAction(createOptions: CreateOption[]): void {
 	const createFolder = createOptions.find((option) => option.id === ACTION_IDS.CREATE_FOLDER);

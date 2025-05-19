@@ -10,6 +10,7 @@ import { keyBy } from 'lodash';
 
 import { UploadDisplayerNode } from './UploadDisplayerNode';
 import { uploadVar } from '../../apollo/uploadVar';
+import { HTTP_STATUS_CODE } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import {
 	populateFolder,
@@ -311,5 +312,69 @@ describe('Upload Displayer Node', () => {
 
 		expect(screen.getByText(/path/i)).toBeVisible();
 		expect(screen.getByText(/item name/i)).toBeVisible();
+	});
+
+	describe('Error Banner', () => {
+		it('should display banner with aborted message when upload is interrupted', () => {
+			const uploadItem = populateUploadItem({
+				statusCode: HTTP_STATUS_CODE.aborted
+			});
+
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />);
+
+			expect(
+				screen.getByText(
+					/The upload was interrupted or blocked. Please try again or check your connection./i
+				)
+			).toBeVisible();
+		});
+
+		it('should display banner with version limit message when max versions reached', () => {
+			const uploadItem = populateUploadItem({
+				statusCode: HTTP_STATUS_CODE.maxVersionReached
+			});
+
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />);
+
+			expect(
+				screen.getByText(
+					/The file could not be uploaded because the maximum number of versions has been reached./i
+				)
+			).toBeVisible();
+		});
+
+		it('should display banner with size limit message when file size is exceeded', () => {
+			const uploadItem = populateUploadItem({
+				statusCode: HTTP_STATUS_CODE.fileSizeExceeded
+			});
+
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />);
+
+			expect(
+				screen.getByText(/The file could not be uploaded because it exceeds the allowed limit./i)
+			).toBeVisible();
+		});
+
+		it('should not display error banner when status code is undefined', () => {
+			const uploadItem = populateUploadItem({
+				statusCode: undefined
+			});
+
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />);
+			expect(
+				screen.queryByText(/was interrupted|versions has been reached|exceeds the allowed limit/i)
+			).not.toBeInTheDocument();
+		});
+
+		it('should not display error banner for unhandled status codes', () => {
+			const uploadItem = populateUploadItem({
+				statusCode: HTTP_STATUS_CODE.overQuota
+			});
+
+			setup(<UploadDisplayerNode uploadItem={uploadItem} />);
+			expect(
+				screen.queryByText(/was interrupted|versions has been reached|exceeds the allowed limit/i)
+			).not.toBeInTheDocument();
+		});
 	});
 });

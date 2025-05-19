@@ -16,14 +16,13 @@ import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { File as FilesFile, Folder } from '../../../../types/graphql/types';
 import { mockCreateLink, mockGetLinks, mockUpdateLink } from '../../../../utils/resolverMocks';
 import * as moduleUtils from '../../../../utils/utils';
-import { generateAccessCode, isFolder } from '../../../../utils/utils';
+import { generateAccessCode } from '../../../../utils/utils';
 
 function getPublicLinkProps(node: FilesFile | Folder): ComponentProps<typeof PublicLink> {
 	return {
 		linkName: 'Link name',
 		linkTitle: 'Link title',
 		linkDescription: 'Link description',
-		isFolder: isFolder(node),
 		nodeId: node.id,
 		nodeName: node.name
 	};
@@ -39,13 +38,13 @@ describe('Access code', () => {
 		expect(screen.getByText(/enable access code/i)).toBeVisible();
 	});
 
-	it('should not render the access code switch and description on files', async () => {
+	it('should render the access code switch and description on files', async () => {
 		const props = getPublicLinkProps(populateNode('File'));
 		const { user } = setup(<PublicLink {...props} />);
 
 		await user.click(screen.getByRole('button', { name: /add link/i }));
-		expect(screen.queryByTestId(ICON_REGEXP.switchOff)).not.toBeInTheDocument();
-		expect(screen.queryByText(/enable access code/i)).not.toBeInTheDocument();
+		expect(screen.getByTestId(ICON_REGEXP.switchOff)).toBeVisible();
+		expect(screen.queryByText(/enable access code/i)).toBeVisible();
 	});
 
 	it('should generate the access code when the user enables the access code', async () => {

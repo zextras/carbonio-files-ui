@@ -50,12 +50,7 @@ const UploadView = (): React.JSX.Element => {
 			<OverQuotaBanner />
 			<ViewLayout
 				listComponent={ListComponent}
-				displayerComponent={
-					<UploadDisplayer
-						translationKey="displayer.uploads"
-						icons={['ImageOutline', 'FileAddOutline', 'FilmOutline']}
-					/>
-				}
+				displayerComponent={<UploadDisplayer />}
 				listContextValue={listContextValue}
 			/>
 		</>

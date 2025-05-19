@@ -107,7 +107,6 @@ interface PublicLinkComponentProps {
 	onRevokeOrRemove: (linkId: string, isRevoke: boolean) => void;
 	forceUrlCopyDisabled: boolean;
 	linkName: string;
-	isFolder: boolean;
 }
 
 export const PublicLinkComponent = ({
@@ -122,8 +121,7 @@ export const PublicLinkComponent = ({
 	onUndo,
 	onRevokeOrRemove,
 	forceUrlCopyDisabled,
-	linkName,
-	isFolder
+	linkName
 }: PublicLinkComponentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
@@ -250,18 +248,20 @@ export const PublicLinkComponent = ({
 
 	return (
 		<Container>
-			<RouteLeavingGuard
-				when={isSomethingChanged}
-				onSave={onEditConfirmCallback}
-				dataHasError={moreThan300Characters}
-			>
-				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
-				</Text>
-				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
-				</Text>
-			</RouteLeavingGuard>
+			{isSomethingChanged && (
+				<RouteLeavingGuard
+					when={isSomethingChanged}
+					onSave={onEditConfirmCallback}
+					dataHasError={moreThan300Characters}
+				>
+					<Text overflow="break-word">
+						{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
+					</Text>
+					<Text overflow="break-word">
+						{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
+					</Text>
+				</RouteLeavingGuard>
+			)}
 			<Padding vertical="small" />
 			<Container orientation="horizontal" mainAlignment="space-between">
 				<Chip
@@ -386,14 +386,12 @@ export const PublicLinkComponent = ({
 							</Text>
 						</Row>
 					)}
-					{isFolder && (
-						<AccessCodeSection
-							accessCode={newAccessCodeValue}
-							isAccessCodeEnabled={isAccessCodeEnabled}
-							toggleAccessCode={toggleAccessCode}
-							regenerateAccessCode={regenerateAccessCode}
-						/>
-					)}
+					<AccessCodeSection
+						accessCode={newAccessCodeValue}
+						isAccessCodeEnabled={isAccessCodeEnabled}
+						toggleAccessCode={toggleAccessCode}
+						regenerateAccessCode={regenerateAccessCode}
+					/>
 				</>
 			)}
 

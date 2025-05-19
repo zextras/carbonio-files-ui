@@ -4,44 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { useCallback } from 'react';
-
 import * as shell from '@zextras/carbonio-shell-ui';
-import { useHistory } from 'react-router-dom';
 
-import { FILES_APP_ID, FILES_ROUTE } from '../../src/carbonio-files-ui-common/constants';
 import { LOGGED_USER_ACCOUNT } from '../../src/mocks/constants';
-
-export const useReplaceHistoryCallback: typeof shell.useReplaceHistoryCallback = () => {
-	const history = useHistory();
-	return useCallback(
-		(location) => {
-			if (typeof location === 'string') {
-				history.replace(location);
-			} else {
-				history.replace(location.path);
-			}
-		},
-		[history]
-	);
-};
-
-export const usePushHistoryCallback: typeof shell.usePushHistoryCallback = () => {
-	const history = useHistory();
-	return useCallback(
-		(location) => {
-			if (typeof location === 'string') {
-				history.push(location);
-			} else {
-				history.push(location.path);
-			}
-		},
-		[history]
-	);
-};
-
-export const useGoBackHistoryCallback: typeof shell.useGoBackHistoryCallback = () =>
-	useHistory().goBack;
 
 export const soapFetch: typeof shell.soapFetch = (req, body) =>
 	Promise.reject(
@@ -60,11 +25,6 @@ export const report: typeof shell.report = () => '';
 export const ACTION_TYPES: Partial<typeof shell.ACTION_TYPES> = {
 	NEW: 'new'
 };
-export const getCurrentRoute: typeof shell.getCurrentRoute = () => ({
-	route: FILES_ROUTE,
-	id: FILES_APP_ID,
-	app: 'carbonio-files-ui'
-});
 
 export const getIntegratedFunction: typeof shell.getIntegratedFunction = <T,>() => [
 	((): void => undefined) as T,

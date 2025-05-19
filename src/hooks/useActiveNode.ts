@@ -7,13 +7,10 @@
 import { useCallback } from 'react';
 
 import { includes } from 'lodash';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { useNavigation } from './useNavigation';
 import { DISPLAYER_TABS } from '../carbonio-files-ui-common/constants';
 import useQueryParam from '../carbonio-files-ui-common/hooks/useQueryParam';
-import { URLParams } from '../carbonio-files-ui-common/types/common';
-import { isSearchView } from '../carbonio-files-ui-common/utils/utils';
 
 export function useActiveNode(): {
 	activeNodeId?: string;
@@ -25,67 +22,38 @@ export function useActiveNode(): {
 	isVersioningTab: boolean;
 	isExistingTab: boolean;
 } {
-	const { navigateTo } = useNavigation();
+	const [searchParams, setSearchParams] = useSearchParams();
 
+	const navigate = useNavigate();
 	const activeNodeId = useQueryParam('node');
 	const tab = useQueryParam('tab');
 
-	const { rootId, filter, view = '' } = useParams<URLParams>();
 	const folderId = useQueryParam('folder');
 	const fileId = useQueryParam('file');
-	const history = useHistory();
-	const inSearchView = isSearchView(history.location);
 
 	const setActiveNode = useCallback(
 		(newId: string, newTab?: string) => {
-			let queryParams = '?';
+			const queryParams: string[] = [];
 			if (folderId) {
-				queryParams += `folder=${folderId}&`;
+				queryParams.push(`folder=${folderId}`);
 			} else if (fileId) {
-				queryParams += `file=${fileId}&`;
+				queryParams.push(`file=${fileId}`);
 			}
-			queryParams += `node=${newId}`;
+			queryParams.push(`node=${newId}`);
 
 			if (newTab) {
-				queryParams += `&tab=${newTab}`;
+				queryParams.push(`tab=${newTab}`);
 			}
 
-			if (inSearchView) {
-				const destination = `${history.location.pathname}${queryParams}`;
-				history.replace(destination);
-			} else {
-				let params = '';
-				if (rootId) {
-					params += `/${rootId}`;
-				} else if (filter) {
-					params += `/${filter}/`;
-				}
-				const destination = `/${view}${params}${queryParams}`;
-				navigateTo(destination, true);
-			}
+			navigate({ search: queryParams.join('&') }, { replace: true });
 		},
-		[fileId, filter, folderId, history, inSearchView, navigateTo, rootId, view]
+		[fileId, folderId, navigate]
 	);
 
 	const removeActiveNode = useCallback(() => {
-		if (inSearchView) {
-			const destination = `${history.location.pathname}`;
-			history.replace(destination);
-		} else {
-			let params = '';
-			if (rootId) {
-				params += `/${rootId}`;
-			} else if (filter) {
-				params += `/${filter}/`;
-			}
-			let queryParams = '?';
-			if (folderId) {
-				queryParams += `folder=${folderId}`;
-			}
-			const destination = `/${view}${params}${queryParams}`;
-			navigateTo(destination, true);
-		}
-	}, [filter, folderId, history, inSearchView, navigateTo, rootId, view]);
+		searchParams.delete('node');
+		setSearchParams(searchParams, { replace: true });
+	}, [searchParams, setSearchParams]);
 
 	return {
 		activeNodeId,

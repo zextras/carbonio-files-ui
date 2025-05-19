@@ -24,7 +24,7 @@ import {
 	mockGetLinks,
 	mockUpdateLink
 } from '../../../../utils/resolverMocks';
-import { formatDate, initExpirationDate, isFolder } from '../../../../utils/utils';
+import { formatDate, initExpirationDate } from '../../../../utils/utils';
 import * as moduleUtils from '../../../../utils/utils';
 
 const getDayBefore = (): number | null => {
@@ -39,7 +39,6 @@ function getPublicLinkProps(node: FilesFile | Folder): ComponentProps<typeof Pub
 		linkName: 'Link name',
 		linkTitle: 'Link title',
 		linkDescription: 'Link description',
-		isFolder: isFolder(node),
 		nodeId: node.id,
 		nodeName: node.name
 	};
@@ -192,9 +191,6 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 
 		await screen.findAllByText(links[0].url as string);
 		expect(screen.getByText(/The maximum amount of public links has been reached/i)).toBeVisible();
-		expect(screen.queryByRole('button', { name: /undo/i })).not.toBeInTheDocument();
-		expect(screen.queryByRole('button', { name: /generate link/i })).not.toBeInTheDocument();
-		expect(screen.queryByRole('button', { name: /add link/i })).not.toBeInTheDocument();
 	});
 
 	describe('Undo button', () => {

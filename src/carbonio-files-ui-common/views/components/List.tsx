@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
@@ -288,7 +288,21 @@ export const List = ({
 		}
 	}, [nodes, selectedIDs, openNodeWithDocs, exitSelectionMode]);
 
-	const { initPreview, emptyPreview, openPreview } = useContext(PreviewsManagerContext);
+	const { initPreview, emptyPreview, openPreview, previews, currentIndex } =
+		useContext(PreviewsManagerContext);
+
+	const lastPreviewLength = useRef(0);
+	useEffect(() => {
+		if (
+			hasMore &&
+			currentIndex !== -1 &&
+			currentIndex + 1 >= previews.length - 1 &&
+			lastPreviewLength.current !== previews.length
+		) {
+			lastPreviewLength.current = previews.length;
+			loadMore?.();
+		}
+	}, [currentIndex, hasMore, loadMore, previews.length]);
 
 	const getHeaderActions = useHeaderActions();
 
@@ -308,7 +322,36 @@ export const List = ({
 						icon: 'ArrowBackOutline',
 						tooltipLabel: t('preview.close.tooltip', 'Close')
 					},
-					id: node.id
+					id: node.id,
+					errorLabel: t('preview.document.errorLabel', 'Failed to load document preview.'),
+					loadingLabel: t('preview.document.loadingLabel', 'Loading document preview…'),
+					printActionTooltipLabel: t('preview.print.tooltip', 'Print'),
+					pageLabel: t('preview.page.label', 'Page'),
+					previousTooltip: t('preview.previous.tooltip', 'Previous'),
+					nextTooltip: t('preview.next.tooltip', 'Next'),
+					fitToWidthLabel: t('preview.fitWidth.label', 'Fit to width'),
+					lowerLimitReachedLabel: t(
+						'preview.minimumZoomReached.tooltip',
+						'Minimum zoom level reached'
+					),
+					upperLimitReachedLabel: t(
+						'preview.maximumZoomReached.tooltip',
+						'Maximum zoom level reached'
+					),
+					resetZoomLabel: t('preview.resetZoom.tooltip', 'Reset zoom'),
+					zoomInLabel: t('preview.zoomIn.tooltip', 'Zoom in'),
+					zoomOutLabel: t('preview.zoomOut.tooltip', 'Zoom out'),
+					titleLabel: t('preview.fileSizeExceeded.title', 'This item cannot be displayed'),
+					contentLabel: t(
+						'preview.fileSizeExceeded.content',
+						'The file size exceeds the limit allowed and cannot be displayed'
+					),
+					downloadLabel: t('preview.fileSizeExceeded.download', 'DOWNLOAD FILE'),
+					openLabel: t('preview.fileSizeExceeded.openTab', 'OPEN IN A SEPARATE TAB'),
+					noteLabel: t(
+						'preview.fileSizeExceeded.note',
+						'Please, download it or open it in a separate tab'
+					)
 				};
 
 				if (node.type === NodeType.Video) {
@@ -357,8 +400,9 @@ export const List = ({
 
 	useEffect(() => {
 		initPreview(nodesForPreview);
-		return emptyPreview;
-	}, [emptyPreview, initPreview, nodesForPreview]);
+	}, [initPreview, nodesForPreview]);
+
+	useEffect(() => emptyPreview, [emptyPreview]);
 
 	const previewSelection = useCallback(() => {
 		const nodeToPreview = nodes.find((node) => node.id === selectedIDs[0]);
@@ -495,7 +539,7 @@ export const List = ({
 					createSnackbar({
 						key: new Date().toLocaleString(),
 						severity: 'info',
-						label: t('uploads.destination.home', "Upload occurred in Files' Home"),
+						label: t('uploads.destination.home', "Upload started in Files' Home"),
 						actionLabel: t('snackbar.upload.goToFolder', 'Go to folder'),
 						onActionClick: () => {
 							navigateToFolder(ROOTS.LOCAL_ROOT);

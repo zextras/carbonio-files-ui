@@ -27,7 +27,6 @@ import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 import { TextWithLineHeight } from '../../StyledComponents';
 
 interface AddPublicLinkComponentProps {
-	isFolder: boolean;
 	status: PublicLinkRowStatus;
 	onAddLink: () => void;
 	onUndo: () => void;
@@ -42,7 +41,6 @@ interface AddPublicLinkComponentProps {
 }
 
 export const AddPublicLinkComponent = ({
-	isFolder,
 	status,
 	onAddLink,
 	onUndo,
@@ -126,18 +124,20 @@ export const AddPublicLinkComponent = ({
 
 	return (
 		<Container>
-			<RouteLeavingGuard
-				when={isSomethingChanged}
-				onSave={onGenerateCallback}
-				dataHasError={moreThan300Characters}
-			>
-				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
-				</Text>
-				<Text overflow="break-word">
-					{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
-				</Text>
-			</RouteLeavingGuard>
+			{isSomethingChanged && (
+				<RouteLeavingGuard
+					when={isSomethingChanged}
+					onSave={onGenerateCallback}
+					dataHasError={moreThan300Characters}
+				>
+					<Text overflow="break-word">
+						{t('modal.unsaved_changes.body.line1', 'Do you want to leave the page without saving?')}
+					</Text>
+					<Text overflow="break-word">
+						{t('modal.unsaved_changes.body.line2', 'All unsaved changes will be lost.')}
+					</Text>
+				</RouteLeavingGuard>
+			)}
 			<Container orientation="horizontal" mainAlignment="space-between">
 				<Container
 					mainAlignment="flex-start"
@@ -237,14 +237,12 @@ export const AddPublicLinkComponent = ({
 							</Text>
 						</Row>
 					)}
-					{isFolder && (
-						<AccessCodeSection
-							accessCode={newAccessCodeValue}
-							isAccessCodeEnabled={isAccessCodeEnabled}
-							regenerateAccessCode={regenerateAccessCode}
-							toggleAccessCode={toggleAccessCode}
-						/>
-					)}
+					<AccessCodeSection
+						accessCode={newAccessCodeValue}
+						isAccessCodeEnabled={isAccessCodeEnabled}
+						regenerateAccessCode={regenerateAccessCode}
+						toggleAccessCode={toggleAccessCode}
+					/>
 					<span ref={scrollToElementRef} />
 				</>
 			)}

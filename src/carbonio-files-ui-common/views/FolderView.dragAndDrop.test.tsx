@@ -36,6 +36,7 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
 
 describe('Drag and drop', () => {
 	test('Drop of a node in a valid folder remove node from current folder list', async () => {

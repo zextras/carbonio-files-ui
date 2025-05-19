@@ -110,7 +110,9 @@ describe('Node List Item', () => {
 						openPreview,
 						initPreview: () => undefined,
 						emptyPreview: () => undefined,
-						createPreview: () => undefined
+						createPreview: () => undefined,
+						currentIndex: -1,
+						previews: []
 					});
 
 					jest.spyOn(useHealthInfo, 'useHealthInfo').mockReturnValue({
@@ -383,7 +385,7 @@ describe('Node List Item', () => {
 					</ListContext.Provider>
 				</SelectionProvider>,
 				{
-					initialRouterEntries: [INTERNAL_PATH.SEARCH]
+					initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`]
 				}
 			);
 			expect(screen.getByText(node.name)).toBeVisible();
@@ -413,7 +415,7 @@ describe('Node List Item', () => {
 					</ListContext.Provider>
 				</SelectionProvider>,
 				{
-					initialRouterEntries: [INTERNAL_PATH.SEARCH]
+					initialRouterEntries: [`/${INTERNAL_PATH.SEARCH}`]
 				}
 			);
 			expect(screen.getByText(node.name)).toBeVisible();

@@ -138,6 +138,7 @@ const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): React
 	return (
 		<ApolloProviderWrapper mocks={mocks}>
 			<MemoryRouter
+				future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
 				initialEntries={initialRouterEntries}
 				initialIndex={
 					initialRouterEntries !== undefined && initialRouterEntries.length > 0

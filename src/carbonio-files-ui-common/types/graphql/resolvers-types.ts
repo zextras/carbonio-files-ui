@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2024 Zextras <https://www.zextras.com>
+ * SPDX-FileCopyrightText: 2025 Zextras <https://www.zextras.com>
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -32,30 +32,30 @@ export type Scalars = {
 
 export type Account = DistributionList | User;
 
-/**
- *  Definition of a collaboration link. It represents an internal link that allows a logged user to
- *  auto-share a specific node with a specific permission.
- *  Each node can have at maximum 2 CollaborationLink:
- *   - one that allows to auto-share the node with the READ+SHARE permission;
- *   - one that allows to auto-share the node with the WRITE+SHARE permission.
- *  A collaboration link can be generated only if the requester has the <strong>can_share</strong>
- *  permission on the node.
- */
+export type AddedNode = {
+	__typename: 'AddedNode';
+	added_node: SnapshotNode;
+	added_node_type: AddedNodeType;
+	created_at: Scalars['DateTime']['output'];
+	destination_folder: SnapshotNode;
+	id: Scalars['ID']['output'];
+	notification_type: NotificationType;
+	triggering_user: SnapshotUser;
+};
+
+export enum AddedNodeType {
+	Copy = 'COPY',
+	Create = 'CREATE',
+	Move = 'MOVE',
+	Upload = 'UPLOAD'
+}
+
 export type CollaborationLink = {
 	__typename: 'CollaborationLink';
-	/**  Link creation timestamp. */
 	created_at: Scalars['DateTime']['output'];
-	/**  Unique identifier of the CollaborationLink. */
 	id: Scalars['ID']['output'];
-	/**  Node on which the share is created when a logged user clicks on the collaboration link. */
 	node: File | Folder;
-	/**  The permission type created/updated when a logged user clicks on the collaboration link. */
 	permission: SharePermission;
-	/**
-	 *  Full URL allowing a logged user to auto-share the related node with the related permission.
-	 *  After the creation/update of the share, the system returns a redirect to the internal url of
-	 *  the shared node.
-	 */
 	url: Scalars['String']['output'];
 };
 
@@ -77,227 +77,113 @@ export type DistributionListUsersArgs = {
 	limit: Scalars['Int']['input'];
 };
 
-/**  Definition of the File type which implements the Node interface */
 export type File = Node & {
 	__typename: 'File';
 	cloned_from_version: Maybe<Scalars['Int']['output']>;
-	/**
-	 *  Returns all the CollaborationLinks of current node.
-	 *  It can be maximum of 2 collaboration links:
-	 *   - one that allows to auto-share the node with the READ+SHARE permission;
-	 *   - one that allows to auto-share the node with the WRITE+SHARE permission.
-	 */
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	/**  File creation timestamp */
 	created_at: Scalars['DateTime']['output'];
-	/**  Creator of the file */
 	creator: User;
-	/**  Description of the file */
 	description: Scalars['String']['output'];
-	/**  Extension of the file */
 	extension: Maybe<Scalars['String']['output']>;
-	/**  True if the owner has marked the file as favourite, false otherwise */
 	flagged: Scalars['Boolean']['output'];
-	/**  Unique identifier of the file */
 	id: Scalars['ID']['output'];
-	/**  Boolean representing if a version in kept forever or not */
 	keep_forever: Scalars['Boolean']['output'];
-	/**  Last user who has edited the file */
 	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
-	/**  Mime type of the file */
 	mime_type: Scalars['String']['output'];
-	/**  Name of the file */
 	name: Scalars['String']['output'];
-	/**  Owner of the file */
 	owner: Maybe<User>;
-	/**  Parent folder containing the file */
 	parent: Maybe<File | Folder>;
-	/**  File permissions of the user making the request */
 	permissions: Permissions;
-	/**  The top level root where the node resides */
 	rootId: Maybe<Scalars['ID']['output']>;
-	/**  Specific share of the current file with the target user (if exists) */
 	share: Maybe<Share>;
-	/**  List of shares of the current file (if they exist) */
 	shares: Array<Maybe<Share>>;
-	/**  Size of the file */
 	size: Scalars['Float']['output'];
-	/**  Type of the node */
 	type: NodeType;
-	/**  File update timestamp */
 	updated_at: Scalars['DateTime']['output'];
-	/**  Version of the file */
 	version: Scalars['Int']['output'];
 };
 
-/**  Definition of the File type which implements the Node interface */
 export type FileShareArgs = {
 	share_target_id: Scalars['ID']['input'];
 };
 
-/**  Definition of the File type which implements the Node interface */
 export type FileSharesArgs = {
 	cursor?: InputMaybe<Scalars['String']['input']>;
 	limit: Scalars['Int']['input'];
 	sorts?: InputMaybe<Array<ShareSort>>;
 };
 
-/**  Definition of the Folder type which implements the Node interface */
 export type Folder = Node & {
 	__typename: 'Folder';
-	/**  List of all child nodes of a folder. */
 	children: NodePage;
-	/**
-	 *  Returns all the CollaborationLinks of current node.
-	 *  It can be maximum of 2 collaboration links:
-	 *   - one that allows to auto-share the node with the READ+SHARE permission;
-	 *   - one that allows to auto-share the node with the WRITE+SHARE permission.
-	 */
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	/**  Folder creation timestamp */
 	created_at: Scalars['DateTime']['output'];
-	/**  Creator of the folder */
 	creator: User;
-	/**  Description of the folder */
 	description: Scalars['String']['output'];
-	/**  True if the owner has marked the folder as favourite, false otherwise */
 	flagged: Scalars['Boolean']['output'];
-	/**  Unique identifier of the folder */
 	id: Scalars['ID']['output'];
-	/**  Last user who has edited the folder */
 	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
-	/**  Name of the folder */
 	name: Scalars['String']['output'];
-	/**  Owner of the folder */
 	owner: Maybe<User>;
-	/**  Parent folder containing the folder. The parent can be null when the current folder is the root */
 	parent: Maybe<File | Folder>;
-	/**  Folder permissions of the user making the request */
 	permissions: Permissions;
-	/**  The top level root where the node resides */
 	rootId: Maybe<Scalars['ID']['output']>;
-	/**  Specific share of the current folder with the target user (if exists) */
 	share: Maybe<Share>;
-	/**  List of shares of the current folder (if they exist) */
 	shares: Array<Maybe<Share>>;
-	/**  Type of the node */
 	type: NodeType;
-	/**  Folder update timestamp */
 	updated_at: Scalars['DateTime']['output'];
 };
 
-/**  Definition of the Folder type which implements the Node interface */
 export type FolderChildrenArgs = {
 	limit: Scalars['Int']['input'];
 	page_token?: InputMaybe<Scalars['String']['input']>;
 	sort: NodeSort;
 };
 
-/**  Definition of the Folder type which implements the Node interface */
 export type FolderShareArgs = {
 	share_target_id: Scalars['ID']['input'];
 };
 
-/**  Definition of the Folder type which implements the Node interface */
 export type FolderSharesArgs = {
 	cursor?: InputMaybe<Scalars['String']['input']>;
 	limit: Scalars['Int']['input'];
 	sorts?: InputMaybe<Array<ShareSort>>;
 };
 
-/**
- *  Definition of the Link type. It represents a public link of a specific node.
- *  Temporarily only a file can have a link
- */
 export type Link = {
 	__typename: 'Link';
-	/**  Link access code. It must be 10 characters long. */
 	access_code: Maybe<Scalars['String']['output']>;
-	/**  Link creation timestamp. */
 	created_at: Scalars['DateTime']['output'];
-	/**  Link description. It must be shorter than 300 characters. */
 	description: Maybe<Scalars['String']['output']>;
-	/**  Link expiration timestamp. */
 	expires_at: Maybe<Scalars['DateTime']['output']>;
-	/**  Unique identifier of the link. */
 	id: Scalars['ID']['output'];
-	/**  Node related to this link. */
 	node: File | Folder;
-	/**
-	 *  Full URL to access the related node. It will be returned only if the requester has the
-	 *  <strong>can_share<strong> permission on the node. However anyone who has this link can
-	 *  download the node.
-	 */
 	url: Maybe<Scalars['String']['output']>;
 };
 
 export type Mutation = {
 	__typename: 'Mutation';
 	cloneVersion: File;
-	/**  Allows to copy a list of Nodes into a specified Folder. */
 	copyNodes: Maybe<Array<File | Folder>>;
-	/**
-	 *  Allows to create a collaboration link for an existing node. A collaboration link can be created
-	 *  only if the requester has the <strong>can_share<strong> permission on the specified node.
-	 *  If the collaboration link already exists the system returns the already created one.
-	 */
 	createCollaborationLink: CollaborationLink;
-	/**  <strong>Creates a new folder</strong> */
 	createFolder: File | Folder;
-	/**
-	 *  Allows to create a public link for an existing node. A link can be created only if the requester has the
-	 *  <strong>can_share<strong> permission on the specified node.
-	 *  Optionally, an expiration timestamp and/or a description can be set.
-	 */
 	createLink: Link;
-	/**
-	 *  Allows to share an existing node to a user specifying the user permissions on that node,
-	 *  and, optionally, an expiration timestamp.
-	 */
 	createShare: Share;
-	/**
-	 *  Allows to delete a list of collaboration links in batch. It returns:
-	 *   - an array of IDs for each collaboration link removed;
-	 *   - a list of errors for each collaboration link that could not be removed.
-	 */
+	deleteAllNodesAndBlobs: Scalars['Boolean']['output'];
 	deleteCollaborationLinks: Array<Maybe<Scalars['ID']['output']>>;
-	/**
-	 *  Allows to delete a list of links in batch. It returns an array of IDs for each removed link and
-	 *  a list of errors for each link that could not be removed.
-	 */
 	deleteLinks: Array<Maybe<Scalars['ID']['output']>>;
-	/**
-	 *  Allows to delete a list of nodes. If the node is a folder then this operation removes the node and all its children,
-	 *  if the node is a file then it removes all the related versions. This operation requires can_delete permission on
-	 *  every node that should be deleted and it cannot be reverted.
-	 */
 	deleteNodes: Maybe<Array<Scalars['ID']['output']>>;
 	deleteShare: Scalars['Boolean']['output'];
-	/** TODO doc */
 	deleteVersions: Array<Maybe<Scalars['Int']['output']>>;
-	/**  Allows to flag a list of nodes. */
 	flagNodes: Maybe<Array<Scalars['ID']['output']>>;
 	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
-	/**
-	 *  Allows to move a list of nodes into a folder destination. This operation requires write permissions on each file
-	 *  should be moved and write permission on the destination folder otherwise it fails.
-	 */
 	moveNodes: Maybe<Array<File | Folder>>;
-	/**  Restores a list of nodes. */
 	restoreNodes: Maybe<Array<Maybe<File | Folder>>>;
-	/**  Trashes a list of nodes. */
 	trashNodes: Maybe<Array<Scalars['ID']['output']>>;
-	/**
-	 *  Allows to update the expiration timestamp and/or the description of an existing link.
-	 *  An existing link can be updated only if the requester has the <strong>can_share<strong>
-	 *  permission on the specified node.
-	 */
 	updateLink: Maybe<Link>;
-	/**  <strong>Update an existing node</strong> */
 	updateNode: File | Folder;
-	/**  Allows to update the SharePermissions and the expiration timestamp of an existing share. */
 	updateShare: Maybe<Share>;
 };
 
@@ -334,6 +220,10 @@ export type MutationCreateShareArgs = {
 	node_id: Scalars['ID']['input'];
 	permission: SharePermission;
 	share_target_id: Scalars['ID']['input'];
+};
+
+export type MutationDeleteAllNodesAndBlobsArgs = {
+	user_id: Scalars['ID']['input'];
 };
 
 export type MutationDeleteCollaborationLinksArgs = {
@@ -403,54 +293,39 @@ export type MutationUpdateShareArgs = {
 	share_target_id: Scalars['ID']['input'];
 };
 
-/**  Definition of the Node interface */
-export type Node = {
-	/**
-	 *  Returns all the CollaborationLinks of current node.
-	 *  It can be maximum of 2 collaboration links:
-	 *   - one that allows to auto-share the node with the READ+SHARE permission;
-	 *   - one that allows to auto-share the node with the WRITE+SHARE permission.
-	 */
-	collaboration_links: Array<Maybe<CollaborationLink>>;
-	/**  Node creation timestamp */
+export type NewShare = {
+	__typename: 'NewShare';
 	created_at: Scalars['DateTime']['output'];
-	/**  Creator of the node (it will be a User type when it will be implemented) */
-	creator: User;
-	/**  Description of the file/folder */
-	description: Scalars['String']['output'];
-	/**  True if the owner has marked the node as favourite, false otherwise */
-	flagged: Scalars['Boolean']['output'];
-	/**  Unique identifier of the node */
 	id: Scalars['ID']['output'];
-	/**  Last user who has edited the node (it will be a User type when it will be implemented) */
+	node: SnapshotNode;
+	notification_type: NotificationType;
+	triggering_user: SnapshotUser;
+};
+
+export type Node = {
+	collaboration_links: Array<Maybe<CollaborationLink>>;
+	created_at: Scalars['DateTime']['output'];
+	creator: User;
+	description: Scalars['String']['output'];
+	flagged: Scalars['Boolean']['output'];
+	id: Scalars['ID']['output'];
 	last_editor: Maybe<User>;
 	links: Array<Maybe<Link>>;
-	/**  Name of the file/folder */
 	name: Scalars['String']['output'];
-	/**  Owner of the node (it will be a User type when it will be implemented) */
 	owner: Maybe<User>;
-	/**  Parent folder containing the node. The parent can be null when the current node is the root folder */
 	parent: Maybe<File | Folder>;
-	/**  Node permissions of the user making the request */
 	permissions: Permissions;
-	/**  The top level root where the node resides */
 	rootId: Maybe<Scalars['ID']['output']>;
-	/**  Specific share of the current node with the target user (if exists) */
 	share: Maybe<Share>;
-	/**  List of shares of the current node (if they exist) */
 	shares: Array<Maybe<Share>>;
-	/**  Type of the node */
 	type: NodeType;
-	/**  Node update timestamp */
 	updated_at: Scalars['DateTime']['output'];
 };
 
-/**  Definition of the Node interface */
 export type NodeShareArgs = {
 	share_target_id: Scalars['ID']['input'];
 };
 
-/**  Definition of the Node interface */
 export type NodeSharesArgs = {
 	cursor?: InputMaybe<Scalars['String']['input']>;
 	limit: Scalars['Int']['input'];
@@ -459,13 +334,10 @@ export type NodeSharesArgs = {
 
 export type NodePage = {
 	__typename: 'NodePage';
-	/** The list of nodes of the requested page */
 	nodes: Array<Maybe<File | Folder>>;
-	/**  The token to use as a cursor for requesting the next page of nodes */
 	page_token: Maybe<Scalars['String']['output']>;
 };
 
-/**  Definition of the NodeSort enumerator. This is useful for sorting the result of a list of nodes. */
 export enum NodeSort {
 	LastEditorAsc = 'LAST_EDITOR_ASC',
 	LastEditorDesc = 'LAST_EDITOR_DESC',
@@ -481,7 +353,6 @@ export enum NodeSort {
 	UpdatedAtDesc = 'UPDATED_AT_DESC'
 }
 
-/** Definition of NodeType enumerator. This is used for discriminating the specific type of a node */
 export enum NodeType {
 	Application = 'APPLICATION',
 	Audio = 'AUDIO',
@@ -496,35 +367,22 @@ export enum NodeType {
 	Video = 'VIDEO'
 }
 
-/**
- * +---------------------------------+-------------------------------------------------------+
- * | Operation                       | Permission                                            |
- * +---------------------------------+-------------------------------------------------------+
- * | Create folder                   | Destination folder: Write and not trashed             |
- * +---------------------------------+-------------------------------------------------------+
- * | Upload node                     | Destination folder: Write and not trashed             |
- * +---------------------------------+-------------------------------------------------------+
- * | Copy node                       | Node to copy: Read                                    |
- * |                                 | Destination folder: Write and not trashed             |
- * +---------------------------------+-------------------------------------------------------+
- * | Move node                       | Node to move: Write                                   |
- * |                                 | Destination folder: Write and not trashed             |
- * +---------------------------------+-------------------------------------------------------+
- * | Download node                   | Read                                                  |
- * +---------------------------------+-------------------------------------------------------+
- * | Delete node                     | Only the owner can delete a node                      |
- * +---------------------------------+-------------------------------------------------------+
- * | List folder                     | Read Folder                                           |
- * +---------------------------------+-------------------------------------------------------+
- * | Get metadata                    | Read                                                  |
- * +---------------------------------+-------------------------------------------------------+
- * | Update metadata                 | Write                                                 |
- * +---------------------------------+-------------------------------------------------------+
- * | Trash/Untrash a node            | Write                                                 |
- * +---------------------------------+-------------------------------------------------------+
- * | Flag/Unflag a node              | Read                                                  |
- * +---------------------------------+-------------------------------------------------------+
- */
+export type Notification = AddedNode | NewShare | RemovedNode;
+
+export type NotificationPage = {
+	__typename: 'NotificationPage';
+	last_seen: Scalars['DateTime']['output'];
+	notifications: Array<Maybe<Notification>>;
+	page_token: Maybe<Scalars['String']['output']>;
+	unread: Scalars['Int']['output'];
+};
+
+export enum NotificationType {
+	AddedNode = 'ADDED_NODE',
+	NewShare = 'NEW_SHARE',
+	RemovedNode = 'REMOVED_NODE'
+}
+
 export type Permissions = {
 	__typename: 'Permissions';
 	can_add_version: Scalars['Boolean']['output'];
@@ -541,33 +399,16 @@ export type Permissions = {
 
 export type Query = {
 	__typename: 'Query';
-	/** <strong> Returns a NodePage based on the given criteria </strong> */
 	findNodes: Maybe<NodePage>;
 	getAccountByEmail: Maybe<Account>;
 	getAccountsByEmail: Array<Maybe<Account>>;
-	/**
-	 *  Returns all the CollaborationLinks of the specified node.
-	 *  The response is not paginated because each node can have a maximum of 2 collaboration links:
-	 *   - one that allows to auto-share the node with the READ+SHARE permission;
-	 *   - one that allows to auto-share the node with the WRITE+SHARE permission.
-	 */
 	getCollaborationLinks: Array<Maybe<CollaborationLink>>;
 	getConfigs: Array<Maybe<Config>>;
-	/**
-	 *  Returns all the links of the specified node.
-	 *  The response is not paginated because each node can have a maximum of 50 links.
-	 */
 	getLinks: Array<Maybe<Link>>;
-	/**  <strong>Returns the attributes of the node specified by ID</strong> */
 	getNode: Maybe<File | Folder>;
-	/**
-	 *  <strong> Returns the list of nodes corresponding to the path of a node</strong>
-	 *  The path is ordered and returns from the highest visible one to the requested node.
-	 */
+	getNotifications: Maybe<NotificationPage>;
 	getPath: Array<Maybe<File | Folder>>;
-	/**  Returns the list of all root folders */
 	getRootsList: Array<Maybe<Root>>;
-	/**  Returns the attributes of the specified share */
 	getShare: Maybe<Share>;
 	getUserById: Maybe<User>;
 	getVersions: Array<Maybe<File>>;
@@ -609,6 +450,12 @@ export type QueryGetNodeArgs = {
 	version?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type QueryGetNotificationsArgs = {
+	limit?: InputMaybe<Scalars['Int']['input']>;
+	page_token?: InputMaybe<Scalars['String']['input']>;
+	update_last_seen: Scalars['Boolean']['input'];
+};
+
 export type QueryGetPathArgs = {
 	node_id: Scalars['ID']['input'];
 };
@@ -627,31 +474,37 @@ export type QueryGetVersionsArgs = {
 	versions?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
-/**  Definition of the type Root. Represents a root folder */
+export type RemovedNode = {
+	__typename: 'RemovedNode';
+	created_at: Scalars['DateTime']['output'];
+	id: Scalars['ID']['output'];
+	notification_type: NotificationType;
+	origin_folder: SnapshotNode;
+	removed_node: SnapshotNode;
+	removed_node_type: RemovedNodeType;
+	triggering_user: SnapshotUser;
+};
+
+export enum RemovedNodeType {
+	Delete = 'DELETE',
+	Move = 'MOVE'
+}
+
 export type Root = {
 	__typename: 'Root';
-	/**  Unique identifier of the root */
 	id: Scalars['ID']['output'];
-	/**  Name of the root */
 	name: Scalars['String']['output'];
 };
 
-/**  Definition of the Share type. It represents a share between a node and a user. */
 export type Share = {
 	__typename: 'Share';
-	/**  Share creation timestamp */
 	created_at: Scalars['DateTime']['output'];
-	/**  Share expiration timestamp */
 	expires_at: Maybe<Scalars['DateTime']['output']>;
-	/**  Node shared */
 	node: File | Folder;
-	/**  User permission for the node */
 	permission: SharePermission;
-	/**  User to whom a node has been shared */
 	share_target: Maybe<SharedTarget>;
 };
 
-/**  The SharePermissions enumerator represents the permissions of a node shared with a user */
 export enum SharePermission {
 	ReadAndShare = 'READ_AND_SHARE',
 	ReadAndWrite = 'READ_AND_WRITE',
@@ -659,32 +512,41 @@ export enum SharePermission {
 	ReadWriteAndShare = 'READ_WRITE_AND_SHARE'
 }
 
-/**  Definition of the ShareSort enumerator. This is useful for sorting the result of a list of shares. */
 export enum ShareSort {
 	CreationAsc = 'CREATION_ASC',
 	CreationDesc = 'CREATION_DESC',
 	ExpirationAsc = 'EXPIRATION_ASC',
 	ExpirationDesc = 'EXPIRATION_DESC',
-	/**  The order is ascending: this means that first are shown the shares with fewer permissions. */
 	SharePermissionsAsc = 'SHARE_PERMISSIONS_ASC',
-	/**  The order is descending: this means that first are shown the shares with more permissions. */
 	SharePermissionsDesc = 'SHARE_PERMISSIONS_DESC',
-	/**  The order is based on the target user identifier and not on his email or display name. */
 	TargetUserAsc = 'TARGET_USER_ASC',
-	/**  The order is based on the target user identifier and not on his email or display name. */
 	TargetUserDesc = 'TARGET_USER_DESC'
 }
 
 export type SharedTarget = DistributionList | User;
 
-/**  Definition of the User type */
+export type SnapshotNode = {
+	__typename: 'SnapshotNode';
+	created_at: Scalars['DateTime']['output'];
+	name: Scalars['String']['output'];
+	node_id: Scalars['ID']['output'];
+	owner_id: Maybe<Scalars['ID']['output']>;
+	snapshot_node_id: Scalars['ID']['output'];
+	type: NodeType;
+};
+
+export type SnapshotUser = {
+	__typename: 'SnapshotUser';
+	email: Scalars['String']['output'];
+	full_name: Scalars['String']['output'];
+	snapshot_user_id: Scalars['ID']['output'];
+	user_id: Scalars['ID']['output'];
+};
+
 export type User = {
 	__typename: 'User';
-	/**  Email of the user */
 	email: Scalars['String']['output'];
-	/**  Full name of the user */
 	full_name: Scalars['String']['output'];
-	/**  Unique identifier of the folder */
 	id: Scalars['ID']['output'];
 };
 
@@ -773,6 +635,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
 	Account: DistributionList | User;
+	Notification: AddedNode | NewShare | RemovedNode;
 	SharedTarget: DistributionList | User;
 };
 
@@ -782,8 +645,8 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 		| (Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 				collaboration_links: Array<Maybe<_RefType['CollaborationLink']>>;
 				links: Array<Maybe<_RefType['Link']>>;
-				parent: Maybe<_RefType['Node']>;
-				share: Maybe<_RefType['Share']>;
+				parent?: Maybe<_RefType['Node']>;
+				share?: Maybe<_RefType['Share']>;
 				shares: Array<Maybe<_RefType['Share']>>;
 		  })
 		| (Omit<
@@ -793,8 +656,8 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 				children: _RefType['NodePage'];
 				collaboration_links: Array<Maybe<_RefType['CollaborationLink']>>;
 				links: Array<Maybe<_RefType['Link']>>;
-				parent: Maybe<_RefType['Node']>;
-				share: Maybe<_RefType['Share']>;
+				parent?: Maybe<_RefType['Node']>;
+				share?: Maybe<_RefType['Share']>;
 				shares: Array<Maybe<_RefType['Share']>>;
 		  });
 };
@@ -802,6 +665,8 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
 	Account: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Account']>;
+	AddedNode: ResolverTypeWrapper<AddedNode>;
+	AddedNodeType: AddedNodeType;
 	Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
 	CollaborationLink: ResolverTypeWrapper<
 		Omit<CollaborationLink, 'node'> & { node: ResolversTypes['Node'] }
@@ -813,8 +678,8 @@ export type ResolversTypes = {
 		Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 			collaboration_links: Array<Maybe<ResolversTypes['CollaborationLink']>>;
 			links: Array<Maybe<ResolversTypes['Link']>>;
-			parent: Maybe<ResolversTypes['Node']>;
-			share: Maybe<ResolversTypes['Share']>;
+			parent?: Maybe<ResolversTypes['Node']>;
+			share?: Maybe<ResolversTypes['Share']>;
 			shares: Array<Maybe<ResolversTypes['Share']>>;
 		}
 	>;
@@ -824,8 +689,8 @@ export type ResolversTypes = {
 			children: ResolversTypes['NodePage'];
 			collaboration_links: Array<Maybe<ResolversTypes['CollaborationLink']>>;
 			links: Array<Maybe<ResolversTypes['Link']>>;
-			parent: Maybe<ResolversTypes['Node']>;
-			share: Maybe<ResolversTypes['Share']>;
+			parent?: Maybe<ResolversTypes['Node']>;
+			share?: Maybe<ResolversTypes['Share']>;
 			shares: Array<Maybe<ResolversTypes['Share']>>;
 		}
 	>;
@@ -833,24 +698,36 @@ export type ResolversTypes = {
 	Int: ResolverTypeWrapper<Scalars['Int']['output']>;
 	Link: ResolverTypeWrapper<Omit<Link, 'node'> & { node: ResolversTypes['Node'] }>;
 	Mutation: ResolverTypeWrapper<{}>;
+	NewShare: ResolverTypeWrapper<NewShare>;
 	Node: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['Node']>;
 	NodePage: ResolverTypeWrapper<
 		Omit<NodePage, 'nodes'> & { nodes: Array<Maybe<ResolversTypes['Node']>> }
 	>;
 	NodeSort: NodeSort;
 	NodeType: NodeType;
+	Notification: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Notification']>;
+	NotificationPage: ResolverTypeWrapper<
+		Omit<NotificationPage, 'notifications'> & {
+			notifications: Array<Maybe<ResolversTypes['Notification']>>;
+		}
+	>;
+	NotificationType: NotificationType;
 	Permissions: ResolverTypeWrapper<Permissions>;
 	Query: ResolverTypeWrapper<{}>;
+	RemovedNode: ResolverTypeWrapper<RemovedNode>;
+	RemovedNodeType: RemovedNodeType;
 	Root: ResolverTypeWrapper<Root>;
 	Share: ResolverTypeWrapper<
 		Omit<Share, 'node' | 'share_target'> & {
 			node: ResolversTypes['Node'];
-			share_target: Maybe<ResolversTypes['SharedTarget']>;
+			share_target?: Maybe<ResolversTypes['SharedTarget']>;
 		}
 	>;
 	SharePermission: SharePermission;
 	ShareSort: ShareSort;
 	SharedTarget: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['SharedTarget']>;
+	SnapshotNode: ResolverTypeWrapper<SnapshotNode>;
+	SnapshotUser: ResolverTypeWrapper<SnapshotUser>;
 	String: ResolverTypeWrapper<Scalars['String']['output']>;
 	User: ResolverTypeWrapper<User>;
 };
@@ -858,6 +735,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
 	Account: ResolversUnionTypes<ResolversParentTypes>['Account'];
+	AddedNode: AddedNode;
 	Boolean: Scalars['Boolean']['output'];
 	CollaborationLink: Omit<CollaborationLink, 'node'> & { node: ResolversParentTypes['Node'] };
 	Config: Config;
@@ -866,8 +744,8 @@ export type ResolversParentTypes = {
 	File: Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 		collaboration_links: Array<Maybe<ResolversParentTypes['CollaborationLink']>>;
 		links: Array<Maybe<ResolversParentTypes['Link']>>;
-		parent: Maybe<ResolversParentTypes['Node']>;
-		share: Maybe<ResolversParentTypes['Share']>;
+		parent?: Maybe<ResolversParentTypes['Node']>;
+		share?: Maybe<ResolversParentTypes['Share']>;
 		shares: Array<Maybe<ResolversParentTypes['Share']>>;
 	};
 	Float: Scalars['Float']['output'];
@@ -878,24 +756,32 @@ export type ResolversParentTypes = {
 		children: ResolversParentTypes['NodePage'];
 		collaboration_links: Array<Maybe<ResolversParentTypes['CollaborationLink']>>;
 		links: Array<Maybe<ResolversParentTypes['Link']>>;
-		parent: Maybe<ResolversParentTypes['Node']>;
-		share: Maybe<ResolversParentTypes['Share']>;
+		parent?: Maybe<ResolversParentTypes['Node']>;
+		share?: Maybe<ResolversParentTypes['Share']>;
 		shares: Array<Maybe<ResolversParentTypes['Share']>>;
 	};
 	ID: Scalars['ID']['output'];
 	Int: Scalars['Int']['output'];
 	Link: Omit<Link, 'node'> & { node: ResolversParentTypes['Node'] };
 	Mutation: {};
+	NewShare: NewShare;
 	Node: ResolversInterfaceTypes<ResolversParentTypes>['Node'];
 	NodePage: Omit<NodePage, 'nodes'> & { nodes: Array<Maybe<ResolversParentTypes['Node']>> };
+	Notification: ResolversUnionTypes<ResolversParentTypes>['Notification'];
+	NotificationPage: Omit<NotificationPage, 'notifications'> & {
+		notifications: Array<Maybe<ResolversParentTypes['Notification']>>;
+	};
 	Permissions: Permissions;
 	Query: {};
+	RemovedNode: RemovedNode;
 	Root: Root;
 	Share: Omit<Share, 'node' | 'share_target'> & {
 		node: ResolversParentTypes['Node'];
-		share_target: Maybe<ResolversParentTypes['SharedTarget']>;
+		share_target?: Maybe<ResolversParentTypes['SharedTarget']>;
 	};
 	SharedTarget: ResolversUnionTypes<ResolversParentTypes>['SharedTarget'];
+	SnapshotNode: SnapshotNode;
+	SnapshotUser: SnapshotUser;
 	String: Scalars['String']['output'];
 	User: User;
 };
@@ -905,6 +791,20 @@ export type AccountResolvers<
 	ParentType extends ResolversParentTypes['Account'] = ResolversParentTypes['Account']
 > = {
 	__resolveType: TypeResolveFn<'DistributionList' | 'User', ParentType, ContextType>;
+};
+
+export type AddedNodeResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['AddedNode'] = ResolversParentTypes['AddedNode']
+> = {
+	added_node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
+	added_node_type?: Resolver<ResolversTypes['AddedNodeType'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	destination_folder?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
+	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
+	triggering_user?: Resolver<ResolversTypes['SnapshotUser'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CollaborationLinkResolvers<
@@ -1092,6 +992,12 @@ export type MutationResolvers<
 		ContextType,
 		RequireFields<MutationCreateShareArgs, 'node_id' | 'permission' | 'share_target_id'>
 	>;
+	deleteAllNodesAndBlobs?: Resolver<
+		ResolversTypes['Boolean'],
+		ParentType,
+		ContextType,
+		RequireFields<MutationDeleteAllNodesAndBlobsArgs, 'user_id'>
+	>;
 	deleteCollaborationLinks?: Resolver<
 		Array<Maybe<ResolversTypes['ID']>>,
 		ParentType,
@@ -1172,6 +1078,18 @@ export type MutationResolvers<
 	>;
 };
 
+export type NewShareResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['NewShare'] = ResolversParentTypes['NewShare']
+> = {
+	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
+	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
+	triggering_user?: Resolver<ResolversTypes['SnapshotUser'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type NodeResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']
@@ -1216,6 +1134,25 @@ export type NodePageResolvers<
 > = {
 	nodes?: Resolver<Array<Maybe<ResolversTypes['Node']>>, ParentType, ContextType>;
 	page_token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotificationResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']
+> = {
+	__resolveType: TypeResolveFn<'AddedNode' | 'NewShare' | 'RemovedNode', ParentType, ContextType>;
+};
+
+export type NotificationPageResolvers<
+	ContextType = any,
+	ParentType extends
+		ResolversParentTypes['NotificationPage'] = ResolversParentTypes['NotificationPage']
+> = {
+	last_seen?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	notifications?: Resolver<Array<Maybe<ResolversTypes['Notification']>>, ParentType, ContextType>;
+	page_token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+	unread?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1277,6 +1214,12 @@ export type QueryResolvers<
 		ContextType,
 		RequireFields<QueryGetNodeArgs, 'node_id'>
 	>;
+	getNotifications?: Resolver<
+		Maybe<ResolversTypes['NotificationPage']>,
+		ParentType,
+		ContextType,
+		RequireFields<QueryGetNotificationsArgs, 'update_last_seen'>
+	>;
 	getPath?: Resolver<
 		Array<Maybe<ResolversTypes['Node']>>,
 		ParentType,
@@ -1302,6 +1245,20 @@ export type QueryResolvers<
 		ContextType,
 		RequireFields<QueryGetVersionsArgs, 'node_id'>
 	>;
+};
+
+export type RemovedNodeResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['RemovedNode'] = ResolversParentTypes['RemovedNode']
+> = {
+	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
+	origin_folder?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
+	removed_node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
+	removed_node_type?: Resolver<ResolversTypes['RemovedNodeType'], ParentType, ContextType>;
+	triggering_user?: Resolver<ResolversTypes['SnapshotUser'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type RootResolvers<
@@ -1332,6 +1289,30 @@ export type SharedTargetResolvers<
 	__resolveType: TypeResolveFn<'DistributionList' | 'User', ParentType, ContextType>;
 };
 
+export type SnapshotNodeResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['SnapshotNode'] = ResolversParentTypes['SnapshotNode']
+> = {
+	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+	node_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	owner_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+	snapshot_node_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SnapshotUserResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['SnapshotUser'] = ResolversParentTypes['SnapshotUser']
+> = {
+	email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+	full_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+	snapshot_user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
@@ -1344,6 +1325,7 @@ export type UserResolvers<
 
 export type Resolvers<ContextType = any> = {
 	Account?: AccountResolvers<ContextType>;
+	AddedNode?: AddedNodeResolvers<ContextType>;
 	CollaborationLink?: CollaborationLinkResolvers<ContextType>;
 	Config?: ConfigResolvers<ContextType>;
 	DateTime?: GraphQLScalarType;
@@ -1352,12 +1334,18 @@ export type Resolvers<ContextType = any> = {
 	Folder?: FolderResolvers<ContextType>;
 	Link?: LinkResolvers<ContextType>;
 	Mutation?: MutationResolvers<ContextType>;
+	NewShare?: NewShareResolvers<ContextType>;
 	Node?: NodeResolvers<ContextType>;
 	NodePage?: NodePageResolvers<ContextType>;
+	Notification?: NotificationResolvers<ContextType>;
+	NotificationPage?: NotificationPageResolvers<ContextType>;
 	Permissions?: PermissionsResolvers<ContextType>;
 	Query?: QueryResolvers<ContextType>;
+	RemovedNode?: RemovedNodeResolvers<ContextType>;
 	Root?: RootResolvers<ContextType>;
 	Share?: ShareResolvers<ContextType>;
 	SharedTarget?: SharedTargetResolvers<ContextType>;
+	SnapshotNode?: SnapshotNodeResolvers<ContextType>;
+	SnapshotUser?: SnapshotUserResolvers<ContextType>;
 	User?: UserResolvers<ContextType>;
 };
