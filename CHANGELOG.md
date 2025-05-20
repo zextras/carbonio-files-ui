@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.12.0](https://github.com/zextras/carbonio-files-ui/compare/v2.11.1...v2.12.0) (2025-05-19)
+
+
+### Features
+
+* add missing preview key translations ([d4bf161](https://github.com/zextras/carbonio-files-ui/commit/d4bf1619cd8f3d42dbe38ee10cb4a7b59bdf3713)), closes [#471](https://github.com/zextras/carbonio-files-ui/issues/471)
+* enable access code on files public link ([891fcc1](https://github.com/zextras/carbonio-files-ui/commit/891fcc1e5a503eef58acfca94dc2e8ecebef0fe4)), closes [#460](https://github.com/zextras/carbonio-files-ui/issues/460)
+* handle upload error with Banner component ([fbb551e](https://github.com/zextras/carbonio-files-ui/commit/fbb551efdf787ad83e3ba126521e2e4dc474fcbd)), closes [#483](https://github.com/zextras/carbonio-files-ui/issues/483)
+* implement notification ui ([029eda6](https://github.com/zextras/carbonio-files-ui/commit/029eda67aa3acaf6584e4b40898fd7fe53b91384)), closes [#485](https://github.com/zextras/carbonio-files-ui/issues/485)
+* load and add new items to the preview without leaving the preview ([7f1970f](https://github.com/zextras/carbonio-files-ui/commit/7f1970ffd5d29ea9c93da5a7a3908a7630972c0e)), closes [#467](https://github.com/zextras/carbonio-files-ui/issues/467)
+
+
+### Bug Fixes
+
+* add offset_from_utc as query param in open file endpoint ([c723081](https://github.com/zextras/carbonio-files-ui/commit/c723081ffb57f9d2d97c1d8161f3d7fb4a26b1be)), closes [#468](https://github.com/zextras/carbonio-files-ui/issues/468)
+* disable reset button when there are no filters active ([23a4eb8](https://github.com/zextras/carbonio-files-ui/commit/23a4eb8b68f2cbe2ddd8cd6be9457c3997540995)), closes [#479](https://github.com/zextras/carbonio-files-ui/issues/479)
+* remove creation snackbar when inside any folder ([75d8bcb](https://github.com/zextras/carbonio-files-ui/commit/75d8bcb3d395a6dca945217a5570212576bce573)), closes [#469](https://github.com/zextras/carbonio-files-ui/issues/469)
+
 ### [2.11.1](https://github.com/zextras/carbonio-files-ui/compare/v2.11.0...v2.11.1) (2025-02-18)
 
 
