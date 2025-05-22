@@ -5,10 +5,10 @@
  */
 
 library(
-	identifier: 'zapp-jenkins-lib@github-pipeline-v4',
+	identifier: 'zapp-jenkins-lib@chore/ci-move-to-kube',
 	retriever: modernSCM([
 		$class: 'GitSCMSource',
-   		remote: 'git@github.com:zextras/jenkins-zapp-lib.git',
+		remote: 'git@github.com:zextras/jenkins-zapp-lib.git',
 		credentialsId: 'jenkins-integration-with-github-account'
 	])
 )
