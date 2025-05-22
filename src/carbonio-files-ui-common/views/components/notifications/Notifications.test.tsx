@@ -6,6 +6,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
+import { waitFor } from '@testing-library/react';
 import { graphql, HttpResponse } from 'msw';
 
 import { getDateNotification } from './NotificationItem';
@@ -234,14 +235,15 @@ describe('Notifications', () => {
 			});
 
 			it('should remove the primary (Regular) color and make it in Text (Regular) when the user opens the notification popover, close it and opens it again', async () => {
-				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
-				const unreadNotifications =
-					notifications.length > 0 ? faker.number.int({ min: 0, max: notifications.length }) : 0;
-				const lastSeen = faker.date.recent().getTime();
-				notifications.forEach((notification, id) => {
-					notification.created_at =
-						id < unreadNotifications ? lastSeen + id + 1 : lastSeen - id - 1;
-				});
+				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification()).sort(
+					(a, b) => b.created_at - a.created_at
+				);
+
+				const unreadNotifications = faker.number.int({ min: 0, max: notifications.length });
+				const lastSeen =
+					unreadNotifications < notifications.length
+						? notifications[unreadNotifications].created_at
+						: notifications[notifications.length - 1].created_at - 1;
 				server.use(
 					graphql.query(GetNotificationsDocument, () =>
 						HttpResponse.json({
@@ -287,6 +289,10 @@ describe('Notifications', () => {
 						icon: ICON_REGEXP.chevronRightNotifications
 					})
 				);
+				await waitFor(() => {
+					expect(lastSeenNotificationsVar()).toBe(notifications[0].created_at);
+				});
+
 				notifications.forEach((notification) => {
 					expect(screen.getByText(notification.triggering_user.email)).toHaveStyle({
 						color: COLORS.text.regular

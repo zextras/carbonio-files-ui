@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 
 import { useReactiveVar } from '@apollo/client';
 import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
-import { includes, some, debounce } from 'lodash';
+import { includes, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { useTheme } from 'styled-components';
@@ -27,7 +27,6 @@ import { draggedItemsVar } from '../../apollo/dragAndDropVar';
 import {
 	DATE_FORMAT_SHORT,
 	DISPLAYER_TABS,
-	DOUBLE_CLICK_DELAY,
 	DRAG_TYPES,
 	ROOTS,
 	TIMERS,
@@ -384,24 +383,18 @@ export const NodeListItem = ({
 		[itemsMap, permittedContextualMenuActions]
 	);
 
-	const setActiveDebounced = useMemo(
-		() =>
-			debounce(
-				(event: React.SyntheticEvent) => {
-					if (!event?.defaultPrevented) {
-						setActiveNode(node.id);
-					}
-				},
-				DOUBLE_CLICK_DELAY,
-				{ leading: false, trailing: true }
-			),
+	const setActive = useCallback(
+		(event: React.SyntheticEvent) => {
+			if (!event?.defaultPrevented) {
+				setActiveNode(node.id);
+			}
+		},
 		[node.id, setActiveNode]
 	);
 
 	const doubleClickHandler = useCallback(() => {
-		setActiveDebounced.cancel();
 		openNode();
-	}, [openNode, setActiveDebounced]);
+	}, [openNode]);
 
 	const openContextualMenuHandler = useCallback(() => {
 		setIsContextualMenuActive(true);
@@ -561,7 +554,7 @@ export const NodeListItem = ({
 						}
 						hoverContainerBackground={activeNodeId === node.id ? 'highlight' : 'gray6'}
 						listItemContainerContextualMenuActive={isContextualMenuActive}
-						listItemContainerOnClick={setActiveDebounced}
+						listItemContainerOnClick={setActive}
 						listItemContainerOnDoubleClick={doubleClickHandler}
 						listItemContainerDisableHover={isContextualMenuActive || dragging}
 						createImgSrc={createImgSrc}
@@ -593,7 +586,7 @@ export const NodeListItem = ({
 						contextualMenuActions={
 							selectionContextualMenuActionsItems ?? permittedContextualMenuActionsItems
 						}
-						listItemContainerOnClick={setActiveDebounced}
+						listItemContainerOnClick={setActive}
 						listItemContainerOnDoubleClick={doubleClickHandler}
 						hoverContainerBackground={activeNodeId === node.id ? 'highlight' : 'gray6'}
 						listItemContainerContextualMenuActive={isContextualMenuActive}

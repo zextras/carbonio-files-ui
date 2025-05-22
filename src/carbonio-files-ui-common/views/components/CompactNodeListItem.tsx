@@ -7,17 +7,12 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { Container, Row, Text } from '@zextras/carbonio-design-system';
-import { some, debounce } from 'lodash';
+import { some } from 'lodash';
 import { useTheme } from 'styled-components';
 
 import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { HoverContainer, ListItemContainer } from './StyledComponents';
-import {
-	DOUBLE_CLICK_DELAY,
-	LIST_ITEM_AVATAR_HEIGHT,
-	LIST_ITEM_HEIGHT_COMPACT,
-	ROOTS
-} from '../../constants';
+import { LIST_ITEM_AVATAR_HEIGHT, LIST_ITEM_HEIGHT_COMPACT, ROOTS } from '../../constants';
 import { File, Folder, Node as GQLNode, NodeType } from '../../types/graphql/types';
 import {
 	getIconByFileType,
@@ -80,24 +75,11 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 		[setActive, node]
 	);
 
-	const setActiveDebounced = useMemo(
-		() =>
-			debounce(
-				(event: React.SyntheticEvent) => {
-					setActiveNode(event);
-				},
-				DOUBLE_CLICK_DELAY,
-				{ leading: false, trailing: true }
-			),
-		[setActiveNode]
-	);
-
 	const doubleClickHandler = useCallback(
 		(event: React.SyntheticEvent) => {
-			setActiveDebounced.cancel();
 			openNode(event);
 		},
-		[openNode, setActiveDebounced]
+		[openNode]
 	);
 
 	const preventTextSelection = useCallback<React.MouseEventHandler>((e: React.MouseEvent): void => {
