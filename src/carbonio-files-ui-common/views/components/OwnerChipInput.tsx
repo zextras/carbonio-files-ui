@@ -35,11 +35,13 @@ interface OwnerChipInputProps {
 		key: K,
 		value: AdvancedFilters[K] | undefined
 	) => void;
+	onInputType?: ChipInputProps['onInputType'];
 }
 
 export const OwnerChipInput = ({
 	currentFilters,
-	updateFilter
+	updateFilter,
+	onInputType
 }: OwnerChipInputProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
@@ -82,11 +84,12 @@ export const OwnerChipInput = ({
 	);
 	const ownerOnType = useCallback<NonNullable<ChipInputProps['onInputType']>>(
 		(ev) => {
+			onInputType?.(ev);
 			if (ev.key.length === 1 || ev.key === 'Delete' || ev.key === 'Backspace') {
 				search(ev);
 			}
 		},
-		[search]
+		[onInputType, search]
 	);
 
 	const dropdownItems = useMemo(() => {

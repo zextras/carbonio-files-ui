@@ -54,7 +54,9 @@ export const AdvancedSearchModalContent = ({
 	const { activeNodeId, removeActiveNode } = useActiveNode();
 	const [t] = useTranslation();
 	const [currentFilters, setCurrentFilters] = useState<AdvancedFilters>(filters);
-	const [keywordsHasTextContent, setKeywordsHasTextContent] = useState<boolean>(false);
+	const [keywordsHasTextContent, setKeywordsHasTextContent] = useState(false);
+	const [ownerHasTextContent, setOwnerHasTextContent] = useState(false);
+	const [inputKey, setInputKey] = useState(0);
 	const folderChipInputRef = useRef<HTMLInputElement>(null);
 	const { resetAll, resetCurrent } = useDestinationVarManager<Node<'id' | 'name'> | null>();
 
@@ -84,7 +86,10 @@ export const AdvancedSearchModalContent = ({
 		[currentFilters, filters, keywordsHasTextContent]
 	);
 
-	const isResetButtonDisabled = useMemo(() => isEmpty(currentFilters), [currentFilters]);
+	const isResetButtonDisabled = useMemo(
+		() => isEmpty(currentFilters) && !keywordsHasTextContent && !ownerHasTextContent,
+		[currentFilters, keywordsHasTextContent, ownerHasTextContent]
+	);
 
 	const confirmHandler = useCallback(() => {
 		searchAdvancedFilters(currentFilters);
@@ -100,6 +105,9 @@ export const AdvancedSearchModalContent = ({
 
 	const resetFilters = useCallback(() => {
 		setCurrentFilters({});
+		setKeywordsHasTextContent(false);
+		setOwnerHasTextContent(false);
+		setInputKey((k) => k + 1);
 	}, []);
 
 	const updateFilter = useCallback(
@@ -144,6 +152,10 @@ export const AdvancedSearchModalContent = ({
 		},
 		[]
 	);
+
+	const ownerOnType = useCallback<NonNullable<ChipInputProps['onInputType']>>(({ textContent }) => {
+		setOwnerHasTextContent(!isEmpty(textContent));
+	}, []);
 
 	const flaggedOnChange = useCallback(
 		(newValue: boolean) => {
@@ -281,6 +293,7 @@ export const AdvancedSearchModalContent = ({
 				>
 					<Container maxWidth={'50%'}>
 						<ChipInput
+							key={inputKey}
 							placeholder={t('search.advancedSearch.modal.keywords.label', 'Keywords')}
 							background="gray5"
 							value={keywords}
@@ -295,7 +308,12 @@ export const AdvancedSearchModalContent = ({
 						/>
 					</Container>
 					<Container maxWidth={'50%'}>
-						<OwnerChipInput currentFilters={currentFilters} updateFilter={updateFilter} />
+						<OwnerChipInput
+							key={inputKey}
+							currentFilters={currentFilters}
+							updateFilter={updateFilter}
+							onInputType={ownerOnType}
+						/>
 					</Container>
 				</Row>
 				<Row
