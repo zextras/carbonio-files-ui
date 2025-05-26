@@ -38,7 +38,7 @@
 		"@graphql-codegen/typescript-resolvers": "^4.5.0",
 		"@graphql-eslint/eslint-plugin": "^3.20.1",
 		"@graphql-tools/jest-transform": "^2.0.0",
-		"@graphql-tools/mock": "^9.0.4",
+		"@graphql-tools/mock": "^9.0.23",
 		"@graphql-tools/schema": "^10.0.6",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
