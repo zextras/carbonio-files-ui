@@ -215,15 +215,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 				{node.permissions.can_share && <Divider />}
 				{node.permissions.can_share && <AddSharing node={node} />}
 			</Container>
-			{node.permissions.can_share && (
-				<CollaborationLinks
-					nodeId={node.id}
-					nodeName={node.name}
-					canWrite={
-						isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
-					}
-				/>
-			)}
+			{node.permissions.can_share && <CollaborationLinks nodeId={node.id} nodeName={node.name} />}
 			{node.permissions.can_share && (
 				<PublicLink
 					nodeId={node.id}

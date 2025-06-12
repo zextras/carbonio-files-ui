@@ -6,7 +6,8 @@
 
 import React from 'react';
 
-import { act, waitFor } from '@testing-library/react';
+import { act } from '@testing-library/react';
+import { forEach } from 'lodash';
 
 import { CollaborationLinks } from './CollaborationLinks';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
@@ -20,7 +21,6 @@ import {
 	mockGetCollaborationLinks
 } from '../../../../utils/resolverMocks';
 import * as moduleUtils from '../../../../utils/utils';
-import { isFile } from '../../../../utils/utils';
 
 describe('Collaboration Link', () => {
 	it('should render the section without collaboration links created', async () => {
@@ -33,366 +33,595 @@ describe('Collaboration Link', () => {
 				getCollaborationLinks: mockGetCollaborationLinks([])
 			}
 		} satisfies Partial<Resolvers>;
-		setup(
-			<CollaborationLinks
-				nodeId={node.id}
-				nodeName={node.name}
-				canWrite={
-					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
-				}
-			/>,
-			{ mocks }
-		);
-		await waitFor(() =>
-			expect(
-				within(screen.getByTestId(SELECTORS.collaborationLinkReadShare)).getByRole('button', {
-					name: /generate link/i
-				})
-			).toBeEnabled()
-		);
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, { mocks });
+
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
 		expect(screen.getByText('Collaboration links')).toBeVisible();
 		expect(
 			screen.getByText(
 				'Internal users will receive the permissions by opening the link. You can always modify granted permissions.'
 			)
 		).toBeVisible();
-		const readAndShareCollaborationLinkContainer = screen.getByTestId(
-			SELECTORS.collaborationLinkReadShare
-		);
-		expect(
-			within(readAndShareCollaborationLinkContainer).getByTestId(ICON_REGEXP.shareCanRead)
-		).toBeVisible();
-		expect(
-			within(readAndShareCollaborationLinkContainer).getByText('Read and Share')
-		).toBeVisible();
-		expect(
-			within(readAndShareCollaborationLinkContainer).getByText(
-				'Create a link in order to share the item'
-			)
-		).toBeVisible();
-		expect(
-			within(readAndShareCollaborationLinkContainer).getByRole('button', { name: /generate link/i })
-		).toBeVisible();
-		expect(
-			within(readAndShareCollaborationLinkContainer).queryByRole('button', {
-				name: /revoke/i
-			})
-		).not.toBeInTheDocument();
-		const readWriteAndShareCollaborationLinkContainer = screen.getByTestId(
-			SELECTORS.collaborationLinkWriteShare
-		);
-		expect(
-			within(readWriteAndShareCollaborationLinkContainer).getByTestId(ICON_REGEXP.shareCanWrite)
-		).toBeVisible();
-		expect(
-			within(readWriteAndShareCollaborationLinkContainer).getByText('Write and Share')
-		).toBeVisible();
-		expect(
-			within(readWriteAndShareCollaborationLinkContainer).getByText(
-				'Create a link in order to share the item'
-			)
-		).toBeVisible();
-		expect(
-			within(readWriteAndShareCollaborationLinkContainer).getByRole('button', {
-				name: /generate link/i
-			})
-		).toBeVisible();
-		expect(
-			within(readWriteAndShareCollaborationLinkContainer).queryByRole('button', {
-				name: /revoke/i
-			})
-		).not.toBeInTheDocument();
-	});
-
-	test('starting with ReadAndShare collaboration link and then create ReadWriteAndShare collaboration link', async () => {
-		const node = populateNode();
-		node.permissions.can_share = true;
-		node.permissions.can_write_folder = true;
-		node.permissions.can_write_file = true;
-		const readAndShareCollaborationLink = populateCollaborationLink(
-			node,
-			SharePermission.ReadAndShare
-		);
-		const readWriteAndShareCollaborationLink = populateCollaborationLink(
-			node,
-			SharePermission.ReadWriteAndShare
-		);
-		const mocks = {
-			Query: {
-				getCollaborationLinks: mockGetCollaborationLinks([readAndShareCollaborationLink])
-			},
-			Mutation: {
-				createCollaborationLink: mockCreateCollaborationLink(readWriteAndShareCollaborationLink)
-			}
-		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<CollaborationLinks
-				nodeId={node.id}
-				nodeName={node.name}
-				canWrite={
-					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
-				}
-			/>,
-			{ mocks }
-		);
-		await screen.findByText(readAndShareCollaborationLink.url);
-		const readWriteAndShareCollaborationLinkContainer = screen.getByTestId(
-			SELECTORS.collaborationLinkWriteShare
-		);
-		const readWriteAndShareGenerateButton = within(
-			readWriteAndShareCollaborationLinkContainer
-		).getByRole('button', {
+		expect(screen.getByText(/choose permission to generate link/i)).toBeVisible();
+		const button = screen.getByRole('button', {
 			name: /generate link/i
 		});
-		await user.click(readWriteAndShareGenerateButton);
-		expect(await screen.findByText(readWriteAndShareCollaborationLink.url)).toBeVisible();
-		const snackbar = await screen.findByText(/New Collaboration Link generated/i);
-		expect(snackbar).toBeVisible();
+		expect(button).toBeVisible();
+		expect(button).toBeDisabled();
+		await user.hover(button);
+		// tooltip of the disabled button
+		expect(await screen.findByText('Choose permissions to generate link')).toBeVisible();
 	});
 
-	test('starting with ReadWriteAndShare collaboration link and then create ReadAndShare collaboration link', async () => {
+	it('should enable generate link button when the user chooses a permission in the select', async () => {
 		const node = populateNode();
 		node.permissions.can_share = true;
 		node.permissions.can_write_folder = true;
 		node.permissions.can_write_file = true;
-		const readAndShareCollaborationLink = populateCollaborationLink(
-			node,
-			SharePermission.ReadAndShare
-		);
-		const readWriteAndShareCollaborationLink = populateCollaborationLink(
-			node,
-			SharePermission.ReadWriteAndShare
-		);
 		const mocks = {
 			Query: {
-				getCollaborationLinks: mockGetCollaborationLinks([readWriteAndShareCollaborationLink])
-			},
-			Mutation: {
-				createCollaborationLink: mockCreateCollaborationLink(readAndShareCollaborationLink)
+				getCollaborationLinks: mockGetCollaborationLinks([])
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<CollaborationLinks
-				nodeId={node.id}
-				nodeName={node.name}
-				canWrite={
-					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
-				}
-			/>,
-			{ mocks }
-		);
-		await screen.findByText(readWriteAndShareCollaborationLink.url);
-		const readAndShareCollaborationLinkContainer = screen.getByTestId(
-			SELECTORS.collaborationLinkReadShare
-		);
-		const readAndShareGenerateButton = within(readAndShareCollaborationLinkContainer).getByRole(
-			'button',
-			{
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, { mocks });
+
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
+		await user.click(screen.getByText(/choose permission to generate link/i));
+		const dropdown = screen.getByTestId(SELECTORS.dropdownList);
+		expect(within(dropdown).getByText('View')).toBeVisible();
+		expect(within(dropdown).getByText('Edit')).toBeVisible();
+		expect(within(dropdown).getByText('View and manage sharing')).toBeVisible();
+		expect(within(dropdown).getByText('Edit and manage sharing')).toBeVisible();
+		await user.click(within(dropdown).getByText('View'));
+		expect(
+			screen.getByRole('button', {
 				name: /generate link/i
-			}
-		);
-		await user.click(readAndShareGenerateButton);
-		expect(await screen.findByText(readAndShareCollaborationLink.url)).toBeVisible();
-		const snackbar = await screen.findByText(/New Collaboration Link generated/i);
-		expect(snackbar).toBeVisible();
+			})
+		).toBeEnabled();
 	});
 
-	test('starting with ReadAndShare collaboration link and then delete it', async () => {
-		const node = populateNode();
-		node.permissions.can_share = true;
-		node.permissions.can_write_folder = true;
-		node.permissions.can_write_file = true;
-		const readAndShareCollaborationLink = populateCollaborationLink(
-			node,
-			SharePermission.ReadAndShare
-		);
-		const mocks = {
-			Query: {
-				getCollaborationLinks: mockGetCollaborationLinks([readAndShareCollaborationLink])
-			},
-			Mutation: {
-				deleteCollaborationLinks: mockDeleteCollaborationLinks([readAndShareCollaborationLink.id])
+	describe('Generation of collaboration link', () => {
+		it.each([
+			[
+				'View',
+				SharePermission.ReadOnly,
+				SELECTORS.collaborationLinkReadOnly,
+				[ICON_REGEXP.eyeCollaborationLinkIcon]
+			],
+			[
+				'Edit',
+				SharePermission.ReadAndWrite,
+				SELECTORS.collaborationLinkWrite,
+				[ICON_REGEXP.editCollaborationLinkIcon]
+			],
+			[
+				'View and manage sharing',
+				SharePermission.ReadAndShare,
+				SELECTORS.collaborationLinkReadShare,
+				[ICON_REGEXP.eyeCollaborationLinkIcon, ICON_REGEXP.shareCollaborationLinkIcon]
+			],
+			[
+				'Edit and manage sharing',
+				SharePermission.ReadWriteAndShare,
+				SELECTORS.collaborationLinkWriteShare,
+				[ICON_REGEXP.editCollaborationLinkIcon, ICON_REGEXP.shareCollaborationLinkIcon]
+			]
+		])(
+			'should generate a collaboration link with %s permission',
+			async (permissionText, sharePermission, dataTestId, icons) => {
+				const node = populateNode();
+				node.permissions.can_share = true;
+				node.permissions.can_write_folder = true;
+				node.permissions.can_write_file = true;
+				const collaborationLink = populateCollaborationLink(node, sharePermission);
+				const mocks = {
+					Query: {
+						getCollaborationLinks: mockGetCollaborationLinks([])
+					},
+					Mutation: {
+						createCollaborationLink: mockCreateCollaborationLink(collaborationLink)
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+					mocks
+				});
+
+				await act(async () => {
+					await jest.advanceTimersToNextTimerAsync();
+				});
+				const select = screen.getByText(/choose permission to generate link/i);
+				await user.click(select);
+				await user.click(
+					within(screen.getByTestId(SELECTORS.dropdownList)).getByText(permissionText)
+				);
+				await user.click(
+					screen.getByRole('button', {
+						name: /generate link/i
+					})
+				);
+				const snackbar = screen.getByTestId(SELECTORS.snackbar);
+				expect(within(snackbar).getByText(/New Collaboration link generated/i)).toBeVisible();
+				const section = screen.getByTestId(dataTestId);
+				expect(within(section).getByText(permissionText)).toBeVisible();
+				const chip = screen.getByTestId(SELECTORS.chip);
+				expect(within(chip).getByText(collaborationLink.url)).toBeVisible();
+				forEach(icons, (icon) => {
+					expect(within(chip).getByTestId(icon)).toBeVisible();
+				});
+				// should render the tooltip because the option is disabled in select
+				await user.click(select);
+				await user.hover(
+					within(screen.getByTestId(SELECTORS.dropdownList)).getByText(permissionText)
+				);
+				expect(
+					await screen.findByText(/This type of link has already been created/i)
+				).toBeVisible();
 			}
-		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<CollaborationLinks
-				nodeId={node.id}
-				nodeName={node.name}
-				canWrite={
-					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
+		);
+
+		it('should not select any options in Select when the user generates a collaboration link', async () => {
+			const node = populateNode();
+			node.permissions.can_share = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_write_file = true;
+			const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
+			const mocks = {
+				Query: {
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				},
+				Mutation: {
+					createCollaborationLink: mockCreateCollaborationLink(readOnlyCollaborationLink)
 				}
-			/>,
-			{ mocks }
-		);
-		const urlElement = await screen.findByText(readAndShareCollaborationLink.url);
-		const readAndShareCollaborationLinkContainer = screen.getByTestId(
-			SELECTORS.collaborationLinkReadShare
-		);
-		const readAndShareRevokeButton = within(readAndShareCollaborationLinkContainer).getByRole(
-			'button',
-			{
-				name: /revoke/i
-			}
-		);
-		await user.click(readAndShareRevokeButton);
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+				mocks
+			});
 
-		const modalTitle = await screen.findByText(`Revoke ${node.name} collaboration link`);
-
-		expect(modalTitle).toBeInTheDocument();
-
-		const modalContent = await screen.findByText(
-			`By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.`
-		);
-		act(() => {
-			// run timers of modal
-			jest.runOnlyPendingTimers();
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(screen.getByText(/choose permission to generate link/i));
+			await user.click(screen.getByText('View'));
+			await user.click(
+				screen.getByRole('button', {
+					name: /generate link/i
+				})
+			);
+			const section = screen.getByTestId(SELECTORS.collaborationLinkSelectLabel);
+			expect(within(section).queryByText(/view/i)).not.toBeInTheDocument();
 		});
 
-		expect(modalContent).toBeVisible();
-		const revokeButton = within(screen.getByTestId(SELECTORS.modal)).getByRole('button', {
-			name: /revoke/i
+		it('should disable the generate link button when the user generates a collaboration link', async () => {
+			const node = populateNode();
+			node.permissions.can_share = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_write_file = true;
+			const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
+			const mocks = {
+				Query: {
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				},
+				Mutation: {
+					createCollaborationLink: mockCreateCollaborationLink(readOnlyCollaborationLink)
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+				mocks
+			});
+
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(screen.getByText(/choose permission to generate link/i));
+			await user.click(screen.getByText('View'));
+			const generateButton = screen.getByRole('button', {
+				name: /generate link/i
+			});
+			await user.click(generateButton);
+			expect(generateButton).toBeDisabled();
 		});
-		expect(revokeButton).toBeVisible();
-		await user.click(revokeButton);
-		await waitFor(() =>
-			expect(screen.queryByText(readAndShareCollaborationLink.url)).not.toBeInTheDocument()
-		);
-		expect(urlElement).not.toBeInTheDocument();
 	});
 
-	test('starting with ReadWriteAndShare collaboration link and then delete it', async () => {
+	it('should disable the select and the generate link button if all the types of collaboration links are created', async () => {
 		const node = populateNode();
 		node.permissions.can_share = true;
 		node.permissions.can_write_folder = true;
 		node.permissions.can_write_file = true;
+		const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
 		const readWriteAndShareCollaborationLink = populateCollaborationLink(
 			node,
 			SharePermission.ReadWriteAndShare
 		);
-		const mocks = {
-			Query: {
-				getCollaborationLinks: mockGetCollaborationLinks([readWriteAndShareCollaborationLink])
-			},
-			Mutation: {
-				deleteCollaborationLinks: mockDeleteCollaborationLinks([
-					readWriteAndShareCollaborationLink.id
-				])
-			}
-		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<CollaborationLinks
-				nodeId={node.id}
-				nodeName={node.name}
-				canWrite={
-					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
-				}
-			/>,
-			{ mocks }
-		);
-		const urlElement = await screen.findByText(readWriteAndShareCollaborationLink.url);
-		const readWriteAndShareCollaborationLinkContainer = screen.getByTestId(
-			SELECTORS.collaborationLinkWriteShare
-		);
-		const readWriteAndShareRevokeButton = within(
-			readWriteAndShareCollaborationLinkContainer
-		).getByRole('button', {
-			name: /revoke/i
-		});
-		await user.click(readWriteAndShareRevokeButton);
-
-		const modalTitle = await screen.findByText(`Revoke ${node.name} collaboration link`);
-
-		expect(modalTitle).toBeInTheDocument();
-
-		const modalContent = await screen.findByText(
-			`By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.`
-		);
-		expect(modalContent).toBeInTheDocument();
-		act(() => {
-			// run timers of modal
-			jest.runOnlyPendingTimers();
-		});
-
-		expect(modalContent).toBeVisible();
-		const revokeButton = within(screen.getByTestId(SELECTORS.modal)).getByRole('button', {
-			name: /revoke/i
-		});
-		expect(revokeButton).toBeVisible();
-		await user.click(revokeButton);
-		await waitFor(() =>
-			expect(screen.queryByText(readWriteAndShareCollaborationLink.url)).not.toBeInTheDocument()
-		);
-		expect(urlElement).not.toBeInTheDocument();
-	});
-
-	test('starting with ReadAndShare collaboration link, click on url chip copy the url to clipboard and show an info snackbar', async () => {
-		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
-
-		const node = populateNode();
-		node.permissions.can_share = true;
-		node.permissions.can_write_folder = true;
-		node.permissions.can_write_file = true;
 		const readAndShareCollaborationLink = populateCollaborationLink(
 			node,
 			SharePermission.ReadAndShare
 		);
-		const mocks = {
-			Query: {
-				getCollaborationLinks: mockGetCollaborationLinks([readAndShareCollaborationLink])
-			}
-		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<CollaborationLinks
-				nodeId={node.id}
-				nodeName={node.name}
-				canWrite={
-					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
-				}
-			/>,
-			{ mocks }
-		);
-		const urlElement = await screen.findByText(readAndShareCollaborationLink.url);
-		await user.click(urlElement);
-		expect(copyToClipboardFn).toBeCalledWith(readAndShareCollaborationLink.url);
-
-		const snackbar = await screen.findByText(/Collaboration Link copied/i);
-		expect(snackbar).toBeVisible();
-	});
-
-	test('If can_write is false than ReadWriteAndShare have to be hidden also if returned by query', async () => {
-		const node = populateNode();
-		node.permissions.can_share = true;
-		node.permissions.can_write_folder = false;
-		node.permissions.can_write_file = false;
-		const readAndShareCollaborationLink = populateCollaborationLink(
+		const readAndWriteCollaborationLink = populateCollaborationLink(
 			node,
-			SharePermission.ReadAndShare
-		);
-		const readWriteAndShareCollaborationLink = populateCollaborationLink(
-			node,
-			SharePermission.ReadWriteAndShare
+			SharePermission.ReadAndWrite
 		);
 		const mocks = {
 			Query: {
 				getCollaborationLinks: mockGetCollaborationLinks([
+					readOnlyCollaborationLink,
+					readWriteAndShareCollaborationLink,
 					readAndShareCollaborationLink,
-					readWriteAndShareCollaborationLink
+					readAndWriteCollaborationLink
 				])
 			}
 		} satisfies Partial<Resolvers>;
-		setup(
-			<CollaborationLinks
-				nodeId={node.id}
-				nodeName={node.name}
-				canWrite={
-					isFile(node) ? node.permissions.can_write_file : node.permissions.can_write_folder
-				}
-			/>,
-			{ mocks }
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+			mocks
+		});
+
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
+		expect(screen.getByText(readOnlyCollaborationLink.url)).toBeVisible();
+		expect(screen.getByText(readAndWriteCollaborationLink.url)).toBeVisible();
+		expect(screen.getByText(readAndShareCollaborationLink.url)).toBeVisible();
+		expect(screen.getByText(readWriteAndShareCollaborationLink.url)).toBeVisible();
+		const generateButton = screen.getByRole('button', {
+			name: /generate link/i
+		});
+		expect(generateButton).toBeDisabled();
+		// the dropdown does not open because the select is disabled
+		await user.click(screen.getByText(/Choose permission to generate link/i));
+		expect(screen.queryByTestId(SELECTORS.dropdownList)).not.toBeInTheDocument();
+		// tooltip of the generate link button disabled
+		await user.hover(generateButton);
+		expect(
+			await screen.findByText(
+				/You've reached the maximum number of links. Revoke one to create a new one./i
+			)
+		).toBeVisible();
+	});
+
+	it('should render the tooltip on select if all the types of collaboration links are created', async () => {
+		const node = populateNode();
+		node.permissions.can_share = true;
+		node.permissions.can_write_folder = true;
+		node.permissions.can_write_file = true;
+		const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
+		const readWriteAndShareCollaborationLink = populateCollaborationLink(
+			node,
+			SharePermission.ReadWriteAndShare
 		);
-		const readAndShareUrlElement = await screen.findByText(readAndShareCollaborationLink.url);
-		expect(readAndShareUrlElement).toBeVisible();
-		const readWriteAndShareUrlElement = screen.queryByText(readWriteAndShareCollaborationLink.url);
-		expect(readWriteAndShareUrlElement).not.toBeInTheDocument();
+		const readAndShareCollaborationLink = populateCollaborationLink(
+			node,
+			SharePermission.ReadAndShare
+		);
+		const readAndWriteCollaborationLink = populateCollaborationLink(
+			node,
+			SharePermission.ReadAndWrite
+		);
+		const mocks = {
+			Query: {
+				getCollaborationLinks: mockGetCollaborationLinks([
+					readOnlyCollaborationLink,
+					readWriteAndShareCollaborationLink,
+					readAndShareCollaborationLink,
+					readAndWriteCollaborationLink
+				])
+			}
+		} satisfies Partial<Resolvers>;
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+			mocks
+		});
+
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
+		await user.hover(screen.getByText(/Choose permission to generate link/i));
+		expect(
+			await screen.findByText(
+				/You've reached the maximum number of links. Revoke one to create a new one./i
+			)
+		).toBeVisible();
+	});
+
+	it('should not render the tooltip on select if not all the types of collaboration links are created', async () => {
+		const node = populateNode();
+		node.permissions.can_share = true;
+		node.permissions.can_write_folder = true;
+		node.permissions.can_write_file = true;
+		const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
+		const readWriteAndShareCollaborationLink = populateCollaborationLink(
+			node,
+			SharePermission.ReadWriteAndShare
+		);
+		const readAndShareCollaborationLink = populateCollaborationLink(
+			node,
+			SharePermission.ReadAndShare
+		);
+		const mocks = {
+			Query: {
+				getCollaborationLinks: mockGetCollaborationLinks([
+					readOnlyCollaborationLink,
+					readWriteAndShareCollaborationLink,
+					readAndShareCollaborationLink
+				])
+			}
+		} satisfies Partial<Resolvers>;
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+			mocks
+		});
+
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
+		await user.hover(screen.getByText(/Choose permission to generate link/i));
+		act(() => {
+			// run timers of tooltip
+			jest.advanceTimersToNextTimer();
+		});
+		expect(
+			screen.queryByText(
+				/You've reached the maximum number of links. Revoke one to create a new one./i
+			)
+		).not.toBeInTheDocument();
+	});
+
+	describe('Revoke collaboration link', () => {
+		it('should revoke only the collaboration link with view permission', async () => {
+			const node = populateNode();
+			node.permissions.can_share = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_write_file = true;
+			const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
+			const readWriteAndShareCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadWriteAndShare
+			);
+			const readAndShareCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadAndShare
+			);
+			const readAndWriteCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadAndWrite
+			);
+			const mocks = {
+				Query: {
+					getCollaborationLinks: mockGetCollaborationLinks([
+						readOnlyCollaborationLink,
+						readWriteAndShareCollaborationLink,
+						readAndShareCollaborationLink,
+						readAndWriteCollaborationLink
+					])
+				},
+				Mutation: {
+					deleteCollaborationLinks: mockDeleteCollaborationLinks([readOnlyCollaborationLink.id])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+				mocks
+			});
+
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(
+				within(screen.getByTestId(SELECTORS.collaborationLinkReadOnly)).getByRole('button', {
+					name: /revoke/i
+				})
+			);
+			act(() => {
+				// run timers of modal
+				jest.runOnlyPendingTimers();
+			});
+			const modal = screen.getByTestId(SELECTORS.modal);
+			expect(within(modal).getByText(`Revoke ${node.name} collaboration link`)).toBeVisible();
+			expect(
+				within(modal).getByText(
+					`By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.`
+				)
+			);
+			const revokeButton = within(modal).getByRole('button', { name: /revoke/i });
+			expect(revokeButton).toBeVisible();
+			await user.click(revokeButton);
+			expect(screen.queryByText(readOnlyCollaborationLink.url)).not.toBeInTheDocument();
+			expect(screen.getByText(readAndWriteCollaborationLink.url)).toBeVisible();
+			expect(screen.getByText(readAndShareCollaborationLink.url)).toBeVisible();
+			expect(screen.getByText(readWriteAndShareCollaborationLink.url)).toBeVisible();
+		});
+
+		it('should revoke only the collaboration link with write and share permission', async () => {
+			const node = populateNode();
+			node.permissions.can_share = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_write_file = true;
+			const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
+			const readWriteAndShareCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadWriteAndShare
+			);
+			const readAndShareCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadAndShare
+			);
+			const readAndWriteCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadAndWrite
+			);
+			const mocks = {
+				Query: {
+					getCollaborationLinks: mockGetCollaborationLinks([
+						readOnlyCollaborationLink,
+						readWriteAndShareCollaborationLink,
+						readAndShareCollaborationLink,
+						readAndWriteCollaborationLink
+					])
+				},
+				Mutation: {
+					deleteCollaborationLinks: mockDeleteCollaborationLinks([
+						readWriteAndShareCollaborationLink.id
+					])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+				mocks
+			});
+
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(
+				within(screen.getByTestId(SELECTORS.collaborationLinkWriteShare)).getByRole('button', {
+					name: /revoke/i
+				})
+			);
+			act(() => {
+				// run timers of modal
+				jest.runOnlyPendingTimers();
+			});
+			const modal = screen.getByTestId(SELECTORS.modal);
+			await user.click(within(modal).getByRole('button', { name: /revoke/i }));
+			expect(screen.queryByText(readWriteAndShareCollaborationLink.url)).not.toBeInTheDocument();
+			expect(screen.getByText(readAndWriteCollaborationLink.url)).toBeVisible();
+			expect(screen.getByText(readAndShareCollaborationLink.url)).toBeVisible();
+			expect(screen.getByText(readOnlyCollaborationLink.url)).toBeVisible();
+		});
+
+		it('should revoke only the collaboration link with write and share permission', async () => {
+			const node = populateNode();
+			node.permissions.can_share = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_write_file = true;
+			const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
+			const readWriteAndShareCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadWriteAndShare
+			);
+			const readAndShareCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadAndShare
+			);
+			const readAndWriteCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadAndWrite
+			);
+			const mocks = {
+				Query: {
+					getCollaborationLinks: mockGetCollaborationLinks([
+						readOnlyCollaborationLink,
+						readWriteAndShareCollaborationLink,
+						readAndShareCollaborationLink,
+						readAndWriteCollaborationLink
+					])
+				},
+				Mutation: {
+					deleteCollaborationLinks: mockDeleteCollaborationLinks([readAndShareCollaborationLink.id])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+				mocks
+			});
+
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(
+				within(screen.getByTestId(SELECTORS.collaborationLinkReadShare)).getByRole('button', {
+					name: /revoke/i
+				})
+			);
+			act(() => {
+				// run timers of modal
+				jest.runOnlyPendingTimers();
+			});
+			const modal = screen.getByTestId(SELECTORS.modal);
+			await user.click(within(modal).getByRole('button', { name: /revoke/i }));
+			expect(screen.queryByText(readAndShareCollaborationLink.url)).not.toBeInTheDocument();
+			expect(screen.getByText(readAndWriteCollaborationLink.url)).toBeVisible();
+			expect(screen.getByText(readWriteAndShareCollaborationLink.url)).toBeVisible();
+			expect(screen.getByText(readOnlyCollaborationLink.url)).toBeVisible();
+		});
+
+		it('should revoke only the collaboration link with write and share permission', async () => {
+			const node = populateNode();
+			node.permissions.can_share = true;
+			node.permissions.can_write_folder = true;
+			node.permissions.can_write_file = true;
+			const readOnlyCollaborationLink = populateCollaborationLink(node, SharePermission.ReadOnly);
+			const readWriteAndShareCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadWriteAndShare
+			);
+			const readAndShareCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadAndShare
+			);
+			const readAndWriteCollaborationLink = populateCollaborationLink(
+				node,
+				SharePermission.ReadAndWrite
+			);
+			const mocks = {
+				Query: {
+					getCollaborationLinks: mockGetCollaborationLinks([
+						readOnlyCollaborationLink,
+						readWriteAndShareCollaborationLink,
+						readAndShareCollaborationLink,
+						readAndWriteCollaborationLink
+					])
+				},
+				Mutation: {
+					deleteCollaborationLinks: mockDeleteCollaborationLinks([readAndWriteCollaborationLink.id])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+				mocks
+			});
+
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(
+				within(screen.getByTestId(SELECTORS.collaborationLinkWrite)).getByRole('button', {
+					name: /revoke/i
+				})
+			);
+			act(() => {
+				// run timers of modal
+				jest.runOnlyPendingTimers();
+			});
+			const modal = screen.getByTestId(SELECTORS.modal);
+			await user.click(within(modal).getByRole('button', { name: /revoke/i }));
+			expect(screen.queryByText(readAndWriteCollaborationLink.url)).not.toBeInTheDocument();
+			expect(screen.getByText(readAndShareCollaborationLink.url)).toBeVisible();
+			expect(screen.getByText(readWriteAndShareCollaborationLink.url)).toBeVisible();
+			expect(screen.getByText(readOnlyCollaborationLink.url)).toBeVisible();
+		});
+	});
+
+	it.each([
+		SharePermission.ReadAndShare,
+		SharePermission.ReadAndWrite,
+		SharePermission.ReadWriteAndShare,
+		SharePermission.ReadOnly
+	])('should copy the url if the user clicks on the chip', async (permission) => {
+		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+		const node = populateNode();
+		node.permissions.can_share = true;
+		node.permissions.can_write_folder = true;
+		node.permissions.can_write_file = true;
+		const collaborationLink = populateCollaborationLink(node, permission);
+		const mocks = {
+			Query: {
+				getCollaborationLinks: mockGetCollaborationLinks([collaborationLink])
+			}
+		} satisfies Partial<Resolvers>;
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, { mocks });
+
+		await act(async () => {
+			await jest.advanceTimersToNextTimerAsync();
+		});
+		await user.click(screen.getByText(collaborationLink.url));
+		expect(copyToClipboardFn).toHaveBeenCalledWith(collaborationLink.url);
+		expect(await screen.findByText(/Collaboration Link copied/i)).toBeVisible();
 	});
 });

@@ -91,7 +91,10 @@ export const ICON_REGEXP = {
 	noNotificationsIcon: 'icon: BellOffOutline',
 	secondaryBarNotifications: 'icon: BellOutline',
 	chevronRightNotifications: 'icon: ChevronRight',
-	chevronLeftNotifications: 'icon: ChevronLeft'
+	chevronLeftNotifications: 'icon: ChevronLeft',
+	eyeCollaborationLinkIcon: 'icon: EyeOutline',
+	editCollaborationLinkIcon: 'icon: Edit2Outline',
+	shareCollaborationLinkIcon: 'icon: ShareOutline'
 } as const;
 
 export const SELECTORS = {
@@ -104,8 +107,11 @@ export const SELECTORS = {
 	nodeDetails: 'node-details',
 	nodeSharing: 'node-sharing',
 	collaborationLinkContainer: 'collaboration-link-container',
+	collaborationLinkReadOnly: 'read-only-collaboration-link-container',
 	collaborationLinkReadShare: 'read-share-collaboration-link-container',
 	collaborationLinkWriteShare: 'read-write-share-collaboration-link-container',
+	collaborationLinkWrite: 'read-write-collaboration-link-container',
+	collaborationLinkSelectLabel: 'collaboration-link-select-label',
 	sharingTabCollaborators: 'node-sharing-collaborators',
 	exclusiveSelectionEditor: 'exclusive-selection-editor',
 	exclusiveSelectionViewer: 'exclusive-selection-viewer',
