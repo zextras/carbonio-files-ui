@@ -74,7 +74,10 @@ export const CustomLabelFactory = ({
 		<>
 			<Tooltip
 				disabled={!disabled}
-				label={t('', "You've reached the maximum number of links. Revoke one to create a new one.")}
+				label={t(
+					'collaborationLinks.generateButton.maximumLinks.tooltip',
+					"You've reached the maximum number of links. Revoke one to create a new one."
+				)}
 			>
 				<ContainerEl
 					orientation="horizontal"

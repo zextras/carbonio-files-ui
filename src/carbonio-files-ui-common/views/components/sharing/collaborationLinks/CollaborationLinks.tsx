@@ -204,31 +204,39 @@ export const CollaborationLinks = ({
 		() => [
 			{
 				value: SharePermission.ReadOnly,
-				label: t('', 'View'),
+				label: t('collaborationLinks.permission.readOnly', 'View'),
 				disabled: !!readOnlyCollaborationLink,
 				customComponent: (
 					<Tooltip
 						disabled={!readOnlyCollaborationLink}
-						label={t('', 'This type of link has already been created')}
+						label={t(
+							'collaborationLinks.permission.optionDisabled.tooltip',
+							'This type of link has already been created'
+						)}
 					>
 						<Container mainAlignment="flex-start" orientation="horizontal">
-							<Text color={readOnlyCollaborationLink ? 'secondary' : 'text'}>{t('', 'View')}</Text>
+							<Text color={readOnlyCollaborationLink ? 'secondary' : 'text'}>
+								{t('collaborationLinks.permission.readOnly', 'View')}
+							</Text>
 						</Container>
 					</Tooltip>
 				)
 			},
 			{
 				value: SharePermission.ReadAndWrite,
-				label: t('', 'Edit'),
+				label: t('collaborationLinks.permission.readAndWrite', 'Edit'),
 				disabled: !!readAndWriteCollaborationLink,
 				customComponent: (
 					<Tooltip
 						disabled={!readAndWriteCollaborationLink}
-						label={t('', 'This type of link has already been created')}
+						label={t(
+							'collaborationLinks.permission.optionDisabled.tooltip',
+							'This type of link has already been created'
+						)}
 					>
 						<Container mainAlignment="flex-start" orientation="horizontal">
 							<Text color={readAndWriteCollaborationLink ? 'secondary' : 'text'}>
-								{t('', 'Edit')}
+								{t('collaborationLinks.permission.readAndWrite', 'Edit')}
 							</Text>
 						</Container>
 					</Tooltip>
@@ -236,16 +244,19 @@ export const CollaborationLinks = ({
 			},
 			{
 				value: SharePermission.ReadAndShare,
-				label: t('', 'View and manage sharing'),
+				label: t('collaborationLinks.permission.readAndShare', 'View and manage sharing'),
 				disabled: !!readAndShareCollaborationLink,
 				customComponent: (
 					<Tooltip
 						disabled={!readAndShareCollaborationLink}
-						label={t('', 'This type of link has already been created')}
+						label={t(
+							'collaborationLinks.permission.optionDisabled.tooltip',
+							'This type of link has already been created'
+						)}
 					>
 						<Container mainAlignment="flex-start" orientation="horizontal">
 							<Text color={readAndShareCollaborationLink ? 'secondary' : 'text'}>
-								{t('', 'View and manage sharing')}
+								{t('collaborationLinks.permission.readAndShare', 'View and manage sharing')}
 							</Text>
 						</Container>
 					</Tooltip>
@@ -253,16 +264,19 @@ export const CollaborationLinks = ({
 			},
 			{
 				value: SharePermission.ReadWriteAndShare,
-				label: t('', 'Edit and manage sharing'),
+				label: t('collaborationLinks.permission.readWriteAndShare', 'Edit and manage sharing'),
 				disabled: !!readWriteAndShareCollaborationLink,
 				customComponent: (
 					<Tooltip
 						disabled={!readWriteAndShareCollaborationLink}
-						label={t('', 'This type of link has already been created')}
+						label={t(
+							'collaborationLinks.permission.optionDisabled.tooltip',
+							'This type of link has already been created'
+						)}
 					>
 						<Container mainAlignment="flex-start" orientation="horizontal">
 							<Text color={readWriteAndShareCollaborationLink ? 'secondary' : 'text'}>
-								{t('', 'Edit and manage sharing')}
+								{t('collaborationLinks.permission.readWriteAndShare', 'Edit and manage sharing')}
 							</Text>
 						</Container>
 					</Tooltip>
@@ -308,25 +322,25 @@ export const CollaborationLinks = ({
 			{
 				collaborationLink: readOnlyCollaborationLink,
 				dataTestId: 'read-only-collaboration-link-container',
-				title: t('', 'View'),
+				title: t('collaborationLinks.permission.readOnly', 'View'),
 				icons: ['EyeOutline']
 			},
 			{
 				collaborationLink: readAndWriteCollaborationLink,
 				dataTestId: 'read-write-collaboration-link-container',
-				title: t('', 'Edit'),
+				title: t('collaborationLinks.permission.readAndWrite', 'Edit'),
 				icons: ['Edit2Outline']
 			},
 			{
 				collaborationLink: readAndShareCollaborationLink,
 				dataTestId: 'read-share-collaboration-link-container',
-				title: t('', 'View and manage sharing'),
+				title: t('collaborationLinks.permission.readAndShare', 'View and manage sharing'),
 				icons: ['EyeOutline', 'ShareOutline']
 			},
 			{
 				collaborationLink: readWriteAndShareCollaborationLink,
 				dataTestId: 'read-write-share-collaboration-link-container',
-				title: t('', 'Edit and manage sharing'),
+				title: t('collaborationLinks.permission.readWriteAndShare', 'Edit and manage sharing'),
 				icons: ['Edit2Outline', 'ShareOutline']
 			}
 		],
@@ -341,10 +355,16 @@ export const CollaborationLinks = ({
 
 	const generateButtonTooltipLabel = useMemo(() => {
 		if (isSelectDisabled) {
-			return t('', "You've reached the maximum number of links. Revoke one to create a new one.");
+			return t(
+				'collaborationLinks.generateButton.maximumLinks.tooltip',
+				"You've reached the maximum number of links. Revoke one to create a new one."
+			);
 		}
 		if (!selected) {
-			return t('', 'Choose permissions to generate link');
+			return t(
+				'collaborationLinks.generateButton.choosePermission.tooltip',
+				'Choose permissions to generate link'
+			);
 		}
 		return undefined;
 	}, [isSelectDisabled, selected, t]);
@@ -445,7 +465,10 @@ export const CollaborationLinks = ({
 				<Select
 					items={items}
 					onChange={onSelectChange}
-					label={t('', 'Choose permission to generate link')}
+					label={t(
+						'collaborationLinks.generateButton.choosePermission.tooltip',
+						'Choose permissions to generate link'
+					)}
 					disabled={isSelectDisabled}
 					LabelFactory={CustomLabelFactory}
 					selection={selection}
@@ -453,7 +476,7 @@ export const CollaborationLinks = ({
 				<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
 					<Tooltip label={generateButtonTooltipLabel} disabled={!!selected}>
 						<Button
-							label={t('', 'Generate link')}
+							label={t('collaborationLinks.button.generateLink', 'Generate link')}
 							color="primary"
 							onClick={onGenerateLink}
 							type="outlined"
