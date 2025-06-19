@@ -44,7 +44,7 @@ describe('Collaboration Link', () => {
 				'Internal users will receive the permissions by opening the link. You can always modify granted permissions.'
 			)
 		).toBeVisible();
-		expect(screen.getByText(/choose permission to generate link/i)).toBeVisible();
+		expect(screen.getByText(/choose permissions to generate link/i)).toBeVisible();
 		const button = screen.getByRole('button', {
 			name: /generate link/i
 		});
@@ -70,7 +70,7 @@ describe('Collaboration Link', () => {
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
 		});
-		await user.click(screen.getByText(/choose permission to generate link/i));
+		await user.click(screen.getByText(/choose permissions to generate link/i));
 		const dropdown = screen.getByTestId(SELECTORS.dropdownList);
 		expect(within(dropdown).getByText('View')).toBeVisible();
 		expect(within(dropdown).getByText('Edit')).toBeVisible();
@@ -133,7 +133,7 @@ describe('Collaboration Link', () => {
 				await act(async () => {
 					await jest.advanceTimersToNextTimerAsync();
 				});
-				const select = screen.getByText(/choose permission to generate link/i);
+				const select = screen.getByText(/choose permissions to generate link/i);
 				await user.click(select);
 				await user.click(
 					within(screen.getByTestId(SELECTORS.dropdownList)).getByText(permissionText)
@@ -184,7 +184,7 @@ describe('Collaboration Link', () => {
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
 			});
-			await user.click(screen.getByText(/choose permission to generate link/i));
+			await user.click(screen.getByText(/choose permissions to generate link/i));
 			await user.click(screen.getByText('View'));
 			await user.click(
 				screen.getByRole('button', {
@@ -216,7 +216,7 @@ describe('Collaboration Link', () => {
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
 			});
-			await user.click(screen.getByText(/choose permission to generate link/i));
+			await user.click(screen.getByText(/choose permissions to generate link/i));
 			await user.click(screen.getByText('View'));
 			const generateButton = screen.getByRole('button', {
 				name: /generate link/i
@@ -270,7 +270,7 @@ describe('Collaboration Link', () => {
 		});
 		expect(generateButton).toBeDisabled();
 		// the dropdown does not open because the select is disabled
-		await user.click(screen.getByText(/Choose permission to generate link/i));
+		await user.click(screen.getByText(/Choose permissions to generate link/i));
 		expect(screen.queryByTestId(SELECTORS.dropdownList)).not.toBeInTheDocument();
 		// tooltip of the generate link button disabled
 		await user.hover(generateButton);
@@ -316,7 +316,7 @@ describe('Collaboration Link', () => {
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
 		});
-		await user.hover(screen.getByText(/Choose permission to generate link/i));
+		await user.hover(screen.getByText(/Choose permissions to generate link/i));
 		expect(
 			await screen.findByText(
 				/You've reached the maximum number of links. Revoke one to create a new one./i
@@ -354,7 +354,7 @@ describe('Collaboration Link', () => {
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
 		});
-		await user.hover(screen.getByText(/Choose permission to generate link/i));
+		await user.hover(screen.getByText(/Choose permissions to generate link/i));
 		act(() => {
 			// run timers of tooltip
 			jest.advanceTimersToNextTimer();

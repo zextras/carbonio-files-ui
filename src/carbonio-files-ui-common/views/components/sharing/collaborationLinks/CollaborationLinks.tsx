@@ -24,7 +24,7 @@ import {
 import { find } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { CustomLabelFactory } from './CustomLabelFactory';
+import { CustomCollaborationLinkSelect } from './CustomCollaborationLinkSelect';
 import { EMPTY_ITEM } from '../../../../../constants';
 import {
 	CreateCollaborationLinkType,
@@ -470,7 +470,7 @@ export const CollaborationLinks = ({
 						'Choose permissions to generate link'
 					)}
 					disabled={isSelectDisabled}
-					LabelFactory={CustomLabelFactory}
+					LabelFactory={CustomCollaborationLinkSelect}
 					selection={selection}
 				/>
 				<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>

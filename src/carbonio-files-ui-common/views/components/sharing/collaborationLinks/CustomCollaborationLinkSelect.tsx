@@ -54,7 +54,7 @@ const Label = styled(Text)<{ $selectedAndValid: boolean }>`
 	transition: 150ms ease-out;
 `;
 
-export const CustomLabelFactory = ({
+export const CustomCollaborationLinkSelect = ({
 	selected,
 	label,
 	open,
@@ -63,11 +63,14 @@ export const CustomLabelFactory = ({
 	disabled
 }: LabelFactoryProps): React.JSX.Element => {
 	const [t] = useTranslation();
-	const isOptionValid = !!selected.find((item) => item.value !== EMPTY_ITEM.value);
+	const hasValidSelection = selected.some((item) => item.value !== EMPTY_ITEM.value);
 	const selectedLabels = useMemo(
 		() =>
-			isOptionValid && selected.reduce<string[]>((arr, obj) => [...arr, obj.label], []).join(', '),
-		[isOptionValid, selected]
+			selected
+				.filter((item) => item.value !== EMPTY_ITEM.value)
+				.map((item) => item.label)
+				.join(', '),
+		[selected]
 	);
 
 	return (
@@ -103,8 +106,8 @@ export const CustomLabelFactory = ({
 							</CustomText>
 						</Padding>
 						<Label
-							$selectedAndValid={selected.length > 0 && isOptionValid}
-							size={selected.length > 0 && isOptionValid ? 'small' : 'medium'}
+							$selectedAndValid={hasValidSelection}
+							size={hasValidSelection ? 'small' : 'medium'}
 							color={(disabled && 'gray2') || ((open || focus) && 'primary') || 'secondary'}
 						>
 							{label}
