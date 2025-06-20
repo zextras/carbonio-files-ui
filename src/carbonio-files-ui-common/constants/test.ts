@@ -106,7 +106,6 @@ export const SELECTORS = {
 	nodeAvatar: 'file-icon-preview',
 	nodeDetails: 'node-details',
 	nodeSharing: 'node-sharing',
-	collaborationLinkContainer: 'collaboration-link-container',
 	collaborationLinkReadOnly: 'read-only-collaboration-link-container',
 	collaborationLinkReadShare: 'read-share-collaboration-link-container',
 	collaborationLinkWriteShare: 'read-write-share-collaboration-link-container',
