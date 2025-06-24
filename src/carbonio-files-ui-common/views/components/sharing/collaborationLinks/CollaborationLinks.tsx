@@ -356,15 +356,12 @@ export const CollaborationLinks = ({
 	const generateButtonTooltipLabel = useMemo(() => {
 		if (isSelectDisabled) {
 			return t(
-				'collaborationLinks.generateButton.maximumLinks.tooltip',
+				'collaborationLinks.maximumLinks.tooltip',
 				"You've reached the maximum number of links. Revoke one to create a new one."
 			);
 		}
 		if (!selected) {
-			return t(
-				'collaborationLinks.generateButton.choosePermission.tooltip',
-				'Choose permissions to generate link'
-			);
+			return t('collaborationLinks.button.choosePermission', 'Choose permissions to generate link');
 		}
 		return undefined;
 	}, [isSelectDisabled, selected, t]);
@@ -468,7 +465,7 @@ export const CollaborationLinks = ({
 					items={items}
 					onChange={onSelectChange}
 					label={t(
-						'collaborationLinks.generateButton.choosePermission.tooltip',
+						'collaborationLinks.button.choosePermission',
 						'Choose permissions to generate link'
 					)}
 					disabled={isSelectDisabled}

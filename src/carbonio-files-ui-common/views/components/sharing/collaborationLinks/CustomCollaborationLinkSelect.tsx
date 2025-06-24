@@ -84,7 +84,7 @@ export const CustomCollaborationLinkSelect = ({
 			<Tooltip
 				disabled={!disabled}
 				label={t(
-					'collaborationLinks.generateButton.maximumLinks.tooltip',
+					'collaborationLinks.maximumLinks.tooltip',
 					"You've reached the maximum number of links. Revoke one to create a new one."
 				)}
 			>
