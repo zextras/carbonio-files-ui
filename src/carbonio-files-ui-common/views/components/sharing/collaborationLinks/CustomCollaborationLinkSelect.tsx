@@ -22,13 +22,19 @@ import styled, { css } from 'styled-components';
 
 import { EMPTY_ITEM } from '../../../../../constants';
 
-const ContainerEl = styled(Container)<{ $focus: boolean }>`
+const ContainerEl = styled(Container)<{ $focus: boolean; $disabled: boolean }>`
 	transition: background 0.2s ease-out;
-	&:hover {
-		background: ${({ theme, background }): string => getColor(`${background}.hover`, theme)};
-	}
-	${({ $focus, theme, background }): ReturnType<typeof css> | false =>
+	cursor: ${({ $disabled }): string => ($disabled ? 'default' : 'pointer')};
+	${({ $disabled, theme, background }): ReturnType<typeof css> | false =>
+		!$disabled &&
+		css`
+			&:hover {
+				background: ${getColor(`${background}.hover`, theme)};
+			}
+		`};
+	${({ $focus, $disabled, theme, background }): ReturnType<typeof css> | false =>
 		$focus &&
+		!$disabled &&
 		css`
 			background: ${getColor(`${background}.focus`, theme)};
 		`};
@@ -94,6 +100,7 @@ export const CustomCollaborationLinkSelect = ({
 					}}
 					background={background}
 					$focus={focus}
+					$disabled={disabled}
 				>
 					<Row takeAvailableSpace mainAlignment="unset">
 						<Padding top="medium" width="100%">
@@ -120,7 +127,7 @@ export const CustomCollaborationLinkSelect = ({
 					/>
 				</ContainerEl>
 			</Tooltip>
-			<Divider color={open || focus ? 'primary' : INPUT_DIVIDER_COLOR} />
+			<Divider color={(open || focus) && !disabled ? 'primary' : INPUT_DIVIDER_COLOR} />
 		</>
 	);
 };
