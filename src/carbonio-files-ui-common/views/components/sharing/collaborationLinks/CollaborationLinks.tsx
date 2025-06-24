@@ -395,72 +395,74 @@ export const CollaborationLinks = ({
 					)}
 				</TextWithLineHeight>
 			</Container>
-			<Container mainAlignment="flex-start" crossAlignment="flex-start">
-				{collaborationLinks.map(
-					({ collaborationLink, dataTestId, title, icons }, key) =>
-						collaborationLink && (
-							<Container
-								key={key}
-								orientation="horizontal"
-								mainAlignment="flex-start"
-								crossAlignment="flex-start"
-								gap="0.5rem"
-								padding={{ all: 'small' }}
-								data-testid={dataTestId}
-							>
+			{collaborationLinks.some(({ collaborationLink }) => collaborationLink) && (
+				<Container mainAlignment="flex-start" crossAlignment="flex-start">
+					{collaborationLinks.map(
+						({ collaborationLink, dataTestId, title, icons }, key) =>
+							collaborationLink && (
 								<Container
-									crossAlignment="flex-start"
-									width="auto"
-									flexGrow={1}
-									minWidth={0}
-									gap={'0.25rem'}
-								>
-									<TextWithLineHeight size="small">{title}</TextWithLineHeight>
-									<Chip
-										label={
-											<Tooltip
-												label={t(
-													'collaborationLinks.link.urlChip.tooltip.copy',
-													'Copy Collaboration link'
-												)}
-												maxWidth="unset"
-												placement="top"
-											>
-												<Row wrap="nowrap" minWidth={0} gap={'0.25rem'}>
-													<Text size="small" weight="light">
-														{collaborationLink.url}
-													</Text>
-													{icons.map((icon, id) => (
-														<Icon key={id} icon={icon} style={{ pointerEvents: 'none' }} />
-													))}
-												</Row>
-											</Tooltip>
-										}
-										hasAvatar={false}
-										minWidth={0}
-										onClick={copyCollaborationUrl}
-										maxWidth="100%"
-									/>
-								</Container>
-								<Container
-									width="auto"
-									flexShrink={0}
+									key={key}
+									orientation="horizontal"
 									mainAlignment="flex-start"
-									crossAlignment="flex-end"
+									crossAlignment="flex-start"
+									gap="0.5rem"
+									padding={{ all: 'small' }}
+									data-testid={dataTestId}
 								>
-									<Button
-										size="small"
-										type="outlined"
-										color="error"
-										label={t('collaborationLinks.button.revoke', 'Revoke')}
-										onClick={() => revokeCollaborationLink(collaborationLink.id)}
-										icon={'SlashOutline'}
-									/>
+									<Container
+										crossAlignment="flex-start"
+										width="auto"
+										flexGrow={1}
+										minWidth={0}
+										gap={'0.25rem'}
+									>
+										<TextWithLineHeight size="small">{title}</TextWithLineHeight>
+										<Chip
+											label={
+												<Tooltip
+													label={t(
+														'collaborationLinks.link.urlChip.tooltip.copy',
+														'Copy Collaboration link'
+													)}
+													maxWidth="unset"
+													placement="top"
+												>
+													<Row wrap="nowrap" minWidth={0} gap={'0.25rem'}>
+														<Text size="small" weight="light">
+															{collaborationLink.url}
+														</Text>
+														{icons.map((icon, id) => (
+															<Icon key={id} icon={icon} style={{ pointerEvents: 'none' }} />
+														))}
+													</Row>
+												</Tooltip>
+											}
+											hasAvatar={false}
+											minWidth={0}
+											onClick={copyCollaborationUrl}
+											maxWidth="100%"
+										/>
+									</Container>
+									<Container
+										width="auto"
+										flexShrink={0}
+										mainAlignment="flex-start"
+										crossAlignment="flex-end"
+									>
+										<Button
+											size="small"
+											type="outlined"
+											color="error"
+											label={t('collaborationLinks.button.revoke', 'Revoke')}
+											onClick={() => revokeCollaborationLink(collaborationLink.id)}
+											icon={'SlashOutline'}
+										/>
+									</Container>
 								</Container>
-							</Container>
-						)
-				)}
-			</Container>
+							)
+					)}
+				</Container>
+			)}
 			<Container mainAlignment={'flex-start'} crossAlignment="flex-start">
 				<Select
 					items={items}
