@@ -43,6 +43,7 @@ import {
 	SharePermission,
 	SnapshotNode,
 	SnapshotUser,
+	TransferredOwnership,
 	User
 } from '../types/graphql/types';
 import {
@@ -608,7 +609,7 @@ function populateSnapshotNode(): SnapshotNode {
 	};
 }
 
-function populateTriggeringUser(): SnapshotUser {
+function populateSnapshotUser(): SnapshotUser {
 	return {
 		__typename: 'SnapshotUser',
 		email: faker.internet.email(),
@@ -627,7 +628,7 @@ export function populateAddedNodeNotification(type?: AddedNodeType): AddedNode {
 		destination_folder: populateSnapshotNode(),
 		id: faker.string.uuid(),
 		notification_type: NotificationType.AddedNode,
-		triggering_user: populateTriggeringUser()
+		triggering_user: populateSnapshotUser()
 	};
 }
 
@@ -638,7 +639,7 @@ export function populateNewShareNotification(): NewShare {
 		id: faker.string.uuid(),
 		node: populateSnapshotNode(),
 		notification_type: NotificationType.NewShare,
-		triggering_user: populateTriggeringUser()
+		triggering_user: populateSnapshotUser()
 	};
 }
 
@@ -651,7 +652,20 @@ export function populateRemovedNodeNotification(type?: RemovedNodeType): Removed
 		origin_folder: populateSnapshotNode(),
 		removed_node: populateSnapshotNode(),
 		removed_node_type: type ?? RemovedNodeType.Delete,
-		triggering_user: populateTriggeringUser()
+		triggering_user: populateSnapshotUser()
+	};
+}
+
+export function populateTransferredOwnershipNotification(): TransferredOwnership {
+	return {
+		__typename: 'TransferredOwnership',
+		created_at: faker.date.past().getTime(),
+		id: faker.string.uuid(),
+		triggering_user: populateSnapshotUser(),
+		notification_type: NotificationType.TransferredOwnership,
+		number_of_nodes: faker.number.int({ min: 1, max: 10 }),
+		receiving_user: populateSnapshotUser(),
+		resulting_node: populateSnapshotNode()
 	};
 }
 

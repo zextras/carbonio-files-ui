@@ -387,7 +387,7 @@ export const TransferOwnershipModalContent = ({
 				confirmDisabled={
 					newOwnerValue.length === 0 ||
 					!newOwnerValue[0].value ||
-					!(data?.getTransferOwnershipAvailability === true)
+					data?.getTransferOwnershipAvailability !== true
 				}
 				confirmTooltip={confirmTooltip}
 				secondaryActionLabel={t('modal.cancel.label', 'Cancel')}
