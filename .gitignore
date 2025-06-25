@@ -11,6 +11,5 @@
 old.codegen.yml
 sdk/package-lock.json
 /dist
-/LICENSES
 *.tgz
 .env
