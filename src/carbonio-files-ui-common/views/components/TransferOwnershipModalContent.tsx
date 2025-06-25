@@ -194,7 +194,6 @@ export const TransferOwnershipModalContent = ({
 							),
 							replace: true
 						});
-						closeAction();
 					} else {
 						console.error('Failed to transfer ownership');
 					}
@@ -248,6 +247,9 @@ export const TransferOwnershipModalContent = ({
 						),
 						replace: true
 					});
+				})
+				.finally(() => {
+					closeAction();
 				});
 		},
 		[capture, closeAction, createSnackbar, newOwnerValue, t, transferOwnership]
