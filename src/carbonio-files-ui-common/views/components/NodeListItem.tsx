@@ -20,6 +20,7 @@ import { NodeHoverBar } from './NodeHoverBar';
 import { NodeListItemUI } from './NodeListItemUI';
 import { useSelectionContext } from './SelectionProvider';
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { useIsCarbonioCE } from '../../../hooks/useIsCarbonioCE';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { useUserInfo } from '../../../hooks/useUserInfo';
@@ -42,6 +43,7 @@ import { useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnershipModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { usePreview } from '../../hooks/usePreview';
@@ -135,6 +137,7 @@ export const NodeListItem = ({
 	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
 	const { openMoveNodesModal } = useMoveModal();
 	const { openCopyNodesModal } = useCopyModal();
+	const { openTransferOwnershipModal } = useTransferOwnershipModal();
 	const { openRenameModal } = useRenameModal();
 	const { setActiveNode, activeNodeId } = useActiveNode();
 	const toggleFlag = useFlagNodesMutation();
@@ -176,6 +179,7 @@ export const NodeListItem = ({
 		[node.id, node.type]
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
+	const isCarbonioCE = useIsCarbonioCE();
 	const openNodeWithDocs = useOpenWithDocs();
 
 	// timer to start navigation
@@ -197,9 +201,10 @@ export const NodeListItem = ({
 			getAllPermittedActions({
 				nodes: [node],
 				canUsePreview,
-				canUseDocs
+				canUseDocs,
+				isCarbonioCE
 			}),
-		[canUseDocs, canUsePreview, node]
+		[canUseDocs, canUsePreview, node, isCarbonioCE]
 	);
 
 	const openNode = useCallback(() => {
@@ -236,6 +241,14 @@ export const NodeListItem = ({
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
+			[Action.TransferOwnership]: {
+				id: 'TransferOwnership',
+				icon: 'SwapOutline',
+				label: t('actions.transferOwnership', 'Transfer ownership'),
+				onClick: (): void => {
+					openTransferOwnershipModal([node]);
+				}
+			},
 			[Action.Edit]: {
 				id: 'Edit',
 				icon: 'Edit2Outline',
@@ -358,8 +371,9 @@ export const NodeListItem = ({
 		[
 			t,
 			sendViaMailCallback,
-			openNodeWithDocs,
+			openTransferOwnershipModal,
 			node,
+			openNodeWithDocs,
 			openPreview,
 			createSnackbar,
 			setActiveNode,

@@ -181,6 +181,7 @@ export type Mutation = {
 	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
 	moveNodes: Maybe<Array<File | Folder>>;
 	restoreNodes: Maybe<Array<Maybe<File | Folder>>>;
+	transferOwnership: File | Folder;
 	trashNodes: Maybe<Array<Scalars['ID']['output']>>;
 	updateLink: Maybe<Link>;
 	updateNode: File | Folder;
@@ -266,6 +267,11 @@ export type MutationMoveNodesArgs = {
 
 export type MutationRestoreNodesArgs = {
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+export type MutationTransferOwnershipArgs = {
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	user_id: Scalars['ID']['input'];
 };
 
 export type MutationTrashNodesArgs = {
@@ -367,7 +373,7 @@ export enum NodeType {
 	Video = 'VIDEO'
 }
 
-export type Notification = AddedNode | NewShare | RemovedNode;
+export type Notification = AddedNode | NewShare | RemovedNode | TransferredOwnership;
 
 export type NotificationPage = {
 	__typename: 'NotificationPage';
@@ -380,7 +386,8 @@ export type NotificationPage = {
 export enum NotificationType {
 	AddedNode = 'ADDED_NODE',
 	NewShare = 'NEW_SHARE',
-	RemovedNode = 'REMOVED_NODE'
+	RemovedNode = 'REMOVED_NODE',
+	TransferredOwnership = 'TRANSFERRED_OWNERSHIP'
 }
 
 export type Permissions = {
@@ -410,6 +417,7 @@ export type Query = {
 	getPath: Array<Maybe<File | Folder>>;
 	getRootsList: Array<Maybe<Root>>;
 	getShare: Maybe<Share>;
+	getTransferOwnershipAvailability: Scalars['Boolean']['output'];
 	getUserById: Maybe<User>;
 	getVersions: Array<Maybe<File>>;
 };
@@ -463,6 +471,11 @@ export type QueryGetPathArgs = {
 export type QueryGetShareArgs = {
 	node_id: Scalars['ID']['input'];
 	share_target_id: Scalars['ID']['input'];
+};
+
+export type QueryGetTransferOwnershipAvailabilityArgs = {
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	user_id: Scalars['ID']['input'];
 };
 
 export type QueryGetUserByIdArgs = {
@@ -541,6 +554,17 @@ export type SnapshotUser = {
 	full_name: Scalars['String']['output'];
 	snapshot_user_id: Scalars['ID']['output'];
 	user_id: Scalars['ID']['output'];
+};
+
+export type TransferredOwnership = {
+	__typename: 'TransferredOwnership';
+	created_at: Scalars['DateTime']['output'];
+	id: Scalars['ID']['output'];
+	notification_type: NotificationType;
+	number_of_nodes: Scalars['Int']['output'];
+	receiving_user: SnapshotUser;
+	resulting_node: SnapshotNode;
+	triggering_user: SnapshotUser;
 };
 
 export type User = {
@@ -635,7 +659,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
 	Account: DistributionList | User;
-	Notification: AddedNode | NewShare | RemovedNode;
+	Notification: AddedNode | NewShare | RemovedNode | TransferredOwnership;
 	SharedTarget: DistributionList | User;
 };
 
@@ -729,6 +753,7 @@ export type ResolversTypes = {
 	SnapshotNode: ResolverTypeWrapper<SnapshotNode>;
 	SnapshotUser: ResolverTypeWrapper<SnapshotUser>;
 	String: ResolverTypeWrapper<Scalars['String']['output']>;
+	TransferredOwnership: ResolverTypeWrapper<TransferredOwnership>;
 	User: ResolverTypeWrapper<User>;
 };
 
@@ -783,6 +808,7 @@ export type ResolversParentTypes = {
 	SnapshotNode: SnapshotNode;
 	SnapshotUser: SnapshotUser;
 	String: Scalars['String']['output'];
+	TransferredOwnership: TransferredOwnership;
 	User: User;
 };
 
@@ -1052,6 +1078,12 @@ export type MutationResolvers<
 		ContextType,
 		Partial<MutationRestoreNodesArgs>
 	>;
+	transferOwnership?: Resolver<
+		ResolversTypes['Node'],
+		ParentType,
+		ContextType,
+		RequireFields<MutationTransferOwnershipArgs, 'user_id'>
+	>;
 	trashNodes?: Resolver<
 		Maybe<Array<ResolversTypes['ID']>>,
 		ParentType,
@@ -1141,7 +1173,11 @@ export type NotificationResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']
 > = {
-	__resolveType: TypeResolveFn<'AddedNode' | 'NewShare' | 'RemovedNode', ParentType, ContextType>;
+	__resolveType: TypeResolveFn<
+		'AddedNode' | 'NewShare' | 'RemovedNode' | 'TransferredOwnership',
+		ParentType,
+		ContextType
+	>;
 };
 
 export type NotificationPageResolvers<
@@ -1233,6 +1269,12 @@ export type QueryResolvers<
 		ContextType,
 		RequireFields<QueryGetShareArgs, 'node_id' | 'share_target_id'>
 	>;
+	getTransferOwnershipAvailability?: Resolver<
+		ResolversTypes['Boolean'],
+		ParentType,
+		ContextType,
+		RequireFields<QueryGetTransferOwnershipAvailabilityArgs, 'user_id'>
+	>;
 	getUserById?: Resolver<
 		Maybe<ResolversTypes['User']>,
 		ParentType,
@@ -1313,6 +1355,21 @@ export type SnapshotUserResolvers<
 	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TransferredOwnershipResolvers<
+	ContextType = any,
+	ParentType extends
+		ResolversParentTypes['TransferredOwnership'] = ResolversParentTypes['TransferredOwnership']
+> = {
+	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
+	number_of_nodes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+	receiving_user?: Resolver<ResolversTypes['SnapshotUser'], ParentType, ContextType>;
+	resulting_node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
+	triggering_user?: Resolver<ResolversTypes['SnapshotUser'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
@@ -1347,5 +1404,6 @@ export type Resolvers<ContextType = any> = {
 	SharedTarget?: SharedTargetResolvers<ContextType>;
 	SnapshotNode?: SnapshotNodeResolvers<ContextType>;
 	SnapshotUser?: SnapshotUserResolvers<ContextType>;
+	TransferredOwnership?: TransferredOwnershipResolvers<ContextType>;
 	User?: UserResolvers<ContextType>;
 };
