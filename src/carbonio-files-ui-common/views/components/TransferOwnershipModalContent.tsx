@@ -174,6 +174,7 @@ export const TransferOwnershipModalContent = ({
 					if (result.data?.transferOwnership) {
 						capture(TRACKER_EVENT.transferOwnership, { app: FILES_APP_ID, success: true });
 						createSnackbar({
+							actionLabel: t('snackbar.transferOwnership.actionLabel', 'Ok'),
 							key: `${result.data?.transferOwnership.id}-transferOwnership`,
 							severity: 'success',
 							label: (
@@ -206,6 +207,7 @@ export const TransferOwnershipModalContent = ({
 						);
 						if (isOverQuotaError) {
 							createSnackbar({
+								actionLabel: t('snackbar.transferOwnership.actionLabel', 'Ok'),
 								key: 'transferOwnership-overQuota',
 								severity: 'error',
 								label: (
