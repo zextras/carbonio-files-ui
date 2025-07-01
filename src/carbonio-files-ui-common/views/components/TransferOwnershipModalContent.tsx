@@ -228,8 +228,8 @@ export const TransferOwnershipModalContent = ({
 								),
 								replace: true
 							});
+							return;
 						}
-						return;
 					}
 					createSnackbar({
 						key: 'transferOwnership-error',

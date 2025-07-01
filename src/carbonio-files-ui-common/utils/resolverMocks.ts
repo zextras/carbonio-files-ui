@@ -312,3 +312,9 @@ export function mockGetTransferOwnershipAvailability(
 export function mockGetTransferOwnershipAvailabilityLoading(): () => Promise<boolean> {
 	return () => new Promise(() => {});
 }
+
+export function mockTransferOwnership(
+	...transferOwnership: (GQLTypes.File | GQLTypes.Folder)[]
+): MutationMock<GQLTypes.TransferOwnershipMutation> {
+	return () => shiftData(transferOwnership);
+}
