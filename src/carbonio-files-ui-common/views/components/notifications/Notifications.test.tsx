@@ -18,7 +18,8 @@ import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateAddedNodeNotification,
 	populateNewShareNotification,
-	populateRemovedNodeNotification
+	populateRemovedNodeNotification,
+	populateTransferredOwnershipNotification
 } from '../../../mocks/mockUtils';
 import { screen, setup, triggerListLoadMore } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
@@ -183,6 +184,26 @@ describe('Notifications', () => {
 					expect(screen.getByText(date)).toBeVisible();
 				}
 			);
+
+			it('should render `User_A transferred ownership of items to you. You’ll find them in folder Folder_Z` when a user transfers ownership of items to you (TRANSFERRED_OWNERSHIP)', async () => {
+				const notification = populateTransferredOwnershipNotification();
+				const mocks = {
+					Query: {
+						getNotifications: mockGetNotifications(0, [notification])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notifications />, { mocks });
+
+				await user.click(
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
+				);
+				expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
+				expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
+				expect(screen.getByText(notification.resulting_node.name)).toBeVisible();
+				expect(screen.getByText(/transferred ownership of items to you/i)).toBeVisible();
+			});
 
 			it('should render the unread notifications in Primary (Regular) color and the other ones in Text (Regular)', async () => {
 				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());

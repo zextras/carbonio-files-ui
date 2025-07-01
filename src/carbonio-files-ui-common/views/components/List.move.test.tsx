@@ -58,7 +58,6 @@ describe('Move', () => {
 			await selectNodes([file.id, folder.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.move)).not.toBeInTheDocument();
 			// deselect folder and select node with right permission
 			await selectNodes([folder.id, node.id], user);

@@ -9,7 +9,7 @@ import { map } from 'lodash';
 
 import { List } from './List';
 import { SelectionProvider } from './SelectionProvider';
-import { ACTION_REGEXP, ICON_REGEXP, SELECTORS } from '../../constants/test';
+import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
 import { setup, selectNodes, screen, within } from '../../tests/utils';
 import { File, Folder } from '../../types/graphql/types';
@@ -50,14 +50,13 @@ describe('Mark for deletion - trash', () => {
 				currentFolder.children.nodes.length
 			);
 
-			const selectionModeActiveListHeader = screen.getByTestId(SELECTORS.listHeaderSelectionMode);
+			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 
-			const trashIcon = within(selectionModeActiveListHeader).getByRoleWithIcon('button', {
-				icon: ICON_REGEXP.moveToTrash
+			const trashAction = await screen.findByText(ACTION_REGEXP.moveToTrash);
+			expect(trashAction).toBeVisible();
+			expect(trashAction).toHaveStyle({
+				color: COLORS.text.regular
 			});
-
-			expect(trashIcon).toBeVisible();
-			expect(trashIcon).toBeEnabled();
 
 			await selectNodes(
 				map(currentFolder.children.nodes, (node) => node?.id || ''),

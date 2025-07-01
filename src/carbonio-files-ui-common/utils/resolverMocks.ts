@@ -302,3 +302,19 @@ export function mockGetNotifications(
 		return populateGetNotifications(nodes, unread);
 	};
 }
+
+export function mockGetTransferOwnershipAvailability(
+	available: boolean
+): QueryMock<GQLTypes.GetTransferOwnershipAvailabilityQuery> {
+	return () => available;
+}
+
+export function mockGetTransferOwnershipAvailabilityLoading(): () => Promise<boolean> {
+	return () => new Promise(() => {});
+}
+
+export function mockTransferOwnership(
+	...transferOwnership: (GQLTypes.File | GQLTypes.Folder)[]
+): MutationMock<GQLTypes.TransferOwnershipMutation> {
+	return () => shiftData(transferOwnership);
+}

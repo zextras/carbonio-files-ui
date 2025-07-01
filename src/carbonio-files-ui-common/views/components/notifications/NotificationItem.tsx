@@ -13,7 +13,8 @@ import {
 	NewShare,
 	Notification,
 	NotificationType,
-	RemovedNode
+	RemovedNode,
+	TransferredOwnership
 } from '../../../types/graphql/types';
 import { InlineText } from '../StyledComponents';
 
@@ -32,6 +33,12 @@ export function isAddedNodeNotification(notification: Notification): notificatio
 
 export function isRemovedNodeNotification(notification: Notification): notification is RemovedNode {
 	return notification.notification_type === NotificationType.RemovedNode;
+}
+
+export function isTransferredOwnershipNotification(
+	notification: Notification
+): notification is TransferredOwnership {
+	return notification.notification_type === NotificationType.TransferredOwnership;
 }
 
 export function getDateNotification(createdAt: number, language?: string): string {
@@ -112,6 +119,28 @@ export const NotificationItem = ({
 						email: notification.triggering_user.email,
 						node: notification.removed_node.name,
 						folder: notification.origin_folder.name
+					}}
+					components={{
+						bold: (
+							<InlineText
+								overflow={'break-word'}
+								weight="bold"
+								color={isUnread ? 'primary' : 'text'}
+							/>
+						)
+					}}
+				/>
+			);
+		}
+		if (isTransferredOwnershipNotification(notification)) {
+			return (
+				<Trans
+					t={t}
+					i18nKey="notifications.transferredOwnership.message"
+					defaults="<bold>{{email}}</bold> transferred ownership of items to you. You’ll find them in folder <bold>{{folder}}</bold>"
+					values={{
+						email: notification.triggering_user.email,
+						folder: notification.resulting_node.name
 					}}
 					components={{
 						bold: (
