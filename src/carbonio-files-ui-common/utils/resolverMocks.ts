@@ -302,3 +302,13 @@ export function mockGetNotifications(
 		return populateGetNotifications(nodes, unread);
 	};
 }
+
+export function mockGetTransferOwnershipAvailability(
+	available: boolean
+): QueryMock<GQLTypes.GetTransferOwnershipAvailabilityQuery> {
+	return () => available;
+}
+
+export function mockGetTransferOwnershipAvailabilityLoading(): () => Promise<boolean> {
+	return () => new Promise(() => {});
+}
