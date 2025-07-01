@@ -18,7 +18,7 @@ import {
 	Tooltip,
 	useSnackbar
 } from '@zextras/carbonio-design-system';
-import { forEach, some } from 'lodash';
+import { forEach } from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { AccountChipInput } from './AccountChipInput';
@@ -27,22 +27,16 @@ import { useActiveNode } from '../../../hooks/useActiveNode';
 import { useTracker } from '../../../hooks/useTracker';
 import { FILES_APP_ID, TRACKER_EVENT } from '../../constants';
 import PARENT_ID from '../../graphql/fragments/parentId.graphql';
-import FIND_NODES from '../../graphql/queries/findNodes.graphql';
-import GET_CHILDREN from '../../graphql/queries/getChildren.graphql';
 import { useGetTransferOwnershipAvailabilityQuery } from '../../hooks/graphql/queries/useGetTransferOwnershipAvailabilityQuery';
 import { useUpdateFolderContent } from '../../hooks/graphql/useUpdateFolderContent';
-import { isQueryResult } from '../../hooks/graphql/utils';
+import { createOnQueryUpdated } from '../../hooks/graphql/utils';
 import {
-	Node,
-	FindNodesQuery,
-	GetChildrenQuery,
 	TransferOwnershipDocument,
 	Folder,
 	ParentIdFragment,
 	QueryGetPathArgs
 } from '../../types/graphql/types';
 import { ContactInfo } from '../../types/network';
-import { isFolder } from '../../utils/utils';
 
 interface TransferOwnershipModalContentProps {
 	closeAction: () => void;
@@ -59,6 +53,12 @@ export const TransferOwnershipModalContent = ({
 	const { capture } = useTracker();
 
 	const { activeNodeId, removeActiveNode } = useActiveNode();
+
+	const onQueryUpdated = useMemo(
+		() => createOnQueryUpdated(activeNodeId, removeActiveNode),
+		[activeNodeId, removeActiveNode]
+	);
+
 	const { removeNodesFromFolder } = useUpdateFolderContent();
 
 	const [newOwnerValue, setNewOwnerValue] = useState<Array<ChipItem<string>>>([]);
@@ -108,39 +108,10 @@ export const TransferOwnershipModalContent = ({
 						});
 					}
 				},
-				onQueryUpdated(observableQuery, { missing, result }) {
-					const { query } = observableQuery.options;
-					let listNodes = null;
-					if (isQueryResult<FindNodesQuery>(query, result, FIND_NODES)) {
-						if (missing) {
-							return observableQuery.refetch();
-						}
-						listNodes = result.findNodes?.nodes;
-					}
-					if (
-						isQueryResult<GetChildrenQuery>(query, result, GET_CHILDREN) &&
-						result.getNode &&
-						isFolder(result.getNode)
-					) {
-						listNodes = result.getNode.children?.nodes;
-					}
-
-					if (
-						observableQuery.hasObservers() &&
-						activeNodeId &&
-						listNodes &&
-						!some<Pick<Node, 'id'> | null>(
-							listNodes,
-							(resultNode) => resultNode?.id === activeNodeId
-						)
-					) {
-						removeActiveNode();
-					}
-					return observableQuery.reobserve();
-				},
+				onQueryUpdated,
 				fetchPolicy: 'network-only'
 			}),
-		[activeNodeId, apolloClient, nodes, removeActiveNode, removeNodesFromFolder]
+		[apolloClient, nodes, onQueryUpdated, removeNodesFromFolder]
 	);
 
 	const titleLabel = useMemo(
