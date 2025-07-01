@@ -420,7 +420,7 @@ describe('Collaboration Link', () => {
 				within(modal).getByText(
 					`By revoking this link, you are blocking the possibility to create new shares with it. Everyone who has already used the collaboration link will keep the access to the item.`
 				)
-			);
+			).toBeVisible();
 			const revokeButton = within(modal).getByRole('button', { name: /revoke/i });
 			expect(revokeButton).toBeVisible();
 			await user.click(revokeButton);
