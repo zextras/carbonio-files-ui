@@ -33,7 +33,8 @@ export const Action = {
 	UpsertDescription: 'UPSERT_DESCRIPTION',
 	RemoveUpload: 'REMOVE_UPLOAD',
 	RetryUpload: 'RETRY_UPLOAD',
-	GoToFolder: 'GO_TO_FOLDER'
+	GoToFolder: 'GO_TO_FOLDER',
+	TransferOwnership: 'TRANSFER_OWNERSHIP'
 } as const;
 
 export type Action = (typeof Action)[keyof typeof Action];
@@ -60,6 +61,7 @@ const completeListActionsForNode = [
 	Action.Copy,
 	Action.Move,
 	Action.Rename,
+	Action.TransferOwnership,
 	Action.MoveToTrash,
 	Action.Restore,
 	Action.DeletePermanently
@@ -488,6 +490,32 @@ export function canManageShares({ nodes }: { nodes: NodeManageShares[] }): boole
 	return nodes.length === 1 && nodes[0].rootId !== ROOTS.TRASH;
 }
 
+type NodeTransferOwnership = Node<'rootId'> & DeepPick<Node<'owner'>, 'owner', 'id'>;
+
+export function canTransferOwnership({
+	nodes,
+	isCarbonioCE = true
+}: {
+	nodes: NodeTransferOwnership[];
+	isCarbonioCE?: boolean;
+}): boolean {
+	if (nodes.length === 0) {
+		throw Error('cannot evaluate canTransferOwnership on empty nodes array');
+	}
+
+	const loggedUserId = getUserAccount().id;
+
+	// Requirements for ownership transfer:
+	// 1. Must not be Carbonio CE version
+	// 2. All nodes must belong to the current user
+	// 3. No node should be in trash
+	return (
+		!isCarbonioCE &&
+		nodes.every((node) => node.owner?.id === loggedUserId) &&
+		nodes.every((node) => node.rootId !== ROOTS.TRASH)
+	);
+}
+
 const ACTION_HANDLERS = {
 	[Action.Edit]: canEdit,
 	[Action.Preview]: canPreview,
@@ -506,7 +534,8 @@ const ACTION_HANDLERS = {
 	[Action.UpsertDescription]: canUpsertDescription,
 	[Action.GoToFolder]: canGoToFolder,
 	[Action.RetryUpload]: canRetryUpload,
-	[Action.RemoveUpload]: canRemoveUpload
+	[Action.RemoveUpload]: canRemoveUpload,
+	[Action.TransferOwnership]: canTransferOwnership
 } as const;
 
 type ActionHandlers = typeof ACTION_HANDLERS;

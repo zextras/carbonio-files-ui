@@ -12,6 +12,7 @@ import { includes } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { useIsCarbonioCE } from '../../../hooks/useIsCarbonioCE';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { DISPLAYER_TABS } from '../../constants';
 import { useDeleteNodesMutation } from '../../hooks/graphql/mutations/useDeleteNodesMutation';
@@ -22,6 +23,7 @@ import { useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnershipModal';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { Node } from '../../types/common';
@@ -70,11 +72,14 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 	const { openDeletePermanentlyModal } = useDeletePermanentlyModal(deletePermanentlyCallback);
 
 	const { canUsePreview, canUseDocs } = useHealthInfo();
+	const isCarbonioCE = useIsCarbonioCE();
 
 	const permittedDisplayerActions: Action[] = useMemo(
-		() => getAllPermittedActions({ nodes: [node], canUsePreview, canUseDocs }),
-		[canUseDocs, canUsePreview, node]
+		() => getAllPermittedActions({ nodes: [node], canUsePreview, canUseDocs, isCarbonioCE }),
+		[canUseDocs, canUsePreview, node, isCarbonioCE]
 	);
+
+	const { openTransferOwnershipModal } = useTransferOwnershipModal();
 
 	const { openMoveNodesModal } = useMoveModal();
 
@@ -109,6 +114,14 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
+			[Action.TransferOwnership]: {
+				id: 'TransferOwnership',
+				icon: 'SwapOutline',
+				label: t('actions.transferOwnership', 'Transfer ownership'),
+				onClick: (): void => {
+					openTransferOwnershipModal([node]);
+				}
+			},
 			[Action.Edit]: {
 				id: 'Edit',
 				icon: 'Edit2Outline',
@@ -220,6 +233,7 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 			openMoveNodesModal,
 			openNodeWithDocs,
 			openRenameModal,
+			openTransferOwnershipModal,
 			preview,
 			restoreNodeCallback,
 			sendViaMailCallback,

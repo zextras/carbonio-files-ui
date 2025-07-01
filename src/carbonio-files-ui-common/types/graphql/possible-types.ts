@@ -14,7 +14,7 @@ const result: PossibleTypesResultData = {
 	possibleTypes: {
 		Account: ['DistributionList', 'User'],
 		Node: ['File', 'Folder'],
-		Notification: ['AddedNode', 'NewShare', 'RemovedNode'],
+		Notification: ['AddedNode', 'NewShare', 'RemovedNode', 'TransferredOwnership'],
 		SharedTarget: ['DistributionList', 'User']
 	}
 };

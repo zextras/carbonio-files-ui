@@ -18,6 +18,7 @@ import { ListContent } from './ListContent';
 import { useSelectionContext } from './SelectionProvider';
 import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { useIsCarbonioCE } from '../../../hooks/useIsCarbonioCE';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
@@ -43,6 +44,7 @@ import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
 import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnershipModal';
 import { useHeaderActions } from '../../hooks/useHeaderActions';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
@@ -151,16 +153,19 @@ export const List = ({
 
 	const { openCopyNodesModal } = useCopyModal(exitSelectionMode);
 
+	const { openTransferOwnershipModal } = useTransferOwnershipModal(exitSelectionMode);
+
 	const selectedNodes = useMemo(
 		() => nodes.filter((node) => selectedIDs.includes(node.id)),
 		[nodes, selectedIDs]
 	);
 	const openNodeWithDocs = useOpenWithDocs();
+	const isCarbonioCE = useIsCarbonioCE();
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
 	const permittedSelectionModeActions = useMemo(
-		() => getAllPermittedActions({ nodes: selectedNodes, canUsePreview, canUseDocs }),
-		[canUseDocs, canUsePreview, selectedNodes]
+		() => getAllPermittedActions({ nodes: selectedNodes, canUsePreview, canUseDocs, isCarbonioCE }),
+		[canUseDocs, canUsePreview, selectedNodes, isCarbonioCE]
 	);
 
 	const setActiveNodeHandler = useCallback(
@@ -222,6 +227,11 @@ export const List = ({
 	const openCopyNodesModalSelection = useCallback<() => ReturnType<OpenCopyModal>>(
 		() => openCopyNodesModal(selectedNodes, folderId),
 		[folderId, openCopyNodesModal, selectedNodes]
+	);
+
+	const openTransferOwnershipModalSelection = useCallback(
+		() => openTransferOwnershipModal(selectedNodes),
+		[openTransferOwnershipModal, selectedNodes]
 	);
 
 	const renameActionCallback = useCallback(
@@ -418,6 +428,12 @@ export const List = ({
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
+			[Action.TransferOwnership]: {
+				id: 'TransferOwnership',
+				icon: 'SwapOutline',
+				label: t('actions.transferOwnership', 'Transfer ownership'),
+				onClick: openTransferOwnershipModalSelection
+			},
 			[Action.Edit]: {
 				id: 'Edit',
 				icon: 'Edit2Outline',
@@ -515,6 +531,7 @@ export const List = ({
 			openDeletePermanentlyModal,
 			openMoveNodesModalSelection,
 			openRenameModalSelection,
+			openTransferOwnershipModalSelection,
 			openWithDocsSelection,
 			previewSelection,
 			restoreSelection,

@@ -4,30 +4,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { ChipInput, ChipInputProps, ChipItem } from '@zextras/carbonio-design-system';
-import { isEmpty, filter, reduce, throttle } from 'lodash';
+import { ChipInputProps, ChipItem } from '@zextras/carbonio-design-system';
+import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { Hint, Loader } from './StyledComponents';
-import { soapFetch } from '../../../network/network';
-import { AdvancedFilters, Contact } from '../../types/common';
-import { AutocompleteGalRequest, AutocompleteGalResponse, ContactInfo } from '../../types/network';
-import { getChipLabel } from '../../utils/utils';
-
-function contactInfoToContact(contactInfo: ContactInfo): Contact {
-	return {
-		email: contactInfo._attrs.email,
-		firstName: contactInfo._attrs.firstName,
-		lastName: contactInfo._attrs.lastName,
-		fullName: contactInfo._attrs.fullName
-	};
-}
-
-const removeGroups: (autocompleteGalResponse: AutocompleteGalResponse) => ContactInfo[] = ({
-	cn
-}) => filter(cn, (item) => item._attrs.type !== 'group');
+import { AccountChipInput } from './AccountChipInput';
+import { AdvancedFilters } from '../../types/common';
+import { ContactInfo } from '../../types/network';
 
 interface OwnerChipInputProps {
 	currentFilters: AdvancedFilters;
@@ -44,79 +29,6 @@ export const OwnerChipInput = ({
 	onInputType
 }: OwnerChipInputProps): React.JSX.Element => {
 	const [t] = useTranslation();
-
-	const [loading, setLoading] = useState(false);
-
-	const [searchResult, setSearchResult] = useState<Array<ContactInfo>>([]);
-
-	const search = useMemo(
-		() =>
-			throttle(
-				({ textContent }: React.KeyboardEvent & { textContent: string | null }) => {
-					if (textContent === '' || textContent === null) {
-						setSearchResult((prevSearchResult) =>
-							prevSearchResult.length > 0 ? [] : prevSearchResult
-						);
-						return;
-					}
-					setLoading(true);
-					soapFetch<AutocompleteGalRequest, AutocompleteGalResponse>(
-						'AutoCompleteGal',
-						{
-							needExp: true,
-							name: textContent
-						},
-						'urn:zimbraAccount'
-					)
-						.then(removeGroups)
-						.then((cn) => {
-							setLoading(false);
-							setSearchResult(cn);
-						})
-						.catch((err: Error) => {
-							console.error(err);
-						});
-				},
-				500,
-				{ leading: true }
-			),
-		[]
-	);
-	const ownerOnType = useCallback<NonNullable<ChipInputProps['onInputType']>>(
-		(ev) => {
-			onInputType?.(ev);
-			if (ev.key.length === 1 || ev.key === 'Delete' || ev.key === 'Backspace') {
-				search(ev);
-			}
-		},
-		[onInputType, search]
-	);
-
-	const dropdownItems = useMemo(() => {
-		const items = reduce<ContactInfo, NonNullable<ChipInputProps['options']>>(
-			searchResult,
-			(accumulator, contactInfo) => {
-				const label = getChipLabel(contactInfoToContact(contactInfo));
-				accumulator.push({
-					label,
-					id: `$${contactInfo.id}`,
-					customComponent: <Hint label={label} email={contactInfo._attrs.email} />,
-					value: { ...contactInfo, label }
-				});
-				return accumulator;
-			},
-			[]
-		);
-		if (loading) {
-			items.push({
-				id: 'loading',
-				label: 'loading',
-				customComponent: <Loader />,
-				value: undefined
-			});
-		}
-		return items;
-	}, [loading, searchResult]);
 
 	const ownerOnChange = useCallback<NonNullable<ChipInputProps['onChange']>>(
 		(newOwner) => {
@@ -144,18 +56,12 @@ export const OwnerChipInput = ({
 	}, [currentFilters.ownerId]);
 
 	return (
-		<ChipInput
+		<AccountChipInput
 			placeholder={t('search.advancedSearch.modal.owner.label', 'Owner')}
-			background="gray5"
-			maxChips={1}
-			separators={[]}
-			confirmChipOnBlur={false}
 			value={ownerChipInputValue}
 			onChange={ownerOnChange}
-			onInputType={ownerOnType}
-			options={dropdownItems}
+			onInputType={onInputType}
 			dropdownWidth={'fit-content'}
-			dropdownMaxWidth={'100vh'}
 		/>
 	);
 };

@@ -626,7 +626,6 @@ describe('Search list', () => {
 			await selectNodes(nodesToUnflag, user);
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(nodesToUnflag.length);
-			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			const unflagIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.unflag });
 			expect(unflagIcon).toBeVisible();
 			expect(unflagIcon).toBeEnabled();

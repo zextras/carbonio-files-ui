@@ -122,6 +122,7 @@ type Mutation {
 	keepVersions(keep_forever: Boolean!, node_id: ID!, versions: [Int!]!): [Int]!
 	moveNodes(destination_id: ID!, node_ids: [ID!]): [Node!]
 	restoreNodes(node_ids: [ID!]): [Node]
+	transferOwnership(node_ids: [ID!], user_id: ID!): Node!
 	trashNodes(node_ids: [ID!]): [ID!]
 	updateLink(access_code: String, description: String, expires_at: DateTime, link_id: ID!): Link
 	updateNode(description: String, flagged: Boolean, name: String, node_id: String!): Node!
@@ -195,7 +196,7 @@ enum NodeType {
 	VIDEO
 }
 
-union Notification = AddedNode | NewShare | RemovedNode
+union Notification = AddedNode | NewShare | RemovedNode | TransferredOwnership
 
 type NotificationPage {
 	last_seen: DateTime!
@@ -208,6 +209,7 @@ enum NotificationType {
 	ADDED_NODE
 	NEW_SHARE
 	REMOVED_NODE
+	TRANSFERRED_OWNERSHIP
 }
 
 type Permissions {
@@ -248,6 +250,7 @@ type Query {
 	getPath(node_id: ID!): [Node]!
 	getRootsList: [Root]!
 	getShare(node_id: ID!, share_target_id: ID!): Share
+	getTransferOwnershipAvailability(node_ids: [ID!], user_id: ID!): Boolean!
 	getUserById(user_id: ID!): User
 	getVersions(node_id: ID!, versions: [Int!]): [File]!
 }
@@ -314,6 +317,16 @@ type SnapshotUser {
 	full_name: String!
 	snapshot_user_id: ID!
 	user_id: ID!
+}
+
+type TransferredOwnership {
+	created_at: DateTime!
+	id: ID!
+	notification_type: NotificationType!
+	number_of_nodes: Int!
+	receiving_user: SnapshotUser!
+	resulting_node: SnapshotNode!
+	triggering_user: SnapshotUser!
 }
 
 type User {

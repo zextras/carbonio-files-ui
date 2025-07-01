@@ -90,7 +90,6 @@ describe('Filter View', () => {
 				await selectNodes([file.id, folder.id], user);
 				// check that all wanted items are selected
 				expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-				expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 				expect(screen.queryByTestId(ICON_REGEXP.move)).not.toBeInTheDocument();
 				// activate selection mode by selecting items
 				await selectNodes([folder.id, node.id], user);

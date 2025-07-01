@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2025 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+mutation transferOwnership($node_ids: [ID!], $user_id: ID!) {
+	transferOwnership(node_ids: $node_ids, user_id: $user_id) {
+		id
+		name
+	}
+}

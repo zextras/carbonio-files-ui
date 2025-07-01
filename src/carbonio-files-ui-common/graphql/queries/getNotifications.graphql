@@ -83,6 +83,32 @@ query getNotifications($limit: Int, $page_token: String, $update_last_seen: Bool
 				}
 				removed_node_type
 			}
+			... on TransferredOwnership {
+				id
+				notification_type
+				created_at
+				triggering_user {
+					user_id
+					full_name
+					email
+					snapshot_user_id
+				}
+				receiving_user {
+					user_id
+					full_name
+					email
+					snapshot_user_id
+				}
+				number_of_nodes
+				resulting_node {
+					node_id
+					name
+					type
+					created_at
+					owner_id
+					snapshot_node_id
+				}
+			}
 		}
 	}
 }
