@@ -395,10 +395,10 @@ export const CollaborationLinks = ({
 			{collaborationLinks.some(({ collaborationLink }) => collaborationLink) && (
 				<Container mainAlignment="flex-start" crossAlignment="flex-start">
 					{collaborationLinks.map(
-						({ collaborationLink, dataTestId, title, icons }, key) =>
+						({ collaborationLink, dataTestId, title, icons }) =>
 							collaborationLink && (
 								<Container
-									key={key}
+									key={collaborationLink.id}
 									orientation="horizontal"
 									mainAlignment="flex-start"
 									crossAlignment="flex-start"
@@ -428,8 +428,8 @@ export const CollaborationLinks = ({
 														<Text size="small" weight="light">
 															{collaborationLink.url}
 														</Text>
-														{icons.map((icon, id) => (
-															<Icon key={id} icon={icon} style={{ pointerEvents: 'none' }} />
+														{icons.map((icon) => (
+															<Icon key={icon} icon={icon} style={{ pointerEvents: 'none' }} />
 														))}
 													</Row>
 												</Tooltip>
