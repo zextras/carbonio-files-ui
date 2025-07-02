@@ -38,17 +38,20 @@ import { TextWithLineHeight } from '../../StyledComponents';
 
 interface CollaborationLinksProps {
 	nodeId: string;
+	canWrite: boolean;
 	nodeName: string;
 }
 
 export const CollaborationLinks = ({
 	nodeId,
+	canWrite,
 	nodeName
 }: CollaborationLinksProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const [selected, setSelected] = useState<SharePermission>();
 	const createSnackbar = useSnackbar();
 	const { createModal, closeModal } = useModal();
+
 	const { data: getCollaborationLinksQueryData, loading } = useGetCollaborationLinksQuery(nodeId);
 
 	const readOnlyCollaborationLink = useMemo(() => {
@@ -200,6 +203,41 @@ export const CollaborationLinks = ({
 		[openDeleteModal]
 	);
 
+	const isReadAndWriteItemDisabled = useMemo(
+		() => !!readAndWriteCollaborationLink || !canWrite,
+		[canWrite, readAndWriteCollaborationLink]
+	);
+
+	const readAndWriteTooltipLabel = useMemo(() => {
+		if (!canWrite)
+			return t(
+				'collaborationLinks.permission.cannotWrite.tooltip',
+				"You are not allowed to create this collaboration link because you don't have edit permission"
+			);
+		return t(
+			'collaborationLinks.permission.optionDisabled.tooltip',
+			'This type of link has already been created'
+		);
+	}, [canWrite, t]);
+
+	const isReadWriteAndShareItemDisabled = useMemo(
+		() => !!readWriteAndShareCollaborationLink || !canWrite,
+		[canWrite, readWriteAndShareCollaborationLink]
+	);
+
+	const readAndWriteAndShareTooltipLabel = useMemo(() => {
+		if (!canWrite)
+			return t(
+				'collaborationLinks.permission.cannotWrite.tooltip',
+				"You are not allowed to create this collaboration link because you don't have edit permission"
+			);
+
+		return t(
+			'collaborationLinks.permission.optionDisabled.tooltip',
+			'This type of link has already been created'
+		);
+	}, [canWrite, t]);
+
 	const items = useMemo<SelectItem<SharePermission>[]>(
 		() => [
 			{
@@ -225,17 +263,11 @@ export const CollaborationLinks = ({
 			{
 				value: SharePermission.ReadAndWrite,
 				label: t('collaborationLinks.permission.readAndWrite', 'Edit'),
-				disabled: !!readAndWriteCollaborationLink,
+				disabled: isReadAndWriteItemDisabled,
 				customComponent: (
-					<Tooltip
-						disabled={!readAndWriteCollaborationLink}
-						label={t(
-							'collaborationLinks.permission.optionDisabled.tooltip',
-							'This type of link has already been created'
-						)}
-					>
+					<Tooltip disabled={!isReadAndWriteItemDisabled} label={readAndWriteTooltipLabel}>
 						<Container mainAlignment="flex-start" orientation="horizontal">
-							<Text color={readAndWriteCollaborationLink ? 'secondary' : 'text'}>
+							<Text color={isReadAndWriteItemDisabled ? 'secondary' : 'text'}>
 								{t('collaborationLinks.permission.readAndWrite', 'Edit')}
 							</Text>
 						</Container>
@@ -265,17 +297,14 @@ export const CollaborationLinks = ({
 			{
 				value: SharePermission.ReadWriteAndShare,
 				label: t('collaborationLinks.permission.readWriteAndShare', 'Edit and manage sharing'),
-				disabled: !!readWriteAndShareCollaborationLink,
+				disabled: isReadWriteAndShareItemDisabled,
 				customComponent: (
 					<Tooltip
-						disabled={!readWriteAndShareCollaborationLink}
-						label={t(
-							'collaborationLinks.permission.optionDisabled.tooltip',
-							'This type of link has already been created'
-						)}
+						disabled={!isReadWriteAndShareItemDisabled}
+						label={readAndWriteAndShareTooltipLabel}
 					>
 						<Container mainAlignment="flex-start" orientation="horizontal">
-							<Text color={readWriteAndShareCollaborationLink ? 'secondary' : 'text'}>
+							<Text color={isReadWriteAndShareItemDisabled ? 'secondary' : 'text'}>
 								{t('collaborationLinks.permission.readWriteAndShare', 'Edit and manage sharing')}
 							</Text>
 						</Container>
@@ -284,10 +313,12 @@ export const CollaborationLinks = ({
 			}
 		],
 		[
+			isReadAndWriteItemDisabled,
+			isReadWriteAndShareItemDisabled,
 			readAndShareCollaborationLink,
-			readAndWriteCollaborationLink,
+			readAndWriteAndShareTooltipLabel,
+			readAndWriteTooltipLabel,
 			readOnlyCollaborationLink,
-			readWriteAndShareCollaborationLink,
 			t
 		]
 	);

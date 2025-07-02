@@ -33,7 +33,9 @@ describe('Collaboration Link', () => {
 				getCollaborationLinks: mockGetCollaborationLinks([])
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, { mocks });
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />, {
+			mocks
+		});
 
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
@@ -65,7 +67,9 @@ describe('Collaboration Link', () => {
 				getCollaborationLinks: mockGetCollaborationLinks([])
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, { mocks });
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />, {
+			mocks
+		});
 
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
@@ -126,9 +130,12 @@ describe('Collaboration Link', () => {
 						createCollaborationLink: mockCreateCollaborationLink(collaborationLink)
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
-					mocks
-				});
+				const { user } = setup(
+					<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />,
+					{
+						mocks
+					}
+				);
 
 				await act(async () => {
 					await jest.advanceTimersToNextTimerAsync();
@@ -177,9 +184,12 @@ describe('Collaboration Link', () => {
 					createCollaborationLink: mockCreateCollaborationLink(readOnlyCollaborationLink)
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
-				mocks
-			});
+			const { user } = setup(
+				<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />,
+				{
+					mocks
+				}
+			);
 
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
@@ -209,9 +219,12 @@ describe('Collaboration Link', () => {
 					createCollaborationLink: mockCreateCollaborationLink(readOnlyCollaborationLink)
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
-				mocks
-			});
+			const { user } = setup(
+				<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />,
+				{
+					mocks
+				}
+			);
 
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
@@ -254,7 +267,7 @@ describe('Collaboration Link', () => {
 				])
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />, {
 			mocks
 		});
 
@@ -309,7 +322,7 @@ describe('Collaboration Link', () => {
 				])
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />, {
 			mocks
 		});
 
@@ -347,7 +360,7 @@ describe('Collaboration Link', () => {
 				])
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />, {
 			mocks
 		});
 
@@ -398,9 +411,12 @@ describe('Collaboration Link', () => {
 					deleteCollaborationLinks: mockDeleteCollaborationLinks([readOnlyCollaborationLink.id])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
-				mocks
-			});
+			const { user } = setup(
+				<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />,
+				{
+					mocks
+				}
+			);
 
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
@@ -463,9 +479,12 @@ describe('Collaboration Link', () => {
 					])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
-				mocks
-			});
+			const { user } = setup(
+				<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />,
+				{
+					mocks
+				}
+			);
 
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
@@ -518,9 +537,12 @@ describe('Collaboration Link', () => {
 					deleteCollaborationLinks: mockDeleteCollaborationLinks([readAndShareCollaborationLink.id])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
-				mocks
-			});
+			const { user } = setup(
+				<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />,
+				{
+					mocks
+				}
+			);
 
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
@@ -573,9 +595,12 @@ describe('Collaboration Link', () => {
 					deleteCollaborationLinks: mockDeleteCollaborationLinks([readAndWriteCollaborationLink.id])
 				}
 			} satisfies Partial<Resolvers>;
-			const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, {
-				mocks
-			});
+			const { user } = setup(
+				<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />,
+				{
+					mocks
+				}
+			);
 
 			await act(async () => {
 				await jest.advanceTimersToNextTimerAsync();
@@ -615,7 +640,9 @@ describe('Collaboration Link', () => {
 				getCollaborationLinks: mockGetCollaborationLinks([collaborationLink])
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} />, { mocks });
+		const { user } = setup(<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite />, {
+			mocks
+		});
 
 		await act(async () => {
 			await jest.advanceTimersToNextTimerAsync();
@@ -624,4 +651,35 @@ describe('Collaboration Link', () => {
 		expect(copyToClipboardFn).toHaveBeenCalledWith(collaborationLink.url);
 		expect(await screen.findByText(/Collaboration Link copied/i)).toBeVisible();
 	});
+
+	it.each(['Edit', 'Edit and manage sharing'])(
+		'should disable the Edit and Edit and manage sharing options if canWrite is false',
+		async (permission) => {
+			const node = populateNode();
+			node.permissions.can_share = true;
+			const mocks = {
+				Query: {
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(
+				<CollaborationLinks nodeId={node.id} nodeName={node.name} canWrite={false} />,
+				{
+					mocks
+				}
+			);
+
+			await act(async () => {
+				await jest.advanceTimersToNextTimerAsync();
+			});
+			await user.click(screen.getByText(/choose permissions to generate link/i));
+			const dropdown = screen.getByTestId(SELECTORS.dropdownList);
+			await user.hover(within(dropdown).getByText(permission));
+			expect(
+				await screen.findByText(
+					"You are not allowed to create this collaboration link because you don't have edit permission"
+				)
+			).toBeVisible();
+		}
+	);
 });
