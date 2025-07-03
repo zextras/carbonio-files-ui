@@ -6,6 +6,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
+import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 
 import { OwnerChipInput } from './OwnerChipInput';
 import * as network from '../../../network/network';
@@ -20,9 +21,14 @@ describe('OwnerChipInput', () => {
 	it('should show email and contact label as suggestion', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
 		jest.spyOn(network, 'soapFetch').mockImplementation(
-			(): Promise<AutocompleteGalResponse> =>
+			(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
-					cn: match
+					Body: {
+						AutocompleteGalResponse: {
+							cn: match
+						}
+					},
+					Header: { context: {} }
 				})
 		);
 		const updateFilter = jest.fn();
@@ -38,9 +44,14 @@ describe('OwnerChipInput', () => {
 			populateAutocompleteGalResult({ type: 'group' })
 		];
 		jest.spyOn(network, 'soapFetch').mockImplementation(
-			(): Promise<AutocompleteGalResponse> =>
+			(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
-					cn: match
+					Body: {
+						AutocompleteGalResponse: {
+							cn: match
+						}
+					},
+					Header: { context: {} }
 				})
 		);
 		const updateFilter = jest.fn();
@@ -65,9 +76,14 @@ describe('OwnerChipInput', () => {
 	it('should hide suggestions if user clears the input', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
 		jest.spyOn(network, 'soapFetch').mockImplementation(
-			(): Promise<AutocompleteGalResponse> =>
+			(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
-					cn: match
+					Body: {
+						AutocompleteGalResponse: {
+							cn: match
+						}
+					},
+					Header: { context: {} }
 				})
 		);
 		const updateFilter = jest.fn();
@@ -81,9 +97,14 @@ describe('OwnerChipInput', () => {
 	it('should invoke updateFilter with the selected value', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
 		jest.spyOn(network, 'soapFetch').mockImplementation(
-			(): Promise<AutocompleteGalResponse> =>
+			(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
-					cn: match
+					Body: {
+						AutocompleteGalResponse: {
+							cn: match
+						}
+					},
+					Header: { context: {} }
 				})
 		);
 		const updateFilter = jest.fn();

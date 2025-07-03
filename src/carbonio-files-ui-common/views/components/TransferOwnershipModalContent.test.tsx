@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
+
 import { TransferOwnershipModalContent } from './TransferOwnershipModalContent';
 import * as network from '../../../network/network';
 import { ICON_REGEXP } from '../../constants/test';
@@ -26,9 +28,14 @@ let match: ContactInfo[] = [];
 const spyAutoComplete = (): void => {
 	match = [populateAutocompleteGalResult()];
 	jest.spyOn(network, 'soapFetch').mockImplementation(
-		(): Promise<AutocompleteGalResponse> =>
+		(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
 			Promise.resolve({
-				cn: match
+				Body: {
+					AutocompleteGalResponse: {
+						cn: match
+					}
+				},
+				Header: { context: {} }
 			})
 	);
 };
