@@ -21,10 +21,10 @@ describe('OwnerChipInput', () => {
 	it('should show email and contact label as suggestion', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
 		jest.spyOn(network, 'soapFetch').mockImplementation(
-			(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
+			(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
 					Body: {
-						AutocompleteGalResponse: {
+						AutoCompleteGalResponse: {
 							cn: match
 						}
 					},
@@ -44,10 +44,10 @@ describe('OwnerChipInput', () => {
 			populateAutocompleteGalResult({ type: 'group' })
 		];
 		jest.spyOn(network, 'soapFetch').mockImplementation(
-			(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
+			(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
 					Body: {
-						AutocompleteGalResponse: {
+						AutoCompleteGalResponse: {
 							cn: match
 						}
 					},
@@ -76,10 +76,10 @@ describe('OwnerChipInput', () => {
 	it('should hide suggestions if user clears the input', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
 		jest.spyOn(network, 'soapFetch').mockImplementation(
-			(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
+			(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
 					Body: {
-						AutocompleteGalResponse: {
+						AutoCompleteGalResponse: {
 							cn: match
 						}
 					},
@@ -97,10 +97,10 @@ describe('OwnerChipInput', () => {
 	it('should invoke updateFilter with the selected value', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
 		jest.spyOn(network, 'soapFetch').mockImplementation(
-			(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
+			(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
 					Body: {
-						AutocompleteGalResponse: {
+						AutoCompleteGalResponse: {
 							cn: match
 						}
 					},

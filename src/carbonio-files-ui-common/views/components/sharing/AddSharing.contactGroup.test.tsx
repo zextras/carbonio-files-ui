@@ -55,7 +55,7 @@ describe('Add Sharing', () => {
 			node.permissions.can_share = true;
 			// mock soap fetch implementation
 			mockedSoapFetch.mockReturnValue({
-				AutocompleteResponse: {
+				AutoCompleteResponse: {
 					match: [
 						populateGalContact('gal-contact-1'),
 						populateContactGroupMatch('contact-group-1'),
@@ -87,7 +87,7 @@ describe('Add Sharing', () => {
 					const res: AutocompleteResponse = {
 						match: [contactGroupMatch]
 					};
-					return { AutocompleteResponse: res };
+					return { AutoCompleteResponse: res };
 				}
 				if (req === 'GetContacts') {
 					const res: GetContactsResponse = {
@@ -162,7 +162,7 @@ describe('Add Sharing', () => {
 					const res: AutocompleteResponse = {
 						match: [contactGroupMatch]
 					};
-					return { AutocompleteResponse: res };
+					return { AutoCompleteResponse: res };
 				}
 				if (req === 'GetContacts') {
 					const res: GetContactsResponse = {
@@ -230,7 +230,7 @@ describe('Add Sharing', () => {
 					const res: AutocompleteResponse = {
 						match: [contactGroupMatch]
 					};
-					return { AutocompleteResponse: res };
+					return { AutoCompleteResponse: res };
 				}
 				if (req === 'GetContacts') {
 					const res: GetContactsResponse = {
@@ -270,7 +270,7 @@ describe('Add Sharing', () => {
 					const res: AutocompleteResponse = {
 						match: [contactGroupMatch]
 					};
-					return { AutocompleteResponse: res };
+					return { AutoCompleteResponse: res };
 				}
 				if (req === 'GetContacts') {
 					const res: GetContactsResponse = {

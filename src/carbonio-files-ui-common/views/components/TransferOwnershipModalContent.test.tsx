@@ -28,10 +28,10 @@ let match: ContactInfo[] = [];
 const spyAutoComplete = (): void => {
 	match = [populateAutocompleteGalResult()];
 	jest.spyOn(network, 'soapFetch').mockImplementation(
-		(): Promise<RawSoapResponse<{ AutocompleteGalResponse: AutocompleteGalResponse }>> =>
+		(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 			Promise.resolve({
 				Body: {
-					AutocompleteGalResponse: {
+					AutoCompleteGalResponse: {
 						cn: match
 					}
 				},

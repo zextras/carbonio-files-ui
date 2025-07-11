@@ -63,7 +63,7 @@ export const AccountChipInput = ({
 						return;
 					}
 					setLoading(true);
-					soapFetch<AutocompleteGalRequest, { AutocompleteGalResponse: AutocompleteGalResponse }>(
+					soapFetch<AutocompleteGalRequest, { AutoCompleteGalResponse: AutocompleteGalResponse }>(
 						'AutoCompleteGal',
 						{
 							needExp: true,
@@ -75,7 +75,7 @@ export const AccountChipInput = ({
 							if (isRawErrorSoapResponse(rawSoapResponse)) {
 								throw new Error('Error fetching AutocompleteGalRequest');
 							}
-							return rawSoapResponse.Body.AutocompleteGalResponse;
+							return rawSoapResponse.Body.AutoCompleteGalResponse;
 						})
 						.then(removeGroups)
 						.then((cn) => {

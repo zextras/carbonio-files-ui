@@ -658,7 +658,7 @@ describe('Advanced search modal content', () => {
 				id: 'id'
 			};
 			mockedSoapFetch.mockReturnValue({
-				AutocompleteGalResponse: { cn: [contactInfo] }
+				AutoCompleteGalResponse: { cn: [contactInfo] }
 			});
 
 			const filters = {};

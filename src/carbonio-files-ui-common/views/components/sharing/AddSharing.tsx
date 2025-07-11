@@ -350,7 +350,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					}
 					setLoading(true);
 
-					soapFetch<AutocompleteRequest, { AutocompleteResponse: AutocompleteResponse }>(
+					soapFetch<AutocompleteRequest, { AutoCompleteResponse: AutocompleteResponse }>(
 						'AutoComplete',
 						{
 							includeGal: true,
@@ -365,7 +365,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 							if (isRawErrorSoapResponse(rawSoapResponse)) {
 								throw new Error('Error fetching autocomplete results');
 							}
-							return rawSoapResponse.Body.AutocompleteResponse;
+							return rawSoapResponse.Body.AutoCompleteResponse;
 						})
 						.then(removeDL)
 						.then(extractCleanMailIfNotAGroup)

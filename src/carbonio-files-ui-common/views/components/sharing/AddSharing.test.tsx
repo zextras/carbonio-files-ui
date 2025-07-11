@@ -62,7 +62,7 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -103,7 +103,7 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -133,7 +133,7 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -159,7 +159,7 @@ describe('Add Sharing', () => {
 		node.permissions.can_share = true;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact('contact-1', 'contact1@example.com'),
 					populateGalContact('contact-2', 'contactsamemail@example.com'),
@@ -184,7 +184,7 @@ describe('Add Sharing', () => {
 		node.permissions.can_share = true;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact('contact-1', 'contact1@example.com'),
 					populateGalContact('contact-2', 'contact2@example.com'),
@@ -221,7 +221,7 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -260,7 +260,7 @@ describe('Add Sharing', () => {
 		// mock soap fetch implementation
 		const contact = populateGalContact(userAccount.full_name, userAccount.email);
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					contact,
@@ -305,7 +305,7 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -368,7 +368,7 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -429,7 +429,7 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -472,7 +472,7 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -511,7 +511,7 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			AutocompleteResponse: {
+			AutoCompleteResponse: {
 				match: [
 					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 					populateGalContact(userAccount.full_name, userAccount.email),
@@ -560,7 +560,7 @@ describe('Add Sharing', () => {
 		// mock soap fetch implementation for both the calls
 		mockedSoapFetch
 			.mockReturnValueOnce({
-				AutocompleteResponse: {
+				AutoCompleteResponse: {
 					match: [
 						populateGalContact(`${userAccount1.full_name[0]}-other-contact-1`),
 						populateGalContact(userAccount1.full_name, userAccount1.email),
@@ -569,7 +569,7 @@ describe('Add Sharing', () => {
 				}
 			})
 			.mockReturnValueOnce({
-				AutocompleteResponse: {
+				AutoCompleteResponse: {
 					match: [
 						populateGalContact(`${userAccount2.full_name[0]}-other-contact-1`),
 						populateGalContact(userAccount2.full_name, userAccount2.email),

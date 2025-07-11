@@ -336,7 +336,7 @@ describe('Node Sharing', () => {
 			shareToCreate.permission = SharePermission.ReadWriteAndShare;
 			// mock soap fetch implementation
 			mockedSoapFetch.mockReturnValue({
-				AutocompleteResponse: {
+				AutoCompleteResponse: {
 					match: [
 						populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
 						populateGalContact(userAccount.full_name, userAccount.email),
@@ -440,7 +440,7 @@ describe('Node Sharing', () => {
 			// mock soap fetch implementation
 			mockedSoapFetch
 				.mockReturnValueOnce({
-					AutocompleteResponse: {
+					AutoCompleteResponse: {
 						match: [
 							populateGalContact(`${userAccount1.full_name[0]}-other-contact-1`),
 							populateGalContact(userAccount1.full_name, userAccount1.email),
@@ -449,7 +449,7 @@ describe('Node Sharing', () => {
 					}
 				})
 				.mockReturnValueOnce({
-					AutocompleteResponse: {
+					AutoCompleteResponse: {
 						match: [
 							populateGalContact(`${userAccount2.full_name[0]}-other-contact-1`),
 							populateGalContact(userAccount2.full_name, userAccount2.email)

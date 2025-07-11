@@ -418,10 +418,10 @@ describe('Folder View', () => {
 			} satisfies Partial<Resolvers>;
 
 			jest.spyOn(network, 'soapFetch').mockImplementation(
-				(): Promise<RawSoapResponse<{ AutocompleteResponse: AutocompleteResponse }>> =>
+				(): Promise<RawSoapResponse<{ AutoCompleteResponse: AutocompleteResponse }>> =>
 					Promise.resolve({
 						Body: {
-							AutocompleteResponse: {
+							AutoCompleteResponse: {
 								match: [populateGalContact(userAccount.full_name, userAccount.email)]
 							}
 						},
