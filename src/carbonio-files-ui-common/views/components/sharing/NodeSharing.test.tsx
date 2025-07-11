@@ -7,10 +7,11 @@
 import React from 'react';
 
 import { act, waitFor } from '@testing-library/react';
+import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 import { forEach } from 'lodash';
 
 import { NodeSharing } from './NodeSharing';
-import * as actualNetworkModule from '../../../../network/network';
+import * as network from '../../../../network/network';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateDistributionList,
@@ -47,17 +48,16 @@ const mockedSoapFetch = jest.fn();
 
 beforeEach(() => {
 	mockedUserLogged = populateUser(global.mockedUserLogged.id, global.mockedUserLogged.name);
+	jest.spyOn(network, 'soapFetch').mockImplementation(
+		(): Promise<RawSoapResponse<Record<string, unknown>>> =>
+			new Promise<RawSoapResponse<Record<string, unknown>>>((resolve, reject) => {
+				const result = mockedSoapFetch();
+				result
+					? resolve({ Body: result, Header: { context: {} } })
+					: reject(new Error('no result provided'));
+			})
+	);
 });
-
-jest.mock<typeof import('../../../../network/network')>('../../../../network/network', () => ({
-	soapFetch: <Req, Res extends Record<string, unknown>>(): ReturnType<
-		typeof actualNetworkModule.soapFetch<Req, Res>
-	> =>
-		new Promise<Res>((resolve, reject) => {
-			const result = mockedSoapFetch();
-			result ? resolve(result) : reject(new Error('no result provided'));
-		})
-}));
 
 describe('Node Sharing', () => {
 	test('render collaborators with owner as first one and logged user as second one', async () => {
@@ -336,11 +336,13 @@ describe('Node Sharing', () => {
 			shareToCreate.permission = SharePermission.ReadWriteAndShare;
 			// mock soap fetch implementation
 			mockedSoapFetch.mockReturnValue({
-				match: [
-					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-					populateGalContact(userAccount.full_name, userAccount.email),
-					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-				]
+				AutoCompleteResponse: {
+					match: [
+						populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+						populateGalContact(userAccount.full_name, userAccount.email),
+						populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+					]
+				}
 			});
 			const mocks = {
 				Query: {
@@ -438,17 +440,21 @@ describe('Node Sharing', () => {
 			// mock soap fetch implementation
 			mockedSoapFetch
 				.mockReturnValueOnce({
-					match: [
-						populateGalContact(`${userAccount1.full_name[0]}-other-contact-1`),
-						populateGalContact(userAccount1.full_name, userAccount1.email),
-						populateGalContact(`${userAccount1.full_name[0]}-other-contact-2`)
-					]
+					AutoCompleteResponse: {
+						match: [
+							populateGalContact(`${userAccount1.full_name[0]}-other-contact-1`),
+							populateGalContact(userAccount1.full_name, userAccount1.email),
+							populateGalContact(`${userAccount1.full_name[0]}-other-contact-2`)
+						]
+					}
 				})
 				.mockReturnValueOnce({
-					match: [
-						populateGalContact(`${userAccount2.full_name[0]}-other-contact-1`),
-						populateGalContact(userAccount2.full_name, userAccount2.email)
-					]
+					AutoCompleteResponse: {
+						match: [
+							populateGalContact(`${userAccount2.full_name[0]}-other-contact-1`),
+							populateGalContact(userAccount2.full_name, userAccount2.email)
+						]
+					}
 				});
 
 			const mocks = {

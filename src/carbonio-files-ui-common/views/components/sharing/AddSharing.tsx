@@ -32,7 +32,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AddShareChip } from './AddShareChip';
 import { EMAIL_REGEXP } from '../../../../constants';
-import { soapFetch } from '../../../../network/network';
+import { isRawErrorSoapResponse, soapFetch } from '../../../../network/network';
 import { useCreateShareMutation } from '../../../hooks/graphql/mutations/useCreateShareMutation';
 import { useGetAccountByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountByEmailQuery';
 import { useGetAccountsByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
@@ -248,84 +248,94 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 				inputRef.current.focus();
 			}
 			setSearchResult([]);
-			soapFetch<GetContactsRequest, GetContactsResponse>('GetContacts', {
+			soapFetch<GetContactsRequest, { GetContactsResponse: GetContactsResponse }>('GetContacts', {
 				cn: {
 					id: contactGroupMatch.id
 				},
 				derefGroupMember: true
-			}).then((result) => {
-				const members = result.cn?.[0].m;
-				const galMembers: Array<ShareChip['value']> = [];
-				const inlineAndContactMemberEmails: string[] = [];
-
-				forEach(members, (member) => {
-					if (member.type === 'I') {
-						inlineAndContactMemberEmails.push(member.value);
-					} else if (member.type === 'C' && isDerefMember(member)) {
-						inlineAndContactMemberEmails.push(member.cn[0]._attrs.email);
-					} else if (
-						member.type === 'G' &&
-						isDerefMember(member) &&
-						// exclude distribution lists from members
-						member.cn[0]._attrs.type !== 'group'
-					) {
-						galMembers.push({
-							...member.cn[0]._attrs,
-							role: Role.Viewer,
-							sharingAllowed: false,
-							id: member.cn[0]._attrs.zimbraId,
-							onUpdate: updateChip,
-							node
-						});
+			})
+				.then((rawSoapResponse) => {
+					if (isRawErrorSoapResponse(rawSoapResponse)) {
+						throw new Error('Error fetching GetContactsRequest');
 					}
-				});
+					return rawSoapResponse.Body.GetContactsResponse;
+				})
+				.then((result) => {
+					const members = result.cn?.[0].m;
+					const galMembers: Array<ShareChip['value']> = [];
+					const inlineAndContactMemberEmails: string[] = [];
 
-				if (size(inlineAndContactMemberEmails) > 0) {
-					const uniqMemberEmails = uniq(inlineAndContactMemberEmails);
-					getAccountsByEmailLazyQuery({
-						variables: {
-							emails: uniqMemberEmails
-						}
-					}).then((getAccountsByEmailLazyQueryResult) => {
-						if (getAccountsByEmailLazyQueryResult.data?.getAccountsByEmail) {
-							const validAccountsMap = keyBy(
-								filter(
-									getAccountsByEmailLazyQueryResult.data?.getAccountsByEmail,
-									(acc) => acc !== null
-								),
-								'email'
-							);
-
-							const mappedMembers = map<string, ShareChip['value']>(uniqMemberEmails, (email) => ({
-								...validAccountsMap[email],
-								email,
+					forEach(members, (member) => {
+						if (member.type === 'I') {
+							inlineAndContactMemberEmails.push(member.value);
+						} else if (member.type === 'C' && isDerefMember(member)) {
+							inlineAndContactMemberEmails.push(member.cn[0]._attrs.email);
+						} else if (
+							member.type === 'G' &&
+							isDerefMember(member) &&
+							// exclude distribution lists from members
+							member.cn[0]._attrs.type !== 'group'
+						) {
+							galMembers.push({
+								...member.cn[0]._attrs,
 								role: Role.Viewer,
 								sharingAllowed: false,
-								id: validAccountsMap[email]?.id,
+								id: member.cn[0]._attrs.zimbraId,
 								onUpdate: updateChip,
 								node
-							}));
-
-							const cleanedEmails = cleanEmails([...mappedMembers, ...galMembers], chips, node);
-							const cleanedChips = map<ShareChip['value'], ShareChip>(
-								cleanedEmails,
-								(chipValue) => ({
-									id: chipValue.id,
-									value: chipValue
-								})
-							);
-
-							setChips((c) => [...c, ...cleanedChips]);
+							});
 						}
 					});
-				} else {
-					const cleanedEmails = cleanEmails(galMembers, chips, node);
-					const cleanedChips = map<ShareChip['value'], ShareChip>(cleanedEmails, (chipValue) => ({
-						value: chipValue
-					}));
-					setChips((c) => [...c, ...cleanedChips]);
-				}
-			});
+
+					if (size(inlineAndContactMemberEmails) > 0) {
+						const uniqMemberEmails = uniq(inlineAndContactMemberEmails);
+						getAccountsByEmailLazyQuery({
+							variables: {
+								emails: uniqMemberEmails
+							}
+						}).then((getAccountsByEmailLazyQueryResult) => {
+							if (getAccountsByEmailLazyQueryResult.data?.getAccountsByEmail) {
+								const validAccountsMap = keyBy(
+									filter(
+										getAccountsByEmailLazyQueryResult.data?.getAccountsByEmail,
+										(acc) => acc !== null
+									),
+									'email'
+								);
+
+								const mappedMembers = map<string, ShareChip['value']>(
+									uniqMemberEmails,
+									(email) => ({
+										...validAccountsMap[email],
+										email,
+										role: Role.Viewer,
+										sharingAllowed: false,
+										id: validAccountsMap[email]?.id,
+										onUpdate: updateChip,
+										node
+									})
+								);
+
+								const cleanedEmails = cleanEmails([...mappedMembers, ...galMembers], chips, node);
+								const cleanedChips = map<ShareChip['value'], ShareChip>(
+									cleanedEmails,
+									(chipValue) => ({
+										id: chipValue.id,
+										value: chipValue
+									})
+								);
+
+								setChips((c) => [...c, ...cleanedChips]);
+							}
+						});
+					} else {
+						const cleanedEmails = cleanEmails(galMembers, chips, node);
+						const cleanedChips = map<ShareChip['value'], ShareChip>(cleanedEmails, (chipValue) => ({
+							value: chipValue
+						}));
+						setChips((c) => [...c, ...cleanedChips]);
+					}
+				});
 		},
 		[chips, getAccountsByEmailLazyQuery, node, updateChip]
 	);
@@ -339,14 +349,24 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 						return;
 					}
 					setLoading(true);
-					soapFetch<AutocompleteRequest, AutocompleteResponse>('AutoComplete', {
-						includeGal: true,
-						needExp: true,
-						t: 'all',
-						name: {
-							_content: textContent
+
+					soapFetch<AutocompleteRequest, { AutoCompleteResponse: AutocompleteResponse }>(
+						'AutoComplete',
+						{
+							includeGal: true,
+							needExp: true,
+							t: 'all',
+							name: {
+								_content: textContent
+							}
 						}
-					})
+					)
+						.then((rawSoapResponse) => {
+							if (isRawErrorSoapResponse(rawSoapResponse)) {
+								throw new Error('Error fetching autocomplete results');
+							}
+							return rawSoapResponse.Body.AutoCompleteResponse;
+						})
 						.then(removeDL)
 						.then(extractCleanMailIfNotAGroup)
 						.then((remoteResults) => {

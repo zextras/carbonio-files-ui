@@ -7,9 +7,10 @@
 import React from 'react';
 
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 
 import { AddSharing } from './AddSharing';
-import * as actualNetworkModule from '../../../../network/network';
+import * as network from '../../../../network/network';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
@@ -35,15 +36,17 @@ import {
 
 const mockedSoapFetch = jest.fn();
 
-jest.mock<typeof import('../../../../network/network')>('../../../../network/network', () => ({
-	soapFetch: <Req, Res extends Record<string, unknown>>(): ReturnType<
-		typeof actualNetworkModule.soapFetch<Req, Res>
-	> =>
-		new Promise<Res>((resolve, reject) => {
-			const result = mockedSoapFetch();
-			result ? resolve(result) : reject(new Error('no result provided'));
-		})
-}));
+beforeEach(() => {
+	jest.spyOn(network, 'soapFetch').mockImplementation(
+		(args): Promise<RawSoapResponse<Record<string, unknown>>> =>
+			new Promise<RawSoapResponse<Record<string, unknown>>>((resolve, reject) => {
+				const result = mockedSoapFetch(args);
+				result
+					? resolve({ Body: result, Header: { context: {} } })
+					: reject(new Error('no result provided'));
+			})
+	);
+});
 
 describe('Add Sharing', () => {
 	test('contact already added as new share is not shown in dropdown', async () => {
@@ -59,11 +62,13 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
@@ -98,11 +103,13 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
@@ -126,11 +133,13 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
@@ -150,12 +159,14 @@ describe('Add Sharing', () => {
 		node.permissions.can_share = true;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact('contact-1', 'contact1@example.com'),
-				populateGalContact('contact-2', 'contactsamemail@example.com'),
-				populateGalContact('contact-3', 'contactsamemail@example.com'),
-				populateGalContact('contact-4', 'contact4@example.com')
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact('contact-1', 'contact1@example.com'),
+					populateGalContact('contact-2', 'contactsamemail@example.com'),
+					populateGalContact('contact-3', 'contactsamemail@example.com'),
+					populateGalContact('contact-4', 'contact4@example.com')
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
@@ -173,11 +184,13 @@ describe('Add Sharing', () => {
 		node.permissions.can_share = true;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact('contact-1', 'contact1@example.com'),
-				populateGalContact('contact-2', 'contact2@example.com'),
-				populateGalContact('contact-3', 'contact3@example.com')
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact('contact-1', 'contact1@example.com'),
+					populateGalContact('contact-2', 'contact2@example.com'),
+					populateGalContact('contact-3', 'contact3@example.com')
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks: {} });
@@ -208,11 +221,13 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
@@ -245,11 +260,13 @@ describe('Add Sharing', () => {
 		// mock soap fetch implementation
 		const contact = populateGalContact(userAccount.full_name, userAccount.email);
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				contact,
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					contact,
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
@@ -288,11 +305,13 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 		// write getNode in cache since it is used to establish permissions
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
@@ -349,11 +368,13 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 		// write getNode in cache since it is used to establish permissions
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
@@ -408,11 +429,13 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
@@ -449,11 +472,13 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
@@ -486,11 +511,13 @@ describe('Add Sharing', () => {
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
 		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
+			AutoCompleteResponse: {
+				match: [
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
+					populateGalContact(userAccount.full_name, userAccount.email),
+					populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
+				]
+			}
 		});
 
 		const { user } = setup(<AddSharing node={node} />, { mocks });
@@ -533,18 +560,22 @@ describe('Add Sharing', () => {
 		// mock soap fetch implementation for both the calls
 		mockedSoapFetch
 			.mockReturnValueOnce({
-				match: [
-					populateGalContact(`${userAccount1.full_name[0]}-other-contact-1`),
-					populateGalContact(userAccount1.full_name, userAccount1.email),
-					populateGalContact(`${userAccount1.full_name[0]}-other-contact-2`)
-				]
+				AutoCompleteResponse: {
+					match: [
+						populateGalContact(`${userAccount1.full_name[0]}-other-contact-1`),
+						populateGalContact(userAccount1.full_name, userAccount1.email),
+						populateGalContact(`${userAccount1.full_name[0]}-other-contact-2`)
+					]
+				}
 			})
 			.mockReturnValueOnce({
-				match: [
-					populateGalContact(`${userAccount2.full_name[0]}-other-contact-1`),
-					populateGalContact(userAccount2.full_name, userAccount2.email),
-					populateGalContact(`${userAccount2.full_name[0]}-other-contact-2`)
-				]
+				AutoCompleteResponse: {
+					match: [
+						populateGalContact(`${userAccount2.full_name[0]}-other-contact-1`),
+						populateGalContact(userAccount2.full_name, userAccount2.email),
+						populateGalContact(`${userAccount2.full_name[0]}-other-contact-2`)
+					]
+				}
 			});
 		// write getNode in cache since it is used to establish permissions
 		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({

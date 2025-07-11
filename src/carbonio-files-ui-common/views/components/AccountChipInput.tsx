@@ -10,7 +10,7 @@ import { ChipInput, ChipInputProps } from '@zextras/carbonio-design-system';
 import { filter, reduce, throttle } from 'lodash';
 
 import { Hint, Loader } from './StyledComponents';
-import { soapFetch } from '../../../network/network';
+import { isRawErrorSoapResponse, soapFetch } from '../../../network/network';
 import { Contact } from '../../types/common';
 import { AutocompleteGalRequest, AutocompleteGalResponse, ContactInfo } from '../../types/network';
 import { getChipLabel } from '../../utils/utils';
@@ -63,7 +63,7 @@ export const AccountChipInput = ({
 						return;
 					}
 					setLoading(true);
-					soapFetch<AutocompleteGalRequest, AutocompleteGalResponse>(
+					soapFetch<AutocompleteGalRequest, { AutoCompleteGalResponse: AutocompleteGalResponse }>(
 						'AutoCompleteGal',
 						{
 							needExp: true,
@@ -71,6 +71,12 @@ export const AccountChipInput = ({
 						},
 						'urn:zimbraAccount'
 					)
+						.then((rawSoapResponse) => {
+							if (isRawErrorSoapResponse(rawSoapResponse)) {
+								throw new Error('Error fetching AutocompleteGalRequest');
+							}
+							return rawSoapResponse.Body.AutoCompleteGalResponse;
+						})
 						.then(removeGroups)
 						.then((cn) => {
 							setLoading(false);

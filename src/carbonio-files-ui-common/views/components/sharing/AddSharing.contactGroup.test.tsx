@@ -6,10 +6,11 @@
 import React from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
+import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 import { forEach, find, reduce } from 'lodash';
 
 import { AddSharing } from './AddSharing';
-import * as actualNetworkModule from '../../../../network/network';
+import * as network from '../../../../network/network';
 import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateGalContact,
@@ -36,17 +37,16 @@ let mockedSoapFetch = jest.fn();
 
 beforeEach(() => {
 	mockedSoapFetch = jest.fn();
+	jest.spyOn(network, 'soapFetch').mockImplementation(
+		(args): Promise<RawSoapResponse<Record<string, unknown>>> =>
+			new Promise<RawSoapResponse<Record<string, unknown>>>((resolve, reject) => {
+				const result = mockedSoapFetch(args);
+				result
+					? resolve({ Body: result, Header: { context: {} } })
+					: reject(new Error('no result provided'));
+			})
+	);
 });
-
-jest.mock<typeof import('../../../../network/network')>('../../../../network/network', () => ({
-	soapFetch: <Req, Res extends Record<string, unknown>>(
-		...args: Parameters<typeof actualNetworkModule.soapFetch<Req, Res>>
-	): ReturnType<typeof actualNetworkModule.soapFetch<Req, Res>> =>
-		new Promise<Res>((resolve, reject) => {
-			const result = mockedSoapFetch(...args);
-			result ? resolve(result) : reject(new Error('no result provided'));
-		})
-}));
 
 describe('Add Sharing', () => {
 	describe('Contact Group', () => {
@@ -55,11 +55,13 @@ describe('Add Sharing', () => {
 			node.permissions.can_share = true;
 			// mock soap fetch implementation
 			mockedSoapFetch.mockReturnValue({
-				match: [
-					populateGalContact('gal-contact-1'),
-					populateContactGroupMatch('contact-group-1'),
-					populateGalContact('gal-contact-2')
-				]
+				AutoCompleteResponse: {
+					match: [
+						populateGalContact('gal-contact-1'),
+						populateContactGroupMatch('contact-group-1'),
+						populateGalContact('gal-contact-2')
+					]
+				}
 			});
 
 			const { user } = setup(<AddSharing node={node} />, { mocks: {} });
@@ -85,13 +87,13 @@ describe('Add Sharing', () => {
 					const res: AutocompleteResponse = {
 						match: [contactGroupMatch]
 					};
-					return res;
+					return { AutoCompleteResponse: res };
 				}
 				if (req === 'GetContacts') {
 					const res: GetContactsResponse = {
 						cn: [contactGroup]
 					};
-					return res;
+					return { GetContactsResponse: res };
 				}
 				return undefined;
 			});
@@ -160,13 +162,13 @@ describe('Add Sharing', () => {
 					const res: AutocompleteResponse = {
 						match: [contactGroupMatch]
 					};
-					return res;
+					return { AutoCompleteResponse: res };
 				}
 				if (req === 'GetContacts') {
 					const res: GetContactsResponse = {
 						cn: [contactGroup]
 					};
-					return res;
+					return { GetContactsResponse: res };
 				}
 				return undefined;
 			});
@@ -228,13 +230,13 @@ describe('Add Sharing', () => {
 					const res: AutocompleteResponse = {
 						match: [contactGroupMatch]
 					};
-					return res;
+					return { AutoCompleteResponse: res };
 				}
 				if (req === 'GetContacts') {
 					const res: GetContactsResponse = {
 						cn: [contactGroup]
 					};
-					return res;
+					return { GetContactsResponse: res };
 				}
 				return undefined;
 			});
@@ -268,13 +270,13 @@ describe('Add Sharing', () => {
 					const res: AutocompleteResponse = {
 						match: [contactGroupMatch]
 					};
-					return res;
+					return { AutoCompleteResponse: res };
 				}
 				if (req === 'GetContacts') {
 					const res: GetContactsResponse = {
 						cn: [contactGroup]
 					};
-					return res;
+					return { GetContactsResponse: res };
 				}
 				return undefined;
 			});
