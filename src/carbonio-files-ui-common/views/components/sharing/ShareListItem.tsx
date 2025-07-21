@@ -7,14 +7,18 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { FetchResult, useLazyQuery } from '@apollo/client';
-import { ChipAction, Text, useSnackbar } from '@zextras/carbonio-design-system';
+import {
+	Avatar,
+	Button,
+	Container,
+	Text,
+	Tooltip,
+	useSnackbar
+} from '@zextras/carbonio-design-system';
 import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { ChipWithPopover } from './ChipWithPopover';
-import { EditShareChipPopoverContainer } from './EditShareChipPopoverContainer';
-import { ShareChipLabel } from './ShareChipLabel';
-import { SHARE_CHIP_MAX_WIDTH, SHARE_CHIP_SIZE } from '../../../constants';
+import { SHARE_TEXT_SIZE } from '../../../constants';
 import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
 import { useUpdateShareMutation } from '../../../hooks/graphql/mutations/useUpdateShareMutation';
 import { useDecreaseYourOwnSharePermissionModal } from '../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
@@ -32,6 +36,8 @@ import {
 import { MakeRequiredNonNull } from '../../../types/utils';
 import { getChipLabel, isFile, isFolder, sharePermissionsGetter } from '../../../utils/utils';
 import { RouteLeavingGuard } from '../RouteLeavingGuard';
+import { EditButtonWithPopover } from './EditButtonWithPopover';
+import { EditSharePopoverContainer } from './EditSharePopoverContainer';
 
 const rowSharePermissionToIdxMap = {
 	[SharePermission.ReadOnly]: 0,
@@ -60,21 +66,21 @@ const rowIdxToRoleMap: { [id: number]: Role } = {
 	1: Role.Editor
 };
 
-interface EditShareChipProps {
+interface ShareListItemProps {
 	share: MakeRequiredNonNull<ShareFragment, 'share_target'> & {
 		node: Node<'id'>;
 	};
 	permissions: Permissions;
-	yourselfChip: boolean;
+	yourself: boolean;
 	deleteShare: ReturnType<typeof useDeleteShareMutation>;
 }
 
-export const EditShareChip = ({
+export const ShareListItem = ({
 	share,
 	permissions,
 	deleteShare,
-	yourselfChip = false
-}: EditShareChipProps): React.JSX.Element => {
+	yourself = false
+}: ShareListItemProps): React.JSX.Element => {
 	const [updateShare] = useUpdateShareMutation();
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
@@ -164,12 +170,8 @@ export const EditShareChip = ({
 	const { openDeleteShareModal } = useDeleteShareModal(
 		deleteShareCallback,
 		share.share_target,
-		yourselfChip
+		yourself
 	);
-
-	const openDeleteShareModalCallback = useCallback(() => {
-		openDeleteShareModal();
-	}, [openDeleteShareModal]);
 
 	const disabledRows = useMemo(() => {
 		const filtered = filter(
@@ -179,19 +181,25 @@ export const EditShareChip = ({
 		return map(filtered, (value: Role) => rowRoleToIdxMap[value]);
 	}, [permissions, share]);
 
-	const chipLabel = useMemo(
-		() => (yourselfChip ? t('displayer.share.chip.you', 'You') : getChipLabel(share.share_target)),
-		[yourselfChip, t, share.share_target]
+	const label = useMemo(
+		() => (yourself ? t('displayer.share.chip.you', 'You') : getChipLabel(share.share_target)),
+		[yourself, t, share.share_target]
 	);
 
-	const editChipTooltipLabel = useMemo(
+	const editButtonTooltipLabel = useMemo(
 		() =>
-			yourselfChip
+			yourself
 				? t('displayer.share.chip.tooltip.edit.you', 'Edit your collaboration')
-				: t('displayer.share.chip.tooltip.edit.collaborator', "Edit {{username}}'s collaboration", {
-						replace: { username: getChipLabel(share.share_target) }
-					}),
-		[yourselfChip, share.share_target, t]
+				: t('displayer.share.chip.tooltip.edit.collaborator', 'Edit collaboration'),
+		[yourself, t]
+	);
+
+	const removeCollaborationButtonTooltipLabel = useMemo(
+		() =>
+			yourself
+				? t('displayer.share.chip.tooltip.remove.yourself', 'Remove your collaboration')
+				: t('displayer.share.chip.tooltip.remove.collaborator', 'Remove collaboration'),
+		[t, yourself]
 	);
 
 	const openPermissionsPopover = useCallback(() => {
@@ -204,82 +212,17 @@ export const EditShareChip = ({
 		setPopoverOpen(newState);
 	}, []);
 
-	const actions = useMemo<ChipAction[]>(() => {
-		const icons: ChipAction[] = [];
-		if (
-			share.permission === SharePermission.ReadOnly ||
-			share.permission === SharePermission.ReadAndShare
-		) {
-			icons.push({
-				icon: 'EyeOutline',
-				id: 'EyeOutline',
-				type: permissions.can_share ? 'button' : 'icon',
-				color: 'gray0',
-				label: (permissions.can_share && editChipTooltipLabel) || undefined,
-				onClick: openPermissionsPopover
-			});
-		} else if (
-			share.permission === SharePermission.ReadAndWrite ||
-			share.permission === SharePermission.ReadWriteAndShare
-		) {
-			icons.push({
-				icon: 'Edit2Outline',
-				id: 'Edit2Outline',
-				type: permissions.can_share ? 'button' : 'icon',
-				color: 'gray0',
-				label: (permissions.can_share && editChipTooltipLabel) || undefined,
-				onClick: openPermissionsPopover
-			});
-		}
-		if (
-			share.permission === SharePermission.ReadAndShare ||
-			share.permission === SharePermission.ReadWriteAndShare
-		) {
-			icons.push({
-				icon: 'Share',
-				id: 'Share',
-				type: permissions.can_share ? 'button' : 'icon',
-				color: 'gray0',
-				label: (permissions.can_share && editChipTooltipLabel) || undefined,
-				onClick: openPermissionsPopover
-			});
-		}
-
-		const buttons: ChipAction[] = [];
-		if (permissions.can_share || yourselfChip) {
-			buttons.push({
-				icon: 'Close',
-				label: yourselfChip
-					? t('displayer.share.chip.tooltip.remove.yourself', 'Remove your collaboration')
-					: t('displayer.share.chip.tooltip.remove.collaborator', 'Remove {{username}}', {
-							replace: { username: getChipLabel(share.share_target) }
-						}),
-				id: 'Remove',
-				type: 'button',
-				color: 'gray0',
-				onClick: openDeleteShareModalCallback
-			});
-		}
-		return [...icons, ...buttons];
-	}, [
-		editChipTooltipLabel,
-		openDeleteShareModalCallback,
-		openPermissionsPopover,
-		permissions.can_share,
-		share,
-		t,
-		yourselfChip
-	]);
-
-	const chipLabelComponent = useMemo(
-		() => <ShareChipLabel contact={share.share_target} />,
-		[share.share_target]
-	);
-
 	const isSomethingChanged = useMemo(
 		() => initialActiveRow !== activeRow || initialCheckboxValue !== checkboxValue,
 		[initialActiveRow, activeRow, initialCheckboxValue, checkboxValue]
 	);
+
+	const isRemoveButtonDisabled = useMemo(
+		() => !(permissions.can_share || yourself),
+		[permissions.can_share, yourself]
+	);
+
+	const canShare = useMemo(() => permissions.can_share, [permissions.can_share]);
 
 	return (
 		<>
@@ -293,34 +236,83 @@ export const EditShareChip = ({
 					</Text>
 				</RouteLeavingGuard>
 			)}
-			<ChipWithPopover
-				size={SHARE_CHIP_SIZE}
-				avatarLabel={chipLabel}
-				label={chipLabelComponent}
-				background={'gray3'}
-				actions={actions}
-				openPopoverOnClick={false}
-				popoverOpen={popoverOpen}
-				onValueChange={updatePermissionsPopover}
-				maxWidth={SHARE_CHIP_MAX_WIDTH}
-			>
-				{(closePopover: () => void): React.JSX.Element => (
-					<EditShareChipPopoverContainer
-						activeRow={activeRow}
-						disabledRows={disabledRows}
-						checkboxValue={checkboxValue}
-						checkboxOnClick={switchSharingAllowed}
-						containerOnClick={changeRole}
-						saveDisabled={initialActiveRow === activeRow && initialCheckboxValue === checkboxValue}
-						saveOnClick={
-							yourselfChip && decreasingSharePermissions
-								? openDecreaseYourOwnSharePermissionModal
-								: updateShareCallback
-						}
-						closePopover={closePopover}
-					/>
-				)}
-			</ChipWithPopover>
+			{share.share_target.__typename === 'User' && (
+				<Container
+					mainAlignment={'flex-start'}
+					crossAlignment={'flex-start'}
+					orientation={'horizontal'}
+					padding={'0.5rem'}
+					width="100%"
+				>
+					<Container
+						mainAlignment={'flex-start'}
+						crossAlignment={'flex-start'}
+						orientation={'horizontal'}
+						gap={'0.5rem'}
+					>
+						<Avatar label={label} />
+						<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
+							<Text size={SHARE_TEXT_SIZE}>{label}</Text>
+							<Text color={'secondary'} size={'extrasmall'}>
+								{share?.share_target.email}
+							</Text>
+						</Container>
+					</Container>
+					<Container
+						orientation={'horizontal'}
+						mainAlignment={'flex-start'}
+						crossAlignment={'flex-start'}
+						gap={'0.25rem'}
+						width={'fit'}
+					>
+						<EditButtonWithPopover
+							popoverOpen={popoverOpen}
+							onValueChange={updatePermissionsPopover}
+							canShare={canShare}
+							editButtonTooltipLabel={editButtonTooltipLabel}
+							openPermissionsPopover={openPermissionsPopover}
+							permission={share.permission}
+						>
+							{(closePopover: () => void): React.JSX.Element => (
+								<EditSharePopoverContainer
+									activeRow={activeRow}
+									disabledRows={disabledRows}
+									checkboxValue={checkboxValue}
+									checkboxOnClick={switchSharingAllowed}
+									containerOnClick={changeRole}
+									saveDisabled={
+										initialActiveRow === activeRow && initialCheckboxValue === checkboxValue
+									}
+									saveOnClick={
+										yourself && decreasingSharePermissions
+											? openDecreaseYourOwnSharePermissionModal
+											: updateShareCallback
+									}
+									closePopover={closePopover}
+								/>
+							)}
+						</EditButtonWithPopover>
+						<Tooltip
+							label={
+								isRemoveButtonDisabled
+									? t(
+											'displayer.share.tooltip.no_remove_permission',
+											"You don't have the necessary permissions to remove collaboration"
+										)
+									: removeCollaborationButtonTooltipLabel
+							}
+						>
+							<Button
+								icon={'Trash2Outline'}
+								color={'error'}
+								type={'outlined'}
+								onClick={openDeleteShareModal}
+								disabled={isRemoveButtonDisabled}
+							/>
+						</Tooltip>
+					</Container>
+				</Container>
+			)}
 		</>
 	);
 };

@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
-import { find, map } from 'lodash';
+import { map } from 'lodash';
 
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
@@ -361,12 +361,6 @@ describe('Folder View', () => {
 	});
 
 	describe('propagation of shares changes', () => {
-		function findChipWithText(text: string | RegExp): HTMLElement | undefined {
-			return find(
-				screen.queryAllByTestId(SELECTORS.chipWithPopover),
-				(chip) => within(chip).queryByText(text) !== null
-			);
-		}
 		test('should show the new share in cached children', async () => {
 			const localRoot = populateLocalRoot();
 			const folder = populateFolder();
@@ -484,8 +478,8 @@ describe('Folder View', () => {
 			await waitFor(() => expect(shareButton).toBeEnabled());
 			await user.click(shareButton);
 			expect(within(addShareChipInput).queryByText(userAccount.full_name)).not.toBeInTheDocument();
-			await waitFor(() => expect(findChipWithText(userAccount.full_name)).toBeDefined());
-			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			await screen.findByText(userAccount.full_name);
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			// folder is shared
 			expect(
 				within(screen.getByTestId(SELECTORS.nodeItem(folder.id))).getByTestId(
@@ -509,7 +503,7 @@ describe('Folder View', () => {
 			await user.click(screen.getByText(subFolder.name));
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
-			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			// navigate inside sub-folder
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
@@ -524,7 +518,7 @@ describe('Folder View', () => {
 			await user.click(screen.getByText(subSubFile.name));
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
-			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 		});
 
 		test('should show the updated share in cached children', async () => {
@@ -604,8 +598,9 @@ describe('Folder View', () => {
 			// folder share is read-only
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			expect(
-				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+				screen.getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.shareCanRead
 				})
 			).toBeVisible();
@@ -621,8 +616,9 @@ describe('Folder View', () => {
 			// sub-folder share is read-only
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			expect(
-				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+				screen.getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.shareCanRead
 				})
 			).toBeVisible();
@@ -636,8 +632,9 @@ describe('Folder View', () => {
 			// sub-sub-file share is read-only
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			expect(
-				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+				screen.getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.shareCanRead
 				})
 			).toBeVisible();
@@ -651,7 +648,7 @@ describe('Folder View', () => {
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
 			await user.click(
-				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+				screen.getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.shareCanRead
 				})
 			);
@@ -661,8 +658,9 @@ describe('Folder View', () => {
 			await waitFor(() => expect(saveButton).toBeEnabled());
 			await user.click(saveButton);
 			// folder share is updated
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			expect(
-				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+				screen.getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.shareCanWrite
 				})
 			).toBeVisible();
@@ -675,9 +673,9 @@ describe('Folder View', () => {
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
 			// sub-folder share is updated
-			await waitFor(() => expect(findChipWithText(userAccount.full_name)).toBeDefined());
+			await screen.findByText(userAccount.full_name);
 			expect(
-				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+				screen.getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.shareCanWrite
 				})
 			).toBeVisible();
@@ -691,7 +689,7 @@ describe('Folder View', () => {
 			await user.click(screen.getByText(/sharing/i));
 			// sub-sub-file share is updated
 			expect(
-				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
+				screen.getByRoleWithIcon('button', {
 					icon: ICON_REGEXP.shareCanWrite
 				})
 			).toBeVisible();
@@ -768,7 +766,7 @@ describe('Folder View', () => {
 			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 			// folder has share
 			await user.click(await screen.findByText(/sharing/i));
-			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			act(() => {
 				jest.runOnlyPendingTimers();
 			});
@@ -779,7 +777,7 @@ describe('Folder View', () => {
 			await user.click(await screen.findByText(subFolder.name));
 			// sub-folder has share
 			await user.click(await screen.findByText(/sharing/i));
-			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			// navigate inside sub-folder to cache data
 			await user.dblClick(
 				within(screen.getByTestId(SELECTORS.list(folder.id))).getByText(subFolder.name)
@@ -787,7 +785,7 @@ describe('Folder View', () => {
 			await user.click(await screen.findByText(subSubFile.name));
 			// sub-sub-file has share
 			await user.click(await screen.findByText(/sharing/i));
-			expect(findChipWithText(userAccount.full_name)).toBeVisible();
+			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			// navigate back to local root
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCtaExpand));
 			await user.click(await screen.findByText(localRoot.name));
@@ -795,8 +793,8 @@ describe('Folder View', () => {
 			await user.click(await screen.findByText(folder.name));
 			await user.click(await screen.findByText(/sharing/i));
 			await user.click(
-				within(findChipWithText(userAccount.full_name) as HTMLElement).getByRoleWithIcon('button', {
-					icon: ICON_REGEXP.close
+				screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.trash
 				})
 			);
 			const modalConfirmButton = await screen.findByRole('button', { name: /remove/i });

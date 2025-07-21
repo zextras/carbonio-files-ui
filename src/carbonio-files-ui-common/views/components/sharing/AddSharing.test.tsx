@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { AddSharing } from './AddSharing';
 import * as actualNetworkModule from '../../../../network/network';
@@ -17,17 +17,10 @@ import {
 	populateShare,
 	populateUser
 } from '../../../mocks/mockUtils';
-import { generateError, setup, within } from '../../../tests/utils';
+import { generateError, screen, setup } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
+import { Share, SharePermission } from '../../../types/graphql/types';
 import {
-	GetNodeDocument,
-	GetNodeQuery,
-	GetNodeQueryVariables,
-	Share,
-	SharePermission
-} from '../../../types/graphql/types';
-import {
-	getNodeVariables,
 	mockCreateShare,
 	mockErrorResolver,
 	mockGetAccountByEmail
@@ -75,7 +68,7 @@ describe('Add Sharing', () => {
 		await screen.findByText(userAccount.email);
 		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByTestId(SELECTORS.chipWithPopover);
+		await screen.findByTestId(SELECTORS.chip);
 		// now try to add a new share with the same email
 		await user.type(chipInput, userAccount.full_name[0]);
 		await screen.findAllByText(/other-contact/i);
@@ -223,171 +216,9 @@ describe('Add Sharing', () => {
 		// wait for the dropdown to be shown
 		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		const chip = await screen.findByTestId(SELECTORS.chipWithPopover);
-		// chip is created with read-only permissions
-		expect(within(chip).getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
+		const chip = await screen.findByTestId(SELECTORS.chip);
+		expect(chip).toBeVisible();
 		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
-	});
-
-	test('when user click on a new share permissions icon button of the chip the popover is shown', async () => {
-		const node = populateNode();
-		node.permissions.can_share = true;
-		const userAccount = populateUser();
-		// set email to lowercase to be compatible with the contacts regexp
-		userAccount.email = userAccount.email.toLowerCase();
-		const mocks = {
-			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
-			}
-		} satisfies Partial<Resolvers>;
-		// mock soap fetch implementation
-		const contact = populateGalContact(userAccount.full_name, userAccount.email);
-		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				contact,
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
-		});
-
-		const { user } = setup(<AddSharing node={node} />, { mocks });
-		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		// type just the first character because the network search is requested only one time with first character.
-		// All characters typed after the first one are just used to filter out the result obtained before
-		await user.type(chipInput, userAccount.full_name[0]);
-		// wait for the dropdown to be shown
-		await user.click(await screen.findByText(userAccount.email));
-		// chip is created
-		await screen.findByTestId(SELECTORS.chipWithPopover);
-		// click on the chip to open the popover
-		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
-		await screen.findByText(/viewer/i);
-		// advance timers to make the popover register listeners
-		jest.advanceTimersToNextTimer();
-		expect(screen.getByText(/viewer/i)).toBeVisible();
-		expect(screen.getByText(/editor/i)).toBeVisible();
-		expect(screen.getByText(/sharing allowed/i)).toBeVisible();
-	});
-
-	test('when user changes permissions from the popover the chip is immediately updated', async () => {
-		const node = populateNode();
-		node.permissions.can_write_file = true;
-		node.permissions.can_write_folder = true;
-		node.permissions.can_share = true;
-		const userAccount = populateUser();
-		// set email to lowercase to be compatible with the contacts regexp
-		userAccount.email = userAccount.email.toLowerCase();
-		const share = populateShare(node, 'new-share', userAccount);
-		share.permission = SharePermission.ReadWriteAndShare;
-		const mocks = {
-			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
-			}
-		} satisfies Partial<Resolvers>;
-		// mock soap fetch implementation
-		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
-		});
-		// write getNode in cache since it is used to establish permissions
-		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			query: GetNodeDocument,
-			variables: getNodeVariables(node.id),
-			data: {
-				getNode: node
-			}
-		});
-
-		const { user } = setup(<AddSharing node={node} />, {
-			mocks,
-			initialRouterEntries: [`/?node=${node.id}`]
-		});
-		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		// type just the first character because the network search is requested only one time with first character.
-		// All characters typed after the first one are just used to filter out the result obtained before
-		await user.type(chipInput, userAccount.full_name[0]);
-		// wait for the dropdown to be shown
-		await user.click(await screen.findByText(userAccount.email));
-		// chip is created
-		const chip = await screen.findByTestId(SELECTORS.chipWithPopover);
-		// chip is created with read-only permissions
-		expect(within(chip).getByTestId(ICON_REGEXP.shareCanRead)).toBeVisible();
-		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
-		// click on chip to open popover
-		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
-		await screen.findByText(/editor/i);
-		// advance timers to make the popover register listeners
-		jest.advanceTimersToNextTimer();
-		await user.click(screen.getByText(/editor/i));
-		expect(await within(chip).findByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
-		// now select the share permission
-		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
-		// wait for chip to update with share permission icon
-		expect(await within(chip).findByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
-	});
-
-	test('without write permissions editor role cannot be selected', async () => {
-		const node = populateNode();
-		node.permissions.can_write_file = false;
-		node.permissions.can_write_folder = false;
-		node.permissions.can_share = true;
-		const userAccount = populateUser();
-		// set email to lowercase to be compatible with the contacts regexp
-		userAccount.email = userAccount.email.toLowerCase();
-		const share = populateShare(node, 'new-share', userAccount);
-		share.permission = SharePermission.ReadAndShare;
-		const mocks = {
-			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
-			}
-		} satisfies Partial<Resolvers>;
-		// mock soap fetch implementation
-		mockedSoapFetch.mockReturnValue({
-			match: [
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-1`),
-				populateGalContact(userAccount.full_name, userAccount.email),
-				populateGalContact(`${userAccount.full_name[0]}-other-contact-2`)
-			]
-		});
-		// write getNode in cache since it is used to establish permissions
-		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			query: GetNodeDocument,
-			variables: getNodeVariables(node.id),
-			data: {
-				getNode: node
-			}
-		});
-
-		const { user } = setup(<AddSharing node={node} />, {
-			mocks,
-			initialRouterEntries: [`/?node=${node.id}`]
-		});
-		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		// type just the first character because the network search is requested only one time with first character.
-		// All characters typed after the first one are just used to filter out the result obtained before
-		await user.type(chipInput, userAccount.full_name[0]);
-		// wait for the dropdown to be shown
-		await user.click(await screen.findByText(userAccount.email));
-		// chip is created
-		const chip = await screen.findByTestId(SELECTORS.chipWithPopover);
-		// click on chip to open popover
-		await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
-		await screen.findByText(/viewer/i);
-		// advance timers to make the popover register listeners
-		jest.advanceTimersToNextTimer();
-		// click on editor shouldn't do anything
-		await user.click(screen.getByText(/editor/i));
-		// click on share should set share permissions
-		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
-		// chip is updated
-		expect(await within(chip).findByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
-		expect(within(chip).queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
 	});
 
 	test('when user click on share button shares are created, chip input is cleared and shared button is disabled', async () => {
@@ -423,7 +254,7 @@ describe('Add Sharing', () => {
 		// wait for the dropdown to be shown
 		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByTestId(SELECTORS.chipWithPopover);
+		await screen.findByTestId(SELECTORS.chip);
 		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 		await user.click(screen.getByRole('button', { name: /share/i }));
 		// create share mutation callback is called only if variables are an exact match
@@ -466,7 +297,7 @@ describe('Add Sharing', () => {
 		// wait for the dropdown to be shown
 		await user.click(await screen.findByText(userAccount.email));
 		// chip is created
-		await screen.findByTestId(SELECTORS.chipWithPopover);
+		await screen.findByTestId(SELECTORS.chip);
 		// share button is now active
 		expect(screen.getByRole('button', { name: /share/i })).toBeEnabled();
 	});
@@ -504,97 +335,10 @@ describe('Add Sharing', () => {
 		await user.click(await screen.findByText(userAccount.email));
 		await screen.findByText(/Account not found/i);
 		// chip is not created
-		expect(screen.queryByTestId(SELECTORS.chipWithPopover)).not.toBeInTheDocument();
+		expect(screen.queryByTestId(SELECTORS.chip)).not.toBeInTheDocument();
 		// dropdown is closed
 		expect(screen.queryByText(userAccount.email)).not.toBeInTheDocument();
 		// share button is still disabled
 		expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
-	});
-
-	test('multiple shares are creatable at once. Popover changes permissions of the active share only', async () => {
-		const node = populateNode();
-		node.permissions.can_write_file = true;
-		node.permissions.can_write_folder = true;
-		node.permissions.can_share = true;
-		const userAccount1 = populateUser();
-		// set email to lowercase to be compatible with the contacts regexp
-		userAccount1.email = userAccount1.email.toLowerCase();
-		const share1 = populateShare(node, 'new-share-1', userAccount1);
-		share1.permission = SharePermission.ReadAndWrite;
-		const userAccount2 = populateUser();
-		userAccount2.email = userAccount2.email.toLowerCase();
-		const share2 = populateShare(node, 'new-share-2', userAccount2);
-		share2.permission = SharePermission.ReadAndShare;
-		const mocks = {
-			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
-			}
-		} satisfies Partial<Resolvers>;
-		// mock soap fetch implementation for both the calls
-		mockedSoapFetch
-			.mockReturnValueOnce({
-				match: [
-					populateGalContact(`${userAccount1.full_name[0]}-other-contact-1`),
-					populateGalContact(userAccount1.full_name, userAccount1.email),
-					populateGalContact(`${userAccount1.full_name[0]}-other-contact-2`)
-				]
-			})
-			.mockReturnValueOnce({
-				match: [
-					populateGalContact(`${userAccount2.full_name[0]}-other-contact-1`),
-					populateGalContact(userAccount2.full_name, userAccount2.email),
-					populateGalContact(`${userAccount2.full_name[0]}-other-contact-2`)
-				]
-			});
-		// write getNode in cache since it is used to establish permissions
-		global.apolloClient.writeQuery<GetNodeQuery, GetNodeQueryVariables>({
-			query: GetNodeDocument,
-			variables: getNodeVariables(node.id),
-			data: {
-				getNode: node
-			}
-		});
-
-		const { user } = setup(<AddSharing node={node} />, {
-			mocks,
-			initialRouterEntries: [`/?node=${node.id}`]
-		});
-		const chipInput = screen.getByRole('textbox', { name: /add new people or groups/i });
-		// type just the first character because the network search is requested only one time with first character.
-		// All characters typed after the first one are just used to filter out the result obtained before
-		await user.type(chipInput, userAccount1.full_name[0]);
-		// wait for the dropdown to be shown
-		await user.click(await screen.findByText(userAccount1.email));
-		// chip is created
-		const chip1 = await screen.findByTestId(SELECTORS.chipWithPopover);
-		// create second chip
-		await user.type(chipInput, userAccount2.full_name[0]);
-		await user.click(await screen.findByText(userAccount2.email));
-		// chip is created
-		const chip2 = (await screen.findAllByTestId(SELECTORS.chipWithPopover)).find(
-			(chip) => within(chip).queryByText(userAccount2.full_name) !== null
-		) as HTMLElement;
-		// edit first share to be an editor
-		// click on chip to open popover
-		await user.click(within(chip1).getByTestId(ICON_REGEXP.shareCanRead));
-		await screen.findByText(/viewer/i);
-		// advance timers to make the popover register listeners
-		jest.advanceTimersToNextTimer();
-		await user.click(screen.getByText(/editor/i));
-		// wait for the chip to update replacing the viewer icon with the editor one
-		// there are 2 editor icons because one is inside the popover
-		expect(await within(chip1).findByTestId(ICON_REGEXP.shareCanWrite)).toBeVisible();
-		expect(within(chip2).queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
-		// edit second share to allow re-share
-		await user.click(within(chip2).getByTestId(ICON_REGEXP.shareCanRead));
-		// previous popover is closed and the one related to second share is opened
-		await screen.findByText(/viewer/i);
-		// advance timers to make the popover register listeners
-		jest.advanceTimersToNextTimer();
-		// select the share permission
-		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
-		// chip is updated, only this chip has the share icon
-		expect(await within(chip2).findByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
-		expect(within(chip1).queryByTestId(ICON_REGEXP.shareCanShare)).not.toBeInTheDocument();
 	});
 });

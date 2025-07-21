@@ -218,7 +218,7 @@ describe('Displayer', () => {
 
 	test('click on collaborators avatar in details tab open shares tab', async () => {
 		const node = populateNode();
-		node.shares = populateShares(node, 10);
+		node.shares = populateShares(node, 10, true);
 		node.permissions.can_share = false;
 		const mocks = {
 			Query: {
@@ -239,6 +239,7 @@ describe('Displayer', () => {
 		expect(screen.getByTestId(ICON_REGEXP.moreHorizontal)).toBeVisible();
 		await user.click(screen.getByTestId(ICON_REGEXP.moreHorizontal));
 		await screen.findByText(collaborator0Name);
+		screen.logTestingPlaygroundURL();
 		await screen.findByText(collaborator5Name);
 		await screen.findAllByTestId(/icon: (EyeOutline|Edit2Outline)/);
 		// tab is changed
@@ -248,7 +249,7 @@ describe('Displayer', () => {
 
 	test('all collaborators are loaded inside the sharing tab when navigating from the details tab', async () => {
 		const node = populateNode();
-		node.shares = populateShares(node, 100);
+		node.shares = populateShares(node, 100, true);
 		node.permissions.can_share = false;
 		const mocks = {
 			Query: {

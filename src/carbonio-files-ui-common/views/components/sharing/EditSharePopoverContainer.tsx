@@ -46,7 +46,7 @@ interface EditShareChipPopoverContainerProps {
 	closePopover: () => void;
 }
 
-export const EditShareChipPopoverContainer = ({
+export const EditSharePopoverContainer = ({
 	activeRow = 0,
 	disabledRows = [],
 	checkboxValue = false,

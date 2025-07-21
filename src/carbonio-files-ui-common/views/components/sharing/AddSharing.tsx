@@ -30,7 +30,6 @@ import {
 } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { AddShareChip } from './AddShareChip';
 import { EMAIL_REGEXP } from '../../../../constants';
 import { soapFetch } from '../../../../network/network';
 import { useCreateShareMutation } from '../../../hooks/graphql/mutations/useCreateShareMutation';
@@ -54,6 +53,7 @@ import { DeepPick } from '../../../types/utils';
 import { getChipLabel, sharePermissionsGetter } from '../../../utils/utils';
 import { RouteLeavingGuard } from '../RouteLeavingGuard';
 import { Hint, Loader } from '../StyledComponents';
+import { AddCollaboratorPermission } from './AddCollaboratorPermission';
 
 interface AddSharingProps {
 	node: Node<'id' | 'owner' | 'permissions'> & {
@@ -145,7 +145,8 @@ function cleanEmails<T extends { email?: string }>(
 
 export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
-
+	const [permissionDefined, setPermissionDefined] = useState(Role.Viewer);
+	const [isAllowedSharingChecked, setIsAllowedSharingChecked] = useState(false);
 	const [createShare] = useCreateShareMutation();
 	const getAccountByEmailLazyQuery = useGetAccountByEmailQuery();
 	const getAccountsByEmailLazyQuery = useGetAccountsByEmailQuery();
@@ -165,6 +166,10 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [loading, setLoading] = useState(false);
+
+	const allowSharingToggleCheck = useCallback(() => {
+		setIsAllowedSharingChecked((prev) => !prev);
+	}, []);
 
 	const createShareCallback = useCallback(() => {
 		const customMessageText = trim(mailTextValue);
@@ -226,11 +231,12 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 								value: {
 									...contact,
 									id: result.data.getAccountByEmail.id,
-									role: Role.Viewer,
-									sharingAllowed: false,
+									role: permissionDefined,
+									sharingAllowed: isAllowedSharingChecked,
 									onUpdate: updateChip,
 									node
-								}
+								},
+								label: getChipLabel(contact)
 							};
 							setChips((c) => [...c, contactWithId]);
 						}
@@ -238,7 +244,14 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					.catch(() => null); // FIXME: this catch shouldn't be necessary but for some reason it is
 			}
 		},
-		[chips, getAccountByEmailLazyQuery, node, updateChip]
+		[
+			chips,
+			getAccountByEmailLazyQuery,
+			isAllowedSharingChecked,
+			node,
+			permissionDefined,
+			updateChip
+		]
 	);
 
 	const addShareContactGroup = useCallback(
@@ -311,7 +324,8 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 								cleanedEmails,
 								(chipValue) => ({
 									id: chipValue.id,
-									value: chipValue
+									value: chipValue,
+									label: getChipLabel(chipValue)
 								})
 							);
 
@@ -321,7 +335,8 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 				} else {
 					const cleanedEmails = cleanEmails(galMembers, chips, node);
 					const cleanedChips = map<ShareChip['value'], ShareChip>(cleanedEmails, (chipValue) => ({
-						value: chipValue
+						value: chipValue,
+						label: getChipLabel(chipValue)
 					}));
 					setChips((c) => [...c, ...cleanedChips]);
 				}
@@ -451,8 +466,9 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					</Text>
 				</RouteLeavingGuard>
 			)}
-			<Container data-testid="add-shares-input-container">
+			<Container data-testid="add-shares-input-container" orientation={'horizontal'} gap={'0.5rem'}>
 				<ChipInput
+					style={{ flexGrow: 1, minWidth: 0 }}
 					inputRef={inputRef}
 					placeholder={t('displayer.share.addShare.input.placeholder', 'Add new people or groups')}
 					confirmChipOnBlur={false}
@@ -460,7 +476,6 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					onInputType={onType}
 					onChange={onChipsChange}
 					value={chips}
-					ChipComponent={AddShareChip}
 					options={dropdownItems}
 					onAdd={onAdd}
 					background="gray5"
@@ -468,8 +483,15 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					wrap="wrap"
 					data-testid="add-sharing-chip-input"
 				/>
+				<AddCollaboratorPermission
+					node={node}
+					contacts={chips}
+					permissionDefined={permissionDefined}
+					setPermissionDefined={setPermissionDefined}
+					isAllowedSharingChecked={isAllowedSharingChecked}
+					allowSharingToggleCheck={allowSharingToggleCheck}
+				/>
 			</Container>
-
 			<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
 				<Button
 					label={t('displayer.share.addShare.button', 'Share')}
