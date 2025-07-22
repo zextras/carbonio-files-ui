@@ -24,6 +24,17 @@ const CustomPopover = styled(Popover)`
 	z-index: 1000;
 `;
 
+const StyledButton = styled(Button)`
+	max-width: fit-content;
+`;
+
+const StyledIcon = styled(Icon)`
+	width: 1rem;
+	min-width: 1rem;
+	height: 1rem;
+	min-height: 1rem;
+`;
+
 export interface EditButtonWithPopoverProps extends Omit<ChipProps, 'children'> {
 	onClose?: (event?: React.SyntheticEvent | KeyboardEvent) => void;
 	popoverOpen?: boolean;
@@ -93,7 +104,7 @@ export const EditButtonWithPopover = React.forwardRef<HTMLDivElement, EditButton
 						orientation={'horizontal'}
 						width={'fit'}
 					>
-						<Button
+						<StyledButton
 							ref={innerRef}
 							icon={() => (
 								<Container
@@ -101,9 +112,10 @@ export const EditButtonWithPopover = React.forwardRef<HTMLDivElement, EditButton
 									crossAlignment={'flex-start'}
 									orientation={'horizontal'}
 									gap={'0.5rem'}
+									width={'fit'}
 								>
-									<Icon icon={permissionIcon} color="currentColor" />
-									<Icon
+									<StyledIcon icon={permissionIcon} color="currentColor" />
+									<StyledIcon
 										icon={
 											permission === SharePermission.ReadAndShare ||
 											permission === SharePermission.ReadWriteAndShare

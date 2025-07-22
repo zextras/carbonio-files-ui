@@ -253,7 +253,7 @@ export const ShareListItem = ({
 						<Avatar label={label} />
 						<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
 							<Text size={SHARE_TEXT_SIZE}>{label}</Text>
-							<Text color={'secondary'} size={'extrasmall'}>
+							<Text color={'secondary'} size={'small'}>
 								{share?.share_target.email}
 							</Text>
 						</Container>
@@ -262,8 +262,8 @@ export const ShareListItem = ({
 						orientation={'horizontal'}
 						mainAlignment={'flex-start'}
 						crossAlignment={'flex-start'}
+						maxWidth={'fit'}
 						gap={'0.25rem'}
-						width={'fit'}
 					>
 						<EditButtonWithPopover
 							popoverOpen={popoverOpen}

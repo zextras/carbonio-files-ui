@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { filter } from 'lodash';
 
 import { ButtonWithPopover } from './ButtonWithPopover';
-import { NewShareChipPopoverContainer } from './NewShareChipPopoverContainer';
+import { NewSharePopoverContainer } from './NewSharePopoverContainer';
 import { Node, Role, ShareChip } from '../../../types/common';
 import { Maybe, Share } from '../../../types/graphql/types';
 import { DeepPick } from '../../../types/utils';
@@ -108,7 +108,7 @@ export const AddCollaboratorPermission = React.forwardRef<
 			isAllowedSharingChecked={isAllowedSharingChecked}
 		>
 			{(): React.JSX.Element => (
-				<NewShareChipPopoverContainer
+				<NewSharePopoverContainer
 					activeRow={rowRoleToIdxMap[contacts[0]?.value?.role ?? permissionDefined]}
 					disabledRows={disabledRows}
 					checkboxValue={isAllowedSharingChecked}

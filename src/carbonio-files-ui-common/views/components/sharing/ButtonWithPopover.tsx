@@ -6,7 +6,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Button, ChipProps, Popover, useCombinedRefs } from '@zextras/carbonio-design-system';
+import { Button, Popover, useCombinedRefs } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -21,7 +21,7 @@ const StyledButton = styled(Button)`
 	min-width: max-content;
 `;
 
-export interface ButtonWithPopoverProps extends Omit<ChipProps, 'children'> {
+export interface ButtonWithPopoverProps {
 	onClose?: (event?: React.SyntheticEvent | KeyboardEvent) => void;
 	popoverOpen?: boolean;
 	onClick?: (event: React.SyntheticEvent) => void;
@@ -71,6 +71,7 @@ export const ButtonWithPopover = React.forwardRef<HTMLDivElement, ButtonWithPopo
 						icon: 'ChevronDown',
 						onClick: openPermissionPopover
 					}}
+					type={'outlined'}
 				/>
 				<CustomPopover
 					open={open}

@@ -107,7 +107,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 					<Text size={SHARE_TEXT_SIZE}>
 						{label} - {t('displayer.share.chip.owner', 'Owner')}
 					</Text>
-					<Text size={'extrasmall'} color="secondary">
+					<Text size={'small'} color="secondary">
 						{node.owner!.email}
 					</Text>
 				</Container>
