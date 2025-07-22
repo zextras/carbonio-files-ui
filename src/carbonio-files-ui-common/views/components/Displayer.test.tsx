@@ -239,7 +239,6 @@ describe('Displayer', () => {
 		expect(screen.getByTestId(ICON_REGEXP.moreHorizontal)).toBeVisible();
 		await user.click(screen.getByTestId(ICON_REGEXP.moreHorizontal));
 		await screen.findByText(collaborator0Name);
-		screen.logTestingPlaygroundURL();
 		await screen.findByText(collaborator5Name);
 		await screen.findAllByTestId(/icon: (EyeOutline|Edit2Outline)/);
 		// tab is changed
