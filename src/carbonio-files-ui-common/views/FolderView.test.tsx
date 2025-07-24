@@ -7,11 +7,12 @@
 import React from 'react';
 
 import { act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 import { map } from 'lodash';
 
 import FolderView from './FolderView';
 import { ACTION_IDS } from '../../constants';
-import * as actualNetworkModule from '../../network/network';
+import * as network from '../../network/network';
 import { viewModeVar } from '../apollo/viewModeVar';
 import { VIEW_MODE } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -36,6 +37,7 @@ import {
 } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { Folder, Share, SharePermission } from '../types/graphql/types';
+import { AutocompleteResponse } from '../types/network';
 import {
 	mockCreateShare,
 	mockDeleteShare,
@@ -47,18 +49,6 @@ import {
 	mockMoveNodes,
 	mockUpdateShare
 } from '../utils/resolverMocks';
-
-const mockedSoapFetch = jest.fn();
-
-jest.mock<typeof import('../../network/network')>('../../network/network', () => ({
-	soapFetch: <Req, Res extends Record<string, unknown>>(): ReturnType<
-		typeof actualNetworkModule.soapFetch<Req, Res>
-	> =>
-		new Promise<Res>((resolve, reject) => {
-			const result = mockedSoapFetch();
-			result ? resolve(result) : reject(new Error('no result provided'));
-		})
-}));
 
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
@@ -421,9 +411,17 @@ describe('Folder View', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			mockedSoapFetch.mockReturnValue({
-				match: [populateGalContact(userAccount.full_name, userAccount.email)]
-			});
+			jest.spyOn(network, 'soapFetch').mockImplementation(
+				(): Promise<RawSoapResponse<{ AutoCompleteResponse: AutocompleteResponse }>> =>
+					Promise.resolve({
+						Body: {
+							AutoCompleteResponse: {
+								match: [populateGalContact(userAccount.full_name, userAccount.email)]
+							}
+						},
+						Header: { context: {} }
+					})
+			);
 
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${localRoot.id}&node=${folder.id}`],

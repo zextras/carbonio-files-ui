@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
 	Button,
@@ -12,8 +12,10 @@ import {
 	ChipProps,
 	Container,
 	Icon,
-	Padding,
 	Row,
+	Select,
+	SelectItem,
+	SingleSelectionOnChange,
 	Text,
 	Tooltip,
 	useModal,
@@ -22,6 +24,8 @@ import {
 import { find } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
+import { CustomCollaborationLinkSelect } from './CustomCollaborationLinkSelect';
+import { EMPTY_ITEM } from '../../../../../constants';
 import {
 	CreateCollaborationLinkType,
 	useCreateCollaborationLinkMutation
@@ -44,10 +48,31 @@ export const CollaborationLinks = ({
 	nodeName
 }: CollaborationLinksProps): React.JSX.Element => {
 	const [t] = useTranslation();
+	const [selected, setSelected] = useState<SharePermission>();
 	const createSnackbar = useSnackbar();
 	const { createModal, closeModal } = useModal();
 
 	const { data: getCollaborationLinksQueryData, loading } = useGetCollaborationLinksQuery(nodeId);
+
+	const readOnlyCollaborationLink = useMemo(() => {
+		if (getCollaborationLinksQueryData?.getCollaborationLinks) {
+			return find(
+				getCollaborationLinksQueryData?.getCollaborationLinks,
+				(link) => link?.permission === SharePermission.ReadOnly
+			);
+		}
+		return undefined;
+	}, [getCollaborationLinksQueryData]);
+
+	const readAndWriteCollaborationLink = useMemo(() => {
+		if (getCollaborationLinksQueryData?.getCollaborationLinks) {
+			return find(
+				getCollaborationLinksQueryData?.getCollaborationLinks,
+				(link) => link?.permission === SharePermission.ReadAndWrite
+			);
+		}
+		return undefined;
+	}, [getCollaborationLinksQueryData]);
 
 	const readAndShareCollaborationLink = useMemo(() => {
 		if (getCollaborationLinksQueryData?.getCollaborationLinks) {
@@ -111,13 +136,17 @@ export const CollaborationLinks = ({
 		[copyLinkToClipboard, createSnackbar, t]
 	);
 
-	const createReadAndShareCollaborationLinkCallback = useCallback(() => {
-		createCollaborationLink(SharePermission.ReadAndShare).then(createCallback);
-	}, [createCallback, createCollaborationLink]);
+	const createCollaborationLinkCallback = useCallback(
+		(sharePermission?: SharePermission) => {
+			sharePermission && createCollaborationLink(sharePermission).then(createCallback);
+		},
+		[createCallback, createCollaborationLink]
+	);
 
-	const createReadWriteAndShareCollaborationLinkCallback = useCallback(() => {
-		createCollaborationLink(SharePermission.ReadWriteAndShare).then(createCallback);
-	}, [createCallback, createCollaborationLink]);
+	const onGenerateLink = useCallback(() => {
+		createCollaborationLinkCallback(selected);
+		setSelected(undefined);
+	}, [createCollaborationLinkCallback, selected]);
 
 	const copyCollaborationUrl = useCallback<NonNullable<ChipProps['onClick']>>(
 		(event) => {
@@ -167,17 +196,206 @@ export const CollaborationLinks = ({
 		[closeModal, createModal, deleteCollaborationsLinks, nodeName, t]
 	);
 
-	const deleteReadAndShareCollaborationLinkCallback = useCallback(() => {
-		if (readAndShareCollaborationLink) {
-			openDeleteModal(readAndShareCollaborationLink.id);
-		}
-	}, [openDeleteModal, readAndShareCollaborationLink]);
+	const revokeCollaborationLink = useCallback(
+		(id: string) => {
+			openDeleteModal(id);
+		},
+		[openDeleteModal]
+	);
 
-	const deleteReadWriteAndShareCollaborationLinkCallback = useCallback(() => {
-		if (readWriteAndShareCollaborationLink) {
-			openDeleteModal(readWriteAndShareCollaborationLink.id);
+	const isReadAndWriteItemDisabled = useMemo(
+		() => !!readAndWriteCollaborationLink || !canWrite,
+		[canWrite, readAndWriteCollaborationLink]
+	);
+
+	const readAndWriteTooltipLabel = useMemo(() => {
+		if (!canWrite)
+			return t(
+				'collaborationLinks.permission.cannotWrite.tooltip',
+				"You are not allowed to create this collaboration link because you don't have edit permission"
+			);
+		return t(
+			'collaborationLinks.permission.optionDisabled.tooltip',
+			'This type of link has already been created'
+		);
+	}, [canWrite, t]);
+
+	const isReadWriteAndShareItemDisabled = useMemo(
+		() => !!readWriteAndShareCollaborationLink || !canWrite,
+		[canWrite, readWriteAndShareCollaborationLink]
+	);
+
+	const readAndWriteAndShareTooltipLabel = useMemo(() => {
+		if (!canWrite)
+			return t(
+				'collaborationLinks.permission.cannotWrite.tooltip',
+				"You are not allowed to create this collaboration link because you don't have edit permission"
+			);
+
+		return t(
+			'collaborationLinks.permission.optionDisabled.tooltip',
+			'This type of link has already been created'
+		);
+	}, [canWrite, t]);
+
+	const items = useMemo<SelectItem<SharePermission>[]>(
+		() => [
+			{
+				value: SharePermission.ReadOnly,
+				label: t('collaborationLinks.permission.readOnly', 'View'),
+				disabled: !!readOnlyCollaborationLink,
+				customComponent: (
+					<Tooltip
+						disabled={!readOnlyCollaborationLink}
+						label={t(
+							'collaborationLinks.permission.optionDisabled.tooltip',
+							'This type of link has already been created'
+						)}
+					>
+						<Container mainAlignment="flex-start" orientation="horizontal">
+							<Text color={readOnlyCollaborationLink ? 'secondary' : 'text'}>
+								{t('collaborationLinks.permission.readOnly', 'View')}
+							</Text>
+						</Container>
+					</Tooltip>
+				)
+			},
+			{
+				value: SharePermission.ReadAndWrite,
+				label: t('collaborationLinks.permission.readAndWrite', 'Edit'),
+				disabled: isReadAndWriteItemDisabled,
+				customComponent: (
+					<Tooltip disabled={!isReadAndWriteItemDisabled} label={readAndWriteTooltipLabel}>
+						<Container mainAlignment="flex-start" orientation="horizontal">
+							<Text color={isReadAndWriteItemDisabled ? 'secondary' : 'text'}>
+								{t('collaborationLinks.permission.readAndWrite', 'Edit')}
+							</Text>
+						</Container>
+					</Tooltip>
+				)
+			},
+			{
+				value: SharePermission.ReadAndShare,
+				label: t('collaborationLinks.permission.readAndShare', 'View and manage sharing'),
+				disabled: !!readAndShareCollaborationLink,
+				customComponent: (
+					<Tooltip
+						disabled={!readAndShareCollaborationLink}
+						label={t(
+							'collaborationLinks.permission.optionDisabled.tooltip',
+							'This type of link has already been created'
+						)}
+					>
+						<Container mainAlignment="flex-start" orientation="horizontal">
+							<Text color={readAndShareCollaborationLink ? 'secondary' : 'text'}>
+								{t('collaborationLinks.permission.readAndShare', 'View and manage sharing')}
+							</Text>
+						</Container>
+					</Tooltip>
+				)
+			},
+			{
+				value: SharePermission.ReadWriteAndShare,
+				label: t('collaborationLinks.permission.readWriteAndShare', 'Edit and manage sharing'),
+				disabled: isReadWriteAndShareItemDisabled,
+				customComponent: (
+					<Tooltip
+						disabled={!isReadWriteAndShareItemDisabled}
+						label={readAndWriteAndShareTooltipLabel}
+					>
+						<Container mainAlignment="flex-start" orientation="horizontal">
+							<Text color={isReadWriteAndShareItemDisabled ? 'secondary' : 'text'}>
+								{t('collaborationLinks.permission.readWriteAndShare', 'Edit and manage sharing')}
+							</Text>
+						</Container>
+					</Tooltip>
+				)
+			}
+		],
+		[
+			isReadAndWriteItemDisabled,
+			isReadWriteAndShareItemDisabled,
+			readAndShareCollaborationLink,
+			readAndWriteAndShareTooltipLabel,
+			readAndWriteTooltipLabel,
+			readOnlyCollaborationLink,
+			t
+		]
+	);
+
+	const selection = useMemo(
+		() => items.find((item) => item.value === selected) ?? EMPTY_ITEM,
+		[selected, items]
+	);
+
+	const onSelectChange = useCallback<SingleSelectionOnChange>((id) => {
+		setSelected(id as SharePermission);
+	}, []);
+
+	const isSelectDisabled = useMemo(
+		() =>
+			Boolean(
+				readOnlyCollaborationLink &&
+					readAndWriteCollaborationLink &&
+					readAndShareCollaborationLink &&
+					readWriteAndShareCollaborationLink
+			),
+		[
+			readAndShareCollaborationLink,
+			readAndWriteCollaborationLink,
+			readOnlyCollaborationLink,
+			readWriteAndShareCollaborationLink
+		]
+	);
+
+	const collaborationLinks = useMemo(
+		() => [
+			{
+				collaborationLink: readOnlyCollaborationLink,
+				dataTestId: 'read-only-collaboration-link-container',
+				title: t('collaborationLinks.permission.readOnly', 'View'),
+				icons: ['EyeOutline']
+			},
+			{
+				collaborationLink: readAndWriteCollaborationLink,
+				dataTestId: 'read-write-collaboration-link-container',
+				title: t('collaborationLinks.permission.readAndWrite', 'Edit'),
+				icons: ['Edit2Outline']
+			},
+			{
+				collaborationLink: readAndShareCollaborationLink,
+				dataTestId: 'read-share-collaboration-link-container',
+				title: t('collaborationLinks.permission.readAndShare', 'View and manage sharing'),
+				icons: ['EyeOutline', 'ShareOutline']
+			},
+			{
+				collaborationLink: readWriteAndShareCollaborationLink,
+				dataTestId: 'read-write-share-collaboration-link-container',
+				title: t('collaborationLinks.permission.readWriteAndShare', 'Edit and manage sharing'),
+				icons: ['Edit2Outline', 'ShareOutline']
+			}
+		],
+		[
+			readAndShareCollaborationLink,
+			readAndWriteCollaborationLink,
+			readOnlyCollaborationLink,
+			readWriteAndShareCollaborationLink,
+			t
+		]
+	);
+
+	const generateButtonTooltipLabel = useMemo(() => {
+		if (isSelectDisabled) {
+			return t(
+				'collaborationLinks.maximumLinks.tooltip',
+				"You've reached the maximum number of links. Revoke one to create a new one."
+			);
 		}
-	}, [openDeleteModal, readWriteAndShareCollaborationLink]);
+		if (!selected) {
+			return t('collaborationLinks.button.choosePermission', 'Choose permissions to generate link');
+		}
+		return undefined;
+	}, [isSelectDisabled, selected, t]);
 
 	return (
 		<Container
@@ -187,6 +405,7 @@ export const CollaborationLinks = ({
 			padding={{ all: 'large' }}
 			background={'gray6'}
 			data-testid="collaboration-link-container"
+			gap={'1rem'}
 		>
 			<Container
 				mainAlignment="flex-start"
@@ -204,158 +423,99 @@ export const CollaborationLinks = ({
 					)}
 				</TextWithLineHeight>
 			</Container>
-			<Padding vertical="small" />
-			<Container
-				orientation="horizontal"
-				mainAlignment="flex-start"
-				crossAlignment="flex-start"
-				gap="0.5rem"
-				padding={{ all: 'small' }}
-				data-testid="read-share-collaboration-link-container"
-			>
-				<Container
-					width="auto"
-					flexShrink={0}
-					mainAlignment="flex-start"
-					crossAlignment="flex-start"
-				>
-					<Icon icon="EyeOutline" size="medium" />
-				</Container>
-				<Container crossAlignment="flex-start" width="auto" flexGrow={1} minWidth={0}>
-					<TextWithLineHeight size="small">
-						{t('collaborationLinks.row.title.ReadAndShare', 'Read and Share')}
-					</TextWithLineHeight>
-					{readAndShareCollaborationLink ? (
-						<Chip
-							label={
-								<Tooltip
-									label={t(
-										'collaborationLinks.link.urlChip.tooltip.copy',
-										'Copy Collaboration link'
-									)}
-									maxWidth="unset"
-									placement="top"
+			{collaborationLinks.some(({ collaborationLink }) => collaborationLink) && (
+				<Container mainAlignment="flex-start" crossAlignment="flex-start">
+					{collaborationLinks.map(
+						({ collaborationLink, dataTestId, title, icons }) =>
+							collaborationLink && (
+								<Container
+									key={collaborationLink.id}
+									orientation="horizontal"
+									mainAlignment="flex-start"
+									crossAlignment="flex-start"
+									gap="0.5rem"
+									padding={{ all: 'small' }}
+									data-testid={dataTestId}
 								>
-									<Row wrap="nowrap" minWidth={0}>
-										<Text size="small" weight="light">
-											{readAndShareCollaborationLink.url}
-										</Text>
-									</Row>
-								</Tooltip>
-							}
-							hasAvatar={false}
-							minWidth={0}
-							onClick={copyCollaborationUrl}
-							maxWidth="100%"
-						/>
-					) : (
-						<TextWithLineHeight size="extrasmall" color="secondary">
-							{t('collaborationLinks.row.placeholder', 'Create a link in order to share the item')}
-						</TextWithLineHeight>
-					)}
-				</Container>
-				<Container width="auto" flexShrink={0} mainAlignment="flex-start" crossAlignment="flex-end">
-					{readAndShareCollaborationLink ? (
-						<Button
-							size="small"
-							type="outlined"
-							color="error"
-							label={t('collaborationLinks.button.revoke', 'Revoke')}
-							onClick={deleteReadAndShareCollaborationLinkCallback}
-							icon={'SlashOutline'}
-						/>
-					) : (
-						<Button
-							size="small"
-							type="outlined"
-							label={t('collaborationLinks.button.generateLink', 'Generate Link')}
-							onClick={createReadAndShareCollaborationLinkCallback}
-							disabled={loading}
-						/>
-					)}
-				</Container>
-			</Container>
-			<Padding vertical="extrasmall" />
-			{canWrite && (
-				<Container
-					orientation="horizontal"
-					mainAlignment="flex-start"
-					crossAlignment="flex-start"
-					gap="0.5rem"
-					padding={{ all: 'small' }}
-					data-testid="read-write-share-collaboration-link-container"
-				>
-					<Container
-						width="auto"
-						flexShrink={0}
-						mainAlignment="flex-start"
-						crossAlignment="flex-start"
-					>
-						<Icon icon="Edit2Outline" size="medium" />
-					</Container>
-					<Container crossAlignment="flex-start" width="auto" flexGrow={1} minWidth={0}>
-						<TextWithLineHeight size="small">
-							{t('collaborationLinks.row.title.writeAndShare', 'Write and Share')}
-						</TextWithLineHeight>
-						{readWriteAndShareCollaborationLink ? (
-							<Chip
-								label={
-									<Tooltip
-										label={t(
-											'collaborationLinks.link.urlChip.tooltip.copy',
-											'Copy Collaboration link'
-										)}
-										maxWidth="unset"
-										placement="top"
+									<Container
+										crossAlignment="flex-start"
+										width="auto"
+										flexGrow={1}
+										minWidth={0}
+										gap={'0.25rem'}
 									>
-										<Row wrap="nowrap" minWidth={0}>
-											<Text size="small" weight="light">
-												{readWriteAndShareCollaborationLink.url}
-											</Text>
-										</Row>
-									</Tooltip>
-								}
-								hasAvatar={false}
-								minWidth={0}
-								onClick={copyCollaborationUrl}
-								maxWidth="100%"
-							/>
-						) : (
-							<TextWithLineHeight size="extrasmall" color="secondary">
-								{t(
-									'collaborationLinks.row.placeholder',
-									'Create a link in order to share the item'
-								)}
-							</TextWithLineHeight>
-						)}
-					</Container>
-					<Container
-						width="auto"
-						flexShrink={0}
-						mainAlignment="flex-start"
-						crossAlignment="flex-end"
-					>
-						{readWriteAndShareCollaborationLink ? (
-							<Button
-								size="small"
-								type="outlined"
-								color="error"
-								label={t('collaborationLinks.button.revoke', 'Revoke')}
-								onClick={deleteReadWriteAndShareCollaborationLinkCallback}
-								icon={'SlashOutline'}
-							/>
-						) : (
-							<Button
-								size="small"
-								type="outlined"
-								label={t('collaborationLinks.button.generateLink', 'Generate Link')}
-								onClick={createReadWriteAndShareCollaborationLinkCallback}
-								disabled={loading}
-							/>
-						)}
-					</Container>
+										<TextWithLineHeight size="small">{title}</TextWithLineHeight>
+										<Chip
+											label={
+												<Tooltip
+													label={t(
+														'collaborationLinks.link.urlChip.tooltip.copy',
+														'Copy Collaboration link'
+													)}
+													maxWidth="unset"
+													placement="top"
+												>
+													<Row wrap="nowrap" minWidth={0} gap={'0.25rem'}>
+														<Text size="small" weight="light">
+															{collaborationLink.url}
+														</Text>
+														{icons.map((icon) => (
+															<Icon key={icon} icon={icon} style={{ pointerEvents: 'none' }} />
+														))}
+													</Row>
+												</Tooltip>
+											}
+											hasAvatar={false}
+											minWidth={0}
+											onClick={copyCollaborationUrl}
+											maxWidth="100%"
+										/>
+									</Container>
+									<Container
+										width="auto"
+										flexShrink={0}
+										mainAlignment="flex-start"
+										crossAlignment="flex-end"
+									>
+										<Button
+											size="small"
+											type="outlined"
+											color="error"
+											label={t('collaborationLinks.button.revoke', 'Revoke')}
+											onClick={() => revokeCollaborationLink(collaborationLink.id)}
+											icon={'SlashOutline'}
+										/>
+									</Container>
+								</Container>
+							)
+					)}
 				</Container>
 			)}
+			<Container mainAlignment={'flex-start'} crossAlignment="flex-start">
+				<Select
+					items={items}
+					onChange={onSelectChange}
+					label={t(
+						'collaborationLinks.button.choosePermission',
+						'Choose permissions to generate link'
+					)}
+					disabled={isSelectDisabled}
+					LabelFactory={CustomCollaborationLinkSelect}
+					selection={selection}
+				/>
+				<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
+					<Tooltip label={generateButtonTooltipLabel} disabled={!!selected}>
+						<Button
+							label={t('collaborationLinks.button.generateLink', 'Generate link')}
+							color="primary"
+							onClick={onGenerateLink}
+							type="outlined"
+							size={'small'}
+							disabled={isSelectDisabled || !selected || loading}
+						/>
+					</Tooltip>
+				</Container>
+			</Container>
 		</Container>
 	);
 };
