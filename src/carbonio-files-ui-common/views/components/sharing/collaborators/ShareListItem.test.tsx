@@ -17,7 +17,7 @@ import { Share, SharePermission } from '../../../../types/graphql/types';
 import { mockDeleteShare, mockUpdateShare } from '../../../../utils/resolverMocks';
 
 describe('ShareListItem', () => {
-	it.each([
+	test.each([
 		[
 			[ICON_REGEXP.shareCanRead, ICON_REGEXP.shareOff],
 			SharePermission.ReadOnly,
@@ -116,8 +116,6 @@ describe('ShareListItem', () => {
 			}
 		}
 	);
-
-	it('should render the tooltip if can share is true', () => {});
 });
 
 describe('Share List Item', () => {
@@ -396,6 +394,39 @@ describe('Share List Item', () => {
 			await waitFor(() => expect(mocks.Mutation.updateShare).toHaveBeenCalled());
 			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 			expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
+		});
+
+		test('should render the tooltip if editor section inside the popover is disabled', async () => {
+			const node = populateNode();
+			node.permissions.can_write_folder = false;
+			node.permissions.can_write_file = false;
+			node.permissions.can_share = true;
+			const userAccount = populateUser();
+			const share = populateShare(node, 'abc', userAccount);
+			share.permission = SharePermission.ReadAndShare;
+			const mocks = {
+				Mutation: {
+					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+				}
+			} satisfies Partial<Resolvers>;
+			const deleteShare = jest.fn();
+			const { user } = setup(
+				<ShareListItem
+					deleteShare={deleteShare}
+					share={share}
+					permissions={node.permissions}
+					yourself={false}
+				/>,
+				{
+					mocks
+				}
+			);
+
+			await user.click(screen.getByTestId(ICON_REGEXP.shareCanRead));
+			await user.hover(screen.getByText(/editor/i));
+			expect(
+				await screen.findByText(/You don't have the necessary permissions to assign editor rights/i)
+			).toBeVisible();
 		});
 	});
 });

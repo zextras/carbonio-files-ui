@@ -11,6 +11,7 @@ import {
 	Avatar,
 	Button,
 	Container,
+	Divider,
 	Text,
 	Tooltip,
 	useSnackbar
@@ -313,6 +314,7 @@ export const ShareListItem = ({
 					</Container>
 				</Container>
 			)}
+			<Divider />
 		</>
 	);
 };

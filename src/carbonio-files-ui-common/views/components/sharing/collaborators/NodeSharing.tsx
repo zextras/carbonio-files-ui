@@ -6,7 +6,15 @@
 
 import React, { useMemo } from 'react';
 
-import { Avatar, Container, Divider, Icon, Padding, Text } from '@zextras/carbonio-design-system';
+import {
+	Avatar,
+	Container,
+	Divider,
+	Icon,
+	Padding,
+	Row,
+	Text
+} from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -95,23 +103,26 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 		const label =
 			node.owner?.id === me ? t('displayer.share.chip.you', 'You') : getChipLabel(node.owner);
 		return (
-			<Container
-				mainAlignment={'flex-start'}
-				crossAlignment={'flex-start'}
-				orientation={'horizontal'}
-				padding={'0.5rem'}
-				gap={'0.5rem'}
-			>
-				<Avatar label={node.owner!.email} />
-				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
-					<Text size={SHARE_TEXT_SIZE}>
-						{label} - {t('displayer.share.chip.owner', 'Owner')}
-					</Text>
-					<Text size={'small'} color="secondary">
-						{node.owner!.email}
-					</Text>
+			<>
+				<Container
+					mainAlignment={'flex-start'}
+					crossAlignment={'flex-start'}
+					orientation={'horizontal'}
+					padding={'0.5rem'}
+					gap={'0.5rem'}
+				>
+					<Avatar label={node.owner!.email} />
+					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
+						<Text size={SHARE_TEXT_SIZE}>
+							{label} - {t('displayer.share.chip.owner', 'Owner')}
+						</Text>
+						<Text size={'small'} color="secondary">
+							{node.owner!.email}
+						</Text>
+					</Container>
 				</Container>
-			</Container>
+				<Divider />
+			</>
 		);
 	}, [me, node.owner, t]);
 
@@ -181,12 +192,15 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 					</Padding>
 				)}
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
-					<Text weight={'bold'}>{t('', 'Collaborators')}</Text>
+					<Row gap={'0.5rem'}>
+						<Text weight={'bold'}>{t('', 'Collaborators')}</Text>
+						{collaborators.length > 0 && <Text>({collaborators.length})</Text>}
+					</Row>
 					<ScrollContainer
 						mainAlignment={'flex-start'}
 						crossAlignment={'flex-start'}
 						height={'fit'}
-						maxHeight={'16rem'}
+						maxHeight={'14rem'}
 						data-testid={'sharing-collaborators-section'}
 					>
 						{ownerListItem}

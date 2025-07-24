@@ -15,7 +15,8 @@ import {
 	Checkbox,
 	Button,
 	pseudoClasses,
-	type ContainerProps
+	type ContainerProps,
+	Tooltip
 } from '@zextras/carbonio-design-system';
 import { includes, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -103,40 +104,43 @@ export const EditSharePopoverContainer = ({
 					</Text>
 				</Container>
 			</ExclusiveSelectionContainer>
-
-			<ExclusiveSelectionContainer
-				$disabled={row1disabled}
-				onClick={container1Click}
-				padding={{ vertical: 'large', horizontal: 'small' }}
-				orientation="horizontal"
-				crossAlignment="flex-start"
-				background={activeRow === 1 ? 'highlight' : 'gray6'}
-				data-testid="exclusive-selection-editor"
+			<Tooltip
+				label={t('', "You don't have the necessary permissions to assign editor rights")}
+				disabled={!row1disabled}
 			>
-				<Padding right="large">
-					<Icon
-						icon="Edit2Outline"
-						size="large"
-						color={(row1disabled && 'secondary') || (activeRow === 1 && 'primary') || 'gray0'}
-					/>
-				</Padding>
-				<Container orientation="vertical" crossAlignment="flex-start">
-					<Text
-						weight={activeRow === 1 ? 'bold' : 'regular'}
-						color={(row1disabled && 'secondary') || (activeRow === 1 && 'primary') || 'text'}
-						size="medium"
-					>
-						{t('displayer.share.chip.popover.role.editor', 'Editor')}
-					</Text>
-					<Text color="secondary" overflow="break-word" size="small">
-						{t(
-							'displayer.share.chip.popover.role.editorDescription',
-							'It will be able to view and edit the item'
-						)}
-					</Text>
-				</Container>
-			</ExclusiveSelectionContainer>
-
+				<ExclusiveSelectionContainer
+					$disabled={row1disabled}
+					onClick={container1Click}
+					padding={{ vertical: 'large', horizontal: 'small' }}
+					orientation="horizontal"
+					crossAlignment="flex-start"
+					background={activeRow === 1 ? 'highlight' : 'gray6'}
+					data-testid="exclusive-selection-editor"
+				>
+					<Padding right="large">
+						<Icon
+							icon="Edit2Outline"
+							size="large"
+							color={(row1disabled && 'secondary') || (activeRow === 1 && 'primary') || 'gray0'}
+						/>
+					</Padding>
+					<Container orientation="vertical" crossAlignment="flex-start">
+						<Text
+							weight={activeRow === 1 ? 'bold' : 'regular'}
+							color={(row1disabled && 'secondary') || (activeRow === 1 && 'primary') || 'text'}
+							size="medium"
+						>
+							{t('displayer.share.chip.popover.role.editor', 'Editor')}
+						</Text>
+						<Text color="secondary" overflow="break-word" size="small">
+							{t(
+								'displayer.share.chip.popover.role.editorDescription',
+								'It will be able to view and edit the item'
+							)}
+						</Text>
+					</Container>
+				</ExclusiveSelectionContainer>
+			</Tooltip>
 			<Padding bottom="small" />
 			<Divider color="gray3" />
 

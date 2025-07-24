@@ -79,7 +79,7 @@ describe('Node Sharing', () => {
 			screen.getByRole('textbox', {
 				name: /add new people or groups/i
 			})
-		);
+		).toBeVisible();
 		expect(
 			screen.getByRoleWithIcon('button', {
 				icon: ICON_REGEXP.shareOff,
@@ -128,7 +128,7 @@ describe('Node Sharing', () => {
 		expect(screen.queryByText(/You are not allowed to share this item./)).not.toBeInTheDocument();
 	});
 
-	it('should render the collaborators', async () => {
+	it('should render the collaborators and the number of collaborators', async () => {
 		const node = populateNode();
 		node.shares = populateShares(node, 2, true);
 		node.permissions.can_share = true;
@@ -152,6 +152,7 @@ describe('Node Sharing', () => {
 				expect(screen.getByText(share.share_target.email)).toBeVisible();
 			}
 		});
+		expect(screen.getByText(`(${node.shares.length})`)).toBeVisible();
 	});
 
 	it('should render the text "You - Owner" if the owner is the logged user)', async () => {
