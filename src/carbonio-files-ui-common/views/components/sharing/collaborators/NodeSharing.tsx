@@ -193,7 +193,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 				)}
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
 					<Row gap={'0.5rem'}>
-						<Text weight={'bold'}>{t('', 'Collaborators')}</Text>
+						<Text weight={'bold'}>{t('displayer.details.collaborators', 'Collaborators')}</Text>
 						{collaborators.length > 0 && <Text>({collaborators.length})</Text>}
 					</Row>
 					<ScrollContainer

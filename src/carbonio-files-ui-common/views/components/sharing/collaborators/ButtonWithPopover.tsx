@@ -62,7 +62,11 @@ export const ButtonWithPopover = React.forwardRef<HTMLDivElement, ButtonWithPopo
 			<>
 				<StyledButton
 					ref={innerRef}
-					label={permissionDefined === Role.Viewer ? t('', 'Viewer') : t('', 'Editor')}
+					label={
+						permissionDefined === Role.Viewer
+							? t('displayer.share.chip.popover.role.viewer', 'Viewer')
+							: t('displayer.share.chip.popover.role.editor', 'Editor')
+					}
 					icon={isAllowedSharingChecked ? 'Share' : 'ShareOff'}
 					onClick={openPermissionPopover}
 					secondaryAction={{

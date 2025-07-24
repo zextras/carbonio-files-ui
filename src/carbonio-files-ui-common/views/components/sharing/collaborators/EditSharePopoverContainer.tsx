@@ -105,7 +105,10 @@ export const EditSharePopoverContainer = ({
 				</Container>
 			</ExclusiveSelectionContainer>
 			<Tooltip
-				label={t('', "You don't have the necessary permissions to assign editor rights")}
+				label={t(
+					'displayer.share.editor.tooltip',
+					"You don't have the necessary permissions to assign editor rights"
+				)}
 				disabled={!row1disabled}
 			>
 				<ExclusiveSelectionContainer
