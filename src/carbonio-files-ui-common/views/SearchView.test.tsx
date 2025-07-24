@@ -68,7 +68,7 @@ describe('Search view', () => {
 			searchParamsVar(searchParams);
 			const nodes = populateNodes(2);
 			const nodeWithShares = populateFile();
-			const shares = populateShares(nodeWithShares);
+			const shares = populateShares(nodeWithShares, 1, true);
 			nodeWithShares.shares = shares;
 			nodeWithShares.permissions.can_share = true;
 			nodes.push(nodeWithShares);
