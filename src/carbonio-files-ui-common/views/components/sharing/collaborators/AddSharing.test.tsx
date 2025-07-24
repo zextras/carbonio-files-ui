@@ -10,29 +10,29 @@ import { waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 
 import { AddSharing } from './AddSharing';
-import * as network from '../../../../network/network';
-import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
+import * as network from '../../../../../network/network';
+import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import {
 	populateGalContact,
 	populateNode,
 	populateShare,
 	populateUser
-} from '../../../mocks/mockUtils';
-import { generateError, screen, setup } from '../../../tests/utils';
-import { Resolvers } from '../../../types/graphql/resolvers-types';
+} from '../../../../mocks/mockUtils';
+import { generateError, screen, setup } from '../../../../tests/utils';
+import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import {
 	GetNodeDocument,
 	GetNodeQuery,
 	GetNodeQueryVariables,
 	Share,
 	SharePermission
-} from '../../../types/graphql/types';
+} from '../../../../types/graphql/types';
 import {
 	getNodeVariables,
 	mockCreateShare,
 	mockErrorResolver,
 	mockGetAccountByEmail
-} from '../../../utils/resolverMocks';
+} from '../../../../utils/resolverMocks';
 
 const mockedSoapFetch = jest.fn();
 

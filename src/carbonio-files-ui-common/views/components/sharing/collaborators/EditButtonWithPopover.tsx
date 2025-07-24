@@ -8,17 +8,16 @@ import React, { useCallback, useState, useEffect, useMemo } from 'react';
 
 import {
 	Popover,
-	ChipProps,
 	useCombinedRefs,
 	Button,
 	Tooltip,
-	Container,
-	Icon
+	Container
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { SharePermission } from '../../../types/graphql/types';
+import { CollaboratorPermissionIcons } from './CollaboratorPermissionIcons';
+import { SharePermission } from '../../../../types/graphql/types';
 
 const CustomPopover = styled(Popover)`
 	z-index: 1000;
@@ -28,15 +27,7 @@ const StyledButton = styled(Button)`
 	max-width: fit-content;
 `;
 
-const StyledIcon = styled(Icon)`
-	width: 1rem;
-	min-width: 1rem;
-	height: 1rem;
-	min-height: 1rem;
-`;
-
-export interface EditButtonWithPopoverProps extends Omit<ChipProps, 'children'> {
-	onClose?: (event?: React.SyntheticEvent | KeyboardEvent) => void;
+export interface EditButtonWithPopoverProps {
 	popoverOpen?: boolean;
 	children: (closePopover: () => void) => React.JSX.Element;
 	onValueChange?: (newState: boolean) => void;
@@ -107,24 +98,10 @@ export const EditButtonWithPopover = React.forwardRef<HTMLDivElement, EditButton
 						<StyledButton
 							ref={innerRef}
 							icon={() => (
-								<Container
-									mainAlignment={'flex-start'}
-									crossAlignment={'flex-start'}
-									orientation={'horizontal'}
-									gap={'0.5rem'}
-									width={'fit'}
-								>
-									<StyledIcon icon={permissionIcon} color="currentColor" />
-									<StyledIcon
-										icon={
-											permission === SharePermission.ReadAndShare ||
-											permission === SharePermission.ReadWriteAndShare
-												? 'Share'
-												: 'ShareOff'
-										}
-										color="currentColor"
-									/>
-								</Container>
+								<CollaboratorPermissionIcons
+									permissionIcon={permissionIcon}
+									permission={permission}
+								/>
 							)}
 							type={'outlined'}
 							onClick={openPermissionsPopover}

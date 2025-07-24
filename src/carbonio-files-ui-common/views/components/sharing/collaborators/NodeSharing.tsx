@@ -12,17 +12,17 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { AddSharing } from './AddSharing';
-import { CollaborationLinks } from './collaborationLinks/CollaborationLinks';
-import { PublicLink } from './publicLink/PublicLink';
 import { ShareListItem } from './ShareListItem';
-import { useUserInfo } from '../../../../hooks/useUserInfo';
-import { SHARE_TEXT_SIZE } from '../../../constants';
-import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
-import { useGetSharesQuery } from '../../../hooks/graphql/queries/useGetSharesQuery';
-import { Node } from '../../../types/common';
-import { GetSharesQuery, Maybe, Share } from '../../../types/graphql/types';
-import { DeepPick, MakePartial, MakeRequiredNonNull } from '../../../types/utils';
-import { cssCalcBuilder, getChipLabel, isFile } from '../../../utils/utils';
+import { useUserInfo } from '../../../../../hooks/useUserInfo';
+import { SHARE_TEXT_SIZE } from '../../../../constants';
+import { useDeleteShareMutation } from '../../../../hooks/graphql/mutations/useDeleteShareMutation';
+import { useGetSharesQuery } from '../../../../hooks/graphql/queries/useGetSharesQuery';
+import { Node } from '../../../../types/common';
+import { GetSharesQuery, Maybe, Share } from '../../../../types/graphql/types';
+import { DeepPick, MakePartial, MakeRequiredNonNull } from '../../../../types/utils';
+import { cssCalcBuilder, getChipLabel, isFile } from '../../../../utils/utils';
+import { CollaborationLinks } from '../collaborationLinks/CollaborationLinks';
+import { PublicLink } from '../publicLink/PublicLink';
 
 const MainContainer = styled(Container)`
 	gap: ${({ theme }): string => theme.sizes.padding.medium};

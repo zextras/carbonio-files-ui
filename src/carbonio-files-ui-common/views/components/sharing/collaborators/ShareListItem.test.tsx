@@ -9,12 +9,12 @@ import React from 'react';
 import { act, waitFor } from '@testing-library/react';
 
 import { ShareListItem } from './ShareListItem';
-import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
-import { populateNode, populateShare, populateUser } from '../../../mocks/mockUtils';
-import { screen, setup } from '../../../tests/utils';
-import { Resolvers } from '../../../types/graphql/resolvers-types';
-import { Share, SharePermission } from '../../../types/graphql/types';
-import { mockDeleteShare, mockUpdateShare } from '../../../utils/resolverMocks';
+import { COLORS, ICON_REGEXP, SELECTORS } from '../../../../constants/test';
+import { populateNode, populateShare, populateUser } from '../../../../mocks/mockUtils';
+import { screen, setup } from '../../../../tests/utils';
+import { Resolvers } from '../../../../types/graphql/resolvers-types';
+import { Share, SharePermission } from '../../../../types/graphql/types';
+import { mockDeleteShare, mockUpdateShare } from '../../../../utils/resolverMocks';
 
 describe('ShareListItem', () => {
 	it.each([

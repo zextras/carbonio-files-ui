@@ -10,10 +10,10 @@ import { filter } from 'lodash';
 
 import { ButtonWithPopover } from './ButtonWithPopover';
 import { NewSharePopoverContainer } from './NewSharePopoverContainer';
-import { Node, Role, ShareChip } from '../../../types/common';
-import { Maybe, Share } from '../../../types/graphql/types';
-import { DeepPick } from '../../../types/utils';
-import { isFile, isFolder } from '../../../utils/utils';
+import { Node, Role, ShareChip } from '../../../../types/common';
+import { Maybe, Share } from '../../../../types/graphql/types';
+import { DeepPick } from '../../../../types/utils';
+import { isFile, isFolder } from '../../../../utils/utils';
 
 const rowRoleToIdxMap: { [key in Role]: number } = {
 	[Role.Viewer]: 0,
@@ -103,7 +103,6 @@ export const AddCollaboratorPermission = React.forwardRef<
 			popoverOpen={popoverOpen}
 			onValueChange={updatePermissionsPopover}
 			openPermissionPopover={openPermissionsPopover}
-			ref={ref}
 			permissionDefined={permissionDefined}
 			isAllowedSharingChecked={isAllowedSharingChecked}
 		>

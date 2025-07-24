@@ -10,8 +10,8 @@ import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 import { forEach, find, reduce } from 'lodash';
 
 import { AddSharing } from './AddSharing';
-import * as network from '../../../../network/network';
-import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
+import * as network from '../../../../../network/network';
+import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import {
 	populateGalContact,
 	populateContactGroupMatch,
@@ -20,18 +20,18 @@ import {
 	populateUser,
 	populateMembers,
 	populateShare
-} from '../../../mocks/mockUtils';
-import { setup } from '../../../tests/utils';
-import { Resolvers } from '../../../types/graphql/resolvers-types';
-import { User } from '../../../types/graphql/types';
+} from '../../../../mocks/mockUtils';
+import { setup } from '../../../../tests/utils';
+import { Resolvers } from '../../../../types/graphql/resolvers-types';
+import { User } from '../../../../types/graphql/types';
 import {
 	AutocompleteResponse,
 	DerefMember,
 	GetContactsResponse,
 	Member
-} from '../../../types/network';
-import { mockGetAccountsByEmail } from '../../../utils/resolverMocks';
-import { getChipLabel } from '../../../utils/utils';
+} from '../../../../types/network';
+import { mockGetAccountsByEmail } from '../../../../utils/resolverMocks';
+import { getChipLabel } from '../../../../utils/utils';
 
 let mockedSoapFetch = jest.fn();
 

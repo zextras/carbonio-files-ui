@@ -10,7 +10,7 @@ import { Button, Popover, useCombinedRefs } from '@zextras/carbonio-design-syste
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Role } from '../../../types/common';
+import { Role } from '../../../../types/common';
 
 const CustomPopover = styled(Popover)`
 	z-index: 1000;
@@ -22,9 +22,7 @@ const StyledButton = styled(Button)`
 `;
 
 export interface ButtonWithPopoverProps {
-	onClose?: (event?: React.SyntheticEvent | KeyboardEvent) => void;
 	popoverOpen?: boolean;
-	onClick?: (event: React.SyntheticEvent) => void;
 	children: (closePopover: () => void) => React.JSX.Element;
 	onValueChange?: (newState: boolean) => void;
 	openPermissionPopover: () => void;

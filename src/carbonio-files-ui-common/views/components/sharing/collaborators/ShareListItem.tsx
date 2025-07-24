@@ -18,12 +18,14 @@ import {
 import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { SHARE_TEXT_SIZE } from '../../../constants';
-import { useDeleteShareMutation } from '../../../hooks/graphql/mutations/useDeleteShareMutation';
-import { useUpdateShareMutation } from '../../../hooks/graphql/mutations/useUpdateShareMutation';
-import { useDecreaseYourOwnSharePermissionModal } from '../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
-import { useDeleteShareModal } from '../../../hooks/useDeleteShareModal';
-import { Role, Node } from '../../../types/common';
+import { EditButtonWithPopover } from './EditButtonWithPopover';
+import { EditSharePopoverContainer } from './EditSharePopoverContainer';
+import { SHARE_TEXT_SIZE } from '../../../../constants';
+import { useDeleteShareMutation } from '../../../../hooks/graphql/mutations/useDeleteShareMutation';
+import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateShareMutation';
+import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
+import { useDeleteShareModal } from '../../../../hooks/useDeleteShareModal';
+import { Role, Node } from '../../../../types/common';
 import {
 	DeleteShareMutation,
 	GetPermissionsDocument,
@@ -32,12 +34,10 @@ import {
 	Permissions,
 	ShareFragment,
 	SharePermission
-} from '../../../types/graphql/types';
-import { MakeRequiredNonNull } from '../../../types/utils';
-import { getChipLabel, isFile, isFolder, sharePermissionsGetter } from '../../../utils/utils';
-import { RouteLeavingGuard } from '../RouteLeavingGuard';
-import { EditButtonWithPopover } from './EditButtonWithPopover';
-import { EditSharePopoverContainer } from './EditSharePopoverContainer';
+} from '../../../../types/graphql/types';
+import { MakeRequiredNonNull } from '../../../../types/utils';
+import { getChipLabel, isFile, isFolder, sharePermissionsGetter } from '../../../../utils/utils';
+import { RouteLeavingGuard } from '../../RouteLeavingGuard';
 
 const rowSharePermissionToIdxMap = {
 	[SharePermission.ReadOnly]: 0,

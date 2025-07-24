@@ -11,25 +11,25 @@ import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 import { forEach } from 'lodash';
 
 import { NodeSharing } from './NodeSharing';
-import { LOGGED_USER } from '../../../../mocks/constants';
-import * as network from '../../../../network/network';
-import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
+import { LOGGED_USER } from '../../../../../mocks/constants';
+import * as network from '../../../../../network/network';
+import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import {
 	populateGalContact,
 	populateNode,
 	populateShare,
 	populateShares,
 	populateUser
-} from '../../../mocks/mockUtils';
-import { screen, setup, within } from '../../../tests/utils';
-import { Resolvers } from '../../../types/graphql/resolvers-types';
+} from '../../../../mocks/mockUtils';
+import { screen, setup, within } from '../../../../tests/utils';
+import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import {
 	GetNodeDocument,
 	GetNodeQuery,
 	GetNodeQueryVariables,
 	SharePermission,
 	User
-} from '../../../types/graphql/types';
+} from '../../../../types/graphql/types';
 import {
 	getNodeVariables,
 	mockCreateShare,
@@ -38,8 +38,8 @@ import {
 	mockGetCollaborationLinks,
 	mockGetLinks,
 	mockGetNode
-} from '../../../utils/resolverMocks';
-import { getChipLabel } from '../../../utils/utils';
+} from '../../../../utils/resolverMocks';
+import { getChipLabel } from '../../../../utils/utils';
 
 let mockedUserLogged: User;
 const mockedSoapFetch = jest.fn();

@@ -30,13 +30,14 @@ import {
 } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { EMAIL_REGEXP } from '../../../../constants';
-import { isRawErrorSoapResponse, soapFetch } from '../../../../network/network';
-import { useCreateShareMutation } from '../../../hooks/graphql/mutations/useCreateShareMutation';
-import { useGetAccountByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountByEmailQuery';
-import { useGetAccountsByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
-import { Contact, Node, Role, ShareChip } from '../../../types/common';
-import { Account, Maybe, Share, User } from '../../../types/graphql/types';
+import { AddCollaboratorPermission } from './AddCollaboratorPermission';
+import { EMAIL_REGEXP } from '../../../../../constants';
+import { isRawErrorSoapResponse, soapFetch } from '../../../../../network/network';
+import { useCreateShareMutation } from '../../../../hooks/graphql/mutations/useCreateShareMutation';
+import { useGetAccountByEmailQuery } from '../../../../hooks/graphql/queries/useGetAccountByEmailQuery';
+import { useGetAccountsByEmailQuery } from '../../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
+import { Contact, Node, Role, ShareChip } from '../../../../types/common';
+import { Account, Maybe, Share, User } from '../../../../types/graphql/types';
 import {
 	AutocompleteRequest,
 	AutocompleteResponse,
@@ -48,12 +49,11 @@ import {
 	isDerefMember,
 	isDistributionList,
 	Match
-} from '../../../types/network';
-import { DeepPick } from '../../../types/utils';
-import { getChipLabel, sharePermissionsGetter } from '../../../utils/utils';
-import { RouteLeavingGuard } from '../RouteLeavingGuard';
-import { Hint, Loader } from '../StyledComponents';
-import { AddCollaboratorPermission } from './AddCollaboratorPermission';
+} from '../../../../types/network';
+import { DeepPick } from '../../../../types/utils';
+import { getChipLabel, sharePermissionsGetter } from '../../../../utils/utils';
+import { RouteLeavingGuard } from '../../RouteLeavingGuard';
+import { Hint, Loader } from '../../StyledComponents';
 
 interface AddSharingProps {
 	node: Node<'id' | 'owner' | 'permissions'> & {
