@@ -116,12 +116,12 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 						<Text size={SHARE_TEXT_SIZE}>
 							{label} - {t('displayer.share.chip.owner', 'Owner')}
 						</Text>
-						<Text size={'small'} color="secondary">
+						<Text size={'extrasmall'} color="secondary">
 							{node.owner!.email}
 						</Text>
 					</Container>
 				</Container>
-				<Divider />
+				<Divider color={'gray3'} />
 			</>
 		);
 	}, [me, node.owner, t]);
@@ -206,7 +206,6 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 						{ownerListItem}
 						{collaborators}
 					</ScrollContainer>
-					<Divider color={'gray3'} />
 				</Container>
 				{node.permissions.can_share && <AddSharing node={node} />}
 			</Container>

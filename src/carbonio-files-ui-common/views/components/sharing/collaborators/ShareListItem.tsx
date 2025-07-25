@@ -254,7 +254,7 @@ export const ShareListItem = ({
 						<Avatar label={label} />
 						<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
 							<Text size={SHARE_TEXT_SIZE}>{label}</Text>
-							<Text color={'secondary'} size={'small'}>
+							<Text color={'secondary'} size={'extrasmall'}>
 								{share?.share_target.email}
 							</Text>
 						</Container>
@@ -314,7 +314,7 @@ export const ShareListItem = ({
 					</Container>
 				</Container>
 			)}
-			<Divider />
+			<Divider color={'gray3'} />
 		</>
 	);
 };
