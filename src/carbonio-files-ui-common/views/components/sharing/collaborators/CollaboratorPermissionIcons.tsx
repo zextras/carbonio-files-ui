@@ -18,12 +18,10 @@ const StyledIcon = styled(Icon)`
 `;
 
 interface CollaboratorPermissionIconsProps {
-	permissionIcon: 'EyeOutline' | 'Edit2Outline';
 	permission: SharePermission;
 }
 
 export const CollaboratorPermissionIcons = ({
-	permissionIcon,
 	permission
 }: CollaboratorPermissionIconsProps): React.JSX.Element => (
 	<Container
@@ -33,7 +31,15 @@ export const CollaboratorPermissionIcons = ({
 		gap={'0.5rem'}
 		width={'fit'}
 	>
-		<StyledIcon icon={permissionIcon} color="currentColor" />
+		<StyledIcon
+			icon={
+				permission === SharePermission.ReadAndWrite ||
+				permission === SharePermission.ReadWriteAndShare
+					? 'Edit2Outline'
+					: 'EyeOutline'
+			}
+			color="currentColor"
+		/>
 		<StyledIcon
 			icon={
 				permission === SharePermission.ReadAndShare ||

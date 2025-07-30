@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { FetchResult, useLazyQuery } from '@apollo/client';
 import {
@@ -12,14 +12,16 @@ import {
 	Button,
 	Container,
 	Divider,
+	Popover,
 	Text,
 	Tooltip,
 	useSnackbar
 } from '@zextras/carbonio-design-system';
 import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
-import { EditButtonWithPopover } from './EditButtonWithPopover';
+import { CollaboratorPermissionIcons } from './CollaboratorPermissionIcons';
 import { EditSharePopoverContainer } from './EditSharePopoverContainer';
 import { SHARE_TEXT_SIZE } from '../../../../constants';
 import { useDeleteShareMutation } from '../../../../hooks/graphql/mutations/useDeleteShareMutation';
@@ -66,6 +68,14 @@ const rowIdxToRoleMap: { [id: number]: Role } = {
 	0: Role.Viewer,
 	1: Role.Editor
 };
+
+const CustomPopover = styled(Popover)`
+	z-index: 1000;
+`;
+
+const StyledButton = styled(Button)`
+	max-width: fit-content;
+`;
 
 interface ShareListItemProps {
 	share: MakeRequiredNonNull<ShareFragment, 'share_target'> & {
@@ -209,10 +219,6 @@ export const ShareListItem = ({
 		}
 	}, [permissions]);
 
-	const updatePermissionsPopover = useCallback((newState: boolean) => {
-		setPopoverOpen(newState);
-	}, []);
-
 	const isSomethingChanged = useMemo(
 		() => initialActiveRow !== activeRow || initialCheckboxValue !== checkboxValue,
 		[initialActiveRow, activeRow, initialCheckboxValue, checkboxValue]
@@ -224,6 +230,8 @@ export const ShareListItem = ({
 	);
 
 	const canShare = useMemo(() => permissions.can_share, [permissions.can_share]);
+
+	const anchorRef = useRef<HTMLDivElement>(null);
 
 	return (
 		<>
@@ -266,33 +274,55 @@ export const ShareListItem = ({
 						maxWidth={'fit'}
 						gap={'0.25rem'}
 					>
-						<EditButtonWithPopover
-							popoverOpen={popoverOpen}
-							onValueChange={updatePermissionsPopover}
-							canShare={canShare}
-							editButtonTooltipLabel={editButtonTooltipLabel}
-							openPermissionsPopover={openPermissionsPopover}
-							permission={share.permission}
+						<Tooltip
+							label={
+								canShare
+									? editButtonTooltipLabel
+									: t(
+											'displayer.share.tooltip.no_edit_permission',
+											"You don't have the necessary permissions to edit collaboration"
+										)
+							}
 						>
-							{(closePopover: () => void): React.JSX.Element => (
-								<EditSharePopoverContainer
-									activeRow={activeRow}
-									disabledRows={disabledRows}
-									checkboxValue={checkboxValue}
-									checkboxOnClick={switchSharingAllowed}
-									containerOnClick={changeRole}
-									saveDisabled={
-										initialActiveRow === activeRow && initialCheckboxValue === checkboxValue
-									}
-									saveOnClick={
-										yourself && decreasingSharePermissions
-											? openDecreaseYourOwnSharePermissionModal
-											: updateShareCallback
-									}
-									closePopover={closePopover}
+							<Container
+								mainAlignment={'flex-start'}
+								crossAlignment={'flex-start'}
+								orientation={'horizontal'}
+								width={'fit'}
+							>
+								<StyledButton
+									ref={anchorRef}
+									icon={() => <CollaboratorPermissionIcons permission={share.permission} />}
+									type={'outlined'}
+									onClick={openPermissionsPopover}
+									disabled={!canShare}
 								/>
-							)}
-						</EditButtonWithPopover>
+							</Container>
+						</Tooltip>
+						<CustomPopover
+							open={popoverOpen}
+							anchorEl={anchorRef}
+							styleAsModal
+							placement="bottom-end"
+							onClose={() => setPopoverOpen(false)}
+						>
+							<EditSharePopoverContainer
+								activeRow={activeRow}
+								disabledRows={disabledRows}
+								checkboxValue={checkboxValue}
+								checkboxOnClick={switchSharingAllowed}
+								containerOnClick={changeRole}
+								saveDisabled={
+									initialActiveRow === activeRow && initialCheckboxValue === checkboxValue
+								}
+								saveOnClick={
+									yourself && decreasingSharePermissions
+										? openDecreaseYourOwnSharePermissionModal
+										: updateShareCallback
+								}
+								closePopover={() => setPopoverOpen(false)}
+							/>
+						</CustomPopover>
 						<Tooltip
 							label={
 								isRemoveButtonDisabled
