@@ -233,6 +233,11 @@ export const ShareListItem = ({
 
 	const anchorRef = useRef<HTMLDivElement>(null);
 
+	const collaboratorPermissionIcons = useMemo(
+		() => <CollaboratorPermissionIcons permission={share.permission} />,
+		[share.permission]
+	);
+
 	return (
 		<>
 			{isSomethingChanged && (
@@ -292,7 +297,7 @@ export const ShareListItem = ({
 							>
 								<StyledButton
 									ref={anchorRef}
-									icon={() => <CollaboratorPermissionIcons permission={share.permission} />}
+									icon={() => collaboratorPermissionIcons}
 									type={'outlined'}
 									onClick={openPermissionsPopover}
 									disabled={!canShare}
