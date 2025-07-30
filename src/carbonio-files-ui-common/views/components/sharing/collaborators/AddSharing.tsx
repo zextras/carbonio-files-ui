@@ -145,8 +145,11 @@ function cleanEmails<T extends { email?: string }>(
 
 export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
-	const [permissionDefined, setPermissionDefined] = useState(Role.Viewer);
-	const [isAllowedSharingChecked, setIsAllowedSharingChecked] = useState(false);
+	const [role, setRole] = useState(Role.Viewer);
+	const [sharingAllowed, setSharingAllowed] = useState(false);
+	const toggleSharingAllowed = useCallback(() => {
+		setSharingAllowed((prev) => !prev);
+	}, []);
 	const [createShare] = useCreateShareMutation();
 	const getAccountByEmailLazyQuery = useGetAccountByEmailQuery();
 	const getAccountsByEmailLazyQuery = useGetAccountsByEmailQuery();
@@ -167,10 +170,6 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [loading, setLoading] = useState(false);
 
-	const allowSharingToggleCheck = useCallback(() => {
-		setIsAllowedSharingChecked((prev) => !prev);
-	}, []);
-
 	const createShareCallback = useCallback(() => {
 		const customMessageText = trim(mailTextValue);
 		const promises = map(chips, (chip) => {
@@ -178,7 +177,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 				return createShare(
 					node,
 					chip.value.id,
-					sharePermissionsGetter(chip.value.role, chip.value.sharingAllowed),
+					sharePermissionsGetter(role, sharingAllowed),
 					customMessageText.length > 0 ? customMessageText : undefined
 				);
 			}
@@ -204,16 +203,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 			setMailTextValue(notCreatedChips.length === 0 ? '' : customMessageText);
 			return results;
 		});
-	}, [chips, createShare, mailTextValue, node]);
-
-	const updateChip = useCallback<ShareChip['value']['onUpdate']>((id, updatedValue) => {
-		setChips((prevState) => {
-			const newState = [...prevState];
-			const idx = findIndex(newState, (item) => item.value.id === id);
-			newState[idx] = { ...newState[idx], value: { ...newState[idx].value, ...updatedValue } };
-			return newState;
-		});
-	}, []);
+	}, [chips, createShare, mailTextValue, node, role, sharingAllowed]);
 
 	const addShareContact = useCallback(
 		(contact: Contact) => (): void => {
@@ -231,9 +221,6 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 								value: {
 									...contact,
 									id: result.data.getAccountByEmail.id,
-									role: permissionDefined,
-									sharingAllowed: isAllowedSharingChecked,
-									onUpdate: updateChip,
 									node
 								},
 								label: getChipLabel(contact)
@@ -244,14 +231,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					.catch(() => null); // FIXME: this catch shouldn't be necessary but for some reason it is
 			}
 		},
-		[
-			chips,
-			getAccountByEmailLazyQuery,
-			isAllowedSharingChecked,
-			node,
-			permissionDefined,
-			updateChip
-		]
+		[chips, getAccountByEmailLazyQuery, node]
 	);
 
 	const addShareContactGroup = useCallback(
@@ -291,10 +271,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 						) {
 							galMembers.push({
 								...member.cn[0]._attrs,
-								role: Role.Viewer,
-								sharingAllowed: false,
 								id: member.cn[0]._attrs.zimbraId,
-								onUpdate: updateChip,
 								node
 							});
 						}
@@ -321,10 +298,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 									(email) => ({
 										...validAccountsMap[email],
 										email,
-										role: Role.Viewer,
-										sharingAllowed: false,
 										id: validAccountsMap[email]?.id,
-										onUpdate: updateChip,
 										node
 									})
 								);
@@ -352,7 +326,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					}
 				});
 		},
-		[chips, getAccountsByEmailLazyQuery, node, updateChip]
+		[chips, getAccountsByEmailLazyQuery, node]
 	);
 
 	const search = useMemo(
@@ -402,11 +376,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 		const filterValidShares = filter<ChipItem, ShareChip>(
 			newChips,
 			(chip): chip is ShareChip =>
-				chip !== undefined &&
-				chip !== null &&
-				typeof chip.value === 'object' &&
-				chip.value !== null &&
-				'role' in chip.value
+				chip !== undefined && chip !== null && typeof chip.value === 'object' && chip.value !== null
 		);
 		setChips(filterValidShares);
 	}, []);
@@ -505,11 +475,10 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 				/>
 				<AddCollaboratorPermission
 					node={node}
-					contacts={chips}
-					permissionDefined={permissionDefined}
-					setPermissionDefined={setPermissionDefined}
-					isAllowedSharingChecked={isAllowedSharingChecked}
-					allowSharingToggleCheck={allowSharingToggleCheck}
+					role={role}
+					setRole={setRole}
+					sharingAllowed={sharingAllowed}
+					toggleSharingAllowed={toggleSharingAllowed}
 				/>
 			</Container>
 			<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>

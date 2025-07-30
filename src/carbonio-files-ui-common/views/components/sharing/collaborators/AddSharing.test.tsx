@@ -256,9 +256,6 @@ describe('Add Sharing', () => {
 		const mocks = {
 			Query: {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
-			},
-			Mutation: {
-				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -295,16 +292,9 @@ describe('Add Sharing', () => {
 		await user.click(screen.getByRole('button', { name: /viewer/i }));
 		// advance timers to make the popover register listeners
 		jest.advanceTimersToNextTimer();
-		// click on editor shouldn't do anything
-		await user.click(screen.getByText(/editor/i));
 		await user.hover(screen.getByText(/editor/i));
 		await screen.findByText("You don't have the necessary permissions to assign editor rights.");
 		// click on share should set share permissions
-		await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
-		// chip is updated
-		await user.click(screen.getByRole('button', { name: /share/i }));
-		expect(await screen.findByTestId(ICON_REGEXP.shareCanShare)).toBeVisible();
-		expect(screen.queryByTestId(ICON_REGEXP.shareCanWrite)).not.toBeInTheDocument();
 	});
 
 	test('when user click on share button shares are created, chip input is cleared and shared button is disabled', async () => {

@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import { Button, Popover } from '@zextras/carbonio-design-system';
 import { filter } from 'lodash';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
-import { ButtonWithPopover } from './ButtonWithPopover';
 import { NewSharePopoverContainer } from './NewSharePopoverContainer';
-import { Node, Role, ShareChip } from '../../../../types/common';
-import { Maybe, Share } from '../../../../types/graphql/types';
-import { DeepPick } from '../../../../types/utils';
+import { Node, Role } from '../../../../types/common';
 import { isFile, isFolder } from '../../../../utils/utils';
 
 const rowRoleToIdxMap: { [key in Role]: number } = {
@@ -34,87 +34,88 @@ const rowIdxToRoleMap: { [key: number]: Role } = {
 	1: Role.Editor
 };
 
+const CustomPopover = styled(Popover)`
+	z-index: 1000;
+`;
+
+const StyledButton = styled(Button)`
+	flex-shrink: 0;
+	min-width: max-content;
+`;
+
 interface AddCollaboratorPermissionProps {
-	node: Node<'id' | 'owner' | 'permissions'> & {
-		shares: Array<
-			Maybe<Pick<Share, '__typename'> & DeepPick<Share, 'share_target', '__typename' | 'id'>>
-		> | null;
-	};
-	contacts: ShareChip[];
-	permissionDefined: Role;
-	setPermissionDefined: React.Dispatch<React.SetStateAction<Role>>;
-	isAllowedSharingChecked: boolean;
-	allowSharingToggleCheck: () => void;
+	node: Node<'permissions'>;
+	role: Role;
+	setRole: React.Dispatch<React.SetStateAction<Role>>;
+	sharingAllowed: boolean;
+	toggleSharingAllowed: () => void;
 }
 
-export const AddCollaboratorPermission = React.forwardRef<
-	HTMLDivElement,
-	AddCollaboratorPermissionProps
->(function AddCollaboratorPermissionFn(
-	{
-		node,
-		contacts,
-		permissionDefined,
-		setPermissionDefined,
-		isAllowedSharingChecked,
-		allowSharingToggleCheck
-	},
-	ref
-) {
-	const [popoverOpen, setPopoverOpen] = useState(false);
+export const AddCollaboratorPermission = function AddCollaboratorPermissionFn({
+	node,
+	role,
+	setRole,
+	sharingAllowed,
+	toggleSharingAllowed
+}: AddCollaboratorPermissionProps): React.JSX.Element {
+	const [t] = useTranslation();
 
-	const switchSharingAllowed = useCallback((): void => {
-		contacts.forEach((contact) => {
-			const { value } = contact;
-			value?.onUpdate(value.id, { sharingAllowed: !value.sharingAllowed });
-		});
-		allowSharingToggleCheck();
-	}, [contacts, allowSharingToggleCheck]);
+	const [popoverOpen, setPopoverOpen] = useState(false);
 
 	const changeRole = useCallback(
 		(containerIdx: keyof typeof rowIdxToRoleMap): void => {
-			const desiredRole = rowIdxToRoleMap[containerIdx];
-			contacts.forEach((contact) => {
-				const { value } = contact;
-				if (node && roleAssignChecker[desiredRole](node)) {
-					value?.onUpdate(value.id, { role: rowIdxToRoleMap[containerIdx] });
-				}
-			});
-			setPermissionDefined(rowIdxToRoleMap[containerIdx]);
+			setRole(rowIdxToRoleMap[containerIdx]);
 		},
-		[contacts, node, setPermissionDefined]
+		[setRole]
 	);
 
 	const disabledRows = useMemo(
-		() => filter(rowRoleToIdxMap, (_idx, role) => !node || !roleAssignChecker[role as Role](node)),
+		() =>
+			filter(
+				rowRoleToIdxMap,
+				(_idx, roleValue) => !node || !roleAssignChecker[roleValue as Role](node)
+			),
 		[node]
 	);
 
-	const openPermissionsPopover = useCallback(() => {
+	const togglePopover = useCallback(() => {
 		setPopoverOpen((prevState) => !prevState);
 	}, []);
 
-	const updatePermissionsPopover = useCallback((newState: boolean) => {
-		setPopoverOpen(newState);
-	}, []);
+	const anchorRef = useRef<HTMLDivElement>(null);
 
 	return (
-		<ButtonWithPopover
-			popoverOpen={popoverOpen}
-			onValueChange={updatePermissionsPopover}
-			openPermissionPopover={openPermissionsPopover}
-			permissionDefined={permissionDefined}
-			isAllowedSharingChecked={isAllowedSharingChecked}
-		>
-			{(): React.JSX.Element => (
+		<>
+			<StyledButton
+				ref={anchorRef}
+				label={
+					role === Role.Viewer
+						? t('displayer.share.chip.popover.role.viewer', 'Viewer')
+						: t('displayer.share.chip.popover.role.editor', 'Editor')
+				}
+				icon={sharingAllowed ? 'Share' : 'ShareOff'}
+				onClick={togglePopover}
+				secondaryAction={{
+					icon: 'ChevronDown',
+					onClick: togglePopover
+				}}
+				type={'outlined'}
+			/>
+			<CustomPopover
+				open={popoverOpen}
+				anchorEl={anchorRef}
+				styleAsModal
+				placement="bottom-end"
+				onClose={() => setPopoverOpen(false)}
+			>
 				<NewSharePopoverContainer
-					activeRow={rowRoleToIdxMap[contacts[0]?.value?.role ?? permissionDefined]}
+					activeRow={rowRoleToIdxMap[role]}
 					disabledRows={disabledRows}
-					checkboxValue={isAllowedSharingChecked}
-					checkboxOnClick={switchSharingAllowed}
+					checkboxValue={sharingAllowed}
+					checkboxOnClick={toggleSharingAllowed}
 					containerOnClick={changeRole}
 				/>
-			)}
-		</ButtonWithPopover>
+			</CustomPopover>
+		</>
 	);
-});
+};
