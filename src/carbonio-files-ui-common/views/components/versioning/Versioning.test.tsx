@@ -12,6 +12,7 @@ import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
 import { CONFIGS, ERROR_CODE, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS, TIMERS } from '../../../constants/test';
+import * as useDownloadNodes from '../../../hooks/useDownloadNodes';
 import * as useOpenWithDocs from '../../../hooks/useOpenWithDocs';
 import {
 	UploadRequestBody,
@@ -41,7 +42,6 @@ import {
 	mockGetVersions,
 	mockKeepVersions
 } from '../../../utils/resolverMocks';
-import * as moduleUtils from '../../../utils/utils';
 import { getChipLabel } from '../../../utils/utils';
 
 describe('Versioning', () => {
@@ -277,7 +277,12 @@ describe('Versioning', () => {
 	});
 
 	test('download version', async () => {
-		const downloadSpy = jest.spyOn(moduleUtils, 'downloadNode');
+		const downloadNodeFn = jest.fn();
+		const downloadMultipleNodesFn = jest.fn();
+		jest.spyOn(useDownloadNodes, 'useDownloadNodes').mockReturnValue({
+			downloadNode: downloadNodeFn,
+			downloadMultipleNodes: downloadMultipleNodesFn
+		});
 
 		const fileVersion1 = populateFile();
 		fileVersion1.permissions.can_write_file = true;
@@ -298,7 +303,11 @@ describe('Versioning', () => {
 		await user.click(versionMoreButton);
 		const downloadItem = await screen.findByText(/download version/i);
 		await user.click(downloadItem);
-		expect(downloadSpy).toHaveBeenCalledWith(fileVersion1.id, fileVersion1.version);
+		expect(downloadNodeFn).toHaveBeenCalledWith(
+			fileVersion1.id,
+			fileVersion1.name,
+			fileVersion1.version
+		);
 	});
 
 	test('open with docs version', async () => {

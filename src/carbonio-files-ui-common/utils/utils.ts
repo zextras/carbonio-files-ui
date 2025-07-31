@@ -19,7 +19,6 @@ import { getUserAccount } from '../../utils/utils';
 import {
 	DATE_FORMAT,
 	DOCS_EXTENSIONS,
-	DOWNLOAD_PATH,
 	INTERNAL_PATH,
 	REST_ENDPOINT,
 	ROOTS,
@@ -311,22 +310,6 @@ export const copyToClipboard = (text: string): Promise<void> => {
 	}
 
 	return window.parent.navigator.clipboard.writeText(text);
-};
-
-export const downloadNode = (id: string, version?: number): void => {
-	if (id) {
-		const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${
-			version ? `/${version}` : ''
-		}`;
-		const a = document.createElement('a');
-		if (a) {
-			a.download = url;
-			a.href = url;
-			a.target = '_blank';
-			a.type = 'hidden';
-			a.click();
-		}
-	}
 };
 
 export const inputElement = ((): HTMLInputElement => {

@@ -24,8 +24,9 @@ import { DATE_TIME_FORMAT } from '../../../constants';
 import { CloneVersionType } from '../../../hooks/graphql/mutations/useCloneVersionMutation';
 import { DeleteVersionsType } from '../../../hooks/graphql/mutations/useDeleteVersionsMutation';
 import { KeepVersionsType } from '../../../hooks/graphql/mutations/useKeepVersionsMutation';
+import { useDownloadNodes } from '../../../hooks/useDownloadNodes';
 import { useOpenWithDocs } from '../../../hooks/useOpenWithDocs';
-import { downloadNode, formatDate, humanFileSize } from '../../../utils/utils';
+import { formatDate, humanFileSize } from '../../../utils/utils';
 import { GridItem } from '../StyledComponents';
 
 const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
@@ -54,6 +55,7 @@ interface VersionRowProps {
 	size: number;
 	updatedAt: number;
 	version: number;
+	nameNode: string;
 }
 export const VersionRow = ({
 	background,
@@ -76,12 +78,14 @@ export const VersionRow = ({
 	rowNumber,
 	size,
 	updatedAt,
-	version
+	version,
+	nameNode
 }: VersionRowProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
 	const openNodeWithDocs = useOpenWithDocs();
+	const { downloadNode } = useDownloadNodes();
 
 	const deleteVersionCallback = useCallback(() => {
 		deleteVersions(nodeId, [version]);
@@ -126,8 +130,8 @@ export const VersionRow = ({
 	}, [cloneVersion, createSnackbar, nodeId, t, version]);
 
 	const downloadVersionCallback = useCallback(() => {
-		downloadNode(nodeId, version);
-	}, [nodeId, version]);
+		downloadNode(nodeId, nameNode, version);
+	}, [downloadNode, nameNode, nodeId, version]);
 
 	const openVersionWithDocsCallback = useCallback(() => {
 		openNodeWithDocs(nodeId, version);

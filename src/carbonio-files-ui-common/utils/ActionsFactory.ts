@@ -344,7 +344,7 @@ export function canDownload({ nodes }: { nodes: NodeDownload[] }): boolean {
 		throw Error('cannot evaluate canDownload on empty nodes array');
 	}
 	const node = nodes[0];
-	return nodes.length === 1 && isFile(node) && node.rootId !== ROOTS.TRASH;
+	return node.rootId !== ROOTS.TRASH;
 }
 
 type NodeOpenWithDocs = Node<'rootId' | 'permissions', 'mime_type'>;

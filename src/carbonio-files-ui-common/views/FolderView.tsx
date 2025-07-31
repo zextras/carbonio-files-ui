@@ -28,6 +28,7 @@ import { URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
 import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
 import { isFolder, takeIfNotEmpty } from '../utils/utils';
+import { DownloadComponent } from './components/DownloadComponent';
 
 const FolderView = (): React.JSX.Element => {
 	const { rootId } = useParams<URLParams>();
@@ -40,6 +41,8 @@ const FolderView = (): React.JSX.Element => {
 	);
 
 	const { data: currentFolder, loading, hasMore, loadMore } = useGetChildrenQuery(currentFolderId);
+
+	const nameFolder = useMemo(() => currentFolder?.getNode?.name, [currentFolder?.getNode?.name]);
 
 	const { data: permissionsData } = useGetPermissionsQuery(currentFolderId);
 
@@ -85,11 +88,12 @@ const FolderView = (): React.JSX.Element => {
 	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
 		() => (
 			<>
+				<DownloadComponent nameFolder={nameFolder} currentFolderId={currentFolderId} />
 				<ViewModeComponent />
 				<SortingComponent />
 			</>
 		),
-		[]
+		[currentFolderId, nameFolder]
 	);
 
 	const ListComponent = useMemo(

@@ -24,12 +24,12 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnershipModal';
+import { useDownloadNodes } from '../../hooks/useDownloadNodes';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { Node } from '../../types/common';
 import { DeepPick } from '../../types/utils';
 import { Action, buildActionItems, getAllPermittedActions } from '../../utils/ActionsFactory';
-import { downloadNode } from '../../utils/utils';
 
 type NodeItem = Node<
 	'id' | 'name' | 'rootId' | 'permissions' | 'type' | 'flagged',
@@ -91,6 +91,8 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 
 	const openNodeWithDocs = useOpenWithDocs();
 
+	const { downloadNode, downloadMultipleNodes } = useDownloadNodes();
+
 	const sendViaMailCallback = useCallback(() => {
 		sendViaMail(node.id);
 	}, [node, sendViaMail]);
@@ -148,7 +150,12 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 				label: t('actions.download', 'Download'),
 				onClick: (): void => {
 					// download node without version to be sure last version is downlaoded
-					downloadNode(node.id);
+					if (node.__typename === 'File') {
+						downloadNode(node.id, node.name);
+					}
+					if (node.__typename === 'Folder') {
+						downloadMultipleNodes([node.id], node.name);
+					}
 				}
 			},
 			[Action.ManageShares]: {
@@ -225,6 +232,8 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 			}
 		}),
 		[
+			downloadMultipleNodes,
+			downloadNode,
 			manageShares,
 			markNodesForDeletionCallback,
 			node,
