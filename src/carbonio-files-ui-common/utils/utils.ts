@@ -324,31 +324,29 @@ export const downloadNode = async (
 	}`;
 	const response = await fetch(url);
 
-	if (!response.ok) {
-		return response;
-	}
-
-	// this is to take the name of the node and its extension,
-	// e.g., node_downloaded.odt
-	const disposition = response.headers.get('Content-Disposition');
-	let filename = nameNode;
-	if (disposition) {
-		const filenameRegex = /filename\*?=(?:UTF-8'')?["']?([^;"']+)/i;
-		const match = filenameRegex.exec(disposition);
-		if (match && match[1]) {
-			filename = decodeURIComponent(match[1]);
+	if (response.ok) {
+		// this is to take the name of the node and its extension,
+		// e.g., node_downloaded.odt
+		const disposition = response.headers.get('Content-Disposition');
+		let filename = nameNode;
+		if (disposition) {
+			const filenameRegex = /filename\*?=(?:UTF-8'')?["']?([^;"']+)/i;
+			const match = filenameRegex.exec(disposition);
+			if (match && match[1]) {
+				filename = decodeURIComponent(match[1]);
+			}
 		}
-	}
 
-	const blob = await response.blob();
-	const urlBlob = URL.createObjectURL(blob);
-	const a = document.createElement('a');
-	a.href = urlBlob;
-	a.download = filename;
-	document.body.appendChild(a);
-	a.click();
-	a.remove();
-	URL.revokeObjectURL(urlBlob);
+		const blob = await response.blob();
+		const urlBlob = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = urlBlob;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+		URL.revokeObjectURL(urlBlob);
+	}
 
 	return response;
 };
@@ -369,19 +367,17 @@ export const downloadMultipleNodes = async (
 		body: params.toString()
 	});
 
-	if (!response.ok) {
-		return response;
+	if (response.ok) {
+		const blob = await response.blob();
+		const urlBlob = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = urlBlob;
+		a.download = nameZip ?? 'file_nodes.zip';
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+		URL.revokeObjectURL(urlBlob);
 	}
-
-	const blob = await response.blob();
-	const urlBlob = URL.createObjectURL(blob);
-	const a = document.createElement('a');
-	a.href = urlBlob;
-	a.download = nameZip ?? 'file_nodes.zip';
-	document.body.appendChild(a);
-	a.click();
-	a.remove();
-	URL.revokeObjectURL(urlBlob);
 
 	return response;
 };
