@@ -19,6 +19,8 @@ import { getUserAccount } from '../../utils/utils';
 import {
 	DATE_FORMAT,
 	DOCS_EXTENSIONS,
+	DOWNLOAD_MULTIPLE_PATH,
+	DOWNLOAD_PATH,
 	INTERNAL_PATH,
 	REST_ENDPOINT,
 	ROOTS,
@@ -310,6 +312,78 @@ export const copyToClipboard = (text: string): Promise<void> => {
 	}
 
 	return window.parent.navigator.clipboard.writeText(text);
+};
+
+export const downloadNode = async (
+	id: string,
+	nameNode: string,
+	version?: number
+): Promise<Response> => {
+	const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${
+		version ? `/${version}` : ''
+	}`;
+	const response = await fetch(url);
+
+	if (!response.ok) {
+		return response;
+	}
+
+	// this is to take the name of the node and its extension,
+	// e.g., node_downloaded.odt
+	const disposition = response.headers.get('Content-Disposition');
+	let filename = nameNode;
+	if (disposition) {
+		const filenameRegex = /filename\*?=(?:UTF-8'')?["']?([^;"']+)/i;
+		const match = filenameRegex.exec(disposition);
+		if (match && match[1]) {
+			filename = decodeURIComponent(match[1]);
+		}
+	}
+
+	const blob = await response.blob();
+	const urlBlob = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = urlBlob;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	a.remove();
+	URL.revokeObjectURL(urlBlob);
+
+	return response;
+};
+
+export const downloadMultipleNodes = async (
+	nodeIds: string[],
+	nameZip?: string
+): Promise<Response> => {
+	const url = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}`;
+	const params = new URLSearchParams();
+	params.append('nodeIds', JSON.stringify(nodeIds));
+
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body: params.toString()
+	});
+
+	if (!response.ok) {
+		return response;
+	}
+
+	const blob = await response.blob();
+	const urlBlob = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = urlBlob;
+	a.download = nameZip ?? 'file_nodes.zip';
+	document.body.appendChild(a);
+	a.click();
+	a.remove();
+	URL.revokeObjectURL(urlBlob);
+
+	return response;
 };
 
 export const inputElement = ((): HTMLInputElement => {

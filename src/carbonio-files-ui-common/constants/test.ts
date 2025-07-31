@@ -61,6 +61,7 @@ export const ICON_REGEXP = {
 	flagged: 'icon: Flag',
 	unflag: 'icon: UnflagOutline',
 	download: 'icon: Download',
+	downloadMultiple: 'icon: DownloadOutline',
 	openDocument: 'icon: BookOpenOutline',
 	close: 'icon: Close',
 	trash: 'icon: Trash2Outline',

@@ -16,6 +16,7 @@ import * as network from '../../network/network';
 import { viewModeVar } from '../apollo/viewModeVar';
 import { VIEW_MODE } from '../constants';
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
+import * as useDownloadNodes from '../hooks/useDownloadNodes';
 import {
 	populateFile,
 	populateFolder,
@@ -54,6 +55,13 @@ jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
 );
 jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+
+beforeEach(() => {
+	jest.spyOn(useDownloadNodes, 'useDownloadNodes').mockReturnValue({
+		downloadNode: jest.fn(),
+		downloadMultipleNodes: jest.fn()
+	});
+});
 
 describe('Folder View', () => {
 	describe('Create Folder', () => {
