@@ -11,9 +11,15 @@ import FolderView from './FolderView';
 import { ICON_REGEXP } from '../constants/test';
 import * as useDownloadNodes from '../hooks/useDownloadNodes';
 import { populateFolder } from '../mocks/mockUtils';
-import { screen, setup, within } from '../tests/utils';
+import { screen, selectNodes, setup, within } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
+
+jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
+	'./components/VirtualizedNodeListItem'
+);
+
+jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
 
 describe('Download', () => {
 	it('should download the whole folder if the user clicks on the download button', async () => {
@@ -29,7 +35,7 @@ describe('Download', () => {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
 				getNode: mockGetNode({
-					getChildren: [currentFolder, currentFolder],
+					getChildren: [currentFolder],
 					getPermissions: [currentFolder]
 				})
 			}
@@ -71,7 +77,7 @@ describe('Download', () => {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
 				getNode: mockGetNode({
-					getChildren: [currentFolder, currentFolder],
+					getChildren: [currentFolder],
 					getPermissions: [currentFolder]
 				})
 			}
@@ -110,7 +116,7 @@ describe('Download', () => {
 			Query: {
 				getPath: mockGetPath([currentFolder]),
 				getNode: mockGetNode({
-					getChildren: [currentFolder, currentFolder],
+					getChildren: [currentFolder],
 					getPermissions: [currentFolder]
 				})
 			}
@@ -127,5 +133,37 @@ describe('Download', () => {
 			})
 		);
 		expect(await screen.findByText(/download all/i)).toBeVisible();
+	});
+
+	it('should call the DownloadMultipleNodes when the user selects multiple nodes and clicks on download button', async () => {
+		const downloadNodeFn = jest.fn();
+		const downloadMultipleNodesFn = jest.fn();
+		jest.spyOn(useDownloadNodes, 'useDownloadNodes').mockReturnValue({
+			downloadNode: downloadNodeFn,
+			downloadMultipleNodes: downloadMultipleNodesFn
+		});
+
+		const currentFolder = populateFolder(5);
+		const node1 = currentFolder.children.nodes[0]!;
+		const node2 = currentFolder.children.nodes[1]!;
+
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({ getChildren: [currentFolder], getPermissions: [currentFolder] })
+			}
+		} satisfies Partial<Resolvers>;
+
+		const { user } = setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+
+		await screen.findByText(node1.name);
+		await selectNodes([node1.id, node2.id], user);
+		const downloadButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.download });
+		expect(downloadButton).toBeVisible();
+		await user.click(downloadButton);
+		expect(downloadMultipleNodesFn).toHaveBeenCalledWith([node1.id, node2.id]);
 	});
 });
