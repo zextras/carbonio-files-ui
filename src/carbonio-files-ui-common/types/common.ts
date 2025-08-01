@@ -234,12 +234,6 @@ export type TargetModule = 'MAILS' | 'CONTACTS' | 'CALENDARS' | 'CHATS';
 export interface ShareChip extends ChipItem {
 	value: {
 		id: string | undefined;
-		sharingAllowed: boolean;
-		role: Role;
-		onUpdate: (
-			id: string | undefined,
-			updatedPartialObject: Partial<Omit<ShareChip['value'], 'onUpdate'>>
-		) => void;
 		node: Node<'permissions'>;
 	} & (Contact | User);
 }

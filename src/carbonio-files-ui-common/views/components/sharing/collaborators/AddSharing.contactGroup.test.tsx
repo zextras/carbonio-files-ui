@@ -10,8 +10,8 @@ import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 import { forEach, find, reduce } from 'lodash';
 
 import { AddSharing } from './AddSharing';
-import * as network from '../../../../network/network';
-import { ICON_REGEXP, SELECTORS } from '../../../constants/test';
+import * as network from '../../../../../network/network';
+import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import {
 	populateGalContact,
 	populateContactGroupMatch,
@@ -20,18 +20,18 @@ import {
 	populateUser,
 	populateMembers,
 	populateShare
-} from '../../../mocks/mockUtils';
-import { setup } from '../../../tests/utils';
-import { Resolvers } from '../../../types/graphql/resolvers-types';
-import { User } from '../../../types/graphql/types';
+} from '../../../../mocks/mockUtils';
+import { setup } from '../../../../tests/utils';
+import { Resolvers } from '../../../../types/graphql/resolvers-types';
+import { User } from '../../../../types/graphql/types';
 import {
 	AutocompleteResponse,
 	DerefMember,
 	GetContactsResponse,
 	Member
-} from '../../../types/network';
-import { mockGetAccountsByEmail } from '../../../utils/resolverMocks';
-import { getChipLabel } from '../../../utils/utils';
+} from '../../../../types/network';
+import { mockGetAccountsByEmail } from '../../../../utils/resolverMocks';
+import { getChipLabel } from '../../../../utils/utils';
 
 let mockedSoapFetch = jest.fn();
 
@@ -130,11 +130,9 @@ describe('Add Sharing', () => {
 			// wait for the dropdown to be shown
 			await screen.findByText(/contact-group-1/i);
 			await user.click(screen.getByText(/contact-group-1/i));
-			await screen.findAllByTestId(SELECTORS.chipWithPopover);
+			await screen.findAllByTestId(SELECTORS.chip);
 			await waitFor(() =>
-				expect(screen.getAllByTestId(SELECTORS.chipWithPopover)).toHaveLength(
-					contactGroup.m?.length || 0
-				)
+				expect(screen.getAllByTestId(SELECTORS.chip)).toHaveLength(contactGroup.m?.length || 0)
 			);
 			await waitFor(() => expect(screen.getByRole('button', { name: /share/i })).toBeEnabled());
 			// dropdown is closed
@@ -190,9 +188,9 @@ describe('Add Sharing', () => {
 			expect(screen.getByText(/contact-group-1/i)).toBeVisible();
 			const contactGroupDropdownItem = screen.getByText(/contact-group-1/i);
 			await user.click(contactGroupDropdownItem);
-			await screen.findAllByTestId(SELECTORS.chipWithPopover);
+			await screen.findAllByTestId(SELECTORS.chip);
 			await waitFor(() =>
-				expect(screen.getAllByTestId(SELECTORS.chipWithPopover)).toHaveLength(
+				expect(screen.getAllByTestId(SELECTORS.chip)).toHaveLength(
 					invalidMembers.length + validMembers.length
 				)
 			);
@@ -296,7 +294,7 @@ describe('Add Sharing', () => {
 			expect(screen.getByText(members[0].cn[0]._attrs.email)).toBeVisible();
 			expect(screen.getByText(members[1].cn[0]._attrs.email)).toBeVisible();
 			// delete chip of one of the members
-			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
+			const chipItems = screen.getAllByTestId(SELECTORS.chip);
 			const member0Chip = find(
 				chipItems,
 				(chipItem) => within(chipItem).queryByText(members[0].cn[0]._attrs.email) !== null

@@ -92,6 +92,8 @@ export const ICON_REGEXP = {
 	secondaryBarNotifications: 'icon: BellOutline',
 	chevronRightNotifications: 'icon: ChevronRight',
 	chevronLeftNotifications: 'icon: ChevronLeft',
+	shareOff: 'icon: ShareOff',
+	infoOutline: 'icon: InfoOutline',
 	eyeCollaborationLinkIcon: 'icon: EyeOutline',
 	editCollaborationLinkIcon: 'icon: Edit2Outline',
 	shareCollaborationLinkIcon: 'icon: ShareOutline'
@@ -115,9 +117,9 @@ export const SELECTORS = {
 	exclusiveSelectionEditor: 'exclusive-selection-editor',
 	exclusiveSelectionViewer: 'exclusive-selection-viewer',
 	chip: 'chip',
-	chipWithPopover: 'chip-with-popover',
 	listHeader: 'list-header',
 	listHeaderSelectionMode: 'list-header-selectionModeActive',
+	sharingCollaboratorsSection: 'sharing-collaborators-section',
 	list(id = ''): string {
 		return `list-${id}`;
 	},
