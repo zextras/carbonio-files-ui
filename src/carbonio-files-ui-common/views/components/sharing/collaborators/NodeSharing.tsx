@@ -100,8 +100,11 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	);
 
 	const ownerListItem = useMemo(() => {
+		if (!node.owner) {
+			return null;
+		}
 		const label =
-			node.owner?.id === me ? t('displayer.share.chip.you', 'You') : getChipLabel(node.owner);
+			node.owner.id === me ? t('displayer.share.chip.you', 'You') : getChipLabel(node.owner);
 		return (
 			<>
 				<Container
@@ -111,13 +114,13 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 					padding={'0.5rem'}
 					gap={'0.5rem'}
 				>
-					<Avatar label={node.owner!.email} />
+					<Avatar label={node.owner.email} />
 					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
 						<Text size={SHARE_TEXT_SIZE}>
 							{label} - {t('displayer.share.chip.owner', 'Owner')}
 						</Text>
 						<Text size={'extrasmall'} color="secondary">
-							{node.owner!.email}
+							{node.owner.email}
 						</Text>
 					</Container>
 				</Container>

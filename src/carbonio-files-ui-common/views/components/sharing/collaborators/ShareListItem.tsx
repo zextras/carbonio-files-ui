@@ -102,7 +102,7 @@ export const ShareListItem = ({
 		{
 			fetchPolicy: 'network-only',
 			variables: {
-				node_id: share?.node?.id
+				node_id: share.node.id
 			}
 		}
 	);
@@ -268,7 +268,7 @@ export const ShareListItem = ({
 						<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
 							<Text size={SHARE_TEXT_SIZE}>{label}</Text>
 							<Text color={'secondary'} size={'extrasmall'}>
-								{share?.share_target.email}
+								{share.share_target.email}
 							</Text>
 						</Container>
 					</Container>
