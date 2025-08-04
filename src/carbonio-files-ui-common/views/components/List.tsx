@@ -263,7 +263,6 @@ export const List = ({
 		const nodeToDownload = nodes.find(
 			(node) => selectedIDs.length === 1 && node.id === selectedIDs[0]
 		);
-		// questo caso e' solo se e' selezionato solo UN file (non cartella)
 		if (nodeToDownload && nodeToDownload.__typename === 'File') {
 			// download node without version to be sure last version is downloaded
 			downloadNode(nodeToDownload.id);
