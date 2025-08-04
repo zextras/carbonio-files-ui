@@ -338,14 +338,12 @@ export const downloadNode = async (id: string, version?: number): Promise<Respon
 
 export const downloadMultipleNodes = async (nodeIds: string[]): Promise<Response> => {
 	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}${DOWNLOAD_PATH_CHECK}`;
-	const params = new URLSearchParams();
-	params.append('nodeIds', JSON.stringify(nodeIds));
 	const response = await fetch(urlCheck, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded'
+			'Content-Type': 'application/json'
 		},
-		body: params.toString()
+		body: JSON.stringify({ nodeIds })
 	});
 
 	if (response.ok) {

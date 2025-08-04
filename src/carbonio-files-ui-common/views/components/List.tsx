@@ -260,18 +260,19 @@ export const List = ({
 	const createSnackbar = useSnackbar();
 
 	const downloadSelection = useCallback(() => {
-		const nodeToDownload = nodes.find(
-			(node) => selectedIDs.length === 1 && node.id === selectedIDs[0]
-		);
-		if (nodeToDownload && nodeToDownload.__typename === 'File') {
-			// download node without version to be sure last version is downloaded
-			downloadNode(nodeToDownload.id);
+		if (selectedIDs.length === 1) {
+			const nodeToDownload = nodes.find((node) => node.id === selectedIDs[0]);
+			if (!nodeToDownload) return;
+
+			if (nodeToDownload.__typename === 'File') {
+				downloadNode(nodeToDownload.id);
+			}
+			if (nodeToDownload.__typename === 'Folder') {
+				downloadMultipleNodes([nodeToDownload.id]);
+			}
 		}
 		if (selectedIDs.length > 1) {
 			downloadMultipleNodes(selectedIDs);
-		}
-		if (nodeToDownload?.__typename === 'Folder') {
-			downloadMultipleNodes([nodeToDownload.id]);
 		}
 		exitSelectionMode();
 	}, [nodes, selectedIDs, exitSelectionMode, downloadNode, downloadMultipleNodes]);
