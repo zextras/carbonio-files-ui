@@ -30,14 +30,14 @@ import {
 } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { AddShareChip } from './AddShareChip';
-import { EMAIL_REGEXP } from '../../../../constants';
-import { isRawErrorSoapResponse, soapFetch } from '../../../../network/network';
-import { useCreateShareMutation } from '../../../hooks/graphql/mutations/useCreateShareMutation';
-import { useGetAccountByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountByEmailQuery';
-import { useGetAccountsByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
-import { Contact, Node, Role, ShareChip } from '../../../types/common';
-import { Account, Maybe, Share, User } from '../../../types/graphql/types';
+import { AddCollaboratorPermission } from './AddCollaboratorPermission';
+import { EMAIL_REGEXP } from '../../../../../constants';
+import { isRawErrorSoapResponse, soapFetch } from '../../../../../network/network';
+import { useCreateShareMutation } from '../../../../hooks/graphql/mutations/useCreateShareMutation';
+import { useGetAccountByEmailQuery } from '../../../../hooks/graphql/queries/useGetAccountByEmailQuery';
+import { useGetAccountsByEmailQuery } from '../../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
+import { Contact, Node, Role, ShareChip } from '../../../../types/common';
+import { Account, Maybe, Share, User } from '../../../../types/graphql/types';
 import {
 	AutocompleteRequest,
 	AutocompleteResponse,
@@ -49,11 +49,11 @@ import {
 	isDerefMember,
 	isDistributionList,
 	Match
-} from '../../../types/network';
-import { DeepPick } from '../../../types/utils';
-import { getChipLabel, sharePermissionsGetter } from '../../../utils/utils';
-import { RouteLeavingGuard } from '../RouteLeavingGuard';
-import { Hint, Loader } from '../StyledComponents';
+} from '../../../../types/network';
+import { DeepPick } from '../../../../types/utils';
+import { getChipLabel, sharePermissionsGetter } from '../../../../utils/utils';
+import { RouteLeavingGuard } from '../../RouteLeavingGuard';
+import { Hint, Loader } from '../../StyledComponents';
 
 interface AddSharingProps {
 	node: Node<'id' | 'owner' | 'permissions'> & {
@@ -145,7 +145,11 @@ function cleanEmails<T extends { email?: string }>(
 
 export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
-
+	const [role, setRole] = useState(Role.Viewer);
+	const [sharingAllowed, setSharingAllowed] = useState(false);
+	const toggleSharingAllowed = useCallback(() => {
+		setSharingAllowed((prev) => !prev);
+	}, []);
 	const [createShare] = useCreateShareMutation();
 	const getAccountByEmailLazyQuery = useGetAccountByEmailQuery();
 	const getAccountsByEmailLazyQuery = useGetAccountsByEmailQuery();
@@ -173,7 +177,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 				return createShare(
 					node,
 					chip.value.id,
-					sharePermissionsGetter(chip.value.role, chip.value.sharingAllowed),
+					sharePermissionsGetter(role, sharingAllowed),
 					customMessageText.length > 0 ? customMessageText : undefined
 				);
 			}
@@ -199,16 +203,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 			setMailTextValue(notCreatedChips.length === 0 ? '' : customMessageText);
 			return results;
 		});
-	}, [chips, createShare, mailTextValue, node]);
-
-	const updateChip = useCallback<ShareChip['value']['onUpdate']>((id, updatedValue) => {
-		setChips((prevState) => {
-			const newState = [...prevState];
-			const idx = findIndex(newState, (item) => item.value.id === id);
-			newState[idx] = { ...newState[idx], value: { ...newState[idx].value, ...updatedValue } };
-			return newState;
-		});
-	}, []);
+	}, [chips, createShare, mailTextValue, node, role, sharingAllowed]);
 
 	const addShareContact = useCallback(
 		(contact: Contact) => (): void => {
@@ -226,11 +221,9 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 								value: {
 									...contact,
 									id: result.data.getAccountByEmail.id,
-									role: Role.Viewer,
-									sharingAllowed: false,
-									onUpdate: updateChip,
 									node
-								}
+								},
+								label: getChipLabel(contact)
 							};
 							setChips((c) => [...c, contactWithId]);
 						}
@@ -238,7 +231,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					.catch(() => null); // FIXME: this catch shouldn't be necessary but for some reason it is
 			}
 		},
-		[chips, getAccountByEmailLazyQuery, node, updateChip]
+		[chips, getAccountByEmailLazyQuery, node]
 	);
 
 	const addShareContactGroup = useCallback(
@@ -278,10 +271,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 						) {
 							galMembers.push({
 								...member.cn[0]._attrs,
-								role: Role.Viewer,
-								sharingAllowed: false,
 								id: member.cn[0]._attrs.zimbraId,
-								onUpdate: updateChip,
 								node
 							});
 						}
@@ -308,10 +298,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 									(email) => ({
 										...validAccountsMap[email],
 										email,
-										role: Role.Viewer,
-										sharingAllowed: false,
 										id: validAccountsMap[email]?.id,
-										onUpdate: updateChip,
 										node
 									})
 								);
@@ -321,7 +308,8 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 									cleanedEmails,
 									(chipValue) => ({
 										id: chipValue.id,
-										value: chipValue
+										value: chipValue,
+										label: getChipLabel(chipValue)
 									})
 								);
 
@@ -331,13 +319,14 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					} else {
 						const cleanedEmails = cleanEmails(galMembers, chips, node);
 						const cleanedChips = map<ShareChip['value'], ShareChip>(cleanedEmails, (chipValue) => ({
-							value: chipValue
+							value: chipValue,
+							label: getChipLabel(chipValue)
 						}));
 						setChips((c) => [...c, ...cleanedChips]);
 					}
 				});
 		},
-		[chips, getAccountsByEmailLazyQuery, node, updateChip]
+		[chips, getAccountsByEmailLazyQuery, node]
 	);
 
 	const search = useMemo(
@@ -387,11 +376,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 		const filterValidShares = filter<ChipItem, ShareChip>(
 			newChips,
 			(chip): chip is ShareChip =>
-				chip !== undefined &&
-				chip !== null &&
-				typeof chip.value === 'object' &&
-				chip.value !== null &&
-				'role' in chip.value
+				chip !== undefined && chip !== null && typeof chip.value === 'object' && chip.value !== null
 		);
 		setChips(filterValidShares);
 	}, []);
@@ -471,8 +456,9 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					</Text>
 				</RouteLeavingGuard>
 			)}
-			<Container data-testid="add-shares-input-container">
+			<Container data-testid="add-shares-input-container" orientation={'horizontal'} gap={'0.5rem'}>
 				<ChipInput
+					style={{ flexGrow: 1, minWidth: 0 }}
 					inputRef={inputRef}
 					placeholder={t('displayer.share.addShare.input.placeholder', 'Add new people or groups')}
 					confirmChipOnBlur={false}
@@ -480,7 +466,6 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					onInputType={onType}
 					onChange={onChipsChange}
 					value={chips}
-					ChipComponent={AddShareChip}
 					options={dropdownItems}
 					onAdd={onAdd}
 					background="gray5"
@@ -488,8 +473,14 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					wrap="wrap"
 					data-testid="add-sharing-chip-input"
 				/>
+				<AddCollaboratorPermission
+					node={node}
+					role={role}
+					setRole={setRole}
+					sharingAllowed={sharingAllowed}
+					toggleSharingAllowed={toggleSharingAllowed}
+				/>
 			</Container>
-
 			<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
 				<Button
 					label={t('displayer.share.addShare.button', 'Share')}

@@ -149,7 +149,7 @@ export function populateShare(
 	};
 }
 
-export function populateShares(node: GQLFile | GQLFolder, limit = 1): Share[] {
+export function populateShares(node: GQLFile | GQLFolder, limit = 1, onlyUser = false): Share[] {
 	const shares: Share[] = [];
 	const nodeRef: Pick<GQLFile | GQLFolder, 'id' | 'type' | '__typename'> = {
 		id: node.id,
@@ -157,7 +157,7 @@ export function populateShares(node: GQLFile | GQLFolder, limit = 1): Share[] {
 		__typename: node.__typename
 	};
 	for (let i = 0; i < limit; i += 1) {
-		shares.push(populateShare(nodeRef as Share['node'], i));
+		shares.push(populateShare(nodeRef as Share['node'], i, onlyUser ? populateUser() : undefined));
 	}
 	return shares;
 }

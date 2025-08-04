@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { DisplayerActions } from './DisplayerActions';
 import { DisplayerHeader } from './DisplayerHeader';
 import { NodeDetails } from './NodeDetails';
-import { NodeSharing } from './sharing/NodeSharing';
+import { NodeSharing } from './sharing/collaborators/NodeSharing';
 import { DisplayerContentContainer } from './StyledComponents';
 import { Versioning } from './versioning/Versioning';
 import { useActiveNode } from '../../../hooks/useActiveNode';
