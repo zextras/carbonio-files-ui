@@ -151,10 +151,10 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 				onClick: (): void => {
 					// download node without version to be sure last version is downlaoded
 					if (node.__typename === 'File') {
-						downloadNode(node.id, node.name);
+						downloadNode(node.id);
 					}
 					if (node.__typename === 'Folder') {
-						downloadMultipleNodes([node.id], node.name);
+						downloadMultipleNodes([node.id]);
 					}
 				}
 			},

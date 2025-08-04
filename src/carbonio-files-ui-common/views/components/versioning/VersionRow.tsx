@@ -55,7 +55,6 @@ interface VersionRowProps {
 	size: number;
 	updatedAt: number;
 	version: number;
-	nameNode: string;
 }
 export const VersionRow = ({
 	background,
@@ -78,8 +77,7 @@ export const VersionRow = ({
 	rowNumber,
 	size,
 	updatedAt,
-	version,
-	nameNode
+	version
 }: VersionRowProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
@@ -130,8 +128,8 @@ export const VersionRow = ({
 	}, [cloneVersion, createSnackbar, nodeId, t, version]);
 
 	const downloadVersionCallback = useCallback(() => {
-		downloadNode(nodeId, nameNode, version);
-	}, [downloadNode, nameNode, nodeId, version]);
+		downloadNode(nodeId, version);
+	}, [downloadNode, nodeId, version]);
 
 	const openVersionWithDocsCallback = useCallback(() => {
 		openNodeWithDocs(nodeId, version);

@@ -21,6 +21,7 @@ import {
 	DOCS_EXTENSIONS,
 	DOWNLOAD_MULTIPLE_PATH,
 	DOWNLOAD_PATH,
+	DOWNLOAD_PATH_CHECK,
 	INTERNAL_PATH,
 	REST_ENDPOINT,
 	ROOTS,
@@ -314,52 +315,32 @@ export const copyToClipboard = (text: string): Promise<void> => {
 	return window.parent.navigator.clipboard.writeText(text);
 };
 
-export const downloadNode = async (
-	id: string,
-	nameNode: string,
-	version?: number
-): Promise<Response> => {
-	const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${
-		version ? `/${version}` : ''
-	}`;
-	const response = await fetch(url);
+export const downloadNode = async (id: string, version?: number): Promise<Response> => {
+	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${DOWNLOAD_PATH_CHECK}`;
+	const response = await fetch(urlCheck);
 
 	if (response.ok) {
-		// this is to take the name of the node and its extension,
-		// e.g., node_downloaded.odt
-		const disposition = response.headers.get('Content-Disposition');
-		let filename = nameNode;
-		if (disposition) {
-			const filenameRegex = /filename\*?=(?:UTF-8'')?["']?([^;"']+)/i;
-			const match = filenameRegex.exec(disposition);
-			if (match && match[1]) {
-				filename = decodeURIComponent(match[1]);
-			}
-		}
-
-		const blob = await response.blob();
-		const urlBlob = URL.createObjectURL(blob);
+		const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${
+			version ? `/${version}` : ''
+		}`;
 		const a = document.createElement('a');
-		a.href = urlBlob;
-		a.download = filename;
-		document.body.appendChild(a);
-		a.click();
-		a.remove();
-		URL.revokeObjectURL(urlBlob);
+		if (a) {
+			a.download = url;
+			a.href = url;
+			a.target = '_blank';
+			a.type = 'hidden';
+			a.click();
+		}
 	}
 
 	return response;
 };
 
-export const downloadMultipleNodes = async (
-	nodeIds: string[],
-	nameZip?: string
-): Promise<Response> => {
-	const url = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}`;
+export const downloadMultipleNodes = async (nodeIds: string[]): Promise<Response> => {
+	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}${DOWNLOAD_PATH_CHECK}`;
 	const params = new URLSearchParams();
 	params.append('nodeIds', JSON.stringify(nodeIds));
-
-	const response = await fetch(url, {
+	const response = await fetch(urlCheck, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
@@ -368,17 +349,32 @@ export const downloadMultipleNodes = async (
 	});
 
 	if (response.ok) {
-		const blob = await response.blob();
-		const urlBlob = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = urlBlob;
-		a.download = nameZip ?? 'file_nodes.zip';
-		document.body.appendChild(a);
-		a.click();
-		a.remove();
-		URL.revokeObjectURL(urlBlob);
-	}
+		const iframe = document.createElement('iframe');
+		iframe.style.display = 'none';
+		iframe.name = 'downloadFrame';
+		document.body.appendChild(iframe);
 
+		const cleanup = (): void => {
+			iframe.removeEventListener('load', cleanup);
+			document.body.removeChild(iframe);
+		};
+		iframe.addEventListener('load', cleanup);
+
+		const form = document.createElement('form');
+		form.method = 'POST';
+		form.action = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}`;
+		form.target = 'downloadFrame';
+
+		const input = document.createElement('input');
+		input.type = 'hidden';
+		input.name = 'nodeIds';
+		input.value = JSON.stringify(nodeIds);
+		form.appendChild(input);
+
+		document.body.appendChild(form);
+		form.submit();
+		document.body.removeChild(form);
+	}
 	return response;
 };
 

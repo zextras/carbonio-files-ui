@@ -266,13 +266,13 @@ export const List = ({
 		// questo caso e' solo se e' selezionato solo UN file (non cartella)
 		if (nodeToDownload && nodeToDownload.__typename === 'File') {
 			// download node without version to be sure last version is downloaded
-			downloadNode(nodeToDownload.id, nodeToDownload.name);
+			downloadNode(nodeToDownload.id);
 		}
 		if (selectedIDs.length > 1) {
 			downloadMultipleNodes(selectedIDs);
 		}
 		if (nodeToDownload?.__typename === 'Folder') {
-			downloadMultipleNodes([nodeToDownload.id], nodeToDownload.name);
+			downloadMultipleNodes([nodeToDownload.id]);
 		}
 		exitSelectionMode();
 	}, [nodes, selectedIDs, exitSelectionMode, downloadNode, downloadMultipleNodes]);

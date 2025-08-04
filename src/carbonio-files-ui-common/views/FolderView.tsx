@@ -42,8 +42,6 @@ const FolderView = (): React.JSX.Element => {
 
 	const { data: currentFolder, loading, hasMore, loadMore } = useGetChildrenQuery(currentFolderId);
 
-	const nameFolder = useMemo(() => currentFolder?.getNode?.name, [currentFolder?.getNode?.name]);
-
 	const { data: permissionsData } = useGetPermissionsQuery(currentFolderId);
 
 	const isUploadFilePermitted = useMemo(
@@ -88,12 +86,12 @@ const FolderView = (): React.JSX.Element => {
 	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
 		() => (
 			<>
-				<DownloadComponent nameFolder={nameFolder} currentFolderId={currentFolderId} />
+				<DownloadComponent currentFolderId={currentFolderId} />
 				<ViewModeComponent />
 				<SortingComponent />
 			</>
 		),
-		[currentFolderId, nameFolder]
+		[currentFolderId]
 	);
 
 	const ListComponent = useMemo(

@@ -12,12 +12,10 @@ import { useTranslation } from 'react-i18next';
 import { useDownloadNodes } from '../../hooks/useDownloadNodes';
 
 interface DownloadComponentProps {
-	nameFolder?: string;
 	currentFolderId: string;
 }
 
 export const DownloadComponent = ({
-	nameFolder,
 	currentFolderId
 }: DownloadComponentProps): React.JSX.Element => {
 	const [t] = useTranslation();
@@ -34,14 +32,14 @@ export const DownloadComponent = ({
 			),
 			confirmLabel: t('', 'Download all'),
 			onConfirm: () => {
-				downloadMultipleNodes([currentFolderId], nameFolder);
+				downloadMultipleNodes([currentFolderId]);
 				closeModal(currentFolderId);
 			},
 			onSecondaryAction: () => closeModal(currentFolderId),
 			secondaryActionLabel: t('', 'Close'),
 			onClose: () => closeModal(currentFolderId)
 		});
-	}, [closeModal, createModal, currentFolderId, downloadMultipleNodes, nameFolder, t]);
+	}, [closeModal, createModal, currentFolderId, downloadMultipleNodes, t]);
 
 	return (
 		<Tooltip label={t('', 'Download all')}>

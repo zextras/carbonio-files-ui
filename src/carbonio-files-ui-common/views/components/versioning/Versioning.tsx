@@ -35,7 +35,7 @@ const MainContainer = styled(Container)`
 	overflow-y: auto;
 `;
 
-type NodeItem = Pick<File, '__typename' | 'id' | 'permissions' | 'rootId' | 'mime_type' | 'name'> &
+type NodeItem = Pick<File, '__typename' | 'id' | 'permissions' | 'rootId' | 'mime_type'> &
 	DeepPick<File, 'parent', 'id' | 'name'>;
 interface VersioningProps {
 	node: NodeItem;
@@ -229,7 +229,6 @@ export const Versioning = ({ node }: VersioningProps): React.JSX.Element => {
 			size={version.size}
 			updatedAt={version.updated_at}
 			version={version.version}
-			nameNode={node.name}
 		/>
 	));
 
@@ -271,7 +270,6 @@ export const Versioning = ({ node }: VersioningProps): React.JSX.Element => {
 			size={version.size}
 			updatedAt={version.updated_at}
 			version={version.version}
-			nameNode={node.name}
 		/>
 	));
 
@@ -314,7 +312,6 @@ export const Versioning = ({ node }: VersioningProps): React.JSX.Element => {
 			size={version.size}
 			updatedAt={version.updated_at}
 			version={version.version}
-			nameNode={node.name}
 		/>
 	));
 

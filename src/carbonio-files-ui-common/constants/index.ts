@@ -155,6 +155,7 @@ export const STORAGES_ENDPOINT = '/services/storages';
 // add leading slash in path
 export const OPEN_FILE_PATH = '/files/open';
 export const DOWNLOAD_PATH = '/download';
+export const DOWNLOAD_PATH_CHECK = '/check';
 export const DOWNLOAD_MULTIPLE_PATH = '/download-multiple';
 export const UPLOAD_PATH = '/upload';
 export const UPLOAD_TO_PATH = '/upload-to';

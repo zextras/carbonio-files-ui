@@ -16,15 +16,15 @@ import {
 } from '../utils/utils';
 
 export const useDownloadNodes = (): {
-	downloadNode: (id: string, nameNode: string, version?: number) => void;
-	downloadMultipleNodes: (nodeIds: string[], nameZip?: string) => void;
+	downloadNode: (id: string, version?: number) => void;
+	downloadMultipleNodes: (nodeIds: string[]) => void;
 } => {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
 
 	const downloadNode = useCallback(
-		(id: string, nameNode: string, version?: number) => {
-			downloadNodeFn(id, nameNode, version).then((response) => {
+		(id: string, version?: number) => {
+			downloadNodeFn(id, version).then((response) => {
 				if (response.ok) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
@@ -46,8 +46,8 @@ export const useDownloadNodes = (): {
 	);
 
 	const downloadMultipleNodes = useCallback(
-		(nodeIds: string[], nameZip?: string) => {
-			downloadMultipleNodesFn(nodeIds, nameZip).then((response) => {
+		(nodeIds: string[]) => {
+			downloadMultipleNodesFn(nodeIds).then((response) => {
 				if (response.ok) {
 					createSnackbar({
 						key: new Date().toLocaleString(),

@@ -19,7 +19,7 @@ import { canEdit, canOpenWithDocs } from '../utils/ActionsFactory';
 type PreviewHeaderAction = NonNullable<PreviewWrapperProps['actions']>[number];
 
 export function useHeaderActions(): (
-	node: Pick<File, '__typename' | 'id' | 'permissions' | 'rootId' | 'mime_type' | 'name'>
+	node: Pick<File, '__typename' | 'id' | 'permissions' | 'rootId' | 'mime_type'>
 ) => Array<PreviewHeaderAction> {
 	const [t] = useTranslation();
 	const openNodeWithDocs = useOpenWithDocs();
@@ -40,7 +40,7 @@ export function useHeaderActions(): (
 					icon: 'DownloadOutline',
 					tooltipLabel: t('preview.actions.tooltip.download', 'Download'),
 					id: 'DownloadOutline',
-					onClick: (): void => downloadNode(node.id, node.name)
+					onClick: (): void => downloadNode(node.id)
 				}
 			];
 			if (canEdit({ nodes: [node], canUseDocs })) {
