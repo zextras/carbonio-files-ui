@@ -303,11 +303,7 @@ describe('Versioning', () => {
 		await user.click(versionMoreButton);
 		const downloadItem = await screen.findByText(/download version/i);
 		await user.click(downloadItem);
-		expect(downloadNodeFn).toHaveBeenCalledWith(
-			fileVersion1.id,
-			fileVersion1.name,
-			fileVersion1.version
-		);
+		expect(downloadNodeFn).toHaveBeenCalledWith(fileVersion1.id, fileVersion1.version);
 	});
 
 	test('open with docs version', async () => {

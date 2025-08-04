@@ -66,7 +66,7 @@ describe('Download', () => {
 		const downloadAllButton = within(modal).getByRole('button', { name: /download all/i });
 		expect(downloadAllButton).toBeVisible();
 		await user.click(downloadAllButton);
-		expect(downloadMultipleNodesFn).toHaveBeenCalledWith([currentFolder.id], currentFolder.name);
+		expect(downloadMultipleNodesFn).toHaveBeenCalledWith([currentFolder.id]);
 		// modal is closed
 		expect(modal).not.toBeInTheDocument();
 	});
