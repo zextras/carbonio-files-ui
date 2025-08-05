@@ -36,8 +36,13 @@ export const useDownloadNodes = (): {
 				}
 				if (response.status === HTTP_STATUS_CODE.fileSizeExceeded) {
 					createSnackbar({
-						label: t('', 'Download size exceeds limit. Reduce selection to download.'),
-						severity: 'warning'
+						key: new Date().toLocaleString(),
+						label: t(
+							'snackbar.download.error',
+							'Download size exceeds limit. Reduce selection to download.'
+						),
+						severity: 'warning',
+						replace: true
 					});
 				}
 			});
@@ -59,8 +64,13 @@ export const useDownloadNodes = (): {
 				}
 				if (response.status === HTTP_STATUS_CODE.fileSizeExceeded) {
 					createSnackbar({
-						label: t('', 'Download size exceeds limit. Reduce selection to download.'),
-						severity: 'warning'
+						key: new Date().toLocaleString(),
+						label: t(
+							'snackbar.download.error',
+							'Download size exceeds limit. Reduce selection to download.'
+						),
+						severity: 'warning',
+						replace: true
 					});
 				}
 			});

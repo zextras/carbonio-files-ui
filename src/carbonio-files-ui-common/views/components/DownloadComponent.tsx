@@ -25,24 +25,24 @@ export const DownloadComponent = ({
 	const download = useCallback(() => {
 		createModal({
 			id: currentFolderId,
-			title: t('', 'Download all'),
+			title: t('actions.download.multiple', 'Download all'),
 			children: t(
-				'',
+				'actions.download.multiple.modal',
 				"You're about to download all your items. This operation may take several minutes."
 			),
-			confirmLabel: t('', 'Download all'),
+			confirmLabel: t('actions.download.multiple', 'Download all'),
 			onConfirm: () => {
 				downloadMultipleNodes([currentFolderId]);
 				closeModal(currentFolderId);
 			},
 			onSecondaryAction: () => closeModal(currentFolderId),
-			secondaryActionLabel: t('', 'Close'),
+			secondaryActionLabel: t('actions.download.multiple.modal.close', 'Close'),
 			onClose: () => closeModal(currentFolderId)
 		});
 	}, [closeModal, createModal, currentFolderId, downloadMultipleNodes, t]);
 
 	return (
-		<Tooltip label={t('', 'Download all')}>
+		<Tooltip label={t('actions.download.multiple', 'Download all')}>
 			<Button type={'ghost'} color={'text'} icon={'DownloadOutline'} onClick={download} />
 		</Tooltip>
 	);
