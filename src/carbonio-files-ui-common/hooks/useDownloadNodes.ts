@@ -42,7 +42,8 @@ export const useDownloadNodes = (): {
 							'Download size exceeds limit. Reduce selection to download.'
 						),
 						severity: 'warning',
-						replace: true
+						replace: true,
+						disableAutoHide: true
 					});
 				}
 			});
@@ -70,7 +71,8 @@ export const useDownloadNodes = (): {
 							'Download size exceeds limit. Reduce selection to download.'
 						),
 						severity: 'warning',
-						replace: true
+						replace: true,
+						disableAutoHide: true
 					});
 				}
 			});
