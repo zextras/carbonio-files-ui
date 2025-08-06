@@ -61,7 +61,8 @@ export const DownloadComponent = ({
 			},
 			onSecondaryAction: () => closeModal(currentFolderId),
 			secondaryActionLabel: t('modal.button.cancel', 'Cancel'),
-			onClose: () => closeModal(currentFolderId)
+			onClose: () => closeModal(currentFolderId),
+			closeIconTooltip: t('modal.close.tooltip', 'Close')
 		});
 	}, [
 		closeModal,

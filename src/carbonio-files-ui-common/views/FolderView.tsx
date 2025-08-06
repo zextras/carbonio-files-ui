@@ -26,7 +26,12 @@ import useQueryParam from '../hooks/useQueryParam';
 import { useUploadFileNewAction } from '../hooks/useUploadFileNewAction';
 import { URLParams } from '../types/common';
 import { NonNullableListItem, Unwrap } from '../types/utils';
-import { canCreateFile, canCreateFolder, canUploadFile } from '../utils/ActionsFactory';
+import {
+	canCreateFile,
+	canCreateFolder,
+	canDownload,
+	canUploadFile
+} from '../utils/ActionsFactory';
 import { isFolder, takeIfNotEmpty } from '../utils/utils';
 import { DownloadComponent } from './components/DownloadComponent';
 
@@ -45,6 +50,11 @@ const FolderView = (): React.JSX.Element => {
 	const { data: permissionsData } = useGetPermissionsQuery(currentFolderId);
 
 	const folderName = useMemo(() => currentFolder?.getNode?.name, [currentFolder?.getNode?.name]);
+
+	const isDownloadButtonShown = useMemo(
+		() => currentFolder?.getNode && canDownload({ nodes: [currentFolder?.getNode] }),
+		[currentFolder]
+	);
 
 	const isUploadFilePermitted = useMemo(
 		() => !!permissionsData?.getNode && canUploadFile(permissionsData.getNode),
@@ -88,12 +98,14 @@ const FolderView = (): React.JSX.Element => {
 	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
 		() => (
 			<>
-				<DownloadComponent currentFolderId={currentFolderId} folderName={folderName} />
+				{!isDownloadButtonShown && (
+					<DownloadComponent currentFolderId={currentFolderId} folderName={folderName} />
+				)}
 				<ViewModeComponent />
 				<SortingComponent />
 			</>
 		),
-		[currentFolderId, folderName]
+		[currentFolderId, folderName, isDownloadButtonShown]
 	);
 
 	const ListComponent = useMemo(

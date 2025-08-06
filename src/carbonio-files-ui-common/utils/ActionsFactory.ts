@@ -343,8 +343,8 @@ export function canDownload({ nodes }: { nodes: NodeDownload[] }): boolean {
 	if (nodes.length === 0) {
 		throw Error('cannot evaluate canDownload on empty nodes array');
 	}
-	const node = nodes[0];
-	return node.rootId !== ROOTS.TRASH;
+
+	return nodes.every((node) => node.rootId !== ROOTS.TRASH);
 }
 
 type NodeOpenWithDocs = Node<'rootId' | 'permissions', 'mime_type'>;
