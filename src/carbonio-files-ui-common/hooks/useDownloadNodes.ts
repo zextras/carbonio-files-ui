@@ -4,16 +4,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { HTTP_STATUS_CODE } from '../constants';
+import { CONFIGS, HTTP_STATUS_CODE } from '../constants';
 import {
 	downloadNode as downloadNodeFn,
-	downloadMultipleNodes as downloadMultipleNodesFn
+	downloadMultipleNodes as downloadMultipleNodesFn,
+	humanFileSizeFromMB
 } from '../utils/utils';
+import { useGetConfigsQuery } from './graphql/queries/useGetConfigsQuery';
 
 export const useDownloadNodes = (): {
 	downloadNode: (id: string, version?: number) => void;
@@ -21,6 +23,9 @@ export const useDownloadNodes = (): {
 } => {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
+	const configs = useGetConfigsQuery();
+
+	const limit = useMemo(() => Number(configs[CONFIGS.MAX_DOWNLOAD_SIZE]), [configs]);
 
 	const downloadNode = useCallback(
 		(id: string, version?: number) => {
@@ -39,7 +44,12 @@ export const useDownloadNodes = (): {
 						key: new Date().toLocaleString(),
 						label: t(
 							'snackbar.download.error',
-							'Download size exceeds limit. Reduce selection to download.'
+							'Download size exceeds the {{limit}} limit. Please reduce items to download',
+							{
+								replace: {
+									limit: humanFileSizeFromMB(limit, t)
+								}
+							}
 						),
 						severity: 'warning',
 						replace: true,
@@ -48,7 +58,7 @@ export const useDownloadNodes = (): {
 				}
 			});
 		},
-		[createSnackbar, t]
+		[createSnackbar, limit, t]
 	);
 
 	const downloadMultipleNodes = useCallback(
@@ -68,7 +78,12 @@ export const useDownloadNodes = (): {
 						key: new Date().toLocaleString(),
 						label: t(
 							'snackbar.download.error',
-							'Download size exceeds limit. Reduce selection to download.'
+							'Download size exceeds the {{limit}} limit. Please reduce items to download',
+							{
+								replace: {
+									limit: humanFileSizeFromMB(limit, t)
+								}
+							}
 						),
 						severity: 'warning',
 						replace: true,
@@ -77,7 +92,7 @@ export const useDownloadNodes = (): {
 				}
 			});
 		},
-		[createSnackbar, t]
+		[createSnackbar, limit, t]
 	);
 
 	return { downloadNode, downloadMultipleNodes };

@@ -62,7 +62,7 @@ export type CollaborationLink = {
 export type Config = {
 	__typename: 'Config';
 	name: Scalars['String']['output'];
-	value: Scalars['String']['output'];
+	value: Maybe<Scalars['String']['output']>;
 };
 
 export type DistributionList = {
@@ -851,7 +851,7 @@ export type ConfigResolvers<
 	ParentType extends ResolversParentTypes['Config'] = ResolversParentTypes['Config']
 > = {
 	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-	value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+	value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

@@ -11,16 +11,19 @@ import { List } from './List';
 import { SelectionProvider } from './SelectionProvider';
 import server from '../../../mocks/server';
 import {
+	CONFIGS,
 	DOWNLOAD_MULTIPLE_PATH,
 	DOWNLOAD_PATH_CHECK,
 	HTTP_STATUS_CODE,
 	REST_ENDPOINT
 } from '../../constants';
-import { ICON_REGEXP } from '../../constants/test';
+import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import * as useDownloadNodes from '../../hooks/useDownloadNodes';
-import { populateFolder } from '../../mocks/mockUtils';
-import { screen, selectNodes, setup } from '../../tests/utils';
+import { populateConfigs, populateFolder } from '../../mocks/mockUtils';
+import { screen, selectNodes, setup, within } from '../../tests/utils';
 import { File, Folder } from '../../types/graphql/types';
+import { mockGetConfigs } from '../../utils/resolverMocks';
+import { humanFileSizeFromMB } from '../../utils/utils';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
@@ -66,6 +69,18 @@ describe('List download', () => {
 		const { nodes } = currentFolder.children;
 		const node1 = nodes[0]!;
 		const node2 = nodes[1]!;
+		const maxDownloadSize = 2000;
+
+		const mocks = {
+			Query: {
+				getConfigs: mockGetConfigs(
+					populateConfigs({
+						[CONFIGS.MAX_DOWNLOAD_SIZE]: `${maxDownloadSize}`
+					})
+				)
+			}
+		};
+
 		const { user } = setup(
 			<SelectionProvider items={nodes as (File | Folder)[]}>
 				<List
@@ -74,7 +89,8 @@ describe('List download', () => {
 					emptyListMessage={'hint'}
 					folderId={currentFolder.id}
 				/>
-			</SelectionProvider>
+			</SelectionProvider>,
+			{ mocks }
 		);
 
 		await screen.findByText(node1.name);
@@ -82,8 +98,11 @@ describe('List download', () => {
 		const downloadButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.download });
 		expect(downloadButton).toBeVisible();
 		await user.click(downloadButton);
+		const snackbar = await screen.findByTestId(SELECTORS.snackbar);
 		expect(
-			await screen.findByText(/Download size exceeds limit. Reduce selection to download./i)
+			within(snackbar).getByText(
+				`Download size exceeds the ${humanFileSizeFromMB(maxDownloadSize, undefined)} limit. Please reduce items to download`
+			)
 		).toBeVisible();
 	});
 });

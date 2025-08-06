@@ -71,6 +71,9 @@ export const humanFileSize = (inputSize: number, t: TFunction | undefined): stri
 	return `${size} ${unitTranslated}`;
 };
 
+export const humanFileSizeFromMB = (inputSize: number, t: TFunction | undefined): string =>
+	humanFileSize(inputSize * 1024 ** 2, t);
+
 function getIconByRootId(rootId: Maybe<string> | undefined): keyof DefaultTheme['icons'] {
 	switch (rootId) {
 		case ROOTS.LOCAL_ROOT:

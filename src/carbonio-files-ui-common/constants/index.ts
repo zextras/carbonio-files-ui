@@ -48,7 +48,9 @@ export const DRAG_TYPES = {
 export const SHARE_TEXT_SIZE = 'small';
 export const CONFIGS = {
 	MAX_VERSIONS: 'max-number-of-versions',
-	MAX_KEEP_VERSIONS: 'max-number-of-keep-versions'
+	MAX_KEEP_VERSIONS: 'max-number-of-keep-versions',
+	MAX_DOWNLOAD_SIZE: 'max-downloadable-size-in-mb',
+	MAX_UPLOAD_SIZE: 'max-uploadable-size-in-mb'
 } as const;
 export const PREVIEW_MAX_SIZE = 20971520;
 export const FILTER_PARAMS: Record<URLParams['filter'], SearchParams> = {

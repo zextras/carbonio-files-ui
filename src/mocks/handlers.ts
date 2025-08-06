@@ -32,6 +32,7 @@ import handleGetBaseNodeRequest from '../carbonio-files-ui-common/mocks/handleGe
 import handleGetChildrenRequest from '../carbonio-files-ui-common/mocks/handleGetChildrenRequest';
 import handleGetChildRequest from '../carbonio-files-ui-common/mocks/handleGetChildRequest';
 import handleGetCollaborationLinksRequest from '../carbonio-files-ui-common/mocks/handleGetCollaborationLinksRequest';
+import handleGetConfigsRequest from '../carbonio-files-ui-common/mocks/handleGetConfigsRequest';
 import handleGetLinksRequest from '../carbonio-files-ui-common/mocks/handleGetLinksRequest';
 import handleGetNodeRequest from '../carbonio-files-ui-common/mocks/handleGetNodeRequest';
 import handleGetNotificationsRequest from '../carbonio-files-ui-common/mocks/handleGetNotificationsRequest';
@@ -67,6 +68,7 @@ import {
 	GetChildDocument,
 	GetChildrenDocument,
 	GetCollaborationLinksDocument,
+	GetConfigsDocument,
 	GetLinksDocument,
 	GetNodeDocument,
 	GetNotificationsDocument,
@@ -102,7 +104,8 @@ handlers.push(
 	graphql.query(GetSharesDocument, handleGetSharesRequest),
 	graphql.query(GetVersionsDocument, handleGetVersionsRequest),
 	graphql.query(GetCollaborationLinksDocument, handleGetCollaborationLinksRequest),
-	graphql.query(GetNotificationsDocument, handleGetNotificationsRequest)
+	graphql.query(GetNotificationsDocument, handleGetNotificationsRequest),
+	graphql.query(GetConfigsDocument, handleGetConfigsRequest)
 );
 // mutations
 handlers.push(
