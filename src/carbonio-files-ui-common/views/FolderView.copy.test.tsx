@@ -52,15 +52,16 @@ jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar
 
 describe('Copy', () => {
 	describe('Selection mode', () => {
-		// check why this tests sometimes fails sometimes passes
 		test('Copy is enabled when multiple files are selected', async () => {
 			const currentFolder = populateFolder();
 			currentFolder.permissions.can_write_file = true;
 			currentFolder.permissions.can_write_folder = true;
 			const file = populateFile();
 			file.parent = currentFolder;
+			file.flagged = true;
 			const folder = populateFolder();
 			folder.parent = currentFolder;
+			folder.flagged = true;
 			currentFolder.children.nodes.push(file, folder);
 
 			const mocks = {
