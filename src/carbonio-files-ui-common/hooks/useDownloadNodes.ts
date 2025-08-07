@@ -6,16 +6,21 @@
 
 import { useCallback } from 'react';
 
+import { useLazyQuery } from '@apollo/client';
 import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { CONFIGS, HTTP_STATUS_CODE } from '../constants';
 import {
+	GetConfigsDocument,
+	GetConfigsQuery,
+	GetConfigsQueryVariables
+} from '../types/graphql/types';
+import {
 	downloadNode as downloadNodeFn,
 	downloadMultipleNodes as downloadMultipleNodesFn,
 	humanFileSizeFromMB
 } from '../utils/utils';
-import { useGetConfigsQuery } from './graphql/queries/useGetConfigsQuery';
 
 export const useDownloadNodes = (): {
 	downloadNode: (id: string, version?: number) => void;
@@ -23,7 +28,13 @@ export const useDownloadNodes = (): {
 } => {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
-	const configs = useGetConfigsQuery();
+
+	const [getConfigLazy] = useLazyQuery<GetConfigsQuery, GetConfigsQueryVariables>(
+		GetConfigsDocument,
+		{
+			fetchPolicy: 'cache-first'
+		}
+	);
 
 	const successSnackbarCallback = useCallback(() => {
 		createSnackbar({
@@ -36,25 +47,32 @@ export const useDownloadNodes = (): {
 	}, [createSnackbar, t]);
 
 	const errorSnackbarCallback = useCallback(() => {
-		const maxDownloadSize = configs[CONFIGS.MAX_DOWNLOAD_SIZE];
-		if (maxDownloadSize != null) {
-			createSnackbar({
-				key: new Date().toLocaleString(),
-				label: t(
-					'snackbar.download.error',
-					'Download size exceeds the {{limit}} limit. Please reduce items to download',
-					{
-						replace: {
-							limit: humanFileSizeFromMB(Number(maxDownloadSize), t)
-						}
-					}
-				),
-				severity: 'warning',
-				replace: true,
-				disableAutoHide: true
-			});
-		}
-	}, [configs, createSnackbar, t]);
+		getConfigLazy().then((response) => {
+			const getConfigs = response.data?.getConfigs;
+			if (getConfigs) {
+				const maxDownloadSize = getConfigs.find(
+					(config) => config?.name === CONFIGS.MAX_DOWNLOAD_SIZE
+				)?.value;
+				if (maxDownloadSize != null) {
+					createSnackbar({
+						key: new Date().toLocaleString(),
+						label: t(
+							'snackbar.download.error',
+							'Download size exceeds the {{limit}} limit. Please reduce items to download',
+							{
+								replace: {
+									limit: humanFileSizeFromMB(Number(maxDownloadSize), t)
+								}
+							}
+						),
+						severity: 'warning',
+						replace: true,
+						autoHideTimeout: 5000
+					});
+				}
+			}
+		});
+	}, [createSnackbar, getConfigLazy, t]);
 
 	const genericErrorSnackbar = useCallback(() => {
 		createSnackbar({

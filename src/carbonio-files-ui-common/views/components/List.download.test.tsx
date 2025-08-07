@@ -26,6 +26,7 @@ import { mockGetConfigs } from '../../utils/resolverMocks';
 import { humanFileSizeFromMB } from '../../utils/utils';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+jest.mock<typeof import('./HeaderBreadcrumbs')>('./HeaderBreadcrumbs');
 
 describe('List download', () => {
 	it('should call the DownloadMultipleNodes when the user selects multiple nodes and clicks on download button', async () => {
