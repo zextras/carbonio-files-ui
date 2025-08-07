@@ -51,7 +51,7 @@ const FolderView = (): React.JSX.Element => {
 
 	const folderName = useMemo(() => currentFolder?.getNode?.name, [currentFolder?.getNode?.name]);
 
-	const isDownloadButtonShown = useMemo(
+	const showDownloadComponent = useMemo(
 		() => currentFolder?.getNode && canDownload({ nodes: [currentFolder?.getNode] }),
 		[currentFolder]
 	);
@@ -98,14 +98,14 @@ const FolderView = (): React.JSX.Element => {
 	const listHeaderActionValue = useMemo<React.ContextType<typeof ListHeaderActionContext>>(
 		() => (
 			<>
-				{!isDownloadButtonShown && (
+				{showDownloadComponent && (
 					<DownloadComponent currentFolderId={currentFolderId} folderName={folderName} />
 				)}
 				<ViewModeComponent />
 				<SortingComponent />
 			</>
 		),
-		[currentFolderId, folderName, isDownloadButtonShown]
+		[currentFolderId, folderName, showDownloadComponent]
 	);
 
 	const ListComponent = useMemo(

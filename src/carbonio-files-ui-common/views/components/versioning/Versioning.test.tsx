@@ -12,7 +12,6 @@ import { Versioning } from './Versioning';
 import server from '../../../../mocks/server';
 import { CONFIGS, ERROR_CODE, REST_ENDPOINT, UPLOAD_VERSION_PATH } from '../../../constants';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS, TIMERS } from '../../../constants/test';
-import * as useDownloadNodes from '../../../hooks/useDownloadNodes';
 import * as useOpenWithDocs from '../../../hooks/useOpenWithDocs';
 import {
 	UploadRequestBody,
@@ -42,6 +41,7 @@ import {
 	mockGetVersions,
 	mockKeepVersions
 } from '../../../utils/resolverMocks';
+import * as utils from '../../../utils/utils';
 import { getChipLabel } from '../../../utils/utils';
 
 describe('Versioning', () => {
@@ -277,12 +277,7 @@ describe('Versioning', () => {
 	});
 
 	test('download version', async () => {
-		const downloadNodeFn = jest.fn();
-		const downloadMultipleNodesFn = jest.fn();
-		jest.spyOn(useDownloadNodes, 'useDownloadNodes').mockReturnValue({
-			downloadNode: downloadNodeFn,
-			downloadMultipleNodes: downloadMultipleNodesFn
-		});
+		const downloadNodeFn = jest.spyOn(utils, 'downloadNode');
 
 		const fileVersion1 = populateFile();
 		fileVersion1.permissions.can_write_file = true;

@@ -10,11 +10,11 @@ import { act } from '@testing-library/react';
 import FolderView from './FolderView';
 import { ROOTS } from '../constants';
 import { ICON_REGEXP } from '../constants/test';
-import * as useDownloadNodes from '../hooks/useDownloadNodes';
 import { populateFolder } from '../mocks/mockUtils';
 import { screen, setup, within } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
+import * as utils from '../utils/utils';
 
 jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
 	'./components/VirtualizedNodeListItem'
@@ -24,12 +24,7 @@ jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar
 
 describe('Download', () => {
 	it('should download the whole ROOT if the user clicks on the download all button on the root', async () => {
-		const downloadNodeFn = jest.fn();
-		const downloadMultipleNodesFn = jest.fn();
-		jest.spyOn(useDownloadNodes, 'useDownloadNodes').mockReturnValue({
-			downloadNode: downloadNodeFn,
-			downloadMultipleNodes: downloadMultipleNodesFn
-		});
+		const downloadMultipleNodesFn = jest.spyOn(utils, 'downloadMultipleNodes');
 
 		const currentFolder = populateFolder(3, ROOTS.LOCAL_ROOT);
 		const mocks = {
@@ -47,7 +42,7 @@ describe('Download', () => {
 			mocks
 		});
 
-		const downloadButton = screen.getByRoleWithIcon('button', {
+		const downloadButton = await screen.findByRoleWithIcon('button', {
 			icon: ICON_REGEXP.downloadMultiple
 		});
 		expect(downloadButton).toBeVisible();
@@ -73,12 +68,7 @@ describe('Download', () => {
 	});
 
 	it('should download the whole folder if the user clicks on the download all button on a folder', async () => {
-		const downloadNodeFn = jest.fn();
-		const downloadMultipleNodesFn = jest.fn();
-		jest.spyOn(useDownloadNodes, 'useDownloadNodes').mockReturnValue({
-			downloadNode: downloadNodeFn,
-			downloadMultipleNodes: downloadMultipleNodesFn
-		});
+		const downloadMultipleNodesFn = jest.spyOn(utils, 'downloadMultipleNodes');
 
 		const currentFolder = populateFolder();
 		const mocks = {
@@ -96,7 +86,7 @@ describe('Download', () => {
 			mocks
 		});
 
-		const downloadButton = screen.getByRoleWithIcon('button', {
+		const downloadButton = await screen.findByRoleWithIcon('button', {
 			icon: ICON_REGEXP.downloadMultiple
 		});
 		expect(downloadButton).toBeVisible();
@@ -139,7 +129,7 @@ describe('Download', () => {
 		});
 
 		await user.click(
-			screen.getByRoleWithIcon('button', {
+			await screen.findByRoleWithIcon('button', {
 				icon: ICON_REGEXP.downloadMultiple
 			})
 		);
@@ -154,13 +144,6 @@ describe('Download', () => {
 	});
 
 	it('should render the tooltip of the download button', async () => {
-		const downloadNodeFn = jest.fn();
-		const downloadMultipleNodesFn = jest.fn();
-		jest.spyOn(useDownloadNodes, 'useDownloadNodes').mockReturnValue({
-			downloadNode: downloadNodeFn,
-			downloadMultipleNodes: downloadMultipleNodesFn
-		});
-
 		const currentFolder = populateFolder();
 		const mocks = {
 			Query: {
@@ -178,7 +161,7 @@ describe('Download', () => {
 		});
 
 		await user.hover(
-			screen.getByRoleWithIcon('button', {
+			await screen.findByRoleWithIcon('button', {
 				icon: ICON_REGEXP.downloadMultiple
 			})
 		);

@@ -15,7 +15,10 @@ import {
 	PREVIEW_PATH,
 	STORAGES_ENDPOINT,
 	MYSELF_QUOTA_PATH,
-	HEALTH_PATH
+	HEALTH_PATH,
+	DOWNLOAD_PATH,
+	DOWNLOAD_PATH_CHECK,
+	DOWNLOAD_MULTIPLE_PATH
 } from '../carbonio-files-ui-common/constants';
 import handleCopyNodesRequest from '../carbonio-files-ui-common/mocks/handleCopyNodesRequest';
 import handleCreateDocsFileRequest from '../carbonio-files-ui-common/mocks/handleCreateDocsFileRequest';
@@ -25,6 +28,8 @@ import handleCreateShareRequest from '../carbonio-files-ui-common/mocks/handleCr
 import handleDeleteLinksRequest from '../carbonio-files-ui-common/mocks/handleDeleteLinkRequest';
 import handleDeleteNodesRequest from '../carbonio-files-ui-common/mocks/handleDeleteNodesRequest';
 import handleDeleteShareRequest from '../carbonio-files-ui-common/mocks/handleDeleteShareRequest';
+import handleDownloadCheckRequest from '../carbonio-files-ui-common/mocks/handleDownloadCheckRequest';
+import handleDownloadMultipleCheckRequest from '../carbonio-files-ui-common/mocks/handleDownloadMultipleCheckRequest';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import handleFlagNodesRequest from '../carbonio-files-ui-common/mocks/handleFlagNodesRequest';
 import handleGetAccountByEmailRequest from '../carbonio-files-ui-common/mocks/handleGetAccountByEmailRequest';
@@ -133,7 +138,15 @@ handlers.push(
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:area/:thumbnail`, handleGetPreviewRequest),
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id`, handleGetPreviewRequest),
 	http.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, handleMySelfQuotaRequest),
-	http.get(`${REST_ENDPOINT}${HEALTH_PATH}`, handleHealthRequest)
+	http.get(`${REST_ENDPOINT}${HEALTH_PATH}`, handleHealthRequest),
+	http.get(
+		`${REST_ENDPOINT}${DOWNLOAD_PATH}/:id${DOWNLOAD_PATH_CHECK}`,
+		handleDownloadCheckRequest
+	),
+	http.post(
+		`${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}${DOWNLOAD_PATH_CHECK}`,
+		handleDownloadMultipleCheckRequest
+	)
 );
 
 export default handlers;
