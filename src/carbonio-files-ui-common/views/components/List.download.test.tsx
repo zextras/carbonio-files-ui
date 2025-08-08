@@ -18,11 +18,11 @@ import {
 	REST_ENDPOINT
 } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
-import * as useDownloadNodes from '../../hooks/useDownloadNodes';
 import { populateConfigs, populateFolder } from '../../mocks/mockUtils';
 import { screen, selectNodes, setup, within } from '../../tests/utils';
 import { File, Folder } from '../../types/graphql/types';
 import { mockGetConfigs } from '../../utils/resolverMocks';
+import * as utils from '../../utils/utils';
 import { humanFileSizeFromMB } from '../../utils/utils';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
@@ -30,12 +30,7 @@ jest.mock<typeof import('./HeaderBreadcrumbs')>('./HeaderBreadcrumbs');
 
 describe('List download', () => {
 	it('should call the DownloadMultipleNodes when the user selects multiple nodes and clicks on download button', async () => {
-		const downloadNodeFn = jest.fn();
-		const downloadMultipleNodesFn = jest.fn();
-		jest.spyOn(useDownloadNodes, 'useDownloadNodes').mockReturnValue({
-			downloadNode: downloadNodeFn,
-			downloadMultipleNodes: downloadMultipleNodesFn
-		});
+		const downloadMultipleNodesFn = jest.spyOn(utils, 'downloadMultipleNodes');
 
 		const currentFolder = populateFolder(3);
 		const { nodes } = currentFolder.children;
@@ -58,6 +53,8 @@ describe('List download', () => {
 		expect(downloadButton).toBeVisible();
 		await user.click(downloadButton);
 		expect(downloadMultipleNodesFn).toHaveBeenCalledWith([node1.id, node2.id]);
+		// const snackbar = await screen.findByTestId(SELECTORS.snackbar);
+		// expect(within(snackbar).getByText(`Your download will start soon`)).toBeVisible();
 	});
 
 	it('should render a snackbar if the download fails due to 413', async () => {

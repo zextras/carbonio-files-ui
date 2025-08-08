@@ -41,7 +41,7 @@ import {
 	mockGetVersions,
 	mockKeepVersions
 } from '../../../utils/resolverMocks';
-import * as utils from '../../../utils/utils';
+import * as moduleUtils from '../../../utils/utils';
 import { getChipLabel } from '../../../utils/utils';
 
 describe('Versioning', () => {
@@ -277,7 +277,7 @@ describe('Versioning', () => {
 	});
 
 	test('download version', async () => {
-		const downloadNodeFn = jest.spyOn(utils, 'downloadNode');
+		const downloadSpy = jest.spyOn(moduleUtils, 'downloadNode');
 
 		const fileVersion1 = populateFile();
 		fileVersion1.permissions.can_write_file = true;
@@ -298,7 +298,7 @@ describe('Versioning', () => {
 		await user.click(versionMoreButton);
 		const downloadItem = await screen.findByText(/download version/i);
 		await user.click(downloadItem);
-		expect(downloadNodeFn).toHaveBeenCalledWith(fileVersion1.id, fileVersion1.version);
+		expect(downloadSpy).toHaveBeenCalledWith(fileVersion1.id, fileVersion1.version);
 	});
 
 	test('open with docs version', async () => {
