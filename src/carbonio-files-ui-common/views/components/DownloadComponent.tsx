@@ -75,7 +75,7 @@ export const DownloadComponent = ({
 	]);
 
 	return (
-		<Tooltip label={t('actions.download.multiple', 'Download all')}>
+		<Tooltip label={t('actions.download.multiple.tooltip', 'Download all')}>
 			<Button type={'ghost'} color={'text'} icon={'DownloadOutline'} onClick={download} />
 		</Tooltip>
 	);
