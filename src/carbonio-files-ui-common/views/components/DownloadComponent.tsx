@@ -54,7 +54,7 @@ export const DownloadComponent = ({
 			id: currentFolderId,
 			title: modalTitle,
 			children: modalContent,
-			confirmLabel: t('actions.download.multiple', 'Download all'),
+			confirmLabel: t('actions.download.multiple.modal.button.label', 'Download all'),
 			onConfirm: () => {
 				downloadMultipleNodes([currentFolderId]);
 				closeModal(currentFolderId);
@@ -75,7 +75,7 @@ export const DownloadComponent = ({
 	]);
 
 	return (
-		<Tooltip label={t('actions.download.multiple.tooltip', 'Download all')}>
+		<Tooltip label={t('actions.download.multiple.button.tooltip', 'Download all')}>
 			<Button type={'ghost'} color={'text'} icon={'DownloadOutline'} onClick={download} />
 		</Tooltip>
 	);
