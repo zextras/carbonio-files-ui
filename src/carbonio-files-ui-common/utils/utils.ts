@@ -387,7 +387,7 @@ function secureIframeDownload(nodeIds: string[]): void {
 		try {
 			iframe.remove();
 		} catch (e) {
-			// Ignore cleanup errors
+			console.warn('Error removing iframe:', e);
 		}
 	};
 
