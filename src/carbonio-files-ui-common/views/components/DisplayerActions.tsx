@@ -91,7 +91,7 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 
 	const openNodeWithDocs = useOpenWithDocs();
 
-	const { downloadNode, downloadMultipleNodes } = useDownloadNodes();
+	const { downloadNodeByType } = useDownloadNodes();
 
 	const sendViaMailCallback = useCallback(() => {
 		sendViaMail(node.id);
@@ -148,15 +148,7 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 				id: 'Download',
 				icon: 'Download',
 				label: t('actions.download', 'Download'),
-				onClick: (): void => {
-					// download node without version to be sure last version is downlaoded
-					if (node.__typename === 'File') {
-						downloadNode(node.id);
-					}
-					if (node.__typename === 'Folder') {
-						downloadMultipleNodes([node.id]);
-					}
-				}
+				onClick: (): void => downloadNodeByType(node)
 			},
 			[Action.ManageShares]: {
 				id: 'ManageShares',
@@ -232,8 +224,7 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 			}
 		}),
 		[
-			downloadMultipleNodes,
-			downloadNode,
+			downloadNodeByType,
 			manageShares,
 			markNodesForDeletionCallback,
 			node,

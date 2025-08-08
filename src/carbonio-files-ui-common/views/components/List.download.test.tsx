@@ -53,8 +53,6 @@ describe('List download', () => {
 		expect(downloadButton).toBeVisible();
 		await user.click(downloadButton);
 		expect(downloadMultipleNodesFn).toHaveBeenCalledWith([node1.id, node2.id]);
-		// const snackbar = await screen.findByTestId(SELECTORS.snackbar);
-		// expect(within(snackbar).getByText(`Your download will start soon`)).toBeVisible();
 	});
 
 	it('should render a snackbar if the download fails due to 413', async () => {

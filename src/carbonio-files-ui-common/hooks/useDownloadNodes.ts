@@ -11,6 +11,7 @@ import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { CONFIGS, HTTP_STATUS_CODE } from '../constants';
+import { PickIdNodeType } from '../types/common';
 import {
 	GetConfigsDocument,
 	GetConfigsQuery,
@@ -25,6 +26,7 @@ import {
 export const useDownloadNodes = (): {
 	downloadNode: (id: string, version?: number) => void;
 	downloadMultipleNodes: (nodeIds: string[]) => void;
+	downloadNodeByType: (node: PickIdNodeType) => void;
 } => {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
@@ -114,5 +116,21 @@ export const useDownloadNodes = (): {
 		[errorSnackbarCallback, genericErrorSnackbar, successSnackbarCallback]
 	);
 
-	return { downloadNode, downloadMultipleNodes };
+	const downloadNodeByType = useCallback(
+		(node: PickIdNodeType) => {
+			switch (node.__typename) {
+				case 'File':
+					downloadNode(node.id);
+					break;
+				case 'Folder':
+					downloadMultipleNodes([node.id]);
+					break;
+				default:
+					throw new Error('Unsupported node type');
+			}
+		},
+		[downloadMultipleNodes, downloadNode]
+	);
+
+	return { downloadNode, downloadMultipleNodes, downloadNodeByType };
 };

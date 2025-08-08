@@ -102,7 +102,7 @@ export const NodeListItem = ({
 	const { viewMode } = useContext(ListContext);
 	const { locale } = useUserInfo();
 
-	const { downloadNode, downloadMultipleNodes } = useDownloadNodes();
+	const { downloadNodeByType } = useDownloadNodes();
 
 	const params = useParams<URLParams>();
 	const isATrashFilter = useMemo(() => isTrashView(params), [params]);
@@ -277,15 +277,7 @@ export const NodeListItem = ({
 				id: 'Download',
 				icon: 'Download',
 				label: t('actions.download', 'Download'),
-				onClick: (): void => {
-					// download node without version to be sure last version is downloaded
-					if (node.__typename === 'File') {
-						downloadNode(node.id);
-					}
-					if (node.__typename === 'Folder') {
-						downloadMultipleNodes([node.id]);
-					}
-				}
+				onClick: (): void => downloadNodeByType(node)
 			},
 			[Action.ManageShares]: {
 				id: 'ManageShares',
@@ -375,8 +367,7 @@ export const NodeListItem = ({
 			node,
 			openNodeWithDocs,
 			openPreview,
-			downloadNode,
-			downloadMultipleNodes,
+			downloadNodeByType,
 			setActiveNode,
 			toggleFlag,
 			openCopyNodesModal,

@@ -129,7 +129,7 @@ export const List = ({
 		icons?: string[];
 	}>();
 
-	const { downloadNode, downloadMultipleNodes } = useDownloadNodes();
+	const { downloadMultipleNodes, downloadNodeByType } = useDownloadNodes();
 
 	const folderNode = useMemo(
 		() =>
@@ -263,19 +263,13 @@ export const List = ({
 		if (selectedIDs.length === 1) {
 			const nodeToDownload = nodes.find((node) => node.id === selectedIDs[0]);
 			if (!nodeToDownload) return;
-
-			if (nodeToDownload.__typename === 'File') {
-				downloadNode(nodeToDownload.id);
-			}
-			if (nodeToDownload.__typename === 'Folder') {
-				downloadMultipleNodes([nodeToDownload.id]);
-			}
+			downloadNodeByType(nodeToDownload);
 		}
 		if (selectedIDs.length > 1) {
 			downloadMultipleNodes(selectedIDs);
 		}
 		exitSelectionMode();
-	}, [nodes, selectedIDs, exitSelectionMode, downloadNode, downloadMultipleNodes]);
+	}, [selectedIDs, exitSelectionMode, nodes, downloadNodeByType, downloadMultipleNodes]);
 
 	const { sendViaMail } = useSendViaMail();
 
