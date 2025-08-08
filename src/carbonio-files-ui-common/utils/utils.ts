@@ -339,6 +339,72 @@ export const downloadNode = async (id: string, version?: number): Promise<Respon
 	return response;
 };
 
+function createHiddenInput(name: string, value: string): HTMLInputElement {
+	const input = document.createElement('input');
+	input.type = 'hidden';
+	input.name = name;
+	input.value = value;
+	return input;
+}
+
+function createDownloadForm(downloadId: string, nodeIds: string[]): HTMLFormElement {
+	const form = document.createElement('form');
+
+	form.method = 'POST';
+	form.action = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}`;
+	form.target = `secureDownload_${downloadId}`;
+	form.style.display = 'none';
+
+	const nodeIdsInput = createHiddenInput('nodeIds', JSON.stringify(nodeIds));
+	form.appendChild(nodeIdsInput);
+
+	return form;
+}
+
+function createSecureIframe(downloadId: string): HTMLIFrameElement {
+	const iframe = document.createElement('iframe');
+
+	iframe.style.display = 'none';
+	iframe.name = `secureDownload_${downloadId}`;
+
+	iframe.setAttribute('sandbox', 'allow-downloads allow-forms');
+
+	return iframe;
+}
+
+function secureIframeDownload(nodeIds: string[]): void {
+	if (!nodeIds?.length) {
+		throw new Error('nodeIds is required and cannot be empty');
+	}
+
+	const downloadId = `dl_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+
+	const iframe = createSecureIframe(downloadId);
+
+	const form = createDownloadForm(downloadId, nodeIds);
+
+	const cleanup = (): void => {
+		try {
+			iframe.remove();
+		} catch (e) {
+			// Ignore cleanup errors
+		}
+	};
+
+	iframe.addEventListener('load', () => {
+		setTimeout(cleanup, 1000); // Small delay to ensure download started
+	});
+
+	iframe.addEventListener('error', cleanup);
+
+	document.body.appendChild(iframe);
+	document.body.appendChild(form);
+
+	form.submit();
+
+	form.remove();
+}
+
 export const downloadMultipleNodes = async (nodeIds: string[]): Promise<Response> => {
 	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}${DOWNLOAD_PATH_CHECK}`;
 	const response = await fetch(urlCheck, {
@@ -350,31 +416,7 @@ export const downloadMultipleNodes = async (nodeIds: string[]): Promise<Response
 	});
 
 	if (response.ok) {
-		const iframe = document.createElement('iframe');
-		iframe.style.display = 'none';
-		iframe.name = 'downloadFrame';
-		document.body.appendChild(iframe);
-
-		const cleanup = (): void => {
-			iframe.removeEventListener('load', cleanup);
-			document.body.removeChild(iframe);
-		};
-		iframe.addEventListener('load', cleanup);
-
-		const form = document.createElement('form');
-		form.method = 'POST';
-		form.action = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}`;
-		form.target = 'downloadFrame';
-
-		const input = document.createElement('input');
-		input.type = 'hidden';
-		input.name = 'nodeIds';
-		input.value = JSON.stringify(nodeIds);
-		form.appendChild(input);
-
-		document.body.appendChild(form);
-		form.submit();
-		document.body.removeChild(form);
+		secureIframeDownload(nodeIds);
 	}
 	return response;
 };
