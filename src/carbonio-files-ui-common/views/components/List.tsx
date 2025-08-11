@@ -45,6 +45,7 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
 import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnershipModal';
+import { useDownloadNodes } from '../../hooks/useDownloadNodes';
 import { useHeaderActions } from '../../hooks/useHeaderActions';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
@@ -60,7 +61,7 @@ import {
 } from '../../utils/ActionsFactory';
 import { getPreviewSrc, isSupportedByPreview } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
-import { downloadNode, humanFileSize, isFile, isFolder } from '../../utils/utils';
+import { humanFileSize, isFile, isFolder } from '../../utils/utils';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};
@@ -127,6 +128,8 @@ export const List = ({
 		message: string;
 		icons?: string[];
 	}>();
+
+	const { downloadMultipleNodes, downloadNodeByType } = useDownloadNodes();
 
 	const folderNode = useMemo(
 		() =>
@@ -257,20 +260,16 @@ export const List = ({
 	const createSnackbar = useSnackbar();
 
 	const downloadSelection = useCallback(() => {
-		const nodeToDownload = nodes.find((node) => node.id === selectedIDs[0]);
-		if (nodeToDownload) {
-			// download node without version to be sure last version is downloaded
-			downloadNode(nodeToDownload.id);
-			exitSelectionMode();
-			createSnackbar({
-				key: new Date().toLocaleString(),
-				severity: 'info',
-				label: t('snackbar.download.start', 'Your download will start soon'),
-				replace: true,
-				hideButton: true
-			});
+		if (selectedIDs.length === 1) {
+			const nodeToDownload = nodes.find((node) => node.id === selectedIDs[0]);
+			if (!nodeToDownload) return;
+			downloadNodeByType(nodeToDownload);
 		}
-	}, [createSnackbar, nodes, selectedIDs, t, exitSelectionMode]);
+		if (selectedIDs.length > 1) {
+			downloadMultipleNodes(selectedIDs);
+		}
+		exitSelectionMode();
+	}, [selectedIDs, exitSelectionMode, nodes, downloadNodeByType, downloadMultipleNodes]);
 
 	const { sendViaMail } = useSendViaMail();
 

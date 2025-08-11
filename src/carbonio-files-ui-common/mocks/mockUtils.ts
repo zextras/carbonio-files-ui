@@ -547,7 +547,9 @@ export function populateLinks(node: GQLFile | GQLFolder, limit = 2): Link[] {
 export function populateConfigs(configMap?: Record<string, string>): Config[] {
 	const defaultConfigs: Record<(typeof CONFIGS)[keyof typeof CONFIGS], string> = {
 		[CONFIGS.MAX_VERSIONS]: '5',
-		[CONFIGS.MAX_KEEP_VERSIONS]: '3'
+		[CONFIGS.MAX_KEEP_VERSIONS]: '3',
+		[CONFIGS.MAX_DOWNLOAD_SIZE]: '100',
+		[CONFIGS.MAX_UPLOAD_SIZE]: '100'
 	};
 	const configs = { ...defaultConfigs, ...configMap };
 	return map(configs, (configValue, configName) => ({

@@ -63,7 +63,7 @@ export type CollaborationLink = {
 export type Config = {
 	__typename: 'Config';
 	name: Scalars['String']['output'];
-	value: Scalars['String']['output'];
+	value: Maybe<Scalars['String']['output']>;
 };
 
 export type DistributionList = {
@@ -1915,7 +1915,7 @@ export type GetCollaborationLinksQuery = {
 export type GetConfigsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetConfigsQuery = {
-	getConfigs: Array<({ name: string; value: string } & { __typename: 'Config' }) | null>;
+	getConfigs: Array<({ name: string; value: string | null } & { __typename: 'Config' }) | null>;
 };
 
 export type GetLinksQueryVariables = Exact<{

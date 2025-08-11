@@ -19,7 +19,9 @@ import { getUserAccount } from '../../utils/utils';
 import {
 	DATE_FORMAT,
 	DOCS_EXTENSIONS,
+	DOWNLOAD_MULTIPLE_PATH,
 	DOWNLOAD_PATH,
+	DOWNLOAD_PATH_CHECK,
 	INTERNAL_PATH,
 	REST_ENDPOINT,
 	ROOTS,
@@ -68,6 +70,9 @@ export const humanFileSize = (inputSize: number, t: TFunction | undefined): stri
 	const size = (inputSize / 1024 ** i).toFixed(2).toString();
 	return `${size} ${unitTranslated}`;
 };
+
+export const humanFileSizeFromMB = (inputSize: number, t: TFunction | undefined): string =>
+	humanFileSize(inputSize * 1024 ** 2, t);
 
 function getIconByRootId(rootId: Maybe<string> | undefined): keyof DefaultTheme['icons'] {
 	switch (rootId) {
@@ -313,8 +318,11 @@ export const copyToClipboard = (text: string): Promise<void> => {
 	return window.parent.navigator.clipboard.writeText(text);
 };
 
-export const downloadNode = (id: string, version?: number): void => {
-	if (id) {
+export const downloadNode = async (id: string, version?: number): Promise<Response> => {
+	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${DOWNLOAD_PATH_CHECK}`;
+	const response = await fetch(urlCheck);
+
+	if (response.ok) {
 		const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${
 			version ? `/${version}` : ''
 		}`;
@@ -327,6 +335,90 @@ export const downloadNode = (id: string, version?: number): void => {
 			a.click();
 		}
 	}
+
+	return response;
+};
+
+function createHiddenInput(name: string, value: string): HTMLInputElement {
+	const input = document.createElement('input');
+	input.type = 'hidden';
+	input.name = name;
+	input.value = value;
+	return input;
+}
+
+function createDownloadForm(downloadId: string, nodeIds: string[]): HTMLFormElement {
+	const form = document.createElement('form');
+
+	form.method = 'POST';
+	form.action = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}`;
+	form.target = `secureDownload_${downloadId}`;
+	form.style.display = 'none';
+
+	const nodeIdsInput = createHiddenInput('nodeIds', JSON.stringify(nodeIds));
+	form.appendChild(nodeIdsInput);
+
+	return form;
+}
+
+function createSecureIframe(downloadId: string): HTMLIFrameElement {
+	const iframe = document.createElement('iframe');
+
+	iframe.style.display = 'none';
+	iframe.name = `secureDownload_${downloadId}`;
+
+	iframe.setAttribute('sandbox', 'allow-downloads allow-forms');
+
+	return iframe;
+}
+
+function secureIframeDownload(nodeIds: string[]): void {
+	if (!nodeIds?.length) {
+		throw new Error('nodeIds is required and cannot be empty');
+	}
+
+	const downloadId = `dl_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+
+	const iframe = createSecureIframe(downloadId);
+
+	const form = createDownloadForm(downloadId, nodeIds);
+
+	const cleanup = (): void => {
+		try {
+			iframe.remove();
+		} catch (e) {
+			console.warn('Error removing iframe:', e);
+		}
+	};
+
+	iframe.addEventListener('load', () => {
+		setTimeout(cleanup, 1000); // Small delay to ensure download started
+	});
+
+	iframe.addEventListener('error', cleanup);
+
+	document.body.appendChild(iframe);
+	document.body.appendChild(form);
+
+	form.submit();
+
+	form.remove();
+}
+
+export const downloadMultipleNodes = async (nodeIds: string[]): Promise<Response> => {
+	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}${DOWNLOAD_PATH_CHECK}`;
+	const response = await fetch(urlCheck, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ nodeIds })
+	});
+
+	if (response.ok) {
+		secureIframeDownload(nodeIds);
+	}
+	return response;
 };
 
 export const inputElement = ((): HTMLInputElement => {

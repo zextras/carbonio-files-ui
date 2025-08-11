@@ -44,6 +44,7 @@ import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanent
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
 import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnershipModal';
+import { useDownloadNodes } from '../../hooks/useDownloadNodes';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { usePreview } from '../../hooks/usePreview';
@@ -62,7 +63,6 @@ import {
 import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import {
-	downloadNode,
 	isFile,
 	isSearchView,
 	formatDate,
@@ -101,6 +101,8 @@ export const NodeListItem = ({
 	const { selectId, isSelectionModeActive, exitSelectionMode, selectedMap } = useSelectionContext();
 	const { viewMode } = useContext(ListContext);
 	const { locale } = useUserInfo();
+
+	const { downloadNodeByType } = useDownloadNodes();
 
 	const params = useParams<URLParams>();
 	const isATrashFilter = useMemo(() => isTrashView(params), [params]);
@@ -275,17 +277,7 @@ export const NodeListItem = ({
 				id: 'Download',
 				icon: 'Download',
 				label: t('actions.download', 'Download'),
-				onClick: (): void => {
-					// download node without version to be sure last version is downloaded
-					downloadNode(node.id);
-					createSnackbar({
-						key: new Date().toLocaleString(),
-						severity: 'info',
-						label: t('snackbar.download.start', 'Your download will start soon'),
-						replace: true,
-						hideButton: true
-					});
-				}
+				onClick: (): void => downloadNodeByType(node)
 			},
 			[Action.ManageShares]: {
 				id: 'ManageShares',
@@ -375,7 +367,7 @@ export const NodeListItem = ({
 			node,
 			openNodeWithDocs,
 			openPreview,
-			createSnackbar,
+			downloadNodeByType,
 			setActiveNode,
 			toggleFlag,
 			openCopyNodesModal,
