@@ -15,7 +15,10 @@ import {
 	PREVIEW_PATH,
 	STORAGES_ENDPOINT,
 	MYSELF_QUOTA_PATH,
-	HEALTH_PATH
+	HEALTH_PATH,
+	DOWNLOAD_PATH,
+	DOWNLOAD_PATH_CHECK,
+	DOWNLOAD_MULTIPLE_PATH
 } from '../carbonio-files-ui-common/constants';
 import handleCopyNodesRequest from '../carbonio-files-ui-common/mocks/handleCopyNodesRequest';
 import handleCreateDocsFileRequest from '../carbonio-files-ui-common/mocks/handleCreateDocsFileRequest';
@@ -25,6 +28,8 @@ import handleCreateShareRequest from '../carbonio-files-ui-common/mocks/handleCr
 import handleDeleteLinksRequest from '../carbonio-files-ui-common/mocks/handleDeleteLinkRequest';
 import handleDeleteNodesRequest from '../carbonio-files-ui-common/mocks/handleDeleteNodesRequest';
 import handleDeleteShareRequest from '../carbonio-files-ui-common/mocks/handleDeleteShareRequest';
+import handleDownloadCheckRequest from '../carbonio-files-ui-common/mocks/handleDownloadCheckRequest';
+import handleDownloadMultipleCheckRequest from '../carbonio-files-ui-common/mocks/handleDownloadMultipleCheckRequest';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import handleFlagNodesRequest from '../carbonio-files-ui-common/mocks/handleFlagNodesRequest';
 import handleGetAccountByEmailRequest from '../carbonio-files-ui-common/mocks/handleGetAccountByEmailRequest';
@@ -32,6 +37,7 @@ import handleGetBaseNodeRequest from '../carbonio-files-ui-common/mocks/handleGe
 import handleGetChildrenRequest from '../carbonio-files-ui-common/mocks/handleGetChildrenRequest';
 import handleGetChildRequest from '../carbonio-files-ui-common/mocks/handleGetChildRequest';
 import handleGetCollaborationLinksRequest from '../carbonio-files-ui-common/mocks/handleGetCollaborationLinksRequest';
+import handleGetConfigsRequest from '../carbonio-files-ui-common/mocks/handleGetConfigsRequest';
 import handleGetLinksRequest from '../carbonio-files-ui-common/mocks/handleGetLinksRequest';
 import handleGetNodeRequest from '../carbonio-files-ui-common/mocks/handleGetNodeRequest';
 import handleGetNotificationsRequest from '../carbonio-files-ui-common/mocks/handleGetNotificationsRequest';
@@ -67,6 +73,7 @@ import {
 	GetChildDocument,
 	GetChildrenDocument,
 	GetCollaborationLinksDocument,
+	GetConfigsDocument,
 	GetLinksDocument,
 	GetNodeDocument,
 	GetNotificationsDocument,
@@ -102,7 +109,8 @@ handlers.push(
 	graphql.query(GetSharesDocument, handleGetSharesRequest),
 	graphql.query(GetVersionsDocument, handleGetVersionsRequest),
 	graphql.query(GetCollaborationLinksDocument, handleGetCollaborationLinksRequest),
-	graphql.query(GetNotificationsDocument, handleGetNotificationsRequest)
+	graphql.query(GetNotificationsDocument, handleGetNotificationsRequest),
+	graphql.query(GetConfigsDocument, handleGetConfigsRequest)
 );
 // mutations
 handlers.push(
@@ -130,7 +138,15 @@ handlers.push(
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:area/:thumbnail`, handleGetPreviewRequest),
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id`, handleGetPreviewRequest),
 	http.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, handleMySelfQuotaRequest),
-	http.get(`${REST_ENDPOINT}${HEALTH_PATH}`, handleHealthRequest)
+	http.get(`${REST_ENDPOINT}${HEALTH_PATH}`, handleHealthRequest),
+	http.get(
+		`${REST_ENDPOINT}${DOWNLOAD_PATH}/:id${DOWNLOAD_PATH_CHECK}`,
+		handleDownloadCheckRequest
+	),
+	http.post(
+		`${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}${DOWNLOAD_PATH_CHECK}`,
+		handleDownloadMultipleCheckRequest
+	)
 );
 
 export default handlers;

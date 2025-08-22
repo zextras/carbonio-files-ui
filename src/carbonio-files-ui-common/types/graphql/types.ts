@@ -63,7 +63,7 @@ export type CollaborationLink = {
 export type Config = {
 	__typename: 'Config';
 	name: Scalars['String']['output'];
-	value: Scalars['String']['output'];
+	value: Maybe<Scalars['String']['output']>;
 };
 
 export type DistributionList = {
@@ -182,6 +182,7 @@ export type Mutation = {
 	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
 	moveNodes: Maybe<Array<File | Folder>>;
 	restoreNodes: Maybe<Array<Maybe<File | Folder>>>;
+	transferOwnership: File | Folder;
 	trashNodes: Maybe<Array<Scalars['ID']['output']>>;
 	updateLink: Maybe<Link>;
 	updateNode: File | Folder;
@@ -267,6 +268,11 @@ export type MutationMoveNodesArgs = {
 
 export type MutationRestoreNodesArgs = {
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+export type MutationTransferOwnershipArgs = {
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	user_id: Scalars['ID']['input'];
 };
 
 export type MutationTrashNodesArgs = {
@@ -368,7 +374,7 @@ export enum NodeType {
 	Video = 'VIDEO'
 }
 
-export type Notification = AddedNode | NewShare | RemovedNode;
+export type Notification = AddedNode | NewShare | RemovedNode | TransferredOwnership;
 
 export type NotificationPage = {
 	__typename: 'NotificationPage';
@@ -381,7 +387,8 @@ export type NotificationPage = {
 export enum NotificationType {
 	AddedNode = 'ADDED_NODE',
 	NewShare = 'NEW_SHARE',
-	RemovedNode = 'REMOVED_NODE'
+	RemovedNode = 'REMOVED_NODE',
+	TransferredOwnership = 'TRANSFERRED_OWNERSHIP'
 }
 
 export type Permissions = {
@@ -411,6 +418,7 @@ export type Query = {
 	getPath: Array<Maybe<File | Folder>>;
 	getRootsList: Array<Maybe<Root>>;
 	getShare: Maybe<Share>;
+	getTransferOwnershipAvailability: Scalars['Boolean']['output'];
 	getUploadItem: Maybe<Scalars['UploadItem']['output']>;
 	getUserById: Maybe<User>;
 	getVersions: Array<Maybe<File>>;
@@ -465,6 +473,11 @@ export type QueryGetPathArgs = {
 export type QueryGetShareArgs = {
 	node_id: Scalars['ID']['input'];
 	share_target_id: Scalars['ID']['input'];
+};
+
+export type QueryGetTransferOwnershipAvailabilityArgs = {
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	user_id: Scalars['ID']['input'];
 };
 
 export type QueryGetUploadItemArgs = {
@@ -547,6 +560,17 @@ export type SnapshotUser = {
 	full_name: Scalars['String']['output'];
 	snapshot_user_id: Scalars['ID']['output'];
 	user_id: Scalars['ID']['output'];
+};
+
+export type TransferredOwnership = {
+	__typename: 'TransferredOwnership';
+	created_at: Scalars['DateTime']['output'];
+	id: Scalars['ID']['output'];
+	notification_type: NotificationType;
+	number_of_nodes: Scalars['Int']['output'];
+	receiving_user: SnapshotUser;
+	resulting_node: SnapshotNode;
+	triggering_user: SnapshotUser;
 };
 
 export type User = {
@@ -1209,6 +1233,15 @@ export type RestoreNodesMutation = {
 		  } & { __typename: 'File' | 'Folder' })
 		| null
 	> | null;
+};
+
+export type TransferOwnershipMutationVariables = Exact<{
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	user_id: Scalars['ID']['input'];
+}>;
+
+export type TransferOwnershipMutation = {
+	transferOwnership: { id: string; name: string } & { __typename: 'File' | 'Folder' };
 };
 
 export type TrashNodesMutationVariables = Exact<{
@@ -1882,7 +1915,7 @@ export type GetCollaborationLinksQuery = {
 export type GetConfigsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetConfigsQuery = {
-	getConfigs: Array<({ name: string; value: string } & { __typename: 'Config' }) | null>;
+	getConfigs: Array<({ name: string; value: string | null } & { __typename: 'Config' }) | null>;
 };
 
 export type GetLinksQueryVariables = Exact<{
@@ -2265,6 +2298,32 @@ export type GetNotificationsQuery = {
 								snapshot_node_id: string;
 							} & { __typename: 'SnapshotNode' };
 					  } & { __typename: 'RemovedNode' })
+					| ({
+							id: string;
+							notification_type: NotificationType;
+							created_at: number;
+							number_of_nodes: number;
+							triggering_user: {
+								user_id: string;
+								full_name: string;
+								email: string;
+								snapshot_user_id: string;
+							} & { __typename: 'SnapshotUser' };
+							receiving_user: {
+								user_id: string;
+								full_name: string;
+								email: string;
+								snapshot_user_id: string;
+							} & { __typename: 'SnapshotUser' };
+							resulting_node: {
+								node_id: string;
+								name: string;
+								type: NodeType;
+								created_at: number;
+								owner_id: string | null;
+								snapshot_node_id: string;
+							} & { __typename: 'SnapshotNode' };
+					  } & { __typename: 'TransferredOwnership' })
 					| null
 				>;
 		  } & { __typename: 'NotificationPage' })
@@ -2357,6 +2416,13 @@ export type GetSharesQuery = {
 		  } & { __typename: 'File' | 'Folder' })
 		| null;
 };
+
+export type GetTransferOwnershipAvailabilityQueryVariables = Exact<{
+	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	user_id: Scalars['ID']['input'];
+}>;
+
+export type GetTransferOwnershipAvailabilityQuery = { getTransferOwnershipAvailability: boolean };
 
 export type GetVersionsQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -4506,6 +4572,65 @@ export const RestoreNodesDocument = {
 		}
 	]
 } as unknown as DocumentNode<RestoreNodesMutation, RestoreNodesMutationVariables>;
+export const TransferOwnershipDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'mutation',
+			name: { kind: 'Name', value: 'transferOwnership' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'node_ids' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+						}
+					}
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'user_id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+					}
+				}
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'transferOwnership' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'node_ids' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'node_ids' } }
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'user_id' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'user_id' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'name' } }
+							]
+						}
+					}
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<TransferOwnershipMutation, TransferOwnershipMutationVariables>;
 export const TrashNodesDocument = {
 	kind: 'Document',
 	definitions: [
@@ -7094,6 +7219,72 @@ export const GetNotificationsDocument = {
 														{ kind: 'Field', name: { kind: 'Name', value: 'removed_node_type' } }
 													]
 												}
+											},
+											{
+												kind: 'InlineFragment',
+												typeCondition: {
+													kind: 'NamedType',
+													name: { kind: 'Name', value: 'TransferredOwnership' }
+												},
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'notification_type' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'triggering_user' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'user_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_user_id' }
+																	}
+																]
+															}
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'receiving_user' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'user_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_user_id' }
+																	}
+																]
+															}
+														},
+														{ kind: 'Field', name: { kind: 'Name', value: 'number_of_nodes' } },
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'resulting_node' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_node_id' }
+																	}
+																]
+															}
+														}
+													]
+												}
 											}
 										]
 									}
@@ -7455,6 +7646,61 @@ export const GetSharesDocument = {
 		}
 	]
 } as unknown as DocumentNode<GetSharesQuery, GetSharesQueryVariables>;
+export const GetTransferOwnershipAvailabilityDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getTransferOwnershipAvailability' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'node_ids' } },
+					type: {
+						kind: 'ListType',
+						type: {
+							kind: 'NonNullType',
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+						}
+					}
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'user_id' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+					}
+				}
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'getTransferOwnershipAvailability' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'node_ids' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'node_ids' } }
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'user_id' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'user_id' } }
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<
+	GetTransferOwnershipAvailabilityQuery,
+	GetTransferOwnershipAvailabilityQueryVariables
+>;
 export const GetVersionsDocument = {
 	kind: 'Document',
 	definitions: [

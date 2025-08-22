@@ -45,11 +45,12 @@ export const DRAG_TYPES = {
 	move: 'files-drag-move',
 	markForDeletion: 'files-drag-markfordeletion'
 };
-export const SHARE_CHIP_SIZE = 'small';
-export const SHARE_CHIP_MAX_WIDTH = '18.75rem';
+export const SHARE_TEXT_SIZE = 'small';
 export const CONFIGS = {
 	MAX_VERSIONS: 'max-number-of-versions',
-	MAX_KEEP_VERSIONS: 'max-number-of-keep-versions'
+	MAX_KEEP_VERSIONS: 'max-number-of-keep-versions',
+	MAX_DOWNLOAD_SIZE: 'max-downloadable-size-in-mb',
+	MAX_UPLOAD_SIZE: 'max-uploadable-size-in-mb'
 } as const;
 export const PREVIEW_MAX_SIZE = 20971520;
 export const FILTER_PARAMS: Record<URLParams['filter'], SearchParams> = {
@@ -155,6 +156,8 @@ export const STORAGES_ENDPOINT = '/services/storages';
 // add leading slash in path
 export const OPEN_FILE_PATH = '/files/open';
 export const DOWNLOAD_PATH = '/download';
+export const DOWNLOAD_PATH_CHECK = '/check';
+export const DOWNLOAD_MULTIPLE_PATH = '/download-multiple';
 export const UPLOAD_PATH = '/upload';
 export const UPLOAD_TO_PATH = '/upload-to';
 export const UPLOAD_VERSION_PATH = '/upload-version';
@@ -189,5 +192,6 @@ export const FILES_ROUTE = 'files';
 export const FILES_APP_ID = 'carbonio-files-ui';
 
 export const TRACKER_EVENT = {
-	openDocumentWithDocs: 'Open document with Docs'
+	openDocumentWithDocs: 'Open document with Docs',
+	transferOwnership: 'Transfer ownership'
 } as const;

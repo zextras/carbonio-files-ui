@@ -18,6 +18,7 @@ import { ListContent } from './ListContent';
 import { useSelectionContext } from './SelectionProvider';
 import ListHeader from '../../../components/ListHeader';
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { useIsCarbonioCE } from '../../../hooks/useIsCarbonioCE';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { draggedItemsVar } from '../../apollo/dragAndDropVar';
@@ -43,6 +44,8 @@ import { OpenCopyModal, useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { OpenMoveModal, useMoveModal } from '../../hooks/modals/useMoveModal';
 import { OpenRenameModal, useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnershipModal';
+import { useDownloadNodes } from '../../hooks/useDownloadNodes';
 import { useHeaderActions } from '../../hooks/useHeaderActions';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
@@ -58,7 +61,7 @@ import {
 } from '../../utils/ActionsFactory';
 import { getPreviewSrc, isSupportedByPreview } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
-import { downloadNode, humanFileSize, isFile, isFolder } from '../../utils/utils';
+import { humanFileSize, isFile, isFolder } from '../../utils/utils';
 
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};
@@ -126,6 +129,8 @@ export const List = ({
 		icons?: string[];
 	}>();
 
+	const { downloadMultipleNodes, downloadNodeByType } = useDownloadNodes();
+
 	const folderNode = useMemo(
 		() =>
 			getChildrenParentData?.getNode &&
@@ -151,16 +156,19 @@ export const List = ({
 
 	const { openCopyNodesModal } = useCopyModal(exitSelectionMode);
 
+	const { openTransferOwnershipModal } = useTransferOwnershipModal(exitSelectionMode);
+
 	const selectedNodes = useMemo(
 		() => nodes.filter((node) => selectedIDs.includes(node.id)),
 		[nodes, selectedIDs]
 	);
 	const openNodeWithDocs = useOpenWithDocs();
+	const isCarbonioCE = useIsCarbonioCE();
 	const { canUsePreview, canUseDocs } = useHealthInfo();
 
 	const permittedSelectionModeActions = useMemo(
-		() => getAllPermittedActions({ nodes: selectedNodes, canUsePreview, canUseDocs }),
-		[canUseDocs, canUsePreview, selectedNodes]
+		() => getAllPermittedActions({ nodes: selectedNodes, canUsePreview, canUseDocs, isCarbonioCE }),
+		[canUseDocs, canUsePreview, selectedNodes, isCarbonioCE]
 	);
 
 	const setActiveNodeHandler = useCallback(
@@ -224,6 +232,11 @@ export const List = ({
 		[folderId, openCopyNodesModal, selectedNodes]
 	);
 
+	const openTransferOwnershipModalSelection = useCallback(
+		() => openTransferOwnershipModal(selectedNodes),
+		[openTransferOwnershipModal, selectedNodes]
+	);
+
 	const renameActionCallback = useCallback(
 		(nodeId: string) => {
 			exitSelectionMode();
@@ -247,20 +260,16 @@ export const List = ({
 	const createSnackbar = useSnackbar();
 
 	const downloadSelection = useCallback(() => {
-		const nodeToDownload = nodes.find((node) => node.id === selectedIDs[0]);
-		if (nodeToDownload) {
-			// download node without version to be sure last version is downloaded
-			downloadNode(nodeToDownload.id);
-			exitSelectionMode();
-			createSnackbar({
-				key: new Date().toLocaleString(),
-				severity: 'info',
-				label: t('snackbar.download.start', 'Your download will start soon'),
-				replace: true,
-				hideButton: true
-			});
+		if (selectedIDs.length === 1) {
+			const nodeToDownload = nodes.find((node) => node.id === selectedIDs[0]);
+			if (!nodeToDownload) return;
+			downloadNodeByType(nodeToDownload);
 		}
-	}, [createSnackbar, nodes, selectedIDs, t, exitSelectionMode]);
+		if (selectedIDs.length > 1) {
+			downloadMultipleNodes(selectedIDs);
+		}
+		exitSelectionMode();
+	}, [selectedIDs, exitSelectionMode, nodes, downloadNodeByType, downloadMultipleNodes]);
 
 	const { sendViaMail } = useSendViaMail();
 
@@ -418,6 +427,12 @@ export const List = ({
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
+			[Action.TransferOwnership]: {
+				id: 'TransferOwnership',
+				icon: 'SwapOutline',
+				label: t('actions.transferOwnership', 'Transfer ownership'),
+				onClick: openTransferOwnershipModalSelection
+			},
 			[Action.Edit]: {
 				id: 'Edit',
 				icon: 'Edit2Outline',
@@ -515,6 +530,7 @@ export const List = ({
 			openDeletePermanentlyModal,
 			openMoveNodesModalSelection,
 			openRenameModalSelection,
+			openTransferOwnershipModalSelection,
 			openWithDocsSelection,
 			previewSelection,
 			restoreSelection,

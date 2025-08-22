@@ -58,8 +58,10 @@ describe('Copy', () => {
 			currentFolder.permissions.can_write_folder = true;
 			const file = populateFile();
 			file.parent = currentFolder;
+			file.flagged = true;
 			const folder = populateFolder();
 			folder.parent = currentFolder;
+			folder.flagged = true;
 			currentFolder.children.nodes.push(file, folder);
 
 			const mocks = {

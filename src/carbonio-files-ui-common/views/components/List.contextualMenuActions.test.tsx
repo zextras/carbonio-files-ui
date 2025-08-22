@@ -495,9 +495,9 @@ describe('Contextual menu actions', () => {
 			expect(screen.getByText(ACTION_REGEXP.moveToTrash)).toBeVisible();
 			expect(screen.getByText(ACTION_REGEXP.copy)).toBeVisible();
 			expect(screen.getByText(ACTION_REGEXP.flag)).toBeVisible();
+			expect(screen.getByText(ACTION_REGEXP.download)).toBeVisible();
 			expect(screen.queryByText(ACTION_REGEXP.openDocument)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.rename)).not.toBeInTheDocument();
-			expect(screen.queryByText(ACTION_REGEXP.download)).not.toBeInTheDocument();
 			expect(screen.queryByText(ACTION_REGEXP.unflag)).not.toBeInTheDocument();
 		});
 

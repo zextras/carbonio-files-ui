@@ -8,17 +8,6 @@ import * as shell from '@zextras/carbonio-shell-ui';
 
 import { LOGGED_USER_ACCOUNT } from '../../src/mocks/constants';
 
-export const soapFetch: typeof shell.soapFetch = (req, body) =>
-	Promise.reject(
-		new Error(
-			`soap-fetch is not mocked. Mock it in the specific test to make it return wat you want.\n
-		Here the params of the request:\n
-		Request type: ${req}\n
-		Request body: ${body}
-		`
-		)
-	);
-
 export const useUserAccount: typeof shell.useUserAccount = () => LOGGED_USER_ACCOUNT;
 export const getUserAccount: typeof shell.getUserAccount = () => LOGGED_USER_ACCOUNT;
 export const report: typeof shell.report = () => '';
@@ -47,6 +36,7 @@ export const useTracker: typeof shell.useTracker = () => ({
 	enableTracker: noop,
 	reset: noop
 });
+export const useIsCarbonioCE: typeof shell.useIsCarbonioCE = () => false;
 export const useAuthenticated: typeof shell.useAuthenticated = () => true;
 export const useIntegratedFunction: typeof shell.useIntegratedFunction = <T,>() => [
 	((): void => undefined) as T,

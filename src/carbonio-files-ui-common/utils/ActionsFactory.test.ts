@@ -15,6 +15,7 @@ import {
 	canPreview,
 	canRename,
 	canRestore,
+	canTransferOwnership,
 	canUnFlag
 } from './ActionsFactory';
 import { docsHandledMimeTypes, isFile, isFolder } from './utils';
@@ -872,6 +873,58 @@ describe('ActionsFactory', () => {
 			node.parent.permissions.can_write_file = true;
 			node.parent.permissions.can_write_folder = true;
 			expect(canBeMoveDestination(destination, [node, destination])).toBe(false);
+		});
+	});
+
+	describe('canTransferOwnership', () => {
+		it('should throw if nodes array is empty', () => {
+			const canTransferOwnershipWrapper: () => boolean = () => canTransferOwnership({ nodes: [] });
+			expect(canTransferOwnershipWrapper).toThrow(
+				'cannot evaluate canTransferOwnership on empty nodes array'
+			);
+		});
+		it('should return true if all nodes are owned by the logged user, isCarbonioCE is false and there are not trashed items', () => {
+			const nodes = populateNodes(2);
+			nodes.forEach((node) => {
+				node.owner = populateUser(LOGGED_USER.id);
+				node.permissions.can_write_file = true;
+				node.permissions.can_write_folder = true;
+				node.rootId = ROOTS.LOCAL_ROOT;
+			});
+			expect(canTransferOwnership({ nodes, isCarbonioCE: false })).toBeTruthy();
+		});
+		it('should return false if at least one node is not owned by the logged user', () => {
+			const nodes = populateNodes(2);
+			nodes[0].owner = populateUser(LOGGED_USER.id);
+			nodes[0].permissions.can_write_file = true;
+			nodes[0].permissions.can_write_folder = true;
+			nodes[0].rootId = ROOTS.LOCAL_ROOT;
+			nodes[1].owner = populateUser('other-user');
+			nodes[1].permissions.can_write_file = true;
+			nodes[1].permissions.can_write_folder = true;
+			nodes[1].rootId = ROOTS.LOCAL_ROOT;
+			expect(canTransferOwnership({ nodes, isCarbonioCE: false })).toBeFalsy();
+		});
+		it('should return false if isCarbonioCE is true', () => {
+			const nodes = populateNodes(2);
+			nodes.forEach((node) => {
+				node.owner = populateUser(LOGGED_USER.id);
+				node.permissions.can_write_file = true;
+				node.permissions.can_write_folder = true;
+				node.rootId = ROOTS.LOCAL_ROOT;
+			});
+			expect(canTransferOwnership({ nodes, isCarbonioCE: true })).toBeFalsy();
+		});
+		it('should return false if there are trashed items', () => {
+			const nodes = populateNodes(2);
+			nodes.forEach((node) => {
+				node.owner = populateUser(LOGGED_USER.id);
+				node.permissions.can_write_file = true;
+				node.permissions.can_write_folder = true;
+				node.rootId = ROOTS.LOCAL_ROOT;
+			});
+			nodes[1].rootId = ROOTS.TRASH;
+			expect(canTransferOwnership({ nodes, isCarbonioCE: false })).toBeFalsy();
 		});
 	});
 });

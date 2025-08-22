@@ -186,9 +186,11 @@ describe('Filter View', () => {
 				destinationFolder.permissions.can_write_folder = true;
 				destinationFolder.permissions.can_write_file = true;
 				destinationFolder.parent = parentFolder;
+				destinationFolder.flagged = false;
 				const nodesToCopy = currentFilter.slice(0, 2);
 				forEach(nodesToCopy, (mockedNode) => {
 					mockedNode.parent = parentFolder;
+					mockedNode.flagged = false;
 				});
 				parentFolder.children.nodes.push(destinationFolder, ...nodesToCopy);
 

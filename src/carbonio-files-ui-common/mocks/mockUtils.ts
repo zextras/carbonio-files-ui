@@ -43,6 +43,7 @@ import {
 	SharePermission,
 	SnapshotNode,
 	SnapshotUser,
+	TransferredOwnership,
 	User
 } from '../types/graphql/types';
 import {
@@ -148,7 +149,7 @@ export function populateShare(
 	};
 }
 
-export function populateShares(node: GQLFile | GQLFolder, limit = 1): Share[] {
+export function populateShares(node: GQLFile | GQLFolder, limit = 1, onlyUser = false): Share[] {
 	const shares: Share[] = [];
 	const nodeRef: Pick<GQLFile | GQLFolder, 'id' | 'type' | '__typename'> = {
 		id: node.id,
@@ -156,7 +157,7 @@ export function populateShares(node: GQLFile | GQLFolder, limit = 1): Share[] {
 		__typename: node.__typename
 	};
 	for (let i = 0; i < limit; i += 1) {
-		shares.push(populateShare(nodeRef as Share['node'], i));
+		shares.push(populateShare(nodeRef as Share['node'], i, onlyUser ? populateUser() : undefined));
 	}
 	return shares;
 }
@@ -546,7 +547,9 @@ export function populateLinks(node: GQLFile | GQLFolder, limit = 2): Link[] {
 export function populateConfigs(configMap?: Record<string, string>): Config[] {
 	const defaultConfigs: Record<(typeof CONFIGS)[keyof typeof CONFIGS], string> = {
 		[CONFIGS.MAX_VERSIONS]: '5',
-		[CONFIGS.MAX_KEEP_VERSIONS]: '3'
+		[CONFIGS.MAX_KEEP_VERSIONS]: '3',
+		[CONFIGS.MAX_DOWNLOAD_SIZE]: '100',
+		[CONFIGS.MAX_UPLOAD_SIZE]: '100'
 	};
 	const configs = { ...defaultConfigs, ...configMap };
 	return map(configs, (configValue, configName) => ({
@@ -608,7 +611,7 @@ function populateSnapshotNode(): SnapshotNode {
 	};
 }
 
-function populateTriggeringUser(): SnapshotUser {
+function populateSnapshotUser(): SnapshotUser {
 	return {
 		__typename: 'SnapshotUser',
 		email: faker.internet.email(),
@@ -627,7 +630,7 @@ export function populateAddedNodeNotification(type?: AddedNodeType): AddedNode {
 		destination_folder: populateSnapshotNode(),
 		id: faker.string.uuid(),
 		notification_type: NotificationType.AddedNode,
-		triggering_user: populateTriggeringUser()
+		triggering_user: populateSnapshotUser()
 	};
 }
 
@@ -638,7 +641,7 @@ export function populateNewShareNotification(): NewShare {
 		id: faker.string.uuid(),
 		node: populateSnapshotNode(),
 		notification_type: NotificationType.NewShare,
-		triggering_user: populateTriggeringUser()
+		triggering_user: populateSnapshotUser()
 	};
 }
 
@@ -651,7 +654,20 @@ export function populateRemovedNodeNotification(type?: RemovedNodeType): Removed
 		origin_folder: populateSnapshotNode(),
 		removed_node: populateSnapshotNode(),
 		removed_node_type: type ?? RemovedNodeType.Delete,
-		triggering_user: populateTriggeringUser()
+		triggering_user: populateSnapshotUser()
+	};
+}
+
+export function populateTransferredOwnershipNotification(): TransferredOwnership {
+	return {
+		__typename: 'TransferredOwnership',
+		created_at: faker.date.past().getTime(),
+		id: faker.string.uuid(),
+		triggering_user: populateSnapshotUser(),
+		notification_type: NotificationType.TransferredOwnership,
+		number_of_nodes: faker.number.int({ min: 1, max: 10 }),
+		receiving_user: populateSnapshotUser(),
+		resulting_node: populateSnapshotNode()
 	};
 }
 

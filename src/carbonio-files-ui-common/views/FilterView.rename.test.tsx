@@ -255,7 +255,8 @@ describe('Filter View', () => {
 
 				const mocks = {
 					Query: {
-						findNodes: mockFindNodes(nodes)
+						findNodes: mockFindNodes(nodes),
+						getNode: mockGetNode({ getNode: [nodes[1]] })
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(

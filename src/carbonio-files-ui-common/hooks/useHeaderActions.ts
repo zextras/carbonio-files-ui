@@ -12,9 +12,9 @@ import { useHealthInfo } from './useHealthInfo';
 import { useOpenWithDocs } from './useOpenWithDocs';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { DISPLAYER_TABS } from '../constants';
+import { useDownloadNodes } from './useDownloadNodes';
 import { File } from '../types/graphql/types';
 import { canEdit, canOpenWithDocs } from '../utils/ActionsFactory';
-import { downloadNode } from '../utils/utils';
 
 type PreviewHeaderAction = NonNullable<PreviewWrapperProps['actions']>[number];
 
@@ -25,6 +25,7 @@ export function useHeaderActions(): (
 	const openNodeWithDocs = useOpenWithDocs();
 	const { setActiveNode } = useActiveNode();
 	const { canUseDocs } = useHealthInfo();
+	const { downloadNode } = useDownloadNodes();
 
 	return useCallback(
 		(node) => {
@@ -63,6 +64,6 @@ export function useHeaderActions(): (
 			}
 			return actions;
 		},
-		[canUseDocs, openNodeWithDocs, setActiveNode, t]
+		[canUseDocs, downloadNode, openNodeWithDocs, setActiveNode, t]
 	);
 }

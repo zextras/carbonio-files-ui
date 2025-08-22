@@ -30,14 +30,14 @@ import {
 } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { AddShareChip } from './AddShareChip';
-import { EMAIL_REGEXP } from '../../../../constants';
-import { soapFetch } from '../../../../network/network';
-import { useCreateShareMutation } from '../../../hooks/graphql/mutations/useCreateShareMutation';
-import { useGetAccountByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountByEmailQuery';
-import { useGetAccountsByEmailQuery } from '../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
-import { Contact, Node, Role, ShareChip } from '../../../types/common';
-import { Account, Maybe, Share, User } from '../../../types/graphql/types';
+import { AddCollaboratorPermission } from './AddCollaboratorPermission';
+import { EMAIL_REGEXP } from '../../../../../constants';
+import { isRawErrorSoapResponse, soapFetch } from '../../../../../network/network';
+import { useCreateShareMutation } from '../../../../hooks/graphql/mutations/useCreateShareMutation';
+import { useGetAccountByEmailQuery } from '../../../../hooks/graphql/queries/useGetAccountByEmailQuery';
+import { useGetAccountsByEmailQuery } from '../../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
+import { Contact, Node, Role, ShareChip } from '../../../../types/common';
+import { Account, Maybe, Share, User } from '../../../../types/graphql/types';
 import {
 	AutocompleteRequest,
 	AutocompleteResponse,
@@ -49,11 +49,11 @@ import {
 	isDerefMember,
 	isDistributionList,
 	Match
-} from '../../../types/network';
-import { DeepPick } from '../../../types/utils';
-import { getChipLabel, sharePermissionsGetter } from '../../../utils/utils';
-import { RouteLeavingGuard } from '../RouteLeavingGuard';
-import { Hint, Loader } from '../StyledComponents';
+} from '../../../../types/network';
+import { DeepPick } from '../../../../types/utils';
+import { getChipLabel, sharePermissionsGetter } from '../../../../utils/utils';
+import { RouteLeavingGuard } from '../../RouteLeavingGuard';
+import { Hint, Loader } from '../../StyledComponents';
 
 interface AddSharingProps {
 	node: Node<'id' | 'owner' | 'permissions'> & {
@@ -145,7 +145,11 @@ function cleanEmails<T extends { email?: string }>(
 
 export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
-
+	const [role, setRole] = useState(Role.Viewer);
+	const [sharingAllowed, setSharingAllowed] = useState(false);
+	const toggleSharingAllowed = useCallback(() => {
+		setSharingAllowed((prev) => !prev);
+	}, []);
 	const [createShare] = useCreateShareMutation();
 	const getAccountByEmailLazyQuery = useGetAccountByEmailQuery();
 	const getAccountsByEmailLazyQuery = useGetAccountsByEmailQuery();
@@ -173,7 +177,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 				return createShare(
 					node,
 					chip.value.id,
-					sharePermissionsGetter(chip.value.role, chip.value.sharingAllowed),
+					sharePermissionsGetter(role, sharingAllowed),
 					customMessageText.length > 0 ? customMessageText : undefined
 				);
 			}
@@ -199,16 +203,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 			setMailTextValue(notCreatedChips.length === 0 ? '' : customMessageText);
 			return results;
 		});
-	}, [chips, createShare, mailTextValue, node]);
-
-	const updateChip = useCallback<ShareChip['value']['onUpdate']>((id, updatedValue) => {
-		setChips((prevState) => {
-			const newState = [...prevState];
-			const idx = findIndex(newState, (item) => item.value.id === id);
-			newState[idx] = { ...newState[idx], value: { ...newState[idx].value, ...updatedValue } };
-			return newState;
-		});
-	}, []);
+	}, [chips, createShare, mailTextValue, node, role, sharingAllowed]);
 
 	const addShareContact = useCallback(
 		(contact: Contact) => (): void => {
@@ -226,11 +221,9 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 								value: {
 									...contact,
 									id: result.data.getAccountByEmail.id,
-									role: Role.Viewer,
-									sharingAllowed: false,
-									onUpdate: updateChip,
 									node
-								}
+								},
+								label: getChipLabel(contact)
 							};
 							setChips((c) => [...c, contactWithId]);
 						}
@@ -238,7 +231,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					.catch(() => null); // FIXME: this catch shouldn't be necessary but for some reason it is
 			}
 		},
-		[chips, getAccountByEmailLazyQuery, node, updateChip]
+		[chips, getAccountByEmailLazyQuery, node]
 	);
 
 	const addShareContactGroup = useCallback(
@@ -248,86 +241,92 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 				inputRef.current.focus();
 			}
 			setSearchResult([]);
-			soapFetch<GetContactsRequest, GetContactsResponse>('GetContacts', {
+			soapFetch<GetContactsRequest, { GetContactsResponse: GetContactsResponse }>('GetContacts', {
 				cn: {
 					id: contactGroupMatch.id
 				},
 				derefGroupMember: true
-			}).then((result) => {
-				const members = result.cn?.[0].m;
-				const galMembers: Array<ShareChip['value']> = [];
-				const inlineAndContactMemberEmails: string[] = [];
-
-				forEach(members, (member) => {
-					if (member.type === 'I') {
-						inlineAndContactMemberEmails.push(member.value);
-					} else if (member.type === 'C' && isDerefMember(member)) {
-						inlineAndContactMemberEmails.push(member.cn[0]._attrs.email);
-					} else if (
-						member.type === 'G' &&
-						isDerefMember(member) &&
-						// exclude distribution lists from members
-						member.cn[0]._attrs.type !== 'group'
-					) {
-						galMembers.push({
-							...member.cn[0]._attrs,
-							role: Role.Viewer,
-							sharingAllowed: false,
-							id: member.cn[0]._attrs.zimbraId,
-							onUpdate: updateChip,
-							node
-						});
+			})
+				.then((rawSoapResponse) => {
+					if (isRawErrorSoapResponse(rawSoapResponse)) {
+						throw new Error('Error fetching GetContactsRequest');
 					}
-				});
+					return rawSoapResponse.Body.GetContactsResponse;
+				})
+				.then((result) => {
+					const members = result.cn?.[0].m;
+					const galMembers: Array<ShareChip['value']> = [];
+					const inlineAndContactMemberEmails: string[] = [];
 
-				if (size(inlineAndContactMemberEmails) > 0) {
-					const uniqMemberEmails = uniq(inlineAndContactMemberEmails);
-					getAccountsByEmailLazyQuery({
-						variables: {
-							emails: uniqMemberEmails
-						}
-					}).then((getAccountsByEmailLazyQueryResult) => {
-						if (getAccountsByEmailLazyQueryResult.data?.getAccountsByEmail) {
-							const validAccountsMap = keyBy(
-								filter(
-									getAccountsByEmailLazyQueryResult.data?.getAccountsByEmail,
-									(acc) => acc !== null
-								),
-								'email'
-							);
-
-							const mappedMembers = map<string, ShareChip['value']>(uniqMemberEmails, (email) => ({
-								...validAccountsMap[email],
-								email,
-								role: Role.Viewer,
-								sharingAllowed: false,
-								id: validAccountsMap[email]?.id,
-								onUpdate: updateChip,
+					forEach(members, (member) => {
+						if (member.type === 'I') {
+							inlineAndContactMemberEmails.push(member.value);
+						} else if (member.type === 'C' && isDerefMember(member)) {
+							inlineAndContactMemberEmails.push(member.cn[0]._attrs.email);
+						} else if (
+							member.type === 'G' &&
+							isDerefMember(member) &&
+							// exclude distribution lists from members
+							member.cn[0]._attrs.type !== 'group'
+						) {
+							galMembers.push({
+								...member.cn[0]._attrs,
+								id: member.cn[0]._attrs.zimbraId,
 								node
-							}));
-
-							const cleanedEmails = cleanEmails([...mappedMembers, ...galMembers], chips, node);
-							const cleanedChips = map<ShareChip['value'], ShareChip>(
-								cleanedEmails,
-								(chipValue) => ({
-									id: chipValue.id,
-									value: chipValue
-								})
-							);
-
-							setChips((c) => [...c, ...cleanedChips]);
+							});
 						}
 					});
-				} else {
-					const cleanedEmails = cleanEmails(galMembers, chips, node);
-					const cleanedChips = map<ShareChip['value'], ShareChip>(cleanedEmails, (chipValue) => ({
-						value: chipValue
-					}));
-					setChips((c) => [...c, ...cleanedChips]);
-				}
-			});
+
+					if (size(inlineAndContactMemberEmails) > 0) {
+						const uniqMemberEmails = uniq(inlineAndContactMemberEmails);
+						getAccountsByEmailLazyQuery({
+							variables: {
+								emails: uniqMemberEmails
+							}
+						}).then((getAccountsByEmailLazyQueryResult) => {
+							if (getAccountsByEmailLazyQueryResult.data?.getAccountsByEmail) {
+								const validAccountsMap = keyBy(
+									filter(
+										getAccountsByEmailLazyQueryResult.data?.getAccountsByEmail,
+										(acc) => acc !== null
+									),
+									'email'
+								);
+
+								const mappedMembers = map<string, ShareChip['value']>(
+									uniqMemberEmails,
+									(email) => ({
+										...validAccountsMap[email],
+										email,
+										id: validAccountsMap[email]?.id,
+										node
+									})
+								);
+
+								const cleanedEmails = cleanEmails([...mappedMembers, ...galMembers], chips, node);
+								const cleanedChips = map<ShareChip['value'], ShareChip>(
+									cleanedEmails,
+									(chipValue) => ({
+										id: chipValue.id,
+										value: chipValue,
+										label: getChipLabel(chipValue)
+									})
+								);
+
+								setChips((c) => [...c, ...cleanedChips]);
+							}
+						});
+					} else {
+						const cleanedEmails = cleanEmails(galMembers, chips, node);
+						const cleanedChips = map<ShareChip['value'], ShareChip>(cleanedEmails, (chipValue) => ({
+							value: chipValue,
+							label: getChipLabel(chipValue)
+						}));
+						setChips((c) => [...c, ...cleanedChips]);
+					}
+				});
 		},
-		[chips, getAccountsByEmailLazyQuery, node, updateChip]
+		[chips, getAccountsByEmailLazyQuery, node]
 	);
 
 	const search = useMemo(
@@ -339,14 +338,24 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 						return;
 					}
 					setLoading(true);
-					soapFetch<AutocompleteRequest, AutocompleteResponse>('AutoComplete', {
-						includeGal: true,
-						needExp: true,
-						t: 'all',
-						name: {
-							_content: textContent
+
+					soapFetch<AutocompleteRequest, { AutoCompleteResponse: AutocompleteResponse }>(
+						'AutoComplete',
+						{
+							includeGal: true,
+							needExp: true,
+							t: 'all',
+							name: {
+								_content: textContent
+							}
 						}
-					})
+					)
+						.then((rawSoapResponse) => {
+							if (isRawErrorSoapResponse(rawSoapResponse)) {
+								throw new Error('Error fetching autocomplete results');
+							}
+							return rawSoapResponse.Body.AutoCompleteResponse;
+						})
 						.then(removeDL)
 						.then(extractCleanMailIfNotAGroup)
 						.then((remoteResults) => {
@@ -367,11 +376,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 		const filterValidShares = filter<ChipItem, ShareChip>(
 			newChips,
 			(chip): chip is ShareChip =>
-				chip !== undefined &&
-				chip !== null &&
-				typeof chip.value === 'object' &&
-				chip.value !== null &&
-				'role' in chip.value
+				chip !== undefined && chip !== null && typeof chip.value === 'object' && chip.value !== null
 		);
 		setChips(filterValidShares);
 	}, []);
@@ -451,8 +456,9 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					</Text>
 				</RouteLeavingGuard>
 			)}
-			<Container data-testid="add-shares-input-container">
+			<Container data-testid="add-shares-input-container" orientation={'horizontal'} gap={'0.5rem'}>
 				<ChipInput
+					style={{ flexGrow: 1, minWidth: 0 }}
 					inputRef={inputRef}
 					placeholder={t('displayer.share.addShare.input.placeholder', 'Add new people or groups')}
 					confirmChipOnBlur={false}
@@ -460,7 +466,6 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					onInputType={onType}
 					onChange={onChipsChange}
 					value={chips}
-					ChipComponent={AddShareChip}
 					options={dropdownItems}
 					onAdd={onAdd}
 					background="gray5"
@@ -468,8 +473,14 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					wrap="wrap"
 					data-testid="add-sharing-chip-input"
 				/>
+				<AddCollaboratorPermission
+					node={node}
+					role={role}
+					setRole={setRole}
+					sharingAllowed={sharingAllowed}
+					toggleSharingAllowed={toggleSharingAllowed}
+				/>
 			</Container>
-
 			<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
 				<Button
 					label={t('displayer.share.addShare.button', 'Share')}

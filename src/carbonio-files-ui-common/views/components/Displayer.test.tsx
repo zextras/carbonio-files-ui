@@ -218,7 +218,7 @@ describe('Displayer', () => {
 
 	test('click on collaborators avatar in details tab open shares tab', async () => {
 		const node = populateNode();
-		node.shares = populateShares(node, 10);
+		node.shares = populateShares(node, 10, true);
 		node.permissions.can_share = false;
 		const mocks = {
 			Query: {
@@ -248,7 +248,7 @@ describe('Displayer', () => {
 
 	test('all collaborators are loaded inside the sharing tab when navigating from the details tab', async () => {
 		const node = populateNode();
-		node.shares = populateShares(node, 100);
+		node.shares = populateShares(node, 100, true);
 		node.permissions.can_share = false;
 		const mocks = {
 			Query: {

@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { map } from 'lodash';
 import { Route, Routes } from 'react-router-dom';
 
@@ -52,7 +52,6 @@ describe('Filter View', () => {
 			expect(nodeItem).toBeVisible();
 			expect(screen.queryByText(/details/)).not.toBeInTheDocument();
 			await user.click(nodeItem);
-			await waitForElementToBeRemoved(screen.queryByText(DISPLAYER_EMPTY_MESSAGE));
 			await screen.findByText(/details/i);
 			expect(screen.getByText(/details/i)).toBeVisible();
 			const displayer = screen.getByTestId(SELECTORS.displayer);
