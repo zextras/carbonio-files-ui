@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.13.0](https://github.com/zextras/carbonio-files-ui/compare/v2.12.0...v2.13.0) (2025-08-22)
+
+
+### Features
+
+* add download multiple feature ([11959b5](https://github.com/zextras/carbonio-files-ui/commit/11959b50cf0f1d7100cda5370b1f6d6b27c31f38)), closes [#501](https://github.com/zextras/carbonio-files-ui/issues/501)
+* change Collaboration link section to include all types ([43592aa](https://github.com/zextras/carbonio-files-ui/commit/43592aac87af42745a4467953ed47c3230cefed9)), closes [#493](https://github.com/zextras/carbonio-files-ui/issues/493)
+* dblClick set item as active too ([212c47d](https://github.com/zextras/carbonio-files-ui/commit/212c47db8fbe9c8c5dc2fb97bd853e0be260e4cc)), closes [#488](https://github.com/zextras/carbonio-files-ui/issues/488)
+* implement transfer ownership ([7e3e72a](https://github.com/zextras/carbonio-files-ui/commit/7e3e72a84182e81a640021a708e449eb809838bb)), closes [#495](https://github.com/zextras/carbonio-files-ui/issues/495)
+* improve usability of the collaboration section ([76faf00](https://github.com/zextras/carbonio-files-ui/commit/76faf00d01f106d2c3b487a256d9a4b1c5b97e46)), closes [#502](https://github.com/zextras/carbonio-files-ui/issues/502)
+
+
+### Bug Fixes
+
+* clean inputs on reset click ([d9ce016](https://github.com/zextras/carbonio-files-ui/commit/d9ce016aad5432098f5210c3aaf4d4af9101901d)), closes [#489](https://github.com/zextras/carbonio-files-ui/issues/489)
+
 ## [2.12.0](https://github.com/zextras/carbonio-files-ui/compare/v2.11.1...v2.12.0) (2025-05-19)
 
 
