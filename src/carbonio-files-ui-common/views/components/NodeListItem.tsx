@@ -7,11 +7,10 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
+import { Action as DSAction, useSnackbar, useTheme } from '@zextras/carbonio-design-system';
 import { includes, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
-import { useTheme } from 'styled-components';
 
 import { Dropzone } from './Dropzone';
 import { NodeAvatarIcon } from './NodeAvatarIcon';

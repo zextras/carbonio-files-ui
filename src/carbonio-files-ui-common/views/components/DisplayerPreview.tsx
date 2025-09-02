@@ -5,11 +5,11 @@
  */
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import styled from '@emotion/styled';
 import { Button, Container, Icon, Text } from '@zextras/carbonio-design-system';
 import { PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { NodeType } from '../../types/graphql/types';
 import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';

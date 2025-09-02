@@ -8,7 +8,6 @@
 
 import React from 'react';
 
-import 'jest-styled-components';
 import { ReactiveVar } from '@apollo/client';
 import { act, waitFor } from '@testing-library/react';
 import { forEach, noop, size } from 'lodash';

@@ -95,8 +95,7 @@ describe('List', () => {
 			await user.dblClick(screen.getByText(node.name));
 			await screen.findByTestId(SELECTORS.pdfPreview);
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
-			// 1 inside the list, 1 in the preview
-			expect(screen.getAllByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toHaveLength(2);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
 			expect(
 				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })
 			).toBeVisible();
@@ -143,8 +142,7 @@ describe('List', () => {
 			await screen.findByTestId(SELECTORS.pdfPreview);
 			expect(openWithDocsFn).not.toHaveBeenCalled();
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewClose })).toBeVisible();
-			// 1 inside the list, 1 inside preview
-			expect(screen.getAllByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toHaveLength(2);
+			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.share })).toBeVisible();
 			expect(
 				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.previewDownload })
 			).toBeVisible();

@@ -5,6 +5,7 @@
  */
 import React, { useCallback, useMemo } from 'react';
 
+import styled from '@emotion/styled';
 import {
 	Icon,
 	Button,
@@ -17,7 +18,6 @@ import {
 	DropdownItem
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { DATE_TIME_FORMAT } from '../../../constants';
@@ -29,7 +29,7 @@ import { useOpenWithDocs } from '../../../hooks/useOpenWithDocs';
 import { formatDate, humanFileSize } from '../../../utils/utils';
 import { GridItem } from '../StyledComponents';
 
-const CustomText = styled(Text).attrs({ weight: 'light', size: 'small' })`
+const CustomText = styled(Text)`
 	line-height: 1.5;
 `;
 
@@ -209,7 +209,9 @@ export const VersionRow = ({
 				$columnStart={1}
 				$columnEnd={2}
 			>
-				<CustomText>{formatDate(updatedAt, locale, DATE_TIME_FORMAT)}</CustomText>
+				<CustomText weight="light" size="small">
+					{formatDate(updatedAt, locale, DATE_TIME_FORMAT)}
+				</CustomText>
 			</GridItem>
 			<GridItem
 				padding={{ left: 'small', right: 'small' }}
@@ -221,7 +223,7 @@ export const VersionRow = ({
 				$columnStart={2}
 				$columnEnd={3}
 			>
-				<CustomText>
+				<CustomText weight="light" size="small">
 					{t('displayer.version.row.versionNumber', 'Version {{versionNumber}}', {
 						replace: { versionNumber: version }
 					})}
@@ -237,7 +239,9 @@ export const VersionRow = ({
 				$columnStart={3}
 				$columnEnd={4}
 			>
-				<CustomText>{lastEditor}</CustomText>
+				<CustomText weight="light" size="small">
+					{lastEditor}
+				</CustomText>
 			</GridItem>
 			<GridItem
 				mainAlignment={'flex-start'}
@@ -248,7 +252,9 @@ export const VersionRow = ({
 				$columnStart={4}
 				$columnEnd={5}
 			>
-				<CustomText>{humanFileSize(size, t)}</CustomText>
+				<CustomText weight="light" size="small">
+					{humanFileSize(size, t)}
+				</CustomText>
 			</GridItem>
 			<GridItem
 				data-testid={`version${version}-icons`}

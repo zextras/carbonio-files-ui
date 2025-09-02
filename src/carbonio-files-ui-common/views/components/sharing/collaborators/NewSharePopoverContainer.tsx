@@ -6,6 +6,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 
+import styled from '@emotion/styled';
 import {
 	Container,
 	Icon,
@@ -19,7 +20,6 @@ import {
 } from '@zextras/carbonio-design-system';
 import { includes } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 const ExclusiveSelectionContainer = styled(Container)<
 	{ $disabled: boolean } & Required<Pick<ContainerProps, 'background'>>

@@ -5,8 +5,9 @@
  */
 import React from 'react';
 
+import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Button, ButtonProps } from '@zextras/carbonio-design-system';
-import styled, { keyframes } from 'styled-components';
 
 const rotate = keyframes`
   from {

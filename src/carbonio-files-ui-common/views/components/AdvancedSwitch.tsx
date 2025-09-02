@@ -6,8 +6,8 @@
 
 import React, { useCallback, useEffect, useRef } from 'react';
 
+import styled from '@emotion/styled';
 import { Container, Switch, Text } from '@zextras/carbonio-design-system';
-import styled from 'styled-components';
 
 interface AdvancedSwitchProps {
 	label: string;

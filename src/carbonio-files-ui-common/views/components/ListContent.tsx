@@ -6,8 +6,9 @@
 
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { List, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
-import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
 import { NodeListItem, NodeListItemProps } from './NodeListItem';

@@ -49,7 +49,8 @@ describe('Filter View', () => {
 				const folder = populateFolder();
 				folder.parent = populateFolder();
 				currentFilter.push(file, folder);
-
+				file.flagged = true;
+				folder.flagged = true;
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter)
@@ -71,7 +72,6 @@ describe('Filter View', () => {
 
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-
 				const copyAction = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 				expect(copyAction).toBeVisible();
 				expect(copyAction).toBeEnabled();

@@ -8,11 +8,11 @@ import React from 'react';
 
 import { ApolloError } from '@apollo/client';
 import { NetworkError } from '@apollo/client/errors';
+import { Theme } from '@zextras/carbonio-design-system';
 import { GraphQLError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
 import { findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
-import { DefaultTheme } from 'styled-components';
 
 import { generateAccessCodeFallback, generateAccessCodeWithCrypto } from './utils.accessCode';
 import { getUserAccount } from '../../utils/utils';
@@ -74,7 +74,7 @@ export const humanFileSize = (inputSize: number, t: TFunction | undefined): stri
 export const humanFileSizeFromMB = (inputSize: number, t: TFunction | undefined): string =>
 	humanFileSize(inputSize * 1024 ** 2, t);
 
-function getIconByRootId(rootId: Maybe<string> | undefined): keyof DefaultTheme['icons'] {
+function getIconByRootId(rootId: Maybe<string> | undefined): keyof Theme['icons'] {
 	switch (rootId) {
 		case ROOTS.LOCAL_ROOT:
 			return 'Folder';
@@ -93,8 +93,8 @@ export const getIconByFileType = (
 	type: NodeType,
 	subType?: Maybe<string>,
 	options?: { outline?: boolean }
-): keyof DefaultTheme['icons'] => {
-	function getIcon(): keyof DefaultTheme['icons'] {
+): keyof Theme['icons'] => {
+	function getIcon(): keyof Theme['icons'] {
 		switch (type) {
 			case NodeType.Folder:
 				return 'Folder';
@@ -128,7 +128,7 @@ export const getIconByFileType = (
 export const getIconColorByFileType = (
 	type: NodeType,
 	subType: Maybe<string> | undefined,
-	theme: DefaultTheme
+	theme: Theme
 ): string => {
 	switch (type) {
 		case NodeType.Folder:

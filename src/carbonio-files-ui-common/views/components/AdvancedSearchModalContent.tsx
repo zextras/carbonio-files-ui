@@ -6,6 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import styled from '@emotion/styled';
 import {
 	ChipInput,
 	ChipInputProps,
@@ -20,7 +21,6 @@ import {
 } from '@zextras/carbonio-design-system';
 import { isEmpty, map, isEqual, every, isArray } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { AdvancedSwitch } from './AdvancedSwitch';
 import { FolderSelectionModalContent } from './FolderSelectionModalContent';

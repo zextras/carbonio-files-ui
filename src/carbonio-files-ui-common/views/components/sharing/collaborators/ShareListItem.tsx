@@ -7,6 +7,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { FetchResult, useLazyQuery } from '@apollo/client';
+import styled from '@emotion/styled';
 import {
 	Avatar,
 	Button,
@@ -19,7 +20,6 @@ import {
 } from '@zextras/carbonio-design-system';
 import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { CollaboratorPermissionIcons } from './CollaboratorPermissionIcons';
 import { EditSharePopoverContainer } from './EditSharePopoverContainer';

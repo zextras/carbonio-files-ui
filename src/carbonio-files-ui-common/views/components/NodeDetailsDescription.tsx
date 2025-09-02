@@ -6,6 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import styled from '@emotion/styled';
 import {
 	Container,
 	Padding,
@@ -16,7 +17,6 @@ import {
 	Button
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { RouteLeavingGuard } from './RouteLeavingGuard';
 import { ShimmerText } from './StyledComponents';
