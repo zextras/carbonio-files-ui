@@ -6,9 +6,9 @@
 
 import React, { useMemo } from 'react';
 
+import styled from '@emotion/styled';
 import { BreadcrumbsProps, getColor } from '@zextras/carbonio-design-system';
 import { map } from 'lodash';
-import styled from 'styled-components';
 
 import { Breadcrumbs } from '../design_system_fork/Breadcrumbs';
 

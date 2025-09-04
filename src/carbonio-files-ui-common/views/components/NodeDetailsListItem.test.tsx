@@ -8,7 +8,7 @@ import React from 'react';
 
 import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
-import { DefaultTheme } from 'styled-components';
+import { Theme } from '@zextras/carbonio-design-system';
 
 import { NodeDetailsListItem } from './NodeDetailsListItem';
 import { SELECTORS } from '../../constants/test';
@@ -16,7 +16,6 @@ import { populateNode, populateUser } from '../../mocks/mockUtils';
 import { setup } from '../../tests/utils';
 import { NodeType, User } from '../../types/graphql/types';
 import { formatDate } from '../../utils/utils';
-import 'jest-styled-components';
 
 let mockedUserLogged: User;
 
@@ -67,7 +66,7 @@ describe('Node List Item', () => {
 		expect(screen.getByText(node.owner.full_name)).toBeVisible();
 	});
 	test.each<
-		[type: NodeType, mimeType: string | undefined, icon: keyof DefaultTheme['icons'], color: string]
+		[type: NodeType, mimeType: string | undefined, icon: keyof Theme['icons'], color: string]
 	>([
 		[NodeType.Folder, 'any', 'Folder', '#828282'],
 		[NodeType.Text, 'application/pdf', 'FilePdf', '#d74942'],

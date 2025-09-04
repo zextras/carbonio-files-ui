@@ -6,6 +6,8 @@
 
 import React, { useCallback, useState } from 'react';
 
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
 	Button,
 	Container,
@@ -16,7 +18,6 @@ import {
 	Text
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
 
 import { ContextualMenu, ContextualMenuProps } from './ContextualMenu';
 import { GridItem, UppercaseText } from './StyledComponents';

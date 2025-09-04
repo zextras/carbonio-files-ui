@@ -6,9 +6,9 @@
 
 import React, { useContext } from 'react';
 
+import { useTheme } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { useTheme } from 'styled-components';
 
 import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { NodeGridItemUI } from './NodeGridItemUI';

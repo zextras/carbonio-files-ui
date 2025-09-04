@@ -5,10 +5,10 @@
  */
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
+import styled from '@emotion/styled';
 import { Container, Icon, Padding, Row } from '@zextras/carbonio-design-system';
 import { sample, map, debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { CenteredText } from './StyledComponents';
 import { TIMERS } from '../../constants';

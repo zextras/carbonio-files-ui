@@ -6,16 +6,15 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
-import { DefaultTheme } from 'styled-components';
+import { Theme } from '@zextras/carbonio-design-system';
 
 import { DisplayerHeader } from './DisplayerHeader';
 import { setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
-import 'jest-styled-components';
 
 describe('Displayer Header', () => {
 	test.each<
-		[type: NodeType, mimeType: string | undefined, icon: keyof DefaultTheme['icons'], color: string]
+		[type: NodeType, mimeType: string | undefined, icon: keyof Theme['icons'], color: string]
 	>([
 		[NodeType.Folder, 'any', 'Folder', '#828282'],
 		[NodeType.Text, 'application/pdf', 'FilePdf', '#d74942'],

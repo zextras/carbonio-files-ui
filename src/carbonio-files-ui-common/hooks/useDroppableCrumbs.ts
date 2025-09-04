@@ -7,10 +7,15 @@
 import React, { DragEventHandler, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useApolloClient } from '@apollo/client';
-import { BreadcrumbsProps, getColor, useSnackbar } from '@zextras/carbonio-design-system';
+import {
+	BreadcrumbsProps,
+	getColor,
+	Theme,
+	useSnackbar,
+	useTheme
+} from '@zextras/carbonio-design-system';
 import { forEach, isEmpty, map, uniq } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { DefaultTheme, useTheme } from 'styled-components';
 
 import { useMoveNodesMutation } from './graphql/mutations/useMoveNodesMutation';
 import { useUpload } from './useUpload';
@@ -24,9 +29,9 @@ import { getUploadAddType } from '../utils/uploadUtils';
 import { hexToRGBA, isFolder } from '../utils/utils';
 import { resetSelection } from '../views/components/SelectionProvider';
 
-function setDropzoneActive(color: string, element: HTMLElement, theme: DefaultTheme): void;
+function setDropzoneActive(color: string, element: HTMLElement, theme: Theme): void;
 function setDropzoneActive(color: '', element: HTMLElement): void;
-function setDropzoneActive(color: string, element: HTMLElement, theme?: DefaultTheme): void {
+function setDropzoneActive(color: string, element: HTMLElement, theme?: Theme): void {
 	element.style.backgroundColor = color && theme ? hexToRGBA(getColor(color, theme), 0.4) : '';
 }
 

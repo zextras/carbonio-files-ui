@@ -5,8 +5,8 @@
  */
 import React, { useEffect, useRef } from 'react';
 
+import styled from '@emotion/styled';
 import { Container, Row, useCombinedRefs } from '@zextras/carbonio-design-system';
-import styled from 'styled-components';
 
 import { LoadingIcon } from './LoadingIcon';
 import { LIST_ITEM_HEIGHT } from '../../constants';

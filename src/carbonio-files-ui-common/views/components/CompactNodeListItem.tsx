@@ -6,9 +6,8 @@
 
 import React, { useCallback, useMemo } from 'react';
 
-import { Container, Row, Text } from '@zextras/carbonio-design-system';
+import { Container, Row, Text, useTheme } from '@zextras/carbonio-design-system';
 import { some } from 'lodash';
-import { useTheme } from 'styled-components';
 
 import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { HoverContainer, ListItemContainer } from './StyledComponents';

@@ -6,7 +6,7 @@
 
 module.exports = (api) => {
 	let presetEnv;
-	const plugins = ['babel-plugin-styled-components'];
+	const plugins = ['@emotion'];
 	if (api.env('test')) {
 		presetEnv = [
 			'@babel/preset-env',

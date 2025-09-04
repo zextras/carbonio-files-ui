@@ -5,8 +5,8 @@
  */
 import React from 'react';
 
+import styled from '@emotion/styled';
 import { Container, Icon } from '@zextras/carbonio-design-system';
-import styled from 'styled-components';
 
 import { SharePermission } from '../../../../types/graphql/types';
 

@@ -7,11 +7,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
+import styled from '@emotion/styled';
 import { Accordion, AccordionItemType, Container } from '@zextras/carbonio-design-system';
 import { map, find, reduce, size, orderBy, filter, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
 
 import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secondaryBarItemVar';
 import { showNotificationsBadgeVar } from '../../carbonio-files-ui-common/apollo/showNotificationsBadgeVar';

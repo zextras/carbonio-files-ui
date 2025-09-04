@@ -5,9 +5,9 @@
  */
 import React, { useMemo } from 'react';
 
+import styled from '@emotion/styled';
 import { Container, Icon, Quota, Tooltip, Text, Button } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { useFilesQuotaInfo } from '../../hooks/useFilesQuotaInfo';
 import { humanFileSize } from '../../utils/utils';

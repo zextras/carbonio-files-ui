@@ -6,9 +6,8 @@
 
 import React, { useMemo } from 'react';
 
-import { Container, Padding, Text } from '@zextras/carbonio-design-system';
+import { Container, Padding, Text, useTheme } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from 'styled-components';
 
 import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { useUserInfo } from '../../../hooks/useUserInfo';

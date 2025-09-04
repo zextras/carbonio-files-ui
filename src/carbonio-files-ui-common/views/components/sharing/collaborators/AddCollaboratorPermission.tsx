@@ -6,10 +6,10 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import styled from '@emotion/styled';
 import { Button, Popover } from '@zextras/carbonio-design-system';
 import { filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { NewSharePopoverContainer } from './NewSharePopoverContainer';
 import { Node, Role } from '../../../../types/common';
