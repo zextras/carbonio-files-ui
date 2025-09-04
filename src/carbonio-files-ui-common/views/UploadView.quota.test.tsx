@@ -67,9 +67,8 @@ describe('Upload view quota', () => {
 		const dropzone = await screen.findByText(/nothing here/i);
 		await uploadWithDnD(dropzone, dataTransferObj);
 		expect(await screen.findByText(/Quota exceeded/i)).toBeVisible();
-		await user.click(
-			screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload, hidden: true })
-		);
+		await user.click(await screen.findByText(node.name));
+		await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.retryUpload }));
 		await screen.findByTestId(ICON_REGEXP.uploadFailed);
 		expect(screen.queryByText(/quota exceeded/i)).not.toBeInTheDocument();
 	});
