@@ -79,7 +79,7 @@
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
 		"@zextras/carbonio-design-system": "^11.0.0-devel.1",
-		"@zextras/carbonio-shell-ui": "12.0.0-playground.1756904713171",
+		"@zextras/carbonio-shell-ui": "12.0.0-devel.1756980987860",
 		"@zextras/carbonio-ui-preview": "^3.3.0-devel.1",
 		"@zextras/carbonio-ui-soap-lib": "^1.0.3",
 		"core-js": "^3.38.1",
