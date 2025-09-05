@@ -147,7 +147,7 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 			[Action.Download]: {
 				id: 'Download',
 				icon: 'Download',
-				label: t('actions.download', 'Download'),
+				label: t('actions.downloadNode', 'Download'),
 				onClick: (): void => downloadNodeByType(node)
 			},
 			[Action.ManageShares]: {
