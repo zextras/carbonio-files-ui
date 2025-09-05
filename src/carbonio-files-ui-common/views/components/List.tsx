@@ -454,7 +454,7 @@ export const List = ({
 			[Action.Download]: {
 				id: 'Download',
 				icon: 'Download',
-				label: t('actions.download', 'Download'),
+				label: t('actions.downloadNode', 'Download'),
 				onClick: downloadSelection
 			},
 			[Action.ManageShares]: {
