@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Breadcrumbs as DsBreadcrumbs, getColor, TextProps } from '@zextras/carbonio-design-system';
-import styled, { css } from 'styled-components';
 
 export const Breadcrumbs = styled(DsBreadcrumbs)<{ $size?: TextProps['size']; $color?: string }>`
 	[class^='Text'] {

@@ -5,11 +5,13 @@
  */
 import React from 'react';
 
+import { act } from '@testing-library/react';
+
 import { List } from './List';
 import { SelectionProvider } from './SelectionProvider';
 import { ACTION_REGEXP, COLORS, ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtils';
-import { setup, selectNodes, screen } from '../../tests/utils';
+import { setup, selectNodes, screen, within } from '../../tests/utils';
 import { File, Folder } from '../../types/graphql/types';
 
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
@@ -58,7 +60,6 @@ describe('Move', () => {
 			await selectNodes([file.id, folder.id], user);
 			// check that all wanted items are selected
 			expect(screen.getByTestId(SELECTORS.checkedAvatar)).toBeInTheDocument();
-			expect(screen.queryByTestId(ICON_REGEXP.moreVertical)).not.toBeInTheDocument();
 			expect(screen.queryByTestId(ICON_REGEXP.move)).not.toBeInTheDocument();
 			// deselect folder and select node with right permission
 			await selectNodes([folder.id, node.id], user);
@@ -104,8 +105,14 @@ describe('Move', () => {
 			// check that all wanted items are selected
 			expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
-			const moveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.move });
-			expect(moveIcon).toBeEnabled();
+			act(() => {
+				// run timers of dropdown
+				jest.runOnlyPendingTimers();
+			});
+			const dropdown = screen.getByTestId(SELECTORS.dropdownList);
+			expect(within(dropdown).getByText('Move')).toBeVisible();
+			expect(within(dropdown).getByTestId(ICON_REGEXP.move)).toBeVisible();
+			expect(within(dropdown).getByText('Move')).toBeEnabled();
 		});
 	});
 

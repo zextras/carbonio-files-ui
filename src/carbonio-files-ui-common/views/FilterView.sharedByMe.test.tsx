@@ -6,7 +6,6 @@
 import React from 'react';
 
 import { act } from '@testing-library/react';
-import { find } from 'lodash';
 import { graphql } from 'msw';
 import { Route, Routes } from 'react-router-dom';
 
@@ -22,7 +21,7 @@ import {
 import { DISPLAYER_EMPTY_MESSAGE, ICON_REGEXP, SELECTORS } from '../constants/test';
 import handleFindNodesRequest from '../mocks/handleFindNodesRequest';
 import { populateFile, populateNodes, populateShares } from '../mocks/mockUtils';
-import { setup, within, screen } from '../tests/utils';
+import { setup, screen } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
@@ -99,7 +98,7 @@ describe('Filter view', () => {
 		test('Deletion of all collaborators remove node from list. Displayer is closed', async () => {
 			const nodes = populateNodes(2);
 			const nodeWithShares = populateFile();
-			const shares = populateShares(nodeWithShares, 2);
+			const shares = populateShares(nodeWithShares, 2, true);
 			nodeWithShares.shares = shares;
 			nodeWithShares.permissions.can_share = true;
 			nodes.push(nodeWithShares);
@@ -135,32 +134,21 @@ describe('Filter view', () => {
 			await screen.findByText(/collaborators/i);
 			// render of the collaborators
 			await screen.findByText(getChipLabel(shares[0].share_target));
-			// there should be 2 chips for collaborators
-			const chipItems = screen.getAllByTestId(SELECTORS.chipWithPopover);
-			expect(chipItems).toHaveLength(2);
-			const share1Item = find(
-				chipItems,
-				(chipItem) => within(chipItem).queryByText(getChipLabel(shares[0].share_target)) !== null
-			);
-			const share2Item = find(
-				chipItems,
-				(chipItem) => within(chipItem).queryByText(getChipLabel(shares[1].share_target)) !== null
-			);
+			// there should be 2 collaborators
+			expect(screen.getByText(getChipLabel(shares[0].share_target))).toBeVisible();
+			expect(screen.getByText(getChipLabel(shares[1].share_target))).toBeVisible();
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodeWithShares.id));
 			expect(nodeItem).toBeVisible();
-			expect(share1Item).toBeDefined();
-			expect(share2Item).toBeDefined();
-			expect(share1Item).toBeVisible();
-			expect(share2Item).toBeVisible();
 			// delete first share
-			await user.click(within(share1Item as HTMLElement).getByTestId(ICON_REGEXP.close));
+			const trashIcons = screen.getAllByRoleWithIcon('button', { icon: ICON_REGEXP.trash });
+			await user.click(trashIcons[0]);
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			await screen.findByText(/success/i);
-			expect(share2Item).toBeVisible();
+			expect(screen.getByText(getChipLabel(shares[1].share_target))).toBeVisible();
 			expect(nodeItem).toBeVisible();
 			// delete second share
-			await user.click(within(share2Item as HTMLElement).getByTestId(ICON_REGEXP.close));
+			await user.click(trashIcons[1]);
 			await screen.findByRole('button', { name: /remove/i });
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			await screen.findByText(/success/i);

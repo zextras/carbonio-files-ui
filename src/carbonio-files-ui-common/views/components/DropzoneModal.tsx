@@ -6,9 +6,10 @@
 
 import React, { useMemo } from 'react';
 
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Container, Icon, Padding, Text } from '@zextras/carbonio-design-system';
 import { map } from 'lodash';
-import styled, { css } from 'styled-components';
 
 import { cssCalcBuilder } from '../../utils/utils';
 

@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitFor, within } from '@testing-library/react';
+import { waitFor, within } from '@testing-library/react';
 import { map } from 'lodash';
 import { http, HttpResponse } from 'msw';
 
@@ -37,6 +37,7 @@ import {
 	buildBreadCrumbRegExp,
 	buildChipsFromKeywords,
 	moveNode,
+	screen,
 	setup,
 	spyOnUseCreateOptions
 } from '../tests/utils';
@@ -67,7 +68,7 @@ describe('Search view', () => {
 			searchParamsVar(searchParams);
 			const nodes = populateNodes(2);
 			const nodeWithShares = populateFile();
-			const shares = populateShares(nodeWithShares);
+			const shares = populateShares(nodeWithShares, 1, true);
 			nodeWithShares.shares = shares;
 			nodeWithShares.permissions.can_share = true;
 			nodes.push(nodeWithShares);
@@ -89,14 +90,11 @@ describe('Search view', () => {
 
 			expect(await screen.findByText(nodes[0].name)).toBeVisible();
 			// render the collaborator
-			const collaboratorChipItem = screen.getByTestId(SELECTORS.chipWithPopover);
-			expect(
-				within(collaboratorChipItem).getByText(getChipLabel(shares[0].share_target))
-			).toBeVisible();
+			expect(screen.getByText(getChipLabel(shares[0].share_target))).toBeVisible();
 			// remove the collaborator
-			await user.click(within(collaboratorChipItem as HTMLElement).getByTestId(ICON_REGEXP.close));
+			await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.trash }));
 			await user.click(screen.getByRole('button', { name: /remove/i }));
-			expect(collaboratorChipItem).not.toBeInTheDocument();
+			expect(screen.queryByTestId(SELECTORS.chip)).not.toBeInTheDocument();
 			// the node is kept in the main list, but the share icon is removed
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(nodeWithShares.id));
 			expect(within(nodeItem).getByText(nodeWithShares.name)).toBeVisible();

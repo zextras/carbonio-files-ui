@@ -5,10 +5,10 @@
  */
 import React, { useCallback, useMemo } from 'react';
 
+import styled from '@emotion/styled';
 import { Avatar, Row, Shimmer, Text, Tooltip } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { useActiveNode } from '../../../hooks/useActiveNode';
 import { DISPLAYER_TABS } from '../../constants';

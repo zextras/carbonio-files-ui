@@ -6,12 +6,15 @@
 
 import React from 'react';
 
+import { SelectItem } from '@zextras/carbonio-design-system';
 import type { QueryChip } from '@zextras/carbonio-search-ui';
 import {
 	ACTION_TYPES as SHELL_ACTION_TYPES,
 	EMAIL_VALIDATION_REGEX
 } from '@zextras/carbonio-shell-ui';
 import { noop } from 'lodash';
+
+import { SharePermission } from '../carbonio-files-ui-common/types/graphql/types';
 
 export const UpdateQueryContext = React.createContext<(arg: Array<QueryChip>) => void>(() => noop);
 
@@ -40,3 +43,8 @@ export const EMAIL_REGEXP = EMAIL_VALIDATION_REGEX;
 
 export const UPDATE_VIEW_EVENT = 'updateView';
 export const RESET_SELECTION_EVENT = 'resetSelection';
+
+export const EMPTY_ITEM: SelectItem<SharePermission> = {
+	label: 'EMPTY',
+	value: 'EMPTY' as SharePermission
+};

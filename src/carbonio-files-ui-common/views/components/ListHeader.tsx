@@ -6,6 +6,7 @@
 
 import React from 'react';
 
+import styled from '@emotion/styled';
 import {
 	Action as DSAction,
 	Button,
@@ -16,7 +17,6 @@ import {
 	CollapsingActions
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { useSelectionContext } from './SelectionProvider';
 import { BREADCRUMB_ROW_HEIGHT } from '../../constants';

@@ -6,8 +6,15 @@
 
 import React from 'react';
 
-import { Button, Container, Divider, Icon, Row, Text } from '@zextras/carbonio-design-system';
-import { useTheme } from 'styled-components';
+import {
+	Button,
+	Container,
+	Divider,
+	Icon,
+	Row,
+	Text,
+	useTheme
+} from '@zextras/carbonio-design-system';
 
 import { Maybe, NodeType } from '../../types/graphql/types';
 import { getIconByFileType, getIconColorByFileType } from '../../utils/utils';

@@ -61,6 +61,7 @@ export const ICON_REGEXP = {
 	flagged: 'icon: Flag',
 	unflag: 'icon: UnflagOutline',
 	download: 'icon: Download',
+	downloadMultiple: 'icon: DownloadOutline',
 	openDocument: 'icon: BookOpenOutline',
 	close: 'icon: Close',
 	trash: 'icon: Trash2Outline',
@@ -91,7 +92,12 @@ export const ICON_REGEXP = {
 	noNotificationsIcon: 'icon: BellOffOutline',
 	secondaryBarNotifications: 'icon: BellOutline',
 	chevronRightNotifications: 'icon: ChevronRight',
-	chevronLeftNotifications: 'icon: ChevronLeft'
+	chevronLeftNotifications: 'icon: ChevronLeft',
+	shareOff: 'icon: ShareOff',
+	infoOutline: 'icon: InfoOutline',
+	eyeCollaborationLinkIcon: 'icon: EyeOutline',
+	editCollaborationLinkIcon: 'icon: Edit2Outline',
+	shareCollaborationLinkIcon: 'icon: ShareOutline'
 } as const;
 
 export const SELECTORS = {
@@ -103,16 +109,18 @@ export const SELECTORS = {
 	nodeAvatar: 'file-icon-preview',
 	nodeDetails: 'node-details',
 	nodeSharing: 'node-sharing',
-	collaborationLinkContainer: 'collaboration-link-container',
+	collaborationLinkReadOnly: 'read-only-collaboration-link-container',
 	collaborationLinkReadShare: 'read-share-collaboration-link-container',
 	collaborationLinkWriteShare: 'read-write-share-collaboration-link-container',
+	collaborationLinkWrite: 'read-write-collaboration-link-container',
+	collaborationLinkSelectLabel: 'collaboration-link-select-label',
 	sharingTabCollaborators: 'node-sharing-collaborators',
 	exclusiveSelectionEditor: 'exclusive-selection-editor',
 	exclusiveSelectionViewer: 'exclusive-selection-viewer',
 	chip: 'chip',
-	chipWithPopover: 'chip-with-popover',
 	listHeader: 'list-header',
 	listHeaderSelectionMode: 'list-header-selectionModeActive',
+	sharingCollaboratorsSection: 'sharing-collaborators-section',
 	list(id = ''): string {
 		return `list-${id}`;
 	},

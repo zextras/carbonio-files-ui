@@ -7,6 +7,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
 	Button,
 	Container,
@@ -19,7 +21,6 @@ import {
 	Theme
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
 
 import { EmptyNotifications } from './EmptyNotifications';
 import { NotificationItem } from './NotificationItem';

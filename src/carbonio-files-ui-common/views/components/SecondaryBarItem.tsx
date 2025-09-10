@@ -6,6 +6,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import styled from '@emotion/styled';
 import {
 	AccordionItem,
 	AccordionItemType,
@@ -18,7 +19,6 @@ import {
 	Tooltip
 } from '@zextras/carbonio-design-system';
 import { map, uniq, find, every } from 'lodash';
-import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
 import { resetSelection } from './SelectionProvider';

@@ -9,7 +9,6 @@
 import React from 'react';
 
 import { act, waitFor } from '@testing-library/react';
-import 'jest-styled-components';
 
 import { FolderSelectionModalContent } from './FolderSelectionModalContent';
 import { destinationVar } from '../../apollo/destinationVar';

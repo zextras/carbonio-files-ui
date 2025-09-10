@@ -49,7 +49,8 @@ describe('Filter View', () => {
 				const folder = populateFolder();
 				folder.parent = populateFolder();
 				currentFilter.push(file, folder);
-
+				file.flagged = true;
+				folder.flagged = true;
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter)
@@ -71,7 +72,6 @@ describe('Filter View', () => {
 
 				// check that all wanted items are selected
 				expect(screen.getAllByTestId(SELECTORS.checkedAvatar)).toHaveLength(2);
-
 				const copyAction = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.copy });
 				expect(copyAction).toBeVisible();
 				expect(copyAction).toBeEnabled();
@@ -186,9 +186,11 @@ describe('Filter View', () => {
 				destinationFolder.permissions.can_write_folder = true;
 				destinationFolder.permissions.can_write_file = true;
 				destinationFolder.parent = parentFolder;
+				destinationFolder.flagged = false;
 				const nodesToCopy = currentFilter.slice(0, 2);
 				forEach(nodesToCopy, (mockedNode) => {
 					mockedNode.parent = parentFolder;
+					mockedNode.flagged = false;
 				});
 				parentFolder.children.nodes.push(destinationFolder, ...nodesToCopy);
 

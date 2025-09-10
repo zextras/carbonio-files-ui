@@ -7,11 +7,10 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { Action as DSAction, useSnackbar } from '@zextras/carbonio-design-system';
+import { Action as DSAction, useSnackbar, useTheme } from '@zextras/carbonio-design-system';
 import { includes, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
-import { useTheme } from 'styled-components';
 
 import { Dropzone } from './Dropzone';
 import { NodeAvatarIcon } from './NodeAvatarIcon';
@@ -20,6 +19,7 @@ import { NodeHoverBar } from './NodeHoverBar';
 import { NodeListItemUI } from './NodeListItemUI';
 import { useSelectionContext } from './SelectionProvider';
 import { useActiveNode } from '../../../hooks/useActiveNode';
+import { useIsCarbonioCE } from '../../../hooks/useIsCarbonioCE';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useSendViaMail } from '../../../hooks/useSendViaMail';
 import { useUserInfo } from '../../../hooks/useUserInfo';
@@ -42,6 +42,8 @@ import { useCopyModal } from '../../hooks/modals/useCopyModal';
 import { useDeletePermanentlyModal } from '../../hooks/modals/useDeletePermanentlyModal';
 import { useMoveModal } from '../../hooks/modals/useMoveModal';
 import { useRenameModal } from '../../hooks/modals/useRenameModal';
+import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnershipModal';
+import { useDownloadNodes } from '../../hooks/useDownloadNodes';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { usePreview } from '../../hooks/usePreview';
@@ -60,7 +62,6 @@ import {
 import { getPreviewOutputFormat, getPreviewThumbnailSrc } from '../../utils/previewUtils';
 import { getUploadAddType } from '../../utils/uploadUtils';
 import {
-	downloadNode,
 	isFile,
 	isSearchView,
 	formatDate,
@@ -100,6 +101,8 @@ export const NodeListItem = ({
 	const { viewMode } = useContext(ListContext);
 	const { locale } = useUserInfo();
 
+	const { downloadNodeByType } = useDownloadNodes();
+
 	const params = useParams<URLParams>();
 	const isATrashFilter = useMemo(() => isTrashView(params), [params]);
 
@@ -135,6 +138,7 @@ export const NodeListItem = ({
 	const { moveNodes: moveNodesMutation } = useMoveNodesMutation();
 	const { openMoveNodesModal } = useMoveModal();
 	const { openCopyNodesModal } = useCopyModal();
+	const { openTransferOwnershipModal } = useTransferOwnershipModal();
 	const { openRenameModal } = useRenameModal();
 	const { setActiveNode, activeNodeId } = useActiveNode();
 	const toggleFlag = useFlagNodesMutation();
@@ -176,6 +180,7 @@ export const NodeListItem = ({
 		[node.id, node.type]
 	);
 	const { canUsePreview, canUseDocs } = useHealthInfo();
+	const isCarbonioCE = useIsCarbonioCE();
 	const openNodeWithDocs = useOpenWithDocs();
 
 	// timer to start navigation
@@ -197,9 +202,10 @@ export const NodeListItem = ({
 			getAllPermittedActions({
 				nodes: [node],
 				canUsePreview,
-				canUseDocs
+				canUseDocs,
+				isCarbonioCE
 			}),
-		[canUseDocs, canUsePreview, node]
+		[canUseDocs, canUsePreview, node, isCarbonioCE]
 	);
 
 	const openNode = useCallback(() => {
@@ -236,6 +242,14 @@ export const NodeListItem = ({
 
 	const itemsMap = useMemo<Partial<Record<Action, DSAction>>>(
 		() => ({
+			[Action.TransferOwnership]: {
+				id: 'TransferOwnership',
+				icon: 'SwapOutline',
+				label: t('actions.transferOwnership', 'Transfer ownership'),
+				onClick: (): void => {
+					openTransferOwnershipModal([node]);
+				}
+			},
 			[Action.Edit]: {
 				id: 'Edit',
 				icon: 'Edit2Outline',
@@ -261,18 +275,8 @@ export const NodeListItem = ({
 			[Action.Download]: {
 				id: 'Download',
 				icon: 'Download',
-				label: t('actions.download', 'Download'),
-				onClick: (): void => {
-					// download node without version to be sure last version is downloaded
-					downloadNode(node.id);
-					createSnackbar({
-						key: new Date().toLocaleString(),
-						severity: 'info',
-						label: t('snackbar.download.start', 'Your download will start soon'),
-						replace: true,
-						hideButton: true
-					});
-				}
+				label: t('actions.downloadNode', 'Download'),
+				onClick: (): void => downloadNodeByType(node)
 			},
 			[Action.ManageShares]: {
 				id: 'ManageShares',
@@ -358,10 +362,11 @@ export const NodeListItem = ({
 		[
 			t,
 			sendViaMailCallback,
-			openNodeWithDocs,
+			openTransferOwnershipModal,
 			node,
+			openNodeWithDocs,
 			openPreview,
-			createSnackbar,
+			downloadNodeByType,
 			setActiveNode,
 			toggleFlag,
 			openCopyNodesModal,

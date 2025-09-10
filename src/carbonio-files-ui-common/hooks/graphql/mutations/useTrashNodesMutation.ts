@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 import { useSnackbar } from '@zextras/carbonio-design-system';
-import { forEach, map, find, partition, some } from 'lodash';
+import { forEach, map, find, partition } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -18,14 +18,10 @@ import { useUserInfo } from '../../../../hooks/useUserInfo';
 import { ROOTS, INTERNAL_PATH, FILTER_TYPE, FILES_ROUTE } from '../../../constants';
 import PARENT_ID from '../../../graphql/fragments/parentId.graphql';
 import TRASH_NODES from '../../../graphql/mutations/trashNodes.graphql';
-import FIND_NODES from '../../../graphql/queries/findNodes.graphql';
-import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
 import { NodeCachedObject } from '../../../types/apollo';
 import { PickIdNodeType } from '../../../types/common';
 import {
-	FindNodesQuery,
 	Folder,
-	GetChildrenQuery,
 	Node,
 	ParentIdFragment,
 	QueryGetPathArgs,
@@ -33,12 +29,12 @@ import {
 	TrashNodesMutationVariables
 } from '../../../types/graphql/types';
 import { DeepPick } from '../../../types/utils';
-import { isFolder, isSearchView } from '../../../utils/utils';
+import { isSearchView } from '../../../utils/utils';
 import { useErrorHandler } from '../../useErrorHandler';
 import { useUpload } from '../../useUpload';
 import { useUpdateFilterContent } from '../useUpdateFilterContent';
 import { useUpdateFolderContent } from '../useUpdateFolderContent';
-import { isQueryResult } from '../utils';
+import { createOnQueryUpdated } from '../utils';
 
 export type TrashNodesType = (
 	...nodes: Array<PickIdNodeType & DeepPick<Node, 'owner', 'id'>>
@@ -55,6 +51,10 @@ export function useTrashNodesMutation(): TrashNodesType {
 	const [t] = useTranslation();
 	const { navigateTo } = useNavigation();
 	const { activeNodeId, removeActiveNode } = useActiveNode();
+	const onQueryUpdated = useMemo(
+		() => createOnQueryUpdated(activeNodeId, removeActiveNode),
+		[activeNodeId, removeActiveNode]
+	);
 	const { removeNodesFromFolder } = useUpdateFolderContent();
 	const { removeNodesFromFilter } = useUpdateFilterContent();
 	const location = useLocation();
@@ -132,36 +132,7 @@ export function useTrashNodesMutation(): TrashNodesType {
 						});
 					}
 				},
-				onQueryUpdated(observableQuery, { missing, result }) {
-					const { query } = observableQuery.options;
-					let listNodes = null;
-					if (isQueryResult<FindNodesQuery>(query, result, FIND_NODES)) {
-						if (missing) {
-							return observableQuery.refetch();
-						}
-						listNodes = result.findNodes?.nodes;
-					}
-					if (
-						isQueryResult<GetChildrenQuery>(query, result, GET_CHILDREN) &&
-						result.getNode &&
-						isFolder(result.getNode)
-					) {
-						listNodes = result.getNode.children?.nodes;
-					}
-
-					if (
-						observableQuery.hasObservers() &&
-						activeNodeId &&
-						listNodes &&
-						!some<Pick<Node, 'id'> | null>(
-							listNodes,
-							(resultNode) => resultNode?.id === activeNodeId
-						)
-					) {
-						removeActiveNode();
-					}
-					return observableQuery.reobserve();
-				}
+				onQueryUpdated
 			}).then(({ data }) => {
 				if (data?.trashNodes) {
 					removeByNodeId(data.trashNodes);
@@ -190,11 +161,10 @@ export function useTrashNodesMutation(): TrashNodesType {
 		},
 		[
 			trashNodesMutation,
+			onQueryUpdated,
 			removeNodesFromFilter,
 			location,
 			removeNodesFromFolder,
-			activeNodeId,
-			removeActiveNode,
 			removeByNodeId,
 			createSnackbar,
 			t,

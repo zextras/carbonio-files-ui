@@ -6,8 +6,8 @@
 
 import React from 'react';
 
+import styled from '@emotion/styled';
 import { Padding, Row, Text, Tooltip } from '@zextras/carbonio-design-system';
-import styled from 'styled-components';
 
 import { ShimmerText } from './StyledComponents';
 import { useUserInfo } from '../../../hooks/useUserInfo';

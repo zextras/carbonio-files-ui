@@ -6,10 +6,9 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { ChipInput, ChipInputProps, ChipItem } from '@zextras/carbonio-design-system';
+import { ChipInput, ChipInputProps, ChipItem, Theme } from '@zextras/carbonio-design-system';
 import { isEmpty, reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { DefaultTheme } from 'styled-components';
 
 import { AdvancedFilters } from '../../types/common';
 import { NodeType } from '../../types/graphql/types';
@@ -66,7 +65,7 @@ export const ItemTypeChipInput = ({
 }: ItemTypeChipInputProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const [filterValue, setFilterValue] = useState<string | null>(null);
-	const [icon, setIcon] = useState<keyof DefaultTheme['icons']>('ChevronDown');
+	const [icon, setIcon] = useState<keyof Theme['icons']>('ChevronDown');
 
 	const itemTypeOnType = useCallback<NonNullable<ChipInputProps['onInputType']>>((ev) => {
 		if (ev.key.length === 1 || ev.key === 'Delete' || ev.key === 'Backspace') {

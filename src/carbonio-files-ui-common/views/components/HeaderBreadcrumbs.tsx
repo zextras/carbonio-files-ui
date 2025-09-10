@@ -6,9 +6,10 @@
 
 import React, { useCallback } from 'react';
 
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { getColor, Icon, Row, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
 
 import { OverFlowHiddenRow } from './StyledComponents';
 import { useNavigation } from '../../../hooks/useNavigation';

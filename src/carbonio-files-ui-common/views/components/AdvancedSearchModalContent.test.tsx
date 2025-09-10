@@ -6,9 +6,10 @@
 import React from 'react';
 
 import { act, screen, waitFor, within } from '@testing-library/react';
+import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 
 import { AdvancedSearchModalContent } from './AdvancedSearchModalContent';
-import * as actualNetworkModule from '../../../network/network';
+import * as network from '../../../network/network';
 import { ROOTS } from '../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../constants/test';
 import { populateFolder } from '../../mocks/mockUtils';
@@ -21,15 +22,18 @@ import { mockGetPath } from '../../utils/resolverMocks';
 
 const mockedSoapFetch = jest.fn();
 
-jest.mock<typeof import('../../../network/network')>('../../../network/network', () => ({
-	soapFetch: <Req, Res extends Record<string, unknown>>(): ReturnType<
-		typeof actualNetworkModule.soapFetch<Req, Res>
-	> =>
-		new Promise<Res>((resolve, reject) => {
-			const result = mockedSoapFetch();
-			result ? resolve(result) : reject(new Error('no result provided'));
-		})
-}));
+beforeEach(() => {
+	jest.spyOn(network, 'soapFetch').mockImplementation(
+		(): Promise<RawSoapResponse<Record<string, unknown>>> =>
+			new Promise<RawSoapResponse<Record<string, unknown>>>((resolve, reject) => {
+				const result = mockedSoapFetch();
+				result
+					? resolve({ Body: result, Header: { context: {} } })
+					: reject(new Error('no result provided'));
+			})
+	);
+});
+
 describe('Advanced search modal content', () => {
 	test('Render all the advanced params empty if no previous filter was set', () => {
 		const filters = {};
@@ -654,7 +658,7 @@ describe('Advanced search modal content', () => {
 				id: 'id'
 			};
 			mockedSoapFetch.mockReturnValue({
-				cn: [contactInfo]
+				AutoCompleteGalResponse: { cn: [contactInfo] }
 			});
 
 			const filters = {};

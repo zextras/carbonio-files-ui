@@ -128,14 +128,14 @@ describe('Filter view', () => {
 				}
 			);
 			await screen.findAllByText(node.name);
-			// logged user chip is shown
+			// logged user is shown
 			await screen.findByText(/you$/i);
 			const sharingContent = screen.getByTestId(SELECTORS.nodeSharing);
-			// owner chip is visible
-			expect(within(sharingContent).getByText(node.owner.full_name)).toBeVisible();
-			// close button is visible on logged user chip
-			expect(within(sharingContent).getByTestId(ICON_REGEXP.close)).toBeVisible();
-			await user.click(within(sharingContent).getByTestId(ICON_REGEXP.close));
+			// owner is visible
+			expect(within(sharingContent).getByText(`${node.owner.full_name} - Owner`)).toBeVisible();
+			// close button is visible on logged user collaborator
+			expect(within(sharingContent).getByTestId(ICON_REGEXP.trash)).toBeVisible();
+			await user.click(within(sharingContent).getByTestId(ICON_REGEXP.trash));
 			// confirmation modal
 			await user.click(await screen.findByRole('button', { name: /remove/i }));
 			await screen.findByText(/success/i);
