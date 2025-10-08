@@ -1544,6 +1544,101 @@ export type GetBaseNodeQuery = {
 		| null;
 };
 
+export type GetCeNotificationsQueryVariables = Exact<{
+	limit?: InputMaybe<Scalars['Int']['input']>;
+	page_token?: InputMaybe<Scalars['String']['input']>;
+	update_last_seen: Scalars['Boolean']['input'];
+}>;
+
+export type GetCeNotificationsQuery = {
+	getNotifications:
+		| ({
+				page_token: string | null;
+				last_seen: number;
+				unread: number;
+				notifications: Array<
+					| ({
+							id: string;
+							notification_type: NotificationType;
+							created_at: number;
+							added_node_type: AddedNodeType;
+							triggering_user: {
+								user_id: string;
+								full_name: string;
+								email: string;
+								snapshot_user_id: string;
+							} & { __typename: 'SnapshotUser' };
+							added_node: {
+								node_id: string;
+								name: string;
+								type: NodeType;
+								created_at: number;
+								owner_id: string | null;
+								snapshot_node_id: string;
+							} & { __typename: 'SnapshotNode' };
+							destination_folder: {
+								name: string;
+								node_id: string;
+								type: NodeType;
+								created_at: number;
+								owner_id: string | null;
+								snapshot_node_id: string;
+							} & { __typename: 'SnapshotNode' };
+					  } & { __typename: 'AddedNode' })
+					| ({
+							id: string;
+							notification_type: NotificationType;
+							created_at: number;
+							triggering_user: {
+								user_id: string;
+								full_name: string;
+								email: string;
+								snapshot_user_id: string;
+							} & { __typename: 'SnapshotUser' };
+							node: {
+								node_id: string;
+								name: string;
+								type: NodeType;
+								created_at: number;
+								owner_id: string | null;
+								snapshot_node_id: string;
+							} & { __typename: 'SnapshotNode' };
+					  } & { __typename: 'NewShare' })
+					| ({
+							id: string;
+							notification_type: NotificationType;
+							created_at: number;
+							removed_node_type: RemovedNodeType;
+							triggering_user: {
+								user_id: string;
+								full_name: string;
+								email: string;
+								snapshot_user_id: string;
+							} & { __typename: 'SnapshotUser' };
+							origin_folder: {
+								node_id: string;
+								name: string;
+								type: NodeType;
+								created_at: number;
+								owner_id: string | null;
+								snapshot_node_id: string;
+							} & { __typename: 'SnapshotNode' };
+							removed_node: {
+								node_id: string;
+								name: string;
+								type: NodeType;
+								created_at: number;
+								owner_id: string | null;
+								snapshot_node_id: string;
+							} & { __typename: 'SnapshotNode' };
+					  } & { __typename: 'RemovedNode' })
+					| { __typename: 'TransferredOwnership' }
+					| null
+				>;
+		  } & { __typename: 'NotificationPage' })
+		| null;
+};
+
 export type GetChildQueryVariables = Exact<{
 	node_id: Scalars['ID']['input'];
 	shares_limit?: InputMaybe<Scalars['Int']['input']>;
@@ -5652,6 +5747,264 @@ export const GetBaseNodeDocument = {
 		}
 	]
 } as unknown as DocumentNode<GetBaseNodeQuery, GetBaseNodeQueryVariables>;
+export const GetCeNotificationsDocument = {
+	kind: 'Document',
+	definitions: [
+		{
+			kind: 'OperationDefinition',
+			operation: 'query',
+			name: { kind: 'Name', value: 'getCENotifications' },
+			variableDefinitions: [
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'page_token' } },
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
+				},
+				{
+					kind: 'VariableDefinition',
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'update_last_seen' } },
+					type: {
+						kind: 'NonNullType',
+						type: { kind: 'NamedType', name: { kind: 'Name', value: 'Boolean' } }
+					}
+				}
+			],
+			selectionSet: {
+				kind: 'SelectionSet',
+				selections: [
+					{
+						kind: 'Field',
+						name: { kind: 'Name', value: 'getNotifications' },
+						arguments: [
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'limit' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'limit' } }
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'page_token' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'page_token' } }
+							},
+							{
+								kind: 'Argument',
+								name: { kind: 'Name', value: 'update_last_seen' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'update_last_seen' } }
+							}
+						],
+						selectionSet: {
+							kind: 'SelectionSet',
+							selections: [
+								{ kind: 'Field', name: { kind: 'Name', value: 'page_token' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'last_seen' } },
+								{ kind: 'Field', name: { kind: 'Name', value: 'unread' } },
+								{
+									kind: 'Field',
+									name: { kind: 'Name', value: 'notifications' },
+									selectionSet: {
+										kind: 'SelectionSet',
+										selections: [
+											{
+												kind: 'InlineFragment',
+												typeCondition: {
+													kind: 'NamedType',
+													name: { kind: 'Name', value: 'AddedNode' }
+												},
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'notification_type' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'triggering_user' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'user_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_user_id' }
+																	}
+																]
+															}
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'added_node' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_node_id' }
+																	}
+																]
+															}
+														},
+														{ kind: 'Field', name: { kind: 'Name', value: 'added_node_type' } },
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'destination_folder' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_node_id' }
+																	}
+																]
+															}
+														}
+													]
+												}
+											},
+											{
+												kind: 'InlineFragment',
+												typeCondition: {
+													kind: 'NamedType',
+													name: { kind: 'Name', value: 'NewShare' }
+												},
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'notification_type' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'triggering_user' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'user_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_user_id' }
+																	}
+																]
+															}
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'node' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_node_id' }
+																	}
+																]
+															}
+														}
+													]
+												}
+											},
+											{
+												kind: 'InlineFragment',
+												typeCondition: {
+													kind: 'NamedType',
+													name: { kind: 'Name', value: 'RemovedNode' }
+												},
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'notification_type' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'triggering_user' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'user_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'full_name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'email' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_user_id' }
+																	}
+																]
+															}
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'origin_folder' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_node_id' }
+																	}
+																]
+															}
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'removed_node' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } },
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_node_id' }
+																	}
+																]
+															}
+														},
+														{ kind: 'Field', name: { kind: 'Name', value: 'removed_node_type' } }
+													]
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				]
+			}
+		}
+	]
+} as unknown as DocumentNode<GetCeNotificationsQuery, GetCeNotificationsQueryVariables>;
 export const GetChildDocument = {
 	kind: 'Document',
 	definitions: [
