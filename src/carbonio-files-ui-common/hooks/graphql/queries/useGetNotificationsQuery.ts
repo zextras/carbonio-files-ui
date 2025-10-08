@@ -8,7 +8,9 @@ import { useCallback } from 'react';
 
 import { ApolloQueryResult, QueryResult, useQuery } from '@apollo/client';
 
+import { useIsCarbonioCE } from '../../../../hooks/useIsCarbonioCE';
 import {
+	GetCeNotificationsDocument,
 	GetNotificationsDocument,
 	GetNotificationsQuery,
 	GetNotificationsQueryVariables,
@@ -28,10 +30,12 @@ export interface GetNotificationsQueryHookReturnType {
 }
 
 export function useGetNotificationsQuery(): GetNotificationsQueryHookReturnType {
+	const isCarbonioCE = useIsCarbonioCE() ?? true;
+
 	const { data, fetchMore, error, refetch } = useQuery<
 		GetNotificationsQuery,
 		GetNotificationsQueryVariables
-	>(GetNotificationsDocument, {
+	>(isCarbonioCE ? GetCeNotificationsDocument : GetNotificationsDocument, {
 		variables: {
 			update_last_seen: true
 		},
