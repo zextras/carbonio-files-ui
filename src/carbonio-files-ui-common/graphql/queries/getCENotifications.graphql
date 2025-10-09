@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: 2025 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+query getCENotifications($limit: Int, $page_token: String, $update_last_seen: Boolean!) {
+	getNotifications(limit: $limit, page_token: $page_token, update_last_seen: $update_last_seen) {
+		page_token
+		last_seen
+		unread
+		notifications {
+			... on AddedNode {
+				id
+				notification_type
+				created_at
+				triggering_user {
+					user_id
+					full_name
+					email
+					snapshot_user_id
+				}
+				added_node {
+					node_id
+					name
+					type
+					created_at
+					owner_id
+					snapshot_node_id
+				}
+				added_node_type
+				destination_folder {
+					name
+					node_id
+					type
+					created_at
+					owner_id
+					snapshot_node_id
+				}
+			}
+			... on NewShare {
+				id
+				notification_type
+				created_at
+				triggering_user {
+					user_id
+					full_name
+					email
+					snapshot_user_id
+				}
+				node {
+					node_id
+					name
+					type
+					created_at
+					owner_id
+					snapshot_node_id
+				}
+			}
+			... on RemovedNode {
+				id
+				notification_type
+				created_at
+				triggering_user {
+					user_id
+					full_name
+					email
+					snapshot_user_id
+				}
+				origin_folder {
+					node_id
+					name
+					type
+					created_at
+					owner_id
+					snapshot_node_id
+				}
+				removed_node {
+					node_id
+					name
+					type
+					created_at
+					owner_id
+					snapshot_node_id
+				}
+				removed_node_type
+			}
+		}
+	}
+}

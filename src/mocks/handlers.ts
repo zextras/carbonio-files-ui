@@ -70,6 +70,7 @@ import {
 	FlagNodesDocument,
 	GetAccountByEmailDocument,
 	GetBaseNodeDocument,
+	GetCeNotificationsDocument,
 	GetChildDocument,
 	GetChildrenDocument,
 	GetCollaborationLinksDocument,
@@ -110,6 +111,7 @@ handlers.push(
 	graphql.query(GetVersionsDocument, handleGetVersionsRequest),
 	graphql.query(GetCollaborationLinksDocument, handleGetCollaborationLinksRequest),
 	graphql.query(GetNotificationsDocument, handleGetNotificationsRequest),
+	graphql.query(GetCeNotificationsDocument, handleGetNotificationsRequest),
 	graphql.query(GetConfigsDocument, handleGetConfigsRequest)
 );
 // mutations

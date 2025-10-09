@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.2](https://github.com/zextras/carbonio-files-ui/compare/v2.13.1...v2.13.2) (2025-10-08)
+
+
+### Bug Fixes
+
+* change getNotificationQuery on CE env ([9aa8151](https://github.com/zextras/carbonio-files-ui/commit/9aa8151de2ae86fd619fc759116b1f431ab0c0cf))
+
 ### [2.13.1](https://github.com/zextras/carbonio-files-ui/compare/v2.13.0...v2.13.1) (2025-09-05)
 
 

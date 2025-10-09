@@ -27,6 +27,9 @@ import server from '../../mocks/server';
 jest.mock('../../carbonio-files-ui-common/views/components/FilesQuota', () => ({
 	FilesQuota: (): React.JSX.Element => <div data-testid="quota-test-id"></div>
 }));
+jest.mock('../../hooks/useIsCarbonioCE', () => ({
+	useIsCarbonioCE: jest.fn(() => false)
+}));
 
 describe('SecondaryBar', () => {
 	describe('Notifications', () => {
