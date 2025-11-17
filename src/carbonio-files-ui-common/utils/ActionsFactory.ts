@@ -34,7 +34,8 @@ export const Action = {
 	RemoveUpload: 'REMOVE_UPLOAD',
 	RetryUpload: 'RETRY_UPLOAD',
 	GoToFolder: 'GO_TO_FOLDER',
-	TransferOwnership: 'TRANSFER_OWNERSHIP'
+	TransferOwnership: 'TRANSFER_OWNERSHIP',
+	AttachToMail: 'ATTACH_TO_MAIL'
 } as const;
 
 export type Action = (typeof Action)[keyof typeof Action];
@@ -482,6 +483,13 @@ export function canSendViaMail({ nodes }: { nodes: NodeSendViaMail[] }): boolean
 	return nodes.length === 1 && isFile(node) && node.rootId !== ROOTS.TRASH;
 }
 
+export function canAttachToMail({ nodes }: { nodes: NodeSendViaMail[] }): boolean {
+	if (nodes.length === 0) {
+		throw Error('cannot evaluate canSendViaMail on empty nodes array');
+	}
+	return nodes.every((node) => node.rootId !== ROOTS.TRASH) && nodes.some((node) => isFile(node));
+}
+
 type NodeManageShares = Node<'rootId'>;
 export function canManageShares({ nodes }: { nodes: NodeManageShares[] }): boolean {
 	if (nodes.length === 0) {
@@ -535,7 +543,8 @@ const ACTION_HANDLERS = {
 	[Action.GoToFolder]: canGoToFolder,
 	[Action.RetryUpload]: canRetryUpload,
 	[Action.RemoveUpload]: canRemoveUpload,
-	[Action.TransferOwnership]: canTransferOwnership
+	[Action.TransferOwnership]: canTransferOwnership,
+	[Action.AttachToMail]: canAttachToMail
 } as const;
 
 type ActionHandlers = typeof ACTION_HANDLERS;
