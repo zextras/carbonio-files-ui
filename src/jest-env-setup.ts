@@ -185,3 +185,8 @@ Object.defineProperty(window.crypto, 'randomUUID', {
 	writable: true,
 	value: jest.fn(() => Math.random().toString())
 });
+
+jest.mock('@zextras/carbonio-ui-preview', () => ({
+	__esModule: true,
+	PreviewManager: ({ children }: React.PropsWithChildren): React.ReactNode => children
+}));
