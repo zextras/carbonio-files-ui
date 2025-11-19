@@ -5,6 +5,8 @@
  */
 
 import '@testing-library/jest-dom';
+import React from 'react';
+
 import { type ApolloClient } from '@apollo/client';
 import { act, configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
@@ -186,7 +188,27 @@ Object.defineProperty(window.crypto, 'randomUUID', {
 	value: jest.fn(() => Math.random().toString())
 });
 
+const mockContextValue = {
+	initPreview: jest.fn(),
+	emptyPreview: jest.fn(),
+	openPreview: jest.fn(),
+	closePreview: jest.fn(),
+	previews: [],
+	currentIndex: 0
+};
+
+const MockPreviewsManagerContext = React.createContext(mockContextValue);
+
 jest.mock('@zextras/carbonio-ui-preview', () => ({
 	__esModule: true,
-	PreviewManager: ({ children }: React.PropsWithChildren): React.ReactNode => children
+	PreviewManager: ({ children }: React.PropsWithChildren): React.ReactNode => children,
+	PreviewsManagerContext: MockPreviewsManagerContext,
+	usePreview: jest.fn(() => ({
+		initPreview: jest.fn(),
+		emptyPreview: jest.fn(),
+		openPreview: jest.fn(),
+		closePreview: jest.fn(),
+		previews: [],
+		currentIndex: 0
+	}))
 }));

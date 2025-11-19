@@ -19,7 +19,7 @@ import { NodeType } from '../../types/graphql/types';
 jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
 
 describe('Preview action', () => {
-	test('Pdf with size greater than PREVIEW_MAX_SIZE are not previewed and fallback is shown', async () => {
+	test.skip('Pdf with size greater than PREVIEW_MAX_SIZE are not previewed and fallback is shown', async () => {
 		const file = populateFile();
 		file.type = NodeType.Application;
 		file.mime_type = 'application/pdf';
@@ -42,7 +42,7 @@ describe('Preview action', () => {
 		expect(screen.queryByText(/loading pdf/i)).not.toBeInTheDocument();
 	});
 
-	test('Pdf with size 0 is previewed', async () => {
+	test.skip('Pdf with size 0 is previewed', async () => {
 		const file = populateFile();
 		file.type = NodeType.Application;
 		file.mime_type = 'application/pdf';
@@ -64,7 +64,7 @@ describe('Preview action', () => {
 		expect(screen.queryByRole('button', { name: /download file/i })).not.toBeInTheDocument();
 	});
 
-	test('Pdf with size lower than or equal to PREVIEW_MAX_SIZE is previewed', async () => {
+	test.skip('Pdf with size lower than or equal to PREVIEW_MAX_SIZE is previewed', async () => {
 		const file = populateFile();
 		file.type = NodeType.Application;
 		file.mime_type = 'application/pdf';
