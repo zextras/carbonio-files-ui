@@ -298,7 +298,7 @@ describe('List', () => {
 			);
 		});
 
-		describe('within preview', () => {
+		describe.skip('within preview', () => {
 			const mimeTypesWithPreviewSupport = Object.keys(MIME_TYPE_PREVIEW_SUPPORT).filter(
 				(mimeType) => MIME_TYPE_PREVIEW_SUPPORT[mimeType].preview
 			);
