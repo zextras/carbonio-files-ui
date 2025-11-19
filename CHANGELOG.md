@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.0](https://github.com/zextras/carbonio-files-ui/compare/v2.13.2...v2.14.0) (2025-11-19)
+
+
+### Features
+
+* add support for attaching files to email via drag-and-drop ([a872ee3](https://github.com/zextras/carbonio-files-ui/commit/a872ee3e1ee655feed54899691d09d36152c3e1f)), closes [#536](https://github.com/zextras/carbonio-files-ui/issues/536)
+
+
+### Bug Fixes
+
+* remove css template literal to render svg ([0e371b6](https://github.com/zextras/carbonio-files-ui/commit/0e371b66ed1f9ed49260f88d54d7b396b27e0739)), closes [#520](https://github.com/zextras/carbonio-files-ui/issues/520)
+
 ### [2.13.2](https://github.com/zextras/carbonio-files-ui/compare/v2.13.1...v2.13.2) (2025-10-08)
 
 
