@@ -5,11 +5,11 @@
  */
 
 library(
-    identifier: 'zapp-jenkins-lib@1.0.3',
+    identifier: 'jenkins-lib-ui@1.0.4',
     retriever: modernSCM([
         $class: 'GitSCMSource',
-        remote: 'git@github.com:zextras/jenkins-zapp-lib.git',
-        credentialsId: 'jenkins-integration-with-github-account'
+        credentialsId: 'jenkins-integration-with-github-account',
+        remote: 'git@github.com:zextras/jenkins-lib-ui.git',
     ])
 )
 
