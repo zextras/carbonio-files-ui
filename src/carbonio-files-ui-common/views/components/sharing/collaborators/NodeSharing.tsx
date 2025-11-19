@@ -6,6 +6,7 @@
 
 import React, { useMemo } from 'react';
 
+import styled from '@emotion/styled';
 import {
 	Avatar,
 	Container,
@@ -17,7 +18,6 @@ import {
 } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { AddSharing } from './AddSharing';
 import { ShareListItem } from './ShareListItem';

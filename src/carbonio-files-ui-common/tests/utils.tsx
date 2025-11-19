@@ -8,6 +8,7 @@ import React, { ReactElement, useMemo } from 'react';
 
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import { SchemaLink } from '@apollo/client/link/schema';
+import { matchers } from '@emotion/jest';
 import { addMocksToSchema } from '@graphql-tools/mock';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
@@ -50,6 +51,8 @@ import { asyncForEach, isFile, isFolder } from '../utils/utils';
 export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
 	readonly rightClick: (target: Element) => Promise<void>;
 };
+
+expect.extend(matchers);
 
 export function within(
 	element: Parameters<typeof rtlWithin<typeof queriesExtended>>[0]

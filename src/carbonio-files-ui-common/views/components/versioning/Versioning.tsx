@@ -7,10 +7,10 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { FetchResult } from '@apollo/client';
+import styled from '@emotion/styled';
 import { Button, Container, Padding, Text } from '@zextras/carbonio-design-system';
 import { map, filter, partition, take, keyBy, drop } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { GridContainer } from './GridElements';
 import UploadVersionButton from './UploadVersionButton';

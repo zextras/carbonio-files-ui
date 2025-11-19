@@ -37,7 +37,3 @@ updates:
           - "@types/react"
           - "@types/react-dom"
           - "react-test-renderer"
-      styled-components:
-        patterns:
-          - "styled-components"
-          - "@types/styled-components"

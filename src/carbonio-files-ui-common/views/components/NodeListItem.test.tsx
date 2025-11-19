@@ -7,7 +7,7 @@
 import React from 'react';
 
 import { fireEvent } from '@testing-library/react';
-import { DefaultTheme } from 'styled-components';
+import { Theme } from '@zextras/carbonio-design-system';
 
 import { NodeListItem } from './NodeListItem';
 import { SelectionProvider } from './SelectionProvider';
@@ -40,7 +40,6 @@ import {
 	PREVIEW_MIME_TYPE_DEPENDANT_ON_DOCS
 } from '../../utils/previewUtils';
 import { formatDate, humanFileSize } from '../../utils/utils';
-import 'jest-styled-components';
 
 let mockedUserLogged: User;
 
@@ -423,12 +422,7 @@ describe('Node List Item', () => {
 		});
 
 		test.each<
-			[
-				type: NodeType,
-				mimeType: string | undefined,
-				icon: keyof DefaultTheme['icons'],
-				color: string
-			]
+			[type: NodeType, mimeType: string | undefined, icon: keyof Theme['icons'], color: string]
 		>([
 			[NodeType.Folder, 'any', 'Folder', '#828282'],
 			[NodeType.Text, 'application/pdf', 'FilePdf', '#d74942'],
@@ -480,7 +474,7 @@ describe('Node List Item', () => {
 				)
 			});
 		});
-		test.each<[rootType: string, icon: keyof DefaultTheme['icons'], color: string]>([
+		test.each<[rootType: string, icon: keyof Theme['icons'], color: string]>([
 			[ROOTS.SHARED_WITH_ME, 'ArrowCircleLeft', '#AB47BC'],
 			[ROOTS.TRASH, 'Trash2', '#828282'],
 			[ROOTS.LOCAL_ROOT, 'Folder', '#828282']
@@ -581,7 +575,7 @@ describe('Node List Item', () => {
 		}
 	);
 
-	test.each<[type: NodeType, mimeType: string, icon: keyof DefaultTheme['icons']]>([
+	test.each<[type: NodeType, mimeType: string, icon: keyof Theme['icons']]>([
 		[NodeType.Text, 'application/pdf', 'FilePdf'],
 		[NodeType.Text, 'any', 'FileText'],
 		[NodeType.Video, 'any', 'Video'],

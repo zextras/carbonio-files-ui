@@ -206,15 +206,17 @@ const config: Config = {
 
 	// An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
 	transformIgnorePatterns: [
-		`/node_modules/(?!(${['@zextras/carbonio-ui-preview', 'pdfjs-dist'].join('|')}))`,
+		`/node_modules/(?!(${['@zextras/carbonio-ui-preview', 'pdfjs-dist', 'until-async'].join('|')}))`,
 		'\\.pnp\\.[^\\/]+$'
-	]
+	],
 
 	// An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
 	// unmockedModulePathPatterns: undefined,
 
 	// Indicates whether each individual test should be reported during the run
 	// verbose: undefined,
+
+	workerIdleMemoryLimit: '512MB'
 
 	// An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
 	// watchPathIgnorePatterns: [],

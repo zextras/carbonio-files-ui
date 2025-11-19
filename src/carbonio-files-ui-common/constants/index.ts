@@ -43,7 +43,8 @@ export const ROOTS = {
 export const DRAG_TYPES = {
 	upload: 'Files',
 	move: 'files-drag-move',
-	markForDeletion: 'files-drag-markfordeletion'
+	markForDeletion: 'files-drag-markfordeletion',
+	mailAttachment: 'mail-attachment'
 };
 export const SHARE_TEXT_SIZE = 'small';
 export const CONFIGS = {

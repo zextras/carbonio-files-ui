@@ -6,9 +6,9 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Container } from '@zextras/carbonio-design-system';
+import styled from '@emotion/styled';
+import { Container, Theme } from '@zextras/carbonio-design-system';
 import { intersection, throttle } from 'lodash';
-import styled, { DefaultTheme } from 'styled-components';
 
 import { DropzoneModal } from './DropzoneModal';
 import { TIMERS } from '../../constants';
@@ -35,7 +35,7 @@ const ContentContainer = styled(Container)<{ $dragging?: boolean; $disabled?: bo
 	opacity: ${({ $dragging, $disabled }): number => ($dragging && $disabled ? 0.6 : 1)};
 `;
 
-const DropzoneOverlay = styled(Container)<{ $borderSize: keyof DefaultTheme['sizes']['padding'] }>`
+const DropzoneOverlay = styled(Container)<{ $borderSize: keyof Theme['sizes']['padding'] }>`
 	position: absolute;
 	opacity: 0.4;
 	border-radius: 0.25rem;

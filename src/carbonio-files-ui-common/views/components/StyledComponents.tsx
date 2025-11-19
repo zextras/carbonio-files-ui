@@ -6,6 +6,8 @@
 
 import React, { CSSProperties } from 'react';
 
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
 	Avatar,
 	Container,
@@ -15,7 +17,6 @@ import {
 	Shimmer,
 	Text
 } from '@zextras/carbonio-design-system';
-import styled, { css } from 'styled-components';
 
 import {
 	LIST_ITEM_AVATAR_HEIGHT,
@@ -38,10 +39,13 @@ export const HoverContainer = styled(Row)`
 	width: 100%;
 `;
 
-export const HoverBarContainer = styled(Row).attrs(({ height, width, theme }) => ({
-	height: height ?? '45%',
-	width: width ?? `calc(100% - ${LIST_ITEM_AVATAR_HEIGHT} - ${theme.sizes.padding.small})`
-}))`
+export const HoverBarContainer = styled(Row)<{
+	height?: string;
+	width?: string;
+}>`
+	height: ${({ height }): string => height ?? '45%'};
+	width: ${({ width, theme }): string =>
+		width ?? `calc(100% - ${LIST_ITEM_AVATAR_HEIGHT} - ${theme.sizes.padding.small})`};
 	display: none;
 	position: absolute;
 	top: 0;
@@ -129,13 +133,11 @@ export const OverFlowHiddenRow = styled(Row)`
 	overflow: hidden;
 `;
 
-export const ShimmerText = styled(Shimmer.Text).attrs<{
+export const ShimmerText = styled(Shimmer.Text)<{
 	$size: 'extrasmall' | 'small' | 'medium' | 'large' | 'extralarge';
-}>(({ $size, theme }) => ({
-	height: cssCalcBuilder(theme.sizes.font[$size], ['*', 1.2]),
-	'data-testid': 'shimmer-text'
-}))<{ $size: 'extrasmall' | 'small' | 'medium' | 'large' | 'extralarge' }>``;
-
+}>`
+	height: ${({ $size, theme }): string => cssCalcBuilder(theme.sizes.font[$size], ['*', 1.2])};
+`;
 export const TextWithLineHeight = styled(Text)`
 	line-height: 1.5;
 `;

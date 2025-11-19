@@ -7,10 +7,10 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useQuery, useReactiveVar } from '@apollo/client';
+import styled from '@emotion/styled';
 import { Action as DSAction, Container, useSnackbar } from '@zextras/carbonio-design-system';
 import { PreviewItem, PreviewsManagerContext } from '@zextras/carbonio-ui-preview';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { Dropzone } from './Dropzone';
 import { EmptyFolder } from './EmptyFolder';

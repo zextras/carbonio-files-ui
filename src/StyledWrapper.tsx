@@ -6,9 +6,9 @@
 
 import React from 'react';
 
+import { css, Global } from '@emotion/react';
 import { ThemeColorObj, ThemeProvider } from '@zextras/carbonio-design-system';
 import type { Theme } from '@zextras/carbonio-design-system';
-import { createGlobalStyle } from 'styled-components';
 
 import { AnimatedLoader } from './carbonio-files-ui-common/views/components/icons/AnimatedLoader';
 import { AnimatedUpload } from './carbonio-files-ui-common/views/components/icons/AnimatedUpload';
@@ -46,17 +46,18 @@ const themeOverride = (
 	}
 });
 
-const GlobalStyle = createGlobalStyle`
-  .disable-hover, .disable-hover * {
-	  &:hover {
-		  background-color: transparent;
-	  }
-  }
+const globalStyles = css`
+	.disable-hover,
+	.disable-hover * {
+		&:hover {
+			background-color: transparent;
+		}
+	}
 `;
 
 const StyledWrapper = ({ children }: React.PropsWithChildren): React.JSX.Element => (
 	<ThemeProvider loadDefaultFont={false} extension={themeOverride}>
-		<GlobalStyle />
+		<Global styles={globalStyles} />
 		{children}
 	</ThemeProvider>
 );

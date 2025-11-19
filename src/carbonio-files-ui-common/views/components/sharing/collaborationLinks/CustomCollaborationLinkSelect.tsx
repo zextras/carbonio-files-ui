@@ -6,6 +6,8 @@
 
 import React, { useMemo } from 'react';
 
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
 	Container,
 	Divider,
@@ -18,7 +20,6 @@ import {
 	Tooltip
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
 
 import { EMPTY_ITEM } from '../../../../../constants';
 

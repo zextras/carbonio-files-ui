@@ -6,8 +6,9 @@
 
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { List, type Action as DSAction, Row } from '@zextras/carbonio-design-system';
-import styled, { css } from 'styled-components';
 
 import { Draggable } from './Draggable';
 import { NodeListItem, NodeListItemProps } from './NodeListItem';
@@ -86,9 +87,12 @@ export const ListContent = ({
 				} else {
 					nodesToDrag.push(node);
 				}
-				const permittedActions = getPermittedActions([Action.Move, Action.MoveToTrash], {
-					nodes: nodesToDrag
-				});
+				const permittedActions = getPermittedActions(
+					[Action.Move, Action.MoveToTrash, Action.AttachToMail],
+					{
+						nodes: nodesToDrag
+					}
+				);
 
 				const draggedItemsTmp = nodesToDrag.reduce<React.JSX.Element[]>(
 					(accumulator, nodeToDrag, currentIndex) => {
@@ -130,6 +134,10 @@ export const ListContent = ({
 						? JSON.stringify(nodesToDrag)
 						: JSON.stringify(false)
 				);
+
+				if (permittedActions.includes(Action.AttachToMail)) {
+					event.dataTransfer.setData(DRAG_TYPES.mailAttachment, JSON.stringify(nodesToDrag));
+				}
 			},
 		[isSelectionModeActive, nodes, selectedMap]
 	);

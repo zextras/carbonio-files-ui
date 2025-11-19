@@ -7,9 +7,8 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
-import { Button, Tooltip } from '@zextras/carbonio-design-system';
+import { Button, Theme, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import { DefaultTheme } from 'styled-components';
 
 import { viewModeVar } from '../../apollo/viewModeVar';
 import { VIEW_MODE } from '../../constants';
@@ -18,7 +17,7 @@ export const ViewModeComponent = (): React.JSX.Element => {
 	const viewMode = useReactiveVar(viewModeVar);
 	const [t] = useTranslation();
 
-	const icon = useMemo<keyof DefaultTheme['icons']>(
+	const icon = useMemo<keyof Theme['icons']>(
 		() => (viewMode === VIEW_MODE.list ? 'GridOutline' : 'ListOutline'),
 		[viewMode]
 	);

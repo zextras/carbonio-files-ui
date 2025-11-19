@@ -7,10 +7,9 @@
 import React from 'react';
 
 import { act, screen, waitFor } from '@testing-library/react';
+import { Theme } from '@zextras/carbonio-design-system';
 import { forEach, map } from 'lodash';
 import { http, HttpResponse } from 'msw';
-import { DefaultTheme } from 'styled-components';
-import 'jest-styled-components';
 
 import { NodeDetails } from './NodeDetails';
 import server from '../../../mocks/server';
@@ -608,7 +607,7 @@ describe('Node Details', () => {
 
 		expect(loadMore).toHaveBeenCalled();
 	});
-	test.each<[type: NodeType, mimeType: string, icon: keyof DefaultTheme['icons'], color: string]>([
+	test.each<[type: NodeType, mimeType: string, icon: keyof Theme['icons'], color: string]>([
 		[NodeType.Folder, 'any', 'Folder', '#828282'],
 		[NodeType.Text, 'application/pdf', 'FilePdf', '#d74942'],
 		[NodeType.Text, 'any', 'FileText', '#2b73d2'],

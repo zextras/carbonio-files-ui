@@ -6,6 +6,7 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 
+import styled from '@emotion/styled';
 import {
 	Button,
 	Container,
@@ -21,7 +22,6 @@ import {
 	InputProps
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { AccessCodeComponent } from './AccessCodeComponent';
 import { AccessCodeSection } from './AccessCodeSection';

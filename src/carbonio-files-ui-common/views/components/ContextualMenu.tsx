@@ -6,8 +6,8 @@
 
 import React from 'react';
 
+import styled from '@emotion/styled';
 import { Dropdown, DropdownItem, DropdownProps } from '@zextras/carbonio-design-system';
-import styled from 'styled-components';
 
 export interface ContextualMenuProps extends Omit<DropdownProps, 'items' | 'contextMenu'> {
 	actions: DropdownItem[];
