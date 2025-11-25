@@ -14,7 +14,6 @@ import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { NodeHoverBar } from './NodeHoverBar';
 import { HoverContainer, ListItemContainer } from './StyledComponents';
 import { UploadStatusComponent } from './UploadStatusComponent';
-import { LIST_ITEM_AVATAR_HEIGHT_COMPACT } from '../../constants';
 import { Breadcrumbs } from '../../design_system_fork/Breadcrumbs';
 import { useUploadActions } from '../../hooks/useUploadActions';
 import { Crumb } from '../../types/common';
@@ -112,12 +111,7 @@ export const UploadNodeDetailsListItem = ({
 						contentCount={(isUploadFolderItem(item) && item.contentCount) || undefined}
 					/>
 				</HoverContainer>
-				<NodeHoverBar
-					actions={hoverActions}
-					height={'100%'}
-					width={`calc(100% - ${LIST_ITEM_AVATAR_HEIGHT_COMPACT})`}
-					padding={{ right: '0.5rem' }}
-				/>
+				<NodeHoverBar actions={hoverActions} />
 			</ListItemContainer>
 		)) || <></>
 	);
