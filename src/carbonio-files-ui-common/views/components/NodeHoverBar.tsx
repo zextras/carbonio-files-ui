@@ -35,7 +35,7 @@ export const NodeHoverBar = ({ actions, ...rest }: NodeHoverBarProps): React.JSX
 			padding={{ right: '0.5rem' }}
 			{...rest}
 		>
-			<CollapsingActions actions={actionsMapped} color={'text'} gap={'0.25rem'} />
+			<CollapsingActions actions={actionsMapped} color={'text'} size={'large'} gap={'0.25rem'} />
 		</HoverBarContainer>
 	);
 };
