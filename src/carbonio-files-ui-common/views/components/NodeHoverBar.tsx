@@ -31,12 +31,11 @@ export const NodeHoverBar = ({ actions, ...rest }: NodeHoverBarProps): React.JSX
 	return (
 		<HoverBarContainer
 			wrap="nowrap"
-			mainAlignment="flex-end"
 			data-testid="hover-bar"
-			padding={{ top: '0.5rem', right: '0.5rem' }}
+			padding={{ right: '0.5rem' }}
 			{...rest}
 		>
-			<CollapsingActions actions={actionsMapped} color={'text'} size={'small'} gap={'0.5rem'} />
+			<CollapsingActions actions={actionsMapped} color={'text'} size={'large'} gap={'0.25rem'} />
 		</HoverBarContainer>
 	);
 };
