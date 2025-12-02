@@ -116,9 +116,11 @@ export const ListContent = ({
 				);
 
 				setDragImage(draggedItemsTmp);
-				if (dragImageRef.current) {
-					event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
-				}
+				setTimeout(() => {
+					if (dragImageRef.current) {
+						event.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
+					}
+				}, 0);
 
 				draggedItemsVar(nodesToDrag);
 				event.dataTransfer.setData(
