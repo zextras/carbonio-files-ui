@@ -3,11 +3,13 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
+import styled from '@emotion/styled';
 import { Avatar, Container, Divider, Text } from '@zextras/carbonio-design-system';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { useNavigation } from '../../../../hooks/useNavigation';
 import {
 	AddedNode,
 	NewShare,
@@ -22,6 +24,15 @@ type NotificationItemProps = {
 	notification: Notification;
 	isUnread: boolean;
 };
+
+const CustomContainer = styled(Container)`
+	margin: 0.5rem 0;
+	border-radius: 1rem;
+	cursor: pointer;
+	&:hover {
+		background-color: ${({ theme }): string => theme.palette.gray6.hover};
+	}
+`;
 
 export function isNewShareNotification(notification: Notification): notification is NewShare {
 	return notification.notification_type === NotificationType.NewShare;
@@ -62,6 +73,7 @@ export const NotificationItem = ({
 	} = useTranslation();
 	const [t] = useTranslation();
 	const date = getDateNotification(notification.created_at, language);
+	const { navigateTo, navigateToFolder } = useNavigation();
 
 	const notificationMessage = useMemo(() => {
 		if (isNewShareNotification(notification)) {
@@ -157,14 +169,34 @@ export const NotificationItem = ({
 		return null;
 	}, [isUnread, notification, t]);
 
+	const handleClick = useCallback((): void => {
+		if (isNewShareNotification(notification) || isTransferredOwnershipNotification(notification)) {
+			// opens the file or folder using the "copy item's shortcut" function behavior
+			navigateToFolder('');
+		}
+		if (isAddedNodeNotification(notification)) {
+			// opens the destination folder with the added item already selected and highlighted, showing the details panel
+			navigateTo(``);
+		}
+		if (isRemovedNodeNotification(notification)) {
+			// opens the origin folder attempting to select the removed item, thus triggering the snackbar that notifies the item's unavailability
+			navigateTo(``);
+		}
+		if (isTransferredOwnershipNotification(notification)) {
+			// opens the file or folder using the "copy item's shortcut" function behavior
+			navigateTo(``);
+		}
+	}, [navigateTo, navigateToFolder, notification]);
+
 	return (
 		<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
-			<Container
+			<CustomContainer
 				orientation={'horizontal'}
 				gap={'0.5rem'}
 				mainAlignment={'flex-start'}
 				crossAlignment={'flex-start'}
-				padding={{ vertical: '1rem', right: '0.25rem' }}
+				padding={'0.5rem'}
+				onClick={handleClick}
 			>
 				<Avatar label={notification.triggering_user.email} />
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
@@ -179,7 +211,7 @@ export const NotificationItem = ({
 						{date}
 					</Text>
 				</Container>
-			</Container>
+			</CustomContainer>
 			<Divider />
 		</Container>
 	);
