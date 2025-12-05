@@ -5,11 +5,13 @@
  */
 import React, { useCallback, useMemo } from 'react';
 
+import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { Avatar, Container, Divider, Text } from '@zextras/carbonio-design-system';
 import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
-import { useNavigation } from '../../../../hooks/useNavigation';
+import { FILES_ROUTE } from '../../../constants';
 import {
 	AddedNode,
 	NewShare,
@@ -23,6 +25,7 @@ import { InlineText } from '../StyledComponents';
 type NotificationItemProps = {
 	notification: Notification;
 	isUnread: boolean;
+	closePopover: () => void;
 };
 
 const CustomContainer = styled(Container)`
@@ -66,14 +69,16 @@ export function getDateNotification(createdAt: number, language?: string): strin
 
 export const NotificationItem = ({
 	notification,
-	isUnread
+	isUnread,
+	closePopover
 }: NotificationItemProps): React.JSX.Element => {
 	const {
 		i18n: { language }
 	} = useTranslation();
 	const [t] = useTranslation();
 	const date = getDateNotification(notification.created_at, language);
-	const { navigateTo, navigateToFolder } = useNavigation();
+	const navigate = useNavigate();
+	const { resetStore } = useApolloClient();
 
 	const notificationMessage = useMemo(() => {
 		if (isNewShareNotification(notification)) {
@@ -170,23 +175,38 @@ export const NotificationItem = ({
 	}, [isUnread, notification, t]);
 
 	const handleClick = useCallback((): void => {
-		if (isNewShareNotification(notification) || isTransferredOwnershipNotification(notification)) {
-			// opens the file or folder using the "copy item's shortcut" function behavior
-			navigateToFolder('');
-		}
-		if (isAddedNodeNotification(notification)) {
-			// opens the destination folder with the added item already selected and highlighted, showing the details panel
-			navigateTo(``);
-		}
-		if (isRemovedNodeNotification(notification)) {
-			// opens the origin folder attempting to select the removed item, thus triggering the snackbar that notifies the item's unavailability
-			navigateTo(``);
+		closePopover();
+		if (isNewShareNotification(notification)) {
+			navigate({
+				search: `${notification.node.type === 'FOLDER' ? 'folder' : 'file'}=${notification.node.node_id}`,
+				pathname: `/${FILES_ROUTE}`
+			});
 		}
 		if (isTransferredOwnershipNotification(notification)) {
-			// opens the file or folder using the "copy item's shortcut" function behavior
-			navigateTo(``);
+			navigate({
+				search: `folder=${notification.resulting_node.node_id}`,
+				pathname: `/${FILES_ROUTE}`
+			});
 		}
-	}, [navigateTo, navigateToFolder, notification]);
+		if (isAddedNodeNotification(notification)) {
+			resetStore();
+			navigate({
+				search: [
+					`folder=${notification.destination_folder.node_id}`,
+					`node=${notification.added_node.node_id}`
+				].join('&')
+			});
+		}
+		if (isRemovedNodeNotification(notification)) {
+			resetStore();
+			navigate({
+				search: [
+					`folder=${notification.origin_folder.node_id}`,
+					`node=${notification.removed_node.node_id}`
+				].join('&')
+			});
+		}
+	}, [closePopover, notification, navigate, resetStore]);
 
 	return (
 		<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
