@@ -17,6 +17,7 @@ import {
 	DateTimePickerProps,
 	InputProps
 } from '@zextras/carbonio-design-system';
+import { getUserSettings } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 
 import { AccessCodeSection } from './AccessCodeSection';
@@ -51,6 +52,8 @@ export const AddPublicLinkComponent = ({
 }: AddPublicLinkComponentProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const scrollToElementRef = useRef<HTMLElement>(null);
+
+	const { zimbraFeatureSharingEnabled } = getUserSettings().attrs;
 
 	const { newAccessCodeValue, isAccessCodeEnabled, regenerateAccessCode, toggleAccessCode, reset } =
 		useAccessCode(false);
@@ -159,7 +162,7 @@ export const AddPublicLinkComponent = ({
 						)}
 					</Text>
 				)}
-				{!limitReached && (
+				{zimbraFeatureSharingEnabled === 'TRUE' && !limitReached && (
 					<Container orientation="horizontal" width="fit">
 						{status === PublicLinkRowStatus.OPEN && (
 							<>

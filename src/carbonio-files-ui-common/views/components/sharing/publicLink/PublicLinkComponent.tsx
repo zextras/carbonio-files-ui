@@ -21,6 +21,7 @@ import {
 	useSnackbar,
 	InputProps
 } from '@zextras/carbonio-design-system';
+import { getUserSettings } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 
 import { AccessCodeComponent } from './AccessCodeComponent';
@@ -126,6 +127,8 @@ export const PublicLinkComponent = ({
 	const [t] = useTranslation();
 	const createSnackbar = useSnackbar();
 	const { locale } = useUserInfo();
+
+	const { zimbraFeatureSharingEnabled } = getUserSettings().attrs;
 
 	const { newAccessCodeValue, isAccessCodeEnabled, regenerateAccessCode, toggleAccessCode, reset } =
 		useAccessCode(!!accessCode, accessCode);
@@ -301,15 +304,19 @@ export const PublicLinkComponent = ({
 								label={t('publicLink.link.undo', 'Undo')}
 								onClick={onUndoCallback}
 							/>
-							<Padding right="small" />
-							<Button
-								size="small"
-								type="outlined"
-								color="secondary"
-								label={t('publicLink.link.editLink', 'Edit Link')}
-								onClick={onEditConfirmCallback}
-								disabled={moreThan300Characters || !isSomethingChanged}
-							/>
+							{zimbraFeatureSharingEnabled === 'TRUE' && (
+								<>
+									<Padding right="small" />
+									<Button
+										size="small"
+										type="outlined"
+										color="secondary"
+										label={t('publicLink.link.editLink', 'Edit Link')}
+										onClick={onEditConfirmCallback}
+										disabled={moreThan300Characters || !isSomethingChanged}
+									/>
+								</>
+							)}
 						</>
 					)}
 					{status !== PublicLinkRowStatus.OPEN && (
@@ -327,16 +334,20 @@ export const PublicLinkComponent = ({
 								icon={!isExpired ? 'SlashOutline' : 'DeletePermanentlyOutline'}
 								onClick={onRevokeOrRemoveCallback}
 							/>
-							<Padding right="small" />
-							<Button
-								disabled={status === PublicLinkRowStatus.DISABLED}
-								size="small"
-								type="outlined"
-								color="secondary"
-								label={t('publicLink.link.edit', 'Edit')}
-								icon="Edit2Outline"
-								onClick={onEditCallback}
-							/>
+							{zimbraFeatureSharingEnabled === 'TRUE' && (
+								<>
+									<Padding right="small" />
+									<Button
+										disabled={status === PublicLinkRowStatus.DISABLED}
+										size="small"
+										type="outlined"
+										color="secondary"
+										label={t('publicLink.link.edit', 'Edit')}
+										icon="Edit2Outline"
+										onClick={onEditCallback}
+									/>
+								</>
+							)}
 						</>
 					)}
 				</Container>

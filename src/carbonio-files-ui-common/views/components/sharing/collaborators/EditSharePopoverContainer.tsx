@@ -19,6 +19,7 @@ import {
 	type ContainerProps,
 	Tooltip
 } from '@zextras/carbonio-design-system';
+import { getUserSettings } from '@zextras/carbonio-shell-ui';
 import { includes, noop } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
@@ -59,8 +60,16 @@ export const EditSharePopoverContainer = ({
 }: EditShareChipPopoverContainerProps): React.JSX.Element => {
 	const [t] = useTranslation();
 
-	const container0Click = useCallback(() => containerOnClick(0), [containerOnClick]);
-	const container1Click = useCallback(() => containerOnClick(1), [containerOnClick]);
+	const { zimbraFeatureSharingEnabled } = getUserSettings().attrs;
+
+	const container0Click = useCallback(
+		() => zimbraFeatureSharingEnabled === 'TRUE' && containerOnClick(0),
+		[containerOnClick]
+	);
+	const container1Click = useCallback(
+		() => zimbraFeatureSharingEnabled === 'TRUE' && containerOnClick(1),
+		[containerOnClick]
+	);
 
 	const row0disabled = useMemo(() => includes(disabledRows, 0), [disabledRows]);
 	const row1disabled = useMemo(() => includes(disabledRows, 1), [disabledRows]);
@@ -154,6 +163,7 @@ export const EditSharePopoverContainer = ({
 			>
 				<Padding right="large">
 					<Checkbox
+						disabled={zimbraFeatureSharingEnabled !== 'TRUE'}
 						size="medium"
 						value={checkboxValue}
 						onClick={(ev: Event): void => {
@@ -176,15 +186,19 @@ export const EditSharePopoverContainer = ({
 					</Text>
 				</Container>
 			</CheckboxContainer>
-			<Divider color="gray3" />
-			<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
-				<Button
-					label={t('displayer.share.chip.popover.save', 'Save')}
-					color="primary"
-					disabled={saveDisabled}
-					onClick={saveCallback}
-				/>
-			</Container>
+			{zimbraFeatureSharingEnabled === 'TRUE' && (
+				<>
+					<Divider color="gray3" />
+					<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
+						<Button
+							label={t('displayer.share.chip.popover.save', 'Save')}
+							color="primary"
+							disabled={saveDisabled}
+							onClick={saveCallback}
+						/>
+					</Container>
+				</>
+			)}
 		</Container>
 	);
 };

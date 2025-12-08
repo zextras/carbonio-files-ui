@@ -16,6 +16,7 @@ import {
 	Row,
 	Text
 } from '@zextras/carbonio-design-system';
+import { getUserSettings } from '@zextras/carbonio-shell-ui';
 import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
@@ -66,6 +67,8 @@ function shareTargetExists<T extends MakePartial<Pick<Share, 'share_target'>, 's
 export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { me } = useUserInfo();
+
+	const { zimbraFeatureSharingEnabled } = getUserSettings().attrs;
 
 	const { data } = useGetSharesQuery(node.id);
 
@@ -210,7 +213,9 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 						{collaborators}
 					</ScrollContainer>
 				</Container>
-				{node.permissions.can_share && <AddSharing node={node} />}
+				{zimbraFeatureSharingEnabled === 'TRUE' && node.permissions.can_share && (
+					<AddSharing node={node} />
+				)}
 			</Container>
 			{node.permissions.can_share && (
 				<CollaborationLinks
