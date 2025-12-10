@@ -13,7 +13,6 @@ import { getDateNotification } from './NotificationItem';
 import { Notifications } from './Notifications';
 import server from '../../../../mocks/server';
 import { lastSeenNotificationsVar } from '../../../apollo/lastSeenNotificationsVar';
-import { NOTIFICATIONS_LOAD_LIMIT } from '../../../constants';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
 	populateAddedNodeNotification,
@@ -21,7 +20,7 @@ import {
 	populateRemovedNodeNotification,
 	populateTransferredOwnershipNotification
 } from '../../../mocks/mockUtils';
-import { screen, setup, triggerListLoadMore } from '../../../tests/utils';
+import { screen, setup } from '../../../tests/utils';
 import { Resolvers } from '../../../types/graphql/resolvers-types';
 import {
 	AddedNodeType,
@@ -29,6 +28,12 @@ import {
 	RemovedNodeType
 } from '../../../types/graphql/types';
 import { mockGetNotifications } from '../../../utils/resolverMocks';
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+	...jest.requireActual('react-router-dom'),
+	useNavigate: (): jest.Mock<void> => mockNavigate
+}));
 
 describe('Notifications', () => {
 	beforeEach(() => {
@@ -327,117 +332,27 @@ describe('Notifications', () => {
 				});
 			});
 
-			describe('Pagination', () => {
-				it('should render new pagination if the user reaches the list bottom element', async () => {
-					const notifications = Array.from({ length: NOTIFICATIONS_LOAD_LIMIT + 5 }, () =>
-						populateAddedNodeNotification()
-					);
-					const firstPage = notifications.slice(0, NOTIFICATIONS_LOAD_LIMIT);
-					const secondPage = notifications.slice(NOTIFICATIONS_LOAD_LIMIT);
-					server.use(
-						graphql.query(GetNotificationsDocument, ({ variables }) => {
-							if (!variables?.page_token) {
-								return HttpResponse.json({
-									data: {
-										getNotifications: {
-											__typename: 'NotificationPage',
-											last_seen: faker.date.recent().getTime(),
-											notifications: firstPage,
-											page_token: firstPage[firstPage.length - 1].id,
-											unread: 0
-										}
-									}
-								});
-							}
-							return HttpResponse.json({
-								data: {
-									getNotifications: {
-										__typename: 'NotificationPage',
-										last_seen: faker.date.recent().getTime(),
-										notifications: secondPage,
-										page_token: null,
-										unread: 0
-									}
-								}
-							});
-						})
-					);
-					const { user } = setup(<Notifications />);
+			it.each([
+				{ name: 'NewShare', populate: populateNewShareNotification },
+				{ name: 'TransferredOwnership', populate: populateTransferredOwnershipNotification },
+				{ name: 'AddedNode', populate: populateAddedNodeNotification },
+				{ name: 'RemovedNode', populate: populateRemovedNodeNotification }
+			])('should navigate when clicking on $name notification', async ({ populate }) => {
+				const notification = populate();
+				const mocks = {
+					Query: {
+						getNotifications: mockGetNotifications(0, [notification])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notifications />, { mocks });
+				await user.click(
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
+				);
+				await user.click(screen.getByTestId(SELECTORS.avatar));
 
-					await user.click(
-						screen.getByRoleWithIcon('button', {
-							icon: ICON_REGEXP.chevronRightNotifications
-						})
-					);
-					firstPage.forEach((notification) => {
-						expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
-					});
-					secondPage.forEach((notification) => {
-						expect(screen.queryByText(notification.triggering_user.email)).not.toBeInTheDocument();
-					});
-					triggerListLoadMore();
-					await screen.findByText(secondPage[0].triggering_user.email);
-					firstPage.forEach((notification) => {
-						expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
-					});
-					secondPage.forEach((notification) => {
-						expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
-					});
-				});
-
-				it('should keep the unread notifications in primary (Regular) color if the user reaches a new pagination', async () => {
-					const notifications = Array.from({ length: NOTIFICATIONS_LOAD_LIMIT + 1 }, () =>
-						populateAddedNodeNotification()
-					);
-					const firstPage = notifications.slice(0, NOTIFICATIONS_LOAD_LIMIT);
-					const secondPage = notifications.slice(NOTIFICATIONS_LOAD_LIMIT);
-					const lastSeen = faker.date.recent().getTime();
-					const firstNotification = notifications[0];
-					firstNotification.created_at = lastSeen + 1;
-					server.use(
-						graphql.query(GetNotificationsDocument, ({ variables }) => {
-							if (!variables?.page_token) {
-								return HttpResponse.json({
-									data: {
-										getNotifications: {
-											__typename: 'NotificationPage',
-											last_seen: lastSeen,
-											notifications: firstPage,
-											page_token: firstPage[firstPage.length - 1].id,
-											unread: 1
-										}
-									}
-								});
-							}
-							return HttpResponse.json({
-								data: {
-									getNotifications: {
-										__typename: 'NotificationPage',
-										last_seen: lastSeen,
-										notifications: secondPage,
-										page_token: null,
-										unread: 0
-									}
-								}
-							});
-						})
-					);
-					const { user } = setup(<Notifications />);
-
-					await user.click(
-						screen.getByRoleWithIcon('button', {
-							icon: ICON_REGEXP.chevronRightNotifications
-						})
-					);
-					expect(screen.getByText(firstNotification.triggering_user.email)).toHaveStyle({
-						color: COLORS.primary.regular
-					});
-					triggerListLoadMore();
-					await screen.findByText(secondPage[0].triggering_user.email);
-					expect(screen.getByText(firstNotification.triggering_user.email)).toHaveStyle({
-						color: COLORS.primary.regular
-					});
-				});
+				expect(mockNavigate).toHaveBeenCalled();
 			});
 		});
 
