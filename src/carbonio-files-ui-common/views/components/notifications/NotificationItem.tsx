@@ -7,7 +7,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
-import { Avatar, Container, Divider, Text } from '@zextras/carbonio-design-system';
+import { Avatar, Container, Divider, Text, useSnackbar } from '@zextras/carbonio-design-system';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -79,6 +79,7 @@ export const NotificationItem = ({
 	const date = getDateNotification(notification.created_at, language);
 	const navigate = useNavigate();
 	const { resetStore } = useApolloClient();
+	const createSnackbar = useSnackbar();
 
 	const notificationMessage = useMemo(() => {
 		if (isNewShareNotification(notification)) {
@@ -199,14 +200,28 @@ export const NotificationItem = ({
 		}
 		if (isRemovedNodeNotification(notification)) {
 			resetStore();
-			navigate({
-				search: [
-					`folder=${notification.origin_folder.node_id}`,
-					`node=${notification.removed_node.node_id}`
-				].join('&')
-			});
+			if (notification.notification_type === NotificationType.RemovedNode) {
+				createSnackbar({
+					key: new Date().toLocaleString(),
+					severity: 'warning',
+					label: t(
+						'errorCode.code_NODE_NOT_FOUND',
+						"It seems that this item doesn't exist, or you do not have permission to access it"
+					)
+				});
+				navigate({
+					search: `folder=${notification.origin_folder.node_id}`
+				});
+			} else {
+				navigate({
+					search: [
+						`folder=${notification.origin_folder.node_id}`,
+						`node=${notification.removed_node.node_id}`
+					].join('&')
+				});
+			}
 		}
-	}, [closePopover, notification, navigate, resetStore]);
+	}, [closePopover, notification, navigate, resetStore, createSnackbar, t]);
 
 	return (
 		<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
