@@ -30,6 +30,12 @@ import {
 } from '../../../types/graphql/types';
 import { mockGetNotifications } from '../../../utils/resolverMocks';
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+	...jest.requireActual('react-router-dom'),
+	useNavigate: (): jest.Mock<void> => mockNavigate
+}));
+
 describe('Notifications', () => {
 	beforeEach(() => {
 		lastSeenNotificationsVar(0);
@@ -325,6 +331,29 @@ describe('Notifications', () => {
 						color: COLORS.text.regular
 					});
 				});
+			});
+
+			it.each([
+				{ name: 'NewShare', populate: populateNewShareNotification },
+				{ name: 'TransferredOwnership', populate: populateTransferredOwnershipNotification },
+				{ name: 'AddedNode', populate: populateAddedNodeNotification },
+				{ name: 'RemovedNode', populate: populateRemovedNodeNotification }
+			])('should navigate when clicking on $name notification', async ({ populate }) => {
+				const notification = populate();
+				const mocks = {
+					Query: {
+						getNotifications: mockGetNotifications(0, [notification])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notifications />, { mocks });
+				await user.click(
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
+				);
+				await user.click(screen.getByTestId(SELECTORS.avatar));
+
+				expect(mockNavigate).toHaveBeenCalled();
 			});
 
 			describe('Pagination', () => {
