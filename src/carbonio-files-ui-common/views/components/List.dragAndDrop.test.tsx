@@ -319,7 +319,9 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				const mocks = { Mutation: { moveNodes: vi.fn() } } satisfies Resolvers;
+				const mocks = {
+					Mutation: { moveNodes: vi.fn().mockResolvedValue(vi.fn()) }
+				} satisfies Resolvers;
 
 				setup(
 					<SelectionProvider items={nodes}>
@@ -407,7 +409,7 @@ describe('List', () => {
 
 				const mocks = {
 					Mutation: {
-						moveNodes: vi.fn()
+						moveNodes: vi.fn().mockResolvedValue(vi.fn())
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -508,7 +510,9 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				const mocks = { Mutation: { moveNodes: vi.fn() } } satisfies Resolvers;
+				const mocks = {
+					Mutation: { moveNodes: vi.fn().mockResolvedValue(vi.fn()) }
+				} satisfies Resolvers;
 				setup(
 					<SelectionProvider items={nodes}>
 						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
@@ -626,7 +630,7 @@ describe('List', () => {
 				expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 				fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
 				fireEvent.dragEnd(itemToDrag, { dataTransfer: dataTransfer() });
-				expect(await screen.findByText(/item moved/i)).toBeVisible();
+				await waitFor(() => expect(screen.getByText(/item moved/i)).toBeVisible());
 				// selection mode is exited
 				expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 			});

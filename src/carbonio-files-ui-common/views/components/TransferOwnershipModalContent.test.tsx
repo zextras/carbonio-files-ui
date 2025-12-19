@@ -182,7 +182,7 @@ describe('TransferOwnershipModalContent', () => {
 				getTransferOwnershipAvailability: mockGetTransferOwnershipAvailability(true)
 			},
 			Mutation: {
-				transferOwnership: vi.fn()
+				transferOwnership: vi.fn().mockReturnValue(vi.fn())
 			}
 		} satisfies Partial<Resolvers>;
 		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
@@ -201,7 +201,7 @@ describe('TransferOwnershipModalContent', () => {
 				getTransferOwnershipAvailability: mockGetTransferOwnershipAvailability(false)
 			},
 			Mutation: {
-				transferOwnership: vi.fn()
+				transferOwnership: vi.fn().mockReturnValue(vi.fn())
 			}
 		} satisfies Partial<Resolvers>;
 		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {

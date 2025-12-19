@@ -81,13 +81,6 @@ vi.mock('@zextras/carbonio-ui-preview', () => ({
 	}))
 }));
 
-vi.mock('@apollo/client', async () => {
-	const actual = await vi.importActual('@apollo/client');
-	return {
-		...actual
-	};
-});
-
 failOnConsole({
 	shouldFailOnWarn: false,
 	shouldFailOnError: true,
@@ -204,6 +197,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	server.resetHandlers();
+	global.apolloClient.cache.reset();
 });
 // mock a simplified crypto
 Object.defineProperty(window.crypto, 'randomUUID', {

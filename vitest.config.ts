@@ -5,11 +5,18 @@
  */
 import graphql from '@rollup/plugin-graphql';
 import react from '@vitejs/plugin-react';
+import dotenv from 'dotenv';
 import { defineConfig } from 'vitest/config';
+
+dotenv.config({ path: '.env' });
+
+const retry = process.env.TEST_RETRY_TIMES ? parseInt(process.env.TEST_RETRY_TIMES, 10) : 2;
+const isCI = process.env.CI === 'true';
 
 export default defineConfig({
 	plugins: [
 		react({
+			jsxImportSource: '@emotion/react',
 			babel: {
 				plugins: ['@emotion/babel-plugin']
 			}
@@ -20,6 +27,8 @@ export default defineConfig({
 		BASE_PATH: JSON.stringify('/')
 	},
 	test: {
+		reporters: isCI ? ['default', 'junit'] : ['verbose'],
+		retry,
 		environment: 'jsdom',
 		setupFiles: ['src/setupTests.ts'],
 		globals: true,
@@ -53,7 +62,6 @@ export default defineConfig({
 		},
 		include: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
 		exclude: ['node_modules', 'constants/test.ts'],
-		reporters: ['default', 'junit'],
 		outputFile: {
 			junit: './junit.xml'
 		}
