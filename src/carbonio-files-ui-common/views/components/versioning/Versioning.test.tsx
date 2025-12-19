@@ -185,7 +185,7 @@ describe('Versioning', () => {
 			/All versions that are not marked to be kept forever, except the current one, will be deleted/i
 		);
 		act(() => {
-			jest.advanceTimersByTime(TIMERS.modalDelayOpen);
+			vi.advanceTimersByTime(TIMERS.modalDelayOpen);
 		});
 		const modalPurgeAllButton = within(screen.getByTestId(SELECTORS.modal)).getByRole('button', {
 			name: /purge all versions/i
@@ -277,7 +277,7 @@ describe('Versioning', () => {
 	});
 
 	test('download version', async () => {
-		const downloadSpy = jest.spyOn(moduleUtils, 'downloadNode');
+		const downloadSpy = vi.spyOn(moduleUtils, 'downloadNode');
 
 		const fileVersion1 = populateFile();
 		fileVersion1.permissions.can_write_file = true;
@@ -302,8 +302,8 @@ describe('Versioning', () => {
 	});
 
 	test('open with docs version', async () => {
-		const openNodeWithDocsSpy = jest.fn();
-		jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openNodeWithDocsSpy);
+		const openNodeWithDocsSpy = vi.fn();
+		vi.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openNodeWithDocsSpy);
 
 		const fileVersion1 = populateFile();
 		fileVersion1.permissions.can_write_file = true;
@@ -428,7 +428,7 @@ describe('Versioning', () => {
 			color: COLORS.dropdownItem.disabled
 		});
 		// register tooltip listeners
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		// hover on action shows a tooltip
 		await user.hover(cloneAsCurrentItem);
 		const tooltip = await screen.findByText(/you have reached the maximum number of versions/i);
@@ -487,7 +487,7 @@ describe('Versioning', () => {
 			color: COLORS.dropdownItem.disabled
 		});
 		// register tooltip listeners
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		// hover on action shows a tooltip
 		await user.hover(keepVersionItem);
 		const tooltip = await screen.findByText(
@@ -724,7 +724,7 @@ describe('Versioning', () => {
 			color: COLORS.dropdownItem.disabled
 		});
 		// register tooltip listeners
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		// hover on action shows a tooltip
 		await user.hover(cloneAsCurrentItem);
 		const tooltip = await screen.findByText(/you don't have the correct permissions/i);
@@ -770,7 +770,7 @@ describe('Versioning', () => {
 			color: COLORS.dropdownItem.disabled
 		});
 		// register tooltip listeners
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		// hover on action shows a tooltip
 		await user.hover(deleteVersion);
 		const tooltip = await screen.findByText(/you don't have the correct permissions/i);
@@ -792,8 +792,8 @@ describe('Versioning', () => {
 		const version = getVersionFromFile(baseFile);
 		const versions = [version];
 
-		const openNodeWithDocsSpy = jest.fn();
-		jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openNodeWithDocsSpy);
+		const openNodeWithDocsSpy = vi.fn();
+		vi.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openNodeWithDocsSpy);
 
 		const mocks = {
 			Query: {
@@ -812,7 +812,7 @@ describe('Versioning', () => {
 			color: COLORS.dropdownItem.disabled
 		});
 		// register tooltip listeners
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		// hover on action shows a tooltip
 		await user.hover(openDocumentVersion);
 		const tooltip = await screen.findByText(/This version cannot be opened by the online editor/i);
@@ -846,7 +846,7 @@ describe('Versioning', () => {
 			color: COLORS.dropdownItem.disabled
 		});
 		// register tooltip listeners
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		// hover on action shows a tooltip
 		await user.hover(keepVersion);
 		const tooltip = await screen.findByText(/you don't have the correct permissions/i);

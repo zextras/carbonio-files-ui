@@ -40,7 +40,7 @@ describe('AccessCodeComponent', () => {
 	});
 
 	it('should copy the access code and render a snackbar when the user clicks on its chip', async () => {
-		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+		const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 		const accessCode = generateAccessCode();
 		const { user } = setup(<AccessCodeComponent accessCode={accessCode} />);
 
@@ -64,7 +64,7 @@ describe('AccessCodeComponent', () => {
 	});
 
 	it('should not copy the access code when the user clicks on the EyeOffOutline icon', async () => {
-		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+		const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 		const accessCode = generateAccessCode();
 		const { user } = setup(<AccessCodeComponent accessCode={accessCode} />);
 

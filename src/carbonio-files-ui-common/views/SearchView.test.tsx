@@ -57,9 +57,7 @@ import {
 } from '../utils/resolverMocks';
 import { getChipLabel } from '../utils/utils';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Search view', () => {
 	describe('Shared by me param', () => {
@@ -212,7 +210,7 @@ describe('Search view', () => {
 			const nodeToMoveItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			await user.rightClick(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			const fullPath = await findByTextWithMarkup(
 				buildBreadCrumbRegExp(...map(pathUpdated, (parent) => parent.name))
 			);

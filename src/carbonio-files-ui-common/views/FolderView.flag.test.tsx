@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { waitForElementToBeRemoved } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -17,7 +17,7 @@ import { setup, selectNodes, screen, within } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
@@ -25,11 +25,9 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/NodeHoverBar');
 
 describe('Flag', () => {
 	describe('Selection mode', () => {
@@ -63,8 +61,13 @@ describe('Flag', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 			expect(screen.queryByTestId(ICON_REGEXP.flagged)).not.toBeInTheDocument();
 			// activate selection mode by selecting items
 			await selectNodes(nodesIdsToFlag, user);
@@ -119,8 +122,13 @@ describe('Flag', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(node.id));

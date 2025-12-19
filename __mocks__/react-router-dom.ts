@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-const actualReactRouterDom = jest.requireActual('react-router-dom');
+const actualReactRouterDom = vi.importActual('react-router-dom');
 
 module.exports = {
 	...actualReactRouterDom,
-	useBlocker: jest.fn().mockImplementation(() => ({
+	useBlocker: vi.fn().mockImplementation(() => ({
 		state: 'unblocked',
-		proceed: jest.fn()
+		proceed: vi.fn()
 	}))
 };

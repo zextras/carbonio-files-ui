@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { RawSoapResponse } from '@zextras/carbonio-ui-soap-lib';
 import { map } from 'lodash';
 
@@ -50,10 +50,8 @@ import {
 	mockUpdateShare
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/VirtualizedNodeListItem');
+vi.mock('./components/NodeHoverBar');
 
 describe('Folder View', () => {
 	describe('Create Folder', () => {
@@ -70,12 +68,16 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
 			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(/nothing here/i);
 			await user.rightClick(screen.getByTestId('emptyFolder'));
 			await user.click(screen.getByText(/new folder/i));
 			act(() => {
 				// run timers of modal
-				jest.advanceTimersToNextTimer();
+				vi.advanceTimersToNextTimer();
 			});
 			const modal = await screen.findByTestId('modal');
 			expect(within(modal).getByText(/create new folder/i)).toBeVisible();
@@ -95,6 +97,10 @@ describe('Folder View', () => {
 			const { findByTextWithMarkup } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
+			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await screen.findByText(/nothing here/i);
 			await findByTextWithMarkup(buildBreadCrumbRegExp(currentFolder.name));
@@ -117,6 +123,10 @@ describe('Folder View', () => {
 			setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
+			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await screen.findByText(/nothing here/i);
 			expect(createOptions.map((createOption) => createOption.action({}))).toContainEqual(
@@ -143,7 +153,7 @@ describe('Folder View', () => {
 				mocks
 			});
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(screen.queryByTestId(SELECTORS.displayer)).not.toBeInTheDocument();
 		});
@@ -166,7 +176,7 @@ describe('Folder View', () => {
 				mocks
 			});
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(screen.getByText(currentFolder.children.nodes[0]!.name));
 			expect(
@@ -194,7 +204,7 @@ describe('Folder View', () => {
 				mocks
 			});
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(
 				within(screen.getByTestId(SELECTORS.displayer)).getByRoleWithIcon('button', {
@@ -219,6 +229,10 @@ describe('Folder View', () => {
 			const { getByTextWithMarkup, user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
+			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const nodeItem = await screen.findByText(currentFolder.children.nodes[0]!.name);
 			expect(nodeItem).toBeVisible();
@@ -297,6 +311,10 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
 			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(/nothing here/i);
 			expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
 				expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
@@ -323,6 +341,10 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
 			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(/nothing here/i);
 			expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
 				expect.arrayContaining([
@@ -345,7 +367,13 @@ describe('Folder View', () => {
 			}
 		} satisfies Partial<Resolvers>;
 		setup(<FolderView />, { initialRouterEntries: [`/?folder=${folder.id}`], mocks });
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
+		await waitFor(() => {
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
+		});
 		await screen.findByText(node.name);
 		expect(screen.getByText(node.name)).toBeVisible();
 	});
@@ -411,7 +439,7 @@ describe('Folder View', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			jest.spyOn(network, 'soapFetch').mockImplementation(
+			vi.spyOn(network, 'soapFetch').mockImplementation(
 				(): Promise<RawSoapResponse<{ AutoCompleteResponse: AutocompleteResponse }>> =>
 					Promise.resolve({
 						Body: {
@@ -427,7 +455,12 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${localRoot.id}&node=${folder.id}`],
 				mocks
 			});
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
+			await waitFor(() => {
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
+			});
 			// folder is not shared
 			const folderItem = screen.getByTestId(SELECTORS.nodeItem(folder.id));
 			expect(within(folderItem).queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
@@ -485,7 +518,7 @@ describe('Folder View', () => {
 				)
 			).toBeVisible();
 			act(() => {
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			// navigate inside folder
 			await user.dblClick(
@@ -592,7 +625,13 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${localRoot.id}&node=${folder.id}`],
 				mocks
 			});
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
+			await waitFor(() => {
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
+			});
 			// folder share is read-only
 			await screen.findByText(/sharing/i);
 			await user.click(screen.getByText(/sharing/i));
@@ -603,7 +642,7 @@ describe('Folder View', () => {
 				})
 			).toBeVisible();
 			act(() => {
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			// navigate inside folder to cache data
 			await user.dblClick(
@@ -761,12 +800,18 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${localRoot.id}&node=${folder.id}`],
 				mocks
 			});
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
+			await waitFor(() => {
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
+			});
 			// folder has share
 			await user.click(await screen.findByText(/sharing/i));
 			expect(screen.getByText(userAccount.full_name)).toBeVisible();
 			act(() => {
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			// navigate inside folder to cache data
 			await user.dblClick(

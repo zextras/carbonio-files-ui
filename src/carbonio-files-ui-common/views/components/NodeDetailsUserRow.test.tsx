@@ -15,7 +15,7 @@ import { setup } from '../../tests/utils';
 describe('Node Details User Row', () => {
 	test('click on email call clickAction', async () => {
 		const node = populateFile();
-		const clickActionMock = jest.fn();
+		const clickActionMock = vi.fn();
 		node.last_editor = populateUser();
 		const label = 'Created by';
 		const { user } = setup(

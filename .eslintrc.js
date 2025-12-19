@@ -92,10 +92,11 @@ module.exports = {
 				'**/mocks/**/*.[jt]s?(x)',
 				'**/types/**/*.[jt]s?(x)',
 				'**/tests/**/*.[jt]s?(x)',
-				'**/jest-*.ts?(x)',
 				'**/test*.ts?(x)',
 				'**/__mocks__/**/*',
-				'codegen.ts'
+				'codegen.ts',
+				'vitest.config.ts',
+				'src/setupTests.ts'
 			],
 			rules: {
 				'import/no-extraneous-dependencies': 'off'

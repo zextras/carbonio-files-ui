@@ -33,11 +33,11 @@ import {
 import { mockGetAccountsByEmail } from '../../../../utils/resolverMocks';
 import { getChipLabel } from '../../../../utils/utils';
 
-let mockedSoapFetch = jest.fn();
+let mockedSoapFetch = vi.fn();
 
 beforeEach(() => {
-	mockedSoapFetch = jest.fn();
-	jest.spyOn(network, 'soapFetch').mockImplementation(
+	mockedSoapFetch = vi.fn();
+	vi.spyOn(network, 'soapFetch').mockImplementation(
 		(args): Promise<RawSoapResponse<Record<string, unknown>>> =>
 			new Promise<RawSoapResponse<Record<string, unknown>>>((resolve, reject) => {
 				const result = mockedSoapFetch(args);

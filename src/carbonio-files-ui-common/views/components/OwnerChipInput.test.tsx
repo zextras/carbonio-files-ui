@@ -20,7 +20,7 @@ import { getChipLabel } from '../../utils/utils';
 describe('OwnerChipInput', () => {
 	it('should show email and contact label as suggestion', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
-		jest.spyOn(network, 'soapFetch').mockImplementation(
+		vi.spyOn(network, 'soapFetch').mockImplementation(
 			(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
 					Body: {
@@ -31,7 +31,7 @@ describe('OwnerChipInput', () => {
 					Header: { context: {} }
 				})
 		);
-		const updateFilter = jest.fn();
+		const updateFilter = vi.fn();
 		const { user } = setup(<OwnerChipInput currentFilters={{}} updateFilter={updateFilter} />);
 		await user.type(screen.getByRole('textbox', { name: 'Owner' }), 'a');
 		expect(await screen.findByText(getChipLabel(match[0]._attrs))).toBeVisible();
@@ -43,7 +43,7 @@ describe('OwnerChipInput', () => {
 			populateAutocompleteGalResult(),
 			populateAutocompleteGalResult({ type: 'group' })
 		];
-		jest.spyOn(network, 'soapFetch').mockImplementation(
+		vi.spyOn(network, 'soapFetch').mockImplementation(
 			(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
 					Body: {
@@ -54,7 +54,7 @@ describe('OwnerChipInput', () => {
 					Header: { context: {} }
 				})
 		);
-		const updateFilter = jest.fn();
+		const updateFilter = vi.fn();
 		const { user } = setup(<OwnerChipInput currentFilters={{}} updateFilter={updateFilter} />);
 		await user.type(screen.getByRole('textbox', { name: 'Owner' }), 'a');
 		expect(await screen.findByText(getChipLabel(match[0]._attrs))).toBeVisible();
@@ -62,7 +62,7 @@ describe('OwnerChipInput', () => {
 	});
 
 	it('should show current filter as value if set', () => {
-		const updateFilter = jest.fn();
+		const updateFilter = vi.fn();
 		const currentOwner = {
 			label: faker.person.fullName(),
 			value: faker.string.uuid()
@@ -75,7 +75,7 @@ describe('OwnerChipInput', () => {
 
 	it('should hide suggestions if user clears the input', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
-		jest.spyOn(network, 'soapFetch').mockImplementation(
+		vi.spyOn(network, 'soapFetch').mockImplementation(
 			(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
 					Body: {
@@ -86,7 +86,7 @@ describe('OwnerChipInput', () => {
 					Header: { context: {} }
 				})
 		);
-		const updateFilter = jest.fn();
+		const updateFilter = vi.fn();
 		const { user } = setup(<OwnerChipInput currentFilters={{}} updateFilter={updateFilter} />);
 		await user.type(screen.getByRole('textbox', { name: 'Owner' }), 'a');
 		await screen.findByText(getChipLabel(match[0]._attrs));
@@ -96,7 +96,7 @@ describe('OwnerChipInput', () => {
 
 	it('should invoke updateFilter with the selected value', async () => {
 		const match: ContactInfo[] = [populateAutocompleteGalResult()];
-		jest.spyOn(network, 'soapFetch').mockImplementation(
+		vi.spyOn(network, 'soapFetch').mockImplementation(
 			(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 				Promise.resolve({
 					Body: {
@@ -107,7 +107,7 @@ describe('OwnerChipInput', () => {
 					Header: { context: {} }
 				})
 		);
-		const updateFilter = jest.fn();
+		const updateFilter = vi.fn();
 		const { user } = setup(<OwnerChipInput currentFilters={{}} updateFilter={updateFilter} />);
 		await user.type(screen.getByRole('textbox', { name: 'Owner' }), 'a');
 		const suggestion = await screen.findByText(getChipLabel(match[0]._attrs));

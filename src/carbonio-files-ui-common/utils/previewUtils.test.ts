@@ -7,8 +7,8 @@
 import { getPreviewOutputFormat, isSupportedByPreview } from './previewUtils';
 import { PREVIEW_TYPE } from '../constants';
 
-jest.mock<typeof import('./previewUtils')>('./previewUtils', () => {
-	const actual = jest.requireActual('./previewUtils');
+vi.mock('./previewUtils', async () => {
+	const actual = await vi.importActual('./previewUtils');
 	return {
 		...actual,
 		MIME_TYPE_PREVIEW_SUPPORT: {

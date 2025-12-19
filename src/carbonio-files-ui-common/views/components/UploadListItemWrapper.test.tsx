@@ -23,15 +23,15 @@ import { mockGetNode } from '../../utils/resolverMocks';
 import { humanFileSize } from '../../utils/utils';
 
 const mockedUseUploadHook: ReturnType<UseUploadHook> = {
-	add: jest.fn(),
-	update: jest.fn(),
-	removeById: jest.fn(),
-	removeByNodeId: jest.fn(),
-	removeAllCompleted: jest.fn(),
-	retryById: jest.fn()
+	add: vi.fn(),
+	update: vi.fn(),
+	removeById: vi.fn(),
+	removeByNodeId: vi.fn(),
+	removeAllCompleted: vi.fn(),
+	retryById: vi.fn()
 };
 
-jest.mock<typeof import('../../hooks/useUpload')>('../../hooks/useUpload', () => ({
+vi.mock('../../hooks/useUpload', () => ({
 	useUpload: (): ReturnType<UseUploadHook> => mockedUseUploadHook
 }));
 
@@ -44,7 +44,7 @@ describe('Upload List Item Wrapper', () => {
 			status: UploadStatus.LOADING,
 			parentNodeId: destinationFolder.id
 		});
-		const mockSelectId = jest.fn();
+		const mockSelectId = vi.fn();
 		const mocks = {
 			Query: {
 				getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -75,7 +75,7 @@ describe('Upload List Item Wrapper', () => {
 
 	test('If item is queued, queued label is shown instead of the progress', async () => {
 		const file = populateUploadItem({ status: UploadStatus.QUEUED });
-		const mockSelectId = jest.fn();
+		const mockSelectId = vi.fn();
 
 		setup(
 			<UploadListItemWrapper
@@ -95,7 +95,7 @@ describe('Upload List Item Wrapper', () => {
 	test('Progress for files is shown with the percentage', async () => {
 		const uploadItem = populateUploadItem({ progress: 45, status: UploadStatus.LOADING });
 
-		const selectFn = jest.fn();
+		const selectFn = vi.fn();
 		setup(
 			<UploadListItemWrapper
 				node={uploadItem}
@@ -117,7 +117,7 @@ describe('Upload List Item Wrapper', () => {
 			status: UploadStatus.LOADING
 		});
 
-		const selectFn = jest.fn();
+		const selectFn = vi.fn();
 		setup(
 			<UploadListItemWrapper
 				node={uploadItem}

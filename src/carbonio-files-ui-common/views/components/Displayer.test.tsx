@@ -252,7 +252,7 @@ describe('Displayer', () => {
 		node.permissions.can_share = false;
 		const mocks = {
 			Query: {
-				getNode: jest.fn(
+				getNode: vi.fn(
 					mockGetNode({ getNode: [node], getShares: [node] }) as (
 						...args: unknown[]
 					) => File | Folder

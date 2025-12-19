@@ -66,7 +66,7 @@ describe('ShareListItem', () => {
 			const userAccount = populateUser();
 			const share = populateShare(node, node.id, userAccount);
 			share.permission = sharePermission;
-			const deleteShare = jest.fn();
+			const deleteShare = vi.fn();
 			setup(
 				<ShareListItem
 					share={share}
@@ -128,7 +128,7 @@ describe('Share List Item', () => {
 			const userAccount = populateUser();
 			const share = populateShare(node, 'abc', userAccount);
 			share.permission = SharePermission.ReadOnly;
-			const deleteShare = jest.fn();
+			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
 					deleteShare={deleteShare}
@@ -158,7 +158,7 @@ describe('Share List Item', () => {
 			const userAccount = populateUser();
 			const share = populateShare(node, 'abc', userAccount);
 			share.permission = SharePermission.ReadOnly;
-			const deleteShare = jest.fn();
+			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
 					deleteShare={deleteShare}
@@ -192,7 +192,7 @@ describe('Share List Item', () => {
 				deleteShare: mockDeleteShare(true)
 			}
 		} satisfies Partial<Resolvers>;
-		const deleteShare = jest.fn(() => Promise.resolve({ data: { deleteShare: true } }));
+		const deleteShare = vi.fn(() => Promise.resolve({ data: { deleteShare: true } }));
 		const { user } = setup(
 			<ShareListItem
 				deleteShare={deleteShare}
@@ -213,7 +213,7 @@ describe('Share List Item', () => {
 		await screen.findByRole('button', { name: /remove/i });
 		// run timers of modal
 		act(() => {
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 		});
 		expect(
 			screen.getByText(/Are you sure to remove yourself from this collaboration/i)
@@ -243,10 +243,10 @@ describe('Share List Item', () => {
 
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
-			const deleteShare = jest.fn();
+			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
 					deleteShare={deleteShare}
@@ -287,10 +287,10 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
-			const deleteShare = jest.fn();
+			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
 					deleteShare={deleteShare}
@@ -324,10 +324,10 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
-			const deleteShare = jest.fn();
+			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
 					deleteShare={deleteShare}
@@ -366,10 +366,10 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
-			const deleteShare = jest.fn();
+			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
 					deleteShare={deleteShare}
@@ -406,10 +406,10 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadAndShare;
 			const mocks = {
 				Mutation: {
-					updateShare: jest.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
 				}
 			} satisfies Partial<Resolvers>;
-			const deleteShare = jest.fn();
+			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
 					deleteShare={deleteShare}

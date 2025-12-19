@@ -19,10 +19,10 @@ import { FUNCTION_IDS } from './constants';
 describe('App', () => {
 	describe('User authenticated', () => {
 		it('should call addRoute', async () => {
-			const addRouteMock = jest.spyOn(shell, 'addRoute');
+			const addRouteMock = vi.spyOn(shell, 'addRoute');
 			setup(<App />);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(addRouteMock).toHaveBeenCalledWith<Parameters<typeof shell.addRoute>>(
 				expect.objectContaining({
@@ -41,8 +41,8 @@ describe('App', () => {
 		});
 
 		it('should call addSearchView', async () => {
-			const addSearchViewMock = jest.fn();
-			jest.spyOn(shell, 'useIntegratedFunction').mockImplementation((id) => {
+			const addSearchViewMock = vi.fn();
+			vi.spyOn(shell, 'useIntegratedFunction').mockImplementation((id) => {
 				if (id === 'search-add-view') {
 					return [addSearchViewMock, true];
 				}
@@ -50,7 +50,7 @@ describe('App', () => {
 			});
 			setup(<App />);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(addSearchViewMock).toHaveBeenCalledWith<Parameters<typeof searchUI.addSearchView>>(
 				expect.objectContaining({
@@ -62,10 +62,10 @@ describe('App', () => {
 		});
 
 		it('should call registerActions', async () => {
-			const registerActionsMock = jest.spyOn(shell, 'registerActions');
+			const registerActionsMock = vi.spyOn(shell, 'registerActions');
 			setup(<App />);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(registerActionsMock).toHaveBeenCalledWith<Parameters<typeof shell.registerActions>>(
 				expect.objectContaining({
@@ -77,10 +77,10 @@ describe('App', () => {
 		});
 
 		it('should call registerFunctions', async () => {
-			const registerFunctionsMock = jest.spyOn(shell, 'registerFunctions');
+			const registerFunctionsMock = vi.spyOn(shell, 'registerFunctions');
 			setup(<App />);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(registerFunctionsMock).toHaveBeenCalledWith<
 				Parameters<typeof shell.registerFunctions>
@@ -98,20 +98,20 @@ describe('App', () => {
 	});
 
 	it('should not register the route, searchView, actions and functions if the user is not authenticated', async () => {
-		jest.spyOn(shell, 'useAuthenticated').mockReturnValue(false);
-		const addRouteMock = jest.spyOn(shell, 'addRoute');
-		const addSearchViewMock = jest.fn();
-		jest.spyOn(shell, 'useIntegratedFunction').mockImplementation((id) => {
+		vi.spyOn(shell, 'useAuthenticated').mockReturnValue(false);
+		const addRouteMock = vi.spyOn(shell, 'addRoute');
+		const addSearchViewMock = vi.fn();
+		vi.spyOn(shell, 'useIntegratedFunction').mockImplementation((id) => {
 			if (id === 'search-add-view') {
 				return [addSearchViewMock, true];
 			}
 			return [(): void => undefined, false];
 		});
-		const registerActionsMock = jest.spyOn(shell, 'registerActions');
-		const registerFunctionsMock = jest.spyOn(shell, 'registerFunctions');
+		const registerActionsMock = vi.spyOn(shell, 'registerActions');
+		const registerFunctionsMock = vi.spyOn(shell, 'registerFunctions');
 		setup(<App />);
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(addRouteMock).not.toHaveBeenCalled();
 		expect(addSearchViewMock).not.toHaveBeenCalled();

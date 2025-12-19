@@ -25,12 +25,12 @@ import { mockGetConfigs } from '../../utils/resolverMocks';
 import * as utils from '../../utils/utils';
 import { humanFileSizeFromMB } from '../../utils/utils';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
-jest.mock<typeof import('./HeaderBreadcrumbs')>('./HeaderBreadcrumbs');
+vi.mock('./VirtualizedNodeListItem');
+vi.mock('./HeaderBreadcrumbs');
 
 describe('List download', () => {
 	it('should call the DownloadMultipleNodes when the user selects multiple nodes and clicks on download button', async () => {
-		const downloadMultipleNodesFn = jest.spyOn(utils, 'downloadMultipleNodes');
+		const downloadMultipleNodesFn = vi.spyOn(utils, 'downloadMultipleNodes');
 
 		const currentFolder = populateFolder(3);
 		const { nodes } = currentFolder.children;

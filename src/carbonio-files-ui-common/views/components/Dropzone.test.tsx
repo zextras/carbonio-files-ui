@@ -6,7 +6,13 @@
 
 import React from 'react';
 
-import { fireEvent, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import {
+	fireEvent,
+	screen,
+	waitFor,
+	waitForElementToBeRemoved,
+	within
+} from '@testing-library/react';
 
 import { Dropzone } from './Dropzone';
 import { SELECTORS } from '../../constants/test';
@@ -42,7 +48,7 @@ describe('Dropzone', () => {
 			dataTransfer: { types: ['test'] }
 		});
 		// first the dropzone1 is removed
-		await waitForElementToBeRemoved(screen.queryByTestId(SELECTORS.dropzone));
+		await waitFor(() => expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument());
 		// and then the dropzone2 is shown
 		await screen.findByTestId(SELECTORS.dropzone);
 		expect(within(dropzone2).getByTestId(SELECTORS.dropzone)).toBeVisible();

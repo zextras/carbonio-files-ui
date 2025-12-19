@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
@@ -51,15 +51,13 @@ const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
 	</div>
 );
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/NodeHoverBar');
 
 function clickOnCreateDocsAction(
 	createOptions: CreateOption[],
@@ -81,7 +79,7 @@ function clickOnCreateDocsAction(
 async function createNode(newNode: { name: string }, user: UserEvent): Promise<void> {
 	// wait for the creation modal to be opened
 	await act(async () => {
-		await jest.advanceTimersByTimeAsync(TIMERS.modalDelayOpen);
+		await vi.advanceTimersByTimeAsync(TIMERS.modalDelayOpen);
 	});
 	const inputField = screen.getByRole('textbox');
 	expect(inputField).toHaveValue('');
@@ -111,7 +109,7 @@ describe('Create docs file', () => {
 		} satisfies Partial<Resolvers>;
 		setup(<FolderView />, { mocks, initialRouterEntries: [`/?folder=${currentFolder.id}`] });
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(createOptions).toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
@@ -143,7 +141,7 @@ describe('Create docs file', () => {
 		} satisfies Partial<Resolvers>;
 		setup(<FolderView />, { mocks, initialRouterEntries: [`/?folder=${currentFolder.id}`] });
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(createOptions).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
@@ -225,6 +223,10 @@ describe('Create docs file', () => {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
 		});
+
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		await screen.findByText(/nothing here/i);
 		expect(createOptions.map((createOption) => createOption.action({}))).not.toContainEqual(
 			expect.objectContaining({ id: ACTION_IDS.CREATE_DOCS_DOCUMENT })
@@ -251,6 +253,10 @@ describe('Create docs file', () => {
 		setup(<FolderView />, {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
+		});
+
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		await screen.findByText(/nothing here/i);
 		expect(createOptions.map((createOption) => createOption.action({}))).toEqual(
@@ -295,8 +301,13 @@ describe('Create docs file', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -349,8 +360,13 @@ describe('Create docs file', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -429,9 +445,13 @@ describe('Create docs file', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait for the load to be completed
-		const listHeader = screen.getByTestId(SELECTORS.listHeader);
-		await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
@@ -488,11 +508,11 @@ describe('Create docs file', () => {
 			} satisfies Partial<Resolvers>;
 			setup(<FolderView />, { mocks, initialRouterEntries: [`/?folder=${currentFolder.id}`] });
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 			act(() => {
-				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
+				vi.advanceTimersByTime(TIMERS.modalDelayOpen);
 			});
 			expect(await screen.findByText('.odt')).toBeVisible();
 		});
@@ -510,11 +530,11 @@ describe('Create docs file', () => {
 			} satisfies Partial<Resolvers>;
 			setup(<FolderView />, { mocks, initialRouterEntries: [`/?folder=${currentFolder.id}`] });
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'ms');
 			act(() => {
-				jest.advanceTimersByTime(TIMERS.modalDelayOpen);
+				vi.advanceTimersByTime(TIMERS.modalDelayOpen);
 			});
 			expect(await screen.findByText('.docx')).toBeVisible();
 		});
@@ -555,7 +575,7 @@ describe('Create docs file', () => {
 		expect(snackbar).toBeVisible();
 		expect(screen.getByRole('button', { name: /ok/i })).toBeVisible();
 		expect(screen.getByTestId(ICON_REGEXP.errorSnackbar)).toBeVisible();
-		jest.advanceTimersByTime(TIMERS.snackbarHide);
+		vi.advanceTimersByTime(TIMERS.snackbarHide);
 		expect(snackbar).toBeVisible();
 	});
 

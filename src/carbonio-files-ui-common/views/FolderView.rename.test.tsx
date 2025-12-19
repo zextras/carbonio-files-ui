@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map, findIndex, last } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -19,7 +19,7 @@ import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { File, Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes, mockUpdateNode } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
@@ -27,11 +27,9 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/NodeHoverBar');
 
 describe('Rename', () => {
 	describe('Selection mode', () => {
@@ -76,8 +74,13 @@ describe('Rename', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 
 			// activate selection mode by selecting items
 			await selectNodes([element.id], user);
@@ -143,7 +146,9 @@ describe('Rename', () => {
 			});
 
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
@@ -257,8 +262,9 @@ describe('Rename', () => {
 			});
 
 			// wait for the load to be completed
-			const listHeader = screen.getByTestId(SELECTORS.listHeader);
-			await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 			let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 1]);
 			// right click to open contextual menu
@@ -429,6 +435,9 @@ describe('Rename', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(nodeToRename.name)).toBeVisible();

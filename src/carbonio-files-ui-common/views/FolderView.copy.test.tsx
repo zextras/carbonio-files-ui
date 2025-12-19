@@ -36,7 +36,7 @@ import {
 	mockGetPath
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
@@ -44,11 +44,9 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/NodeHoverBar');
 
 describe('Copy', () => {
 	describe('Selection mode', () => {
@@ -76,6 +74,9 @@ describe('Copy', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(file.name);
 			await selectNodes([file.id, folder.id], user);
 
@@ -148,7 +149,7 @@ describe('Copy', () => {
 			await user.click(destinationFolderItem);
 			act(() => {
 				// run timers of modal
-				jest.advanceTimersToNextTimer();
+				vi.advanceTimersToNextTimer();
 			});
 			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));
@@ -221,7 +222,7 @@ describe('Copy', () => {
 			const modalList = await screen.findByTestId(SELECTORS.modalList);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(within(modalList).getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				currentFolder.children.nodes.length
@@ -282,6 +283,10 @@ describe('Copy', () => {
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${localRoot.id}`]
 			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(nodesToCopy[0].name);
 			await screen.findByText(nodesToCopy[1].name);
 			await selectNodes(
@@ -293,7 +298,7 @@ describe('Copy', () => {
 			await user.click(screen.getByText(ACTION_REGEXP.copy));
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByRole('button', { name: /copy/i }));
 			const snackbar = await screen.findByTestId('snackbar');
@@ -368,7 +373,7 @@ describe('Copy', () => {
 			await user.click(destinationFolderItem);
 			act(() => {
 				// run timers of modal
-				jest.advanceTimersToNextTimer();
+				vi.advanceTimersToNextTimer();
 			});
 			expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeEnabled();
 			await user.click(screen.getByRole('button', { name: ACTION_REGEXP.copy }));

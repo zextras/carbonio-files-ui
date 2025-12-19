@@ -8,13 +8,14 @@ import '@testing-library/jest-dom';
 import React from 'react';
 
 import { type ApolloClient } from '@apollo/client';
-import { act, configure } from '@testing-library/react';
+import { configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
 import dotenv from 'dotenv';
-import failOnConsole from 'jest-fail-on-console';
 import { noop } from 'lodash';
-// this can be removed once migrated to Node 22 (https://github.com/wojtekmaj/react-pdf/wiki/Upgrade-guide-from-version-8.x-to-9.x#dropped-support-for-older-browsers-and-nodejs-versions)
+// this can be removed once migrated to Node 22
 import 'core-js/proposals/promise-with-resolvers';
+import { Mock } from 'vitest';
+import failOnConsole from 'vitest-fail-on-console';
 
 import buildClient from './carbonio-files-ui-common/apollo';
 import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar';
@@ -34,7 +35,6 @@ type FileSystemDirectoryEntryMock = Omit<FileSystemDirectoryEntry, 'filesystem'>
 	filesystem: Partial<FileSystemDirectoryEntry['filesystem']>;
 };
 
-// see https://stackoverflow.com/a/68328575
 declare global {
 	// eslint-disable-next-line no-var,vars-on-top
 	var apolloClient: ApolloClient<object>;
@@ -44,6 +44,48 @@ declare global {
 
 configure({
 	asyncUtilTimeout: 2000
+});
+
+vi.mock('@zextras/carbonio-shell-ui');
+
+vi.mock('react-router-dom', async () => {
+	const actual = await vi.importActual('react-router-dom');
+	return {
+		...actual,
+		useBlocker: (): Mock => vi.fn()
+	};
+});
+
+const mockContextValue = {
+	initPreview: vi.fn(),
+	emptyPreview: vi.fn(),
+	openPreview: vi.fn(),
+	closePreview: vi.fn(),
+	previews: [],
+	currentIndex: 0
+};
+
+const MockPreviewsManagerContext = React.createContext(mockContextValue);
+
+vi.mock('@zextras/carbonio-ui-preview', () => ({
+	__esModule: true,
+	PreviewManager: ({ children }: React.PropsWithChildren): React.ReactNode => children,
+	PreviewsManagerContext: MockPreviewsManagerContext,
+	usePreview: vi.fn(() => ({
+		initPreview: vi.fn(),
+		emptyPreview: vi.fn(),
+		openPreview: vi.fn(),
+		closePreview: vi.fn(),
+		previews: [],
+		currentIndex: 0
+	}))
+}));
+
+vi.mock('@apollo/client', async () => {
+	const actual = await vi.importActual('@apollo/client');
+	return {
+		...actual
+	};
 });
 
 failOnConsole({
@@ -61,84 +103,17 @@ failOnConsole({
 		)
 });
 
-jest.setTimeout(60000);
-
-beforeEach(() => {
-	// reset apollo client cache
-	global.apolloClient.resetStore();
-	// reset reactive variables
-	searchParamsVar({});
-	uploadVar({});
-	uploadFunctionsVar({});
-	nodeSortVar(NODES_SORT_DEFAULT);
-	viewModeVar(VIEW_MODE_DEFAULT);
-	draggedItemsVar(null);
-	destinationVar({ defaultValue: undefined, currentValue: undefined });
-	window.localStorage.clear();
-	healthCache.healthRequested = true;
-	healthCache.healthReceived = true;
-	healthCache.healthFailed = false;
-	healthCache.docsIsLive = true;
-	healthCache.previewIsLive = true;
-
-	Object.defineProperty(window, 'IntersectionObserver', {
-		writable: true,
-		value: jest.fn(function intersectionObserverMock(
-			callback: IntersectionObserverCallback,
-			options: IntersectionObserverInit
-		) {
-			return {
-				thresholds: options.threshold,
-				root: options.root,
-				rootMargin: options.rootMargin,
-				observe: noop,
-				unobserve: noop,
-				disconnect: noop
-			};
-		})
-	});
-
-	Object.defineProperty(window, 'ResizeObserver', {
-		writable: true,
-		value: jest.fn(function ResizeObserverMock(): ResizeObserver {
-			return {
-				observe: jest.fn(),
-				unobserve: jest.fn(),
-				disconnect: jest.fn()
-			};
-		})
-	});
-});
-
 beforeAll(() => {
-	server.listen({ onUnhandledRequest: 'warn' });
-
-	const retryTimes = process.env.JEST_RETRY_TIMES ? parseInt(process.env.JEST_RETRY_TIMES, 10) : 2;
-	jest.retryTimes(retryTimes, { logErrorsBeforeRetry: true });
-
-	// initialize an apollo client instance for test and makes it available globally
-	global.apolloClient = buildClient();
-
-	// define browser objects non available in jest
-	// https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
-	Object.defineProperty(window, 'matchMedia', {
-		writable: true,
-		value: (query: string): Partial<MediaQueryList> => ({
-			matches: false,
-			media: query,
-			onchange: null,
-			addEventListener: noop,
-			removeEventListener: noop,
-			dispatchEvent: () => true
-		})
+	vi.useFakeTimers({
+		shouldAdvanceTime: true
 	});
+
+	server.listen({ onUnhandledRequest: 'warn' });
 
 	Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', {
 		writable: true,
 		value: noop
 	});
-
-	global.mockedUserLogged = LOGGED_USER_ACCOUNT;
 
 	window.resizeTo = function resizeTo(width, height): void {
 		Object.assign(this, {
@@ -151,9 +126,10 @@ beforeAll(() => {
 
 	Element.prototype.scrollTo = noop;
 
+	global.mockedUserLogged = LOGGED_USER_ACCOUNT;
+
 	Object.defineProperty(window, 'FileSystemDirectoryEntry', {
 		writable: true,
-		// define it as a standard function and not arrow function because arrow functions can't be called with new
 		value: function FileSystemDirectoryEntryMock(): FileSystemDirectoryEntryMock {
 			return {
 				createReader: () => new FileSystemDirectoryReader(),
@@ -174,41 +150,63 @@ beforeAll(() => {
 	window.open = (): ReturnType<typeof window.open> => null;
 });
 
-afterAll(() => server.close());
-afterEach(() => {
-	jest.runOnlyPendingTimers();
-	server.resetHandlers();
-	act(() => {
-		window.resizeTo(1024, 768);
+afterAll(() => {
+	vi.useRealTimers();
+	server.close();
+});
+
+beforeEach(() => {
+	global.apolloClient = buildClient();
+
+	// reset reactive variables
+	searchParamsVar({});
+	uploadVar({});
+	uploadFunctionsVar({});
+	nodeSortVar(NODES_SORT_DEFAULT);
+	viewModeVar(VIEW_MODE_DEFAULT);
+	draggedItemsVar(null);
+	destinationVar({ defaultValue: undefined, currentValue: undefined });
+	window.localStorage.clear();
+	healthCache.healthRequested = true;
+	healthCache.healthReceived = true;
+	healthCache.healthFailed = false;
+	healthCache.docsIsLive = true;
+	healthCache.previewIsLive = true;
+
+	Object.defineProperty(window, 'IntersectionObserver', {
+		writable: true,
+		value: vi.fn(function intersectionObserverMock(
+			callback: IntersectionObserverCallback,
+			options: IntersectionObserverInit
+		) {
+			return {
+				thresholds: options.threshold,
+				root: options.root,
+				rootMargin: options.rootMargin,
+				observe: noop,
+				unobserve: noop,
+				disconnect: noop
+			};
+		})
 	});
+
+	Object.defineProperty(window, 'ResizeObserver', {
+		writable: true,
+		value: vi.fn(function ResizeObserverMock(): ResizeObserver {
+			return {
+				observe: vi.fn(),
+				unobserve: vi.fn(),
+				disconnect: vi.fn()
+			};
+		})
+	});
+});
+
+afterEach(() => {
+	server.resetHandlers();
 });
 // mock a simplified crypto
 Object.defineProperty(window.crypto, 'randomUUID', {
 	writable: true,
-	value: jest.fn(() => Math.random().toString())
+	value: vi.fn(() => Math.random().toString())
 });
-
-const mockContextValue = {
-	initPreview: jest.fn(),
-	emptyPreview: jest.fn(),
-	openPreview: jest.fn(),
-	closePreview: jest.fn(),
-	previews: [],
-	currentIndex: 0
-};
-
-const MockPreviewsManagerContext = React.createContext(mockContextValue);
-
-jest.mock('@zextras/carbonio-ui-preview', () => ({
-	__esModule: true,
-	PreviewManager: ({ children }: React.PropsWithChildren): React.ReactNode => children,
-	PreviewsManagerContext: MockPreviewsManagerContext,
-	usePreview: jest.fn(() => ({
-		initPreview: jest.fn(),
-		emptyPreview: jest.fn(),
-		openPreview: jest.fn(),
-		closePreview: jest.fn(),
-		previews: [],
-		currentIndex: 0
-	}))
-}));

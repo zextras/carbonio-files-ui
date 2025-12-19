@@ -45,22 +45,25 @@ import {
 import { mockGetNode } from '../utils/resolverMocks';
 import { UploadQueue } from '../utils/uploadUtils';
 
-jest.mock('@zextras/carbonio-design-system', () => ({
-	...jest.requireActual('@zextras/carbonio-design-system'),
-	CollapsingActions: ({ actions }: CollapsingActionsProps): React.JSX.Element => (
-		<div>
-			{actions.map((action) => (
-				<MockButton
-					key={action.id}
-					onClick={action.onClick}
-					icon={action.icon}
-					type={'ghost'}
-					color={'text'}
-				/>
-			))}
-		</div>
-	)
-}));
+vi.mock('@zextras/carbonio-design-system', async () => {
+	const actual = await vi.importActual('@zextras/carbonio-design-system');
+	return {
+		...actual,
+		CollapsingActions: ({ actions }: CollapsingActionsProps): React.JSX.Element => (
+			<div>
+				{actions.map((action) => (
+					<MockButton
+						key={action.id}
+						onClick={action.onClick}
+						icon={action.icon}
+						type={'ghost'}
+						color={'text'}
+					/>
+				))}
+			</div>
+		)
+	};
+});
 
 describe('Upload View', () => {
 	describe('Folder', () => {
@@ -166,7 +169,7 @@ describe('Upload View', () => {
 
 			emitter.emit(EMITTER_CODES.never);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 		});
 
@@ -253,7 +256,7 @@ describe('Upload View', () => {
 
 			emitter.emit(EMITTER_CODES.never);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 		});
 
@@ -278,8 +281,8 @@ describe('Upload View', () => {
 			const emitter = new EventEmitter();
 
 			const createFolderResponses = [folder, level1Folder, level2Folder];
-			const createFolderMutation = jest.fn();
-			const uploadFile = jest.fn();
+			const createFolderMutation = vi.fn();
+			const uploadFile = vi.fn();
 
 			server.use(
 				graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
@@ -343,7 +346,7 @@ describe('Upload View', () => {
 			// complete level 0 (create main folder)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(1));
 			await screen.findByText('1/5');
@@ -357,7 +360,7 @@ describe('Upload View', () => {
 			// complete first level (create folder 1 and upload file 1)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(2));
 			await waitFor(() => expect(uploadFile).toHaveBeenCalled());
@@ -373,7 +376,7 @@ describe('Upload View', () => {
 			// complete second level (create folder 2)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(3));
 			await screen.findByText('4/5');
@@ -388,7 +391,7 @@ describe('Upload View', () => {
 			// complete third level (upload file 3)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await screen.findByText('5/5');
 			await waitFor(() => expect(uploadFile).toHaveBeenCalledTimes(2));
@@ -422,8 +425,8 @@ describe('Upload View', () => {
 			const emitter = new EventEmitter();
 
 			const createFolderResponses = [folder, level1Folder, level2Folder];
-			const createFolderMutation = jest.fn();
-			const uploadFile = jest.fn();
+			const createFolderMutation = vi.fn();
+			const uploadFile = vi.fn();
 
 			server.use(
 				graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
@@ -488,7 +491,7 @@ describe('Upload View', () => {
 			// complete level 0 (create main folder)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalled());
 			await screen.findByText('1/5');
@@ -497,7 +500,7 @@ describe('Upload View', () => {
 			// complete first level (create folder 1 and upload file 1)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(2));
 			await waitFor(() => expect(uploadFile).toHaveBeenCalled());
@@ -507,7 +510,7 @@ describe('Upload View', () => {
 			// complete second level (create folder 2)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(3));
 			await screen.findByText('4/5');
@@ -516,7 +519,7 @@ describe('Upload View', () => {
 			// complete third level (upload file 3)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await screen.findByText('5/5');
 			await waitFor(() => expect(uploadFile).toHaveBeenCalledTimes(2));
@@ -544,8 +547,8 @@ describe('Upload View', () => {
 			const emitter = new EventEmitter();
 
 			const createFolderResponses = [folder, level1Folder, level2Folder];
-			const createFolderMutation = jest.fn();
-			const uploadFile = jest.fn();
+			const createFolderMutation = vi.fn();
+			const uploadFile = vi.fn();
 
 			server.use(
 				graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
@@ -610,7 +613,7 @@ describe('Upload View', () => {
 			// complete level 0 (create main folder)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalled());
 			await screen.findByText('1/5');
@@ -620,7 +623,7 @@ describe('Upload View', () => {
 			emitter.emit(EMITTER_CODES.fail);
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(2));
 			await waitFor(() => expect(uploadFile).toHaveBeenCalled());
@@ -631,7 +634,7 @@ describe('Upload View', () => {
 			// complete second level (create folder 2)
 			emitter.emit(EMITTER_CODES.success);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(createFolderMutation).toHaveBeenCalledTimes(3));
 			await screen.findByText('3/5');
@@ -640,7 +643,7 @@ describe('Upload View', () => {
 			// fail third level (upload file 3)
 			emitter.emit(EMITTER_CODES.fail);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			// all the folders and the two files are in failed status
 			await waitFor(() => expect(screen.getAllByTestId(ICON_REGEXP.uploadFailed)).toHaveLength(5));
@@ -791,7 +794,7 @@ describe('Upload View', () => {
 			expect(within(mainFolderItem).getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 			emitter.emit(EMITTER_CODES.never);
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 		});
 
@@ -858,7 +861,7 @@ describe('Upload View', () => {
 				expect(screen.getByText('1/1')).toBeVisible();
 				emitter.emit(EMITTER_CODES.never);
 				await act(async () => {
-					await jest.advanceTimersToNextTimerAsync();
+					await vi.advanceTimersToNextTimerAsync();
 				});
 			});
 
@@ -926,7 +929,7 @@ describe('Upload View', () => {
 				expect(screen.getByText('1/1')).toBeVisible();
 				emitter.emit(EMITTER_CODES.never);
 				await act(async () => {
-					await jest.advanceTimersToNextTimerAsync();
+					await vi.advanceTimersToNextTimerAsync();
 				});
 			});
 

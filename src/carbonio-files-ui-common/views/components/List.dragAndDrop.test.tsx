@@ -40,8 +40,8 @@ import {
 	mockMoveNodes
 } from '../../utils/resolverMocks';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
-jest.mock<typeof import('./NodeHoverBar')>('./NodeHoverBar');
+vi.mock('./VirtualizedNodeListItem');
+vi.mock('./NodeHoverBar');
 
 describe('List', () => {
 	describe('Drag and drop', () => {
@@ -94,7 +94,7 @@ describe('List', () => {
 
 				expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
 
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 
 				await waitFor(() => {
 					const localRootCachedData = global.apolloClient.readQuery({
@@ -141,7 +141,7 @@ describe('List', () => {
 					dataTransfer: dataTransferObj
 				});
 				expect(screen.queryByText(/Drop here your attachments/m)).not.toBeInTheDocument();
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 
 			test('Drag of files in a folder node with right permissions shows upload dropzone of the list item. Drop triggers upload in list item folder', async () => {
@@ -291,7 +291,7 @@ describe('List', () => {
 				});
 
 				await act(async () => {
-					await jest.advanceTimersToNextTimerAsync();
+					await vi.advanceTimersToNextTimerAsync();
 				});
 				await waitFor(() => expect(requestDestinationFolder).toBe(currentFolder.id));
 				expect(
@@ -319,7 +319,7 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				const mocks = { Mutation: { moveNodes: jest.fn() } } satisfies Resolvers;
+				const mocks = { Mutation: { moveNodes: vi.fn() } } satisfies Resolvers;
 
 				setup(
 					<SelectionProvider items={nodes}>
@@ -335,7 +335,7 @@ describe('List', () => {
 				const destinationItem = screen.getByText(destinationFolder.name);
 				fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 				act(() => {
-					jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
+					vi.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 				});
 				expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 				fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
@@ -407,7 +407,7 @@ describe('List', () => {
 
 				const mocks = {
 					Mutation: {
-						moveNodes: jest.fn()
+						moveNodes: vi.fn()
 					}
 				} satisfies Partial<Resolvers>;
 
@@ -508,7 +508,7 @@ describe('List', () => {
 
 				const dataTransfer = createMoveDataTransfer();
 
-				const mocks = { Mutation: { moveNodes: jest.fn() } } satisfies Resolvers;
+				const mocks = { Mutation: { moveNodes: vi.fn() } } satisfies Resolvers;
 				setup(
 					<SelectionProvider items={nodes}>
 						<List nodes={nodes} mainList emptyListMessage={'Empty list'} />
@@ -524,7 +524,7 @@ describe('List', () => {
 				// drag and drop on folder with permissions. Overlay is not shown.
 				fireEvent.dragEnter(destinationItem, { dataTransfer: dataTransfer() });
 				act(() => {
-					jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
+					vi.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 				});
 				expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 				fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });
@@ -559,7 +559,7 @@ describe('List', () => {
 				fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
 				fireEvent.dragEnter(itemToDrag, { dataTransfer: dataTransfer() });
 				act(() => {
-					jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
+					vi.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 				});
 				// dropzone overlay of the list is shown
 				expect(await screen.findByTestId(SELECTORS.dropzone)).toBeVisible();
@@ -621,7 +621,7 @@ describe('List', () => {
 					expect(draggedImage[1]).toHaveStyle({ color: COLORS.text.regular });
 				});
 				act(() => {
-					jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
+					vi.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 				});
 				expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
 				fireEvent.drop(destinationItem, { dataTransfer: dataTransfer() });

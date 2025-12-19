@@ -22,16 +22,14 @@ import {
 } from '../carbonio-files-ui-common/types/graphql/types';
 import server from '../mocks/server';
 
-jest.mock<typeof import('../hooks/useCreateOptions')>('../hooks/useCreateOptions');
+vi.mock('../hooks/useCreateOptions');
 
-jest.mock<typeof import('../carbonio-files-ui-common/views/components/VirtualizedNodeListItem')>(
-	'../carbonio-files-ui-common/views/components/VirtualizedNodeListItem'
-);
+vi.mock('../carbonio-files-ui-common/views/components/VirtualizedNodeListItem');
 
-let updateQueryMock = jest.fn();
+let updateQueryMock = vi.fn();
 
 beforeEach(() => {
-	updateQueryMock = jest.fn();
+	updateQueryMock = vi.fn();
 });
 
 const useQuery = (): ReturnType<SearchViewProps['useQuery']> => {
@@ -48,8 +46,8 @@ describe('Search view', () => {
 	describe('Advanced search', () => {
 		test('When user select flagged, flagged param is set', async () => {
 			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
-			const useDisableSearch = jest.fn();
-			const mockedFindNodes = jest.fn(handleFindNodesRequest);
+			const useDisableSearch = vi.fn();
+			const mockedFindNodes = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
@@ -70,7 +68,7 @@ describe('Search view', () => {
 			await screen.findByText(/^flagged/i);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await screen.findByRole('button', { name: /search/i });
 			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
@@ -79,7 +77,7 @@ describe('Search view', () => {
 			await user.click(screen.getByRole('button', { name: /search/i }));
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(updateQueryMock).toHaveBeenCalledWith([
 				expect.objectContaining({
@@ -98,8 +96,8 @@ describe('Search view', () => {
 
 		test('When user select shared, shared_by_me param is set', async () => {
 			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
-			const useDisableSearch = jest.fn();
-			const mockedFindNodes = jest.fn(handleFindNodesRequest);
+			const useDisableSearch = vi.fn();
+			const mockedFindNodes = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
@@ -116,7 +114,7 @@ describe('Search view', () => {
 			await screen.findByText(/^shared/i);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByText(/^shared/i));
 			await user.click(screen.getByRole('button', { name: /search/i }));
@@ -137,8 +135,8 @@ describe('Search view', () => {
 
 		test('When user choose a folder and the sub-folders param, folder_id and cascade are set', async () => {
 			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
-			const useDisableSearch = jest.fn();
-			const mockedFindNodes = jest.fn(handleFindNodesRequest);
+			const useDisableSearch = vi.fn();
+			const mockedFindNodes = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
@@ -155,13 +153,13 @@ describe('Search view', () => {
 			await screen.findByText(/select a folder/i);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.getByText(/home/i)).toBeVisible();
 			expect(screen.getByText(/search also in contained folders/i)).toBeVisible();
@@ -190,8 +188,8 @@ describe('Search view', () => {
 
 		test('When user choose a folder but not the sub-folders param, folder_id is set with selected folder id and cascade is set to false', async () => {
 			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
-			const useDisableSearch = jest.fn();
-			const mockedFindNodes = jest.fn(handleFindNodesRequest);
+			const useDisableSearch = vi.fn();
+			const mockedFindNodes = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
@@ -208,13 +206,13 @@ describe('Search view', () => {
 			await screen.findByText(/select a folder/i);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByRole('textbox', { name: /select a folder/i }));
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByText(/home/i));
 			await user.click(screen.getByText(/search also in contained folders/i));
@@ -240,8 +238,8 @@ describe('Search view', () => {
 
 		test('When user types some keyword, keywords param is set with new keywords', async () => {
 			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
-			const useDisableSearch = jest.fn();
-			const mockedFindNodes = jest.fn(handleFindNodesRequest);
+			const useDisableSearch = vi.fn();
+			const mockedFindNodes = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
@@ -258,7 +256,7 @@ describe('Search view', () => {
 			await screen.findByText(/keywords/i);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			// wait for chips to be created (1 chip + icon close of the modal)
@@ -292,8 +290,8 @@ describe('Search view', () => {
 
 		test('All advanced filters together', async () => {
 			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
-			const useDisableSearch = jest.fn();
-			const mockedFindNodes = jest.fn(handleFindNodesRequest);
+			const useDisableSearch = vi.fn();
+			const mockedFindNodes = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
@@ -311,7 +309,7 @@ describe('Search view', () => {
 			await screen.findByRole('textbox', { name: /keywords/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.type(screen.getByRole('textbox', { name: /keywords/i }), 'keyword1;');
 			// wait for chips to be created (1 chip + icon close of the modal)
@@ -330,7 +328,7 @@ describe('Search view', () => {
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByText(/home/i));
 			expect(screen.getByRole('button', { name: /choose folder/i })).toBeEnabled();
@@ -380,7 +378,7 @@ describe('Search view', () => {
 
 		test('search action run a search and results are shown in the list', async () => {
 			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
-			const useDisableSearch = jest.fn();
+			const useDisableSearch = vi.fn();
 			const nodes = populateNodes(10);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>(FindNodesDocument, () =>
@@ -404,7 +402,7 @@ describe('Search view', () => {
 			await screen.findByRole('button', { name: /search/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByText(/^flagged/i));
 			await user.click(screen.getByRole('button', { name: /search/i }));
@@ -414,8 +412,8 @@ describe('Search view', () => {
 
 		test('Close modal action does not run a search', async () => {
 			const ResultsHeader = (): React.JSX.Element => <p>Results header</p>;
-			const useDisableSearch = jest.fn();
-			const mockedFindNodes = jest.fn(handleFindNodesRequest);
+			const useDisableSearch = vi.fn();
+			const mockedFindNodes = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedFindNodes)
 			);
@@ -436,7 +434,7 @@ describe('Search view', () => {
 			await screen.findByRole('button', { name: /search/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.getByRole('button', { name: /search/i })).toBeDisabled();
 			await user.click(screen.getByText(/^flagged/i));

@@ -14,7 +14,7 @@ import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtil
 import { setup, selectNodes, screen, within } from '../../tests/utils';
 import { File, Folder } from '../../types/graphql/types';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
 describe('Move', () => {
 	describe('Selection mode', () => {
@@ -99,6 +99,9 @@ describe('Move', () => {
 				</SelectionProvider>
 			);
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(file.name);
 			await screen.findByTestId(SELECTORS.customBreadcrumbs);
 			await selectNodes([file.id, folder.id], user);
@@ -107,7 +110,7 @@ describe('Move', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 			act(() => {
 				// run timers of dropdown
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			const dropdown = screen.getByTestId(SELECTORS.dropdownList);
 			expect(within(dropdown).getByText('Move')).toBeVisible();

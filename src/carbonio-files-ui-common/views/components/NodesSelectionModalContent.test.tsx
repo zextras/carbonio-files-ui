@@ -91,7 +91,7 @@ describe('Nodes Selection Modal Content', () => {
 		);
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getByText('This is the title')).toBeVisible();
 		expect(screen.getByText('This is the description')).toBeVisible();
@@ -118,10 +118,8 @@ describe('Nodes Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const isValidSelection = jest
-			.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-			.mockReturnValue(true);
-		const confirmAction = jest.fn();
+		const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
+		const confirmAction = vi.fn();
 
 		const { user } = setup(
 			<div
@@ -145,7 +143,7 @@ describe('Nodes Selection Modal Content', () => {
 		);
 		// wait for root list query to be executed
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		await user.dblClick(screen.getByText(/home/i));
 		await screen.findByText(folder.name);
@@ -177,10 +175,10 @@ describe('Nodes Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const isValidSelection = jest
-			.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+		const isValidSelection = vi
+			.fn<IsValidSelectionFn>()
 			.mockImplementation(({ id }) => id !== localRoot.id);
-		const confirmAction = jest.fn();
+		const confirmAction = vi.fn();
 
 		const { user } = setup(
 			<div
@@ -242,10 +240,8 @@ describe('Nodes Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const isValidSelection = jest
-			.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-			.mockReturnValue(true);
-		const confirmAction = jest.fn();
+		const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
+		const confirmAction = vi.fn();
 
 		const { user } = setup(
 			<div
@@ -282,7 +278,7 @@ describe('Nodes Selection Modal Content', () => {
 		await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
 		// wait a tick to allow getBaseNode query to complete
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		const confirmButton = screen.getByRole('button', { name: /select/i });
 		// confirm button remains disabled because the opened folder is not valid by validity check
@@ -298,9 +294,7 @@ describe('Nodes Selection Modal Content', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const isValidSelection = jest
-			.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-			.mockReturnValue(false);
+		const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(false);
 
 		const { user } = setup(
 			<div
@@ -388,7 +382,7 @@ describe('Nodes Selection Modal Content', () => {
 
 		describe('without criteria to select nodes', () => {
 			test('show roots by default. confirm button is disabled', async () => {
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 				const mocks = {
 					Query: {
 						getRootsList: mockGetRootsList()
@@ -440,7 +434,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -509,7 +503,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -578,7 +572,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -637,7 +631,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -670,7 +664,7 @@ describe('Nodes Selection Modal Content', () => {
 				);
 				// run queries
 				await act(async () => {
-					await jest.advanceTimersToNextTimerAsync();
+					await vi.advanceTimersToNextTimerAsync();
 				});
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
@@ -684,7 +678,7 @@ describe('Nodes Selection Modal Content', () => {
 			test('local root item is valid, other roots are not valid', async () => {
 				const localRoot = populateFolder(2, ROOTS.LOCAL_ROOT);
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -746,7 +740,7 @@ describe('Nodes Selection Modal Content', () => {
 				localRoot.children.nodes.push(folder);
 				folder.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -767,7 +761,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={jest.fn()}
+							closeAction={vi.fn()}
 							canSelectOpenedFolder
 							maxSelection={1}
 						/>
@@ -828,7 +822,7 @@ describe('Nodes Selection Modal Content', () => {
 				localRoot.children.nodes.push(folder);
 				folder.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -852,7 +846,7 @@ describe('Nodes Selection Modal Content', () => {
 							confirmAction={confirmAction}
 							confirmLabel="Select"
 							title="Select nodes"
-							closeAction={jest.fn()}
+							closeAction={vi.fn()}
 							maxSelection={1}
 						/>
 					</div>,
@@ -897,7 +891,7 @@ describe('Nodes Selection Modal Content', () => {
 			test('shared with me root is navigable', async () => {
 				const sharedWithMeFilter = populateNodes(4);
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -955,7 +949,7 @@ describe('Nodes Selection Modal Content', () => {
 				const folder = populateFolder(3);
 				filter.push(folder);
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1011,10 +1005,10 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const isValidSelection = jest
-					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				const isValidSelection = vi
+					.fn<IsValidSelectionFn>()
 					.mockImplementation((node) => isFile(node));
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1081,11 +1075,11 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const isValidSelection = jest
-					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				const isValidSelection = vi
+					.fn<IsValidSelectionFn>()
 					.mockImplementation((node) => isFolder(node));
-				const confirmAction = jest.fn();
-				const resetToDefaultFn = jest.fn(resetToDefault);
+				const confirmAction = vi.fn();
+				const resetToDefaultFn = vi.fn(resetToDefault);
 
 				const mocks = {
 					Query: {
@@ -1173,10 +1167,10 @@ describe('Nodes Selection Modal Content', () => {
 				invalidFolder.parent = localRoot;
 				invalidFile.parent = localRoot;
 
-				const isValidSelection = jest
-					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				const isValidSelection = vi
+					.fn<IsValidSelectionFn>()
 					.mockImplementation((node) => node.name.startsWith('valid'));
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1288,7 +1282,7 @@ describe('Nodes Selection Modal Content', () => {
 			file.parent = localRoot;
 			folder.parent = localRoot;
 
-			const confirmAction = jest.fn();
+			const confirmAction = vi.fn();
 
 			const mocks = {
 				Query: {
@@ -1357,7 +1351,7 @@ describe('Nodes Selection Modal Content', () => {
 				mockedNode.parent = localRoot;
 			});
 
-			const confirmAction = jest.fn();
+			const confirmAction = vi.fn();
 
 			const mocks = {
 				Query: {
@@ -1431,7 +1425,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1465,7 +1459,7 @@ describe('Nodes Selection Modal Content', () => {
 				);
 
 				act(() => {
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
@@ -1496,7 +1490,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1566,7 +1560,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1630,7 +1624,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1690,7 +1684,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1768,7 +1762,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1844,7 +1838,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1914,7 +1908,7 @@ describe('Nodes Selection Modal Content', () => {
 				folder.parent = localRoot;
 				file.parent = localRoot;
 
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -1985,10 +1979,10 @@ describe('Nodes Selection Modal Content', () => {
 				file1.parent = localRoot;
 				file2.parent = localRoot;
 
-				const isValidSelection = jest
-					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				const isValidSelection = vi
+					.fn<IsValidSelectionFn>()
 					.mockImplementation((node) => isFile(node));
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -2022,7 +2016,7 @@ describe('Nodes Selection Modal Content', () => {
 				);
 
 				// wait for root list query to be executed
-				jest.advanceTimersToNextTimer();
+				vi.advanceTimersToNextTimer();
 
 				// navigate inside home
 				await user.dblClick(screen.getByText(/home/i));
@@ -2090,10 +2084,10 @@ describe('Nodes Selection Modal Content', () => {
 				folder2.parent = localRoot;
 				file.parent = localRoot;
 
-				const isValidSelection = jest
-					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				const isValidSelection = vi
+					.fn<IsValidSelectionFn>()
 					.mockImplementation((node) => isFolder(node));
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -2225,10 +2219,10 @@ describe('Nodes Selection Modal Content', () => {
 				invalidFolder.parent = localRoot;
 				invalidFile.parent = localRoot;
 
-				const isValidSelection = jest
-					.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
+				const isValidSelection = vi
+					.fn<IsValidSelectionFn>()
 					.mockImplementation((node) => node.name.startsWith('valid'));
-				const confirmAction = jest.fn();
+				const confirmAction = vi.fn();
 
 				const mocks = {
 					Query: {
@@ -2401,9 +2395,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2427,7 +2419,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			// new folder button is hidden
 			expect(screen.queryByRole('button', { name: /new folder/i })).not.toBeInTheDocument();
 			await user.dblClick(screen.getByText(/home/i));
@@ -2457,9 +2449,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2484,7 +2474,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			// new folder button is hidden
 			expect(screen.queryByRole('button', { name: /new folder/i })).not.toBeInTheDocument();
 			await user.dblClick(screen.getByText(/home/i));
@@ -2517,9 +2507,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2544,7 +2532,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			await user.dblClick(screen.getByText(/shared with me/i));
 			await screen.findByText(sharedFolder.name);
 			// new folder button is hidden
@@ -2580,9 +2568,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2607,7 +2593,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			await user.dblClick(screen.getByText(/shared with me/i));
 			await screen.findByText(sharedFolder.name);
 			await user.dblClick(screen.getByText(sharedFolder.name));
@@ -2645,9 +2631,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
 
 			const newFolderName = 'new folder name';
 
@@ -2674,7 +2658,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
@@ -2719,9 +2703,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
 
 			const newFolderName = 'new folder name';
 
@@ -2747,7 +2729,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			);
 
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
@@ -2797,10 +2779,8 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
-			const confirmAction = jest.fn();
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
+			const confirmAction = vi.fn();
 
 			const { user } = setup(
 				<div
@@ -2825,7 +2805,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
@@ -2873,9 +2853,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
 
 			const { user } = setup(
 				<div
@@ -2900,7 +2878,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));
@@ -2915,7 +2893,7 @@ describe('Nodes Selection Modal Content', () => {
 			expect(screen.getAllByText(/A folder with same name already exists/i)).toHaveLength(2);
 			// close snackbar
 			act(() => {
-				jest.advanceTimersByTime(TIMERS.snackbarHide);
+				vi.advanceTimersByTime(TIMERS.snackbarHide);
 			});
 			// only the one inside modal remains visible
 			expect(screen.getByText(/A folder with same name already exists/i)).toBeVisible();
@@ -2948,11 +2926,9 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
-			const confirmAction = jest.fn();
-			const closeAction = jest.fn();
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
+			const confirmAction = vi.fn();
+			const closeAction = vi.fn();
 			const { user } = setup(
 				<div
 					onClick={(): void =>
@@ -2976,7 +2952,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			await user.click(screen.getByText(/home/i));
 			await waitFor(() => expect(screen.getByRole('button', { name: /select/i })).toBeEnabled());
 			const closeButton = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close });
@@ -3008,9 +2984,7 @@ describe('Nodes Selection Modal Content', () => {
 				}
 			} satisfies Partial<Resolvers>;
 
-			const isValidSelection = jest
-				.fn<ReturnType<IsValidSelectionFn>, Parameters<IsValidSelectionFn>>()
-				.mockReturnValue(true);
+			const isValidSelection = vi.fn<IsValidSelectionFn>().mockReturnValue(true);
 
 			const newFolderName = 'new folder name';
 
@@ -3037,7 +3011,7 @@ describe('Nodes Selection Modal Content', () => {
 			);
 
 			// wait for root list query to be executed
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			await user.dblClick(screen.getByText(/home/i));
 			await screen.findByText(folder.name);
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));

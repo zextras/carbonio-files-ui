@@ -32,9 +32,7 @@ import {
 	mockGetLinks
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter view', () => {
 	describe('Shared With Me filter', () => {
@@ -61,7 +59,7 @@ describe('Filter view', () => {
 		});
 
 		test('Shared with me filter has sharedWithMe=true and excludes trashed nodes', async () => {
-			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			const mockedRequestHandler = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 			);
@@ -84,7 +82,7 @@ describe('Filter view', () => {
 				direct_share: true
 			};
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({

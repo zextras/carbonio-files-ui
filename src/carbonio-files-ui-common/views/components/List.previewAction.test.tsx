@@ -21,7 +21,7 @@ import { Resolvers } from '../../types/graphql/resolvers-types';
 import { File, Folder, GetChildrenParentDocument, NodeType, User } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/resolverMocks';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
 function prepareCache(folder: Folder): void {
 	global.apolloClient.writeQuery({

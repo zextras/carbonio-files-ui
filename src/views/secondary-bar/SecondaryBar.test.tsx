@@ -24,11 +24,11 @@ import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/clien
 import { GetNotificationsDocument } from '../../carbonio-files-ui-common/types/graphql/types';
 import server from '../../mocks/server';
 
-jest.mock('../../carbonio-files-ui-common/views/components/FilesQuota', () => ({
+vi.mock('../../carbonio-files-ui-common/views/components/FilesQuota', () => ({
 	FilesQuota: (): React.JSX.Element => <div data-testid="quota-test-id"></div>
 }));
-jest.mock('../../hooks/useIsCarbonioCE', () => ({
-	useIsCarbonioCE: jest.fn(() => false)
+vi.mock('../../hooks/useIsCarbonioCE', () => ({
+	useIsCarbonioCE: vi.fn(() => false)
 }));
 
 describe('SecondaryBar', () => {
@@ -43,6 +43,7 @@ describe('SecondaryBar', () => {
 		});
 
 		it('should render the Notifications entry with the notifications badge counter if there are notifications', async () => {
+			server.resetHandlers();
 			const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
 			const unread = 1;
 			server.use(
@@ -63,7 +64,7 @@ describe('SecondaryBar', () => {
 			setup(<SecondaryBar expanded />);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(screen.getByTestId(ICON_REGEXP.secondaryBarNotifications)).toBeVisible();
 			expect(screen.getByText(/notifications/i)).toBeVisible();
@@ -94,7 +95,7 @@ describe('SecondaryBar', () => {
 			const { user } = setup(<SecondaryBar expanded />);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(screen.getByText(unread)).toBeVisible();
 			await user.click(
