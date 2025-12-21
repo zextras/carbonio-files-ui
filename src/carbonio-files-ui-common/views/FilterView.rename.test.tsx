@@ -32,7 +32,6 @@ import {
 import { addNodeInSortedList } from '../utils/utils';
 
 vi.mock('./components/VirtualizedNodeListItem');
-// vi.mock('react-router-dom');
 
 describe('Filter View', () => {
 	describe('Rename', () => {

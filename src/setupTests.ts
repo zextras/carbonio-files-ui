@@ -35,6 +35,7 @@ type FileSystemDirectoryEntryMock = Omit<FileSystemDirectoryEntry, 'filesystem'>
 	filesystem: Partial<FileSystemDirectoryEntry['filesystem']>;
 };
 
+// see https://stackoverflow.com/a/68328575
 declare global {
 	// eslint-disable-next-line no-var,vars-on-top
 	var apolloClient: ApolloClient<object>;

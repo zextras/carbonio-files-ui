@@ -42,16 +42,36 @@ export default defineConfig({
 			reportsDirectory: 'coverage',
 			include: ['src/**/*.{js,ts,jsx,tsx}'],
 			exclude: [
-				'node_modules/',
-				'src/mocks/',
-				'src/types/',
-				'src/tests/',
-				'src/carbonio-files-ui-common/mocks/',
-				'src/carbonio-files-ui-common/tests/',
-				'src/carbonio-files-ui-common/types/',
+				'**/types/',
+				'**/mocks/',
+				'**/tests/',
+
+				// Test files
+				'**/*.test.{ts,tsx}',
+				'**/*.spec.{ts,tsx}',
+
+				// Type definitions
+				'**/*.d.ts',
+
+				// Test utilities
+				'**/setupTests.{ts,tsx}',
+				'**/testUtils.{ts,tsx}',
+				'**/test-utils.{ts,tsx}',
+
+				// Test folders
+				'**/__tests__/**',
+				'**/__mocks__/**',
+
+				// Build artifacts
+				'**/dist/**',
+				'**/coverage/**',
+				'**/node_modules/**',
+
 				'**/(test|mock)*.ts?(x)',
 				'**/resolverMocks.ts',
-				'**/resolvers.ts'
+				'**/resolvers.ts',
+				'**/dist/**',
+				'**/coverage/**'
 			],
 			thresholds: {
 				branches: 75,
@@ -61,7 +81,7 @@ export default defineConfig({
 			}
 		},
 		include: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
-		exclude: ['node_modules', 'constants/test.ts'],
+		exclude: ['node_modules', '**/test.ts'],
 		outputFile: {
 			junit: './junit.xml'
 		}
