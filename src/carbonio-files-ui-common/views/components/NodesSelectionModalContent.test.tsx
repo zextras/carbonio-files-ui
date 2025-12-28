@@ -662,10 +662,14 @@ describe('Nodes Selection Modal Content', () => {
 						mocks
 					}
 				);
-				// run queries
-				await act(async () => {
-					await vi.advanceTimersToNextTimerAsync();
-				});
+
+				await waitFor(() =>
+					expect(
+						global.apolloClient.readQuery<GetRootsListQuery, GetRootsListQueryVariables>({
+							query: GetRootsListDocument
+						})?.getRootsList || null
+					).not.toBeNull()
+				);
 				await user.dblClick(screen.getByText(/home/i));
 				await screen.findByText(folder.name);
 				await screen.findByTextWithMarkup(buildBreadCrumbRegExp('Files', localRoot.name));

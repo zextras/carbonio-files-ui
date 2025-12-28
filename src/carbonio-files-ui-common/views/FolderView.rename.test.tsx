@@ -364,6 +364,9 @@ describe('Rename', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(nodeToRename.name)).toBeVisible();
