@@ -3,11 +3,15 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { Avatar, Container, Divider, Text } from '@zextras/carbonio-design-system';
+import { useApolloClient } from '@apollo/client';
+import styled from '@emotion/styled';
+import { Avatar, Container, Divider, Text, useSnackbar } from '@zextras/carbonio-design-system';
 import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
+import { FILES_ROUTE } from '../../../constants';
 import {
 	AddedNode,
 	NewShare,
@@ -21,7 +25,17 @@ import { InlineText } from '../StyledComponents';
 type NotificationItemProps = {
 	notification: Notification;
 	isUnread: boolean;
+	closePopover: () => void;
 };
+
+const CustomContainer = styled(Container)`
+	margin: 0.5rem 0;
+	border-radius: 1rem;
+	cursor: pointer;
+	&:hover {
+		background-color: ${({ theme }): string => theme.palette.gray6.hover};
+	}
+`;
 
 export function isNewShareNotification(notification: Notification): notification is NewShare {
 	return notification.notification_type === NotificationType.NewShare;
@@ -55,13 +69,17 @@ export function getDateNotification(createdAt: number, language?: string): strin
 
 export const NotificationItem = ({
 	notification,
-	isUnread
+	isUnread,
+	closePopover
 }: NotificationItemProps): React.JSX.Element => {
 	const {
 		i18n: { language }
 	} = useTranslation();
 	const [t] = useTranslation();
 	const date = getDateNotification(notification.created_at, language);
+	const navigate = useNavigate();
+	const { resetStore } = useApolloClient();
+	const createSnackbar = useSnackbar();
 
 	const notificationMessage = useMemo(() => {
 		if (isNewShareNotification(notification)) {
@@ -157,14 +175,63 @@ export const NotificationItem = ({
 		return null;
 	}, [isUnread, notification, t]);
 
+	const handleClick = useCallback((): void => {
+		closePopover();
+		if (isNewShareNotification(notification)) {
+			navigate({
+				search: `${notification.node.type === 'FOLDER' ? 'folder' : 'file'}=${notification.node.node_id}`,
+				pathname: `/${FILES_ROUTE}`
+			});
+		}
+		if (isTransferredOwnershipNotification(notification)) {
+			navigate({
+				search: `folder=${notification.resulting_node.node_id}`,
+				pathname: `/${FILES_ROUTE}`
+			});
+		}
+		if (isAddedNodeNotification(notification)) {
+			resetStore();
+			navigate({
+				search: [
+					`folder=${notification.destination_folder.node_id}`,
+					`node=${notification.added_node.node_id}`
+				].join('&')
+			});
+		}
+		if (isRemovedNodeNotification(notification)) {
+			resetStore();
+			if (notification.notification_type === NotificationType.RemovedNode) {
+				createSnackbar({
+					key: new Date().toLocaleString(),
+					severity: 'warning',
+					label: t(
+						'errorCode.code_NODE_NOT_FOUND',
+						"It seems that this item doesn't exist, or you do not have permission to access it"
+					)
+				});
+				navigate({
+					search: `folder=${notification.origin_folder.node_id}`
+				});
+			} else {
+				navigate({
+					search: [
+						`folder=${notification.origin_folder.node_id}`,
+						`node=${notification.removed_node.node_id}`
+					].join('&')
+				});
+			}
+		}
+	}, [closePopover, notification, navigate, resetStore, createSnackbar, t]);
+
 	return (
 		<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
-			<Container
+			<CustomContainer
 				orientation={'horizontal'}
 				gap={'0.5rem'}
 				mainAlignment={'flex-start'}
 				crossAlignment={'flex-start'}
-				padding={{ vertical: '1rem', right: '0.25rem' }}
+				padding={'0.5rem'}
+				onClick={handleClick}
 			>
 				<Avatar label={notification.triggering_user.email} />
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
@@ -179,7 +246,7 @@ export const NotificationItem = ({
 						{date}
 					</Text>
 				</Container>
-			</Container>
+			</CustomContainer>
 			<Divider />
 		</Container>
 	);
