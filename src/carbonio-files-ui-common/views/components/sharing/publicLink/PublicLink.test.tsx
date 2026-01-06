@@ -518,6 +518,9 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<PublicLink {...props} />, { mocks });
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await user.click(screen.getByRole('button', { name: /add link/i }));
 			await user.type(screen.getByRole('textbox', { name: /link's description/i }), description);
 			await user.click(screen.getByRole('button', { name: /generate link/i }));
@@ -542,6 +545,9 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<PublicLink {...props} />, { mocks });
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(link.url as string);
 			await user.click(
 				screen.getByRoleWithIcon('button', { name: /edit/i, icon: ICON_REGEXP.edit })

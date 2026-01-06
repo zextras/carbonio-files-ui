@@ -21,7 +21,7 @@ import {
 	populateNode,
 	populateNodePage
 } from '../carbonio-files-ui-common/mocks/mockUtils';
-import { delayUntil, screen, setup, within } from '../carbonio-files-ui-common/tests/utils';
+import { screen, setup, within } from '../carbonio-files-ui-common/tests/utils';
 import {
 	GetChildrenDocument,
 	GetNodeDocument,
@@ -387,8 +387,7 @@ describe('AppView', () => {
 						}),
 					{ once: true }
 				),
-				graphql.query(GetChildrenDocument, async () => {
-					await delayUntil(emitter, EMITTER_CODES.never);
+				graphql.query(GetChildrenDocument, () => {
 					return HttpResponse.json({
 						data: {
 							getNode: folder
@@ -419,8 +418,7 @@ describe('AppView', () => {
 						}),
 					{ once: true }
 				),
-				graphql.query(GetNodeDocument, async () => {
-					await delayUntil(emitter, EMITTER_CODES.never);
+				graphql.query(GetNodeDocument, () => {
 					return HttpResponse.json({
 						data: {
 							getNode: node1

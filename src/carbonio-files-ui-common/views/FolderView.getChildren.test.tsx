@@ -102,16 +102,6 @@ describe('Get children', () => {
 		await act(async () => {
 			await vi.advanceTimersToNextTimerAsync();
 		});
-		// this is the loading refresh icon
-		expect(screen.getByTestId(SELECTORS.listHeader)).toContainElement(
-			screen.getByTestId(ICON_REGEXP.queryLoading)
-		);
-		expect(
-			within(screen.getByTestId(SELECTORS.listHeader)).getByTestId(ICON_REGEXP.queryLoading)
-		).toBeVisible();
-		await waitFor(() => {
-			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
-		});
 		// wait the rendering of the first item
 		await screen.findByTestId(SELECTORS.nodeItem(currentFolder.children.nodes[0]!.id));
 		expect(

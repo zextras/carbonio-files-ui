@@ -110,6 +110,9 @@ describe('Folder View Selection mode', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		await screen.findByText((currentFolder.children.nodes[0] as Folder).name);
 		expect(screen.queryByText(/select all/i)).not.toBeInTheDocument();
 		await selectNodes([(currentFolder.children.nodes[0] as Folder).id], user);

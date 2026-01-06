@@ -27,8 +27,7 @@ const buildClient: () => ApolloClient<NormalizedCacheObject> = () => {
 
 		apolloClient = new ApolloClient<NormalizedCacheObject>({
 			cache,
-			// TODO: disable in production
-			connectToDevTools: true,
+			connectToDevTools: process.env.NODE_ENV !== 'production',
 			link: httpLink
 		});
 	}

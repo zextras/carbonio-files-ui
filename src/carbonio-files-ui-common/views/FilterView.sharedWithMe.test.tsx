@@ -125,6 +125,10 @@ describe('Filter view', () => {
 					mocks
 				}
 			);
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findAllByText(node.name);
 			// logged user is shown
 			await screen.findByText(/you$/i);
