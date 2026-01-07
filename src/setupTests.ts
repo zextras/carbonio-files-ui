@@ -5,10 +5,10 @@
  */
 
 import '@testing-library/jest-dom';
-import React, { act } from 'react';
+import React from 'react';
 
 import { type ApolloClient } from '@apollo/client';
-import { configure } from '@testing-library/react';
+import { act, configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
 import dotenv from 'dotenv';
 import { noop } from 'lodash';
@@ -109,6 +109,8 @@ beforeAll(() => {
 		value: noop
 	});
 
+	global.mockedUserLogged = LOGGED_USER_ACCOUNT;
+
 	window.resizeTo = function resizeTo(width, height): void {
 		Object.assign(this, {
 			innerWidth: width,
@@ -119,8 +121,6 @@ beforeAll(() => {
 	};
 
 	Element.prototype.scrollTo = noop;
-
-	global.mockedUserLogged = LOGGED_USER_ACCOUNT;
 
 	Object.defineProperty(window, 'FileSystemDirectoryEntry', {
 		writable: true,
@@ -197,6 +197,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+	// vi.runOnlyPendingTimers();
 	server.resetHandlers();
 	act(() => {
 		window.resizeTo(1024, 768);
