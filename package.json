@@ -70,6 +70,7 @@
 		"jsdom": "^27.3.0",
 		"msw": "^2.11.3",
 		"npm-check-updates": "^17.1.13",
+		"sonarqube-scanner": "^4.3.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.6.3",
 		"vitest": "^4.0.15",

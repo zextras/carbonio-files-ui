@@ -40,17 +40,19 @@ export const HoverContainer = styled(Row)`
 `;
 
 export const HoverBarContainer = styled(Container)<{
+	height?: string;
 	width?: string;
 }>`
-	width: ${({ width, theme }): string =>
-		width ?? `calc(100% - ${LIST_ITEM_AVATAR_HEIGHT} - ${theme.sizes.padding.small})`};
+	top: 0;
+	right: 0;
 	display: none;
 	position: absolute;
-	right: 0;
+	width: fit-content;
+	height: ${({ height }): string => height ?? '45%'};
 	background: linear-gradient(
 		to right,
 		transparent,
-		${({ theme }): string => theme.palette.gray6.hover} 50%,
+		${({ theme }): string => theme.palette.gray6.hover} 1rem,
 		${({ theme }): string => theme.palette.gray6.hover} 100%
 	);
 `;
