@@ -5,7 +5,7 @@
  */
 
 import '@testing-library/jest-dom';
-import React from 'react';
+import React, { act } from 'react';
 
 import { type ApolloClient } from '@apollo/client';
 import { configure } from '@testing-library/react';
@@ -198,6 +198,9 @@ beforeEach(() => {
 
 afterEach(() => {
 	server.resetHandlers();
+	act(() => {
+		window.resizeTo(1024, 768);
+	});
 	global.apolloClient.cache.reset();
 });
 // mock a simplified crypto

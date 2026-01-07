@@ -44,12 +44,6 @@ beforeEach(() => {
 	};
 });
 
-afterEach(() => {
-	act(() => {
-		window.resizeTo(1024, 768);
-	});
-})
-
 describe('Header Breadcrumbs', () => {
 	describe('Drag and drop', () => {
 		it('should not show the dropzone if folder id is empty', () => {
