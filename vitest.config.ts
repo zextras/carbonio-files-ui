@@ -23,9 +23,6 @@ export default defineConfig({
 		}),
 		graphql()
 	],
-	define: {
-		BASE_PATH: JSON.stringify('/')
-	},
 	test: {
 		reporters: isCI ? ['default', 'junit'] : ['verbose'],
 		retry,
