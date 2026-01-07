@@ -387,13 +387,13 @@ describe('AppView', () => {
 						}),
 					{ once: true }
 				),
-				graphql.query(GetChildrenDocument, () => {
-					return HttpResponse.json({
+				graphql.query(GetChildrenDocument, () =>
+					HttpResponse.json({
 						data: {
 							getNode: folder
 						}
-					});
-				}),
+					})
+				),
 				graphql.query(GetPermissionsDocument, () =>
 					HttpResponse.json({
 						data: {
@@ -418,13 +418,13 @@ describe('AppView', () => {
 						}),
 					{ once: true }
 				),
-				graphql.query(GetNodeDocument, () => {
-					return HttpResponse.json({
+				graphql.query(GetNodeDocument, () =>
+					HttpResponse.json({
 						data: {
 							getNode: node1
 						}
-					});
-				})
+					})
+				)
 			);
 			setup(<AppView />, {
 				initialRouterEntries: [`/?folder=${folder.id}&node=${node1.id}`]
