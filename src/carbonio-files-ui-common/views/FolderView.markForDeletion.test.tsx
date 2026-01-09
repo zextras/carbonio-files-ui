@@ -146,6 +146,9 @@ describe('Mark for deletion - trash', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0]!.name);
 			expect(screen.getByText(firstPage[0]!.name)).toBeVisible();
 			expect(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1]!.name)).toBeVisible();
@@ -202,8 +205,13 @@ describe('Mark for deletion - trash', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 
 			expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(5);
 

@@ -118,6 +118,9 @@ describe('Copy', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(nodeToCopy.name);
 
 			let destinationFolderCachedData = global.apolloClient.readQuery<
@@ -197,6 +200,9 @@ describe('Copy', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(nodesToCopy[0].name);
 
 			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
@@ -287,7 +293,6 @@ describe('Copy', () => {
 			await act(async () => {
 				await vi.advanceTimersToNextTimerAsync();
 			});
-			await screen.findByText(nodesToCopy[0].name);
 			await screen.findByText(nodesToCopy[1].name);
 			await selectNodes(
 				map(nodesToCopy, (node) => node.id),
@@ -348,6 +353,9 @@ describe('Copy', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(nodeToCopy.name);
 
 			let destinationFolderCachedData = global.apolloClient.readQuery<

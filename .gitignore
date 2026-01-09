@@ -13,3 +13,4 @@ sdk/package-lock.json
 /dist
 *.tgz
 .env
+.vscode

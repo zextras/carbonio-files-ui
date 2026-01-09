@@ -145,6 +145,9 @@ describe('Create folder', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait for the load to be completed
 		await waitFor(() =>
 			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()

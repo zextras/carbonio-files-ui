@@ -317,6 +317,9 @@ describe('Move', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(nodeToMove.name);
 			let destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,

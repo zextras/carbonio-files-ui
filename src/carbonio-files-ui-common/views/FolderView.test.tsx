@@ -279,6 +279,10 @@ describe('Folder View', () => {
 				initialRouterEntries: [`/?folder=${currentFolder.id}&node=${node.id}`],
 				mocks
 			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findAllByText(node.name);
 			await screen.findByText(destinationFolder.name);
 			const displayer = screen.getByTestId(SELECTORS.displayer);

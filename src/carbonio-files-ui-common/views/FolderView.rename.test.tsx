@@ -50,9 +50,7 @@ describe('Rename', () => {
 			// the new name of the node is going to be the name of the last ordered element with the timestamp at the end
 			const timestamp = Date.now();
 			const element = currentFolder.children.nodes[0]!;
-			const newName = `${
-				currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.name
-			}-${timestamp}`;
+			const newName = `${currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.name}-${timestamp}`;
 
 			const newPos = currentFolder.children.nodes.length - 1;
 
@@ -123,9 +121,7 @@ describe('Rename', () => {
 			// the new name of the node is going to be the name of the last ordered element with the timestamp at the end
 			const timestamp = Date.now();
 			const element = currentFolder.children.nodes[0]!;
-			const newName = `${
-				currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.name
-			}-${timestamp}`;
+			const newName = `${currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.name}-${timestamp}`;
 
 			const mocks = {
 				Query: {
@@ -145,11 +141,9 @@ describe('Rename', () => {
 				mocks
 			});
 
-			// wait for the load to be completed
-			await waitFor(() =>
-				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
-			);
-
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
@@ -193,9 +187,7 @@ describe('Rename', () => {
 			// the element to rename is the first of the list. New position is third position of third page
 			const timestamp = Date.now();
 			const element = currentFolder.children.nodes[0]!;
-			const newName = `${
-				currentFolder.children.nodes[NODES_LOAD_LIMIT * 2 + 2]!.name
-			}-${timestamp}`;
+			const newName = `${currentFolder.children.nodes[NODES_LOAD_LIMIT * 2 + 2]!.name}-${timestamp}`;
 
 			// the cursor is last element of first page and does not change after rename
 			const firstCursor = currentFolder.children.nodes[NODES_LOAD_LIMIT - 1]!;
@@ -261,6 +253,9 @@ describe('Rename', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
 			await waitFor(() =>
 				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()

@@ -12,8 +12,6 @@ import { act, configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
 import dotenv from 'dotenv';
 import { noop } from 'lodash';
-// this can be removed once migrated to Node 22
-import 'core-js/proposals/promise-with-resolvers';
 import { Mock } from 'vitest';
 import failOnConsole from 'vitest-fail-on-console';
 
@@ -91,10 +89,7 @@ failOnConsole({
 		// and it's an object instead of a Window class instance, so the check on the prop type fail for the target prop
 		/Invalid prop `\w+`(\sof type `\w+`)? supplied to `(\w+(\(\w+\))?)`/.test(errorMessage) ||
 		// errors forced from the tests
-		/Controlled error/gi.test(errorMessage) ||
-		/The "input" argument must be an instance of ArrayBuffer or ArrayBufferView. Received an instance of File/.test(
-			errorMessage
-		)
+		/Controlled error/gi.test(errorMessage)
 });
 
 beforeAll(() => {
@@ -197,7 +192,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-	// vi.runOnlyPendingTimers();
 	server.resetHandlers();
 	act(() => {
 		window.resizeTo(1024, 768);

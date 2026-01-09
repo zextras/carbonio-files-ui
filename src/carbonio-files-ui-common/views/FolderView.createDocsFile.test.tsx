@@ -201,6 +201,10 @@ describe('Create docs file', () => {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
 		});
+
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		await user.rightClick(await screen.findByText(/It looks like there's nothing here/i));
 		const dropdown = await screen.findByTestId(SELECTORS.dropdownList);
 		expect(within(dropdown).queryByText(ACTION_REGEXP.newDocument)).not.toBeInTheDocument();
@@ -566,6 +570,10 @@ describe('Create docs file', () => {
 			initialRouterEntries: [`/?folder=${currentFolder.id}`],
 			mocks
 		});
+
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		await screen.findByText(LIST_EMPTY_MESSAGE);
 		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
 		await createNode({ name: 'over quota' }, user);
@@ -619,6 +627,10 @@ describe('Create docs file', () => {
 			const { user } = setup(<FolderView />, {
 				initialRouterEntries: [`/?folder=${currentFolder.id}`],
 				mocks
+			});
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await screen.findByText(LIST_EMPTY_MESSAGE);
 			clickOnCreateDocsAction(createOptions, action, docType);
