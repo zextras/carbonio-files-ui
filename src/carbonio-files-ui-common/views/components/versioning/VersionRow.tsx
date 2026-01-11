@@ -115,7 +115,7 @@ export const VersionRow = ({
 
 	const cloneVersionCallback = useCallback(() => {
 		cloneVersion(nodeId, version).then((data) => {
-			if (data) {
+			if (data.data) {
 				createSnackbar({
 					key: new Date().toLocaleString(),
 					severity: 'info',

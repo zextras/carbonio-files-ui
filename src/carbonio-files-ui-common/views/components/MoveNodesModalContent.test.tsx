@@ -537,9 +537,6 @@ describe('Move Nodes Modal', () => {
 			{ mocks }
 		);
 
-		await act(async () => {
-			await vi.advanceTimersToNextTimerAsync();
-		});
 		await screen.findByText(nodeToMove.name);
 
 		// grand ancestor is not in breadcrumb because it is before a folder without permissions

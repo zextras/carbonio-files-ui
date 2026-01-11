@@ -462,9 +462,6 @@ describe('Folder View', () => {
 			await act(async () => {
 				await vi.advanceTimersToNextTimerAsync();
 			});
-			await waitFor(() => {
-				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
-			});
 			// folder is not shared
 			const folderItem = screen.getByTestId(SELECTORS.nodeItem(folder.id));
 			expect(within(folderItem).queryByTestId(ICON_REGEXP.sharedByMe)).not.toBeInTheDocument();
@@ -632,9 +629,6 @@ describe('Folder View', () => {
 
 			await act(async () => {
 				await vi.advanceTimersToNextTimerAsync();
-			});
-			await waitFor(() => {
-				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 			});
 			// folder share is read-only
 			await screen.findByText(/sharing/i);
@@ -807,9 +801,6 @@ describe('Folder View', () => {
 
 			await act(async () => {
 				await vi.advanceTimersToNextTimerAsync();
-			});
-			await waitFor(() => {
-				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
 			});
 			// folder has share
 			await user.click(await screen.findByText(/sharing/i));
