@@ -259,8 +259,8 @@ describe('AppView', () => {
 			await act(async () => {
 				await vi.advanceTimersToNextTimerAsync();
 			});
-			await screen.findByText(node1.name);
-			await screen.findByText(folder.name);
+			await within(screen.getByTestId(SELECTORS.list(folder.id))).findByText(node1.name);
+			await within(screen.getByTestId(SELECTORS.listHeader)).findByText(folder.name);
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
