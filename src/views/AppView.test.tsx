@@ -393,7 +393,7 @@ describe('AppView', () => {
 						data: {
 							getNode: folder
 						}
-					})
+					});
 				}),
 				graphql.query(GetPermissionsDocument, () =>
 					HttpResponse.json({
@@ -425,7 +425,7 @@ describe('AppView', () => {
 						data: {
 							getNode: node1
 						}
-					})
+					});
 				})
 			);
 			setup(<AppView />, {
