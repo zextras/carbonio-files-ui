@@ -21,7 +21,7 @@ import {
 	populateNode,
 	populateNodePage
 } from '../carbonio-files-ui-common/mocks/mockUtils';
-import { screen, setup, within } from '../carbonio-files-ui-common/tests/utils';
+import { delayUntil, screen, setup, within } from '../carbonio-files-ui-common/tests/utils';
 import {
 	GetChildrenDocument,
 	GetNodeDocument,
@@ -102,7 +102,7 @@ describe('AppView', () => {
 			await act(async () => {
 				await vi.advanceTimersToNextTimerAsync();
 			});
-			await screen.findByTestId(SELECTORS.listHeader);
+			await waitFor(() => screen.findByTestId(SELECTORS.listHeader));
 			await screen.findByTestId(SELECTORS.displayer);
 			await screen.findByText(node1.name);
 			await screen.findByText(folder.name);
@@ -387,13 +387,14 @@ describe('AppView', () => {
 						}),
 					{ once: true }
 				),
-				graphql.query(GetChildrenDocument, () =>
-					HttpResponse.json({
+				graphql.query(GetChildrenDocument, async () => {
+					await delayUntil(emitter, EMITTER_CODES.never);
+					return HttpResponse.json({
 						data: {
 							getNode: folder
 						}
 					})
-				),
+				}),
 				graphql.query(GetPermissionsDocument, () =>
 					HttpResponse.json({
 						data: {
@@ -418,13 +419,14 @@ describe('AppView', () => {
 						}),
 					{ once: true }
 				),
-				graphql.query(GetNodeDocument, () =>
-					HttpResponse.json({
+				graphql.query(GetNodeDocument, async () => {
+					await delayUntil(emitter, EMITTER_CODES.never);
+					return HttpResponse.json({
 						data: {
 							getNode: node1
 						}
 					})
-				)
+				})
 			);
 			setup(<AppView />, {
 				initialRouterEntries: [`/?folder=${folder.id}&node=${node1.id}`]
@@ -442,8 +444,9 @@ describe('AppView', () => {
 				vi.advanceTimersByTime(TIMERS.DISPLAYER_SHOW_MESSAGE);
 			});
 			expect(screen.queryByText(DISPLAYER_EMPTY_MESSAGE)).not.toBeInTheDocument();
-			act(() => {
+			await act(async () => {
 				emitter.emit(EMITTER_CODES.never);
+				await vi.advanceTimersToNextTimerAsync();
 			});
 		});
 	});
