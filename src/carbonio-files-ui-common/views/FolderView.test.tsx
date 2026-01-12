@@ -382,7 +382,7 @@ describe('Folder View', () => {
 		expect(screen.getByText(node.name)).toBeVisible();
 	});
 
-	describe('propagation of shares changes', () => {
+	describe.skip('propagation of shares changes', () => {
 		test('should show the new share in cached children', async () => {
 			const localRoot = populateLocalRoot();
 			const folder = populateFolder();

@@ -7,7 +7,7 @@
 import React, { ComponentProps } from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 
 import { PublicLink } from './PublicLink';
 import { DATE_TIME_FORMAT } from '../../../../constants';
@@ -564,7 +564,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					firstOfNextMonth.getDate()
 				)
 			);
-			expect(screen.getByText(expiresOnDate)).toBeVisible();
+			await waitFor(() => expect(screen.getByText(expiresOnDate)).toBeVisible())
 		});
 	});
 
