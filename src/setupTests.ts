@@ -12,7 +12,6 @@ import { act, configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
 import dotenv from 'dotenv';
 import { noop } from 'lodash';
-import { Mock } from 'vitest';
 import failOnConsole from 'vitest-fail-on-console';
 
 import buildClient from './carbonio-files-ui-common/apollo';
@@ -51,7 +50,10 @@ vi.mock('react-router-dom', async () => {
 	const actual = await vi.importActual('react-router-dom');
 	return {
 		...actual,
-		useBlocker: (): Mock => vi.fn()
+		useBlocker: vi.fn().mockImplementation(() => ({
+			state: 'unblocked',
+			proceed: vi.fn()
+		}))
 	};
 });
 
