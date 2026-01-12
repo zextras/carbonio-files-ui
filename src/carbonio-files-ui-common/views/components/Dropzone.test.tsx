@@ -42,7 +42,7 @@ describe('Dropzone', () => {
 			dataTransfer: { types: ['test'] }
 		});
 		// first the dropzone1 is removed
-		await waitForElementToBeRemoved(await screen.findByTestId(SELECTORS.dropzone));
+		await waitForElementToBeRemoved(screen.queryByTestId(SELECTORS.dropzone));
 		// and then the dropzone2 is shown
 		await screen.findByTestId(SELECTORS.dropzone);
 		expect(within(dropzone2).getByTestId(SELECTORS.dropzone)).toBeVisible();

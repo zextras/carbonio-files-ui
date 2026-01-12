@@ -6,7 +6,7 @@
 
 /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 
-import React, { act } from 'react';
+import React from 'react';
 
 import { waitFor } from '@testing-library/react';
 import { forEach, map } from 'lodash';
