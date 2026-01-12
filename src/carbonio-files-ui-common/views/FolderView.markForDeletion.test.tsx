@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';

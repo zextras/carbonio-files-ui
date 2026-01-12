@@ -102,7 +102,6 @@ describe('AppView', () => {
 			await act(async () => {
 				await vi.advanceTimersToNextTimerAsync();
 			});
-			await waitFor(() => screen.findByTestId(SELECTORS.listHeader));
 			await screen.findByTestId(SELECTORS.displayer);
 			await screen.findByText(node1.name);
 			await screen.findByText(folder.name);

@@ -43,7 +43,6 @@ describe('SecondaryBar', () => {
 		});
 
 		it('should render the Notifications entry with the notifications badge counter if there are notifications', async () => {
-			server.resetHandlers();
 			const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
 			const unread = 1;
 			server.use(
