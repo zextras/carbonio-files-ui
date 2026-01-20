@@ -8,6 +8,7 @@ import React from 'react';
 import { faker } from '@faker-js/faker';
 import { waitFor } from '@testing-library/react';
 import { graphql, HttpResponse } from 'msw';
+import { Mock } from 'vitest';
 
 import { getDateNotification } from './NotificationItem';
 import { Notifications } from './Notifications';
@@ -30,11 +31,14 @@ import {
 } from '../../../types/graphql/types';
 import { mockGetNotifications } from '../../../utils/resolverMocks';
 
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useNavigate: (): jest.Mock<void> => mockNavigate
-}));
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+	const actual = await vi.importActual('react-router-dom');
+	return {
+		...actual,
+		useNavigate: (): Mock => mockNavigate
+	};
+});
 
 describe('Notifications', () => {
 	beforeEach(() => {

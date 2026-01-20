@@ -32,9 +32,7 @@ import {
 	mockRestoreNodes
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter view', () => {
 	describe('Trash filter', () => {
@@ -294,7 +292,7 @@ describe('Filter view', () => {
 		});
 
 		test('My Trash filter sharedWithMe=false and includes only trashed nodes', async () => {
-			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			const mockedRequestHandler = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 			);
@@ -316,7 +314,7 @@ describe('Filter view', () => {
 				shares_limit: SHARES_LOAD_LIMIT
 			};
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -350,7 +348,7 @@ describe('Filter view', () => {
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.sortDesc })).toBeVisible();
 		});
 		test('Shared trash filter has sharedWithMe=true and includes only trashed nodes', async () => {
-			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			const mockedRequestHandler = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 			);
@@ -372,7 +370,7 @@ describe('Filter view', () => {
 				shares_limit: SHARES_LOAD_LIMIT
 			};
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({

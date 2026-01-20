@@ -8,7 +8,6 @@ MIT License (MIT) applies to:
 @commitlint/cli, Copyright (c) 2016 - present Mario Nebl
 @commitlint/config-conventional, Copyright (c) 2016 - present Mario Nebl
 @emotion/babel-plugin, Copyright (c) Emotion team and other contributors
-@emotion/jest, Copyright (c) Emotion team and other contributors
 @emotion/react, Copyright (c) Emotion team and other contributors
 @emotion/styled, Copyright (c) Emotion team and other contributors
 @faker-js/faker, Faker - Copyright (c) 2022-2024; faker.js - Copyright (c) 2020 Marak Squires
@@ -21,7 +20,6 @@ MIT License (MIT) applies to:
 @graphql-codegen/typescript-resolvers, Copyright (c) 2016 Dotan Simha;
 @graphql-codegen/typescript, Copyright (c) 2016 Dotan Simha;
 @graphql-eslint/eslint-plugin, Copyright (c) 2022 Dimitri POSTOLOV
-@graphql-tools/jest-transform, Copyright (c) 2020 The Guild, Inc.
 @graphql-tools/mock, Copyright (c) 2020 The Guild, Inc.
 @graphql-tools/schema, Copyright (c) 2020 The Guild, Inc.
 @testing-library/dom, Copyright (c) 2017 Kent C. Dodds
@@ -35,8 +33,10 @@ MIT License (MIT) applies to:
 @types/react-dom, Copyright (c) Microsoft Corporation.
 @types/react-router-dom, Copyright (c) Microsoft Corporation.
 @types/react, Copyright (c) Microsoft Corporation.
-@types/styled-components, Copyright (c) Microsoft Corporation.
 @types/uuid, Copyright (c) Microsoft Corporation.
+@vitejs/plugin-react, Copyright (c) 2019-present, Yuxi (Evan) You and Vite contributors
+@vitest/coverage-v8, Copyright (c) 2021-Present VoidZero Inc. and Vitest contributors
+@vitest/ui, Copyright (c) 2021-Present VoidZero Inc. and Vitest contributors
 core-js, Copyright (c) 2014-2025 Denis Pushkarev
 date-fns, Copyright (c) 2021 Sasha Koss and Lesha Koss https://kossnocorp.mit-license.org
 eslint-plugin-no-autofix, Copyright (c) 2018 薛定谔的猫
@@ -48,9 +48,7 @@ husky, Copyright (c) 2021 typicode
 i18next, Copyright (c) 2022 i18next
 identity-obj-proxy, Copyright (c) 2015 Keyan Zhang
 is-ci, Copyright (c) 2016-2021 Thomas Watson Steen
-jest-environment-jsdom, Copyright (c) Meta Platforms, Inc. and affiliates.
-jest-fail-on-console, Copyright (c) 2022 Valentin Hervieu
-jest, Copyright (c) Meta Platforms, Inc. and affiliates.
+jsdom, Copyright (c) 2010 Elijah Insua
 lodash, Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
 msw, Copyright (c) 2018–present Artem Zakharchenko
 react-dom, Copyright (c) Facebook, Inc. and its affiliates.
@@ -59,6 +57,8 @@ react-router-dom, Copyright (c) React Training LLC 2015-2019. Copyright (c) Remi
 react, Copyright (c) Facebook, Inc. and its affiliates.
 ts-node, Copyright (c) 2014 Blake Embrey (hello@blakeembrey.com)
 uuid, Copyright (c) 2010-2020 Robert Kieffer and other contributors
+vitest-fail-on-console, Copyright (c) 2024 Thomas Brodusch
+vitest, Copyright (c) 2021-Present VoidZero Inc. and Vitest contributors
 
 MIT License
 

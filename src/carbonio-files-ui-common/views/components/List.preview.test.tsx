@@ -16,7 +16,7 @@ import { populateFile } from '../../mocks/mockUtils';
 import { setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
 describe('Preview action', () => {
 	test.skip('Pdf with size greater than PREVIEW_MAX_SIZE are not previewed and fallback is shown', async () => {
@@ -127,7 +127,7 @@ describe('Preview action', () => {
 		await screen.findByText(file.name);
 		await user.rightClick(screen.getByText(file.name));
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		expect(screen.queryByText(ACTION_REGEXP.preview)).not.toBeInTheDocument();
 	});

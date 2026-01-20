@@ -314,11 +314,11 @@ describe('Generate access code', () => {
 		expect(() => generateAccessCode(-10)).toThrow('Unexpected length');
 	});
 	it('should call generateAccessCodeFallback when generateAccessCodeWithCrypto throws an error', () => {
-		jest.spyOn(moduleUtils, 'generateAccessCodeWithCrypto').mockImplementation(() => {
+		vi.spyOn(moduleUtils, 'generateAccessCodeWithCrypto').mockImplementation(() => {
 			throw new Error();
 		});
 
-		const generateAccessCodeFallbackSpy = jest.spyOn(moduleUtils, 'generateAccessCodeFallback');
+		const generateAccessCodeFallbackSpy = vi.spyOn(moduleUtils, 'generateAccessCodeFallback');
 		generateAccessCode();
 		expect(generateAccessCodeFallbackSpy).toHaveBeenCalled();
 	});

@@ -9,21 +9,25 @@ import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
 import { CreateSnackbarFn, CreateSnackbarFnArgs, Text } from '@zextras/carbonio-design-system';
 import { http, HttpResponse } from 'msw';
+import { MockedFunction } from 'vitest';
 
 import { OpenWithDocsResponse, useOpenWithDocs } from './useOpenWithDocs';
 import server from '../../mocks/server';
 import { DOCS_ENDPOINT, HTTP_STATUS_CODE, OPEN_FILE_PATH } from '../constants';
 import { setupHook } from '../tests/utils';
 
-let mockCreateSnackbar: jest.MockedFn<CreateSnackbarFn>;
+let mockCreateSnackbar: MockedFunction<CreateSnackbarFn>;
 
-jest.mock('@zextras/carbonio-design-system', () => ({
-	...jest.requireActual('@zextras/carbonio-design-system'),
-	useSnackbar: (): CreateSnackbarFn => mockCreateSnackbar
-}));
+vi.mock('@zextras/carbonio-design-system', async () => {
+	const actual = await vi.importActual('@zextras/carbonio-design-system');
+	return {
+		...actual,
+		useSnackbar: (): CreateSnackbarFn => mockCreateSnackbar
+	};
+});
 
 beforeEach(() => {
-	mockCreateSnackbar = jest.fn();
+	mockCreateSnackbar = vi.fn();
 });
 
 describe('useOpenWithDocs hook', () => {
@@ -36,7 +40,7 @@ describe('useOpenWithDocs hook', () => {
 			)
 		);
 
-		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
+		const spyWindowOpen = vi.spyOn(window, 'open').mockImplementation(vi.fn());
 		const { result } = setupHook(() => useOpenWithDocs());
 		await result.current('id');
 		expect(spyWindowOpen).toHaveBeenCalledWith(fileOpenUrl, fileOpenUrl);
@@ -50,7 +54,7 @@ describe('useOpenWithDocs hook', () => {
 			)
 		);
 
-		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
+		const spyWindowOpen = vi.spyOn(window, 'open').mockImplementation(vi.fn());
 		const { result } = setupHook(() => useOpenWithDocs());
 
 		await act(async () => {
@@ -86,7 +90,7 @@ describe('useOpenWithDocs hook', () => {
 			)
 		);
 
-		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
+		const spyWindowOpen = vi.spyOn(window, 'open').mockImplementation(vi.fn());
 		const { result } = setupHook(() => useOpenWithDocs());
 
 		await act(async () => {
@@ -103,7 +107,7 @@ describe('useOpenWithDocs hook', () => {
 	it('should show generic error snackbar if there is a network error', async () => {
 		server.use(http.get(`${DOCS_ENDPOINT}${OPEN_FILE_PATH}/:id`, () => HttpResponse.error()));
 
-		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
+		const spyWindowOpen = vi.spyOn(window, 'open').mockImplementation(vi.fn());
 		const { result } = setupHook(() => useOpenWithDocs());
 
 		await act(async () => {
@@ -131,7 +135,7 @@ describe('useOpenWithDocs hook', () => {
 				}
 			)
 		);
-		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
+		const spyWindowOpen = vi.spyOn(window, 'open').mockImplementation(vi.fn());
 		const { result } = setupHook(() => useOpenWithDocs());
 		await result.current('id');
 		expect(offsetFromUtc).toBe(offsetFromUtcToVerify.toString());
@@ -152,7 +156,7 @@ describe('useOpenWithDocs hook', () => {
 				}
 			)
 		);
-		const spyWindowOpen = jest.spyOn(window, 'open').mockImplementation();
+		const spyWindowOpen = vi.spyOn(window, 'open').mockImplementation(vi.fn());
 		const { result } = setupHook(() => useOpenWithDocs());
 		await result.current('id', version);
 		expect(versionParam).toBe(version.toString());

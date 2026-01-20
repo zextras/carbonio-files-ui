@@ -20,13 +20,13 @@ describe('Files Quota', () => {
 	it('should show files quota when request return successfully', async () => {
 		setup(<FilesQuota />);
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(await screen.findByTestId(SELECTORS.filesQuota)).toBeVisible();
 	});
 
 	it('should not show files quota when request return error ', async () => {
-		const spyInstance = jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo');
+		const spyInstance = vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo');
 
 		server.use(
 			http.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, () =>

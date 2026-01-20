@@ -15,7 +15,7 @@ import { selectNodes, setup, screen } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 import * as previewUtils from '../../utils/previewUtils';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
 describe('List', () => {
 	describe('Badge', () => {
@@ -105,8 +105,8 @@ describe('List', () => {
 		});
 
 		test('Double click on node that is supported by both preview and docs and has write permissions open document with docs', async () => {
-			const openWithDocsFn = jest.fn();
-			jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
+			const openWithDocsFn = vi.fn();
+			vi.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
 			const node = populateFile();
 			node.permissions.can_write_file = true;
 			node.mime_type = 'application/vnd.oasis.opendocument.text';
@@ -124,8 +124,8 @@ describe('List', () => {
 		});
 
 		test.skip('Double click on node that is supported by both preview and docs but does not have write permissions open document with preview', async () => {
-			const openWithDocsFn = jest.fn();
-			jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
+			const openWithDocsFn = vi.fn();
+			vi.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
 			const node = populateFile();
 			node.permissions.can_write_file = false;
 			node.mime_type = 'application/vnd.oasis.opendocument.text';
@@ -153,11 +153,11 @@ describe('List', () => {
 		});
 
 		test('Double click on node that is not supported by preview nor docs does nothing', async () => {
-			const openWithDocsFn = jest.fn();
-			jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
-			const getDocumentPreviewSrcFn = jest.spyOn(previewUtils, 'getDocumentPreviewSrc');
-			const getPdfPreviewSrcFn = jest.spyOn(previewUtils, 'getPdfPreviewSrc');
-			const getImgPreviewSrcFn = jest.spyOn(previewUtils, 'getImgPreviewSrc');
+			const openWithDocsFn = vi.fn();
+			vi.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
+			const getDocumentPreviewSrcFn = vi.spyOn(previewUtils, 'getDocumentPreviewSrc');
+			const getPdfPreviewSrcFn = vi.spyOn(previewUtils, 'getPdfPreviewSrc');
+			const getImgPreviewSrcFn = vi.spyOn(previewUtils, 'getImgPreviewSrc');
 			const node = populateFile();
 			node.type = NodeType.Application;
 			node.mime_type = 'unsupported/mimetype';
@@ -177,7 +177,7 @@ describe('List', () => {
 		describe('Preview load more without exit from preview', () => {
 			test.skip('should call loadMore when reaching the second-last preview item', async () => {
 				const nodes = Array.from({ length: 10 }, () => populateImgFile());
-				const loadMore = jest.fn();
+				const loadMore = vi.fn();
 
 				const { user } = setup(
 					<SelectionProvider items={nodes}>
@@ -203,7 +203,7 @@ describe('List', () => {
 
 			test('should not call loadMore if hasMore is false', async () => {
 				const nodes = Array.from({ length: 10 }, () => populateImgFile());
-				const loadMore = jest.fn();
+				const loadMore = vi.fn();
 
 				const { user } = setup(
 					<SelectionProvider items={nodes}>

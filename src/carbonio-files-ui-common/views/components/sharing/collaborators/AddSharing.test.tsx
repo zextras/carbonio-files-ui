@@ -34,10 +34,10 @@ import {
 	mockGetAccountByEmail
 } from '../../../../utils/resolverMocks';
 
-const mockedSoapFetch = jest.fn();
+const mockedSoapFetch = vi.fn();
 
 beforeEach(() => {
-	jest.spyOn(network, 'soapFetch').mockImplementation(
+	vi.spyOn(network, 'soapFetch').mockImplementation(
 		(args): Promise<RawSoapResponse<Record<string, unknown>>> =>
 			new Promise<RawSoapResponse<Record<string, unknown>>>((resolve, reject) => {
 				const result = mockedSoapFetch(args);
@@ -291,7 +291,7 @@ describe('Add Sharing', () => {
 		await screen.findByTestId(SELECTORS.chip);
 		await user.click(screen.getByRole('button', { name: /viewer/i }));
 		// advance timers to make the popover register listeners
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		await user.hover(screen.getByText(/editor/i));
 		await screen.findByText("You don't have the necessary permissions to assign editor rights.");
 		// click on share should set share permissions
@@ -310,7 +310,7 @@ describe('Add Sharing', () => {
 				getAccountByEmail: mockGetAccountByEmail(userAccount)
 			},
 			Mutation: {
-				createShare: jest.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
+				createShare: vi.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation

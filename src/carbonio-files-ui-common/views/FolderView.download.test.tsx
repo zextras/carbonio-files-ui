@@ -16,15 +16,13 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 import * as utils from '../utils/utils';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/NodeHoverBar');
 
 describe('Download', () => {
 	it('should download the whole ROOT if the user clicks on the download all button on the root', async () => {
-		const downloadMultipleNodesFn = jest.spyOn(utils, 'downloadMultipleNodes');
+		const downloadMultipleNodesFn = vi.spyOn(utils, 'downloadMultipleNodes');
 
 		const currentFolder = populateFolder(3, ROOTS.LOCAL_ROOT);
 		const mocks = {
@@ -42,6 +40,9 @@ describe('Download', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		const downloadButton = await screen.findByRoleWithIcon('button', {
 			icon: ICON_REGEXP.downloadMultiple
 		});
@@ -49,7 +50,7 @@ describe('Download', () => {
 		await user.click(downloadButton);
 		act(() => {
 			// run timers of modal
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 		});
 		const modal = await screen.findByTestId('modal');
 		expect(within(modal).getAllByText('Download all')).toHaveLength(2);
@@ -68,7 +69,7 @@ describe('Download', () => {
 	});
 
 	it('should download the whole folder if the user clicks on the download all button on a folder', async () => {
-		const downloadMultipleNodesFn = jest.spyOn(utils, 'downloadMultipleNodes');
+		const downloadMultipleNodesFn = vi.spyOn(utils, 'downloadMultipleNodes');
 
 		const currentFolder = populateFolder();
 		const mocks = {
@@ -86,6 +87,9 @@ describe('Download', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		const downloadButton = await screen.findByRoleWithIcon('button', {
 			icon: ICON_REGEXP.downloadMultiple
 		});
@@ -93,7 +97,7 @@ describe('Download', () => {
 		await user.click(downloadButton);
 		act(() => {
 			// run timers of modal
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 		});
 		const modal = await screen.findByTestId('modal');
 		expect(within(modal).getByText(`Download ${currentFolder.name}`)).toBeVisible();
@@ -128,6 +132,9 @@ describe('Download', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		await user.click(
 			await screen.findByRoleWithIcon('button', {
 				icon: ICON_REGEXP.downloadMultiple
@@ -135,7 +142,7 @@ describe('Download', () => {
 		);
 		act(() => {
 			// run timers of modal
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 		});
 		const modal = await screen.findByTestId('modal');
 		expect(modal).toBeVisible();
@@ -160,6 +167,9 @@ describe('Download', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		await user.hover(
 			await screen.findByRoleWithIcon('button', {
 				icon: ICON_REGEXP.downloadMultiple

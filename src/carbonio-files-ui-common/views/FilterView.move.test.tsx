@@ -36,9 +36,7 @@ import {
 	mockMoveNodes
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter View', () => {
 	describe('Move', () => {
@@ -280,7 +278,7 @@ describe('Filter View', () => {
 				await findByTextWithMarkup(breadcrumbRegexp);
 				act(() => {
 					// run modal timers
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 
@@ -440,7 +438,7 @@ describe('Filter View', () => {
 				await findByTextWithMarkup(breadcrumbRegexp);
 				act(() => {
 					// run modal timers
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				expect(getByTextWithMarkup(breadcrumbRegexp)).toBeVisible();
 

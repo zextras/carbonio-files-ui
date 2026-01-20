@@ -27,15 +27,15 @@ import { Resolvers } from '../../types/graphql/resolvers-types';
 import { File, Folder } from '../../types/graphql/types';
 import { mockFindNodes, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
 
-let confirmAction = jest.fn();
-let resetToDefault = jest.fn();
+let confirmAction = vi.fn();
+let resetToDefault = vi.fn();
 
 beforeEach(() => {
-	confirmAction = jest.fn(() => {
+	confirmAction = vi.fn(() => {
 		// clone implementation of the function contained in the close callback of useCopyContent
 		destinationVar({ defaultValue: undefined, currentValue: undefined });
 	});
-	resetToDefault = jest.fn(() => {
+	resetToDefault = vi.fn(() => {
 		// clone implementation of the function contained in the click callback of useCopyContent
 		destinationVar({ ...destinationVar(), currentValue: destinationVar().defaultValue });
 	});
@@ -214,7 +214,7 @@ describe('Folder Selection Modal Content', () => {
 
 		const mocks = {
 			Query: {
-				getPath: jest.fn(mockGetPath([localRoot]) as () => (File | Folder)[]),
+				getPath: vi.fn(mockGetPath([localRoot]) as () => (File | Folder)[]),
 				getNode: mockGetNode({ getChildren: [localRoot] })
 			}
 		} satisfies Partial<Resolvers>;
@@ -308,7 +308,7 @@ describe('Folder Selection Modal Content', () => {
 		);
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		const checkboxLabel = screen.getByText('search also in contained folders');
 		expect(checkboxLabel).toBeVisible();

@@ -92,7 +92,7 @@ describe('Displayer', () => {
 				});
 				await user.click(copyAction);
 			} else {
-				fail();
+				expect.fail('Error fail');
 			}
 		}
 		// modal opening
@@ -211,7 +211,7 @@ describe('Displayer', () => {
 		await user.click(moreVertical);
 		await renameNode(newName, user);
 		expect(screen.queryByRole('button', { name: ACTION_REGEXP.rename })).not.toBeInTheDocument();
-		expect(screen.getAllByText(newName)).toHaveLength(2);
+		await waitFor(() => expect(screen.getAllByText(newName)).toHaveLength(2));
 		expect(screen.queryByText(node.name)).not.toBeInTheDocument();
 		expect(getByTextWithMarkup(buildBreadCrumbRegExp(newName))).toBeVisible();
 	});
@@ -252,7 +252,7 @@ describe('Displayer', () => {
 		node.permissions.can_share = false;
 		const mocks = {
 			Query: {
-				getNode: jest.fn(
+				getNode: vi.fn(
 					mockGetNode({ getNode: [node], getShares: [node] }) as (
 						...args: unknown[]
 					) => File | Folder

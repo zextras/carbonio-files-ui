@@ -25,7 +25,7 @@ describe('Upload List Item Wrapper', () => {
 					status: faker.helpers.objectValue(UploadStatus),
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -54,7 +54,7 @@ describe('Upload List Item Wrapper', () => {
 					status: faker.helpers.objectValue(UploadStatus),
 					parentNodeId: null
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -85,7 +85,7 @@ describe('Upload List Item Wrapper', () => {
 					status: faker.helpers.objectValue(UploadStatus),
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -113,7 +113,7 @@ describe('Upload List Item Wrapper', () => {
 					status: faker.helpers.objectValue(UploadStatus),
 					parentNodeId: null
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })

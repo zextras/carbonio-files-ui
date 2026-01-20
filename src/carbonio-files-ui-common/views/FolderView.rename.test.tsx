@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import { forEach, map, findIndex, last } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -19,7 +19,7 @@ import { FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { File, Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes, mockUpdateNode } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
@@ -27,11 +27,9 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/NodeHoverBar');
 
 describe('Rename', () => {
 	describe('Selection mode', () => {
@@ -52,9 +50,7 @@ describe('Rename', () => {
 			// the new name of the node is going to be the name of the last ordered element with the timestamp at the end
 			const timestamp = Date.now();
 			const element = currentFolder.children.nodes[0]!;
-			const newName = `${
-				currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.name
-			}-${timestamp}`;
+			const newName = `${currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.name}-${timestamp}`;
 
 			const newPos = currentFolder.children.nodes.length - 1;
 
@@ -76,8 +72,13 @@ describe('Rename', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 
 			// activate selection mode by selecting items
 			await selectNodes([element.id], user);
@@ -120,9 +121,7 @@ describe('Rename', () => {
 			// the new name of the node is going to be the name of the last ordered element with the timestamp at the end
 			const timestamp = Date.now();
 			const element = currentFolder.children.nodes[0]!;
-			const newName = `${
-				currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.name
-			}-${timestamp}`;
+			const newName = `${currentFolder.children.nodes[currentFolder.children.nodes.length - 1]!.name}-${timestamp}`;
 
 			const mocks = {
 				Query: {
@@ -142,9 +141,9 @@ describe('Rename', () => {
 				mocks
 			});
 
-			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
-
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// right click to open contextual menu
 			const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 			// open context menu
@@ -188,9 +187,7 @@ describe('Rename', () => {
 			// the element to rename is the first of the list. New position is third position of third page
 			const timestamp = Date.now();
 			const element = currentFolder.children.nodes[0]!;
-			const newName = `${
-				currentFolder.children.nodes[NODES_LOAD_LIMIT * 2 + 2]!.name
-			}-${timestamp}`;
+			const newName = `${currentFolder.children.nodes[NODES_LOAD_LIMIT * 2 + 2]!.name}-${timestamp}`;
 
 			// the cursor is last element of first page and does not change after rename
 			const firstCursor = currentFolder.children.nodes[NODES_LOAD_LIMIT - 1]!;
@@ -256,9 +253,13 @@ describe('Rename', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
-			const listHeader = screen.getByTestId(SELECTORS.listHeader);
-			await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 			let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 			expect(screen.getByTestId(SELECTORS.nodeItem(firstCursor.id))).toBe(nodes[nodes.length - 1]);
 			// right click to open contextual menu
@@ -358,6 +359,9 @@ describe('Rename', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(nodeToRename.name)).toBeVisible();
@@ -429,6 +433,9 @@ describe('Rename', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(nodeToRename.name)).toBeVisible();

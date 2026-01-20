@@ -25,7 +25,7 @@ import {
 	mockTrashNodes
 } from '../../utils/resolverMocks';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
 describe('Search list', () => {
 	describe('Selection mode', () => {
@@ -296,7 +296,7 @@ describe('Search list', () => {
 				const confirmButton = await screen.findByRole('button', { name: /delete permanently/i });
 				act(() => {
 					// run timers of modal
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				await user.click(confirmButton);
 				await screen.findByText(/^success$/i);
@@ -572,7 +572,7 @@ describe('Search list', () => {
 			});
 			act(() => {
 				// run modal timers
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(modalConfirmButton);
 			await waitFor(() =>

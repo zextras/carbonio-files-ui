@@ -25,7 +25,7 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { File, Folder } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockMoveNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer">
 			{props.translationKey}:{props.icons}
@@ -33,10 +33,8 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/VirtualizedNodeListItem');
+vi.mock('./components/NodeHoverBar');
 
 describe('Drag and drop', () => {
 	test('Drop of a node in a valid folder remove node from current folder list', async () => {
@@ -73,6 +71,9 @@ describe('Drag and drop', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 		const destinationItem = screen.getByText(destinationFolder.name);
 		fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -125,6 +126,9 @@ describe('Drag and drop', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		const itemToDrag = await screen.findByText(nodesToDrag[0].name);
 
 		// load the full path
@@ -225,12 +229,15 @@ describe('Drag and drop', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		const nodeToDrag = await screen.findByText(draggedNode.name);
 		expect(nodeToDrag).toBeVisible();
 		fireEvent.dragStart(nodeToDrag, { dataTransfer: dataTransfer() });
 		fireEvent.dragEnter(screen.getByText(destinationFolder.name), { dataTransfer: dataTransfer() });
 		act(() => {
-			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
+			vi.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 		});
 		// dropzone of the node item is shown
 		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();
@@ -238,14 +245,14 @@ describe('Drag and drop', () => {
 
 		// wait for navigation timer to be executed
 		act(() => {
-			jest.advanceTimersByTime(TIMERS.DRAG_NAVIGATION_TRIGGER);
+			vi.advanceTimersByTime(TIMERS.DRAG_NAVIGATION_TRIGGER);
 		});
 
 		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
 		expect(screen.queryByTestId(SELECTORS.dropzone)).not.toBeInTheDocument();
 		fireEvent.dragEnter(screen.getByText(/nothing here/i), { dataTransfer: dataTransfer() });
 		act(() => {
-			jest.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
+			vi.advanceTimersByTime(TIMERS.SHOW_DROPZONE);
 		});
 		// dropzone of the folder list is shown
 		expect(screen.getByTestId(SELECTORS.dropzone)).toBeVisible();

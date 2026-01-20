@@ -20,9 +20,9 @@ import { Resolvers } from '../../types/graphql/resolvers-types';
 import { File, Folder } from '../../types/graphql/types';
 import { mockGetPath } from '../../utils/resolverMocks';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
-jest.mock<typeof import('./NodeHoverBar')>('./NodeHoverBar');
+vi.mock('./NodeHoverBar');
 
 describe('Contextual menu actions', () => {
 	describe('on empty space', () => {
@@ -35,10 +35,10 @@ describe('Contextual menu actions', () => {
 
 				currentFolder.children.nodes.push(node1, node2, node3);
 
-				const createFolderAction = jest.fn();
-				const createDocumentAction = jest.fn();
-				const createSpreadsheetAction = jest.fn();
-				const createPresentationAction = jest.fn();
+				const createFolderAction = vi.fn();
+				const createDocumentAction = vi.fn();
+				const createSpreadsheetAction = vi.fn();
+				const createPresentationAction = vi.fn();
 				const canCreateFolder = true;
 				const canCreateFile = true;
 
@@ -143,10 +143,10 @@ describe('Contextual menu actions', () => {
 
 				currentFolder.children.nodes.push(node1, node2, node3);
 
-				const createFolderAction = jest.fn();
-				const createDocumentAction = jest.fn();
-				const createSpreadsheetAction = jest.fn();
-				const createPresentationAction = jest.fn();
+				const createFolderAction = vi.fn();
+				const createDocumentAction = vi.fn();
+				const createSpreadsheetAction = vi.fn();
+				const createPresentationAction = vi.fn();
 				const canCreateFolder = false;
 				const canCreateFile = false;
 
@@ -248,10 +248,10 @@ describe('Contextual menu actions', () => {
 			test('when canCreateFolder and canCreateFolder are true', async () => {
 				const currentFolder = populateFolder();
 
-				const createFolderAction = jest.fn();
-				const createDocumentAction = jest.fn();
-				const createSpreadsheetAction = jest.fn();
-				const createPresentationAction = jest.fn();
+				const createFolderAction = vi.fn();
+				const createDocumentAction = vi.fn();
+				const createSpreadsheetAction = vi.fn();
+				const createPresentationAction = vi.fn();
 				const canCreateFolder = true;
 				const canCreateFile = true;
 
@@ -351,10 +351,10 @@ describe('Contextual menu actions', () => {
 			test('when canCreateFolder and canCreateFolder are false', async () => {
 				const currentFolder = populateFolder();
 
-				const createFolderAction = jest.fn();
-				const createDocumentAction = jest.fn();
-				const createSpreadsheetAction = jest.fn();
-				const createPresentationAction = jest.fn();
+				const createFolderAction = vi.fn();
+				const createDocumentAction = vi.fn();
+				const createSpreadsheetAction = vi.fn();
+				const createPresentationAction = vi.fn();
 				const canCreateFolder = false;
 				const canCreateFile = false;
 
@@ -543,7 +543,7 @@ describe('Contextual menu actions', () => {
 			await user.rightClick(screen.getByTestId(SELECTORS.nodeItem(element1.id)));
 			act(() => {
 				// run timers of dropdown
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.queryByTestId(SELECTORS.dropdownList)).not.toBeInTheDocument();
 		});

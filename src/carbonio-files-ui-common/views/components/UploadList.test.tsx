@@ -8,14 +8,7 @@ import React, { useMemo } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import { faker } from '@faker-js/faker';
-import {
-	act,
-	fireEvent,
-	screen,
-	waitFor,
-	waitForElementToBeRemoved,
-	within
-} from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { forEach, find, keyBy, filter } from 'lodash';
 import { http, HttpResponse, StrictResponse } from 'msw';
@@ -179,7 +172,7 @@ describe('Upload list', () => {
 
 			// run queries
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const itemToDrag = screen.getByText(nodesToDrag[0].name);
 			fireEvent.dragStart(itemToDrag, { dataTransfer: dataTransfer() });
@@ -327,7 +320,9 @@ describe('Upload list', () => {
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(3);
 			expect(screen.getByTestId(ICON_REGEXP.uploadLoading)).toBeVisible();
 			emitter.emit(EMITTER_CODES.success);
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.uploadLoading));
+			await waitFor(() => {
+				expect(screen.queryByTestId(ICON_REGEXP.uploadLoading)).not.toBeInTheDocument();
+			});
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(4);
 			expect(screen.queryByTestId(ICON_REGEXP.uploadLoading)).not.toBeInTheDocument();
 
@@ -460,7 +455,9 @@ describe('Upload list', () => {
 			expect(screen.queryByText(/queued/i)).not.toBeInTheDocument();
 			// then wait for all other files to be uploaded
 			emitter.emit(EMITTER_CODES.success);
-			await waitForElementToBeRemoved(screen.queryAllByTestId(ICON_REGEXP.uploadLoading));
+			await waitFor(() => {
+				expect(screen.queryByTestId(ICON_REGEXP.uploadLoading)).not.toBeInTheDocument();
+			});
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(3);
 			expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 				uploadedFiles.length - 1
@@ -595,7 +592,7 @@ describe('Upload list', () => {
 
 			const dataTransferObj = createUploadDataTransfer([folderToUpload]);
 
-			const uploadFileHandler = jest.fn(handleUploadFileRequest);
+			const uploadFileHandler = vi.fn(handleUploadFileRequest);
 
 			server.use(
 				http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(

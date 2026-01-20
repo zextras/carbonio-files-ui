@@ -27,7 +27,7 @@ let match: ContactInfo[] = [];
 
 const spyAutoComplete = (): void => {
 	match = [populateAutocompleteGalResult()];
-	jest.spyOn(network, 'soapFetch').mockImplementation(
+	vi.spyOn(network, 'soapFetch').mockImplementation(
 		(): Promise<RawSoapResponse<{ AutoCompleteGalResponse: AutocompleteGalResponse }>> =>
 			Promise.resolve({
 				Body: {
@@ -50,7 +50,7 @@ const selectNewOwner = async (userEvent: UserEvent): Promise<void> => {
 describe('TransferOwnershipModalContent', () => {
 	it('should render without crashing', () => {
 		const node = populateNode();
-		setup(<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />);
+		setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />);
 		expect(screen.getByText(`Transfer Ownership of ${node.name}`)).toBeVisible();
 		expect(screen.getByText('Select a new owner for the selected items.')).toBeVisible();
 
@@ -68,7 +68,7 @@ describe('TransferOwnershipModalContent', () => {
 	});
 	describe('InputDescription', () => {
 		it('shows nothing if no owner is selected', () => {
-			setup(<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={jest.fn()} />);
+			setup(<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={vi.fn()} />);
 			expect(screen.queryByText(/Checking the new owner’s storage quota/i)).not.toBeInTheDocument();
 			expect(
 				screen.queryByText(/The new owner doesn’t have enough storage available/i)
@@ -86,7 +86,7 @@ describe('TransferOwnershipModalContent', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(
-				<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={jest.fn()} />,
+				<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={vi.fn()} />,
 				{ mocks }
 			);
 			await selectNewOwner(user);
@@ -101,7 +101,7 @@ describe('TransferOwnershipModalContent', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(
-				<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={jest.fn()} />,
+				<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={vi.fn()} />,
 				{
 					mocks
 				}
@@ -118,7 +118,7 @@ describe('TransferOwnershipModalContent', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(
-				<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={jest.fn()} />,
+				<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={vi.fn()} />,
 				{
 					mocks
 				}
@@ -139,7 +139,7 @@ describe('TransferOwnershipModalContent', () => {
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(
-				<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={jest.fn()} />,
+				<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={vi.fn()} />,
 				{
 					mocks
 				}
@@ -151,24 +151,24 @@ describe('TransferOwnershipModalContent', () => {
 	describe('Modal Title', () => {
 		it('should display the correct title for a single node', () => {
 			const node = populateNode();
-			setup(<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />);
+			setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />);
 			expect(screen.getByText(`Transfer Ownership of ${node.name}`)).toBeVisible();
 		});
 		it('should display the correct title for multiple nodes', () => {
 			const nodes = [populateNode(), populateNode()];
-			setup(<TransferOwnershipModalContent nodes={nodes} closeAction={jest.fn()} />);
+			setup(<TransferOwnershipModalContent nodes={nodes} closeAction={vi.fn()} />);
 			expect(screen.getByText(`Transfer Ownership of ${nodes.length} items`)).toBeVisible();
 		});
 	});
 	it('should call closeAction when the modal is closed with footer cancel button', () => {
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 		setup(<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={closeAction} />);
 		const closeButton = screen.getByRole('button', { name: /cancel/i });
 		closeButton.click();
 		expect(closeAction).toHaveBeenCalledTimes(1);
 	});
 	it('should call closeAction when the modal is closed with the header close icon', () => {
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 		setup(<TransferOwnershipModalContent nodes={[populateNode()]} closeAction={closeAction} />);
 		const closeIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close });
 		closeIcon.click();
@@ -182,13 +182,12 @@ describe('TransferOwnershipModalContent', () => {
 				getTransferOwnershipAvailability: mockGetTransferOwnershipAvailability(true)
 			},
 			Mutation: {
-				transferOwnership: jest.fn()
+				transferOwnership: vi.fn().mockReturnValue(vi.fn())
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />,
-			{ mocks }
-		);
+		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
+			mocks
+		});
 		await selectNewOwner(user);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		await user.click(transferButton);
@@ -202,13 +201,12 @@ describe('TransferOwnershipModalContent', () => {
 				getTransferOwnershipAvailability: mockGetTransferOwnershipAvailability(false)
 			},
 			Mutation: {
-				transferOwnership: jest.fn()
+				transferOwnership: vi.fn().mockReturnValue(vi.fn())
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />,
-			{ mocks }
-		);
+		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
+			mocks
+		});
 		await selectNewOwner(user);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		await user.click(transferButton);
@@ -216,7 +214,7 @@ describe('TransferOwnershipModalContent', () => {
 	});
 	it('should disable confirm button when no new owner is selected', async () => {
 		const node = populateNode();
-		setup(<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />);
+		setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		expect(transferButton).toBeDisabled();
 	});
@@ -228,10 +226,9 @@ describe('TransferOwnershipModalContent', () => {
 				getTransferOwnershipAvailability: mockGetTransferOwnershipAvailabilityLoading()
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />,
-			{ mocks }
-		);
+		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
+			mocks
+		});
 		await selectNewOwner(user);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		expect(transferButton).toBeDisabled();
@@ -244,10 +241,9 @@ describe('TransferOwnershipModalContent', () => {
 				getTransferOwnershipAvailability: mockGetTransferOwnershipAvailability(true)
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />,
-			{ mocks }
-		);
+		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
+			mocks
+		});
 		await selectNewOwner(user);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		expect(transferButton).toBeEnabled();
@@ -260,10 +256,9 @@ describe('TransferOwnershipModalContent', () => {
 				getTransferOwnershipAvailability: mockGetTransferOwnershipAvailability(false)
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />,
-			{ mocks }
-		);
+		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
+			mocks
+		});
 		await selectNewOwner(user);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		expect(transferButton).toBeDisabled();
@@ -279,10 +274,9 @@ describe('TransferOwnershipModalContent', () => {
 				transferOwnership: mockTransferOwnership(populateFolder())
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />,
-			{ mocks }
-		);
+		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
+			mocks
+		});
 		await selectNewOwner(user);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		await user.click(transferButton);
@@ -301,10 +295,9 @@ describe('TransferOwnershipModalContent', () => {
 				)
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />,
-			{ mocks }
-		);
+		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
+			mocks
+		});
 		await selectNewOwner(user);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		await user.click(transferButton);
@@ -324,10 +317,9 @@ describe('TransferOwnershipModalContent', () => {
 				transferOwnership: mockErrorResolver(generateError('transferOwnership error'))
 			}
 		} satisfies Partial<Resolvers>;
-		const { user } = setup(
-			<TransferOwnershipModalContent nodes={[node]} closeAction={jest.fn()} />,
-			{ mocks }
-		);
+		const { user } = setup(<TransferOwnershipModalContent nodes={[node]} closeAction={vi.fn()} />, {
+			mocks
+		});
 		await selectNewOwner(user);
 		const transferButton = screen.getByRole('button', { name: /transfer/i });
 		await user.click(transferButton);

@@ -17,7 +17,7 @@ import { generateError, screen, setup, within } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { mockErrorResolver, mockGetNode, mockGetPath } from '../../utils/resolverMocks';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
 describe('Copy', () => {
 	describe('Failure for over quota', () => {
@@ -52,7 +52,7 @@ describe('Copy', () => {
 			await user.click(screen.getByText(ACTION_REGEXP.copy));
 			await act(async () => {
 				// run timers of modal
-				await jest.advanceTimersByTimeAsync(TIMERS.modalDelayOpen);
+				await vi.advanceTimersByTimeAsync(TIMERS.modalDelayOpen);
 			});
 			await user.click(screen.getByRole('button', { name: /copy/i }));
 			const snackbar = await screen.findByTestId('snackbar');

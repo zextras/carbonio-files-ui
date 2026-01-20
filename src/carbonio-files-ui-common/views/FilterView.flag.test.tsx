@@ -17,9 +17,7 @@ import { setup, selectNodes } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes, mockFlagNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter View', () => {
 	describe('Flag', () => {

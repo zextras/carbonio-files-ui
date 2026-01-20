@@ -7,7 +7,7 @@
 import React, { ComponentProps } from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 
 import { PublicLink } from './PublicLink';
 import { DATE_TIME_FORMAT } from '../../../../constants';
@@ -392,7 +392,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			const node = populateNode(nodeType);
 			const props = getPublicLinkProps(node);
 
-			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+			const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 			const link = populateLink(node);
 			link.expires_at = null;
 			const mocks = {
@@ -412,7 +412,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 		it('can copy the link to clipboard if it is not expired', async () => {
 			const node = populateNode(nodeType);
 			const props = getPublicLinkProps(node);
-			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+			const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 			const link = populateLink(node);
 			const firstOfNextMonth = getFirstOfNextMonth();
 			const expiresAt = initExpirationDate(firstOfNextMonth) as Date;
@@ -434,7 +434,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 		it('cannot copy the link to clipboard if it is expired', async () => {
 			const node = populateNode(nodeType);
 			const props = getPublicLinkProps(node);
-			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+			const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 			const link = populateLink(node);
 			link.expires_at = getDayBefore();
 			const mocks = {
@@ -453,7 +453,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			const node = populateNode(nodeType);
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
-			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+			const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 			const mocks = {
 				Query: {
 					getLinks: mockGetLinks([])
@@ -477,7 +477,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			const node = populateNode(nodeType);
 			const props = getPublicLinkProps(node);
 			const link = populateLink(node);
-			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+			const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 			const mocks = {
 				Query: {
 					getLinks: mockGetLinks([link])
@@ -558,7 +558,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 					firstOfNextMonth.getDate()
 				)
 			);
-			expect(screen.getByText(expiresOnDate)).toBeVisible();
+			await waitFor(() => expect(screen.getByText(expiresOnDate)).toBeVisible());
 		});
 	});
 
@@ -592,7 +592,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			await user.click(screen.getByRoleWithIcon('button', { name: btnName, icon }));
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			const modal = await screen.findByTestId(SELECTORS.modal);
 			expect(
@@ -619,7 +619,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 			);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			const closeButton = await screen.findByTestId(ICON_REGEXP.close);
 			expect(closeButton).toBeVisible();
@@ -656,7 +656,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 				await user.click(screen.getByRoleWithIcon('button', { name: btnName, icon }));
 				act(() => {
 					// run timers of modal
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				await screen.findByText(RegExp(`${btnName} ${node.name} ${props.linkName}`, 'i'));
 				const modal = await screen.findByTestId(SELECTORS.modal);
@@ -684,7 +684,7 @@ describe.each<Node['__typename']>(['File', 'Folder'])('Public %s Link', (nodeTyp
 				);
 				act(() => {
 					// run timers of modal
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				await screen.findByText(`Revoke ${node.name} ${props.linkName}`);
 				const modal = await screen.findByTestId(SELECTORS.modal);

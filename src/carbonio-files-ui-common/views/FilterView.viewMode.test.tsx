@@ -17,7 +17,7 @@ import { screen, setup } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockFindNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
@@ -25,9 +25,7 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('View Mode', () => {
 	it.each(Object.values(FILTER_TYPE))(

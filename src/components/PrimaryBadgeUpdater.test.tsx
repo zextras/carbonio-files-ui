@@ -25,7 +25,7 @@ import server from '../mocks/server';
 
 describe('PrimaryBarElement', () => {
 	test('should render an alert icon if an upload fails', () => {
-		const updatePrimaryBadgeSpy = jest.spyOn(shell, 'updatePrimaryBadge');
+		const updatePrimaryBadgeSpy = vi.spyOn(shell, 'updatePrimaryBadge');
 		const uploadItems = populateUploadItems(2);
 		uploadItems[0].status = UploadStatus.FAILED;
 		uploadItems[1].status = UploadStatus.COMPLETED;
@@ -54,7 +54,7 @@ describe('PrimaryBarElement', () => {
 	});
 
 	it('should render the Notifications badge counter if there are notifications', async () => {
-		const updatePrimaryBadgeSpy = jest.spyOn(shell, 'updatePrimaryBadge');
+		const updatePrimaryBadgeSpy = vi.spyOn(shell, 'updatePrimaryBadge');
 		const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
 		const unread = 1;
 		server.use(
@@ -75,7 +75,7 @@ describe('PrimaryBarElement', () => {
 		setup(<PrimaryBadgeUpdater />);
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(updatePrimaryBadgeSpy).toHaveBeenCalledWith(
 			{

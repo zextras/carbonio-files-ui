@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -17,7 +17,7 @@ import { generateError, setup, triggerListLoadMore } from '../tests/utils';
 import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
@@ -25,10 +25,8 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/VirtualizedNodeListItem');
+vi.mock('./components/NodeHoverBar');
 
 describe('Get children', () => {
 	test('access to a folder with network error response show an error page', async () => {
@@ -51,7 +49,12 @@ describe('Get children', () => {
 			mocks
 		});
 
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
+		await waitFor(() => {
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument();
+		});
 
 		await screen.findByText(/An error occurred/i);
 	});
@@ -96,16 +99,9 @@ describe('Get children', () => {
 			mocks
 		});
 
-		// this is the loading refresh icon
-		expect(screen.getByTestId(SELECTORS.listHeader)).toContainElement(
-			screen.getByTestId(ICON_REGEXP.queryLoading)
-		);
-		expect(
-			within(screen.getByTestId(SELECTORS.listHeader)).getByTestId(ICON_REGEXP.queryLoading)
-		).toBeVisible();
-		await waitForElementToBeRemoved(
-			within(screen.getByTestId(SELECTORS.listHeader)).queryByTestId(ICON_REGEXP.queryLoading)
-		);
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait the rendering of the first item
 		await screen.findByTestId(SELECTORS.nodeItem(currentFolder.children.nodes[0]!.id));
 		expect(

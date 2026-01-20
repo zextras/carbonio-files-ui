@@ -9,7 +9,7 @@ import { screen } from '@testing-library/react';
 import { Theme } from '@zextras/carbonio-design-system';
 
 import { DisplayerHeader } from './DisplayerHeader';
-import { setup } from '../../tests/utils';
+import { getElementStyles, hexToRgb, setup } from '../../tests/utils';
 import { NodeType } from '../../types/graphql/types';
 
 describe('Displayer Header', () => {
@@ -30,7 +30,7 @@ describe('Displayer Header', () => {
 	])(
 		'node with type %s and mimetype %s show icon %s with color %s',
 		(type, mimeType, icon, color) => {
-			const closeActionFn = jest.fn();
+			const closeActionFn = vi.fn();
 			setup(
 				<DisplayerHeader
 					name={'name'}
@@ -40,7 +40,7 @@ describe('Displayer Header', () => {
 				/>
 			);
 			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
-			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
+			expect(getElementStyles(screen.getByTestId(`icon: ${icon}`)).color).toBe(hexToRgb(color));
 		}
 	);
 });

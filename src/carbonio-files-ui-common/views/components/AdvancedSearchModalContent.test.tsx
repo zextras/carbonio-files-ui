@@ -20,10 +20,10 @@ import { NodeType } from '../../types/graphql/types';
 import { ContactInfo } from '../../types/network';
 import { mockGetPath } from '../../utils/resolverMocks';
 
-const mockedSoapFetch = jest.fn();
+const mockedSoapFetch = vi.fn();
 
 beforeEach(() => {
-	jest.spyOn(network, 'soapFetch').mockImplementation(
+	vi.spyOn(network, 'soapFetch').mockImplementation(
 		(): Promise<RawSoapResponse<Record<string, unknown>>> =>
 			new Promise<RawSoapResponse<Record<string, unknown>>>((resolve, reject) => {
 				const result = mockedSoapFetch();
@@ -37,8 +37,8 @@ beforeEach(() => {
 describe('Advanced search modal content', () => {
 	test('Render all the advanced params empty if no previous filter was set', () => {
 		const filters = {};
-		const closeAction = jest.fn();
-		const searchAdvancedFilters = jest.fn();
+		const closeAction = vi.fn();
+		const searchAdvancedFilters = vi.fn();
 		setup(
 			<AdvancedSearchModalContent
 				filters={filters}
@@ -114,8 +114,8 @@ describe('Advanced search modal content', () => {
 				value: NodeType.Folder
 			}
 		};
-		const closeAction = jest.fn();
-		const searchAdvancedFilters = jest.fn();
+		const closeAction = vi.fn();
+		const searchAdvancedFilters = vi.fn();
 		setup(
 			<AdvancedSearchModalContent
 				filters={filters}
@@ -144,8 +144,8 @@ describe('Advanced search modal content', () => {
 
 	test('close modal does not run search', async () => {
 		const filters = {};
-		const closeAction = jest.fn();
-		const searchAdvancedFilters = jest.fn();
+		const closeAction = vi.fn();
+		const searchAdvancedFilters = vi.fn();
 		const { user } = setup(
 			<AdvancedSearchModalContent
 				filters={filters}
@@ -164,8 +164,8 @@ describe('Advanced search modal content', () => {
 	describe('keywords param', () => {
 		test('in keywords input comma, semicolon and tab are the splitter for the keywords. Space has its default behaviour', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -227,8 +227,8 @@ describe('Advanced search modal content', () => {
 	describe('flagged param', () => {
 		test('click on select change flagged param', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -259,8 +259,8 @@ describe('Advanced search modal content', () => {
 					avatarIcon: 'Share'
 				}
 			};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -282,8 +282,8 @@ describe('Advanced search modal content', () => {
 	describe('shared by me param', () => {
 		test('click on select change sharedByMme param', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -315,8 +315,8 @@ describe('Advanced search modal content', () => {
 					avatarIcon: 'Flag'
 				}
 			};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -338,8 +338,8 @@ describe('Advanced search modal content', () => {
 	describe('folder param', () => {
 		test('input typing is disabled', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -352,7 +352,7 @@ describe('Advanced search modal content', () => {
 			await screen.findByRole('button', { name: /go back/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.queryByText(/something/i)).not.toBeInTheDocument();
 			await user.click(screen.getByRole('button', { name: /go back/i }));
@@ -363,8 +363,8 @@ describe('Advanced search modal content', () => {
 
 		test('click on input without a value opens a modal with roots list', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -377,7 +377,7 @@ describe('Advanced search modal content', () => {
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.getByText(/home/i)).toBeVisible();
 			expect(screen.getByText(/shared with me/i)).toBeVisible();
@@ -387,8 +387,8 @@ describe('Advanced search modal content', () => {
 
 		test('selection of a folder inside modal creates a chip for the selected folder', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -401,7 +401,7 @@ describe('Advanced search modal content', () => {
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByText(/trash/i));
 			await waitFor(() =>
@@ -427,8 +427,8 @@ describe('Advanced search modal content', () => {
 
 		test('search in sub-folders checkbox toggle cascade param', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -441,7 +441,7 @@ describe('Advanced search modal content', () => {
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 			await user.click(screen.getByText(/trash/i));
@@ -473,8 +473,8 @@ describe('Advanced search modal content', () => {
 				folderId: { value: ROOTS.TRASH },
 				cascade: { value: true }
 			};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const trashRoot = populateFolder(0, ROOTS.TRASH, ROOTS.TRASH);
 			const mocks = {
 				Query: {
@@ -493,7 +493,7 @@ describe('Advanced search modal content', () => {
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByText(/trash/i));
 			expect(screen.getByRole('button', { name: /choose folder/i })).toBeDisabled();
@@ -504,8 +504,8 @@ describe('Advanced search modal content', () => {
 
 		test('set sharedWithMe param to false (exclude) if local root root is chosen', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -518,7 +518,7 @@ describe('Advanced search modal content', () => {
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.getByText(/home/i)).toBeVisible();
 			await user.click(screen.getByText(/home/i));
@@ -546,8 +546,8 @@ describe('Advanced search modal content', () => {
 
 		test('set sharedWithMe param to true (include only) if shared with me if shared with me root is chosen', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -560,7 +560,7 @@ describe('Advanced search modal content', () => {
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.getByText(/shared with me/i)).toBeVisible();
 			await user.click(screen.getByText(/shared with me/i));
@@ -591,8 +591,8 @@ describe('Advanced search modal content', () => {
 				folderId: { value: ROOTS.TRASH, label: 'Trash', avatarIcon: 'Folder' },
 				cascade: { value: true }
 			};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const trashRoot = populateFolder(0, ROOTS.TRASH, ROOTS.TRASH);
 			const mocks = {
 				Query: {
@@ -613,7 +613,7 @@ describe('Advanced search modal content', () => {
 			await screen.findByRole('button', { name: /choose folder/i });
 			act(() => {
 				// run modal timers
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.getAllByText(/trash/i)).toHaveLength(2);
 			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
@@ -662,8 +662,8 @@ describe('Advanced search modal content', () => {
 			});
 
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -700,8 +700,8 @@ describe('Advanced search modal content', () => {
 	describe('item type param', () => {
 		test('open dropdown, select an item from dropDown and call searchAdvancedFilters function with proper params', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -762,8 +762,8 @@ describe('Advanced search modal content', () => {
 
 		test('should change icon when dropdown is visible', async () => {
 			const filters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -784,8 +784,8 @@ describe('Advanced search modal content', () => {
 	describe('Reset filters button', () => {
 		it('should enable the reset button if the user puts a filter', async () => {
 			const filters: AdvancedFilters = {};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -807,8 +807,8 @@ describe('Advanced search modal content', () => {
 					avatarIcon: 'Flag'
 				}
 			};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}
@@ -868,8 +868,8 @@ describe('Advanced search modal content', () => {
 					value: NodeType.Folder
 				}
 			};
-			const closeAction = jest.fn();
-			const searchAdvancedFilters = jest.fn();
+			const closeAction = vi.fn();
+			const searchAdvancedFilters = vi.fn();
 			const { user } = setup(
 				<AdvancedSearchModalContent
 					filters={filters}

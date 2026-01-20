@@ -37,7 +37,7 @@ import {
 	mockMoveNodes
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
@@ -45,11 +45,9 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/NodeHoverBar');
 
 describe('Move', () => {
 	describe('Selection mode', () => {
@@ -87,6 +85,9 @@ describe('Move', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(nodeToMove.name);
 			let destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
@@ -156,6 +157,9 @@ describe('Move', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(nodesToMove[0].name);
 			let destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
@@ -240,6 +244,9 @@ describe('Move', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0].name);
 			await selectNodes(
 				nodesToMove.map((node) => node.id),
@@ -255,14 +262,14 @@ describe('Move', () => {
 			const moveModalButton = await screen.findByRole('button', { name: ACTION_REGEXP.move });
 			act(() => {
 				// run path lazy query
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByText(commonParent.name));
 			await screen.findByTextWithMarkup(buildBreadCrumbRegExp(commonParent.name));
 			await screen.findByText(destinationFolder.name);
 			act(() => {
 				// 	run modal timers
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(screen.getByText(destinationFolder.name));
 			await waitFor(() => expect(moveModalButton).toBeEnabled());
@@ -310,6 +317,9 @@ describe('Move', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(nodeToMove.name);
 			let destinationFolderCachedData = global.apolloClient.readQuery<
 				GetChildrenQuery,
@@ -377,6 +387,9 @@ describe('Move', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0].name);
 			await user.rightClick(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name));
 			await moveNode(destinationFolder, user);

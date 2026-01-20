@@ -18,8 +18,8 @@ describe('Node Hover Bar', () => {
 	});
 
 	test('render all actions icons', async () => {
-		const action1Fn = jest.fn();
-		const action2Fn = jest.fn();
+		const action1Fn = vi.fn();
+		const action2Fn = vi.fn();
 
 		const actions: DSAction[] = [
 			{
