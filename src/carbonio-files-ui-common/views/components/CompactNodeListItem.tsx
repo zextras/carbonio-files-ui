@@ -6,8 +6,9 @@
 
 import React, { useCallback, useMemo } from 'react';
 
-import { Container, Row, Text, useTheme } from '@zextras/carbonio-design-system';
+import { Button, Container, Row, Text, Tooltip, useTheme } from '@zextras/carbonio-design-system';
 import { some } from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 import { NodeAvatarIcon } from './NodeAvatarIcon';
 import { HoverContainer, ListItemContainer } from './StyledComponents';
@@ -42,6 +43,7 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 	selectable = true,
 	trashed
 }: CompactNodeListItemProps<TNode>): React.JSX.Element => {
+	const [t] = useTranslation();
 	const theme = useTheme();
 
 	const isNavigable = useMemo(
@@ -112,35 +114,48 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 					background={isActive ? 'highlight' : 'gray6'}
 					data-testid={'hover-container'}
 				>
-					<NodeAvatarIcon
-						selectionModeActive={false}
-						selected={false}
-						compact
-						disabled={disabled}
-						selectable={selectable}
-						icon={getIconByFileType(node.type, mimeType ?? node.id)}
-						color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
-					/>
-					<Container
-						orientation="vertical"
-						crossAlignment="flex-start"
-						mainAlignment="space-around"
-						padding={{ left: 'large' }}
-						minWidth="auto"
-						width="fill"
-						maxWidth={cssCalcBuilder('100%', ['-', LIST_ITEM_AVATAR_HEIGHT])}
-					>
-						<Row
-							padding={{ vertical: 'extrasmall' }}
+					<Container orientation="horizontal" minWidth="0" width="fill">
+						<NodeAvatarIcon
+							selectionModeActive={false}
+							selected={false}
+							compact
+							disabled={disabled}
+							selectable={selectable}
+							icon={getIconByFileType(node.type, mimeType ?? node.id)}
+							color={getIconColorByFileType(node.type, mimeType ?? node.id, theme)}
+						/>
+						<Container
+							orientation="vertical"
+							crossAlignment="flex-start"
+							mainAlignment="space-around"
+							padding={{ left: 'large' }}
+							minWidth="auto"
 							width="fill"
-							wrap="nowrap"
-							mainAlignment="space-between"
+							maxWidth={cssCalcBuilder('100%', ['-', LIST_ITEM_AVATAR_HEIGHT])}
 						>
-							<Text overflow="ellipsis" disabled={disabled} size="medium">
-								{node.name}
-							</Text>
-						</Row>
+							<Row
+								padding={{ vertical: 'extrasmall' }}
+								width="fill"
+								wrap="nowrap"
+								mainAlignment="space-between"
+							>
+								<Text overflow="ellipsis" disabled={disabled} size="medium">
+									{node.name}
+								</Text>
+							</Row>
+						</Container>
 					</Container>
+					{isNavigable && (
+						<Tooltip label={t('actions.navigateIntoFolder', 'Go to folder')} placement="top">
+							<Button
+								icon="ChevronRight"
+								onClick={openNode}
+								type="ghost"
+								size="large"
+								color={'gray0'}
+							/>
+						</Tooltip>
+					)}
 				</HoverContainer>
 			</ListItemContainer>
 		</Container>

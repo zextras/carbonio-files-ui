@@ -97,7 +97,8 @@ export const ICON_REGEXP = {
 	infoOutline: 'icon: InfoOutline',
 	eyeCollaborationLinkIcon: 'icon: EyeOutline',
 	editCollaborationLinkIcon: 'icon: Edit2Outline',
-	shareCollaborationLinkIcon: 'icon: ShareOutline'
+	shareCollaborationLinkIcon: 'icon: ShareOutline',
+	navigateIntoFolder: 'icon: ChevronRight'
 } as const;
 
 export const SELECTORS = {
