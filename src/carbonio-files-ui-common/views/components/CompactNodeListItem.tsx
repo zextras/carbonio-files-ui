@@ -146,13 +146,18 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 						</Container>
 					</Container>
 					{isNavigable && (
-						<Tooltip label={t('actions.navigateIntoFolder', 'Go to folder')} placement="top">
+						<Tooltip
+							label={t('actions.viewContents', 'View contents')}
+							placement="top"
+							disabled={disabled}
+						>
 							<Button
 								icon="ChevronRight"
 								onClick={openNode}
 								type="ghost"
 								size="large"
 								color={'gray0'}
+								disabled={disabled}
 							/>
 						</Tooltip>
 					)}
