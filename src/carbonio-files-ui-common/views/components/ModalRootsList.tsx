@@ -170,7 +170,8 @@ export const ModalRootsList = ({
 			roots.push({
 				id: ROOTS.TRASH,
 				name: t('modal.roots.trash.trash', 'Trash'),
-				type: NodeType.Root
+				type: NodeType.Root,
+				rootId: ROOTS.TRASH
 			});
 		}
 

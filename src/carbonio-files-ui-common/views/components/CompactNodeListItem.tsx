@@ -145,7 +145,7 @@ export const CompactNodeListItem = <TNode extends NodeItem = NodeItem>({
 							</Row>
 						</Container>
 					</Container>
-					{isNavigable && (
+					{isNavigable && !trashed && (
 						<Tooltip
 							label={t('actions.viewContents', 'View contents')}
 							placement="top"
