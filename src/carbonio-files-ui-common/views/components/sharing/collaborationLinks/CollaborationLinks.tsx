@@ -21,6 +21,7 @@ import {
 	useModal,
 	useSnackbar
 } from '@zextras/carbonio-design-system';
+import { getUserSettings } from '@zextras/carbonio-shell-ui';
 import { find } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
@@ -51,6 +52,8 @@ export const CollaborationLinks = ({
 	const [selected, setSelected] = useState<SharePermission>();
 	const createSnackbar = useSnackbar();
 	const { createModal, closeModal } = useModal();
+
+	const { zimbraFeatureSharingEnabled } = getUserSettings().attrs;
 
 	const { data: getCollaborationLinksQueryData, loading } = useGetCollaborationLinksQuery(nodeId);
 
@@ -491,31 +494,33 @@ export const CollaborationLinks = ({
 					)}
 				</Container>
 			)}
-			<Container mainAlignment={'flex-start'} crossAlignment="flex-start">
-				<Select
-					items={items}
-					onChange={onSelectChange}
-					label={t(
-						'collaborationLinks.button.choosePermission',
-						'Choose permissions to generate link'
-					)}
-					disabled={isSelectDisabled}
-					LabelFactory={CustomCollaborationLinkSelect}
-					selection={selection}
-				/>
-				<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
-					<Tooltip label={generateButtonTooltipLabel} disabled={!!selected}>
-						<Button
-							label={t('collaborationLinks.button.generateLink', 'Generate link')}
-							color="primary"
-							onClick={onGenerateLink}
-							type="outlined"
-							size={'small'}
-							disabled={isSelectDisabled || !selected || loading}
-						/>
-					</Tooltip>
+			{zimbraFeatureSharingEnabled === 'TRUE' && (
+				<Container mainAlignment={'flex-start'} crossAlignment="flex-start">
+					<Select
+						items={items}
+						onChange={onSelectChange}
+						label={t(
+							'collaborationLinks.button.choosePermission',
+							'Choose permissions to generate link'
+						)}
+						disabled={isSelectDisabled}
+						LabelFactory={CustomCollaborationLinkSelect}
+						selection={selection}
+					/>
+					<Container orientation="horizontal" mainAlignment="flex-end" padding={{ top: 'small' }}>
+						<Tooltip label={generateButtonTooltipLabel} disabled={!!selected}>
+							<Button
+								label={t('collaborationLinks.button.generateLink', 'Generate link')}
+								color="primary"
+								onClick={onGenerateLink}
+								type="outlined"
+								size={'small'}
+								disabled={isSelectDisabled || !selected || loading}
+							/>
+						</Tooltip>
+					</Container>
 				</Container>
-			</Container>
+			)}
 		</Container>
 	);
 };
