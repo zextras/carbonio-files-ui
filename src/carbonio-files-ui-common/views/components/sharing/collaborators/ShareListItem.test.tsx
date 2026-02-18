@@ -189,10 +189,10 @@ describe('Share List Item', () => {
 		const share = populateShare(node, 'abc', userAccount);
 		const mocks = {
 			Mutation: {
-				deleteShare: mockDeleteShare(true)
+				deleteShares: mockDeleteShare('deleted-id')
 			}
 		} satisfies Partial<Resolvers>;
-		const deleteShare = vi.fn(() => Promise.resolve({ data: { deleteShare: true } }));
+		const deleteShare = vi.fn(() => Promise.resolve({ data: { deleteShares: ['deleted-id'] } }));
 		const { user } = setup(
 			<ShareListItem
 				deleteShare={deleteShare}
@@ -243,7 +243,7 @@ describe('Share List Item', () => {
 
 			const mocks = {
 				Mutation: {
-					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();
@@ -274,7 +274,7 @@ describe('Share List Item', () => {
 			});
 			await user.click(screen.getByText(/editor/i));
 			expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
-			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
+			expect(mocks.Mutation.updateShares).not.toHaveBeenCalled();
 		});
 
 		test('editor entry is disabled if node has not write permissions', async () => {
@@ -287,7 +287,7 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();
@@ -311,7 +311,7 @@ describe('Share List Item', () => {
 			expect(screen.getByText(/editor/i)).toBeVisible();
 			await user.click(screen.getByText(/editor/i));
 			expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
-			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
+			expect(mocks.Mutation.updateShares).not.toHaveBeenCalled();
 		});
 
 		test('click on checkbox "sharing allowed" enable save button but does not trigger collaboration update', async () => {
@@ -324,7 +324,7 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();
@@ -351,7 +351,7 @@ describe('Share List Item', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.checkboxUnchecked));
 			await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled());
 			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
-			expect(mocks.Mutation.updateShare).not.toHaveBeenCalled();
+			expect(mocks.Mutation.updateShares).not.toHaveBeenCalled();
 			expect(screen.queryByTestId(ICON_REGEXP.checkboxUnchecked)).not.toBeInTheDocument();
 			expect(screen.getByTestId(ICON_REGEXP.checkboxChecked)).toBeVisible();
 		});
@@ -366,7 +366,7 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();
@@ -391,7 +391,7 @@ describe('Share List Item', () => {
 			await screen.findByTestId(ICON_REGEXP.checkboxChecked);
 			await user.click(screen.getByText(/editor/i));
 			await user.click(screen.getByRole('button', { name: /save/i }));
-			await waitFor(() => expect(mocks.Mutation.updateShare).toHaveBeenCalled());
+			await waitFor(() => expect(mocks.Mutation.updateShares).toHaveBeenCalled());
 			expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 			expect(screen.queryByText(/viewer/i)).not.toBeInTheDocument();
 		});
@@ -406,7 +406,7 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadAndShare;
 			const mocks = {
 				Mutation: {
-					updateShare: vi.fn(mockUpdateShare(share) as (...args: unknown[]) => Share)
+					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();

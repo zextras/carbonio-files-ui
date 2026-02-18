@@ -65,7 +65,7 @@ import {
 	CreateShareDocument,
 	DeleteLinksDocument,
 	DeleteNodesDocument,
-	DeleteShareDocument,
+	DeleteSharesDocument,
 	FindNodesDocument,
 	FlagNodesDocument,
 	GetAccountByEmailDocument,
@@ -89,7 +89,7 @@ import {
 	UpdateLinkDocument,
 	UpdateNodeDescriptionDocument,
 	UpdateNodeDocument,
-	UpdateShareDocument
+	UpdateSharesDocument
 } from '../carbonio-files-ui-common/types/graphql/types';
 
 const handlers: RequestHandler[] = [];
@@ -122,7 +122,7 @@ handlers.push(
 	graphql.mutation(CreateShareDocument, handleCreateShareRequest),
 	graphql.mutation(DeleteLinksDocument, handleDeleteLinksRequest),
 	graphql.mutation(DeleteNodesDocument, handleDeleteNodesRequest),
-	graphql.mutation(DeleteShareDocument, handleDeleteShareRequest),
+	graphql.mutation(DeleteSharesDocument, handleDeleteShareRequest),
 	graphql.mutation(FlagNodesDocument, handleFlagNodesRequest),
 	graphql.mutation(MoveNodesDocument, handleMoveNodesRequest),
 	graphql.mutation(RestoreNodesDocument, handleRestoreNodesRequest),
@@ -130,7 +130,7 @@ handlers.push(
 	graphql.mutation(UpdateLinkDocument, handleUpdateLinkRequest),
 	graphql.mutation(UpdateNodeDocument, handleUpdateNodeRequest),
 	graphql.mutation(UpdateNodeDescriptionDocument, handleUpdateNodeRequest),
-	graphql.mutation(UpdateShareDocument, handleUpdateShareRequest)
+	graphql.mutation(UpdateSharesDocument, handleUpdateShareRequest)
 );
 // rest
 handlers.push(

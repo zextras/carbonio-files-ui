@@ -17,18 +17,20 @@ import { PickIdNodeType } from '../../../types/common';
 import {
 	SharePermission,
 	ShareTargetFragment,
-	UpdateShareMutation,
-	UpdateShareMutationVariables
+	UpdateSharesMutation,
+	UpdateSharesMutationVariables
 } from '../../../types/graphql/types';
 import { useErrorHandler } from '../../useErrorHandler';
 
 export type UpdateShareType = (
 	node: PickIdNodeType,
-	shareTargetId: string,
+	shareTargetIds: string[],
 	permission: SharePermission
-) => Promise<FetchResult<UpdateShareMutation>>;
+) => Promise<FetchResult<UpdateSharesMutation>>;
 
 /**
+ * Mutation to update shares.
+ * Accepts an array of share target IDs to update in a single request.
  * Can return error: ErrorCode.SHARE_NOT_FOUND
  */
 export function useUpdateShareMutation(): [
@@ -36,16 +38,16 @@ export function useUpdateShareMutation(): [
 	updateShareError: ApolloError | undefined
 ] {
 	const [updateShareMutation, { error: updateShareError }] = useMutation<
-		UpdateShareMutation,
-		UpdateShareMutationVariables
+		UpdateSharesMutation,
+		UpdateSharesMutationVariables
 	>(UPDATE_SHARE);
 
 	const updateShare: UpdateShareType = useCallback(
-		(node: PickIdNodeType, shareTargetId: string, permission: SharePermission) =>
+		(node: PickIdNodeType, shareTargetIds: string[], permission: SharePermission) =>
 			updateShareMutation({
 				variables: {
 					node_id: node.id,
-					share_target_id: shareTargetId,
+					share_target_ids: shareTargetIds,
 					permission
 				},
 				update(cache) {
@@ -63,7 +65,7 @@ export function useUpdateShareMutation(): [
 												id: cache.identify(existingShareRef.share_target),
 												fragment: SHARE_TARGET
 											});
-										if (sharedTarget && sharedTarget.id === shareTargetId) {
+										if (sharedTarget && shareTargetIds.includes(sharedTarget.id)) {
 											const newExistingShareRef: ShareCachedObject = {
 												...existingShareRef,
 												permission

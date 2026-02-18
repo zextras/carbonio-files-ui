@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import {
 	Avatar,
 	Button,
+	Checkbox,
 	Container,
 	Divider,
 	Popover,
@@ -30,7 +31,7 @@ import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals
 import { useDeleteShareModal } from '../../../../hooks/useDeleteShareModal';
 import { Role, Node } from '../../../../types/common';
 import {
-	DeleteShareMutation,
+	DeleteSharesMutation,
 	GetPermissionsDocument,
 	GetPermissionsQuery,
 	GetPermissionsQueryVariables,
@@ -84,13 +85,21 @@ interface ShareListItemProps {
 	permissions: Permissions;
 	yourself: boolean;
 	deleteShare: ReturnType<typeof useDeleteShareMutation>;
+	isSelected?: boolean;
+	isSelecting?: boolean;
+	onSelectionChange?: (id: string, selected: boolean) => void;
+	selectionMode?: boolean;
 }
 
 export const ShareListItem = ({
 	share,
 	permissions,
 	deleteShare,
-	yourself = false
+	yourself = false,
+	isSelected = false,
+	isSelecting,
+	onSelectionChange,
+	selectionMode = false
 }: ShareListItemProps): React.JSX.Element => {
 	const [updateShare] = useUpdateShareMutation();
 	const [t] = useTranslation();
@@ -157,7 +166,7 @@ export const ShareListItem = ({
 		() =>
 			updateShare(
 				share.node,
-				share.share_target.id,
+				[share.share_target.id],
 				sharePermissionsGetter(rowIdxToRoleMap[activeRow], checkboxValue)
 			),
 		[activeRow, checkboxValue, share, updateShare]
@@ -174,7 +183,8 @@ export const ShareListItem = ({
 	);
 
 	const deleteShareCallback = useCallback(
-		(): Promise<FetchResult<DeleteShareMutation>> => deleteShare(share.node, share.share_target.id),
+		(): Promise<FetchResult<DeleteSharesMutation>> =>
+			deleteShare(share.node, [share.share_target.id]),
 		[deleteShare, share]
 	);
 
@@ -225,8 +235,8 @@ export const ShareListItem = ({
 	);
 
 	const isRemoveButtonDisabled = useMemo(
-		() => !(permissions.can_share || yourself),
-		[permissions.can_share, yourself]
+		() => !(permissions.can_share || yourself) || isSelecting,
+		[permissions.can_share, yourself, isSelecting]
 	);
 
 	const canShare = useMemo(() => permissions.can_share, [permissions.can_share]);
@@ -253,11 +263,24 @@ export const ShareListItem = ({
 			{share.share_target.__typename === 'User' && (
 				<Container
 					mainAlignment={'flex-start'}
-					crossAlignment={'flex-start'}
+					crossAlignment={'center'}
 					orientation={'horizontal'}
 					padding={'0.5rem'}
 					width="100%"
+					background={isSelected ? 'highlight' : undefined}
 				>
+					{selectionMode && (
+						<Container width="fit" padding={{ right: 'small' }}>
+							<Checkbox
+								value={isSelected}
+								onClick={(e): void => {
+									e.stopPropagation();
+									onSelectionChange?.(share.share_target.id, !isSelected);
+								}}
+								iconColor={isSelected ? 'primary' : undefined}
+							/>
+						</Container>
+					)}
 					<Container
 						mainAlignment={'flex-start'}
 						crossAlignment={'flex-start'}
@@ -288,6 +311,7 @@ export const ShareListItem = ({
 											"You don't have the necessary permissions to edit collaboration"
 										)
 							}
+							disabled={isSelecting}
 						>
 							<Container
 								mainAlignment={'flex-start'}
@@ -300,7 +324,7 @@ export const ShareListItem = ({
 									icon={() => collaboratorPermissionIcons}
 									type={'outlined'}
 									onClick={openPermissionsPopover}
-									disabled={!canShare}
+									disabled={!canShare || isSelecting}
 								/>
 							</Container>
 						</Tooltip>
@@ -337,6 +361,7 @@ export const ShareListItem = ({
 										)
 									: removeCollaborationButtonTooltipLabel
 							}
+							disabled={isSelecting}
 						>
 							<Button
 								icon={'Trash2Outline'}

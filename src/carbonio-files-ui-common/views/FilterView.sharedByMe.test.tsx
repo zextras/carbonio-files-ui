@@ -109,7 +109,7 @@ describe('Filter view', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true, true)
+					deleteShares: mockDeleteShare('deleted-id-1', 'deleted-id-2')
 				}
 			} satisfies Partial<Resolvers>;
 

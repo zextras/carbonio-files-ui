@@ -11,11 +11,11 @@ import { Container, Text, useModal } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { TransText } from '../design_system_fork/TransText';
-import { DeleteShareMutation, ShareFragment } from '../types/graphql/types';
+import { DeleteSharesMutation, ShareFragment } from '../types/graphql/types';
 import { InlineText } from '../views/components/StyledComponents';
 
 export function useDeleteShareModal(
-	deleteShareAction: () => Promise<FetchResult<DeleteShareMutation>>,
+	deleteShareAction: () => Promise<FetchResult<DeleteSharesMutation>>,
 	shareTarget: NonNullable<ShareFragment['share_target']>,
 	isYourShare: boolean,
 	deleteShareActionCallback?: () => void

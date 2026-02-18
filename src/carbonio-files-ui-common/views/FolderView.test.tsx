@@ -618,7 +618,7 @@ describe('Folder View', () => {
 					getLinks: mockGetLinks([], [], [])
 				},
 				Mutation: {
-					updateShare: mockUpdateShare({ ...shareUpdated, node: folderUpdated })
+					updateShares: mockUpdateShare({ ...shareUpdated, node: folderUpdated })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -790,7 +790,7 @@ describe('Folder View', () => {
 					getLinks: mockGetLinks([], [], [])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true)
+					deleteShares: mockDeleteShare('deleted-id')
 				}
 			} satisfies Partial<Resolvers>;
 

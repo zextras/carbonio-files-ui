@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2025 Zextras <https://www.zextras.com>
+ * SPDX-FileCopyrightText: 2026 Zextras <https://www.zextras.com>
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -84,6 +84,7 @@ export type File = Node & {
 	created_at: Scalars['DateTime']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
+	digest: Scalars['String']['output'];
 	extension: Maybe<Scalars['String']['output']>;
 	flagged: Scalars['Boolean']['output'];
 	id: Scalars['ID']['output'];
@@ -175,7 +176,7 @@ export type Mutation = {
 	deleteCollaborationLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteNodes: Maybe<Array<Scalars['ID']['output']>>;
-	deleteShare: Scalars['Boolean']['output'];
+	deleteShares: Array<Maybe<Scalars['ID']['output']>>;
 	deleteVersions: Array<Maybe<Scalars['Int']['output']>>;
 	flagNodes: Maybe<Array<Scalars['ID']['output']>>;
 	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
@@ -185,7 +186,7 @@ export type Mutation = {
 	trashNodes: Maybe<Array<Scalars['ID']['output']>>;
 	updateLink: Maybe<Link>;
 	updateNode: File | Folder;
-	updateShare: Maybe<Share>;
+	updateShares: Array<Maybe<Share>>;
 };
 
 export type MutationCloneVersionArgs = {
@@ -239,9 +240,9 @@ export type MutationDeleteNodesArgs = {
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
-export type MutationDeleteShareArgs = {
+export type MutationDeleteSharesArgs = {
 	node_id: Scalars['ID']['input'];
-	share_target_id: Scalars['ID']['input'];
+	share_target_ids: Array<Scalars['ID']['input']>;
 };
 
 export type MutationDeleteVersionsArgs = {
@@ -292,11 +293,11 @@ export type MutationUpdateNodeArgs = {
 	node_id: Scalars['String']['input'];
 };
 
-export type MutationUpdateShareArgs = {
+export type MutationUpdateSharesArgs = {
 	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
 	node_id: Scalars['ID']['input'];
 	permission?: InputMaybe<SharePermission>;
-	share_target_id: Scalars['ID']['input'];
+	share_target_ids: Array<Scalars['ID']['input']>;
 };
 
 export type NewShare = {
@@ -579,7 +580,12 @@ export type ResolverTypeWrapper<T> = Promise<T> | T;
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
 	resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
+export type Resolver<
+	TResult,
+	TParent = Record<PropertyKey, never>,
+	TContext = Record<PropertyKey, never>,
+	TArgs = Record<PropertyKey, never>
+> =
 	| ResolverFn<TResult, TParent, TContext, TArgs>
 	| ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
@@ -627,28 +633,36 @@ export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, 
 export type SubscriptionResolver<
 	TResult,
 	TKey extends string,
-	TParent = {},
-	TContext = {},
-	TArgs = {}
+	TParent = Record<PropertyKey, never>,
+	TContext = Record<PropertyKey, never>,
+	TArgs = Record<PropertyKey, never>
 > =
 	| ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
 	| SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
-export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+export type TypeResolveFn<
+	TTypes,
+	TParent = Record<PropertyKey, never>,
+	TContext = Record<PropertyKey, never>
+> = (
 	parent: TParent,
 	context: TContext,
 	info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
-	obj: T,
-	context: TContext,
-	info: GraphQLResolveInfo
-) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<
+	T = Record<PropertyKey, never>,
+	TContext = Record<PropertyKey, never>
+> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
-export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+export type DirectiveResolverFn<
+	TResult = Record<PropertyKey, never>,
+	TParent = Record<PropertyKey, never>,
+	TContext = Record<PropertyKey, never>,
+	TArgs = Record<PropertyKey, never>
+> = (
 	next: NextResolverFn<TResult>,
 	parent: TParent,
 	args: TArgs,
@@ -721,7 +735,7 @@ export type ResolversTypes = {
 	ID: ResolverTypeWrapper<Scalars['ID']['output']>;
 	Int: ResolverTypeWrapper<Scalars['Int']['output']>;
 	Link: ResolverTypeWrapper<Omit<Link, 'node'> & { node: ResolversTypes['Node'] }>;
-	Mutation: ResolverTypeWrapper<{}>;
+	Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
 	NewShare: ResolverTypeWrapper<NewShare>;
 	Node: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['Node']>;
 	NodePage: ResolverTypeWrapper<
@@ -737,7 +751,7 @@ export type ResolversTypes = {
 	>;
 	NotificationType: NotificationType;
 	Permissions: ResolverTypeWrapper<Permissions>;
-	Query: ResolverTypeWrapper<{}>;
+	Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
 	RemovedNode: ResolverTypeWrapper<RemovedNode>;
 	RemovedNodeType: RemovedNodeType;
 	Root: ResolverTypeWrapper<Root>;
@@ -788,7 +802,7 @@ export type ResolversParentTypes = {
 	ID: Scalars['ID']['output'];
 	Int: Scalars['Int']['output'];
 	Link: Omit<Link, 'node'> & { node: ResolversParentTypes['Node'] };
-	Mutation: {};
+	Mutation: Record<PropertyKey, never>;
 	NewShare: NewShare;
 	Node: ResolversInterfaceTypes<ResolversParentTypes>['Node'];
 	NodePage: Omit<NodePage, 'nodes'> & { nodes: Array<Maybe<ResolversParentTypes['Node']>> };
@@ -797,7 +811,7 @@ export type ResolversParentTypes = {
 		notifications: Array<Maybe<ResolversParentTypes['Notification']>>;
 	};
 	Permissions: Permissions;
-	Query: {};
+	Query: Record<PropertyKey, never>;
 	RemovedNode: RemovedNode;
 	Root: Root;
 	Share: Omit<Share, 'node' | 'share_target'> & {
@@ -843,7 +857,6 @@ export type CollaborationLinkResolvers<
 	node?: Resolver<ResolversTypes['Node'], ParentType, ContextType>;
 	permission?: Resolver<ResolversTypes['SharePermission'], ParentType, ContextType>;
 	url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ConfigResolvers<
@@ -852,7 +865,6 @@ export type ConfigResolvers<
 > = {
 	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 	value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface DateTimeScalarConfig
@@ -889,6 +901,7 @@ export type FileResolvers<
 	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 	creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 	description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+	digest?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 	extension?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 	flagged?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -975,7 +988,6 @@ export type LinkResolvers<
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	node?: Resolver<ResolversTypes['Node'], ParentType, ContextType>;
 	url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<
@@ -1042,11 +1054,11 @@ export type MutationResolvers<
 		ContextType,
 		Partial<MutationDeleteNodesArgs>
 	>;
-	deleteShare?: Resolver<
-		ResolversTypes['Boolean'],
+	deleteShares?: Resolver<
+		Array<Maybe<ResolversTypes['ID']>>,
 		ParentType,
 		ContextType,
-		RequireFields<MutationDeleteShareArgs, 'node_id' | 'share_target_id'>
+		RequireFields<MutationDeleteSharesArgs, 'node_id' | 'share_target_ids'>
 	>;
 	deleteVersions?: Resolver<
 		Array<Maybe<ResolversTypes['Int']>>,
@@ -1102,11 +1114,11 @@ export type MutationResolvers<
 		ContextType,
 		RequireFields<MutationUpdateNodeArgs, 'node_id'>
 	>;
-	updateShare?: Resolver<
-		Maybe<ResolversTypes['Share']>,
+	updateShares?: Resolver<
+		Array<Maybe<ResolversTypes['Share']>>,
 		ParentType,
 		ContextType,
-		RequireFields<MutationUpdateShareArgs, 'node_id' | 'share_target_id'>
+		RequireFields<MutationUpdateSharesArgs, 'node_id' | 'share_target_ids'>
 	>;
 };
 
@@ -1127,37 +1139,6 @@ export type NodeResolvers<
 	ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']
 > = {
 	__resolveType: TypeResolveFn<'File' | 'Folder', ParentType, ContextType>;
-	collaboration_links?: Resolver<
-		Array<Maybe<ResolversTypes['CollaborationLink']>>,
-		ParentType,
-		ContextType
-	>;
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-	creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-	description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-	flagged?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-	last_editor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-	links?: Resolver<Array<Maybe<ResolversTypes['Link']>>, ParentType, ContextType>;
-	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-	owner?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-	parent?: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
-	permissions?: Resolver<ResolversTypes['Permissions'], ParentType, ContextType>;
-	rootId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-	share?: Resolver<
-		Maybe<ResolversTypes['Share']>,
-		ParentType,
-		ContextType,
-		RequireFields<NodeShareArgs, 'share_target_id'>
-	>;
-	shares?: Resolver<
-		Array<Maybe<ResolversTypes['Share']>>,
-		ParentType,
-		ContextType,
-		RequireFields<NodeSharesArgs, 'limit'>
-	>;
-	type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
-	updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
 export type NodePageResolvers<
@@ -1166,7 +1147,6 @@ export type NodePageResolvers<
 > = {
 	nodes?: Resolver<Array<Maybe<ResolversTypes['Node']>>, ParentType, ContextType>;
 	page_token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type NotificationResolvers<
@@ -1189,7 +1169,6 @@ export type NotificationPageResolvers<
 	notifications?: Resolver<Array<Maybe<ResolversTypes['Notification']>>, ParentType, ContextType>;
 	page_token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 	unread?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PermissionsResolvers<
@@ -1206,7 +1185,6 @@ export type PermissionsResolvers<
 	can_share?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 	can_write_file?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 	can_write_folder?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<
@@ -1309,7 +1287,6 @@ export type RootResolvers<
 > = {
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ShareResolvers<
@@ -1321,7 +1298,6 @@ export type ShareResolvers<
 	node?: Resolver<ResolversTypes['Node'], ParentType, ContextType>;
 	permission?: Resolver<ResolversTypes['SharePermission'], ParentType, ContextType>;
 	share_target?: Resolver<Maybe<ResolversTypes['SharedTarget']>, ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SharedTargetResolvers<
@@ -1341,7 +1317,6 @@ export type SnapshotNodeResolvers<
 	owner_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 	snapshot_node_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SnapshotUserResolvers<
@@ -1352,7 +1327,6 @@ export type SnapshotUserResolvers<
 	full_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 	snapshot_user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TransferredOwnershipResolvers<

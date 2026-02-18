@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-mutation deleteShare($node_id: ID!, $share_target_id: ID!) {
-	deleteShare(node_id: $node_id, share_target_id: $share_target_id)
+mutation deleteShares($node_id: ID!, $share_target_ids: [ID!]!) {
+	deleteShares(node_id: $node_id, share_target_ids: $share_target_ids)
 }

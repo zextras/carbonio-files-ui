@@ -167,9 +167,9 @@ export function mockGetNode(
 }
 
 export function mockDeleteShare(
-	...deleteShare: boolean[]
-): MutationMock<GQLTypes.DeleteShareMutation> {
-	return () => shiftData(deleteShare);
+	...deleteShare: (string | null)[]
+): MutationMock<GQLTypes.DeleteSharesMutation> {
+	return () => [shiftData(deleteShare)];
 }
 
 export function mockCreateShare(
@@ -180,8 +180,8 @@ export function mockCreateShare(
 
 export function mockUpdateShare(
 	...updateShare: GQLTypes.Share[]
-): MutationMock<GQLTypes.UpdateShareMutation> {
-	return () => shiftData(updateShare);
+): MutationMock<GQLTypes.UpdateSharesMutation> {
+	return () => [shiftData(updateShare)];
 }
 
 export function mockGetAccountByEmail(

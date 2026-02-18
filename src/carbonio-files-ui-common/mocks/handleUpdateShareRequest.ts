@@ -7,19 +7,23 @@
 import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { populateShare, populateUser } from './mockUtils';
-import { Share, UpdateShareMutation, UpdateShareMutationVariables } from '../types/graphql/types';
+import { Share, UpdateSharesMutation, UpdateSharesMutationVariables } from '../types/graphql/types';
 
 const handleUpdateShareRequest: GraphQLResponseResolver<
-	UpdateShareMutation,
-	UpdateShareMutationVariables
+	UpdateSharesMutation,
+	UpdateSharesMutationVariables
 > = ({ variables }) => {
-	const { node_id: nodeId, share_target_id: shareTargetId, permission } = variables;
-	const share = populateShare({ id: nodeId } as Share['node'], '', populateUser(shareTargetId));
-	share.permission = permission;
+	const { node_id: nodeId, share_target_ids: shareTargetIdsRaw, permission } = variables;
+	const shareTargetIds = Array.isArray(shareTargetIdsRaw) ? shareTargetIdsRaw : [shareTargetIdsRaw];
+	const shares = shareTargetIds.map((shareTargetId: string) => {
+		const share = populateShare({ id: nodeId } as Share['node'], '', populateUser(shareTargetId));
+		share.permission = permission;
+		return share;
+	});
 
 	return HttpResponse.json({
 		data: {
-			updateShare: share
+			updateShares: shares
 		}
 	});
 };

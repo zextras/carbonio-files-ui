@@ -6,15 +6,17 @@
 
 import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
-import { DeleteShareMutation, DeleteShareMutationVariables } from '../types/graphql/types';
+import { DeleteSharesMutation, DeleteSharesMutationVariables } from '../types/graphql/types';
 
 const handleDeleteShareRequest: GraphQLResponseResolver<
-	DeleteShareMutation,
-	DeleteShareMutationVariables
-> = () =>
+	DeleteSharesMutation,
+	DeleteSharesMutationVariables
+> = ({ variables }) =>
 	HttpResponse.json({
 		data: {
-			deleteShare: true
+			deleteShares: Array.isArray(variables.share_target_ids)
+				? variables.share_target_ids
+				: [variables.share_target_ids]
 		}
 	});
 
