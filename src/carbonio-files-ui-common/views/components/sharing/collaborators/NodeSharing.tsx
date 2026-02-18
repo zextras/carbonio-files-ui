@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { FetchResult, useLazyQuery } from '@apollo/client';
+import { FetchResult } from '@apollo/client';
 import styled from '@emotion/styled';
 import {
 	Avatar,
@@ -16,44 +16,30 @@ import {
 	Divider,
 	Icon,
 	Padding,
-	Popover,
 	Row,
 	Text,
-	Tooltip,
-	useSnackbar
+	Tooltip
 } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { AddSharing } from './AddSharing';
-import { EditSharePopoverContainer } from './EditSharePopoverContainer';
+import { EditPermissionBulkButton } from './EditPermissionBulkButton';
 import { ShareListItem } from './ShareListItem';
 import { useUserInfo } from '../../../../../hooks/useUserInfo';
 import { SHARE_TEXT_SIZE } from '../../../../constants';
 import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/useDeleteSharesMutation';
-import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateShareMutation';
 import { useGetSharesQuery } from '../../../../hooks/graphql/queries/useGetSharesQuery';
-import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
 import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
-import { Node, Role } from '../../../../types/common';
+import { Node } from '../../../../types/common';
 import {
 	DeleteSharesMutation,
-	GetPermissionsDocument,
-	GetPermissionsQuery,
-	GetPermissionsQueryVariables,
 	GetSharesQuery,
 	Maybe,
-	Share,
-	SharePermission
+	Share
 } from '../../../../types/graphql/types';
 import { DeepPick, MakePartial, MakeRequiredNonNull } from '../../../../types/utils';
-import {
-	cssCalcBuilder,
-	getChipLabel,
-	isFile,
-	isFolder,
-	sharePermissionsGetter
-} from '../../../../utils/utils';
+import { cssCalcBuilder, getChipLabel, isFile } from '../../../../utils/utils';
 import { CollaborationLinks } from '../collaborationLinks/CollaborationLinks';
 import { PublicLink } from '../publicLink/PublicLink';
 
@@ -74,10 +60,6 @@ const ScrollContainer = styled(Container)`
 	}
 `;
 
-const CustomPopover = styled(Popover)`
-	z-index: 1000;
-`;
-
 interface NodeSharingProps {
 	node: Node<'id' | 'permissions' | 'owner' | 'name'> & {
 		shares: Array<
@@ -96,25 +78,9 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { me } = useUserInfo();
 	const { data } = useGetSharesQuery(node.id);
-	const createSnackbar = useSnackbar();
 	const deleteShares = useDeleteSharesMutation();
-	const [updateShare] = useUpdateShareMutation();
 
 	const [selectedIds, setSelectedIds] = useState<string[]>([]);
-	const [bulkEditPopoverOpen, setBulkEditPopoverOpen] = useState(false);
-	const [bulkEditActiveRow, setBulkEditActiveRow] = useState(0);
-	const [bulkEditCheckboxValue, setBulkEditCheckboxValue] = useState(false);
-	const bulkEditAnchorRef = useRef<HTMLDivElement>(null);
-
-	const [getPermissionsLazy] = useLazyQuery<GetPermissionsQuery, GetPermissionsQueryVariables>(
-		GetPermissionsDocument,
-		{
-			fetchPolicy: 'network-only',
-			variables: {
-				node_id: node.id
-			}
-		}
-	);
 
 	const allCollaboratorIds = useMemo(() => {
 		const ids: string[] = [];
@@ -180,125 +146,6 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 		isAllSelected,
 		selectedIds.length
 	);
-
-	const bulkEditDisabledRows = useMemo(() => {
-		const canWriteEditor =
-			(isFolder(node) && node.permissions.can_write_folder) ||
-			(isFile(node) && node.permissions.can_write_file);
-		return canWriteEditor ? [] : [1];
-	}, [node]);
-
-	const toggleBulkEditPopover = useCallback(() => {
-		setBulkEditPopoverOpen((prev) => !prev);
-	}, []);
-
-	const handleBulkEditChangeRole = useCallback(
-		(containerIdx: number) => {
-			if (!bulkEditDisabledRows.includes(containerIdx)) {
-				setBulkEditActiveRow(containerIdx);
-			}
-		},
-		[bulkEditDisabledRows]
-	);
-
-	const handleBulkEditToggleCheckbox = useCallback(() => {
-		setBulkEditCheckboxValue((prev) => !prev);
-	}, []);
-
-	const mySharePermission = useMemo(() => {
-		const myShare = data?.getNode?.shares?.find(
-			(share) => share && share.share_target && share.share_target.id === me
-		);
-		return myShare?.permission ?? null;
-	}, [data?.getNode?.shares, me]);
-
-	const bulkUpdateShareAction = useCallback(() => {
-		const ids = isAllSelected ? allCollaboratorIds : selectedIds;
-		const rowIdxToRole: { [id: number]: Role } = {
-			0: Role.Viewer,
-			1: Role.Editor
-		};
-		const permission = sharePermissionsGetter(
-			rowIdxToRole[bulkEditActiveRow],
-			bulkEditCheckboxValue
-		);
-		return updateShare(node, ids, permission);
-	}, [
-		allCollaboratorIds,
-		bulkEditActiveRow,
-		bulkEditCheckboxValue,
-		isAllSelected,
-		node,
-		selectedIds,
-		updateShare
-	]);
-
-	const updateSharesActionCallback = useCallback(() => {
-		getPermissionsLazy();
-		setSelectedIds([]);
-		setBulkEditActiveRow(0);
-		setBulkEditCheckboxValue(false);
-		createSnackbar({
-			key: new Date().toLocaleString(),
-			severity: 'info',
-			label: t('snackbar.decreaseYourOwnShare.success', 'Rights updated successfully'),
-			replace: true,
-			hideButton: true
-		});
-	}, [createSnackbar, getPermissionsLazy, t]);
-
-	const { openDecreaseYourOwnSharePermissionModal } = useDecreaseYourOwnSharePermissionModal(
-		bulkUpdateShareAction,
-		updateSharesActionCallback
-	);
-
-	const isBulkEditDecreasingOwnPermission = useMemo(() => {
-		const ids = isAllSelected ? allCollaboratorIds : selectedIds;
-		if (!ids.includes(me) || mySharePermission === null) {
-			return false;
-		}
-		const rowIdxToRole: { [id: number]: Role } = {
-			0: Role.Viewer,
-			1: Role.Editor
-		};
-		const newPermission = sharePermissionsGetter(
-			rowIdxToRole[bulkEditActiveRow],
-			bulkEditCheckboxValue
-		);
-		// Define permission rank to detect decrease
-		const permissionRank: Record<SharePermission, number> = {
-			[SharePermission.ReadOnly]: 0,
-			[SharePermission.ReadAndShare]: 1,
-			[SharePermission.ReadAndWrite]: 2,
-			[SharePermission.ReadWriteAndShare]: 3
-		};
-		return permissionRank[newPermission] < permissionRank[mySharePermission];
-	}, [
-		allCollaboratorIds,
-		bulkEditActiveRow,
-		bulkEditCheckboxValue,
-		isAllSelected,
-		me,
-		mySharePermission,
-		selectedIds
-	]);
-
-	const handleBulkEditSave = useCallback(() => {
-		if (isBulkEditDecreasingOwnPermission) {
-			openDecreaseYourOwnSharePermissionModal();
-		} else {
-			bulkUpdateShareAction();
-			getPermissionsLazy();
-			setSelectedIds([]);
-			setBulkEditActiveRow(0);
-			setBulkEditCheckboxValue(false);
-		}
-	}, [
-		bulkUpdateShareAction,
-		getPermissionsLazy,
-		isBulkEditDecreasingOwnPermission,
-		openDecreaseYourOwnSharePermissionModal
-	]);
 
 	const collaborators = useMemo(
 		() =>
@@ -463,30 +310,15 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 										count: selectedIds.length
 									})}
 								</Text>
-								<Button
-									ref={bulkEditAnchorRef}
-									icon={'EyeOutline'}
-									type={'outlined'}
-									onClick={toggleBulkEditPopover}
+								<EditPermissionBulkButton
+									node={node}
+									data={data}
+									me={me}
+									isAllSelected={isAllSelected}
+									allCollaboratorIds={allCollaboratorIds}
+									selectedIds={selectedIds}
+									setSelectedIds={setSelectedIds}
 								/>
-								<CustomPopover
-									open={bulkEditPopoverOpen}
-									anchorEl={bulkEditAnchorRef}
-									styleAsModal
-									placement="bottom-end"
-									onClose={() => setBulkEditPopoverOpen(false)}
-								>
-									<EditSharePopoverContainer
-										activeRow={bulkEditActiveRow}
-										disabledRows={bulkEditDisabledRows}
-										checkboxValue={bulkEditCheckboxValue}
-										checkboxOnClick={handleBulkEditToggleCheckbox}
-										containerOnClick={handleBulkEditChangeRole}
-										saveDisabled={false}
-										saveOnClick={handleBulkEditSave}
-										closePopover={() => setBulkEditPopoverOpen(false)}
-									/>
-								</CustomPopover>
 								<Tooltip label={t('', 'Remove collaborators for all')}>
 									<Button
 										icon={'Trash2Outline'}

@@ -367,6 +367,7 @@ export function populateFile(id?: string, name?: string): MakeRequiredNonNull<GQ
 		parent: populateFolder(),
 		keep_forever: faker.datatype.boolean(),
 		cloned_from_version: null,
+		digest: faker.string.alphanumeric(64),
 		__typename: 'File'
 	};
 	file.shares = populateShares(file, faker.number.int(10));
@@ -398,6 +399,7 @@ export function populateImgFile(id?: string, name?: string): MakeRequiredNonNull
 		parent: populateFolder(),
 		keep_forever: faker.datatype.boolean(),
 		cloned_from_version: null,
+		digest: faker.string.alphanumeric(64),
 		__typename: 'File'
 	};
 	file.shares = populateShares(file, faker.number.int(10));
