@@ -44,7 +44,7 @@ import { isQueryResult } from '../utils';
  * Accepts an array of share target IDs to delete in a single request.
  * Can return error: ErrorCode.SHARE_NOT_FOUND
  */
-export function useDeleteShareMutation(): (
+export function useDeleteSharesMutation(): (
 	node: PickIdNodeType,
 	shareTargetIds: string[]
 ) => Promise<FetchResult<DeleteSharesMutation>> {
@@ -56,19 +56,19 @@ export function useDeleteShareMutation(): (
 	const location = useLocation();
 	const { activeNodeId, removeActiveNode } = useActiveNode();
 
-	const [deleteShareMutation, { error }] = useMutation<
+	const [deleteSharesMutation, { error }] = useMutation<
 		DeleteSharesMutation,
 		DeleteSharesMutationVariables
 	>(DeleteSharesDocument);
 
 	useErrorHandler(error, 'DELETE_SHARE', { type: 'error' });
 
-	const deleteShare: (
+	const deleteShares: (
 		node: PickIdNodeType,
 		shareTargetIds: string[]
 	) => Promise<FetchResult<DeleteSharesMutation>> = useCallback(
 		(node: PickIdNodeType, shareTargetIds: string[]) =>
-			deleteShareMutation({
+			deleteSharesMutation({
 				variables: {
 					node_id: node.id,
 					share_target_ids: shareTargetIds
@@ -159,7 +159,7 @@ export function useDeleteShareMutation(): (
 		[
 			activeNodeId,
 			createSnackbar,
-			deleteShareMutation,
+			deleteSharesMutation,
 			location,
 			me,
 			removeActiveNode,
@@ -169,5 +169,5 @@ export function useDeleteShareMutation(): (
 		]
 	);
 
-	return deleteShare;
+	return deleteShares;
 }

@@ -25,10 +25,10 @@ import { useTranslation } from 'react-i18next';
 import { CollaboratorPermissionIcons } from './CollaboratorPermissionIcons';
 import { EditSharePopoverContainer } from './EditSharePopoverContainer';
 import { SHARE_TEXT_SIZE } from '../../../../constants';
-import { useDeleteShareMutation } from '../../../../hooks/graphql/mutations/useDeleteShareMutation';
+import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/useDeleteSharesMutation';
 import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateShareMutation';
 import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
-import { useDeleteShareModal } from '../../../../hooks/useDeleteShareModal';
+import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
 import { Role, Node } from '../../../../types/common';
 import {
 	DeleteSharesMutation,
@@ -84,7 +84,7 @@ interface ShareListItemProps {
 	};
 	permissions: Permissions;
 	yourself: boolean;
-	deleteShare: ReturnType<typeof useDeleteShareMutation>;
+	deleteShares: ReturnType<typeof useDeleteSharesMutation>;
 	isSelected?: boolean;
 	isSelecting?: boolean;
 	onSelectionChange?: (id: string, selected: boolean) => void;
@@ -94,7 +94,7 @@ interface ShareListItemProps {
 export const ShareListItem = ({
 	share,
 	permissions,
-	deleteShare,
+	deleteShares,
 	yourself = false,
 	isSelected = false,
 	isSelecting,
@@ -184,11 +184,11 @@ export const ShareListItem = ({
 
 	const deleteShareCallback = useCallback(
 		(): Promise<FetchResult<DeleteSharesMutation>> =>
-			deleteShare(share.node, [share.share_target.id]),
-		[deleteShare, share]
+			deleteShares(share.node, [share.share_target.id]),
+		[deleteShares, share]
 	);
 
-	const { openDeleteShareModal } = useDeleteShareModal(
+	const { openDeleteSharesModal: openDeleteShareModal } = useDeleteSharesModal(
 		deleteShareCallback,
 		share.share_target,
 		yourself

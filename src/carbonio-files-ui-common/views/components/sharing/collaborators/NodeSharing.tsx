@@ -6,7 +6,7 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { useLazyQuery } from '@apollo/client';
+import { FetchResult, useLazyQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import {
 	Avatar,
@@ -19,8 +19,7 @@ import {
 	Popover,
 	Row,
 	Text,
-	Tooltip,
-	useModal
+	Tooltip
 } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -30,15 +29,17 @@ import { EditSharePopoverContainer } from './EditSharePopoverContainer';
 import { ShareListItem } from './ShareListItem';
 import { useUserInfo } from '../../../../../hooks/useUserInfo';
 import { SHARE_TEXT_SIZE } from '../../../../constants';
-import { useDeleteShareMutation } from '../../../../hooks/graphql/mutations/useDeleteShareMutation';
+import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/useDeleteSharesMutation';
 import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateShareMutation';
 import { useGetSharesQuery } from '../../../../hooks/graphql/queries/useGetSharesQuery';
 import {
 	useDecreaseYourOwnSharePermissionModal,
 	type UpdateShareAction
 } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
+import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
 import { Node, Role } from '../../../../types/common';
 import {
+	DeleteSharesMutation,
 	GetPermissionsDocument,
 	GetPermissionsQuery,
 	GetPermissionsQueryVariables,
@@ -96,11 +97,9 @@ function shareTargetExists<T extends MakePartial<Pick<Share, 'share_target'>, 's
 export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { me } = useUserInfo();
-	const { createModal, closeModal } = useModal();
-
 	const { data } = useGetSharesQuery(node.id);
 
-	const deleteShare = useDeleteShareMutation();
+	const deleteShares = useDeleteSharesMutation();
 	const [updateShare] = useUpdateShareMutation();
 
 	const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -151,136 +150,34 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const isAllSelected =
 		allCollaboratorIds.length > 0 && selectedIds.length === allCollaboratorIds.length;
 
-	const handleBulkDelete = useCallback(() => {
-		if (isAllSelected) {
-			const modalId = 'delete-modal';
-			createModal({
-				id: modalId,
-				title: (
-					<Container
-						orientation="horizontal"
-						mainAlignment={'flex-start'}
-						crossAlignment={'flex-start'}
-						gap={'0.5rem'}
-					>
-						<Icon icon={'AlertCircleOutline'} color={'error'} size={'large'} />
-						<Text weight="bold">{t('', 'Remove all collaborators')}</Text>
-					</Container>
-				),
-				onClose: () => {
-					closeModal(modalId);
-				},
-				children: (
-					<Container
-						mainAlignment={'flex-start'}
-						crossAlignment={'flex-start'}
-						padding={{ vertical: 'large' }}
-						gap="2rem"
-					>
-						<Text overflow="break-word">
-							{t(
-								'',
-								"You're about to remove all collaborators from this file. After this action, only you will have access to the file and people it was shared with will no longer be able to view or edit it."
-							)}
-						</Text>
-						<Text color="error" weight="bold">
-							{t('', 'This action cannot be undone.')}
-						</Text>
-					</Container>
-				),
-				customFooter: (
-					<Container mainAlignment={'flex-end'} orientation={'horizontal'} gap="0.5rem">
-						<Button
-							label={t('', 'No, cancel')}
-							onClick={() => closeModal(modalId)}
-							color={'secondary'}
-							type="outlined"
-						/>
-						<Button
-							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus
-							label={t('', 'Yes, remove all')}
-							onClick={() => {
-								deleteShare(node, allCollaboratorIds).then(() => {
-									closeModal(modalId);
-									setSelectedIds([]);
-								});
-							}}
-							color="error"
-						/>
-					</Container>
-				)
-			});
-		} else {
-			const modalId = 'delete-modal';
-			createModal({
-				id: modalId,
-				title: (
-					<Container
-						orientation="horizontal"
-						mainAlignment={'flex-start'}
-						crossAlignment={'flex-start'}
-						gap={'0.5rem'}
-					>
-						<Icon icon={'AlertCircleOutline'} color={'error'} size={'large'} />
-						<Text weight="bold">{t('', 'Remove collaborators')}</Text>
-					</Container>
-				),
-				onClose: () => {
-					closeModal(modalId);
-				},
-				children: (
-					<Container
-						mainAlignment={'flex-start'}
-						crossAlignment={'flex-start'}
-						padding={{ vertical: 'large' }}
-						gap="2rem"
-					>
-						<Text overflow="break-word">
-							{t(
-								'',
-								`You're about to remove ${selectedIds.length} collaborator(s) from this file. After this action, these people will no longer be able to view or edit it.`
-							)}
-						</Text>
-						<Text color="error" weight="bold">
-							{t('', 'This action cannot be undone.')}
-						</Text>
-					</Container>
-				),
-				customFooter: (
-					<Container mainAlignment={'flex-end'} orientation={'horizontal'} gap="0.5rem">
-						<Button
-							label={t('', 'No, cancel')}
-							onClick={() => closeModal(modalId)}
-							color={'secondary'}
-							type="outlined"
-						/>
-						<Button
-							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus
-							label={t('', 'Yes, remove')}
-							onClick={() => {
-								deleteShare(node, selectedIds).then(() => {
-									closeModal(modalId);
-									setSelectedIds([]);
-								});
-							}}
-							color="error"
-						/>
-					</Container>
-				)
-			});
+	const deleteShareBulkAction = useCallback(
+		(): Promise<FetchResult<DeleteSharesMutation>> => deleteShares(node, allCollaboratorIds),
+		[allCollaboratorIds, deleteShares, node]
+	);
+
+	const bulkShareTarget = useMemo(() => {
+		if (selectedIds.length !== 1) {
+			return null;
 		}
-	}, [
-		allCollaboratorIds,
-		closeModal,
-		createModal,
-		deleteShare,
+		const selectedShare = data?.getNode?.shares?.find(
+			(share) => share && share.share_target && share.share_target.id === selectedIds[0]
+		);
+		return selectedShare?.share_target ?? null;
+	}, [data?.getNode?.shares, selectedIds]);
+
+	const bulkIsYourShare = useMemo(
+		() => selectedIds.length === 1 && selectedIds[0] === me,
+		[me, selectedIds]
+	);
+
+	const { openDeleteSharesModal: openDeleteShareBulkModal } = useDeleteSharesModal(
+		deleteShareBulkAction,
+		bulkShareTarget,
+		bulkIsYourShare,
+		() => setSelectedIds([]),
 		isAllSelected,
-		node,
-		selectedIds,
-		t
-	]);
+		selectedIds.length
+	);
 
 	const bulkEditDisabledRows = useMemo(() => {
 		const canWriteEditor =
@@ -402,7 +299,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 								share={share}
 								permissions={node.permissions}
 								yourself={share.share_target.id === me}
-								deleteShare={deleteShare}
+								deleteShares={deleteShares}
 								isSelected={selectedIds.includes(share.share_target.id)}
 								isSelecting={selectedIds.length > 0}
 								onSelectionChange={handleSelectionChange}
@@ -421,7 +318,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 			),
 		[
 			data?.getNode?.shares,
-			deleteShare,
+			deleteShares,
 			handleSelectionChange,
 			me,
 			node.permissions,
@@ -581,7 +478,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 										icon={'Trash2Outline'}
 										color={'error'}
 										type={'outlined'}
-										onClick={handleBulkDelete}
+										onClick={openDeleteShareBulkModal}
 									/>
 								</Tooltip>
 							</Row>

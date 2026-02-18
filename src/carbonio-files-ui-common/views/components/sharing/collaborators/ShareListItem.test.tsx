@@ -72,7 +72,7 @@ describe('ShareListItem', () => {
 					share={share}
 					permissions={node.permissions}
 					yourself={false}
-					deleteShare={deleteShare}
+					deleteShares={deleteShare}
 				/>
 			);
 
@@ -131,7 +131,7 @@ describe('Share List Item', () => {
 			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
-					deleteShare={deleteShare}
+					deleteShares={deleteShare}
 					share={share}
 					permissions={node.permissions}
 					yourself={false}
@@ -161,7 +161,7 @@ describe('Share List Item', () => {
 			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
-					deleteShare={deleteShare}
+					deleteShares={deleteShare}
 					share={share}
 					permissions={node.permissions}
 					yourself={false}
@@ -195,7 +195,7 @@ describe('Share List Item', () => {
 		const deleteShare = vi.fn(() => Promise.resolve({ data: { deleteShares: ['deleted-id'] } }));
 		const { user } = setup(
 			<ShareListItem
-				deleteShare={deleteShare}
+				deleteShares={deleteShare}
 				share={share}
 				permissions={node.permissions}
 				yourself
@@ -249,7 +249,7 @@ describe('Share List Item', () => {
 			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
-					deleteShare={deleteShare}
+					deleteShares={deleteShare}
 					share={share}
 					permissions={node.permissions}
 					yourself={false}
@@ -293,7 +293,7 @@ describe('Share List Item', () => {
 			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
-					deleteShare={deleteShare}
+					deleteShares={deleteShare}
 					share={share}
 					permissions={node.permissions}
 					yourself={false}
@@ -330,7 +330,7 @@ describe('Share List Item', () => {
 			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
-					deleteShare={deleteShare}
+					deleteShares={deleteShare}
 					share={share}
 					permissions={node.permissions}
 					yourself={false}
@@ -372,7 +372,7 @@ describe('Share List Item', () => {
 			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
-					deleteShare={deleteShare}
+					deleteShares={deleteShare}
 					share={share}
 					permissions={node.permissions}
 					yourself={false}
@@ -412,7 +412,7 @@ describe('Share List Item', () => {
 			const deleteShare = vi.fn();
 			const { user } = setup(
 				<ShareListItem
-					deleteShare={deleteShare}
+					deleteShares={deleteShare}
 					share={share}
 					permissions={node.permissions}
 					yourself={false}
