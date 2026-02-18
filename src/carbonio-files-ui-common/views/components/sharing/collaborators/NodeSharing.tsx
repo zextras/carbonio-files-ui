@@ -441,6 +441,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 						crossAlignment={'center'}
 						width={'fill'}
 						gap={'0.5rem'}
+						data-testid="node-sharing-collaborators-header"
 					>
 						<Row gap={'0.5rem'} mainAlignment={'flex-start'} crossAlignment={'center'}>
 							{node.permissions.can_share && collaborators.length > 0 && (

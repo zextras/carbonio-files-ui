@@ -45,7 +45,7 @@ export function useDeleteSharesModal(
 	const body = useMemo(() => {
 		if (isYourShare) {
 			return (
-				<>
+				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
 					<Text overflow="break-word" size="small">
 						{t(
 							'modal.deleteShare.yourShare.body.answer',
@@ -58,7 +58,7 @@ export function useDeleteSharesModal(
 							'All the access permission previously given to you will be lost.'
 						)}
 					</Text>
-				</>
+				</Container>
 			);
 		}
 
@@ -85,22 +85,17 @@ export function useDeleteSharesModal(
 		}
 
 		return (
-			<>
-				<Text overflow="break-word">
-					{isAllSelected
-						? t(
-								'',
-								"You're about to remove all collaborators from this file. After this action, only you will have access to the file and people it was shared with will no longer be able to view or edit it."
-							)
-						: t(
-								'',
-								`You're about to remove ${selectedCount ?? 0} collaborator(s) from this file. After this action, these people will no longer be able to view or edit it.`
-							)}
-				</Text>
-				<Text color="error" weight="bold">
-					{t('', 'This action cannot be undone.')}
-				</Text>
-			</>
+			<Text overflow="break-word">
+				{isAllSelected
+					? t(
+							'',
+							"You're about to remove all collaborators from this file. After this action, only you will have access to the file and people it was shared with will no longer be able to view or edit it."
+						)
+					: t(
+							'',
+							`You're about to remove ${selectedCount ?? 0} collaborator(s) from this file. After this action, these people will no longer be able to view or edit it.`
+						)}
+			</Text>
 		);
 	}, [isBulk, isAllSelected, isYourShare, selectedCount, shareTarget, t]);
 
@@ -134,9 +129,12 @@ export function useDeleteSharesModal(
 					mainAlignment={'flex-start'}
 					crossAlignment={'flex-start'}
 					padding={{ vertical: 'large' }}
-					gap={isBulk ? '2rem' : undefined}
+					gap="1rem"
 				>
 					{body}
+					<Text color="error" weight="bold">
+						{t('', 'This action cannot be undone.')}
+					</Text>
 				</Container>
 			),
 			customFooter: (
@@ -169,7 +167,6 @@ export function useDeleteSharesModal(
 		createModal,
 		deleteShareAction,
 		deleteShareActionCallback,
-		isBulk,
 		t,
 		title
 	]);

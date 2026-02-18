@@ -98,7 +98,9 @@ export const ICON_REGEXP = {
 	eyeCollaborationLinkIcon: 'icon: EyeOutline',
 	editCollaborationLinkIcon: 'icon: Edit2Outline',
 	shareCollaborationLinkIcon: 'icon: ShareOutline',
-	navigateIntoFolder: 'icon: ChevronRight'
+	navigateIntoFolder: 'icon: ChevronRight',
+	removeCollaboratorsSeleced: 'icon: Trash2Outline',
+	editCollaboratorsSeleced: 'icon: EyeOutline'
 } as const;
 
 export const SELECTORS = {
@@ -153,7 +155,8 @@ export const SELECTORS = {
 	gridCellThumbnail: 'grid-cell-thumbnail',
 	virtualizedNodeListItem: 'virtualized-node-list-item',
 	snackbar: 'snackbar',
-	hoverContainer: 'hover-container'
+	hoverContainer: 'hover-container',
+	nodeSharingCollaboratorsHeader: 'node-sharing-collaborators-header'
 };
 
 export const EMITTER_CODES = {
