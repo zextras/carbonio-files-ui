@@ -19,7 +19,8 @@ import {
 	Popover,
 	Row,
 	Text,
-	Tooltip
+	Tooltip,
+	useSnackbar
 } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -32,10 +33,7 @@ import { SHARE_TEXT_SIZE } from '../../../../constants';
 import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/useDeleteSharesMutation';
 import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateShareMutation';
 import { useGetSharesQuery } from '../../../../hooks/graphql/queries/useGetSharesQuery';
-import {
-	useDecreaseYourOwnSharePermissionModal,
-	type UpdateShareAction
-} from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
+import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
 import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
 import { Node, Role } from '../../../../types/common';
 import {
@@ -98,7 +96,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { me } = useUserInfo();
 	const { data } = useGetSharesQuery(node.id);
-
+	const createSnackbar = useSnackbar();
 	const deleteShares = useDeleteSharesMutation();
 	const [updateShare] = useUpdateShareMutation();
 
@@ -151,9 +149,13 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 		allCollaboratorIds.length > 0 && selectedIds.length === allCollaboratorIds.length;
 
 	const deleteShareBulkAction = useCallback(
-		(): Promise<FetchResult<DeleteSharesMutation>> => deleteShares(node, allCollaboratorIds),
-		[allCollaboratorIds, deleteShares, node]
+		(): Promise<FetchResult<DeleteSharesMutation>> => deleteShares(node, selectedIds),
+		[deleteShares, node, selectedIds]
 	);
+
+	const deleteShareActionCallback = useCallback((): void => {
+		setSelectedIds([]);
+	}, []);
 
 	const bulkShareTarget = useMemo(() => {
 		if (selectedIds.length !== 1) {
@@ -174,7 +176,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 		deleteShareBulkAction,
 		bulkShareTarget,
 		bulkIsYourShare,
-		() => setSelectedIds([]),
+		deleteShareActionCallback,
 		isAllSelected,
 		selectedIds.length
 	);
@@ -220,28 +222,34 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 			rowIdxToRole[bulkEditActiveRow],
 			bulkEditCheckboxValue
 		);
-		return updateShare(node, ids, permission).then(() => {
-			if (ids.includes(me)) {
-				getPermissionsLazy();
-			}
-			setSelectedIds([]);
-			setBulkEditActiveRow(0);
-			setBulkEditCheckboxValue(false);
-		});
+		return updateShare(node, ids, permission);
 	}, [
 		allCollaboratorIds,
 		bulkEditActiveRow,
 		bulkEditCheckboxValue,
-		getPermissionsLazy,
 		isAllSelected,
-		me,
 		node,
 		selectedIds,
 		updateShare
 	]);
 
+	const updateSharesActionCallback = useCallback(() => {
+		getPermissionsLazy();
+		setSelectedIds([]);
+		setBulkEditActiveRow(0);
+		setBulkEditCheckboxValue(false);
+		createSnackbar({
+			key: new Date().toLocaleString(),
+			severity: 'info',
+			label: t('snackbar.decreaseYourOwnShare.success', 'Rights updated successfully'),
+			replace: true,
+			hideButton: true
+		});
+	}, [createSnackbar, getPermissionsLazy, t]);
+
 	const { openDecreaseYourOwnSharePermissionModal } = useDecreaseYourOwnSharePermissionModal(
-		bulkUpdateShareAction as unknown as UpdateShareAction
+		bulkUpdateShareAction,
+		updateSharesActionCallback
 	);
 
 	const isBulkEditDecreasingOwnPermission = useMemo(() => {
@@ -280,9 +288,14 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 			openDecreaseYourOwnSharePermissionModal();
 		} else {
 			bulkUpdateShareAction();
+			getPermissionsLazy();
+			setSelectedIds([]);
+			setBulkEditActiveRow(0);
+			setBulkEditCheckboxValue(false);
 		}
 	}, [
 		bulkUpdateShareAction,
+		getPermissionsLazy,
 		isBulkEditDecreasingOwnPermission,
 		openDecreaseYourOwnSharePermissionModal
 	]);
