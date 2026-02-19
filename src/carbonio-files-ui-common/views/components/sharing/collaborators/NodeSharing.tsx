@@ -131,7 +131,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 		[me, selectedIds]
 	);
 
-	const { openDeleteSharesModal: openDeleteShareBulkModal } = useDeleteSharesModal(
+	const { openDeleteSharesModal } = useDeleteSharesModal(
 		deleteShareBulkAction,
 		bulkShareTarget,
 		bulkIsYourShare,
@@ -318,7 +318,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 										icon={'Trash2Outline'}
 										color={'error'}
 										type={'outlined'}
-										onClick={openDeleteShareBulkModal}
+										onClick={openDeleteSharesModal}
 									/>
 								</Tooltip>
 							</Row>

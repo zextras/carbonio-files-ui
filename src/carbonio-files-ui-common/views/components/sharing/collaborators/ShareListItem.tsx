@@ -184,7 +184,7 @@ export const ShareListItem = ({
 		[deleteShares, share]
 	);
 
-	const { openDeleteSharesModal: openDeleteShareModal } = useDeleteSharesModal(
+	const { openDeleteSharesModal } = useDeleteSharesModal(
 		deleteShareCallback,
 		share.share_target,
 		yourself
@@ -363,7 +363,7 @@ export const ShareListItem = ({
 								icon={'Trash2Outline'}
 								color={'error'}
 								type={'outlined'}
-								onClick={openDeleteShareModal}
+								onClick={openDeleteSharesModal}
 								disabled={isRemoveButtonDisabled}
 							/>
 						</Tooltip>

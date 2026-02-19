@@ -15,10 +15,10 @@ import { DeleteSharesMutation, ShareFragment } from '../types/graphql/types';
 import { InlineText } from '../views/components/StyledComponents';
 
 export function useDeleteSharesModal(
-	deleteShareAction: () => Promise<FetchResult<DeleteSharesMutation>>,
+	deleteSharesAction: () => Promise<FetchResult<DeleteSharesMutation>>,
 	shareTarget: NonNullable<ShareFragment['share_target']> | null,
 	isYourShare: boolean,
-	deleteShareActionCallback?: () => void,
+	deleteSharesActionCallback?: () => void,
 	isAllSelected?: boolean,
 	selectedCount?: number
 ): {
@@ -150,8 +150,8 @@ export function useDeleteSharesModal(
 						autoFocus
 						label={confirmButtonLabel}
 						onClick={() => {
-							deleteShareAction().then(() => {
-								deleteShareActionCallback?.();
+							deleteSharesAction().then(() => {
+								deleteSharesActionCallback?.();
 								closeModal(modalId);
 							});
 						}}
@@ -165,8 +165,8 @@ export function useDeleteSharesModal(
 		closeModal,
 		confirmButtonLabel,
 		createModal,
-		deleteShareAction,
-		deleteShareActionCallback,
+		deleteSharesAction,
+		deleteSharesActionCallback,
 		t,
 		title
 	]);
