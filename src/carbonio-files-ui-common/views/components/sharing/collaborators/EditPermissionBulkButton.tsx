@@ -185,7 +185,7 @@ export const EditPermissionBulkButton = ({
 
 	return (
 		<>
-			<Tooltip label={t('', 'Edit collaboration for all')}>
+			<Tooltip label={t('', 'Edit collaboration for all')} placement="top">
 				<Row>
 					<Button
 						ref={bulkEditAnchorRef}

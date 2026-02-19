@@ -265,8 +265,13 @@ export const ShareListItem = ({
 					width="100%"
 					background={isSelected ? 'highlight' : undefined}
 				>
-					{selectionMode && (
-						<Container width="fit" padding={{ right: 'small' }}>
+					<Container
+						mainAlignment={'flex-start'}
+						crossAlignment={'center'}
+						orientation={'horizontal'}
+						gap={'0.5rem'}
+					>
+						{selectionMode && (
 							<Checkbox
 								value={isSelected}
 								onClick={(e): void => {
@@ -275,14 +280,7 @@ export const ShareListItem = ({
 								}}
 								iconColor={isSelected ? 'primary' : undefined}
 							/>
-						</Container>
-					)}
-					<Container
-						mainAlignment={'flex-start'}
-						crossAlignment={'flex-start'}
-						orientation={'horizontal'}
-						gap={'0.5rem'}
-					>
+						)}
 						<Avatar label={label} />
 						<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
 							<Text size={SHARE_TEXT_SIZE}>{label}</Text>
