@@ -102,7 +102,7 @@ export function useDeleteSharesModal(
 		if (isAllSelected) {
 			return t('modal.deleteShare.button.confirmAll', 'Yes, remove all');
 		}
-		return t('modal.deleteShare.button.confirm', 'Yes, remove');
+		return t('modal.deleteShare.button.confirmRemove', 'Yes, remove');
 	}, [isAllSelected, t]);
 
 	const openDeleteSharesModal = useCallback(() => {
