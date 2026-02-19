@@ -51,13 +51,6 @@ const MainContainer = styled(Container)`
 const ScrollContainer = styled(Container)`
 	overflow-y: auto;
 	overflow-x: hidden;
-
-	> div {
-		margin: ${({ theme }): string => {
-			const $marginSize = cssCalcBuilder(theme.sizes.padding.extrasmall, ['/', 2]);
-			return `${$marginSize} ${$marginSize} ${$marginSize} 0`;
-		}};
-	}
 `;
 
 interface NodeSharingProps {
@@ -199,6 +192,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 					mainAlignment={'flex-start'}
 					crossAlignment={'flex-start'}
 					orientation={'horizontal'}
+					height={'fit'}
 					padding={'0.5rem'}
 					gap={'0.5rem'}
 				>
@@ -330,16 +324,17 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 							</Row>
 						)}
 					</Row>
-					<ScrollContainer
+					<Container
 						mainAlignment={'flex-start'}
 						crossAlignment={'flex-start'}
-						height={'fit'}
 						maxHeight={'14rem'}
 						data-testid={'sharing-collaborators-section'}
 					>
+						<ScrollContainer mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
+							{collaborators}
+						</ScrollContainer>
 						{ownerListItem}
-						{collaborators}
-					</ScrollContainer>
+					</Container>
 				</Container>
 				{node.permissions.can_share && <AddSharing node={node} />}
 			</Container>
