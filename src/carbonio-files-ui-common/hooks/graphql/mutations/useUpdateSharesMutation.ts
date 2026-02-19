@@ -93,7 +93,7 @@ export function useUpdateShareMutation(): [
 				if (result.data?.updateShares) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
-						severity: 'info',
+						severity: 'success',
 						label: t('snackbar.decreaseYourOwnShare.success', 'Rights updated successfully'),
 						replace: true,
 						hideButton: true
