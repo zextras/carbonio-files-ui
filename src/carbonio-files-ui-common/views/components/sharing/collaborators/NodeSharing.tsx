@@ -298,21 +298,28 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 							{collaborators.length > 0 && <Text>({collaborators.length})</Text>}
 						</Row>
 						{selectedIds.length > 0 && (
-							<Row gap={'0.5rem'} mainAlignment={'flex-end'} crossAlignment={'center'}>
-								<Text color={'primary'}>
-									{t('displayer.share.selected', '{{count}} selected', {
-										count: selectedIds.length
-									})}
-								</Text>
-								<EditPermissionBulkButton
-									node={node}
-									data={data}
-									me={me}
-									isAllSelected={isAllSelected}
-									allCollaboratorIds={allCollaboratorIds}
-									selectedIds={selectedIds}
-									setSelectedIds={setSelectedIds}
-								/>
+							<Row gap={'0.25rem'} mainAlignment={'flex-end'} crossAlignment={'center'}>
+								<Row
+									orientation={'horizontal'}
+									mainAlignment={'flex-start'}
+									crossAlignment={'center'}
+									gap={'0.5rem'}
+								>
+									<Text color={'primary'}>
+										{t('displayer.share.selected', '{{count}} selected', {
+											count: selectedIds.length
+										})}
+									</Text>
+									<EditPermissionBulkButton
+										node={node}
+										data={data}
+										me={me}
+										isAllSelected={isAllSelected}
+										allCollaboratorIds={allCollaboratorIds}
+										selectedIds={selectedIds}
+										setSelectedIds={setSelectedIds}
+									/>
+								</Row>
 								<Tooltip label={t('', 'Remove collaborators for all')}>
 									<Button
 										icon={'Trash2Outline'}

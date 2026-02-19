@@ -8,7 +8,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { useLazyQuery } from '@apollo/client';
 import styled from '@emotion/styled';
-import { Button, Popover } from '@zextras/carbonio-design-system';
+import { Button, Popover, Row, Tooltip } from '@zextras/carbonio-design-system';
+import { useTranslation } from 'react-i18next';
 
 import { EditSharePopoverContainer } from './EditSharePopoverContainer';
 import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateSharesMutation';
@@ -57,6 +58,7 @@ export const EditPermissionBulkButton = ({
 	const [bulkEditActiveRow, setBulkEditActiveRow] = useState(0);
 	const [bulkEditCheckboxValue, setBulkEditCheckboxValue] = useState(false);
 	const bulkEditAnchorRef = useRef<HTMLDivElement>(null);
+	const [t] = useTranslation();
 	const [updateShare] = useUpdateShareMutation();
 	const [getPermissionsLazy] = useLazyQuery<GetPermissionsQuery, GetPermissionsQueryVariables>(
 		GetPermissionsDocument,
@@ -183,30 +185,34 @@ export const EditPermissionBulkButton = ({
 
 	return (
 		<>
-			<Button
-				ref={bulkEditAnchorRef}
-				icon={'EyeOutline'}
-				type={'outlined'}
-				onClick={toggleBulkEditPopover}
-			/>
-			<CustomPopover
-				open={bulkEditPopoverOpen}
-				anchorEl={bulkEditAnchorRef}
-				styleAsModal
-				placement="bottom-end"
-				onClose={() => setBulkEditPopoverOpen(false)}
-			>
-				<EditSharePopoverContainer
-					activeRow={bulkEditActiveRow}
-					disabledRows={bulkEditDisabledRows}
-					checkboxValue={bulkEditCheckboxValue}
-					checkboxOnClick={handleBulkEditToggleCheckbox}
-					containerOnClick={handleBulkEditChangeRole}
-					saveDisabled={false}
-					saveOnClick={handleBulkEditSave}
-					closePopover={() => setBulkEditPopoverOpen(false)}
-				/>
-			</CustomPopover>
+			<Tooltip label={t('', 'Edit collaboration for all')}>
+				<Row>
+					<Button
+						ref={bulkEditAnchorRef}
+						icon={'EyeOutline'}
+						type={'outlined'}
+						onClick={toggleBulkEditPopover}
+					/>
+					<CustomPopover
+						open={bulkEditPopoverOpen}
+						anchorEl={bulkEditAnchorRef}
+						styleAsModal
+						placement="bottom-end"
+						onClose={() => setBulkEditPopoverOpen(false)}
+					>
+						<EditSharePopoverContainer
+							activeRow={bulkEditActiveRow}
+							disabledRows={bulkEditDisabledRows}
+							checkboxValue={bulkEditCheckboxValue}
+							checkboxOnClick={handleBulkEditToggleCheckbox}
+							containerOnClick={handleBulkEditChangeRole}
+							saveDisabled={false}
+							saveOnClick={handleBulkEditSave}
+							closePopover={() => setBulkEditPopoverOpen(false)}
+						/>
+					</CustomPopover>
+				</Row>
+			</Tooltip>
 		</>
 	);
 };
