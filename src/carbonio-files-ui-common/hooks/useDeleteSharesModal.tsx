@@ -46,13 +46,13 @@ export function useDeleteSharesModal(
 		if (isYourShare) {
 			return (
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
-					<Text overflow="break-word" size="small">
+					<Text overflow="break-word">
 						{t(
 							'modal.deleteShare.yourShare.body.answer',
 							'Are you sure to remove yourself from this collaboration?'
 						)}
 					</Text>
-					<Text overflow="break-word" size="small">
+					<Text overflow="break-word">
 						{t(
 							'modal.deleteShare.yourShare.body.permissionLost',
 							'All the access permission previously given to you will be lost.'
@@ -73,13 +73,9 @@ export function useDeleteSharesModal(
 							''
 					}}
 					overflow="break-word"
-					size="small"
 				>
 					Are you sure to remove all the access permission previously given to
-					<InlineText weight="bold" size="small">
-						{{ shareTarget }}
-					</InlineText>
-					?
+					<InlineText weight="bold">{{ shareTarget }}</InlineText>?
 				</TransText>
 			);
 		}
