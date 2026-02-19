@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FetchResult, useLazyQuery } from '@apollo/client';
 import styled from '@emotion/styled';
@@ -128,6 +128,11 @@ export const ShareListItem = ({
 
 	const [activeRow, setActiveRow] = useState(initialActiveRow);
 	const [checkboxValue, setCheckboxValue] = useState(initialCheckboxValue);
+
+	useEffect(() => {
+		setActiveRow(initialActiveRow);
+		setCheckboxValue(initialCheckboxValue);
+	}, [initialActiveRow, initialCheckboxValue]);
 
 	const decreasingSharePermissions = useMemo(
 		() =>
