@@ -49,12 +49,20 @@ export function useDecreaseYourOwnSharePermissionModal(
 					padding={{ vertical: 'large' }}
 					gap="1rem"
 				>
-					<Text overflow="break-word">
-						{t(
-							'modal.decreaseYourOwnSharePermissions.body',
-							"Are you sure to decrease your rights on this item? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored."
-						)}
-					</Text>
+					<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
+						<Text overflow="break-word">
+							{t(
+								'modal.decreaseYourOwnSharePermissions.body1',
+								"Are you sure to decrease your rights on this item? The action is permanent and you won't be able to restore the previous share's rights by yourself."
+							)}
+						</Text>
+						<Text overflow="break-word">
+							{t(
+								'modal.decreaseYourOwnSharePermissions.body2',
+								" You can always contact the shared item's owner if you need the previous permission to be restored."
+							)}
+						</Text>
+					</Container>
 					<Text color={'error'} weight="bold">
 						{t('modal.deleteShare.warning', 'This action cannot be undone.')}
 					</Text>
@@ -71,7 +79,10 @@ export function useDecreaseYourOwnSharePermissionModal(
 					<Button
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
-						label={t('modal.decreaseYourOwnSharePermissions.button.confirm', 'Yes, confirm')}
+						label={t(
+							'modal.decreaseYourOwnSharePermissions.button.confirmDecrease',
+							'Yes, confirm'
+						)}
 						onClick={() => {
 							updateShareAction().then(() => {
 								updateShareActionCallback?.();
