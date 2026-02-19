@@ -8,7 +8,7 @@ import { GraphQLResponseResolver, HttpResponse } from 'msw';
 
 import { DeleteSharesMutation, DeleteSharesMutationVariables } from '../types/graphql/types';
 
-const handleDeleteShareRequest: GraphQLResponseResolver<
+const handleDeleteSharesRequest: GraphQLResponseResolver<
 	DeleteSharesMutation,
 	DeleteSharesMutationVariables
 > = ({ variables }) =>
@@ -20,4 +20,4 @@ const handleDeleteShareRequest: GraphQLResponseResolver<
 		}
 	});
 
-export default handleDeleteShareRequest;
+export default handleDeleteSharesRequest;

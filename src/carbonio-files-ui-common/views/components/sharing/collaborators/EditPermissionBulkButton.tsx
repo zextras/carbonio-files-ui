@@ -170,49 +170,43 @@ export const EditPermissionBulkButton = ({
 			openDecreaseYourOwnSharePermissionModal();
 		} else {
 			bulkUpdateShareAction();
-			getPermissionsLazy();
-			setSelectedIds([]);
-			setBulkEditActiveRow(0);
-			setBulkEditCheckboxValue(false);
+			updateSharesActionCallback();
 		}
 	}, [
 		bulkUpdateShareAction,
-		getPermissionsLazy,
 		isBulkEditDecreasingOwnPermission,
 		openDecreaseYourOwnSharePermissionModal,
-		setSelectedIds
+		updateSharesActionCallback
 	]);
 
 	return (
-		<>
-			<Tooltip label={t('', 'Edit collaboration for all')} placement="top">
-				<Row>
-					<Button
-						ref={bulkEditAnchorRef}
-						icon={'EyeOutline'}
-						type={'outlined'}
-						onClick={toggleBulkEditPopover}
+		<Tooltip label={t('', 'Edit collaboration for all')} placement="top">
+			<Row>
+				<Button
+					ref={bulkEditAnchorRef}
+					icon={'EyeOutline'}
+					type={'outlined'}
+					onClick={toggleBulkEditPopover}
+				/>
+				<CustomPopover
+					open={bulkEditPopoverOpen}
+					anchorEl={bulkEditAnchorRef}
+					styleAsModal
+					placement="bottom-end"
+					onClose={() => setBulkEditPopoverOpen(false)}
+				>
+					<EditSharePopoverContainer
+						activeRow={bulkEditActiveRow}
+						disabledRows={bulkEditDisabledRows}
+						checkboxValue={bulkEditCheckboxValue}
+						checkboxOnClick={handleBulkEditToggleCheckbox}
+						containerOnClick={handleBulkEditChangeRole}
+						saveDisabled={false}
+						saveOnClick={handleBulkEditSave}
+						closePopover={() => setBulkEditPopoverOpen(false)}
 					/>
-					<CustomPopover
-						open={bulkEditPopoverOpen}
-						anchorEl={bulkEditAnchorRef}
-						styleAsModal
-						placement="bottom-end"
-						onClose={() => setBulkEditPopoverOpen(false)}
-					>
-						<EditSharePopoverContainer
-							activeRow={bulkEditActiveRow}
-							disabledRows={bulkEditDisabledRows}
-							checkboxValue={bulkEditCheckboxValue}
-							checkboxOnClick={handleBulkEditToggleCheckbox}
-							containerOnClick={handleBulkEditChangeRole}
-							saveDisabled={false}
-							saveOnClick={handleBulkEditSave}
-							closePopover={() => setBulkEditPopoverOpen(false)}
-						/>
-					</CustomPopover>
-				</Row>
-			</Tooltip>
-		</>
+				</CustomPopover>
+			</Row>
+		</Tooltip>
 	);
 };

@@ -77,7 +77,7 @@ export function useDeleteSharesModal(
 				>
 					Are you sure to remove all the access permission previously given to
 					<InlineText weight="bold" size="small">
-						{'{{ shareTarget }}'}
+						{{ shareTarget }}
 					</InlineText>
 					?
 				</TransText>
@@ -93,7 +93,10 @@ export function useDeleteSharesModal(
 						)
 					: t(
 							'',
-							`You're about to remove ${selectedCount ?? 0} collaborator(s) from this file. After this action, these people will no longer be able to view or edit it.`
+							`You're about to remove {{count}} collaborator(s) from this file. After this action, these people will no longer be able to view or edit it.`,
+							{
+								count: selectedCount
+							}
 						)}
 			</Text>
 		);

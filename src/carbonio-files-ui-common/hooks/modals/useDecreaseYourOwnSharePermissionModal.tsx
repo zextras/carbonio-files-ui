@@ -39,12 +39,6 @@ export function useDecreaseYourOwnSharePermissionModal(
 					</Text>
 				</Container>
 			),
-			onConfirm: () => {
-				updateShareAction().then(() => {
-					updateShareActionCallback?.();
-					closeModal(modalId);
-				});
-			},
 			onClose: () => {
 				closeModal(modalId);
 			},

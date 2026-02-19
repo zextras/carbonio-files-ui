@@ -9,7 +9,7 @@ import { GraphQLResponseResolver, HttpResponse } from 'msw';
 import { populateShare, populateUser } from './mockUtils';
 import { Share, UpdateSharesMutation, UpdateSharesMutationVariables } from '../types/graphql/types';
 
-const handleUpdateShareRequest: GraphQLResponseResolver<
+const handleUpdateSharesRequest: GraphQLResponseResolver<
 	UpdateSharesMutation,
 	UpdateSharesMutationVariables
 > = ({ variables }) => {
@@ -28,4 +28,4 @@ const handleUpdateShareRequest: GraphQLResponseResolver<
 	});
 };
 
-export default handleUpdateShareRequest;
+export default handleUpdateSharesRequest;
