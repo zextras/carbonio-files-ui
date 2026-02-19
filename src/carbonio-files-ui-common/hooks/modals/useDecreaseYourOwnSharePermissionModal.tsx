@@ -59,7 +59,7 @@ export function useDecreaseYourOwnSharePermissionModal(
 						<Text overflow="break-word">
 							{t(
 								'modal.decreaseYourOwnSharePermissions.body2',
-								" You can always contact the shared item's owner if you need the previous permission to be restored."
+								"You can always contact the shared item's owner if you need the previous permission to be restored."
 							)}
 						</Text>
 					</Container>
