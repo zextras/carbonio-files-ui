@@ -7,7 +7,9 @@
 import { useCallback } from 'react';
 
 import { ApolloError, FetchResult, useMutation } from '@apollo/client';
+import { useSnackbar } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 import { assertCachedObject, recursiveShareEvict } from '../../../apollo/cacheUtils';
 import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
@@ -37,6 +39,8 @@ export function useUpdateShareMutation(): [
 	updateShare: UpdateShareType,
 	updateShareError: ApolloError | undefined
 ] {
+	const createSnackbar = useSnackbar();
+	const [t] = useTranslation();
 	const [updateShareMutation, { error: updateShareError }] = useMutation<
 		UpdateSharesMutation,
 		UpdateSharesMutationVariables
@@ -85,8 +89,19 @@ export function useUpdateShareMutation(): [
 					});
 					recursiveShareEvict(cache, node);
 				}
+			}).then((result) => {
+				if (result.data?.updateShares) {
+					createSnackbar({
+						key: new Date().toLocaleString(),
+						severity: 'info',
+						label: t('snackbar.decreaseYourOwnShare.success', 'Rights updated successfully'),
+						replace: true,
+						hideButton: true
+					});
+				}
+				return result;
 			}),
-		[updateShareMutation]
+		[createSnackbar, t, updateShareMutation]
 	);
 	useErrorHandler(updateShareError, 'UPDATE_SHARE');
 

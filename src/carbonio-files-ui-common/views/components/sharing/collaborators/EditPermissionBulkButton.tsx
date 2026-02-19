@@ -8,11 +8,10 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { useLazyQuery } from '@apollo/client';
 import styled from '@emotion/styled';
-import { Button, Popover, useSnackbar } from '@zextras/carbonio-design-system';
-import { useTranslation } from 'react-i18next';
+import { Button, Popover } from '@zextras/carbonio-design-system';
 
 import { EditSharePopoverContainer } from './EditSharePopoverContainer';
-import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateShareMutation';
+import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateSharesMutation';
 import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
 import { Node, Role } from '../../../../types/common';
 import {
@@ -58,8 +57,6 @@ export const EditPermissionBulkButton = ({
 	const [bulkEditActiveRow, setBulkEditActiveRow] = useState(0);
 	const [bulkEditCheckboxValue, setBulkEditCheckboxValue] = useState(false);
 	const bulkEditAnchorRef = useRef<HTMLDivElement>(null);
-	const [t] = useTranslation();
-	const createSnackbar = useSnackbar();
 	const [updateShare] = useUpdateShareMutation();
 	const [getPermissionsLazy] = useLazyQuery<GetPermissionsQuery, GetPermissionsQueryVariables>(
 		GetPermissionsDocument,
@@ -128,14 +125,7 @@ export const EditPermissionBulkButton = ({
 		setSelectedIds([]);
 		setBulkEditActiveRow(0);
 		setBulkEditCheckboxValue(false);
-		createSnackbar({
-			key: new Date().toLocaleString(),
-			severity: 'info',
-			label: t('snackbar.decreaseYourOwnShare.success', 'Rights updated successfully'),
-			replace: true,
-			hideButton: true
-		});
-	}, [createSnackbar, getPermissionsLazy, setSelectedIds, t]);
+	}, [getPermissionsLazy, setSelectedIds]);
 
 	const { openDecreaseYourOwnSharePermissionModal } = useDecreaseYourOwnSharePermissionModal(
 		bulkUpdateShareAction,

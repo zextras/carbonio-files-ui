@@ -16,8 +16,7 @@ import {
 	Divider,
 	Popover,
 	Text,
-	Tooltip,
-	useSnackbar
+	Tooltip
 } from '@zextras/carbonio-design-system';
 import { map, filter } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +25,7 @@ import { CollaboratorPermissionIcons } from './CollaboratorPermissionIcons';
 import { EditSharePopoverContainer } from './EditSharePopoverContainer';
 import { SHARE_TEXT_SIZE } from '../../../../constants';
 import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/useDeleteSharesMutation';
-import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateShareMutation';
+import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateSharesMutation';
 import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
 import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
 import { Role, Node } from '../../../../types/common';
@@ -103,7 +102,6 @@ export const ShareListItem = ({
 }: ShareListItemProps): React.JSX.Element => {
 	const [updateShare] = useUpdateShareMutation();
 	const [t] = useTranslation();
-	const createSnackbar = useSnackbar();
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
 	const [getPermissionsLazy] = useLazyQuery<GetPermissionsQuery, GetPermissionsQueryVariables>(
@@ -118,14 +116,7 @@ export const ShareListItem = ({
 
 	const updateShareActionCallback = useCallback(() => {
 		getPermissionsLazy();
-		createSnackbar({
-			key: new Date().toLocaleString(),
-			severity: 'info',
-			label: t('snackbar.decreaseYourOwnShare.success', 'Rights updated successfully'),
-			replace: true,
-			hideButton: true
-		});
-	}, [createSnackbar, getPermissionsLazy, t]);
+	}, [getPermissionsLazy]);
 
 	const initialActiveRow = useMemo(() => rowSharePermissionToIdxMap[share.permission], [share]);
 	const initialCheckboxValue = useMemo(
