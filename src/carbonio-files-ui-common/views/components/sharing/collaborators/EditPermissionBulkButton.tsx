@@ -180,7 +180,10 @@ export const EditPermissionBulkButton = ({
 	]);
 
 	return (
-		<Tooltip label={t('', 'Edit collaboration for all')} placement="top">
+		<Tooltip
+			label={t('displayer.share.chip.tooltip.edit.bulk', 'Edit collaboration for all')}
+			placement="top"
+		>
 			<Row>
 				<Button
 					ref={bulkEditAnchorRef}

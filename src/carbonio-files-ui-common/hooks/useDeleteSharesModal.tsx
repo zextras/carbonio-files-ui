@@ -31,15 +31,15 @@ export function useDeleteSharesModal(
 
 	const title = useMemo(() => {
 		if (isYourShare) {
-			return t('', 'Remove your share');
+			return t('modal.deleteShare.title.yourShare', 'Remove your share');
 		}
 		if (!isBulk) {
-			return t('', 'Remove collaborator');
+			return t('modal.deleteShare.title.single', 'Remove collaborator');
 		}
 		if (isAllSelected) {
-			return t('', 'Remove all collaborators');
+			return t('modal.deleteShare.title.all', 'Remove all collaborators');
 		}
-		return t('', 'Remove collaborators');
+		return t('modal.deleteShare.title.multiple', 'Remove collaborators');
 	}, [isAllSelected, isBulk, isYourShare, t]);
 
 	const body = useMemo(() => {
@@ -84,11 +84,11 @@ export function useDeleteSharesModal(
 			<Text overflow="break-word">
 				{isAllSelected
 					? t(
-							'',
+							'modal.deleteShare.bulk.body.all',
 							"You're about to remove all collaborators from this file. After this action, only you will have access to the file and people it was shared with will no longer be able to view or edit it."
 						)
 					: t(
-							'',
+							'modal.deleteShare.bulk.body.multiple',
 							`You're about to remove {{count}} collaborator(s) from this file. After this action, these people will no longer be able to view or edit it.`,
 							{
 								count: selectedCount
@@ -100,9 +100,9 @@ export function useDeleteSharesModal(
 
 	const confirmButtonLabel = useMemo(() => {
 		if (isAllSelected) {
-			return t('', 'Yes, remove all');
+			return t('modal.deleteShare.button.confirmAll', 'Yes, remove all');
 		}
-		return t('', 'Yes, remove');
+		return t('modal.deleteShare.button.confirm', 'Yes, remove');
 	}, [isAllSelected, t]);
 
 	const openDeleteSharesModal = useCallback(() => {
@@ -132,14 +132,14 @@ export function useDeleteSharesModal(
 				>
 					{body}
 					<Text color="error" weight="bold">
-						{t('', 'This action cannot be undone.')}
+						{t('modal.deleteShare.warning', 'This action cannot be undone.')}
 					</Text>
 				</Container>
 			),
 			customFooter: (
 				<Container mainAlignment={'flex-end'} orientation={'horizontal'} gap="0.5rem">
 					<Button
-						label={t('', 'No, cancel')}
+						label={t('modal.deleteShare.button.cancel', 'No, cancel')}
 						onClick={() => closeModal(modalId)}
 						color={'secondary'}
 						type="outlined"

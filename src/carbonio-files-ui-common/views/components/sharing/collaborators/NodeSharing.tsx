@@ -320,7 +320,12 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 										setSelectedIds={setSelectedIds}
 									/>
 								</Row>
-								<Tooltip label={t('', 'Remove collaboration for all')}>
+								<Tooltip
+									label={t(
+										'displayer.share.chip.tooltip.remove.bulk',
+										'Remove collaboration for all'
+									)}
+								>
 									<Button
 										icon={'Trash2Outline'}
 										color={'error'}

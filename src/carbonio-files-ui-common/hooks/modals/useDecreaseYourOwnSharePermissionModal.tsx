@@ -56,14 +56,14 @@ export function useDecreaseYourOwnSharePermissionModal(
 						)}
 					</Text>
 					<Text color={'error'} weight="bold">
-						{t('', 'This action cannot be undone.')}
+						{t('modal.deleteShare.warning', 'This action cannot be undone.')}
 					</Text>
 				</Container>
 			),
 			customFooter: (
 				<Container mainAlignment={'flex-end'} orientation={'horizontal'} gap="0.5rem">
 					<Button
-						label={t('', 'No, cancel')}
+						label={t('modal.deleteShare.button.cancel', 'No, cancel')}
 						onClick={() => closeModal(modalId)}
 						color={'secondary'}
 						type="outlined"
@@ -71,7 +71,7 @@ export function useDecreaseYourOwnSharePermissionModal(
 					<Button
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
-						label={t('', 'Yes, confirm')}
+						label={t('modal.decreaseYourOwnSharePermissions.button.confirm', 'Yes, confirm')}
 						onClick={() => {
 							updateShareAction().then(() => {
 								updateShareActionCallback?.();
