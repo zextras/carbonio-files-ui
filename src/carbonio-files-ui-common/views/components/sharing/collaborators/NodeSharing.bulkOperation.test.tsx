@@ -534,5 +534,43 @@ describe('bulk operation', () => {
 			expect(within(modal).getByRole('button', { name: /no, cancel/i })).toBeVisible();
 			expect(within(modal).getByRole('button', { name: /yes, confirm/i })).toBeVisible();
 		});
+
+		it('should close the single edit popover when a selection checkbox is clicked', async () => {
+			const node = populateNode();
+			node.owner = populateUser();
+			const loggedUser = populateUser(LOGGED_USER.id);
+			const user2 = populateUser();
+			const share1 = populateShare(node, node.id, loggedUser);
+			const share2 = populateShare(node, node.id, user2);
+			share1.permission = SharePermission.ReadWriteAndShare;
+			share2.permission = SharePermission.ReadWriteAndShare;
+			node.shares = [share1, share2];
+			node.permissions.can_share = true;
+			node.permissions.can_write_file = true;
+			node.permissions.can_write_folder = true;
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getShares: [node] }),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(<NodeSharing node={node} />, { mocks });
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
+			const collaboratorsSection = screen.getByTestId('sharing-collaborators-section');
+			const editButtons = within(collaboratorsSection).getAllByRoleWithIcon('button', {
+				icon: ICON_REGEXP.edit
+			});
+			await user.click(editButtons[1]);
+			const viewerSelection = screen.getByTestId(SELECTORS.exclusiveSelectionViewer);
+			expect(within(viewerSelection).getByText(/viewer/i)).toBeVisible();
+			expect(screen.getByRole('button', { name: /save/i })).toBeVisible();
+			const checkboxes = screen.getAllByTestId(ICON_REGEXP.checkboxUnchecked);
+			await user.click(checkboxes[1]);
+			expect(screen.queryByTestId(SELECTORS.exclusiveSelectionViewer)).not.toBeInTheDocument();
+		});
 	});
 });

@@ -130,9 +130,10 @@ export const ShareListItem = ({
 	const [checkboxValue, setCheckboxValue] = useState(initialCheckboxValue);
 
 	useEffect(() => {
+		setPopoverOpen(false);
 		setActiveRow(initialActiveRow);
 		setCheckboxValue(initialCheckboxValue);
-	}, [initialActiveRow, initialCheckboxValue]);
+	}, [isSelecting, initialActiveRow, initialCheckboxValue]);
 
 	const decreasingSharePermissions = useMemo(
 		() =>
