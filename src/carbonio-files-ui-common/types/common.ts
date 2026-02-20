@@ -174,8 +174,8 @@ export enum ErrorCode {
 	FILE_VERSION_NOT_FOUND = 'FILE_VERSION_NOT_FOUND',
 	/** Used By:
 	 * getShare
-	 * updateShare
-	 * deleteShare
+	 * updateShares
+	 * deleteShares
 	 */
 	SHARE_NOT_FOUND = 'SHARE_NOT_FOUND',
 	/** Used By:

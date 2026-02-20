@@ -27,7 +27,7 @@ import handleCreateLinkRequest from '../carbonio-files-ui-common/mocks/handleCre
 import handleCreateShareRequest from '../carbonio-files-ui-common/mocks/handleCreateShareRequest';
 import handleDeleteLinksRequest from '../carbonio-files-ui-common/mocks/handleDeleteLinkRequest';
 import handleDeleteNodesRequest from '../carbonio-files-ui-common/mocks/handleDeleteNodesRequest';
-import handleDeleteShareRequest from '../carbonio-files-ui-common/mocks/handleDeleteShareRequest';
+import handleDeleteSharesRequest from '../carbonio-files-ui-common/mocks/handleDeleteSharesRequest';
 import handleDownloadCheckRequest from '../carbonio-files-ui-common/mocks/handleDownloadCheckRequest';
 import handleDownloadMultipleCheckRequest from '../carbonio-files-ui-common/mocks/handleDownloadMultipleCheckRequest';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
@@ -55,7 +55,7 @@ import handleRestoreNodesRequest from '../carbonio-files-ui-common/mocks/handleR
 import handleTrashNodesRequest from '../carbonio-files-ui-common/mocks/handleTrashNodesRequest';
 import handleUpdateLinkRequest from '../carbonio-files-ui-common/mocks/handleUpdateLinkRequest';
 import handleUpdateNodeRequest from '../carbonio-files-ui-common/mocks/handleUpdateNodeRequest';
-import handleUpdateShareRequest from '../carbonio-files-ui-common/mocks/handleUpdateShareRequest';
+import handleUpdateSharesRequest from '../carbonio-files-ui-common/mocks/handleUpdateSharesRequest';
 import handleUploadFileRequest from '../carbonio-files-ui-common/mocks/handleUploadFileRequest';
 import handleUploadVersionRequest from '../carbonio-files-ui-common/mocks/handleUploadVersionRequest';
 import {
@@ -65,7 +65,7 @@ import {
 	CreateShareDocument,
 	DeleteLinksDocument,
 	DeleteNodesDocument,
-	DeleteShareDocument,
+	DeleteSharesDocument,
 	FindNodesDocument,
 	FlagNodesDocument,
 	GetAccountByEmailDocument,
@@ -89,7 +89,7 @@ import {
 	UpdateLinkDocument,
 	UpdateNodeDescriptionDocument,
 	UpdateNodeDocument,
-	UpdateShareDocument
+	UpdateSharesDocument
 } from '../carbonio-files-ui-common/types/graphql/types';
 
 const handlers: RequestHandler[] = [];
@@ -122,7 +122,7 @@ handlers.push(
 	graphql.mutation(CreateShareDocument, handleCreateShareRequest),
 	graphql.mutation(DeleteLinksDocument, handleDeleteLinksRequest),
 	graphql.mutation(DeleteNodesDocument, handleDeleteNodesRequest),
-	graphql.mutation(DeleteShareDocument, handleDeleteShareRequest),
+	graphql.mutation(DeleteSharesDocument, handleDeleteSharesRequest),
 	graphql.mutation(FlagNodesDocument, handleFlagNodesRequest),
 	graphql.mutation(MoveNodesDocument, handleMoveNodesRequest),
 	graphql.mutation(RestoreNodesDocument, handleRestoreNodesRequest),
@@ -130,7 +130,7 @@ handlers.push(
 	graphql.mutation(UpdateLinkDocument, handleUpdateLinkRequest),
 	graphql.mutation(UpdateNodeDocument, handleUpdateNodeRequest),
 	graphql.mutation(UpdateNodeDescriptionDocument, handleUpdateNodeRequest),
-	graphql.mutation(UpdateShareDocument, handleUpdateShareRequest)
+	graphql.mutation(UpdateSharesDocument, handleUpdateSharesRequest)
 );
 // rest
 handlers.push(

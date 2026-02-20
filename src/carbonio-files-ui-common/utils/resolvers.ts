@@ -5,7 +5,7 @@
  */
 
 import { NODES_LOAD_LIMIT } from '../constants';
-import { FolderResolvers, NodeResolvers, Resolvers } from '../types/graphql/resolvers-types';
+import { FileResolvers, FolderResolvers, Resolvers } from '../types/graphql/resolvers-types';
 
 function resolveByTypename<T>(obj: { __typename?: T }): T {
 	if (obj.__typename) {
@@ -14,7 +14,7 @@ function resolveByTypename<T>(obj: { __typename?: T }): T {
 	throw new Error(`typename is undefined in object ${obj}`);
 }
 
-const defaultSharesResolver: NodeResolvers['shares'] = (parent, args) =>
+const defaultSharesResolver: FileResolvers['shares'] = (parent, args) =>
 	parent.shares.slice(0, args.limit);
 
 const defaultChildrenResolver: FolderResolvers['children'] = (parent, args) => {
@@ -38,7 +38,7 @@ export const resolvers = {
 	},
 	Folder: {
 		children: defaultChildrenResolver,
-		shares: defaultSharesResolver
+		shares: defaultSharesResolver as unknown as FolderResolvers['shares']
 	},
 	SharedTarget: {
 		__resolveType: resolveByTypename

@@ -33,7 +33,7 @@ import {
 import {
 	getNodeVariables,
 	mockCreateShare,
-	mockDeleteShare,
+	mockDeleteShares,
 	mockGetAccountByEmail,
 	mockGetCollaborationLinks,
 	mockGetLinks,
@@ -505,7 +505,12 @@ describe('Node Sharing', () => {
 				expect(within(modal).getByText(/Decrease your current rights/i)).toBeVisible();
 				expect(
 					within(modal).getByText(
-						"Are you sure to decrease your rights on this item? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored."
+						"Are you sure to decrease your rights on this item? The action is permanent and you won't be able to restore the previous share's rights by yourself."
+					)
+				).toBeVisible();
+				expect(
+					within(modal).getByText(
+						"You can always contact the shared item's owner if you need the previous permission to be restored."
 					)
 				).toBeVisible();
 				expect(within(modal).getByRole('button', { name: /confirm/i })).toBeVisible();
@@ -530,7 +535,7 @@ describe('Node Sharing', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true)
+					deleteShares: mockDeleteShares([mockedUserLogged.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
@@ -599,7 +604,7 @@ describe('Node Sharing', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true)
+					deleteShares: mockDeleteShares([userAccount.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, {

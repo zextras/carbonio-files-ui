@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+mutation deleteShares($node_id: ID!, $share_target_ids: [ID!]!) {
+	deleteShares(node_id: $node_id, share_target_ids: $share_target_ids)
+}

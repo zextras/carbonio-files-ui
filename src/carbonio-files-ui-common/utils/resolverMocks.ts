@@ -166,10 +166,10 @@ export function mockGetNode(
 	};
 }
 
-export function mockDeleteShare(
-	...deleteShare: boolean[]
-): MutationMock<GQLTypes.DeleteShareMutation> {
-	return () => shiftData(deleteShare);
+export function mockDeleteShares(
+	...deleteShares: (string | null)[][]
+): MutationMock<GQLTypes.DeleteSharesMutation> {
+	return () => shiftData(deleteShares);
 }
 
 export function mockCreateShare(
@@ -178,10 +178,10 @@ export function mockCreateShare(
 	return () => shiftData(createShare);
 }
 
-export function mockUpdateShare(
-	...updateShare: GQLTypes.Share[]
-): MutationMock<GQLTypes.UpdateShareMutation> {
-	return () => shiftData(updateShare);
+export function mockUpdateShares(
+	...updateShares: GQLTypes.Share[]
+): MutationMock<GQLTypes.UpdateSharesMutation> {
+	return () => [shiftData(updateShares)];
 }
 
 export function mockGetAccountByEmail(

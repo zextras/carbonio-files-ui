@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2025 Zextras <https://www.zextras.com>
+ * SPDX-FileCopyrightText: 2026 Zextras <https://www.zextras.com>
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -85,6 +85,7 @@ export type File = Node & {
 	created_at: Scalars['DateTime']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
+	digest: Scalars['String']['output'];
 	extension: Maybe<Scalars['String']['output']>;
 	flagged: Scalars['Boolean']['output'];
 	id: Scalars['ID']['output'];
@@ -176,7 +177,7 @@ export type Mutation = {
 	deleteCollaborationLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteNodes: Maybe<Array<Scalars['ID']['output']>>;
-	deleteShare: Scalars['Boolean']['output'];
+	deleteShares: Array<Maybe<Scalars['ID']['output']>>;
 	deleteVersions: Array<Maybe<Scalars['Int']['output']>>;
 	flagNodes: Maybe<Array<Scalars['ID']['output']>>;
 	keepVersions: Array<Maybe<Scalars['Int']['output']>>;
@@ -186,7 +187,7 @@ export type Mutation = {
 	trashNodes: Maybe<Array<Scalars['ID']['output']>>;
 	updateLink: Maybe<Link>;
 	updateNode: File | Folder;
-	updateShare: Maybe<Share>;
+	updateShares: Array<Maybe<Share>>;
 };
 
 export type MutationCloneVersionArgs = {
@@ -240,9 +241,9 @@ export type MutationDeleteNodesArgs = {
 	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
-export type MutationDeleteShareArgs = {
+export type MutationDeleteSharesArgs = {
 	node_id: Scalars['ID']['input'];
-	share_target_id: Scalars['ID']['input'];
+	share_target_ids: Array<Scalars['ID']['input']>;
 };
 
 export type MutationDeleteVersionsArgs = {
@@ -293,11 +294,11 @@ export type MutationUpdateNodeArgs = {
 	node_id: Scalars['String']['input'];
 };
 
-export type MutationUpdateShareArgs = {
+export type MutationUpdateSharesArgs = {
 	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
 	node_id: Scalars['ID']['input'];
 	permission?: InputMaybe<SharePermission>;
-	share_target_id: Scalars['ID']['input'];
+	share_target_ids: Array<Scalars['ID']['input']>;
 };
 
 export type NewShare = {
@@ -1178,12 +1179,12 @@ export type DeleteNodesMutationVariables = Exact<{
 
 export type DeleteNodesMutation = { deleteNodes: Array<string> | null };
 
-export type DeleteShareMutationVariables = Exact<{
+export type DeleteSharesMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
-	share_target_id: Scalars['ID']['input'];
+	share_target_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
-export type DeleteShareMutation = { deleteShare: boolean };
+export type DeleteSharesMutation = { deleteShares: Array<string | null> };
 
 export type DeleteVersionsMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
@@ -1294,14 +1295,14 @@ export type UpdateNodeDescriptionMutation = {
 	updateNode: { id: string; description: string } & { __typename: 'File' | 'Folder' };
 };
 
-export type UpdateShareMutationVariables = Exact<{
+export type UpdateSharesMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
-	share_target_id: Scalars['ID']['input'];
+	share_target_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 	permission: SharePermission;
 }>;
 
-export type UpdateShareMutation = {
-	updateShare:
+export type UpdateSharesMutation = {
+	updateShares: Array<
 		| ({
 				permission: SharePermission;
 				created_at: number;
@@ -1311,7 +1312,8 @@ export type UpdateShareMutation = {
 					| null;
 				node: { id: string } & { __typename: 'File' | 'Folder' };
 		  } & { __typename: 'Share' })
-		| null;
+		| null
+	>;
 };
 
 export type GetUploadItemQueryVariables = Exact<{
@@ -4326,13 +4328,13 @@ export const DeleteNodesDocument = {
 		}
 	]
 } as unknown as DocumentNode<DeleteNodesMutation, DeleteNodesMutationVariables>;
-export const DeleteShareDocument = {
+export const DeleteSharesDocument = {
 	kind: 'Document',
 	definitions: [
 		{
 			kind: 'OperationDefinition',
 			operation: 'mutation',
-			name: { kind: 'Name', value: 'deleteShare' },
+			name: { kind: 'Name', value: 'deleteShares' },
 			variableDefinitions: [
 				{
 					kind: 'VariableDefinition',
@@ -4344,10 +4346,16 @@ export const DeleteShareDocument = {
 				},
 				{
 					kind: 'VariableDefinition',
-					variable: { kind: 'Variable', name: { kind: 'Name', value: 'share_target_id' } },
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'share_target_ids' } },
 					type: {
 						kind: 'NonNullType',
-						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+						type: {
+							kind: 'ListType',
+							type: {
+								kind: 'NonNullType',
+								type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							}
+						}
 					}
 				}
 			],
@@ -4356,7 +4364,7 @@ export const DeleteShareDocument = {
 				selections: [
 					{
 						kind: 'Field',
-						name: { kind: 'Name', value: 'deleteShare' },
+						name: { kind: 'Name', value: 'deleteShares' },
 						arguments: [
 							{
 								kind: 'Argument',
@@ -4365,8 +4373,8 @@ export const DeleteShareDocument = {
 							},
 							{
 								kind: 'Argument',
-								name: { kind: 'Name', value: 'share_target_id' },
-								value: { kind: 'Variable', name: { kind: 'Name', value: 'share_target_id' } }
+								name: { kind: 'Name', value: 'share_target_ids' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'share_target_ids' } }
 							}
 						]
 					}
@@ -4374,7 +4382,7 @@ export const DeleteShareDocument = {
 			}
 		}
 	]
-} as unknown as DocumentNode<DeleteShareMutation, DeleteShareMutationVariables>;
+} as unknown as DocumentNode<DeleteSharesMutation, DeleteSharesMutationVariables>;
 export const DeleteVersionsDocument = {
 	kind: 'Document',
 	definitions: [
@@ -4967,13 +4975,13 @@ export const UpdateNodeDescriptionDocument = {
 		}
 	]
 } as unknown as DocumentNode<UpdateNodeDescriptionMutation, UpdateNodeDescriptionMutationVariables>;
-export const UpdateShareDocument = {
+export const UpdateSharesDocument = {
 	kind: 'Document',
 	definitions: [
 		{
 			kind: 'OperationDefinition',
 			operation: 'mutation',
-			name: { kind: 'Name', value: 'updateShare' },
+			name: { kind: 'Name', value: 'updateShares' },
 			variableDefinitions: [
 				{
 					kind: 'VariableDefinition',
@@ -4985,10 +4993,16 @@ export const UpdateShareDocument = {
 				},
 				{
 					kind: 'VariableDefinition',
-					variable: { kind: 'Variable', name: { kind: 'Name', value: 'share_target_id' } },
+					variable: { kind: 'Variable', name: { kind: 'Name', value: 'share_target_ids' } },
 					type: {
 						kind: 'NonNullType',
-						type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+						type: {
+							kind: 'ListType',
+							type: {
+								kind: 'NonNullType',
+								type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							}
+						}
 					}
 				},
 				{
@@ -5005,7 +5019,7 @@ export const UpdateShareDocument = {
 				selections: [
 					{
 						kind: 'Field',
-						name: { kind: 'Name', value: 'updateShare' },
+						name: { kind: 'Name', value: 'updateShares' },
 						arguments: [
 							{
 								kind: 'Argument',
@@ -5014,8 +5028,8 @@ export const UpdateShareDocument = {
 							},
 							{
 								kind: 'Argument',
-								name: { kind: 'Name', value: 'share_target_id' },
-								value: { kind: 'Variable', name: { kind: 'Name', value: 'share_target_id' } }
+								name: { kind: 'Name', value: 'share_target_ids' },
+								value: { kind: 'Variable', name: { kind: 'Name', value: 'share_target_ids' } }
 							},
 							{
 								kind: 'Argument',
@@ -5078,7 +5092,7 @@ export const UpdateShareDocument = {
 			}
 		}
 	]
-} as unknown as DocumentNode<UpdateShareMutation, UpdateShareMutationVariables>;
+} as unknown as DocumentNode<UpdateSharesMutation, UpdateSharesMutationVariables>;
 export const GetUploadItemDocument = {
 	kind: 'Document',
 	definitions: [
