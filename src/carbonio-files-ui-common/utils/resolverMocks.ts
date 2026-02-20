@@ -167,9 +167,9 @@ export function mockGetNode(
 }
 
 export function mockDeleteShares(
-	...deleteShares: (string | null)[]
+	...deleteShares: (string | null)[][]
 ): MutationMock<GQLTypes.DeleteSharesMutation> {
-	return () => [shiftData(deleteShares)];
+	return () => shiftData(deleteShares);
 }
 
 export function mockCreateShare(

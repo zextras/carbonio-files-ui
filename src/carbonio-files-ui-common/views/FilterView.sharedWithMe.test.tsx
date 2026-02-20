@@ -82,7 +82,7 @@ describe('Filter view', () => {
 				direct_share: true
 			};
 			await act(async () => {
-				await vi.advanceTimersToNextTimerAsync();
+				await vi.runOnlyPendingTimersAsync();
 			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -110,7 +110,7 @@ describe('Filter view', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShares('deleted-id')
+					deleteShares: mockDeleteShares([mockedUserLogged.id])
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -127,7 +127,7 @@ describe('Filter view', () => {
 			);
 
 			await act(async () => {
-				await vi.advanceTimersToNextTimerAsync();
+				await vi.runOnlyPendingTimersAsync();
 			});
 			await screen.findAllByText(node.name);
 			// logged user is shown
@@ -141,6 +141,11 @@ describe('Filter view', () => {
 			// confirmation modal
 			await user.click(await screen.findByRole('button', { name: /remove/i }));
 			await screen.findByText(/success/i);
+			// close snackbar
+			act(() => {
+				// run timers of snackbar
+				vi.runOnlyPendingTimers();
+			});
 			// node is removed from the list and displayer is closed
 			expect(screen.queryByText(node.name)).not.toBeInTheDocument();
 			expect(screen.queryByText(/you$/i)).not.toBeInTheDocument();

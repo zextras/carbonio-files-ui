@@ -535,7 +535,7 @@ describe('Node Sharing', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShares('deleted-id')
+					deleteShares: mockDeleteShares([mockedUserLogged.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
@@ -604,7 +604,7 @@ describe('Node Sharing', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShares('deleted-id')
+					deleteShares: mockDeleteShares([userAccount.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, {

@@ -189,7 +189,7 @@ describe('Share List Item', () => {
 		const share = populateShare(node, 'abc', userAccount);
 		const mocks = {
 			Mutation: {
-				deleteShares: mockDeleteShares('deleted-id')
+				deleteShares: mockDeleteShares(['deleted-id'])
 			}
 		} satisfies Partial<Resolvers>;
 		const deleteShare = vi.fn(() => Promise.resolve({ data: { deleteShares: ['deleted-id'] } }));

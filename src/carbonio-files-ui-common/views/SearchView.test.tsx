@@ -78,7 +78,7 @@ describe('Search view', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShares('deleted-id-1', 'deleted-id-2')
+					deleteShares: mockDeleteShares([shares[0]!.share_target!.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<SearchView />, {

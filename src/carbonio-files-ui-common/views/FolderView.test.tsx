@@ -790,7 +790,7 @@ describe('Folder View', () => {
 					getLinks: mockGetLinks([], [], [])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShares('deleted-id')
+					deleteShares: mockDeleteShares(['deleted-id'])
 				}
 			} satisfies Partial<Resolvers>;
 

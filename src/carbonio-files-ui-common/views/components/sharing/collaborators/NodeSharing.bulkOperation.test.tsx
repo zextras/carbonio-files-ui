@@ -192,7 +192,7 @@ describe('bulk operation', () => {
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},
 					Mutation: {
-						deleteShares: mockDeleteShares('deleted-id')
+						deleteShares: mockDeleteShares([loggedUser.id, user2.id])
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(<NodeSharing node={node} />, { mocks });
@@ -291,7 +291,7 @@ describe('bulk operation', () => {
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},
 					Mutation: {
-						deleteShares: mockDeleteShares('deleted-id')
+						deleteShares: mockDeleteShares([loggedUser.id, user2.id])
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(<NodeSharing node={node} />, { mocks });

@@ -156,7 +156,7 @@ export const recursiveShareEvict = (cache: ApolloCache<unknown>, node: Node<'id'
 		fields: {
 			children(existingChildrenRefs, { readField, DELETE }) {
 				assertCachedObject(existingChildrenRefs);
-				if (existingChildrenRefs.nodes) {
+				if (existingChildrenRefs?.nodes) {
 					forEach(
 						[...existingChildrenRefs.nodes.ordered, ...existingChildrenRefs.nodes.unOrdered],
 						(ref) => {
