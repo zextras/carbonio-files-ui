@@ -54,40 +54,43 @@ export function useUpdateSharesMutation(): [
 					share_target_ids: shareTargetIds,
 					permission
 				},
-				update(cache) {
-					cache.modify<NodeCachedObject>({
-						id: cache.identify(node),
-						fields: {
-							shares(existingShares) {
-								assertCachedObject(existingShares);
-								const updatedShares = reduce<ShareCachedObject, ShareCachedObject[]>(
-									existingShares.shares,
-									(accumulator, existingShareRef) => {
-										const sharedTarget =
-											existingShareRef.share_target &&
-											cache.readFragment<ShareTargetFragment>({
-												id: cache.identify(existingShareRef.share_target),
-												fragment: SHARE_TARGET
-											});
-										if (sharedTarget && shareTargetIds.includes(sharedTarget.id)) {
-											const newExistingShareRef: ShareCachedObject = {
-												...existingShareRef,
-												permission
-											};
-											accumulator.push(newExistingShareRef);
+				update(cache, { data }) {
+					if (data?.updateShares) {
+						const updatedTargetIds = data.updateShares.map((share) => share?.share_target?.id);
+						cache.modify<NodeCachedObject>({
+							id: cache.identify(node),
+							fields: {
+								shares(existingShares) {
+									assertCachedObject(existingShares);
+									const updatedShares = reduce<ShareCachedObject, ShareCachedObject[]>(
+										existingShares.shares,
+										(accumulator, existingShareRef) => {
+											const sharedTarget =
+												existingShareRef.share_target &&
+												cache.readFragment<ShareTargetFragment>({
+													id: cache.identify(existingShareRef.share_target),
+													fragment: SHARE_TARGET
+												});
+											if (sharedTarget && updatedTargetIds.includes(sharedTarget.id)) {
+												const newExistingShareRef: ShareCachedObject = {
+													...existingShareRef,
+													permission
+												};
+												accumulator.push(newExistingShareRef);
+												return accumulator;
+											}
+											accumulator.push(existingShareRef);
 											return accumulator;
-										}
-										accumulator.push(existingShareRef);
-										return accumulator;
-									},
-									[]
-								);
+										},
+										[]
+									);
 
-								return { ...existingShares, shares: updatedShares };
+									return { ...existingShares, shares: updatedShares };
+								}
 							}
-						}
-					});
-					recursiveShareEvict(cache, node);
+						});
+						recursiveShareEvict(cache, node);
+					}
 				}
 			}).then((result) => {
 				if (result.data?.updateShares) {

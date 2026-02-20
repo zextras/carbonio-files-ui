@@ -91,7 +91,7 @@ export function useDeleteSharesMutation(): (
 												id: cache.identify(existingShareRef.share_target),
 												fragment: ShareTargetFragmentDoc
 											});
-										return !(sharedTarget && shareTargetIds.includes(sharedTarget.id));
+										return !(sharedTarget && data.deleteShares.includes(sharedTarget.id));
 									});
 									if (updatedShares.length === 0 && !isSearchView(location)) {
 										// remove node from shared by me when user remove all collaborators
@@ -106,7 +106,7 @@ export function useDeleteSharesMutation(): (
 						});
 						recursiveShareEvict(cache, node);
 						// always remove node when user remove self share
-						if (shareTargetIds.includes(me)) {
+						if (data.deleteShares.includes(me)) {
 							removeNodesFromFilter([node.id], () => true);
 
 							const parentFolder = cache.readFragment<ParentIdFragment>({
