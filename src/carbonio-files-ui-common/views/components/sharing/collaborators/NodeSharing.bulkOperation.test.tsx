@@ -13,11 +13,11 @@ import { screen, setup, within } from '../../../../tests/utils';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { SharePermission } from '../../../../types/graphql/types';
 import {
-	mockDeleteShare,
+	mockDeleteShares,
 	mockGetCollaborationLinks,
 	mockGetLinks,
 	mockGetNode,
-	mockUpdateShare
+	mockUpdateShares
 } from '../../../../utils/resolverMocks';
 import { getChipLabel } from '../../../../utils/utils';
 
@@ -192,7 +192,7 @@ describe('bulk operation', () => {
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},
 					Mutation: {
-						deleteShares: mockDeleteShare('deleted-id')
+						deleteShares: mockDeleteShares('deleted-id')
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(<NodeSharing node={node} />, { mocks });
@@ -291,7 +291,7 @@ describe('bulk operation', () => {
 						getCollaborationLinks: mockGetCollaborationLinks([])
 					},
 					Mutation: {
-						deleteShares: mockDeleteShare('deleted-id')
+						deleteShares: mockDeleteShares('deleted-id')
 					}
 				} satisfies Partial<Resolvers>;
 				const { user } = setup(<NodeSharing node={node} />, { mocks });
@@ -445,7 +445,7 @@ describe('bulk operation', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					updateShares: mockUpdateShare(updatedShare)
+					updateShares: mockUpdateShares(updatedShare)
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, { mocks });

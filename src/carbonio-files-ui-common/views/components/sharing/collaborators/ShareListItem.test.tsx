@@ -14,7 +14,7 @@ import { populateNode, populateShare, populateUser } from '../../../../mocks/moc
 import { screen, setup } from '../../../../tests/utils';
 import { Resolvers } from '../../../../types/graphql/resolvers-types';
 import { Share, SharePermission } from '../../../../types/graphql/types';
-import { mockDeleteShare, mockUpdateShare } from '../../../../utils/resolverMocks';
+import { mockDeleteShares, mockUpdateShares } from '../../../../utils/resolverMocks';
 
 describe('ShareListItem', () => {
 	test.each([
@@ -189,7 +189,7 @@ describe('Share List Item', () => {
 		const share = populateShare(node, 'abc', userAccount);
 		const mocks = {
 			Mutation: {
-				deleteShares: mockDeleteShare('deleted-id')
+				deleteShares: mockDeleteShares('deleted-id')
 			}
 		} satisfies Partial<Resolvers>;
 		const deleteShare = vi.fn(() => Promise.resolve({ data: { deleteShares: ['deleted-id'] } }));
@@ -243,7 +243,7 @@ describe('Share List Item', () => {
 
 			const mocks = {
 				Mutation: {
-					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
+					updateShares: vi.fn(mockUpdateShares(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();
@@ -287,7 +287,7 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
+					updateShares: vi.fn(mockUpdateShares(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();
@@ -324,7 +324,7 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
+					updateShares: vi.fn(mockUpdateShares(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();
@@ -366,7 +366,7 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadOnly;
 			const mocks = {
 				Mutation: {
-					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
+					updateShares: vi.fn(mockUpdateShares(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();
@@ -406,7 +406,7 @@ describe('Share List Item', () => {
 			share.permission = SharePermission.ReadAndShare;
 			const mocks = {
 				Mutation: {
-					updateShares: vi.fn(mockUpdateShare(share) as unknown as (...args: unknown[]) => Share[])
+					updateShares: vi.fn(mockUpdateShares(share) as unknown as (...args: unknown[]) => Share[])
 				}
 			} satisfies Partial<Resolvers>;
 			const deleteShare = vi.fn();

@@ -25,7 +25,7 @@ import { CollaboratorPermissionIcons } from './CollaboratorPermissionIcons';
 import { EditSharePopoverContainer } from './EditSharePopoverContainer';
 import { SHARE_TEXT_SIZE } from '../../../../constants';
 import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/useDeleteSharesMutation';
-import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateSharesMutation';
+import { useUpdateSharesMutation } from '../../../../hooks/graphql/mutations/useUpdateSharesMutation';
 import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
 import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
 import { Role, Node } from '../../../../types/common';
@@ -100,7 +100,7 @@ export const ShareListItem = ({
 	onSelectionChange,
 	selectionMode = false
 }: ShareListItemProps): React.JSX.Element => {
-	const [updateShare] = useUpdateShareMutation();
+	const [updateShares] = useUpdateSharesMutation();
 	const [t] = useTranslation();
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -161,12 +161,12 @@ export const ShareListItem = ({
 
 	const updateShareCallback = useCallback(
 		() =>
-			updateShare(
+			updateShares(
 				share.node,
 				[share.share_target.id],
 				sharePermissionsGetter(rowIdxToRoleMap[activeRow], checkboxValue)
 			),
-		[activeRow, checkboxValue, share, updateShare]
+		[activeRow, checkboxValue, share, updateShares]
 	);
 
 	const routeLeavingGuardOnSaveHandler = useCallback(

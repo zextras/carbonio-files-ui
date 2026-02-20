@@ -12,7 +12,7 @@ import { Button, Popover, Row, Tooltip } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { EditSharePopoverContainer } from './EditSharePopoverContainer';
-import { useUpdateShareMutation } from '../../../../hooks/graphql/mutations/useUpdateSharesMutation';
+import { useUpdateSharesMutation } from '../../../../hooks/graphql/mutations/useUpdateSharesMutation';
 import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
 import { Node, Role } from '../../../../types/common';
 import {
@@ -59,7 +59,7 @@ export const EditPermissionBulkButton = ({
 	const [bulkEditCheckboxValue, setBulkEditCheckboxValue] = useState(false);
 	const bulkEditAnchorRef = useRef<HTMLDivElement>(null);
 	const [t] = useTranslation();
-	const [updateShare] = useUpdateShareMutation();
+	const [updateShares] = useUpdateSharesMutation();
 	const [getPermissionsLazy] = useLazyQuery<GetPermissionsQuery, GetPermissionsQueryVariables>(
 		GetPermissionsDocument,
 		{
@@ -111,7 +111,7 @@ export const EditPermissionBulkButton = ({
 			rowIdxToRole[bulkEditActiveRow],
 			bulkEditCheckboxValue
 		);
-		return updateShare(node, ids, permission);
+		return updateShares(node, ids, permission);
 	}, [
 		allCollaboratorIds,
 		bulkEditActiveRow,
@@ -119,7 +119,7 @@ export const EditPermissionBulkButton = ({
 		isAllSelected,
 		node,
 		selectedIds,
-		updateShare
+		updateShares
 	]);
 
 	const updateSharesActionCallback = useCallback(() => {

@@ -33,7 +33,7 @@ import {
 import {
 	getNodeVariables,
 	mockCreateShare,
-	mockDeleteShare,
+	mockDeleteShares,
 	mockGetAccountByEmail,
 	mockGetCollaborationLinks,
 	mockGetLinks,
@@ -535,7 +535,7 @@ describe('Node Sharing', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShare('deleted-id')
+					deleteShares: mockDeleteShares('deleted-id')
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
@@ -604,7 +604,7 @@ describe('Node Sharing', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShare('deleted-id')
+					deleteShares: mockDeleteShares('deleted-id')
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, {

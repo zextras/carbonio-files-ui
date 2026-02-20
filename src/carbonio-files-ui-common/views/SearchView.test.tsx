@@ -45,7 +45,7 @@ import { AdvancedFilters } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { BaseNodeFragment, Folder, NodeType } from '../types/graphql/types';
 import {
-	mockDeleteShare,
+	mockDeleteShares,
 	mockFindNodes,
 	mockGetNode,
 	mockGetCollaborationLinks,
@@ -78,7 +78,7 @@ describe('Search view', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShare('deleted-id-1', 'deleted-id-2')
+					deleteShares: mockDeleteShares('deleted-id-1', 'deleted-id-2')
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<SearchView />, {

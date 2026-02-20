@@ -40,14 +40,14 @@ import { Folder, Share, SharePermission } from '../types/graphql/types';
 import { AutocompleteResponse } from '../types/network';
 import {
 	mockCreateShare,
-	mockDeleteShare,
+	mockDeleteShares,
 	mockGetAccountByEmail,
 	mockGetCollaborationLinks,
 	mockGetLinks,
 	mockGetNode,
 	mockGetPath,
 	mockMoveNodes,
-	mockUpdateShare
+	mockUpdateShares
 } from '../utils/resolverMocks';
 
 vi.mock('./components/VirtualizedNodeListItem');
@@ -618,7 +618,7 @@ describe('Folder View', () => {
 					getLinks: mockGetLinks([], [], [])
 				},
 				Mutation: {
-					updateShares: mockUpdateShare({ ...shareUpdated, node: folderUpdated })
+					updateShares: mockUpdateShares({ ...shareUpdated, node: folderUpdated })
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -790,7 +790,7 @@ describe('Folder View', () => {
 					getLinks: mockGetLinks([], [], [])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShare('deleted-id')
+					deleteShares: mockDeleteShares('deleted-id')
 				}
 			} satisfies Partial<Resolvers>;
 

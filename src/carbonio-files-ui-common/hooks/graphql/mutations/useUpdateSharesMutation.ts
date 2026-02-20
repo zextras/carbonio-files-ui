@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 import { assertCachedObject, recursiveShareEvict } from '../../../apollo/cacheUtils';
 import SHARE_TARGET from '../../../graphql/fragments/shareTarget.graphql';
-import UPDATE_SHARE from '../../../graphql/mutations/updateShare.graphql';
+import UPDATE_SHARES from '../../../graphql/mutations/updateShares.graphql';
 import { NodeCachedObject, ShareCachedObject } from '../../../types/apollo';
 import { PickIdNodeType } from '../../../types/common';
 import {
@@ -35,20 +35,20 @@ export type UpdateShareType = (
  * Accepts an array of share target IDs to update in a single request.
  * Can return error: ErrorCode.SHARE_NOT_FOUND
  */
-export function useUpdateShareMutation(): [
-	updateShare: UpdateShareType,
-	updateShareError: ApolloError | undefined
+export function useUpdateSharesMutation(): [
+	updateShares: UpdateShareType,
+	updateSharesError: ApolloError | undefined
 ] {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
-	const [updateShareMutation, { error: updateShareError }] = useMutation<
+	const [updateSharesMutation, { error: updateSharesError }] = useMutation<
 		UpdateSharesMutation,
 		UpdateSharesMutationVariables
-	>(UPDATE_SHARE);
+	>(UPDATE_SHARES);
 
-	const updateShare: UpdateShareType = useCallback(
+	const updateShares: UpdateShareType = useCallback(
 		(node: PickIdNodeType, shareTargetIds: string[], permission: SharePermission) =>
-			updateShareMutation({
+			updateSharesMutation({
 				variables: {
 					node_id: node.id,
 					share_target_ids: shareTargetIds,
@@ -101,9 +101,9 @@ export function useUpdateShareMutation(): [
 				}
 				return result;
 			}),
-		[createSnackbar, t, updateShareMutation]
+		[createSnackbar, t, updateSharesMutation]
 	);
-	useErrorHandler(updateShareError, 'UPDATE_SHARE');
+	useErrorHandler(updateSharesError, 'UPDATE_SHARES');
 
-	return [updateShare, updateShareError];
+	return [updateShares, updateSharesError];
 }

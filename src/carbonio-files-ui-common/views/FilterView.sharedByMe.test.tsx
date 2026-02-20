@@ -25,7 +25,7 @@ import { setup, screen } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
-	mockDeleteShare,
+	mockDeleteShares,
 	mockFindNodes,
 	mockGetNode,
 	mockGetCollaborationLinks,
@@ -109,7 +109,7 @@ describe('Filter view', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShares: mockDeleteShare('deleted-id-1', 'deleted-id-2')
+					deleteShares: mockDeleteShares('deleted-id-1', 'deleted-id-2')
 				}
 			} satisfies Partial<Resolvers>;
 
