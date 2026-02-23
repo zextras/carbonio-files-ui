@@ -52,7 +52,7 @@
 		"@types/react": "^18.3.12",
 		"@types/react-dom": "^18.3.1",
 		"@types/uuid": "^10.0.0",
-		"@vitejs/plugin-react": "^5.1.2",
+		"@vitejs/plugin-react": "^5.1.4",
 		"@vitest/coverage-v8": "^4.0.15",
 		"@vitest/ui": "^4.0.15",
 		"@zextras/carbonio-search-ui": "github:zextras/carbonio-search-ui#devel",
