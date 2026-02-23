@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.15.0](https://github.com/zextras/carbonio-files-ui/compare/v2.14.0...v2.15.0) (2026-02-23)
+
+
+### Features
+
+* add bulk edit and delete shares operation ([e820880](https://github.com/zextras/carbonio-files-ui/commit/e8208801c2ca679659d7639a0afa58f0da57a8da)), closes [#573](https://github.com/zextras/carbonio-files-ui/issues/573)
+* improve folder navigation on select-node integration ([64f0a1e](https://github.com/zextras/carbonio-files-ui/commit/64f0a1eed5fdbefb85bc5ad003a19b57f019bdd5)), closes [#568](https://github.com/zextras/carbonio-files-ui/issues/568)
+* improve hover action button size and blur effect ([97caf74](https://github.com/zextras/carbonio-files-ui/commit/97caf746ffee52934c5f41c804e29ce2a5fff8cf)), closes [#560](https://github.com/zextras/carbonio-files-ui/issues/560)
+* improve hovering of the lists ([b7dc9df](https://github.com/zextras/carbonio-files-ui/commit/b7dc9dfdd2de61ded93e6d4dcc5bb5803be8ff6f)), closes [#547](https://github.com/zextras/carbonio-files-ui/issues/547)
+* make files notifications clickable [CO-2810] ([#554](https://github.com/zextras/carbonio-files-ui/issues/554)) ([edb340d](https://github.com/zextras/carbonio-files-ui/commit/edb340d6809461d9007384ba41fbc72bfaaf795a))
+
+
+### Bug Fixes
+
+* add sonarqube-scanner dependency to resolve CI permission issue ([686a944](https://github.com/zextras/carbonio-files-ui/commit/686a944b68c29387dc717c134d6d1bbc45befb0c)), closes [#565](https://github.com/zextras/carbonio-files-ui/issues/565)
+* call setDragImage after dragImage render to fix Safari ([0874708](https://github.com/zextras/carbonio-files-ui/commit/0874708eb3830140eb97df722cf843369c986349)), closes [#548](https://github.com/zextras/carbonio-files-ui/issues/548)
+* **deps:** upgrade node to v22 ([#562](https://github.com/zextras/carbonio-files-ui/issues/562)) ([c7e7204](https://github.com/zextras/carbonio-files-ui/commit/c7e720456fbb2c8519c46d9e4f531683911d43c2))
+* modify AnimatedUpload ([8f20147](https://github.com/zextras/carbonio-files-ui/commit/8f20147884d85436c7895b09d4ebbdce6f73919e)), closes [#549](https://github.com/zextras/carbonio-files-ui/issues/549)
+
 ## [2.14.0](https://github.com/zextras/carbonio-files-ui/compare/v2.13.2...v2.14.0) (2025-11-19)
 
 
