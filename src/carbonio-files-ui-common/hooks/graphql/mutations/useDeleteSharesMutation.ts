@@ -20,9 +20,9 @@ import GET_CHILDREN from '../../../graphql/queries/getChildren.graphql';
 import { NodeCachedObject } from '../../../types/apollo';
 import { PickIdNodeType } from '../../../types/common';
 import {
-	DeleteShareDocument,
-	DeleteShareMutation,
-	DeleteShareMutationVariables,
+	DeleteSharesDocument,
+	DeleteSharesMutation,
+	DeleteSharesMutationVariables,
 	DistributionList,
 	FindNodesQuery,
 	Folder,
@@ -40,13 +40,14 @@ import { useUpdateFolderContent } from '../useUpdateFolderContent';
 import { isQueryResult } from '../utils';
 
 /**
- * Mutation to delete share.
+ * Mutation to delete shares.
+ * Accepts an array of share target IDs to delete in a single request.
  * Can return error: ErrorCode.SHARE_NOT_FOUND
  */
-export function useDeleteShareMutation(): (
+export function useDeleteSharesMutation(): (
 	node: PickIdNodeType,
-	shareTargetId: string
-) => Promise<FetchResult<DeleteShareMutation>> {
+	shareTargetIds: string[]
+) => Promise<FetchResult<DeleteSharesMutation>> {
 	const createSnackbar = useSnackbar();
 	const { removeNodesFromFolder } = useUpdateFolderContent();
 	const { removeNodesFromFilter } = useUpdateFilterContent();
@@ -55,29 +56,29 @@ export function useDeleteShareMutation(): (
 	const location = useLocation();
 	const { activeNodeId, removeActiveNode } = useActiveNode();
 
-	const [deleteShareMutation, { error }] = useMutation<
-		DeleteShareMutation,
-		DeleteShareMutationVariables
-	>(DeleteShareDocument);
+	const [deleteSharesMutation, { error }] = useMutation<
+		DeleteSharesMutation,
+		DeleteSharesMutationVariables
+	>(DeleteSharesDocument);
 
-	useErrorHandler(error, 'DELETE_SHARE', { type: 'error' });
+	useErrorHandler(error, 'DELETE_SHARES', { type: 'error' });
 
-	const deleteShare: (
+	const deleteShares: (
 		node: PickIdNodeType,
-		shareTargetId: string
-	) => Promise<FetchResult<DeleteShareMutation>> = useCallback(
-		(node: PickIdNodeType, shareTargetId: string) =>
-			deleteShareMutation({
+		shareTargetIds: string[]
+	) => Promise<FetchResult<DeleteSharesMutation>> = useCallback(
+		(node: PickIdNodeType, shareTargetIds: string[]) =>
+			deleteSharesMutation({
 				variables: {
 					node_id: node.id,
-					share_target_id: shareTargetId
+					share_target_ids: shareTargetIds
 				},
 				optimisticResponse: {
-					deleteShare: true
+					deleteShares: shareTargetIds
 				},
 				errorPolicy: 'all',
 				update(cache, { data }) {
-					if (data?.deleteShare) {
+					if (data?.deleteShares) {
 						cache.modify<NodeCachedObject>({
 							id: cache.identify(node),
 							fields: {
@@ -90,7 +91,7 @@ export function useDeleteShareMutation(): (
 												id: cache.identify(existingShareRef.share_target),
 												fragment: ShareTargetFragmentDoc
 											});
-										return !(sharedTarget && sharedTarget.id === shareTargetId);
+										return !(sharedTarget && data.deleteShares.includes(sharedTarget.id));
 									});
 									if (updatedShares.length === 0 && !isSearchView(location)) {
 										// remove node from shared by me when user remove all collaborators
@@ -105,7 +106,7 @@ export function useDeleteShareMutation(): (
 						});
 						recursiveShareEvict(cache, node);
 						// always remove node when user remove self share
-						if (shareTargetId === me) {
+						if (data.deleteShares.includes(me)) {
 							removeNodesFromFilter([node.id], () => true);
 
 							const parentFolder = cache.readFragment<ParentIdFragment>({
@@ -136,14 +137,15 @@ export function useDeleteShareMutation(): (
 						// close displayer when deleted share cause node to be removed from the list
 						if (
 							listNodes !== null &&
-							(shareTargetId === me || !some(listNodes, (listNode) => node.id === listNode?.id))
+							(shareTargetIds.includes(me) ||
+								!some(listNodes, (listNode) => node.id === listNode?.id))
 						) {
 							removeActiveNode();
 						}
 					}
 				}
 			}).then((result) => {
-				if (result.data?.deleteShare) {
+				if (result.data?.deleteShares) {
 					createSnackbar({
 						key: new Date().toLocaleString(),
 						severity: 'success',
@@ -157,7 +159,7 @@ export function useDeleteShareMutation(): (
 		[
 			activeNodeId,
 			createSnackbar,
-			deleteShareMutation,
+			deleteSharesMutation,
 			location,
 			me,
 			removeActiveNode,
@@ -167,5 +169,5 @@ export function useDeleteShareMutation(): (
 		]
 	);
 
-	return deleteShare;
+	return deleteShares;
 }

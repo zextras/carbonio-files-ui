@@ -35,7 +35,7 @@ import {
 	populateShares,
 	populateUser
 } from '../../mocks/mockUtils';
-import { buildBreadCrumbRegExp, setup, triggerLoadMore } from '../../tests/utils';
+import { buildBreadCrumbRegExp, hexToRgb, setup, triggerLoadMore } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
 import { Folder, NodeType, QueryGetPathArgs } from '../../types/graphql/types';
 import { canUpsertDescription } from '../../utils/ActionsFactory';
@@ -48,7 +48,7 @@ describe('Node Details', () => {
 		const node = populateFile();
 		node.parent = populateFolder();
 		node.last_editor = populateUser();
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -96,7 +96,7 @@ describe('Node Details', () => {
 		forEach(children, (child) => {
 			child.owner = node.owner;
 		});
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -142,7 +142,7 @@ describe('Node Details', () => {
 	test('Labels of empty info are hidden', () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -191,7 +191,7 @@ describe('Node Details', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		const { getByTextWithMarkup, queryByTextWithMarkup, findByTextWithMarkup, user } = setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -250,7 +250,7 @@ describe('Node Details', () => {
 		const collaborator = populateUser();
 		collaborator.full_name = '';
 		const share = populateShare(node, 'share-1', collaborator);
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -291,7 +291,7 @@ describe('Node Details', () => {
 		node.owner = { ...node.owner, full_name: '' };
 		node.last_editor = { ...populateUser(), full_name: '' };
 		node.creator = { ...node.creator, full_name: '' };
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -327,7 +327,7 @@ describe('Node Details', () => {
 	});
 
 	test('should show file preview for image when preview is live', async () => {
-		const getPreviewThumbnailSrcFn = jest.spyOn(previewUtils, 'getPreviewThumbnailSrc');
+		const getPreviewThumbnailSrcFn = vi.spyOn(previewUtils, 'getPreviewThumbnailSrc');
 		healthCache.reset();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
@@ -335,7 +335,7 @@ describe('Node Details', () => {
 			)
 		);
 		const node = populateFile();
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		node.type = NodeType.Image;
 		node.mime_type = 'image/png';
 		setup(
@@ -369,7 +369,7 @@ describe('Node Details', () => {
 	});
 
 	test('should not show file preview for image when preview is not live', async () => {
-		const getPreviewThumbnailSrcFn = jest.spyOn(previewUtils, 'getPreviewThumbnailSrc');
+		const getPreviewThumbnailSrcFn = vi.spyOn(previewUtils, 'getPreviewThumbnailSrc');
 		healthCache.reset();
 		server.use(
 			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
@@ -377,7 +377,7 @@ describe('Node Details', () => {
 			)
 		);
 		const node = populateFile();
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		node.type = NodeType.Image;
 		node.mime_type = 'image/png';
 		setup(
@@ -413,7 +413,7 @@ describe('Node Details', () => {
 
 	test('should show preview of gif image with gif format', async () => {
 		const node = populateFile();
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		node.type = NodeType.Image;
 		node.mime_type = 'image/gif';
 		setup(
@@ -449,7 +449,7 @@ describe('Node Details', () => {
 
 	it('should show file preview for pdf', async () => {
 		const node = populateFile();
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		node.type = NodeType.Text;
 		node.mime_type = 'application/pdf';
 		setup(
@@ -486,7 +486,7 @@ describe('Node Details', () => {
 
 	test('should not show file thumbnail for document', async () => {
 		const node = populateFile();
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		node.type = NodeType.Application;
 		node.mime_type = 'application/vnd.oasis.opendocument.text';
 		setup(
@@ -515,14 +515,14 @@ describe('Node Details', () => {
 		);
 		expect(screen.getByText(node.name)).toBeVisible();
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
 
 	test('Do not show file preview for node with unsupported type/mime type', async () => {
 		const node = populateFile();
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		node.type = NodeType.Text;
 		node.mime_type = 'text/plain';
 		setup(
@@ -551,7 +551,7 @@ describe('Node Details', () => {
 		);
 		expect(screen.getByText(node.name)).toBeVisible();
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
 	});
@@ -566,7 +566,7 @@ describe('Node Details', () => {
 		forEach(nodes, (child) => {
 			child.owner = node.owner;
 		});
-		const loadMore = jest.fn();
+		const loadMore = vi.fn();
 		setup(
 			<NodeDetails
 				typeName={node.__typename}
@@ -623,7 +623,7 @@ describe('Node Details', () => {
 		'child of a folder with type %s and mimetype %s show icon %s with color %s inside content',
 		(type, mimeType, icon, color) => {
 			const node = populateFolder();
-			const loadMore = jest.fn();
+			const loadMore = vi.fn();
 			const child = populateFile();
 			child.type = type;
 			child.mime_type = mimeType;
@@ -651,7 +651,7 @@ describe('Node Details', () => {
 				/>
 			);
 			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
-			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
+			expect(getComputedStyle(screen.getByTestId(`icon: ${icon}`)).color).toBe(hexToRgb(color));
 		}
 	);
 });

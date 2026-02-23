@@ -88,6 +88,7 @@ export const Notifications = (): React.JSX.Element => {
 							key={notification?.id}
 							notification={notification}
 							isUnread={notification.created_at > Math.max(lastSeen, lastSeenVar)}
+							closePopover={() => setOpen(false)}
 						/>
 					);
 				}

@@ -17,9 +17,7 @@ import { setup, selectNodes, screen, within } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockDeletePermanently, mockFindNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter View', () => {
 	describe('Delete Permanently', () => {
@@ -78,7 +76,7 @@ describe('Filter View', () => {
 				const confirmButton = await screen.findByRole('button', { name: /delete permanently/i });
 				act(() => {
 					// run timers of modal
-					jest.advanceTimersToNextTimer();
+					vi.advanceTimersToNextTimer();
 				});
 				await user.click(confirmButton);
 				await screen.findByText(/^success$/i);

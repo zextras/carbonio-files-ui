@@ -31,9 +31,7 @@ import {
 } from '../utils/resolverMocks';
 import { addNodeInSortedList } from '../utils/utils';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter View', () => {
 	describe('Rename', () => {
@@ -176,7 +174,7 @@ describe('Filter View', () => {
 				// close snackbar
 				act(() => {
 					// run timers of snackbar
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				// when find only 1 occurrence means that snackbar is hidden
 				expect(screen.getByText(/Error! Name already assigned/)).toBeVisible();
@@ -280,7 +278,7 @@ describe('Filter View', () => {
 				const flagAction1 = await screen.findByText(ACTION_REGEXP.flag);
 				act(() => {
 					// run timers of dropdown
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				expect(flagAction1).toBeVisible();
 				// right click on second node
@@ -289,7 +287,7 @@ describe('Filter View', () => {
 				const unflagAction2 = await screen.findByText(ACTION_REGEXP.unflag);
 				act(() => {
 					// run timers of dropdown
-					jest.runOnlyPendingTimers();
+					vi.runOnlyPendingTimers();
 				});
 				expect(unflagAction2).toBeVisible();
 				// check that the flag action becomes invisible (contextual menu of first node is closed)

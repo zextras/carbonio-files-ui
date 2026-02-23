@@ -221,7 +221,7 @@ describe('NodeDetailsDescription component', () => {
 
 		const mocks = {
 			Mutation: {
-				updateNode: jest.fn(
+				updateNode: vi.fn(
 					mockUpdateNode({
 						...node,
 						description: newDescription

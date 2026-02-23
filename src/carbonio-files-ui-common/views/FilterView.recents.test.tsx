@@ -26,14 +26,12 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import { mockFindNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter View', () => {
 	describe('Recents filter', () => {
 		test('Recents filter is sort by updated_at_desc and excludes trashed nodes', async () => {
-			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			const mockedRequestHandler = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 			);
@@ -54,7 +52,7 @@ describe('Filter View', () => {
 				shares_limit: SHARES_LOAD_LIMIT
 			};
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({

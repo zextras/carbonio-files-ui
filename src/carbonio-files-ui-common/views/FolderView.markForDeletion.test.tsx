@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { forEach, map } from 'lodash';
 
 import { DisplayerProps } from './components/Displayer';
@@ -19,7 +19,7 @@ import { QueryResolvers, Resolvers } from '../types/graphql/resolvers-types';
 import { File, Folder, NodeSort } from '../types/graphql/types';
 import { mockGetNode, mockGetPath, mockTrashNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="map">
 			{props.translationKey}:{props.icons}
@@ -27,10 +27,8 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/VirtualizedNodeListItem');
+vi.mock('./components/NodeHoverBar');
 
 describe('Mark for deletion - trash', () => {
 	describe('Selection mode', () => {
@@ -65,6 +63,9 @@ describe('Mark for deletion - trash', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(filename1);
 			await screen.findByText(folderName1);
 
@@ -145,6 +146,9 @@ describe('Mark for deletion - trash', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0]!.name);
 			expect(screen.getByText(firstPage[0]!.name)).toBeVisible();
 			expect(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1]!.name)).toBeVisible();
@@ -158,7 +162,7 @@ describe('Mark for deletion - trash', () => {
 			expect(trashAction).toBeVisible();
 			act(() => {
 				// run lazy query
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.click(trashAction);
 			await screen.findByText(/Item moved to trash/i);
@@ -201,8 +205,13 @@ describe('Mark for deletion - trash', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 
 			expect(screen.getAllByTestId(SELECTORS.nodeAvatar)).toHaveLength(5);
 
@@ -252,8 +261,13 @@ describe('Mark for deletion - trash', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			// wait for the load to be completed
-			await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+			await waitFor(() =>
+				expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+			);
 
 			expect(screen.queryAllByTestId(SELECTORS.nodeAvatar).length).toEqual(5);
 
@@ -310,6 +324,9 @@ describe('Mark for deletion - trash', () => {
 				mocks
 			});
 
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByText(firstPage[0].name);
 			expect(screen.getByText(firstPage[0].name)).toBeVisible();
 			expect(screen.getByText(firstPage[NODES_LOAD_LIMIT - 1].name)).toBeVisible();

@@ -26,12 +26,10 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import { mockFindNodes } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 type FindNodesHandler = typeof handleFindNodesRequest;
-const mockedRequestHandler = jest.fn<ReturnType<FindNodesHandler>, Parameters<FindNodesHandler>>();
+const mockedRequestHandler = vi.fn<FindNodesHandler>();
 
 beforeEach(() => {
 	mockedRequestHandler.mockImplementation(handleFindNodesRequest);
@@ -84,7 +82,7 @@ describe('Filter view', () => {
 				shares_limit: SHARES_LOAD_LIMIT
 			};
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({

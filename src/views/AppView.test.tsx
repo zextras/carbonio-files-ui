@@ -31,9 +31,7 @@ import {
 import { UPDATE_VIEW_EVENT } from '../constants';
 import server from '../mocks/server';
 
-jest.mock<typeof import('../carbonio-files-ui-common/views/components/VirtualizedNodeListItem')>(
-	'../carbonio-files-ui-common/views/components/VirtualizedNodeListItem'
-);
+vi.mock('../carbonio-files-ui-common/views/components/VirtualizedNodeListItem');
 
 describe('AppView', () => {
 	describe('on update view', () => {
@@ -100,14 +98,17 @@ describe('AppView', () => {
 			setup(<AppView />, {
 				initialRouterEntries: [`/?folder=${folder.id}`]
 			});
-			await screen.findByTestId(SELECTORS.listHeader);
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByTestId(SELECTORS.displayer);
 			await screen.findByText(node1.name);
 			await screen.findByText(folder.name);
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(await screen.findByText(node2.name)).toBeVisible();
 		});
@@ -173,6 +174,10 @@ describe('AppView', () => {
 			);
 
 			setup(<AppView />, { initialRouterEntries: [`/?folder=${folder.id}`] });
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await screen.findByTestId(SELECTORS.listHeader);
 			await screen.findByTestId(SELECTORS.displayer);
 			await screen.findByText(node1.name);
@@ -180,12 +185,13 @@ describe('AppView', () => {
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await waitFor(() => expect(screen.queryByText(node2.name)).not.toBeInTheDocument());
 		});
 
 		it('should show updated data for child', async () => {
+			vi.clearAllTimers();
 			const folder = populateFolder();
 			const node1 = populateNode();
 			const node2 = populateNode();
@@ -249,13 +255,17 @@ describe('AppView', () => {
 				)
 			);
 			setup(<AppView />, { initialRouterEntries: [`/?folder=${folder.id}`] });
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
 			await within(screen.getByTestId(SELECTORS.list(folder.id))).findByText(node1.name);
 			await within(screen.getByTestId(SELECTORS.listHeader)).findByText(folder.name);
 			await screen.findByText(DISPLAYER_EMPTY_MESSAGE);
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(await screen.findByText(node1Updated.name)).toBeVisible();
 			expect(screen.queryByText(node1.name)).not.toBeInTheDocument();
@@ -345,7 +355,7 @@ describe('AppView', () => {
 			});
 			// run all queries
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(
 				within(screen.getByTestId(SELECTORS.displayerHeader)).getByText(node1.name)
@@ -353,7 +363,7 @@ describe('AppView', () => {
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(
 				await within(screen.getByTestId(SELECTORS.displayerHeader)).findByText(node1Updated.name)
@@ -422,19 +432,20 @@ describe('AppView', () => {
 			});
 			// run all queries
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			fireEvent(window, new CustomEvent(UPDATE_VIEW_EVENT));
 			await act(async () => {
 				// run network queries
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			act(() => {
-				jest.advanceTimersByTime(TIMERS.DISPLAYER_SHOW_MESSAGE);
+				vi.advanceTimersByTime(TIMERS.DISPLAYER_SHOW_MESSAGE);
 			});
 			expect(screen.queryByText(DISPLAYER_EMPTY_MESSAGE)).not.toBeInTheDocument();
-			act(() => {
+			await act(async () => {
 				emitter.emit(EMITTER_CODES.never);
+				await vi.advanceTimersToNextTimerAsync();
 			});
 		});
 	});

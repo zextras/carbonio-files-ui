@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { act, fireEvent, waitFor } from '@testing-library/react';
 
 import { HeaderBreadcrumbs } from './HeaderBreadcrumbs';
 import { UseNavigationHook } from '../../../hooks/useNavigation';
@@ -32,15 +32,15 @@ import { mockGetPath, mockMoveNodes } from '../../utils/resolverMocks';
 
 let mockedUseNavigationHook: ReturnType<UseNavigationHook>;
 
-jest.mock<typeof import('../../../hooks/useNavigation')>('../../../hooks/useNavigation', () => ({
+vi.mock('../../../hooks/useNavigation', () => ({
 	useNavigation: (): ReturnType<UseNavigationHook> => mockedUseNavigationHook
 }));
 
 beforeEach(() => {
 	mockedUseNavigationHook = {
-		navigateTo: jest.fn(),
-		navigateToFolder: jest.fn(),
-		navigateBack: jest.fn
+		navigateTo: vi.fn(),
+		navigateToFolder: vi.fn(),
+		navigateBack: vi.fn
 	};
 });
 
@@ -159,7 +159,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: jest.fn(
+					moveNodes: vi.fn(
 						mockMoveNodes(
 							movingNodes.map((node) => ({ ...node, parent: currentFolder }))
 						) as () => (File | Folder)[]
@@ -194,7 +194,7 @@ describe('Header Breadcrumbs', () => {
 			});
 			fireEvent.drop(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 
@@ -292,7 +292,7 @@ describe('Header Breadcrumbs', () => {
 			fireEvent.dragEnter(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			// wait for navigation to start eventually
-			await jest.advanceTimersByTimeAsync(TIMERS.DRAG_NAVIGATION_TRIGGER);
+			await vi.advanceTimersByTimeAsync(TIMERS.DRAG_NAVIGATION_TRIGGER);
 			fireEvent.dragLeave(destinationCrumbItem, { dataTransfer: dataTransfer() });
 			expect(mockedUseNavigationHook.navigateToFolder).not.toHaveBeenCalled();
 		});
@@ -325,7 +325,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: jest.fn(
+					moveNodes: vi.fn(
 						mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] }))) as () => (
 							| File
 							| Folder
@@ -366,7 +366,7 @@ describe('Header Breadcrumbs', () => {
 			});
 			fireEvent.dragEnd(mockDraggedItem, { dataTransfer: dataTransfer() });
 			// advance timers to allow mutation to eventually be executed
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 
@@ -454,8 +454,8 @@ describe('Header Breadcrumbs', () => {
 			// simulate a drag of a node of the list
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
-			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
-			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
+			vi.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
+			vi.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
 			act(() => {
 				window.resizeTo(500, 300);
 			});
@@ -470,18 +470,20 @@ describe('Header Breadcrumbs', () => {
 			expect(await screen.findByText(path[0].name)).toBeVisible();
 			fireEvent.dragLeave(collapserItem, { dataTransfer: dataTransfer() });
 			// wait less than the timeout to be sure that when mouse is over the dropdown of the breadcrumbs, it will not be closed by another event
-			await jest.advanceTimersByTimeAsync(TIMERS.DRAG_DELAY_CLOSE_DROPDOWN - 1);
+			await vi.advanceTimersByTimeAsync(TIMERS.DRAG_DELAY_CLOSE_DROPDOWN - 1);
 			fireEvent.dragEnter(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			fireEvent.dragOver(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			// now wait the default timeout to be sure the dropdown remains opened
-			await jest.advanceTimersByTimeAsync(TIMERS.DRAG_DELAY_CLOSE_DROPDOWN);
+			await vi.advanceTimersByTimeAsync(TIMERS.DRAG_DELAY_CLOSE_DROPDOWN);
 			expect(screen.getByText(path[0].name)).toBeVisible();
 			fireEvent.dragLeave(screen.getByText(path[0].name), { dataTransfer: dataTransfer() });
 			fireEvent.dragEnter(screen.getByText('draggable element mock'), {
 				dataTransfer: dataTransfer()
 			});
 			// when mouse leaves the dropdown, the dropdown is closed
-			await waitForElementToBeRemoved(screen.queryByText(path[0].name));
+			await waitFor(() => {
+				expect(screen.queryByText(path[0].name)).not.toBeInTheDocument();
+			});
 		});
 
 		test('on a hidden crumb shows enabled dropzone and trigger move action', async () => {
@@ -524,8 +526,8 @@ describe('Header Breadcrumbs', () => {
 			// simulate a drag of a node of the list
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
-			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
-			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
+			vi.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
+			vi.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
 			act(() => {
 				window.resizeTo(500, 300);
 			});
@@ -583,7 +585,7 @@ describe('Header Breadcrumbs', () => {
 					getPath: mockGetPath(path)
 				},
 				Mutation: {
-					moveNodes: jest.fn(
+					moveNodes: vi.fn(
 						mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] }))) as () => (
 							| File
 							| Folder
@@ -604,8 +606,8 @@ describe('Header Breadcrumbs', () => {
 			await user.click(screen.getByTestId(ICON_REGEXP.breadcrumbCta));
 			await screen.findByText(/hide previous folders/i);
 			const breadcrumbsComponent = screen.getByTestId(SELECTORS.customBreadcrumbs);
-			jest.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
-			jest.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
+			vi.spyOn(breadcrumbsComponent, 'offsetWidth', 'get').mockReturnValue(450);
+			vi.spyOn(breadcrumbsComponent, 'scrollWidth', 'get').mockReturnValue(500);
 			act(() => {
 				window.resizeTo(500, 300);
 			});
@@ -633,9 +635,11 @@ describe('Header Breadcrumbs', () => {
 				'background-color': COLORS.dropzone.disabled
 			});
 			// dropdown is closed
-			await waitForElementToBeRemoved(destinationItem);
+			await waitFor(() => {
+				expect(destinationItem).not.toBeInTheDocument();
+			});
 			// advance timers to allow mutation to eventually be executed
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 			expect(mocks.Mutation.moveNodes).not.toHaveBeenCalled();
 		});
 	});

@@ -6,6 +6,8 @@
 
 import React from 'react';
 
+import { act } from '@testing-library/react';
+
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
 import { ICON_REGEXP, SELECTORS } from '../constants/test';
@@ -14,7 +16,7 @@ import { screen, setup } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
@@ -22,11 +24,9 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/NodeHoverBar');
 
 describe('View Mode', () => {
 	it('should switch between list view and grid view', async () => {
@@ -46,6 +46,9 @@ describe('View Mode', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		await screen.findByText(currentFolder.children.nodes[0]!.name);
 		const gridModeIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.gridViewMode });
 		expect(gridModeIcon).toBeVisible();

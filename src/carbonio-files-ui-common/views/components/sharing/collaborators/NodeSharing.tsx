@@ -4,29 +4,40 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
+import { FetchResult } from '@apollo/client';
 import styled from '@emotion/styled';
 import {
 	Avatar,
+	Button,
+	Checkbox,
 	Container,
 	Divider,
 	Icon,
 	Padding,
 	Row,
-	Text
+	Text,
+	Tooltip
 } from '@zextras/carbonio-design-system';
 import { reduce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { AddSharing } from './AddSharing';
+import { EditPermissionBulkButton } from './EditPermissionBulkButton';
 import { ShareListItem } from './ShareListItem';
 import { useUserInfo } from '../../../../../hooks/useUserInfo';
 import { SHARE_TEXT_SIZE } from '../../../../constants';
-import { useDeleteShareMutation } from '../../../../hooks/graphql/mutations/useDeleteShareMutation';
+import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/useDeleteSharesMutation';
 import { useGetSharesQuery } from '../../../../hooks/graphql/queries/useGetSharesQuery';
+import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
 import { Node } from '../../../../types/common';
-import { GetSharesQuery, Maybe, Share } from '../../../../types/graphql/types';
+import {
+	DeleteSharesMutation,
+	GetSharesQuery,
+	Maybe,
+	Share
+} from '../../../../types/graphql/types';
 import { DeepPick, MakePartial, MakeRequiredNonNull } from '../../../../types/utils';
 import { cssCalcBuilder, getChipLabel, isFile } from '../../../../utils/utils';
 import { CollaborationLinks } from '../collaborationLinks/CollaborationLinks';
@@ -40,13 +51,6 @@ const MainContainer = styled(Container)`
 const ScrollContainer = styled(Container)`
 	overflow-y: auto;
 	overflow-x: hidden;
-
-	> div {
-		margin: ${({ theme }): string => {
-			const $marginSize = cssCalcBuilder(theme.sizes.padding.extrasmall, ['/', 2]);
-			return `${$marginSize} ${$marginSize} ${$marginSize} 0`;
-		}};
-	}
 `;
 
 interface NodeSharingProps {
@@ -66,10 +70,75 @@ function shareTargetExists<T extends MakePartial<Pick<Share, 'share_target'>, 's
 export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { me } = useUserInfo();
-
 	const { data } = useGetSharesQuery(node.id);
+	const deleteShares = useDeleteSharesMutation();
 
-	const deleteShare = useDeleteShareMutation();
+	const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+	const allCollaboratorIds = useMemo(() => {
+		const ids: string[] = [];
+		data?.getNode?.shares?.forEach((share) => {
+			if (share && share.share_target && share.share_target.__typename === 'User') {
+				ids.push(share.share_target.id);
+			}
+		});
+		return ids;
+	}, [data?.getNode?.shares]);
+
+	const handleSelectionChange = useCallback((id: string, selected: boolean) => {
+		setSelectedIds((prev) => {
+			if (selected) {
+				return prev.includes(id) ? prev : [...prev, id];
+			}
+			return prev.filter((existingId) => existingId !== id);
+		});
+	}, []);
+
+	const handleSelectAll = useCallback(() => {
+		if (selectedIds.length === allCollaboratorIds.length) {
+			setSelectedIds([]);
+		} else {
+			setSelectedIds([...allCollaboratorIds]);
+		}
+	}, [allCollaboratorIds, selectedIds.length]);
+
+	const selectionMode = node.permissions.can_share;
+
+	const isAllSelected =
+		allCollaboratorIds.length > 0 && selectedIds.length === allCollaboratorIds.length;
+
+	const deleteShareBulkAction = useCallback(
+		(): Promise<FetchResult<DeleteSharesMutation>> => deleteShares(node, selectedIds),
+		[deleteShares, node, selectedIds]
+	);
+
+	const deleteShareActionCallback = useCallback((): void => {
+		setSelectedIds([]);
+	}, []);
+
+	const bulkShareTarget = useMemo(() => {
+		if (selectedIds.length !== 1) {
+			return null;
+		}
+		const selectedShare = data?.getNode?.shares?.find(
+			(share) => share && share.share_target && share.share_target.id === selectedIds[0]
+		);
+		return selectedShare?.share_target ?? null;
+	}, [data?.getNode?.shares, selectedIds]);
+
+	const bulkIsYourShare = useMemo(
+		() => selectedIds.length === 1 && selectedIds[0] === me,
+		[me, selectedIds]
+	);
+
+	const { openDeleteSharesModal } = useDeleteSharesModal(
+		deleteShareBulkAction,
+		bulkShareTarget,
+		bulkIsYourShare,
+		deleteShareActionCallback,
+		isAllSelected,
+		selectedIds.length
+	);
 
 	const collaborators = useMemo(
 		() =>
@@ -83,7 +152,11 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 								share={share}
 								permissions={node.permissions}
 								yourself={share.share_target.id === me}
-								deleteShare={deleteShare}
+								deleteShares={deleteShares}
+								isSelected={selectedIds.includes(share.share_target.id)}
+								isSelecting={selectedIds.length > 0}
+								onSelectionChange={handleSelectionChange}
+								selectionMode={selectionMode}
 							/>
 						);
 						if (share.share_target.id === me) {
@@ -96,7 +169,15 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 				},
 				[]
 			),
-		[data?.getNode?.shares, deleteShare, me, node.permissions]
+		[
+			data?.getNode?.shares,
+			deleteShares,
+			handleSelectionChange,
+			me,
+			node.permissions,
+			selectedIds,
+			selectionMode
+		]
 	);
 
 	const ownerListItem = useMemo(() => {
@@ -111,6 +192,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 					mainAlignment={'flex-start'}
 					crossAlignment={'flex-start'}
 					orientation={'horizontal'}
+					height={'fit'}
 					padding={'0.5rem'}
 					gap={'0.5rem'}
 				>
@@ -195,20 +277,76 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 					</Padding>
 				)}
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
-					<Row gap={'0.5rem'}>
-						<Text weight={'bold'}>{t('displayer.details.collaborators', 'Collaborators')}</Text>
-						{collaborators.length > 0 && <Text>({collaborators.length})</Text>}
+					<Row
+						mainAlignment={'space-between'}
+						crossAlignment={'center'}
+						width={'fill'}
+						gap={'0.5rem'}
+						data-testid="node-sharing-collaborators-header"
+					>
+						<Row gap={'0.5rem'} mainAlignment={'flex-start'} crossAlignment={'center'}>
+							{node.permissions.can_share && collaborators.length > 0 && (
+								<Checkbox
+									value={isAllSelected}
+									onClick={handleSelectAll}
+									iconColor={isAllSelected ? 'primary' : undefined}
+								/>
+							)}
+							<Text weight={'bold'}>
+								{t('displayer.share.allCollaborators', 'All Collaborators')}
+							</Text>
+							{collaborators.length > 0 && <Text>({collaborators.length})</Text>}
+						</Row>
+						{selectedIds.length > 0 && (
+							<Row gap={'0.25rem'} mainAlignment={'flex-end'} crossAlignment={'center'}>
+								<Row
+									orientation={'horizontal'}
+									mainAlignment={'flex-start'}
+									crossAlignment={'center'}
+									gap={'0.5rem'}
+								>
+									<Text color={'primary'}>
+										{t('displayer.share.selected', '{{count}} selected', {
+											count: selectedIds.length
+										})}
+									</Text>
+									<EditPermissionBulkButton
+										node={node}
+										data={data}
+										me={me}
+										isAllSelected={isAllSelected}
+										allCollaboratorIds={allCollaboratorIds}
+										selectedIds={selectedIds}
+										setSelectedIds={setSelectedIds}
+									/>
+								</Row>
+								<Tooltip
+									label={t(
+										'displayer.share.chip.tooltip.remove.bulk',
+										'Remove collaboration for all'
+									)}
+								>
+									<Button
+										icon={'Trash2Outline'}
+										color={'error'}
+										type={'outlined'}
+										onClick={openDeleteSharesModal}
+									/>
+								</Tooltip>
+							</Row>
+						)}
 					</Row>
-					<ScrollContainer
+					<Container
 						mainAlignment={'flex-start'}
 						crossAlignment={'flex-start'}
-						height={'fit'}
 						maxHeight={'14rem'}
 						data-testid={'sharing-collaborators-section'}
 					>
+						<ScrollContainer mainAlignment={'flex-start'} crossAlignment={'flex-start'}>
+							{collaborators}
+						</ScrollContainer>
 						{ownerListItem}
-						{collaborators}
-					</ScrollContainer>
+					</Container>
 				</Container>
 				{node.permissions.can_share && <AddSharing node={node} />}
 			</Container>

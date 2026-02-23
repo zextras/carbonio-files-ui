@@ -17,7 +17,7 @@ import { Resolvers } from '../../types/graphql/resolvers-types';
 import { File, Folder, NodeSort } from '../../types/graphql/types';
 import { mockErrorResolver } from '../../utils/resolverMocks';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
 describe('Rename', () => {
 	describe('Selection mode', () => {

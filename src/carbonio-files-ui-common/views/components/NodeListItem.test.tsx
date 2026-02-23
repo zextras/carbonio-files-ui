@@ -33,7 +33,7 @@ import {
 	populateShares,
 	populateUser
 } from '../../mocks/mockUtils';
-import { setup, screen, within } from '../../tests/utils';
+import { setup, screen, within, getElementStyles, hexToRgb } from '../../tests/utils';
 import { NodeType, User } from '../../types/graphql/types';
 import {
 	MIME_TYPE_PREVIEW_SUPPORT,
@@ -101,11 +101,11 @@ describe('Node List Item', () => {
 			])(
 				`should %s when canUsePreview is %s, canUseDocs is %s, canWriteFile is %s, mime_type is %s `,
 				async (action, canUsePreview, canUseDocs, canWriteFile, mimeType, type) => {
-					const openWithDocsFn = jest.fn();
-					jest.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
-					const openPreview = jest.fn();
+					const openWithDocsFn = vi.fn();
+					vi.spyOn(useOpenWithDocs, 'useOpenWithDocs').mockReturnValue(openWithDocsFn);
+					const openPreview = vi.fn();
 
-					jest.spyOn(usePreview, 'usePreview').mockReturnValue({
+					vi.spyOn(usePreview, 'usePreview').mockReturnValue({
 						openPreview,
 						initPreview: () => undefined,
 						emptyPreview: () => undefined,
@@ -114,7 +114,7 @@ describe('Node List Item', () => {
 						previews: []
 					});
 
-					jest.spyOn(useHealthInfo, 'useHealthInfo').mockReturnValue({
+					vi.spyOn(useHealthInfo, 'useHealthInfo').mockReturnValue({
 						canUsePreview,
 						canUseDocs
 					});
@@ -126,7 +126,7 @@ describe('Node List Item', () => {
 
 					const { user } = setup(
 						<SelectionProvider items={[node]}>
-							<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+							<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 								<NodeListItem node={node} />
 							</ListContext.Provider>
 						</SelectionProvider>
@@ -155,7 +155,7 @@ describe('Node List Item', () => {
 			node.last_editor = mockedUserLogged;
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -172,7 +172,7 @@ describe('Node List Item', () => {
 			const node = populateFolder();
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -186,7 +186,7 @@ describe('Node List Item', () => {
 			node.shares = populateShares(node, 1);
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -201,7 +201,7 @@ describe('Node List Item', () => {
 			node.owner = populateUser();
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -216,7 +216,7 @@ describe('Node List Item', () => {
 			node.shares = [];
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -230,7 +230,7 @@ describe('Node List Item', () => {
 			node.flagged = true;
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -244,7 +244,7 @@ describe('Node List Item', () => {
 			node.flagged = false;
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -256,7 +256,7 @@ describe('Node List Item', () => {
 			const node = populateFile();
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -271,7 +271,7 @@ describe('Node List Item', () => {
 			node.last_editor = node.owner;
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -283,7 +283,7 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -294,18 +294,18 @@ describe('Node List Item', () => {
 		test('double click on a folder activates navigation', async () => {
 			const mockedHistory: Array<string> = [];
 			const mockedUseNavigationHook = {
-				navigateToFolder: jest.fn((path) => {
+				navigateToFolder: vi.fn((path) => {
 					mockedHistory.push(path);
 				}),
-				navigateTo: jest.fn(),
-				navigateBack: jest.fn()
+				navigateTo: vi.fn(),
+				navigateBack: vi.fn()
 			};
-			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
+			vi.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 
 			const node = populateFolder(0);
 			const { user } = setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -318,15 +318,15 @@ describe('Node List Item', () => {
 
 		test('double click on a folder with selection mode active does nothing', async () => {
 			const mockedUseNavigationHook = {
-				navigateToFolder: jest.fn(),
-				navigateTo: jest.fn(),
-				navigateBack: jest.fn()
+				navigateToFolder: vi.fn(),
+				navigateTo: vi.fn(),
+				navigateBack: vi.fn()
 			};
-			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
+			vi.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 			const node = populateFolder(0);
 			const { user } = setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -337,16 +337,16 @@ describe('Node List Item', () => {
 
 		test('double click on a folder marked for deletion does nothing', async () => {
 			const mockedUseNavigationHook = {
-				navigateToFolder: jest.fn(),
-				navigateTo: jest.fn(),
-				navigateBack: jest.fn()
+				navigateToFolder: vi.fn(),
+				navigateTo: vi.fn(),
+				navigateBack: vi.fn()
 			};
-			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
+			vi.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 			const node = populateFolder(0);
 			node.rootId = ROOTS.TRASH;
 			const { user } = setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -357,15 +357,15 @@ describe('Node List Item', () => {
 
 		test('double click on a folder disabled does nothing', async () => {
 			const mockedUseNavigationHook = {
-				navigateToFolder: jest.fn(),
-				navigateTo: jest.fn(),
-				navigateBack: jest.fn()
+				navigateToFolder: vi.fn(),
+				navigateTo: vi.fn(),
+				navigateBack: vi.fn()
 			};
-			jest.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
+			vi.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 			const node = populateFolder(0);
 			const { user } = setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -379,7 +379,7 @@ describe('Node List Item', () => {
 			node.rootId = ROOTS.TRASH;
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>,
@@ -396,7 +396,7 @@ describe('Node List Item', () => {
 			node.rootId = ROOTS.TRASH;
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -409,7 +409,7 @@ describe('Node List Item', () => {
 			const node = populateNode();
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>,
@@ -443,7 +443,7 @@ describe('Node List Item', () => {
 				node.mime_type = mimeType ?? '';
 				setup(
 					<SelectionProvider items={[node]}>
-						<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+						<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 							<NodeListItem node={node} />
 						</ListContext.Provider>
 					</SelectionProvider>
@@ -452,8 +452,10 @@ describe('Node List Item', () => {
 					within(screen.getByTestId(SELECTORS.nodeAvatar)).getByTestId(`icon: ${icon}`)
 				).toBeVisible();
 				expect(
-					within(screen.getByTestId(SELECTORS.nodeAvatar)).getByTestId(`icon: ${icon}`)
-				).toHaveStyleRule('color', color);
+					getElementStyles(
+						within(screen.getByTestId(SELECTORS.nodeAvatar)).getByTestId(`icon: ${icon}`)
+					).color
+				).toBe(hexToRgb(color));
 			}
 		);
 
@@ -463,7 +465,7 @@ describe('Node List Item', () => {
 			node.mime_type = 'image/gif';
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
@@ -483,13 +485,13 @@ describe('Node List Item', () => {
 			node.type = NodeType.Root;
 			setup(
 				<SelectionProvider items={[node]}>
-					<ListContext.Provider value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode }}>
+					<ListContext.Provider value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode }}>
 						<NodeListItem node={node} />
 					</ListContext.Provider>
 				</SelectionProvider>
 			);
 			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
-			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
+			expect(getElementStyles(screen.getByTestId(`icon: ${icon}`)).color).toBe(hexToRgb(color));
 		});
 	});
 	test('unflag action on hover is visible if node is flagged', () => {
@@ -499,7 +501,7 @@ describe('Node List Item', () => {
 		setup(
 			<SelectionProvider items={[node]}>
 				<ListContext.Provider
-					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
+					value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
 				>
 					<NodeListItem node={node} />
 				</ListContext.Provider>
@@ -515,7 +517,7 @@ describe('Node List Item', () => {
 		setup(
 			<SelectionProvider items={[node]}>
 				<ListContext.Provider
-					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
+					value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode: VIEW_MODE.list }}
 				>
 					<NodeListItem node={node} />
 				</ListContext.Provider>
@@ -530,7 +532,7 @@ describe('Node List Item', () => {
 		setup(
 			<SelectionProvider items={[folder]}>
 				<ListContext.Provider
-					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+					value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 				>
 					<NodeListItem node={folder} />
 				</ListContext.Provider>
@@ -547,7 +549,7 @@ describe('Node List Item', () => {
 			setup(
 				<SelectionProvider items={[file]}>
 					<ListContext.Provider
-						value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+						value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 					>
 						<NodeListItem node={file} />
 					</ListContext.Provider>
@@ -565,7 +567,7 @@ describe('Node List Item', () => {
 			setup(
 				<SelectionProvider items={[file]}>
 					<ListContext.Provider
-						value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+						value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 					>
 						<NodeListItem node={file} />
 					</ListContext.Provider>
@@ -595,7 +597,7 @@ describe('Node List Item', () => {
 			setup(
 				<SelectionProvider items={[file]}>
 					<ListContext.Provider
-						value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+						value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 					>
 						<NodeListItem node={file} />
 					</ListContext.Provider>
@@ -613,7 +615,7 @@ describe('Node List Item', () => {
 		setup(
 			<SelectionProvider items={[file]}>
 				<ListContext.Provider
-					value={{ setIsEmpty: jest.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
+					value={{ setIsEmpty: vi.fn(), isEmpty: false, viewMode: VIEW_MODE.grid }}
 				>
 					<NodeListItem node={file} />
 				</ListContext.Provider>

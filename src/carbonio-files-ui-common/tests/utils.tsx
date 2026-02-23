@@ -8,7 +8,6 @@ import React, { ReactElement, useMemo } from 'react';
 
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import { SchemaLink } from '@apollo/client/link/schema';
-import { matchers } from '@emotion/jest';
 import { addMocksToSchema } from '@graphql-tools/mock';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
@@ -51,8 +50,6 @@ import { asyncForEach, isFile, isFolder } from '../utils/utils';
 export type UserEvent = ReturnType<(typeof userEvent)['setup']> & {
 	readonly rightClick: (target: Element) => Promise<void>;
 };
-
-expect.extend(matchers);
 
 export function within(
 	element: Parameters<typeof rtlWithin<typeof queriesExtended>>[0]
@@ -203,7 +200,7 @@ export const setup = (
 	ui: ReactElement,
 	options?: SetupOptions
 ): { user: UserEvent } & ReturnType<typeof customRender> => ({
-	user: setupUserEvent({ advanceTimers: jest.advanceTimersByTimeAsync, ...options?.setupOptions }),
+	user: setupUserEvent({ advanceTimers: vi.advanceTimersByTimeAsync, ...options?.setupOptions }),
 	...customRender(ui, {
 		initialRouterEntries: options?.initialRouterEntries,
 		mocks: options?.mocks,
@@ -236,7 +233,7 @@ export function triggerLoadMore(
 	}: Partial<IntersectionObserverEntry> = {},
 	callsIndex: number = 0
 ): void {
-	const { calls, instances } = jest.mocked(window.IntersectionObserver).mock;
+	const { calls, instances } = vi.mocked(window.IntersectionObserver).mock;
 	const [onChange] = calls[callsIndex ?? calls.length - 1];
 	// trigger the intersection on the observed element
 	act(() => {
@@ -294,7 +291,7 @@ export function triggerListLoadMore(callsIndex?: number, isIntersecting = true):
 }
 
 export function makeListItemsVisible(): void {
-	const { calls, instances } = jest.mocked(window.IntersectionObserver).mock;
+	const { calls, instances } = vi.mocked(window.IntersectionObserver).mock;
 	calls.forEach((call, index) => {
 		const [onChange] = call;
 		// trigger the intersection on the observed element
@@ -365,7 +362,7 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 	const inputField = await screen.findByRole('textbox');
 	act(() => {
 		// run timers of modal
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 	});
 	await user.clear(inputField);
 	await user.type(inputField, newName);
@@ -388,7 +385,7 @@ export async function moveNode(destinationFolder: Folder, user: UserEvent): Prom
 	const modalList = await screen.findByTestId(SELECTORS.modalList);
 	act(() => {
 		// run timers of modal
-		jest.runOnlyPendingTimers();
+		vi.runOnlyPendingTimers();
 	});
 	const destinationFolderItem = await within(modalList).findByText(destinationFolder.name);
 	await user.click(destinationFolderItem);
@@ -568,7 +565,7 @@ export async function uploadWithDnD(
 		dataTransfer: dataTransferObj
 	});
 	await act(async () => {
-		await jest.advanceTimersToNextTimerAsync();
+		await vi.advanceTimersToNextTimerAsync();
 	});
 	if (dataTransferObj.files.length > 0) {
 		// use find all to make this work also when there is the displayer open
@@ -579,7 +576,7 @@ export async function uploadWithDnD(
 
 export function spyOnUseCreateOptions(): CreateOption[] {
 	const createOptionsCollector: CreateOption[] = [];
-	jest.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
+	vi.spyOn(useCreateOptionsModule, 'useCreateOptions').mockReturnValue({
 		setCreateOptions: (...options: CreateOption[]): void => {
 			createOptionsCollector.splice(0, createOptionsCollector.length, ...options);
 		},
@@ -592,4 +589,25 @@ export function spyOnUseCreateOptions(): CreateOption[] {
 		}
 	});
 	return createOptionsCollector;
+}
+
+export function getElementStyles(element: HTMLElement): CSSStyleDeclaration {
+	return window.getComputedStyle(element);
+}
+
+export function hexToRgb(hex: string): string {
+	let tmp = hex.replace('#', '');
+
+	if (tmp.length === 3) {
+		tmp = hex
+			.split('')
+			.map((char) => char + char)
+			.join('');
+	}
+
+	const r = parseInt(tmp.substring(0, 2), 16);
+	const g = parseInt(tmp.substring(2, 4), 16);
+	const b = parseInt(tmp.substring(4, 6), 16);
+
+	return `rgb(${r}, ${g}, ${b})`;
 }

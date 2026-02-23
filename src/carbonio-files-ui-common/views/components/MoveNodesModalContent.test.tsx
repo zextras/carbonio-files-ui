@@ -231,7 +231,7 @@ describe('Move Nodes Modal', () => {
 		expect(screen.queryByTestId(ICON_REGEXP.flag)).not.toBeInTheDocument();
 		// selection mode
 		await selectNodes([folder.id], user);
-		jest.runOnlyPendingTimers();
+		vi.runOnlyPendingTimers();
 		expect(screen.queryByTestId(SELECTORS.checkedAvatar)).not.toBeInTheDocument();
 	});
 
@@ -260,7 +260,7 @@ describe('Move Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 
 		const { user } = setup(
 			<div onClick={resetToDefault}>
@@ -329,7 +329,7 @@ describe('Move Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 
 		const { user } = setup(
 			<div onClick={resetToDefault}>
@@ -393,7 +393,7 @@ describe('Move Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 
 		const { user } = setup(
 			<div onClick={resetToDefault}>

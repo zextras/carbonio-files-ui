@@ -129,7 +129,7 @@ describe('Upload List', () => {
 					return new Response(null, { status: XMLHttpRequest.UNSENT }) as StrictResponse<null>;
 				};
 
-				const uploadFileHandler = jest.fn(handleUploadFileRequest);
+				const uploadFileHandler = vi.fn(handleUploadFileRequest);
 				server.use(
 					http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, uploadFileHandler),
 					graphql.query<GetChildQuery, GetChildQueryVariables>('getChild', () =>
@@ -307,7 +307,7 @@ describe('Upload List', () => {
 
 					const emitter = new EventEmitter();
 
-					const uploadHandlerResolve = jest.fn();
+					const uploadHandlerResolve = vi.fn();
 
 					server.use(
 						http.post<UploadRequestParams, UploadRequestBody, UploadResponse | null>(
@@ -382,7 +382,7 @@ describe('Upload List', () => {
 						}
 					} satisfies Partial<Resolvers>;
 
-					const uploadHandler = jest.fn();
+					const uploadHandler = vi.fn();
 
 					server.use(
 						graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
@@ -455,7 +455,7 @@ describe('Upload List', () => {
 						}
 					} satisfies Partial<Resolvers>;
 
-					const uploadHandler = jest.fn();
+					const uploadHandler = vi.fn();
 
 					server.use(
 						http.post<UploadRequestParams, UploadRequestBody, UploadResponse>(

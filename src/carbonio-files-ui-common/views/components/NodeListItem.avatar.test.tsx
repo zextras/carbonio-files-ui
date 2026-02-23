@@ -40,8 +40,8 @@ describe('Node List Item Avatar', () => {
 				})
 			)
 		);
-		const getPreviewThumbnailSrcFn = jest.spyOn(previewUtils, 'getPreviewThumbnailSrc');
-		const NodeAvatarIconComponentFn = jest.spyOn(NodeAvatarIconModule, 'NodeAvatarIcon');
+		const getPreviewThumbnailSrcFn = vi.spyOn(previewUtils, 'getPreviewThumbnailSrc');
+		const NodeAvatarIconComponentFn = vi.spyOn(NodeAvatarIconModule, 'NodeAvatarIcon');
 
 		const node = populateFile();
 		node.type = NodeType.Image;
@@ -74,7 +74,7 @@ describe('Node List Item Avatar', () => {
 				})
 			)
 		);
-		const getPreviewThumbnailSrcFn = jest.spyOn(previewUtils, 'getPreviewThumbnailSrc');
+		const getPreviewThumbnailSrcFn = vi.spyOn(previewUtils, 'getPreviewThumbnailSrc');
 		expect(healthCache.healthReceived).toBeFalsy();
 		const node = populateFile();
 		node.type = NodeType.Image;

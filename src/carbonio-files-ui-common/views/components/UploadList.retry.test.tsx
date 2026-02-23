@@ -124,8 +124,8 @@ describe('Upload List', () => {
 					item.parent = localRoot;
 				});
 
-				const uploadFailedHandler = jest.fn();
-				const uploadSuccessHandler = jest.fn();
+				const uploadFailedHandler = vi.fn();
+				const uploadSuccessHandler = vi.fn();
 				const emitter = new EventEmitter();
 
 				server.use(
@@ -206,7 +206,7 @@ describe('Upload List', () => {
 
 				const dataTransferObj = createUploadDataTransfer([folder]);
 
-				const uploadHandler = jest.fn(handleUploadFileRequest);
+				const uploadHandler = vi.fn(handleUploadFileRequest);
 
 				server.use(
 					graphql.mutation(
@@ -255,8 +255,8 @@ describe('Upload List', () => {
 
 				const dataTransferObj = createUploadDataTransfer([folder]);
 
-				const uploadHandler = jest.fn();
-				const createFolderMutation = jest.fn();
+				const uploadHandler = vi.fn();
+				const createFolderMutation = vi.fn();
 
 				server.use(
 					graphql.mutation<CreateFolderMutation, CreateFolderMutationVariables>(
@@ -329,7 +329,7 @@ describe('Upload List', () => {
 
 				const dataTransferObj = createUploadDataTransfer([folder]);
 
-				const uploadHandler = jest.fn(handleUploadFileRequest);
+				const uploadHandler = vi.fn(handleUploadFileRequest);
 
 				let createSubFolderCalled = false;
 
@@ -414,7 +414,7 @@ describe('Upload List', () => {
 
 				const dataTransferObj = createUploadDataTransfer([folder]);
 
-				const uploadHandler = jest.fn();
+				const uploadHandler = vi.fn();
 				let uploadFailedCalled = false;
 
 				server.use(

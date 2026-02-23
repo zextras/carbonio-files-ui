@@ -25,6 +25,10 @@ export const findNodesFieldPolicy: FieldPolicy<
 		'sort'
 	],
 	merge(existing, incoming, fieldFunctions) {
+		if (!incoming) {
+			return existing as FindNodesCachedObject;
+		}
+
 		// see https://github.com/apollographql/apollo-client/issues/6394#issuecomment-656193666
 		return {
 			args: fieldFunctions.args,

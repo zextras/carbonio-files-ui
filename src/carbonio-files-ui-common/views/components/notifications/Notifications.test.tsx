@@ -8,6 +8,7 @@ import React from 'react';
 import { faker } from '@faker-js/faker';
 import { waitFor } from '@testing-library/react';
 import { graphql, HttpResponse } from 'msw';
+import { Mock } from 'vitest';
 
 import { getDateNotification } from './NotificationItem';
 import { Notifications } from './Notifications';
@@ -29,6 +30,15 @@ import {
 	RemovedNodeType
 } from '../../../types/graphql/types';
 import { mockGetNotifications } from '../../../utils/resolverMocks';
+
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+	const actual = await vi.importActual('react-router-dom');
+	return {
+		...actual,
+		useNavigate: (): Mock => mockNavigate
+	};
+});
 
 describe('Notifications', () => {
 	beforeEach(() => {
@@ -325,6 +335,29 @@ describe('Notifications', () => {
 						color: COLORS.text.regular
 					});
 				});
+			});
+
+			it.each([
+				{ name: 'NewShare', populate: populateNewShareNotification },
+				{ name: 'TransferredOwnership', populate: populateTransferredOwnershipNotification },
+				{ name: 'AddedNode', populate: populateAddedNodeNotification },
+				{ name: 'RemovedNode', populate: populateRemovedNodeNotification }
+			])('should navigate when clicking on $name notification', async ({ populate }) => {
+				const notification = populate();
+				const mocks = {
+					Query: {
+						getNotifications: mockGetNotifications(0, [notification])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notifications />, { mocks });
+				await user.click(
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
+				);
+				await user.click(screen.getByTestId(SELECTORS.avatar));
+
+				expect(mockNavigate).toHaveBeenCalled();
 			});
 
 			describe('Pagination', () => {

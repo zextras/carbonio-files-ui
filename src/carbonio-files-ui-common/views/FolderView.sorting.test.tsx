@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -16,7 +16,7 @@ import { screen, setup, within } from '../tests/utils';
 import { FolderResolvers, NodeSort, Resolvers } from '../types/graphql/resolvers-types';
 import { mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => (
 		<div data-testid="displayer-test-id">
 			{props.translationKey}:{props.icons}
@@ -24,10 +24,8 @@ jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () 
 	)
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/VirtualizedNodeListItem');
+vi.mock('./components/NodeHoverBar');
 
 describe('Sorting', () => {
 	test('Switch from name ascending to name descending order', async () => {
@@ -73,6 +71,9 @@ describe('Sorting', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		await screen.findByText(filename1);
 		const items = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(within(items[0]).getByText('a')).toBeVisible();

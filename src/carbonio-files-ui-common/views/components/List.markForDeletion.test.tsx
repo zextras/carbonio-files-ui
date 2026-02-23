@@ -14,7 +14,7 @@ import { populateFile, populateFolder, populateNode } from '../../mocks/mockUtil
 import { setup, selectNodes, screen, within } from '../../tests/utils';
 import { File, Folder } from '../../types/graphql/types';
 
-jest.mock<typeof import('./VirtualizedNodeListItem')>('./VirtualizedNodeListItem');
+vi.mock('./VirtualizedNodeListItem');
 
 describe('Mark for deletion - trash', () => {
 	describe('Selection mode', () => {

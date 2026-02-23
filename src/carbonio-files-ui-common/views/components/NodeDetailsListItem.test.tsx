@@ -13,7 +13,7 @@ import { Theme } from '@zextras/carbonio-design-system';
 import { NodeDetailsListItem } from './NodeDetailsListItem';
 import { SELECTORS } from '../../constants/test';
 import { populateNode, populateUser } from '../../mocks/mockUtils';
-import { setup } from '../../tests/utils';
+import { hexToRgb, setup } from '../../tests/utils';
 import { NodeType, User } from '../../types/graphql/types';
 import { formatDate } from '../../utils/utils';
 
@@ -92,7 +92,7 @@ describe('Node List Item', () => {
 				/>
 			);
 			expect(screen.getByTestId(`icon: ${icon}`)).toBeVisible();
-			expect(screen.getByTestId(`icon: ${icon}`)).toHaveStyleRule('color', color);
+			expect(getComputedStyle(screen.getByTestId(`icon: ${icon}`)).color).toBe(hexToRgb(color));
 		}
 	);
 });

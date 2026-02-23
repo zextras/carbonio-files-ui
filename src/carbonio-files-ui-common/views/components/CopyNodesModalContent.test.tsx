@@ -327,7 +327,7 @@ describe('Copy Nodes Modal', () => {
 		await user.click(sharedWithMeItem);
 		expect(screen.getByRole('button', { name: ACTION_REGEXP.copy })).toBeDisabled();
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		// navigate inside shared with me filter
 		await user.dblClick(sharedWithMeItem);
@@ -352,7 +352,7 @@ describe('Copy Nodes Modal', () => {
 
 		// navigate inside folder of shared with me filter
 		await user.dblClick(screen.getByText(sharedWithMeFilter[0].name));
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		await screen.findByText(/It looks like there's nothing here./);
 		breadcrumb = await findByTextWithMarkup(
 			buildBreadCrumbRegExp('Files', sharedWithMeFilter[0].name)
@@ -437,7 +437,7 @@ describe('Copy Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 
 		const { user, findByTextWithMarkup } = setup(
 			<div onClick={resetToDefault}>
@@ -509,7 +509,7 @@ describe('Copy Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 
 		const { findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -585,7 +585,7 @@ describe('Copy Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 
 		const { user } = setup(
 			<div onClick={resetToDefault}>
@@ -647,7 +647,7 @@ describe('Copy Nodes Modal', () => {
 			}
 		} satisfies Partial<Resolvers>;
 
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 
 		global.apolloClient.writeQuery<GetChildrenQuery, GetChildrenQueryVariables>({
 			query: GET_CHILDREN,
@@ -690,11 +690,11 @@ describe('Copy Nodes Modal', () => {
 		expect(screen.getByText(/shared with me/i)).toBeVisible();
 		expect(confirmButton).toBeDisabled();
 		// register tooltip listener
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		await user.hover(confirmButtonLabel);
 		act(() => {
 			// run timers of tooltip
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 		});
 		const tooltip = await screen.findByText(/you can't perform this action here/i);
 		expect(tooltip).toBeVisible();
@@ -704,7 +704,7 @@ describe('Copy Nodes Modal', () => {
 		expect(confirmButton).toBeEnabled();
 		await user.hover(confirmButtonLabel);
 		// run timers of tooltip
-		jest.advanceTimersToNextTimer();
+		vi.advanceTimersToNextTimer();
 		expect(screen.queryByText(/you can't perform this action here/i)).not.toBeInTheDocument();
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());
@@ -742,7 +742,7 @@ describe('Copy Nodes Modal', () => {
 				copyNodes: mockCopyNodes(copiedNodes)
 			}
 		} satisfies Partial<Resolvers>;
-		const closeAction = jest.fn();
+		const closeAction = vi.fn();
 
 		const { findByTextWithMarkup, user } = setup(
 			<div onClick={resetToDefault}>
@@ -769,7 +769,7 @@ describe('Copy Nodes Modal', () => {
 		await user.click(screen.getByText('Home'));
 		expect(confirmButton).toBeEnabled();
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		await user.click(confirmButton);
 		await waitFor(() => expect(closeAction).toHaveBeenCalled());

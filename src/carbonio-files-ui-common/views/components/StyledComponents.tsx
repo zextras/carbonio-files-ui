@@ -39,21 +39,21 @@ export const HoverContainer = styled(Row)`
 	width: 100%;
 `;
 
-export const HoverBarContainer = styled(Row)<{
+export const HoverBarContainer = styled(Container)<{
 	height?: string;
 	width?: string;
 }>`
-	height: ${({ height }): string => height ?? '45%'};
-	width: ${({ width, theme }): string =>
-		width ?? `calc(100% - ${LIST_ITEM_AVATAR_HEIGHT} - ${theme.sizes.padding.small})`};
-	display: none;
-	position: absolute;
 	top: 0;
 	right: 0;
+	display: none;
+	position: absolute;
+	width: fit-content;
+	height: ${({ height }): string => height ?? '45%'};
 	background: linear-gradient(
 		to right,
 		transparent,
-		${({ theme }): string => theme.palette.gray6.hover}
+		${({ theme }): string => theme.palette.gray6.hover} 1rem,
+		${({ theme }): string => theme.palette.gray6.hover} 100%
 	);
 `;
 

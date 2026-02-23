@@ -23,10 +23,10 @@ describe('UploadDisplayer', () => {
 		const uploadItem = populateUploadItem({ name: 'test-file.txt' });
 		uploadVar({ [uploadItem.id]: uploadItem });
 
-		jest.spyOn(useActiveNodeModule, 'useActiveNode').mockReturnValue({
+		vi.spyOn(useActiveNodeModule, 'useActiveNode').mockReturnValue({
 			activeNodeId: uploadItem.id,
-			setActiveNode: jest.fn(),
-			removeActiveNode: jest.fn(),
+			setActiveNode: vi.fn(),
+			removeActiveNode: vi.fn(),
 			isDetailsTab: false,
 			isSharingTab: false,
 			isVersioningTab: false,

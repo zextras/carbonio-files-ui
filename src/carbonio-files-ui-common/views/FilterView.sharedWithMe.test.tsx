@@ -25,16 +25,14 @@ import { setup, within, screen } from '../tests/utils';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../types/graphql/types';
 import {
-	mockDeleteShare,
+	mockDeleteShares,
 	mockFindNodes,
 	mockGetNode,
 	mockGetCollaborationLinks,
 	mockGetLinks
 } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter view', () => {
 	describe('Shared With Me filter', () => {
@@ -61,7 +59,7 @@ describe('Filter view', () => {
 		});
 
 		test('Shared with me filter has sharedWithMe=true and excludes trashed nodes', async () => {
-			const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+			const mockedRequestHandler = vi.fn(handleFindNodesRequest);
 			server.use(
 				graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 			);
@@ -84,7 +82,7 @@ describe('Filter view', () => {
 				direct_share: true
 			};
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.runOnlyPendingTimersAsync();
 			});
 			expect(mockedRequestHandler).toHaveBeenCalledWith(
 				expect.objectContaining({
@@ -112,7 +110,7 @@ describe('Filter view', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true)
+					deleteShares: mockDeleteShares([mockedUserLogged.id])
 				}
 			} satisfies Partial<Resolvers>;
 
@@ -127,6 +125,10 @@ describe('Filter view', () => {
 					mocks
 				}
 			);
+
+			await act(async () => {
+				await vi.runOnlyPendingTimersAsync();
+			});
 			await screen.findAllByText(node.name);
 			// logged user is shown
 			await screen.findByText(/you$/i);
@@ -139,6 +141,11 @@ describe('Filter view', () => {
 			// confirmation modal
 			await user.click(await screen.findByRole('button', { name: /remove/i }));
 			await screen.findByText(/success/i);
+			// close snackbar
+			act(() => {
+				// run timers of snackbar
+				vi.runOnlyPendingTimers();
+			});
 			// node is removed from the list and displayer is closed
 			expect(screen.queryByText(node.name)).not.toBeInTheDocument();
 			expect(screen.queryByText(/you$/i)).not.toBeInTheDocument();

@@ -9,13 +9,13 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { Draggable } from './Draggable';
-import { DRAG_TYPES, TIMERS } from '../../constants';
+import { DRAG_TYPES } from '../../constants';
 import { setup } from '../../tests/utils';
 
 describe('Draggable', () => {
 	test('Force drag end on mouse move after user release drag but no drag end is fired', async () => {
-		const dragStartFn = jest.fn();
-		const dragEndFn = jest.fn();
+		const dragStartFn = vi.fn();
+		const dragEndFn = vi.fn();
 		setup(
 			<Draggable onDragStart={dragStartFn} onDragEnd={dragEndFn} effect="move">
 				Draggable element
@@ -29,7 +29,7 @@ describe('Draggable', () => {
 		expect(dragStartFn).toHaveBeenCalled();
 
 		// wait a second to allow draggable to register listener
-		await jest.advanceTimersToNextTimerAsync(TIMERS.DRAG_THROTTLE);
+		await vi.advanceTimersToNextTimerAsync();
 
 		fireEvent.dragEnter(window, { dataTransfer: { types: [DRAG_TYPES.move] } });
 		fireEvent.dragOver(window, { dataTransfer: { types: [DRAG_TYPES.move] } });

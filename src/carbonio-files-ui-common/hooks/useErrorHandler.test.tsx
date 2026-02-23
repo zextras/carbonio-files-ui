@@ -6,8 +6,6 @@
 
 import React from 'react';
 
-import '@testing-library/jest-dom';
-
 import { ApolloError } from '@apollo/client';
 import { act } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
@@ -42,7 +40,7 @@ describe('useErrorHandler', () => {
 		).toBeVisible();
 		expect(within(snackbar).getByText(/Ok/i)).toBeVisible();
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		expect(
 			within(snackbar).getByText(
@@ -60,7 +58,7 @@ describe('useErrorHandler', () => {
 		expect(within(snackbar).getByText(/Error! Copy permissions failed/i)).toBeVisible();
 		// close snackbar
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		expect(screen.queryByTestId('snackbar')).not.toBeInTheDocument();
 		expect(screen.queryByText(/Error! Copy permissions failed/i)).not.toBeInTheDocument();
@@ -82,7 +80,7 @@ describe('useErrorHandler', () => {
 		).not.toBeInTheDocument();
 		// close snackbar
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		expect(screen.queryByTestId('snackbar')).not.toBeInTheDocument();
 		expect(screen.queryByText(/Error! Copy permissions failed/i)).not.toBeInTheDocument();

@@ -38,7 +38,7 @@ describe('Collaboration Link', () => {
 		});
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getByText('Collaboration links')).toBeVisible();
 		expect(
@@ -72,7 +72,7 @@ describe('Collaboration Link', () => {
 		});
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		await user.click(screen.getByText(/choose permissions to generate link/i));
 		const dropdown = screen.getByTestId(SELECTORS.dropdownList);
@@ -138,7 +138,7 @@ describe('Collaboration Link', () => {
 				);
 
 				await act(async () => {
-					await jest.advanceTimersToNextTimerAsync();
+					await vi.advanceTimersToNextTimerAsync();
 				});
 				const select = screen.getByText(/choose permissions to generate link/i);
 				await user.click(select);
@@ -192,7 +192,7 @@ describe('Collaboration Link', () => {
 			);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(screen.getByText(/choose permissions to generate link/i));
 			await user.click(screen.getByText('View'));
@@ -227,7 +227,7 @@ describe('Collaboration Link', () => {
 			);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(screen.getByText(/choose permissions to generate link/i));
 			await user.click(screen.getByText('View'));
@@ -272,7 +272,7 @@ describe('Collaboration Link', () => {
 		});
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getByText(readOnlyCollaborationLink.url)).toBeVisible();
 		expect(screen.getByText(readAndWriteCollaborationLink.url)).toBeVisible();
@@ -327,7 +327,7 @@ describe('Collaboration Link', () => {
 		});
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		await user.hover(screen.getByText(/Choose permissions to generate link/i));
 		expect(
@@ -365,12 +365,12 @@ describe('Collaboration Link', () => {
 		});
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		await user.hover(screen.getByText(/Choose permissions to generate link/i));
 		act(() => {
 			// run timers of tooltip
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 		});
 		expect(
 			screen.queryByText(
@@ -419,7 +419,7 @@ describe('Collaboration Link', () => {
 			);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(
 				within(screen.getByTestId(SELECTORS.collaborationLinkReadOnly)).getByRole('button', {
@@ -428,7 +428,7 @@ describe('Collaboration Link', () => {
 			);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			const modal = screen.getByTestId(SELECTORS.modal);
 			expect(within(modal).getByText(`Revoke ${node.name} collaboration link`)).toBeVisible();
@@ -487,7 +487,7 @@ describe('Collaboration Link', () => {
 			);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(
 				within(screen.getByTestId(SELECTORS.collaborationLinkWriteShare)).getByRole('button', {
@@ -496,7 +496,7 @@ describe('Collaboration Link', () => {
 			);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			const modal = screen.getByTestId(SELECTORS.modal);
 			await user.click(within(modal).getByRole('button', { name: /revoke/i }));
@@ -545,7 +545,7 @@ describe('Collaboration Link', () => {
 			);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(
 				within(screen.getByTestId(SELECTORS.collaborationLinkReadShare)).getByRole('button', {
@@ -554,7 +554,7 @@ describe('Collaboration Link', () => {
 			);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			const modal = screen.getByTestId(SELECTORS.modal);
 			await user.click(within(modal).getByRole('button', { name: /revoke/i }));
@@ -603,7 +603,7 @@ describe('Collaboration Link', () => {
 			);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(
 				within(screen.getByTestId(SELECTORS.collaborationLinkWrite)).getByRole('button', {
@@ -612,7 +612,7 @@ describe('Collaboration Link', () => {
 			);
 			act(() => {
 				// run timers of modal
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			const modal = screen.getByTestId(SELECTORS.modal);
 			await user.click(within(modal).getByRole('button', { name: /revoke/i }));
@@ -629,7 +629,7 @@ describe('Collaboration Link', () => {
 		SharePermission.ReadWriteAndShare,
 		SharePermission.ReadOnly
 	])('should copy the url if the user clicks on the chip', async (permission) => {
-		const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+		const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 		const node = populateNode();
 		node.permissions.can_share = true;
 		node.permissions.can_write_folder = true;
@@ -645,7 +645,7 @@ describe('Collaboration Link', () => {
 		});
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		await user.click(screen.getByText(collaborationLink.url));
 		expect(copyToClipboardFn).toHaveBeenCalledWith(collaborationLink.url);
@@ -670,7 +670,7 @@ describe('Collaboration Link', () => {
 			);
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(screen.getByText(/choose permissions to generate link/i));
 			const dropdown = screen.getByTestId(SELECTORS.dropdownList);

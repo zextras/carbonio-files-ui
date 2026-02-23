@@ -19,25 +19,28 @@ import { humanFileSize } from '../../utils/utils';
 
 let mockQuota: (props: QuotaProps) => React.JSX.Element;
 
-jest.mock('@zextras/carbonio-design-system', () => ({
-	...jest.requireActual('@zextras/carbonio-design-system'),
-	Quota: (props: QuotaProps): unknown => mockQuota(props)
-}));
+vi.mock('@zextras/carbonio-design-system', async () => {
+	const actual = await vi.importActual('@zextras/carbonio-design-system');
+	return {
+		...actual,
+		Quota: (props: QuotaProps): unknown => mockQuota(props)
+	};
+});
 
 beforeEach(() => {
-	mockQuota = jest.fn().mockReturnValue(<div>mock Quota</div>);
+	mockQuota = vi.fn().mockReturnValue(<div>mock Quota</div>);
 });
 
 describe('Files Quota', () => {
 	describe('Unlimited available space (limit = 0)', () => {
 		it('should show the string "[used] of unlimited space”', () => {
 			const used = faker.number.int();
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used,
 				limit: 0,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 			const quotaString = `${humanFileSize(used, undefined)} of unlimited space`;
 
@@ -47,12 +50,12 @@ describe('Files Quota', () => {
 		});
 
 		it('should hide the progress bar', () => {
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used: faker.number.int(),
 				limit: 0,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 
 			setup(<FilesQuota />);
@@ -64,12 +67,12 @@ describe('Files Quota', () => {
 			const limit = 0;
 			const used = faker.number.int();
 
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used,
 				limit,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 
 			setup(<FilesQuota />);
@@ -82,12 +85,12 @@ describe('Files Quota', () => {
 			const used = faker.number.int();
 			const limit = faker.number.int({ min: 1000 });
 
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used,
 				limit,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 			const quotaString = `${humanFileSize(used, undefined)} of ${humanFileSize(limit, undefined)} used`;
 
@@ -100,12 +103,12 @@ describe('Files Quota', () => {
 				const limit = faker.number.int({ min: 1000 });
 				const used = Math.floor(limit / 2);
 
-				jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+				vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 					used,
 					limit,
 					requestFailed: false,
 					responseReceived: true,
-					refreshData: jest.fn()
+					refreshData: vi.fn()
 				});
 
 				setup(<FilesQuota />);
@@ -120,12 +123,12 @@ describe('Files Quota', () => {
 				const limit = faker.number.int({ min: 1000 });
 				const used = limit;
 
-				jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+				vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 					used,
 					limit,
 					requestFailed: false,
 					responseReceived: true,
-					refreshData: jest.fn()
+					refreshData: vi.fn()
 				});
 
 				setup(<FilesQuota />);
@@ -140,12 +143,12 @@ describe('Files Quota', () => {
 				const limit = faker.number.int({ min: 1000 });
 				const used = limit * 2;
 
-				jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+				vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 					used,
 					limit,
 					requestFailed: false,
 					responseReceived: true,
-					refreshData: jest.fn()
+					refreshData: vi.fn()
 				});
 
 				setup(<FilesQuota />);
@@ -161,12 +164,12 @@ describe('Files Quota', () => {
 			const limit = faker.number.int({ min: 1000 });
 			const used = limit * 2;
 
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used,
 				limit,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 
 			const { user } = setup(<FilesQuota />);
@@ -175,7 +178,7 @@ describe('Files Quota', () => {
 			expect(overQuotaIcon).toBeVisible();
 			act(() => {
 				// run tooltip timer to register listeners
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.hover(overQuotaIcon);
 
@@ -188,12 +191,12 @@ describe('Files Quota', () => {
 			const limit = faker.number.int({ min: 1000 });
 			const used = limit;
 
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used,
 				limit,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 
 			const { user } = setup(<FilesQuota />);
@@ -201,7 +204,7 @@ describe('Files Quota', () => {
 			expect(overQuotaIcon).toBeVisible();
 			act(() => {
 				// run tooltip timer to register listeners
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.hover(overQuotaIcon);
 
@@ -214,12 +217,12 @@ describe('Files Quota', () => {
 			const limit = faker.number.int({ min: 1000 });
 			const used = Math.floor(limit / 2);
 
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used,
 				limit,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 
 			setup(<FilesQuota />);
@@ -228,12 +231,12 @@ describe('Files Quota', () => {
 	});
 
 	it('should not show the quota panel if quota info request fails', () => {
-		jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+		vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 			used: undefined,
 			limit: undefined,
 			requestFailed: true,
 			responseReceived: true,
-			refreshData: jest.fn()
+			refreshData: vi.fn()
 		});
 
 		setup(<FilesQuota />);
@@ -241,12 +244,12 @@ describe('Files Quota', () => {
 	});
 
 	it('should not show the quota panel if quota info request is not responded yet', () => {
-		jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+		vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 			used: undefined,
 			limit: undefined,
 			requestFailed: false,
 			responseReceived: false,
-			refreshData: jest.fn()
+			refreshData: vi.fn()
 		});
 
 		setup(<FilesQuota />);
@@ -257,12 +260,12 @@ describe('Files Quota', () => {
 		it('should render refresh button', () => {
 			const used = faker.number.int();
 			const limit = faker.number.int({ min: 1000 });
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used,
 				limit,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 			setup(<FilesQuota />);
 			expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshQuota })).toBeVisible();
@@ -271,17 +274,17 @@ describe('Files Quota', () => {
 		it('should show tooltip on hover', async () => {
 			const used = faker.number.int();
 			const limit = faker.number.int({ min: 1000 });
-			jest.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
+			vi.spyOn(useFilesQuotaInfo, 'useFilesQuotaInfo').mockReturnValue({
 				used,
 				limit,
 				requestFailed: false,
 				responseReceived: true,
-				refreshData: jest.fn()
+				refreshData: vi.fn()
 			});
 			const { user } = setup(<FilesQuota />);
 			act(() => {
 				// run tooltip timer to register listeners
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			await user.hover(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshQuota }));
 			expect(await screen.findByText(/refresh/i)).toBeVisible();
@@ -296,7 +299,7 @@ describe('Files Quota', () => {
 				limit,
 				undefined
 			)} used`;
-			const mockMySelfQuota = jest
+			const mockMySelfQuota = vi
 				.spyOn(mySelfQuotaModule, 'mySelfQuota')
 				.mockResolvedValueOnce({ limit, used: quotaUsed })
 				.mockResolvedValueOnce({ limit, used: updatedQuotaUsed });
@@ -321,7 +324,7 @@ describe('Files Quota', () => {
 				const updatedQuotaUsed = 99;
 				const quotaString = `${humanFileSize(quotaUsed, undefined)} of ${description}`;
 				const updatedQuotaString = `${humanFileSize(updatedQuotaUsed, undefined)} of ${description}`;
-				const mockMySelfQuota = jest
+				const mockMySelfQuota = vi
 					.spyOn(mySelfQuotaModule, 'mySelfQuota')
 					.mockResolvedValueOnce({ limit, used: quotaUsed })
 					.mockResolvedValueOnce({ limit, used: updatedQuotaUsed });

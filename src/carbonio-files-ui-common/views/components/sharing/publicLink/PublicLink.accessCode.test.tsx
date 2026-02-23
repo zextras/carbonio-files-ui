@@ -48,7 +48,7 @@ describe('Access code', () => {
 	});
 
 	it('should generate the access code when the user enables the access code', async () => {
-		const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
+		const spy = vi.spyOn(moduleUtils, 'generateAccessCode');
 		const props = getPublicLinkProps(populateNode('Folder'));
 		const mocks = {
 			Query: {
@@ -158,7 +158,7 @@ describe('Access code', () => {
 		});
 
 		it('should copy the access code when the user clicks on the copy button', async () => {
-			const copyToClipboardFn = jest.spyOn(moduleUtils, 'copyToClipboard');
+			const copyToClipboardFn = vi.spyOn(moduleUtils, 'copyToClipboard');
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const { user } = setup(<PublicLink {...props} />);
@@ -173,7 +173,7 @@ describe('Access code', () => {
 		});
 
 		it('should generate a new access code when the user clicks on the regenerate button', async () => {
-			const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
+			const spy = vi.spyOn(moduleUtils, 'generateAccessCode');
 			const node = populateNode('Folder');
 			const props = getPublicLinkProps(node);
 			const mocks = {
@@ -388,7 +388,7 @@ describe('Access code', () => {
 			});
 
 			it('should generate a new access code when the user disables the access code, edits the link and enables the access code again', async () => {
-				const spy = jest.spyOn(moduleUtils, 'generateAccessCode');
+				const spy = vi.spyOn(moduleUtils, 'generateAccessCode');
 				const node = populateNode('Folder');
 				const props = getPublicLinkProps(node);
 				const link = populateLink(node, true);

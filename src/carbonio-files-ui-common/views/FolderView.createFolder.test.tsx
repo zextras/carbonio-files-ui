@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { act, screen, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
@@ -37,14 +37,12 @@ const MockDisplayer = (props: DisplayerProps): React.JSX.Element => (
 	</div>
 );
 
-jest.mock<typeof import('./components/Displayer')>('./components/Displayer', () => ({
+vi.mock('./components/Displayer', () => ({
 	Displayer: (props: DisplayerProps): React.JSX.Element => <MockDisplayer {...props} />
 }));
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
-jest.mock<typeof import('./components/NodeHoverBar')>('./components/NodeHoverBar');
+vi.mock('./components/VirtualizedNodeListItem');
+vi.mock('./components/NodeHoverBar');
 
 function clickOnCreateFolderAction(createOptions: CreateOption[]): void {
 	const createFolder = createOptions.find((option) => option.id === ACTION_IDS.CREATE_FOLDER);
@@ -91,8 +89,13 @@ describe('Create folder', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -105,7 +108,7 @@ describe('Create folder', () => {
 		expect(error).toBeInTheDocument();
 		act(() => {
 			// run timers of modal
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		const inputField = screen.getByRole('textbox');
 		expect(inputField).toBeVisible();
@@ -142,8 +145,13 @@ describe('Create folder', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);
@@ -203,9 +211,13 @@ describe('Create folder', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait for the load to be completed
-		const listHeader = screen.getByTestId(SELECTORS.listHeader);
-		await waitForElementToBeRemoved(within(listHeader).queryByTestId(ICON_REGEXP.queryLoading));
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		let nodes = screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false });
 		expect(nodes).toHaveLength(currentFolder.children.nodes.length);
 		clickOnCreateFolderAction(createOptions);
@@ -272,8 +284,13 @@ describe('Create folder', () => {
 			mocks
 		});
 
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
 		// wait for the load to be completed
-		await waitForElementToBeRemoved(screen.queryByTestId(ICON_REGEXP.queryLoading));
+		await waitFor(() =>
+			expect(screen.queryByTestId(ICON_REGEXP.queryLoading)).not.toBeInTheDocument()
+		);
 		expect(screen.getAllByTestId(SELECTORS.nodeItem(), { exact: false })).toHaveLength(
 			currentFolder.children.nodes.length
 		);

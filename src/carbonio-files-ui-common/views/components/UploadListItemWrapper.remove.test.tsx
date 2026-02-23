@@ -25,7 +25,7 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.FAILED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -54,7 +54,7 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.LOADING,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -83,7 +83,7 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.QUEUED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -113,7 +113,7 @@ describe('Upload List Item Wrapper', () => {
 					nodeId: faker.string.uuid(),
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -144,7 +144,7 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.FAILED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -172,7 +172,7 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.LOADING,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -200,7 +200,7 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.QUEUED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })
@@ -228,7 +228,7 @@ describe('Upload List Item Wrapper', () => {
 					status: UploadStatus.COMPLETED,
 					parentNodeId: destinationFolder.id
 				});
-				const mockSelectedId = jest.fn();
+				const mockSelectedId = vi.fn();
 				const mocks = {
 					Query: {
 						getNode: mockGetNode({ getBaseNode: [destinationFolder] })

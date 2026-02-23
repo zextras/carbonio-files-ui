@@ -33,7 +33,7 @@ import {
 import {
 	getNodeVariables,
 	mockCreateShare,
-	mockDeleteShare,
+	mockDeleteShares,
 	mockGetAccountByEmail,
 	mockGetCollaborationLinks,
 	mockGetLinks,
@@ -42,11 +42,11 @@ import {
 import { getChipLabel } from '../../../../utils/utils';
 
 let mockedUserLogged: User;
-const mockedSoapFetch = jest.fn();
+const mockedSoapFetch = vi.fn();
 
 beforeEach(() => {
 	mockedUserLogged = populateUser(global.mockedUserLogged.id, global.mockedUserLogged.name);
-	jest.spyOn(network, 'soapFetch').mockImplementation(
+	vi.spyOn(network, 'soapFetch').mockImplementation(
 		(): Promise<RawSoapResponse<Record<string, unknown>>> =>
 			new Promise<RawSoapResponse<Record<string, unknown>>>((resolve, reject) => {
 				const result = mockedSoapFetch();
@@ -72,7 +72,7 @@ describe('Node Sharing', () => {
 		setup(<NodeSharing node={node} />, { mocks });
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getByText(/collaborators/i)).toBeVisible();
 		expect(
@@ -102,7 +102,7 @@ describe('Node Sharing', () => {
 		setup(<NodeSharing node={node} />, { mocks });
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getByTestId(ICON_REGEXP.infoOutline)).toBeVisible();
 		expect(screen.getByText(/You are not allowed to share this item./)).toBeVisible();
@@ -122,7 +122,7 @@ describe('Node Sharing', () => {
 		setup(<NodeSharing node={node} />, { mocks });
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.queryByTestId(ICON_REGEXP.infoOutline)).not.toBeInTheDocument();
 		expect(screen.queryByText(/You are not allowed to share this item./)).not.toBeInTheDocument();
@@ -142,7 +142,7 @@ describe('Node Sharing', () => {
 		setup(<NodeSharing node={node} />, { mocks });
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getAllByTestId(SELECTORS.avatar)).toHaveLength(node.shares.length + 1);
 		forEach(node.shares, (share) => {
@@ -168,7 +168,7 @@ describe('Node Sharing', () => {
 		setup(<NodeSharing node={node} />, { mocks });
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getByText(/You - Owner/i)).toBeVisible();
 	});
@@ -189,7 +189,7 @@ describe('Node Sharing', () => {
 		setup(<NodeSharing node={node} />, { mocks });
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getByText(`${getChipLabel(node.owner)} - Owner`)).toBeVisible();
 	});
@@ -210,7 +210,7 @@ describe('Node Sharing', () => {
 		setup(<NodeSharing node={node} />, { mocks });
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		expect(screen.getByText('You')).toBeVisible();
 		expect(screen.queryByText('You - Owner')).not.toBeInTheDocument();
@@ -238,7 +238,7 @@ describe('Node Sharing', () => {
 			setup(<NodeSharing node={node} />, { mocks });
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const shareCanReadButtons = screen.getAllByRoleWithIcon('button', {
 				icon: ICON_REGEXP.shareCanRead
@@ -276,7 +276,7 @@ describe('Node Sharing', () => {
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const shareCanReadButtons = screen.getAllByRoleWithIcon('button', {
 				icon: ICON_REGEXP.shareCanRead
@@ -322,7 +322,7 @@ describe('Node Sharing', () => {
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const shareCanReadButtons = screen.getAllByRoleWithIcon('button', {
 				icon: ICON_REGEXP.shareCanRead
@@ -366,7 +366,7 @@ describe('Node Sharing', () => {
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const editButtons = screen.getAllByRoleWithIcon('button', {
 				icon: ICON_REGEXP.edit
@@ -411,7 +411,7 @@ describe('Node Sharing', () => {
 				const { user } = setup(<NodeSharing node={node} />, { mocks });
 
 				await act(async () => {
-					await jest.advanceTimersToNextTimerAsync();
+					await vi.advanceTimersToNextTimerAsync();
 				});
 				const editButtons = screen.getAllByRoleWithIcon('button', {
 					icon: ICON_REGEXP.edit
@@ -456,7 +456,7 @@ describe('Node Sharing', () => {
 				const { user } = setup(<NodeSharing node={node} />, { mocks });
 
 				await act(async () => {
-					await jest.advanceTimersToNextTimerAsync();
+					await vi.advanceTimersToNextTimerAsync();
 				});
 				const editButtons = screen.getAllByRoleWithIcon('button', {
 					icon: ICON_REGEXP.edit
@@ -488,7 +488,7 @@ describe('Node Sharing', () => {
 				const { user } = setup(<NodeSharing node={node} />, { mocks });
 
 				await act(async () => {
-					await jest.advanceTimersToNextTimerAsync();
+					await vi.advanceTimersToNextTimerAsync();
 				});
 				const editButtons = screen.getAllByRoleWithIcon('button', {
 					icon: ICON_REGEXP.edit
@@ -500,12 +500,17 @@ describe('Node Sharing', () => {
 				const modal = screen.getByTestId(SELECTORS.modal);
 				act(() => {
 					// run timers of modal
-					jest.advanceTimersToNextTimer();
+					vi.advanceTimersToNextTimer();
 				});
 				expect(within(modal).getByText(/Decrease your current rights/i)).toBeVisible();
 				expect(
 					within(modal).getByText(
-						"Are you sure to decrease your rights on this item? The action is permanent and you won't be able to restore the previous share's rights by yourself. You can always contact the shared item's owner if you need the previous permission to be restored."
+						"Are you sure to decrease your rights on this item? The action is permanent and you won't be able to restore the previous share's rights by yourself."
+					)
+				).toBeVisible();
+				expect(
+					within(modal).getByText(
+						"You can always contact the shared item's owner if you need the previous permission to be restored."
 					)
 				).toBeVisible();
 				expect(within(modal).getByRole('button', { name: /confirm/i })).toBeVisible();
@@ -530,20 +535,20 @@ describe('Node Sharing', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true)
+					deleteShares: mockDeleteShares([mockedUserLogged.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, { mocks });
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const trashButtons = screen.getAllByRoleWithIcon('button', { icon: ICON_REGEXP.trash });
 			await user.click(trashButtons[0]);
 			await screen.findByRole('button', { name: /remove/i });
 			// run timers of modal
 			act(() => {
-				jest.advanceTimersToNextTimer();
+				vi.advanceTimersToNextTimer();
 			});
 			expect(
 				screen.getByText(/Are you sure to remove yourself from this collaboration/i)
@@ -556,7 +561,7 @@ describe('Node Sharing', () => {
 			// close snackbar
 			act(() => {
 				// run timers of snackbar
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			});
 			expect(screen.queryByText(/success/i)).not.toBeInTheDocument();
 			// logged user chip is removed from the list of collaborators
@@ -581,7 +586,7 @@ describe('Node Sharing', () => {
 			setup(<NodeSharing node={node} />, { mocks });
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			expect(screen.getAllByRoleWithIcon('button', { icon: ICON_REGEXP.trash })).toHaveLength(1);
 		});
@@ -599,7 +604,7 @@ describe('Node Sharing', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true)
+					deleteShares: mockDeleteShares([userAccount.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<NodeSharing node={node} />, {
@@ -607,13 +612,13 @@ describe('Node Sharing', () => {
 			});
 
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			await user.click(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.trash }));
 			await user.click(screen.getByRole('button', { name: /remove/i }));
 			// run timers of modal
 			act(() => {
-				jest.advanceTimersToNextTimer();
+				vi.advanceTimersToNextTimer();
 			});
 			await screen.findByText(/success/i);
 			expect(screen.queryByText(getChipLabel(userAccount))).not.toBeInTheDocument();
@@ -668,7 +673,7 @@ describe('Node Sharing', () => {
 			});
 			// run queries
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });
 			// type just the first character because the network search is requested only one time with first character.
@@ -759,7 +764,7 @@ describe('Node Sharing', () => {
 			});
 			// run queries
 			await act(async () => {
-				await jest.advanceTimersToNextTimerAsync();
+				await vi.advanceTimersToNextTimerAsync();
 			});
 			const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });
 			// type just the first character because the network search is requested only one time with first character.
@@ -851,7 +856,7 @@ describe('Node Sharing', () => {
 		});
 
 		await act(async () => {
-			await jest.advanceTimersToNextTimerAsync();
+			await vi.advanceTimersToNextTimerAsync();
 		});
 		const chipInput = screen.getByRole('textbox', { name: /Add new people or groups/i });
 		await user.type(chipInput, userAccount.full_name[0]);

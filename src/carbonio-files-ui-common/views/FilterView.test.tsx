@@ -23,13 +23,11 @@ import { Resolvers } from '../types/graphql/resolvers-types';
 import { FindNodesQuery, FindNodesQueryVariables } from '../types/graphql/types';
 import { mockFindNodes, mockFlagNodes, mockGetNode, mockGetPath } from '../utils/resolverMocks';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Filter view', () => {
 	test('No url param render a "Missing filter" message', async () => {
-		const mockedRequestHandler = jest.fn(handleFindNodesRequest);
+		const mockedRequestHandler = vi.fn(handleFindNodesRequest);
 		server.use(
 			graphql.query<FindNodesQuery, FindNodesQueryVariables>('findNodes', mockedRequestHandler)
 		);
@@ -179,7 +177,7 @@ describe('Filter view', () => {
 		await screen.findByTestId(SELECTORS.nodeItem(node.id));
 		expect(screen.getByTestId(SELECTORS.nodeItem(), { exact: false })).toBeInTheDocument();
 		act(() => {
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 		});
 		// flag the node through the hover bar
 		await user.click(screen.getByTestId(ICON_REGEXP.flag));

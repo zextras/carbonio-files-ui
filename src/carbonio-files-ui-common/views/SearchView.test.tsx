@@ -45,7 +45,7 @@ import { AdvancedFilters } from '../types/common';
 import { Resolvers } from '../types/graphql/resolvers-types';
 import { BaseNodeFragment, Folder, NodeType } from '../types/graphql/types';
 import {
-	mockDeleteShare,
+	mockDeleteShares,
 	mockFindNodes,
 	mockGetNode,
 	mockGetCollaborationLinks,
@@ -57,9 +57,7 @@ import {
 } from '../utils/resolverMocks';
 import { getChipLabel } from '../utils/utils';
 
-jest.mock<typeof import('./components/VirtualizedNodeListItem')>(
-	'./components/VirtualizedNodeListItem'
-);
+vi.mock('./components/VirtualizedNodeListItem');
 
 describe('Search view', () => {
 	describe('Shared by me param', () => {
@@ -80,7 +78,7 @@ describe('Search view', () => {
 					getCollaborationLinks: mockGetCollaborationLinks([])
 				},
 				Mutation: {
-					deleteShare: mockDeleteShare(true, true)
+					deleteShares: mockDeleteShares([shares[0]!.share_target!.id])
 				}
 			} satisfies Partial<Resolvers>;
 			const { user } = setup(<SearchView />, {
@@ -212,7 +210,7 @@ describe('Search view', () => {
 			const nodeToMoveItem = screen.getByTestId(SELECTORS.nodeItem(node.id));
 			await user.rightClick(nodeToMoveItem);
 			await moveNode(destinationFolder, user);
-			jest.advanceTimersToNextTimer();
+			vi.advanceTimersToNextTimer();
 			const fullPath = await findByTextWithMarkup(
 				buildBreadCrumbRegExp(...map(pathUpdated, (parent) => parent.name))
 			);

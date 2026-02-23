@@ -15,8 +15,8 @@ import { screen, setup } from '../carbonio-files-ui-common/tests/utils';
 
 describe('Node Details User Row', () => {
 	it('should open the composer with the email when click on the email', async () => {
-		const integratedFunction = jest.fn();
-		jest.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
+		const integratedFunction = vi.fn();
+		vi.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
 		const node = populateFile();
 		node.last_editor = populateUser();
 		const { user } = setup(<NodeDetailsUserRow user={node.owner} label={faker.string.alpha(10)} />);
