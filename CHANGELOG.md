@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.15.1](https://github.com/zextras/carbonio-files-ui/compare/v2.15.0...v2.15.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* update jenkins-lib-ui to versione 1.0.9 ([1b88325](https://github.com/zextras/carbonio-files-ui/commit/1b883253e60c9897abd0321d8a045b7b7fd2f10f))
+
 ## [2.15.0](https://github.com/zextras/carbonio-files-ui/compare/v2.14.0...v2.15.0) (2026-02-23)
 
 
