@@ -5,7 +5,7 @@
  */
 
 library(
-    identifier: 'jenkins-lib-ui@1.0.6',
+    identifier: 'jenkins-lib-ui@1.0.9',
     retriever: modernSCM([
         $class: 'GitSCMSource',
         credentialsId: 'jenkins-integration-with-github-account',
