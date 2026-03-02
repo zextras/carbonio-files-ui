@@ -24,8 +24,17 @@ export type Participant = {
 	address: string;
 };
 
+export type MailAttachment = {
+	aid: string;
+	filename: string;
+	size?: number;
+	isInline: boolean;
+	contentType: string;
+};
+
 export type ComposePrefillMessageType = (args: {
-	aid?: Array<string>;
+	aid?: string[];
+	attachments?: MailAttachment[];
 	recipients?: Array<Partial<Participant>>;
 }) => void;
 

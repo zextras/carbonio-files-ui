@@ -169,8 +169,8 @@ export const NodeListItem = ({
 	const { sendViaMail } = useSendViaMail();
 
 	const sendViaMailCallback = useCallback(() => {
-		sendViaMail(node.id);
-	}, [node.id, sendViaMail]);
+		sendViaMail(node);
+	}, [node, sendViaMail]);
 
 	const isNavigable = useMemo(
 		() =>

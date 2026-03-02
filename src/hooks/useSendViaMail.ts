@@ -9,23 +9,45 @@ import { useCallback } from 'react';
 import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
+import { NodeItem } from '../carbonio-files-ui-common/types/common';
 import { uploadToTargetModule } from '../carbonio-files-ui-common/utils/utils';
 import { getComposePrefillMessageFunction } from '../integrations/functions';
 
+type FileNodeItem = NodeItem & {
+	size?: number;
+	mime_type?: string;
+};
+
 export function useSendViaMail(): {
-	sendViaMail: (nodeId: string) => void;
+	sendViaMail: (node: FileNodeItem) => void;
 } {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
 
 	const sendViaMail = useCallback(
-		(nodeId: string) => {
-			uploadToTargetModule({ nodeId, targetModule: 'MAILS' }).then(
+		(node: FileNodeItem) => {
+			uploadToTargetModule({
+				nodeId: node.id,
+				targetModule: 'MAILS'
+			}).then(
 				(result) => {
 					const { integratedFunction, available } = getComposePrefillMessageFunction();
-					if (available) {
-						integratedFunction({ aid: [result.attachmentId] });
+
+					if (!available) {
+						return;
 					}
+
+					const attachment = {
+						aid: result.attachmentId,
+						filename: node.name,
+						size: node?.size,
+						isInline: false,
+						contentType: node?.mime_type ?? 'application/octet-stream'
+					};
+
+					integratedFunction({
+						attachments: [attachment]
+					});
 				},
 				(reason) => {
 					console.error(reason);
