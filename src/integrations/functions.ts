@@ -33,7 +33,6 @@ export type MailAttachment = {
 };
 
 export type ComposePrefillMessageType = (args: {
-	aid?: string[];
 	attachments?: MailAttachment[];
 	recipients?: Array<Partial<Participant>>;
 }) => void;
