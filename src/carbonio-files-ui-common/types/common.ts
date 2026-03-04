@@ -17,10 +17,9 @@ import {
 	Maybe,
 	Node as GQLNode,
 	Permissions,
-	User,
-	Share
+	User
 } from './graphql/types';
-import { DeepPick, SnakeToCamelCase } from './utils';
+import { SnakeToCamelCase } from './utils';
 
 export type Node<
 	NodeKeys extends keyof GQLNode = never,
@@ -30,22 +29,6 @@ export type Node<
 	(Pick<File, '__typename' | FileKeys> | Pick<Folder, '__typename' | FolderKeys>);
 
 export type PickIdNodeType = Node<'id'>;
-
-export type NodeItem = Node<
-	| 'id'
-	| 'name'
-	| 'permissions'
-	| 'type'
-	| 'rootId'
-	| 'flagged'
-	| 'updated_at'
-	| 'owner'
-	| 'last_editor',
-	'mime_type' | 'extension' | 'size' | 'version'
-> &
-	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> & {
-		shares: Maybe<Pick<Share, '__typename'>>[];
-	};
 
 export type GetNodeParentType = {
 	parent?: Maybe<

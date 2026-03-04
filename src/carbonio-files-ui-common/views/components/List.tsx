@@ -50,8 +50,10 @@ import { useHeaderActions } from '../../hooks/useHeaderActions';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { useUpload } from '../../hooks/useUpload';
-import { Crumb, NodeItem } from '../../types/common';
-import { GetChildrenParentDocument, NodeType } from '../../types/graphql/types';
+import { Crumb } from '../../types/common';
+import { Node } from '../../types/common';
+import { GetChildrenParentDocument, Maybe, NodeType, Share } from '../../types/graphql/types';
+import { DeepPick } from '../../types/utils';
 import {
 	Action,
 	buildActionItems,
@@ -65,6 +67,22 @@ import { humanFileSize, isFile, isFolder } from '../../utils/utils';
 const MainContainer = styled(Container)`
 	border-left: 0.0625rem solid ${(props): string => props.theme.palette.gray6.regular};
 `;
+
+type NodeItem = Node<
+	| 'id'
+	| 'name'
+	| 'permissions'
+	| 'type'
+	| 'rootId'
+	| 'flagged'
+	| 'updated_at'
+	| 'owner'
+	| 'last_editor',
+	'mime_type' | 'extension' | 'size' | 'version'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> & {
+		shares: Maybe<Pick<Share, '__typename'>>[];
+	};
 
 interface ListProps {
 	nodes: NodeItem[];

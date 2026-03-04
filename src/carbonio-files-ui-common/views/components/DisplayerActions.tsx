@@ -27,9 +27,16 @@ import { useTransferOwnershipModal } from '../../hooks/modals/useTransferOwnersh
 import { useDownloadNodes } from '../../hooks/useDownloadNodes';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
-import { NodeItem } from '../../types/common';
+import { Node } from '../../types/common';
+import { DeepPick } from '../../types/utils';
 import { Action, buildActionItems, getAllPermittedActions } from '../../utils/ActionsFactory';
 
+type NodeItem = Node<
+	'id' | 'name' | 'rootId' | 'permissions' | 'type' | 'flagged',
+	'version' | 'mime_type'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
 interface DisplayerActionsParams {
 	node: NodeItem;
 }

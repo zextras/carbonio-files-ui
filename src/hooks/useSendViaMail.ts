@@ -9,9 +9,17 @@ import { useCallback } from 'react';
 import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { NodeItem } from '../carbonio-files-ui-common/types/common';
+import { Node } from '../carbonio-files-ui-common/types/common';
+import { DeepPick } from '../carbonio-files-ui-common/types/utils';
 import { uploadToTargetModule } from '../carbonio-files-ui-common/utils/utils';
 import { getComposePrefillMessageFunction } from '../integrations/functions';
+
+type NodeItem = Node<
+	'id' | 'name' | 'rootId' | 'permissions' | 'type' | 'flagged',
+	'version' | 'mime_type'
+> &
+	DeepPick<Node<'parent'>, 'parent', 'id' | 'permissions' | '__typename'> &
+	DeepPick<Node<'owner'>, 'owner', 'id'>;
 
 type FileNodeItem = NodeItem & {
 	size?: number;
