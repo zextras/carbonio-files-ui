@@ -50,8 +50,7 @@ import { useHeaderActions } from '../../hooks/useHeaderActions';
 import { useHealthInfo } from '../../hooks/useHealthInfo';
 import { useOpenWithDocs } from '../../hooks/useOpenWithDocs';
 import { useUpload } from '../../hooks/useUpload';
-import { Crumb } from '../../types/common';
-import { Node } from '../../types/common';
+import { Crumb, Node } from '../../types/common';
 import { GetChildrenParentDocument, Maybe, NodeType, Share } from '../../types/graphql/types';
 import { DeepPick } from '../../types/utils';
 import {
