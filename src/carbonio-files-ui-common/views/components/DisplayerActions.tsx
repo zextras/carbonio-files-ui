@@ -94,7 +94,7 @@ export const DisplayerActions = ({ node }: DisplayerActionsParams): React.JSX.El
 	const { downloadNodeByType } = useDownloadNodes();
 
 	const sendViaMailCallback = useCallback(() => {
-		sendViaMail(node.id);
+		sendViaMail(node);
 	}, [node, sendViaMail]);
 
 	const { setActiveNode } = useActiveNode();

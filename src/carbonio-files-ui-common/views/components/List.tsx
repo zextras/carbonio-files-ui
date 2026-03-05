@@ -277,7 +277,7 @@ export const List = ({
 		exitSelectionMode();
 		const nodeToSend = nodes.find((node) => node.id === selectedIDs[0]);
 		if (nodeToSend) {
-			sendViaMail(nodeToSend.id);
+			sendViaMail(nodeToSend);
 		}
 	}, [exitSelectionMode, nodes, selectedIDs, sendViaMail]);
 
