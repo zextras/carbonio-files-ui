@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.15.2](https://github.com/zextras/carbonio-files-ui/compare/v2.15.1...v2.15.2) (2026-03-05)
+
+
+### Bug Fixes
+
+* lint ([ff87edf](https://github.com/zextras/carbonio-files-ui/commit/ff87edf297f2c67c2ca796014459faf574ba4b6d))
+* sendViaEmails improvement for unsaved editor ([3900af6](https://github.com/zextras/carbonio-files-ui/commit/3900af62e569baffb6729a6b1300a0e8a7e84c5c))
+* tipization changes ([b634437](https://github.com/zextras/carbonio-files-ui/commit/b63443773e34acd727b9e7394a97fda572445f2c))
+* type ([2b033e4](https://github.com/zextras/carbonio-files-ui/commit/2b033e4a5926a8ff2ceffa6236d6fc4547377975))
+
 ### [2.15.1](https://github.com/zextras/carbonio-files-ui/compare/v2.15.0...v2.15.1) (2026-02-27)
 
 
