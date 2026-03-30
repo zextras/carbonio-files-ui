@@ -39,6 +39,7 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 		errorPolicy: 'all',
 		onCompleted({ copyNodes: copyNodesResult }) {
 			if (copyNodesResult && copyNodesResult.length > 0) {
+				window.dispatchEvent(new CustomEvent('carbonio-files-ui:quota-changed'));
 				createSnackbar({
 					key: new Date().toLocaleString(),
 					severity: 'info',

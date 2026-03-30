@@ -29,7 +29,12 @@ export type CloneVersionType = (
  */
 export function useCloneVersionMutation(): CloneVersionType {
 	const [cloneVersionMutation, { error: cloneVersionError }] = useMutation(CloneVersionDocument, {
-		errorPolicy: 'all'
+		errorPolicy: 'all',
+		onCompleted({ cloneVersion: cloneVersionResult }) {
+			if (cloneVersionResult) {
+				window.dispatchEvent(new CustomEvent('carbonio-files-ui:quota-changed'));
+			}
+		}
 	});
 
 	const cloneVersion: CloneVersionType = useCallback(

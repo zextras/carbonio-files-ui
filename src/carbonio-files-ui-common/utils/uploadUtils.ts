@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
-import { forEach, map, find, filter, reduce, pull } from 'lodash';
+import { debounce, forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
@@ -311,6 +311,10 @@ function loadItemAsChild(
 	return Promise.resolve();
 }
 
+const debouncedRefreshQuota = debounce((): void => {
+	window.dispatchEvent(new CustomEvent('carbonio-files-ui:quota-changed'));
+}, 2000);
+
 export function canBeProcessed(id: string): boolean {
 	return uploadVar()[id].parentNodeId !== null;
 }
@@ -401,6 +405,7 @@ export function uploadCompleted(
 		});
 
 		incrementAllParents(fileEnriched);
+		debouncedRefreshQuota();
 
 		if (fileEnriched.parentNodeId) {
 			loadItemAsChild(nodeId, fileEnriched.parentNodeId, apolloClient, nodeSort, addNodeToFolder);

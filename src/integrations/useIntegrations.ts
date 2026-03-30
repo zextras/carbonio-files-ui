@@ -5,7 +5,7 @@
  */
 import { useEffect, useMemo } from 'react';
 
-import { registerFunctions } from '@zextras/carbonio-shell-ui';
+import { getIntegratedFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
 
 import { getGetLinkFunction } from './getGetLinkFunction';
 import { getNodeFunction } from './getNodeFunction';
@@ -50,4 +50,17 @@ export const useIntegrations = (): void => {
 			updateLinkFunction
 		);
 	}, [selectNodesFunction, updateLinkFunction]);
+
+	useEffect(() => {
+		const handler = (): void => {
+			const [refreshQuota, available] = getIntegratedFunction('storages-refresh-quota');
+			if (available) {
+				refreshQuota();
+			}
+		};
+		window.addEventListener('carbonio-files-ui:quota-changed', handler);
+		return () => {
+			window.removeEventListener('carbonio-files-ui:quota-changed', handler);
+		};
+	}, []);
 };
