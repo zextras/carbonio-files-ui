@@ -11,7 +11,7 @@ import { Avatar, Container, Divider, Text, useSnackbar } from '@zextras/carbonio
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { FILES_ROUTE } from '../../../constants';
+import { FILES_ROUTE, INTERNAL_PATH } from '../../../constants';
 import {
 	AddedNode,
 	NewShare,
@@ -252,12 +252,11 @@ export const NotificationItem = ({
 		}
 		if (isSuccededRecordingNotification(notification)) {
 			resetStore();
+			const folderId = notification.recording_destination_node.node_id.trim();
+			const nodeId = notification.recording_node.node_id.trim();
 			navigate({
-				search: [
-					`folder=${notification.recording_destination_node.node_id}`,
-					`node=${notification.recording_node.node_id}`
-				].join('&'),
-				pathname: `/${FILES_ROUTE}`
+				search: `node=${nodeId}`,
+				pathname: `/${FILES_ROUTE}/${INTERNAL_PATH.ROOT}/${folderId}`
 			});
 		}
 	}, [closePopover, notification, navigate, resetStore, createSnackbar, t]);
