@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 
+import { QUOTA_CHANGED_EVENT } from '../../../../constants';
 import {
 	CloneVersionDocument,
 	CloneVersionMutation,
@@ -32,7 +33,7 @@ export function useCloneVersionMutation(): CloneVersionType {
 		errorPolicy: 'all',
 		onCompleted({ cloneVersion: cloneVersionResult }) {
 			if (cloneVersionResult) {
-				window.dispatchEvent(new CustomEvent('carbonio-files-ui:quota-changed'));
+				window.dispatchEvent(new CustomEvent(QUOTA_CHANGED_EVENT));
 			}
 		}
 	});

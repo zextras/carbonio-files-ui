@@ -13,7 +13,7 @@ import { getUploadToTargetAndGetTargetIdFunction } from './getUploadToTargetAndG
 import { useSelectNodes } from './useSelectNodes';
 import { useUpdateLinkMutation } from '../carbonio-files-ui-common/hooks/graphql/mutations/useUpdateLinkMutation';
 import { ErrorHandlerOptions } from '../carbonio-files-ui-common/hooks/useErrorHandler';
-import { FUNCTION_IDS } from '../constants';
+import { FUNCTION_IDS, QUOTA_CHANGED_EVENT } from '../constants';
 
 export const useIntegrations = (): void => {
 	const selectNodes = useSelectNodes();
@@ -58,9 +58,9 @@ export const useIntegrations = (): void => {
 				refreshQuota();
 			}
 		};
-		window.addEventListener('carbonio-files-ui:quota-changed', handler);
+		window.addEventListener(QUOTA_CHANGED_EVENT, handler);
 		return () => {
-			window.removeEventListener('carbonio-files-ui:quota-changed', handler);
+			window.removeEventListener(QUOTA_CHANGED_EVENT, handler);
 		};
 	}, []);
 };

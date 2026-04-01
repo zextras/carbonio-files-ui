@@ -11,7 +11,7 @@ import { http, HttpResponse } from 'msw';
 
 import { DisplayerProps } from './components/Displayer';
 import FolderView from './FolderView';
-import { ACTION_IDS } from '../../constants';
+import { ACTION_IDS, QUOTA_CHANGED_EVENT } from '../../constants';
 import { CreateOption, NewAction } from '../../hooks/useCreateOptions';
 import server from '../../mocks/server';
 import {
@@ -629,7 +629,7 @@ describe('Create docs file', () => {
 		await createNode({ name: newFile.name }, user);
 		await screen.findByTestId(SELECTORS.nodeItem(newFile.id));
 		expect(dispatchEventSpy).toHaveBeenCalledWith(
-			expect.objectContaining({ type: 'carbonio-files-ui:quota-changed' })
+			expect.objectContaining({ type: QUOTA_CHANGED_EVENT })
 		);
 	});
 

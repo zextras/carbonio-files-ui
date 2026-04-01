@@ -43,6 +43,7 @@ export const EMAIL_REGEXP = EMAIL_VALIDATION_REGEX;
 
 export const UPDATE_VIEW_EVENT = 'updateView';
 export const RESET_SELECTION_EVENT = 'resetSelection';
+export const QUOTA_CHANGED_EVENT = 'carbonio-files-ui:quota-changed';
 
 export const EMPTY_ITEM: SelectItem<SharePermission> = {
 	label: 'EMPTY',
