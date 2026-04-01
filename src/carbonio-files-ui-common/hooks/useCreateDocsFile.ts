@@ -95,6 +95,7 @@ export const useCreateDocsFile = (): UseCreateDocsFileReturnType => {
 			if (response.ok) {
 				const { nodeId } = (await response.json()) as CreateDocsFileResponse;
 				if (nodeId) {
+					window.dispatchEvent(new CustomEvent('carbonio-files-ui:quota-changed'));
 					return onCreateFileCompleted(nodeId);
 				}
 				return undefined;

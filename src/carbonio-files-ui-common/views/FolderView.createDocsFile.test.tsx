@@ -587,6 +587,52 @@ describe('Create docs file', () => {
 		expect(snackbar).toBeVisible();
 	});
 
+	it('should dispatch quota-changed event after successful document creation', async () => {
+		healthCache.reset();
+		server.use(
+			http.get<never, never, HealthResponse>(`${REST_ENDPOINT}${HEALTH_PATH}`, () =>
+				HttpResponse.json({ dependencies: [{ name: DOCS_SERVICE_NAME, live: true }] })
+			)
+		);
+		const currentFolder = populateFolder();
+		currentFolder.permissions.can_write_file = true;
+		currentFolder.permissions.can_write_folder = true;
+		const newFile = populateFile();
+		newFile.parent = currentFolder;
+		const createOptions = spyOnUseCreateOptions();
+		const mocks = {
+			Query: {
+				getPath: mockGetPath([currentFolder]),
+				getNode: mockGetNode({
+					getChildren: [currentFolder],
+					getPermissions: [currentFolder],
+					getNode: [newFile]
+				})
+			}
+		} satisfies Partial<Resolvers>;
+
+		server.use(
+			http.post(DOCS_ENDPOINT + CREATE_FILE_PATH, () => HttpResponse.json({ nodeId: newFile.id }))
+		);
+
+		const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
+		const { user } = setup(<FolderView />, {
+			initialRouterEntries: [`/?folder=${currentFolder.id}`],
+			mocks
+		});
+
+		await act(async () => {
+			await vi.advanceTimersToNextTimerAsync();
+		});
+		await screen.findByText(LIST_EMPTY_MESSAGE);
+		clickOnCreateDocsAction(createOptions, ACTION_IDS.CREATE_DOCS_DOCUMENT, 'libre');
+		await createNode({ name: newFile.name }, user);
+		await screen.findByTestId(SELECTORS.nodeItem(newFile.id));
+		expect(dispatchEventSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ type: 'carbonio-files-ui:quota-changed' })
+		);
+	});
+
 	it.each<
 		[
 			string,
