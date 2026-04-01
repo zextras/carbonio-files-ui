@@ -375,7 +375,12 @@ export enum NodeType {
 	Video = 'VIDEO'
 }
 
-export type Notification = AddedNode | NewShare | RemovedNode | TransferredOwnership;
+export type Notification =
+	| AddedNode
+	| NewShare
+	| RemovedNode
+	| SucceededRecording
+	| TransferredOwnership;
 
 export type NotificationPage = {
 	__typename: 'NotificationPage';
@@ -389,6 +394,7 @@ export enum NotificationType {
 	AddedNode = 'ADDED_NODE',
 	NewShare = 'NEW_SHARE',
 	RemovedNode = 'REMOVED_NODE',
+	SucceededRecording = 'SUCCEEDED_RECORDING',
 	TransferredOwnership = 'TRANSFERRED_OWNERSHIP'
 }
 
@@ -561,6 +567,15 @@ export type SnapshotUser = {
 	full_name: Scalars['String']['output'];
 	snapshot_user_id: Scalars['ID']['output'];
 	user_id: Scalars['ID']['output'];
+};
+
+export type SucceededRecording = {
+	__typename: 'SucceededRecording';
+	created_at: Scalars['DateTime']['output'];
+	id: Scalars['ID']['output'];
+	notification_type: NotificationType;
+	recording_destination_node: SnapshotNode;
+	recording_node: SnapshotNode;
 };
 
 export type TransferredOwnership = {
@@ -1634,7 +1649,7 @@ export type GetCeNotificationsQuery = {
 								snapshot_node_id: string;
 							} & { __typename: 'SnapshotNode' };
 					  } & { __typename: 'RemovedNode' })
-					| { __typename: 'TransferredOwnership' }
+					| { __typename: 'SucceededRecording' | 'TransferredOwnership' }
 					| null
 				>;
 		  } & { __typename: 'NotificationPage' })
@@ -2395,6 +2410,27 @@ export type GetNotificationsQuery = {
 								snapshot_node_id: string;
 							} & { __typename: 'SnapshotNode' };
 					  } & { __typename: 'RemovedNode' })
+					| ({
+							id: string;
+							notification_type: NotificationType;
+							created_at: number;
+							recording_node: {
+								snapshot_node_id: string;
+								node_id: string;
+								name: string;
+								type: NodeType;
+								created_at: number;
+								owner_id: string | null;
+							} & { __typename: 'SnapshotNode' };
+							recording_destination_node: {
+								snapshot_node_id: string;
+								node_id: string;
+								name: string;
+								type: NodeType;
+								created_at: number;
+								owner_id: string | null;
+							} & { __typename: 'SnapshotNode' };
+					  } & { __typename: 'SucceededRecording' })
 					| ({
 							id: string;
 							notification_type: NotificationType;
@@ -7647,6 +7683,57 @@ export const GetNotificationsDocument = {
 																		kind: 'Field',
 																		name: { kind: 'Name', value: 'snapshot_node_id' }
 																	}
+																]
+															}
+														}
+													]
+												}
+											},
+											{
+												kind: 'InlineFragment',
+												typeCondition: {
+													kind: 'NamedType',
+													name: { kind: 'Name', value: 'SucceededRecording' }
+												},
+												selectionSet: {
+													kind: 'SelectionSet',
+													selections: [
+														{ kind: 'Field', name: { kind: 'Name', value: 'id' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'notification_type' } },
+														{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'recording_node' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_node_id' }
+																	},
+																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } }
+																]
+															}
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'recording_destination_node' },
+															selectionSet: {
+																kind: 'SelectionSet',
+																selections: [
+																	{
+																		kind: 'Field',
+																		name: { kind: 'Name', value: 'snapshot_node_id' }
+																	},
+																	{ kind: 'Field', name: { kind: 'Name', value: 'node_id' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'name' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'type' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'created_at' } },
+																	{ kind: 'Field', name: { kind: 'Name', value: 'owner_id' } }
 																]
 															}
 														}

@@ -18,7 +18,8 @@ import {
 	Notification,
 	NotificationType,
 	RemovedNode,
-	TransferredOwnership
+	TransferredOwnership,
+	SucceededRecording
 } from '../../../types/graphql/types';
 import { InlineText } from '../StyledComponents';
 
@@ -53,6 +54,12 @@ export function isTransferredOwnershipNotification(
 	notification: Notification
 ): notification is TransferredOwnership {
 	return notification.notification_type === NotificationType.TransferredOwnership;
+}
+
+export function isSuccededRecordingNotification(
+	notification: Notification
+): notification is SucceededRecording {
+	return notification.notification_type === NotificationType.SucceededRecording;
 }
 
 export function getDateNotification(createdAt: number, language?: string): string {
@@ -172,6 +179,28 @@ export const NotificationItem = ({
 				/>
 			);
 		}
+		if (isSuccededRecordingNotification(notification)) {
+			return (
+				<Trans
+					t={t}
+					i18nKey="notifications.succeededRecording.message"
+					defaults="<bold>{{node}}</bold> saved in <bold>{{folder}}</bold>"
+					values={{
+						node: notification.recording_node.name,
+						folder: notification.recording_destination_node.name
+					}}
+					components={{
+						bold: (
+							<InlineText
+								overflow={'break-word'}
+								weight="bold"
+								color={isUnread ? 'primary' : 'text'}
+							/>
+						)
+					}}
+				/>
+			);
+		}
 		return null;
 	}, [isUnread, notification, t]);
 
@@ -221,6 +250,16 @@ export const NotificationItem = ({
 				});
 			}
 		}
+		if (isSuccededRecordingNotification(notification)) {
+			resetStore();
+			navigate({
+				search: [
+					`folder=${notification.recording_destination_node.node_id}`,
+					`node=${notification.recording_node.node_id}`
+				].join('&'),
+				pathname: `/${FILES_ROUTE}`
+			});
+		}
 	}, [closePopover, notification, navigate, resetStore, createSnackbar, t]);
 
 	return (
@@ -233,7 +272,12 @@ export const NotificationItem = ({
 				padding={'0.5rem'}
 				onClick={handleClick}
 			>
-				<Avatar label={notification.triggering_user.email} />
+				<Avatar
+					label={
+						isSuccededRecordingNotification(notification) ? '' : notification.triggering_user.email
+					}
+					icon={isSuccededRecordingNotification(notification) ? 'Settings' : undefined}
+				/>
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
 					<Text
 						overflow={'break-word'}

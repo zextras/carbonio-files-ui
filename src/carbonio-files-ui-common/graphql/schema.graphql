@@ -197,7 +197,7 @@ enum NodeType {
 	VIDEO
 }
 
-union Notification = AddedNode | NewShare | RemovedNode | TransferredOwnership
+union Notification = AddedNode | NewShare | RemovedNode | SucceededRecording | TransferredOwnership
 
 type NotificationPage {
 	last_seen: DateTime!
@@ -210,6 +210,7 @@ enum NotificationType {
 	ADDED_NODE
 	NEW_SHARE
 	REMOVED_NODE
+	SUCCEEDED_RECORDING
 	TRANSFERRED_OWNERSHIP
 }
 
@@ -318,6 +319,14 @@ type SnapshotUser {
 	full_name: String!
 	snapshot_user_id: ID!
 	user_id: ID!
+}
+
+type SucceededRecording {
+	created_at: DateTime!
+	id: ID!
+	notification_type: NotificationType!
+	recording_destination_node: SnapshotNode!
+	recording_node: SnapshotNode!
 }
 
 type TransferredOwnership {

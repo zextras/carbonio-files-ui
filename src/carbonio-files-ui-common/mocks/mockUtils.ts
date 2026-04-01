@@ -43,6 +43,7 @@ import {
 	SharePermission,
 	SnapshotNode,
 	SnapshotUser,
+	SucceededRecording,
 	TransferredOwnership,
 	User
 } from '../types/graphql/types';
@@ -670,6 +671,17 @@ export function populateTransferredOwnershipNotification(): TransferredOwnership
 		number_of_nodes: faker.number.int({ min: 1, max: 10 }),
 		receiving_user: populateSnapshotUser(),
 		resulting_node: populateSnapshotNode()
+	};
+}
+
+export function populateSucceededRecordingNotification(): SucceededRecording {
+	return {
+		__typename: 'SucceededRecording',
+		created_at: faker.date.past().getTime(),
+		id: faker.string.uuid(),
+		notification_type: NotificationType.SucceededRecording,
+		recording_node: populateSnapshotNode(),
+		recording_destination_node: populateSnapshotNode()
 	};
 }
 
