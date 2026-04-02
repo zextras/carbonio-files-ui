@@ -7,6 +7,7 @@ import React from 'react';
 
 import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
+import { useFeatureFlag } from '@zextras/carbonio-shell-ui';
 import { keyBy } from 'lodash';
 import { graphql, HttpResponse } from 'msw';
 
@@ -32,6 +33,19 @@ vi.mock('../../hooks/useIsCarbonioCE', () => ({
 }));
 
 describe('SecondaryBar', () => {
+	describe('FilesQuota feature flag', () => {
+		it('should render FilesQuota when totalQuota feature flag is off', () => {
+			setup(<SecondaryBar expanded />);
+			expect(screen.getByTestId('quota-test-id')).toBeVisible();
+		});
+
+		it('should not render FilesQuota when totalQuota feature flag is on', () => {
+			vi.mocked(useFeatureFlag).mockReturnValue(true);
+			setup(<SecondaryBar expanded />);
+			expect(screen.queryByTestId('quota-test-id')).not.toBeInTheDocument();
+		});
+	});
+
 	describe('Notifications', () => {
 		it('should render the Notifications entry without the notifications badge counter if there are no notifications', () => {
 			setup(<SecondaryBar expanded />);

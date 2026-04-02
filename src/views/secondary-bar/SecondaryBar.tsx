@@ -9,6 +9,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useReactiveVar } from '@apollo/client';
 import styled from '@emotion/styled';
 import { Accordion, AccordionItemType, Container } from '@zextras/carbonio-design-system';
+import { useFeatureFlag } from '@zextras/carbonio-shell-ui';
 import { map, find, reduce, size, orderBy, filter, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -46,6 +47,7 @@ interface SecondaryBarProps {
 }
 
 export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element => {
+	const isTotalQuotaEnabled = useFeatureFlag('totalQuota');
 	const { unread } = useGetNotificationsQuery();
 	const isNotificationsBadgeCounterShown = useReactiveVar(showNotificationsBadgeVar);
 	const { navigateTo } = useNavigation();
@@ -276,7 +278,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	return expanded ? (
 		<Container mainAlignment={'space-between'}>
 			<CustomAccordion height={'fit'} role="menuitem" items={items || []} />
-			<FilesQuota />
+			{!isTotalQuotaEnabled && <FilesQuota />}
 		</Container>
 	) : (
 		<Container height={'fit'}>
