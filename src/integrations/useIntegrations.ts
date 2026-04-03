@@ -5,7 +5,7 @@
  */
 import { useEffect, useMemo } from 'react';
 
-import { registerFunctions } from '@zextras/carbonio-shell-ui';
+import { getIntegratedFunction, registerFunctions } from '@zextras/carbonio-shell-ui';
 
 import { getGetLinkFunction } from './getGetLinkFunction';
 import { getNodeFunction } from './getNodeFunction';
@@ -13,7 +13,7 @@ import { getUploadToTargetAndGetTargetIdFunction } from './getUploadToTargetAndG
 import { useSelectNodes } from './useSelectNodes';
 import { useUpdateLinkMutation } from '../carbonio-files-ui-common/hooks/graphql/mutations/useUpdateLinkMutation';
 import { ErrorHandlerOptions } from '../carbonio-files-ui-common/hooks/useErrorHandler';
-import { FUNCTION_IDS } from '../constants';
+import { FUNCTION_IDS, QUOTA_CHANGED_EVENT } from '../constants';
 
 export const useIntegrations = (): void => {
 	const selectNodes = useSelectNodes();
@@ -50,4 +50,17 @@ export const useIntegrations = (): void => {
 			updateLinkFunction
 		);
 	}, [selectNodesFunction, updateLinkFunction]);
+
+	useEffect(() => {
+		const handler = (): void => {
+			const [refreshQuota, available] = getIntegratedFunction('storages-refresh-quota');
+			if (available) {
+				refreshQuota();
+			}
+		};
+		window.addEventListener(QUOTA_CHANGED_EVENT, handler);
+		return () => {
+			window.removeEventListener(QUOTA_CHANGED_EVENT, handler);
+		};
+	}, []);
 };

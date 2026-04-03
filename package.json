@@ -7,6 +7,8 @@
 		"build": "sdk build",
 		"start": "sdk watch",
 		"deploy": "sdk install",
+		"deploy:local": "sdk deploy --container ${CONTAINER:-carbonio-advanced-carbonio-composed-ui-1}",
+		"watch:local": "sdk watch -h ${HOST:-localhost}",
 		"test": "vitest run",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest run --coverage",

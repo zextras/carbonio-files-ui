@@ -10,6 +10,7 @@ import { FetchResult, useApolloClient, useReactiveVar } from '@apollo/client';
 import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
+import { QUOTA_CHANGED_EVENT } from '../../constants';
 import { useUpdateFolderContent } from './graphql/useUpdateFolderContent';
 import { nodeSortVar } from '../apollo/nodeSortVar';
 import {
@@ -95,6 +96,7 @@ export const useCreateDocsFile = (): UseCreateDocsFileReturnType => {
 			if (response.ok) {
 				const { nodeId } = (await response.json()) as CreateDocsFileResponse;
 				if (nodeId) {
+					window.dispatchEvent(new CustomEvent(QUOTA_CHANGED_EVENT));
 					return onCreateFileCompleted(nodeId);
 				}
 				return undefined;
