@@ -11,7 +11,7 @@ import { Avatar, Container, Divider, Text, useSnackbar } from '@zextras/carbonio
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { FILES_ROUTE, INTERNAL_PATH } from '../../../constants';
+import { FILES_ROUTE, INTERNAL_PATH, ROOTS } from '../../../constants';
 import {
 	AddedNode,
 	NewShare,
@@ -120,7 +120,10 @@ export const NotificationItem = ({
 					values={{
 						email: notification.triggering_user.email,
 						node: notification.added_node.name,
-						folder: notification.destination_folder.name
+						folder:
+							notification.destination_folder.node_id.trim() === ROOTS.LOCAL_ROOT
+								? t('secondaryBar.filesHome', 'Home')
+								: notification.destination_folder.name
 					}}
 					components={{
 						bold: (
@@ -143,7 +146,10 @@ export const NotificationItem = ({
 					values={{
 						email: notification.triggering_user.email,
 						node: notification.removed_node.name,
-						folder: notification.origin_folder.name
+						folder:
+							notification.origin_folder.node_id.trim() === ROOTS.LOCAL_ROOT
+								? t('secondaryBar.filesHome', 'Home')
+								: notification.origin_folder.name
 					}}
 					components={{
 						bold: (
@@ -187,7 +193,10 @@ export const NotificationItem = ({
 					defaults="<bold>{{node}}</bold> saved in <bold>{{folder}}</bold>"
 					values={{
 						node: notification.recording_node.name,
-						folder: notification.recording_destination_node.name
+						folder:
+							notification.recording_destination_node.node_id.trim() === ROOTS.LOCAL_ROOT
+								? t('secondaryBar.filesHome', 'Home')
+								: notification.recording_destination_node.name
 					}}
 					components={{
 						bold: (
