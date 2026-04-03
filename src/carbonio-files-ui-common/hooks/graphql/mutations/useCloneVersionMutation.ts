@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 
 import { FetchResult, useMutation } from '@apollo/client';
 
+import { QUOTA_CHANGED_EVENT } from '../../../../constants';
 import {
 	CloneVersionDocument,
 	CloneVersionMutation,
@@ -29,7 +30,12 @@ export type CloneVersionType = (
  */
 export function useCloneVersionMutation(): CloneVersionType {
 	const [cloneVersionMutation, { error: cloneVersionError }] = useMutation(CloneVersionDocument, {
-		errorPolicy: 'all'
+		errorPolicy: 'all',
+		onCompleted({ cloneVersion: cloneVersionResult }) {
+			if (cloneVersionResult) {
+				window.dispatchEvent(new CustomEvent(QUOTA_CHANGED_EVENT));
+			}
+		}
 	});
 
 	const cloneVersion: CloneVersionType = useCallback(
