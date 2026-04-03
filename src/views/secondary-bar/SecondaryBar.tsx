@@ -9,7 +9,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useReactiveVar } from '@apollo/client';
 import styled from '@emotion/styled';
 import { Accordion, AccordionItemType, Container } from '@zextras/carbonio-design-system';
-import { useFeatureFlag } from '@zextras/carbonio-shell-ui';
 import { map, find, reduce, size, orderBy, filter, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -28,6 +27,7 @@ import {
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
 } from '../../carbonio-files-ui-common/views/components/SecondaryBarItem';
+import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import { useNavigation } from '../../hooks/useNavigation';
 
 type AccordionItemWithPriority = AccordionItemType & {

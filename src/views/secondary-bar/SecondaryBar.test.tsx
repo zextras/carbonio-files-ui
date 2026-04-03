@@ -7,7 +7,6 @@ import React from 'react';
 
 import { faker } from '@faker-js/faker';
 import { act } from '@testing-library/react';
-import { useFeatureFlag } from '@zextras/carbonio-shell-ui';
 import { keyBy } from 'lodash';
 import { graphql, HttpResponse } from 'msw';
 
@@ -23,6 +22,7 @@ import {
 import { screen, setup } from '../../carbonio-files-ui-common/tests/utils';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetNotificationsDocument } from '../../carbonio-files-ui-common/types/graphql/types';
+import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import server from '../../mocks/server';
 
 vi.mock('../../carbonio-files-ui-common/views/components/FilesQuota', () => ({
@@ -30,6 +30,9 @@ vi.mock('../../carbonio-files-ui-common/views/components/FilesQuota', () => ({
 }));
 vi.mock('../../hooks/useIsCarbonioCE', () => ({
 	useIsCarbonioCE: vi.fn(() => false)
+}));
+vi.mock('../../hooks/useFeatureFlag', () => ({
+	useFeatureFlag: vi.fn(() => undefined)
 }));
 
 describe('SecondaryBar', () => {
