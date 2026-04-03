@@ -56,7 +56,7 @@ export function isTransferredOwnershipNotification(
 	return notification.notification_type === NotificationType.TransferredOwnership;
 }
 
-export function isSuccededRecordingNotification(
+export function isSucceededRecordingNotification(
 	notification: Notification
 ): notification is SucceededRecording {
 	return notification.notification_type === NotificationType.SucceededRecording;
@@ -185,7 +185,7 @@ export const NotificationItem = ({
 				/>
 			);
 		}
-		if (isSuccededRecordingNotification(notification)) {
+		if (isSucceededRecordingNotification(notification)) {
 			return (
 				<Trans
 					t={t}
@@ -259,7 +259,7 @@ export const NotificationItem = ({
 				});
 			}
 		}
-		if (isSuccededRecordingNotification(notification)) {
+		if (isSucceededRecordingNotification(notification)) {
 			resetStore();
 			const folderId = notification.recording_destination_node.node_id.trim();
 			const nodeId = notification.recording_node.node_id.trim();
@@ -282,9 +282,9 @@ export const NotificationItem = ({
 			>
 				<Avatar
 					label={
-						isSuccededRecordingNotification(notification) ? '' : notification.triggering_user.email
+						isSucceededRecordingNotification(notification) ? '' : notification.triggering_user.email
 					}
-					icon={isSuccededRecordingNotification(notification) ? 'Settings' : undefined}
+					icon={isSucceededRecordingNotification(notification) ? 'Settings' : undefined}
 				/>
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
 					<Text
