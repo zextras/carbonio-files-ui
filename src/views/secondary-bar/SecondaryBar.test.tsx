@@ -22,6 +22,7 @@ import {
 import { screen, setup } from '../../carbonio-files-ui-common/tests/utils';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetNotificationsDocument } from '../../carbonio-files-ui-common/types/graphql/types';
+import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import server from '../../mocks/server';
 
 vi.mock('../../carbonio-files-ui-common/views/components/FilesQuota', () => ({
@@ -30,8 +31,24 @@ vi.mock('../../carbonio-files-ui-common/views/components/FilesQuota', () => ({
 vi.mock('../../hooks/useIsCarbonioCE', () => ({
 	useIsCarbonioCE: vi.fn(() => false)
 }));
+vi.mock('../../hooks/useFeatureFlag', () => ({
+	useFeatureFlag: vi.fn(() => undefined)
+}));
 
 describe('SecondaryBar', () => {
+	describe('FilesQuota feature flag', () => {
+		it('should render FilesQuota when totalQuota feature flag is off', () => {
+			setup(<SecondaryBar expanded />);
+			expect(screen.getByTestId('quota-test-id')).toBeVisible();
+		});
+
+		it('should not render FilesQuota when totalQuota feature flag is on', () => {
+			vi.mocked(useFeatureFlag).mockReturnValue(true);
+			setup(<SecondaryBar expanded />);
+			expect(screen.queryByTestId('quota-test-id')).not.toBeInTheDocument();
+		});
+	});
+
 	describe('Notifications', () => {
 		it('should render the Notifications entry without the notifications badge counter if there are no notifications', () => {
 			setup(<SecondaryBar expanded />);
