@@ -12,6 +12,7 @@ import { forEach, map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
+import { QUOTA_CHANGED_EVENT } from '../../../../constants';
 import { useNavigation } from '../../../../hooks/useNavigation';
 import { SHARES_LOAD_LIMIT } from '../../../constants';
 import { PickIdNodeType } from '../../../types/common';
@@ -39,6 +40,7 @@ export function useCopyNodesMutation(): { copyNodes: CopyNodesType; loading: boo
 		errorPolicy: 'all',
 		onCompleted({ copyNodes: copyNodesResult }) {
 			if (copyNodesResult && copyNodesResult.length > 0) {
+				window.dispatchEvent(new CustomEvent(QUOTA_CHANGED_EVENT));
 				createSnackbar({
 					key: new Date().toLocaleString(),
 					severity: 'info',

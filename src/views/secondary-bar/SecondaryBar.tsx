@@ -27,6 +27,7 @@ import {
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
 } from '../../carbonio-files-ui-common/views/components/SecondaryBarItem';
+import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import { useNavigation } from '../../hooks/useNavigation';
 
 type AccordionItemWithPriority = AccordionItemType & {
@@ -46,6 +47,7 @@ interface SecondaryBarProps {
 }
 
 export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element => {
+	const isTotalQuotaEnabled = useFeatureFlag('totalQuota');
 	const { unread } = useGetNotificationsQuery();
 	const isNotificationsBadgeCounterShown = useReactiveVar(showNotificationsBadgeVar);
 	const { navigateTo } = useNavigation();
@@ -276,7 +278,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	return expanded ? (
 		<Container mainAlignment={'space-between'}>
 			<CustomAccordion height={'fit'} role="menuitem" items={items || []} />
-			<FilesQuota />
+			{!isTotalQuotaEnabled && <FilesQuota />}
 		</Container>
 	) : (
 		<Container height={'fit'}>
