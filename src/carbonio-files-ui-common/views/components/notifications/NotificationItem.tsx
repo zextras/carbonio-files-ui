@@ -11,14 +11,15 @@ import { Avatar, Container, Divider, Text, useSnackbar } from '@zextras/carbonio
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { FILES_ROUTE } from '../../../constants';
+import { FILES_ROUTE, INTERNAL_PATH, ROOTS } from '../../../constants';
 import {
 	AddedNode,
 	NewShare,
 	Notification,
 	NotificationType,
 	RemovedNode,
-	TransferredOwnership
+	TransferredOwnership,
+	SucceededRecording
 } from '../../../types/graphql/types';
 import { InlineText } from '../StyledComponents';
 
@@ -55,6 +56,12 @@ export function isTransferredOwnershipNotification(
 	return notification.notification_type === NotificationType.TransferredOwnership;
 }
 
+export function isSucceededRecordingNotification(
+	notification: Notification
+): notification is SucceededRecording {
+	return notification.notification_type === NotificationType.SucceededRecording;
+}
+
 export function getDateNotification(createdAt: number, language?: string): string {
 	const fixedLocale = language?.replace('_', '-');
 	const format: Intl.DateTimeFormatOptions = {
@@ -82,6 +89,9 @@ export const NotificationItem = ({
 	const createSnackbar = useSnackbar();
 
 	const notificationMessage = useMemo(() => {
+		const boldComponent = (
+			<InlineText overflow={'break-word'} weight="bold" color={isUnread ? 'primary' : 'text'} />
+		);
 		if (isNewShareNotification(notification)) {
 			return (
 				<Trans
@@ -93,13 +103,7 @@ export const NotificationItem = ({
 						node: notification.node.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
 					}}
 				/>
 			);
@@ -113,16 +117,13 @@ export const NotificationItem = ({
 					values={{
 						email: notification.triggering_user.email,
 						node: notification.added_node.name,
-						folder: notification.destination_folder.name
+						folder:
+							notification.destination_folder.node_id.trim() === ROOTS.LOCAL_ROOT
+								? t('secondaryBar.filesHome', 'Home')
+								: notification.destination_folder.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
 					}}
 				/>
 			);
@@ -136,16 +137,13 @@ export const NotificationItem = ({
 					values={{
 						email: notification.triggering_user.email,
 						node: notification.removed_node.name,
-						folder: notification.origin_folder.name
+						folder:
+							notification.origin_folder.node_id.trim() === ROOTS.LOCAL_ROOT
+								? t('secondaryBar.filesHome', 'Home')
+								: notification.origin_folder.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
 					}}
 				/>
 			);
@@ -161,13 +159,26 @@ export const NotificationItem = ({
 						folder: notification.resulting_node.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
+					}}
+				/>
+			);
+		}
+		if (isSucceededRecordingNotification(notification)) {
+			return (
+				<Trans
+					t={t}
+					i18nKey="notifications.succeededRecording.message"
+					defaults="<bold>{{node}}</bold> saved in <bold>{{folder}}</bold>"
+					values={{
+						node: notification.recording_node.name,
+						folder:
+							notification.recording_destination_node.node_id.trim() === ROOTS.LOCAL_ROOT
+								? t('secondaryBar.filesHome', 'Home')
+								: notification.recording_destination_node.name
+					}}
+					components={{
+						bold: boldComponent
 					}}
 				/>
 			);
@@ -221,6 +232,15 @@ export const NotificationItem = ({
 				});
 			}
 		}
+		if (isSucceededRecordingNotification(notification)) {
+			resetStore();
+			const folderId = notification.recording_destination_node.node_id.trim();
+			const nodeId = notification.recording_node.node_id.trim();
+			navigate({
+				search: `node=${nodeId}`,
+				pathname: `/${FILES_ROUTE}/${INTERNAL_PATH.ROOT}/${folderId}`
+			});
+		}
 	}, [closePopover, notification, navigate, resetStore, createSnackbar, t]);
 
 	return (
@@ -233,7 +253,12 @@ export const NotificationItem = ({
 				padding={'0.5rem'}
 				onClick={handleClick}
 			>
-				<Avatar label={notification.triggering_user.email} />
+				<Avatar
+					label={
+						isSucceededRecordingNotification(notification) ? '' : notification.triggering_user.email
+					}
+					icon={isSucceededRecordingNotification(notification) ? 'Settings' : undefined}
+				/>
 				<Container mainAlignment={'flex-start'} crossAlignment={'flex-start'} gap={'0.5rem'}>
 					<Text
 						overflow={'break-word'}

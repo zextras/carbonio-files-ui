@@ -374,7 +374,12 @@ export enum NodeType {
 	Video = 'VIDEO'
 }
 
-export type Notification = AddedNode | NewShare | RemovedNode | TransferredOwnership;
+export type Notification =
+	| AddedNode
+	| NewShare
+	| RemovedNode
+	| SucceededRecording
+	| TransferredOwnership;
 
 export type NotificationPage = {
 	__typename: 'NotificationPage';
@@ -388,6 +393,7 @@ export enum NotificationType {
 	AddedNode = 'ADDED_NODE',
 	NewShare = 'NEW_SHARE',
 	RemovedNode = 'REMOVED_NODE',
+	SucceededRecording = 'SUCCEEDED_RECORDING',
 	TransferredOwnership = 'TRANSFERRED_OWNERSHIP'
 }
 
@@ -557,6 +563,15 @@ export type SnapshotUser = {
 	user_id: Scalars['ID']['output'];
 };
 
+export type SucceededRecording = {
+	__typename: 'SucceededRecording';
+	created_at: Scalars['DateTime']['output'];
+	id: Scalars['ID']['output'];
+	notification_type: NotificationType;
+	recording_destination_node: SnapshotNode;
+	recording_node: SnapshotNode;
+};
+
 export type TransferredOwnership = {
 	__typename: 'TransferredOwnership';
 	created_at: Scalars['DateTime']['output'];
@@ -673,7 +688,7 @@ export type DirectiveResolverFn<
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
 	Account: DistributionList | User;
-	Notification: AddedNode | NewShare | RemovedNode | TransferredOwnership;
+	Notification: AddedNode | NewShare | RemovedNode | SucceededRecording | TransferredOwnership;
 	SharedTarget: DistributionList | User;
 };
 
@@ -767,6 +782,7 @@ export type ResolversTypes = {
 	SnapshotNode: ResolverTypeWrapper<SnapshotNode>;
 	SnapshotUser: ResolverTypeWrapper<SnapshotUser>;
 	String: ResolverTypeWrapper<Scalars['String']['output']>;
+	SucceededRecording: ResolverTypeWrapper<SucceededRecording>;
 	TransferredOwnership: ResolverTypeWrapper<TransferredOwnership>;
 	User: ResolverTypeWrapper<User>;
 };
@@ -822,6 +838,7 @@ export type ResolversParentTypes = {
 	SnapshotNode: SnapshotNode;
 	SnapshotUser: SnapshotUser;
 	String: Scalars['String']['output'];
+	SucceededRecording: SucceededRecording;
 	TransferredOwnership: TransferredOwnership;
 	User: User;
 };
@@ -1154,7 +1171,7 @@ export type NotificationResolvers<
 	ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']
 > = {
 	__resolveType: TypeResolveFn<
-		'AddedNode' | 'NewShare' | 'RemovedNode' | 'TransferredOwnership',
+		'AddedNode' | 'NewShare' | 'RemovedNode' | 'SucceededRecording' | 'TransferredOwnership',
 		ParentType,
 		ContextType
 	>;
@@ -1329,6 +1346,19 @@ export type SnapshotUserResolvers<
 	user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 };
 
+export type SucceededRecordingResolvers<
+	ContextType = any,
+	ParentType extends
+		ResolversParentTypes['SucceededRecording'] = ResolversParentTypes['SucceededRecording']
+> = {
+	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
+	recording_destination_node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
+	recording_node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TransferredOwnershipResolvers<
 	ContextType = any,
 	ParentType extends
@@ -1378,6 +1408,7 @@ export type Resolvers<ContextType = any> = {
 	SharedTarget?: SharedTargetResolvers<ContextType>;
 	SnapshotNode?: SnapshotNodeResolvers<ContextType>;
 	SnapshotUser?: SnapshotUserResolvers<ContextType>;
+	SucceededRecording?: SucceededRecordingResolvers<ContextType>;
 	TransferredOwnership?: TransferredOwnershipResolvers<ContextType>;
 	User?: UserResolvers<ContextType>;
 };

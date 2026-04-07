@@ -109,6 +109,27 @@ query getNotifications($limit: Int, $page_token: String, $update_last_seen: Bool
 					snapshot_node_id
 				}
 			}
+			... on SucceededRecording {
+				id
+				notification_type
+				created_at
+				recording_node {
+					snapshot_node_id
+					node_id
+					name
+					type
+					created_at
+					owner_id
+				}
+				recording_destination_node {
+					snapshot_node_id
+					node_id
+					name
+					type
+					created_at
+					owner_id
+				}
+			}
 		}
 	}
 }

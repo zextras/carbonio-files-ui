@@ -20,6 +20,7 @@ import {
 	populateAddedNodeNotification,
 	populateNewShareNotification,
 	populateRemovedNodeNotification,
+	populateSucceededRecordingNotification,
 	populateTransferredOwnershipNotification
 } from '../../../mocks/mockUtils';
 import { screen, setup, triggerListLoadMore } from '../../../tests/utils';
@@ -215,6 +216,28 @@ describe('Notifications', () => {
 				expect(screen.getByText(/transferred ownership of items to you/i)).toBeVisible();
 			});
 
+			it('should render `Node_X saved in Folder_Z` when a recording succeeded (type SUCCEEDED_RECORDING)', async () => {
+				const notification = populateSucceededRecordingNotification();
+				const mocks = {
+					Query: {
+						getNotifications: mockGetNotifications(0, [notification])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notifications />, { mocks });
+
+				await user.click(
+					screen.getByRoleWithIcon('button', {
+						icon: ICON_REGEXP.chevronRightNotifications
+					})
+				);
+				expect(screen.getByTestId(SELECTORS.avatar)).toBeVisible();
+				expect(screen.getByText(notification.recording_node.name)).toBeVisible();
+				expect(screen.getByText(notification.recording_destination_node.name)).toBeVisible();
+				expect(screen.getByText(/saved in/i)).toBeVisible();
+				const date = getDateNotification(notification.created_at);
+				expect(screen.getByText(date)).toBeVisible();
+			});
+
 			it('should render the unread notifications in Primary (Regular) color and the other ones in Text (Regular)', async () => {
 				const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
 				const unreadNotifications =
@@ -341,7 +364,8 @@ describe('Notifications', () => {
 				{ name: 'NewShare', populate: populateNewShareNotification },
 				{ name: 'TransferredOwnership', populate: populateTransferredOwnershipNotification },
 				{ name: 'AddedNode', populate: populateAddedNodeNotification },
-				{ name: 'RemovedNode', populate: populateRemovedNodeNotification }
+				{ name: 'RemovedNode', populate: populateRemovedNodeNotification },
+				{ name: 'SucceededRecording', populate: populateSucceededRecordingNotification }
 			])('should navigate when clicking on $name notification', async ({ populate }) => {
 				const notification = populate();
 				const mocks = {
