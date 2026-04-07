@@ -89,6 +89,9 @@ export const NotificationItem = ({
 	const createSnackbar = useSnackbar();
 
 	const notificationMessage = useMemo(() => {
+		const boldComponent = (
+			<InlineText overflow={'break-word'} weight="bold" color={isUnread ? 'primary' : 'text'} />
+		);
 		if (isNewShareNotification(notification)) {
 			return (
 				<Trans
@@ -100,13 +103,7 @@ export const NotificationItem = ({
 						node: notification.node.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
 					}}
 				/>
 			);
@@ -126,13 +123,7 @@ export const NotificationItem = ({
 								: notification.destination_folder.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
 					}}
 				/>
 			);
@@ -152,13 +143,7 @@ export const NotificationItem = ({
 								: notification.origin_folder.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
 					}}
 				/>
 			);
@@ -174,13 +159,7 @@ export const NotificationItem = ({
 						folder: notification.resulting_node.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
 					}}
 				/>
 			);
@@ -199,13 +178,7 @@ export const NotificationItem = ({
 								: notification.recording_destination_node.name
 					}}
 					components={{
-						bold: (
-							<InlineText
-								overflow={'break-word'}
-								weight="bold"
-								color={isUnread ? 'primary' : 'text'}
-							/>
-						)
+						bold: boldComponent
 					}}
 				/>
 			);
