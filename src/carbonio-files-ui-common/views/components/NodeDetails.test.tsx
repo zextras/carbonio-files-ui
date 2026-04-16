@@ -172,8 +172,7 @@ describe('Node Details', () => {
 			screen.getByText(formatDate(node.created_at, undefined, DATE_TIME_FORMAT))
 		).toBeVisible();
 		expect(screen.queryByText('Last edit')).not.toBeInTheDocument();
-		expect(screen.getByText('Description')).toBeInTheDocument();
-		expect(screen.getByText('Click the edit button to add a description')).toBeInTheDocument();
+		expect(screen.getAllByText('Description')).toHaveLength(2);
 		expect(screen.queryByText('Size')).not.toBeInTheDocument();
 		expect(screen.queryByText('Downloads')).not.toBeInTheDocument();
 		expect(screen.queryByText('Collaborators')).not.toBeInTheDocument();

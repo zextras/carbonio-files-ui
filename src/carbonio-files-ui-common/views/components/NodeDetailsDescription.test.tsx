@@ -10,7 +10,6 @@ import { faker } from '@faker-js/faker';
 import { waitFor } from '@testing-library/react';
 
 import { NodeDetailsDescription } from './NodeDetailsDescription';
-import { ICON_REGEXP } from '../../constants/test';
 import { populateFile } from '../../mocks/mockUtils';
 import { generateError, setup, screen } from '../../tests/utils';
 import { Resolvers } from '../../types/graphql/resolvers-types';
@@ -19,7 +18,7 @@ import { canUpsertDescription } from '../../utils/ActionsFactory';
 import { mockErrorResolver, mockUpdateNode } from '../../utils/resolverMocks';
 
 describe('NodeDetailsDescription component', () => {
-	test('Missing description show missing description label', () => {
+	it('should render description section', () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		node.description = '';
@@ -31,11 +30,12 @@ describe('NodeDetailsDescription component', () => {
 			/>,
 			{ mocks: {} }
 		);
-		expect(screen.getByText('Description')).toBeInTheDocument();
-		expect(screen.getByText('Click the edit button to add a description')).toBeInTheDocument();
+
+		expect(screen.getAllByText('Description')[0]).toBeVisible();
+		expect(screen.getByRole('textbox', { name: 'Description' })).toBeVisible();
 	});
 
-	test('Missing description is not shown if description cannot be edited', () => {
+	it('should render TextArea as readOnly when description cannot be edited', () => {
 		const node = populateFile();
 		node.permissions.can_write_file = false;
 		node.description = '';
@@ -47,31 +47,11 @@ describe('NodeDetailsDescription component', () => {
 			/>,
 			{ mocks: {} }
 		);
-		expect(screen.getByText('Description')).toBeInTheDocument();
-		expect(
-			screen.queryByText('Click the edit button to add a description')
-		).not.toBeInTheDocument();
+
+		expect(screen.getByRole('textbox')).toHaveAttribute('readonly');
 	});
 
-	test('Edit icon disabled if can_write_file is false', () => {
-		const node = populateFile();
-		node.permissions.can_write_file = false;
-		setup(
-			<NodeDetailsDescription
-				id={node.id}
-				description={node.description}
-				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
-			/>,
-			{ mocks: {} }
-		);
-		expect(screen.getByText('Description')).toBeInTheDocument();
-
-		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-		expect(editIcon).toBeDisabled();
-	});
-
-	test('Edit icon not disabled if can_write_file is true', () => {
+	it('should render TextArea as editable when can_write_file is true', () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		setup(
@@ -82,14 +62,11 @@ describe('NodeDetailsDescription component', () => {
 			/>,
 			{ mocks: {} }
 		);
-		expect(screen.getByText('Description')).toBeInTheDocument();
 
-		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-		expect(editIcon).toBeEnabled();
+		expect(screen.getByRole('textbox')).not.toHaveAttribute('readonly');
 	});
 
-	test('save button is disabled when description is the same', async () => {
+	it('should show Cancel and Save buttons only when description changes and hide them when restored to original', async () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';
@@ -102,37 +79,33 @@ describe('NodeDetailsDescription component', () => {
 			/>,
 			{ mocks: {} }
 		);
-		expect(screen.getByText('Description')).toBeInTheDocument();
-		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-		expect(editIcon).toBeEnabled();
-		await user.click(editIcon);
-
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
-		expect(saveIcon).toBeVisible();
-		expect(saveIcon).toBeDisabled();
+		expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 
 		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
-		expect(saveIcon).toBeEnabled();
+		const saveButton = screen.getByRole('button', { name: /save/i });
+		expect(saveButton).toBeVisible();
+		expect(saveButton).toBeEnabled();
+		expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
 
 		await user.clear(inputField);
 		await user.type(inputField, node.description);
 
-		expect(saveIcon).toBeDisabled();
+		expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
 	});
 
-	test('save button is disabled when description has more than 4096 characters', async () => {
+	it('should disable Save button when description has more than 1024 characters', async () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';
-		const moreThan4096Description = faker.string.sample(5000);
+		const moreThan1024Description = faker.string.sample(2000);
 
-		expect(moreThan4096Description.length).toBeGreaterThan(4096);
+		expect(moreThan1024Description.length).toBeGreaterThan(1024);
 
 		const { user } = setup(
 			<NodeDetailsDescription
@@ -142,31 +115,52 @@ describe('NodeDetailsDescription component', () => {
 			/>,
 			{ mocks: {} }
 		);
-		expect(screen.getByText('Description')).toBeInTheDocument();
-		expect(screen.getByText(node.description)).toBeInTheDocument();
-
-		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-		expect(editIcon).toBeEnabled();
-		await user.click(editIcon);
-
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
-		expect(saveIcon).toBeVisible();
-		expect(saveIcon).toBeDisabled();
 
 		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
-		expect(saveIcon).toBeEnabled();
+		const saveButton = screen.getByRole('button', { name: /save/i });
+		expect(saveButton).toBeEnabled();
 
 		await user.clear(inputField);
-		await user.paste(moreThan4096Description);
+		await user.paste(moreThan1024Description);
 
-		expect(saveIcon).toBeDisabled();
+		expect(saveButton).toBeDisabled();
 	});
 
-	test('close button do not save changes', async () => {
+	it('should render "Maximum length allowed is 1024 characters" text when textarea is focused', async () => {
+		const node = populateFile();
+		node.permissions.can_write_file = true;
+		node.description = '';
+
+		const { user } = setup(
+			<NodeDetailsDescription
+				id={node.id}
+				description={node.description}
+				canUpsertDescription={canUpsertDescription({ nodes: [node] })}
+			/>,
+			{ mocks: {} }
+		);
+
+		const inputField = screen.getByRole('textbox', { name: 'Description' });
+
+		expect(
+			screen.queryByText(/maximum length allowed is 1024 characters/i)
+		).not.toBeInTheDocument();
+
+		await user.click(inputField);
+
+		expect(screen.getByText(/maximum length allowed is 1024 characters/i)).toBeVisible();
+
+		await user.tab();
+
+		expect(
+			screen.queryByText(/maximum length allowed is 1024 characters/i)
+		).not.toBeInTheDocument();
+	});
+
+	it('should discard changes and restore original value when Cancel button is clicked', async () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';
@@ -179,42 +173,25 @@ describe('NodeDetailsDescription component', () => {
 			/>,
 			{ mocks: {} }
 		);
-		expect(screen.getByText('Description')).toBeInTheDocument();
-		expect(screen.getByText(node.description)).toBeInTheDocument();
 
-		let editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-		expect(editIcon).toBeEnabled();
-		await user.click(editIcon);
+		const inputField = screen.getByRole('textbox');
+		expect(inputField).toHaveValue(node.description);
 
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
-		expect(saveIcon).toBeVisible();
-		expect(saveIcon).toBeDisabled();
-
-		let inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
 
 		expect(inputField).toHaveValue(newDescription);
 
-		expect(saveIcon).toBeEnabled();
+		const cancelButton = screen.getByRole('button', { name: /cancel/i });
+		await user.click(cancelButton);
 
-		const closeICon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.close });
-		expect(closeICon).toBeVisible();
-		await user.click(closeICon);
-
-		editIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-		expect(screen.getByText(node.description)).toBeInTheDocument();
-
-		await user.click(editIcon);
-
-		inputField = screen.getByRole('textbox');
-
+		// Value restored, buttons gone
 		expect(inputField).toHaveValue(node.description);
+		expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 	});
 
-	test('save button close editing mode and call mutation', async () => {
+	it('should call mutation and hide buttons when Save button is clicked', async () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';
@@ -238,17 +215,6 @@ describe('NodeDetailsDescription component', () => {
 			/>,
 			{ mocks }
 		);
-		expect(screen.getByText('Description')).toBeInTheDocument();
-		expect(screen.getByText(node.description)).toBeInTheDocument();
-
-		let editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-		expect(editIcon).toBeEnabled();
-		await user.click(editIcon);
-
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
-		expect(saveIcon).toBeVisible();
-		expect(saveIcon).toBeDisabled();
 
 		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
@@ -256,20 +222,16 @@ describe('NodeDetailsDescription component', () => {
 
 		expect(inputField).toHaveValue(newDescription);
 
-		expect(saveIcon).toBeEnabled();
+		const saveButton = screen.getByRole('button', { name: /save/i });
+		expect(saveButton).toBeEnabled();
 
-		await user.click(saveIcon);
-
-		editIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-
-		expect(saveIcon).not.toBeVisible();
+		await user.click(saveButton);
 
 		await waitFor(() => expect(mocks.Mutation.updateNode).toHaveBeenCalled());
 		expect(mocks.Mutation.updateNode).toHaveBeenCalledTimes(1);
 	});
 
-	test('if save operation throws an error, description input field is shown with last description typed', async () => {
+	it('should keep description textarea visible with last typed value if save operation throws an error', async () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';
@@ -286,28 +248,19 @@ describe('NodeDetailsDescription component', () => {
 			/>,
 			{ mocks }
 		);
-		expect(screen.getByText(/description/i)).toBeVisible();
-		expect(screen.getByText(node.description)).toBeVisible();
+		expect(screen.getAllByText('Description')[0]).toBeVisible();
 
-		const editIcon = screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.edit });
-		expect(editIcon).toBeVisible();
-		await user.click(editIcon);
-		const saveIcon = await screen.findByRoleWithIcon('button', { icon: ICON_REGEXP.save });
-		expect(saveIcon).toBeVisible();
-		const inputField = screen.getByRole('textbox', {
-			name: /maximum length allowed is 4096 characters/i
-		});
+		const inputField = screen.getByRole('textbox');
 		await user.clear(inputField);
 		await user.type(inputField, newDescription);
-		await user.click(saveIcon);
+
+		const saveButton = screen.getByRole('button', { name: /save/i });
+		await user.click(saveButton);
+
 		await screen.findByText(/update description error/i);
 
-		expect(
-			screen.getByRole('textbox', { name: /maximum length allowed is 4096 characters/i })
-		).toBeVisible();
-		expect(screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.save })).toBeVisible();
-		expect(
-			screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.edit })
-		).not.toBeInTheDocument();
+		// TextArea still visible with the typed value
+		expect(screen.getByRole('textbox')).toBeVisible();
+		expect(screen.getByRole('textbox')).toHaveValue(newDescription);
 	});
 });
