@@ -191,7 +191,7 @@ describe('NodeDetailsDescription component', () => {
 		expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
 	});
 
-	it('should call mutation and hide buttons when Save button is clicked', async () => {
+	it('should call mutation when Save button is clicked', async () => {
 		const node = populateFile();
 		node.permissions.can_write_file = true;
 		const newDescription = 'newDescription';

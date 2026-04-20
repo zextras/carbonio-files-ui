@@ -10,7 +10,6 @@ import { Button, Padding, Row, Text, TextArea } from '@zextras/carbonio-design-s
 import { useTranslation } from 'react-i18next';
 
 import { RouteLeavingGuard } from './RouteLeavingGuard';
-import { ShimmerText } from './StyledComponents';
 import { useUpdateNodeDescriptionMutation } from '../../hooks/graphql/mutations/useUpdateNodeDescriptionMutation';
 
 interface NodeDetailsDescriptionProps {
@@ -104,28 +103,25 @@ export const NodeDetailsDescription = ({
 				padding={{ vertical: 'small' }}
 			>
 				<Label>{t('displayer.details.description', 'Description')}</Label>
-				{loading && description === undefined && <ShimmerText $size="medium" width="70%" />}
-				{!(loading && description === undefined) && (
-					<TextArea
-						ref={textAreaRef}
-						label={t('displayer.details.description', 'Description')}
-						value={descriptionValue}
-						onChange={changeDescription}
-						onFocus={(): void => setIsFocused(true)}
-						onBlur={(): void => setIsFocused(false)}
-						hasError={moreThanMaxCharacters}
-						data-testid="input-description"
-						readOnly={!canUpsertDescription || loading}
-						description={
-							isFocused
-								? t(
-										'displayer.details.editDescription.characterLimit',
-										'Maximum length allowed is 1024 characters'
-									)
-								: undefined
-						}
-					/>
-				)}
+				<TextArea
+					ref={textAreaRef}
+					label={t('displayer.details.description', 'Description')}
+					value={descriptionValue}
+					onChange={changeDescription}
+					onFocus={(): void => setIsFocused(true)}
+					onBlur={(): void => setIsFocused(false)}
+					hasError={moreThanMaxCharacters}
+					data-testid="input-description"
+					readOnly={!canUpsertDescription || loading}
+					description={
+						isFocused
+							? t('displayer.details.editDescription.characterLimit', {
+									defaultValue: 'Maximum length allowed is {{max}} characters',
+									max: DESCRIPTION_MAX_LENGTH
+								})
+							: undefined
+					}
+				/>
 				{isDescriptionChanged && (
 					<Row width="fill" mainAlignment="flex-end" padding={{ top: 'small' }} gap="0.25rem">
 						<Button
