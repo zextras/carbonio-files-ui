@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, Padding, Row, Text, TextArea } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +41,7 @@ export const NodeDetailsDescription = ({
 
 	const [descriptionValue, setDescriptionValue] = useState(description);
 	const [isFocused, setIsFocused] = useState(false);
+	const textAreaRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		setDescriptionValue(description);
@@ -106,6 +107,7 @@ export const NodeDetailsDescription = ({
 				{loading && description === undefined && <ShimmerText $size="medium" width="70%" />}
 				{!(loading && description === undefined) && (
 					<TextArea
+						ref={textAreaRef}
 						label={t('displayer.details.description', 'Description')}
 						value={descriptionValue}
 						onChange={changeDescription}
@@ -130,13 +132,21 @@ export const NodeDetailsDescription = ({
 							type="outlined"
 							color="secondary"
 							label={t('displayer.details.editDescription.cancel', 'Cancel')}
-							onClick={cancel}
+							onClick={(): void => {
+								cancel();
+								textAreaRef.current?.querySelector('textarea')?.blur();
+							}}
+							onMouseDown={(e: React.MouseEvent): void => e.preventDefault()}
 						/>
 						<Button
 							color="primary"
 							label={t('displayer.details.editDescription.save', 'Save')}
-							onClick={save}
+							onClick={(): void => {
+								save();
+								textAreaRef.current?.querySelector('textarea')?.blur();
+							}}
 							disabled={moreThanMaxCharacters}
+							onMouseDown={(e: React.MouseEvent): void => e.preventDefault()}
 						/>
 					</Row>
 				)}
