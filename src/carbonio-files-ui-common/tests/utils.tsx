@@ -359,7 +359,7 @@ export async function renameNode(newName: string, user: UserEvent): Promise<void
 	await screen.findByText(/\brename\b/i);
 	await user.click(screen.getByText(/\brename\b/i));
 	// fill new name in modal input field
-	const inputField = await screen.findByRole('textbox');
+	const inputField = await screen.findByRole('textbox', { name: /item name/i });
 	act(() => {
 		// run timers of modal
 		vi.advanceTimersToNextTimer();
