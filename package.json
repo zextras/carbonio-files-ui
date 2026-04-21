@@ -69,6 +69,7 @@
 		"@zextras/carbonio-ui-sdk": "2.2.2",
 		"babel-plugin-transform-import-meta": "2.3.3",
 		"dotenv": "16.4.5",
+		"eslint": "8.57.1",
 		"eslint-plugin-no-autofix": "2.1.0",
 		"eslint-plugin-notice": "1.0.0",
 		"graphql-tag": "2.12.6",
