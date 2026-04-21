@@ -46,6 +46,7 @@
 		"@graphql-codegen/typescript": "5.0.2",
 		"@graphql-codegen/typescript-operations": "5.0.2",
 		"@graphql-codegen/typescript-resolvers": "5.1.0",
+		"@graphql-typed-document-node/core": "3.2.0",
 		"@graphql-eslint/eslint-plugin": "3.20.1",
 		"@graphql-tools/mock": "9.1.5",
 		"@graphql-tools/schema": "10.0.31",
@@ -86,7 +87,6 @@
 	},
 	"dependencies": {
 		"@apollo/client": "3.10.8",
-		"@graphql-typed-document-node/core": "3.2.0",
 		"@emotion/react": "11.14.0",
 		"@emotion/styled": "11.14.1",
 		"@zextras/carbonio-design-system": "12.0.0",
