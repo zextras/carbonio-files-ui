@@ -12,7 +12,7 @@ module.exports = (api) => {
 			'@babel/preset-env',
 			{
 				useBuiltIns: 'usage',
-				corejs: 3.36,
+				corejs: 3.49,
 				modules: 'commonjs'
 			}
 		];
@@ -22,7 +22,7 @@ module.exports = (api) => {
 			'@babel/preset-env',
 			{
 				useBuiltIns: 'usage',
-				corejs: 3.36
+				corejs: 3.49
 			}
 		];
 	}
