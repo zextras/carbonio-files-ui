@@ -1,5 +1,5 @@
-npm run type-check
-npm run lint
+pnpm run type-check
+pnpm run lint
 if command -v pipx > /dev/null 2>&1; then
   pipx run reuse --include-submodules download --all && pipx run reuse --include-submodules lint
 else
@@ -11,4 +11,4 @@ else
   fi
 fi
 
-npm test
+pnpm test
