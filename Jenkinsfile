@@ -5,7 +5,7 @@
  */
 
 library(
-    identifier: 'jenkins-lib-ui@1.0.11',
+    identifier: 'jenkins-lib-ui@1.0.12',
     retriever: modernSCM([
         $class: 'GitSCMSource',
         credentialsId: 'jenkins-integration-with-github-account',
@@ -14,6 +14,5 @@ library(
 )
 
 zappPipeline(
-    disableAutoTranslationsSync: true,
     timeout: 30
 )
