@@ -1,3 +1,23 @@
+## 2.16.0 (2026-04-27)
+
+* build(release): migrate to semantic-release (#601) ([676e914](https://github.com/zextras/carbonio-files-ui/commit/676e914)), closes [#601](https://github.com/zextras/carbonio-files-ui/issues/601)
+* chore: migrate to pnpm and pin all dependency versions (#599) ([d6b360e](https://github.com/zextras/carbonio-files-ui/commit/d6b360e)), closes [#599](https://github.com/zextras/carbonio-files-ui/issues/599)
+* chore(deps): update carbonio-ui-sdk to 2.2.2 (#590) ([b638ce7](https://github.com/zextras/carbonio-files-ui/commit/b638ce7)), closes [#590](https://github.com/zextras/carbonio-files-ui/issues/590)
+* chore(deps): update dependency @babel/preset-env to ^7.29.2 (#585) ([c555889](https://github.com/zextras/carbonio-files-ui/commit/c555889)), closes [#585](https://github.com/zextras/carbonio-files-ui/issues/585)
+* chore(deps): update dependency @types/lodash to ^4.17.24 (#578) ([22c4042](https://github.com/zextras/carbonio-files-ui/commit/22c4042)), closes [#578](https://github.com/zextras/carbonio-files-ui/issues/578)
+* chore(deps): update dependency @types/node to ^20.19.37 (#579) ([3b421fd](https://github.com/zextras/carbonio-files-ui/commit/3b421fd)), closes [#579](https://github.com/zextras/carbonio-files-ui/issues/579)
+* chore(deps): update dependency @types/node to v20.19.39 (#597) ([db1abe3](https://github.com/zextras/carbonio-files-ui/commit/db1abe3)), closes [#597](https://github.com/zextras/carbonio-files-ui/issues/597)
+* chore(deps): update dependency sonarqube-scanner to ^4.3.5 (#586) ([dd13f1b](https://github.com/zextras/carbonio-files-ui/commit/dd13f1b)), closes [#586](https://github.com/zextras/carbonio-files-ui/issues/586)
+* chore(deps): update dependency zextras/jenkins-lib-ui to v1.0.10 (#587) ([1804430](https://github.com/zextras/carbonio-files-ui/commit/1804430)), closes [#587](https://github.com/zextras/carbonio-files-ui/issues/587)
+* feat: add succeeded recording notification ([24b8bdc](https://github.com/zextras/carbonio-files-ui/commit/24b8bdc)), closes [#592](https://github.com/zextras/carbonio-files-ui/issues/592)
+* feat: hide FilesQuota when totalQuota feature flag is enabled ([de25894](https://github.com/zextras/carbonio-files-ui/commit/de25894)), closes [#593](https://github.com/zextras/carbonio-files-ui/issues/593)
+* feat: improve description editing panel ([0b4dc88](https://github.com/zextras/carbonio-files-ui/commit/0b4dc88)), closes [#596](https://github.com/zextras/carbonio-files-ui/issues/596)
+* feat: refresh quota after storage-consuming operations ([c34e1fa](https://github.com/zextras/carbonio-files-ui/commit/c34e1fa)), closes [#591](https://github.com/zextras/carbonio-files-ui/issues/591)
+* fix(deps): update dependency @zextras/carbonio-shell-ui to v14.0.1 (#588) ([aa2a8d5](https://github.com/zextras/carbonio-files-ui/commit/aa2a8d5)), closes [#588](https://github.com/zextras/carbonio-files-ui/issues/588)
+* Merge pull request #577 from zextras/version-bumper/v2.15.0-1 ([f27c3f6](https://github.com/zextras/carbonio-files-ui/commit/f27c3f6)), closes [#577](https://github.com/zextras/carbonio-files-ui/issues/577)
+* Merge pull request #581 from zextras/version-bumper/v2.15.1-1 ([755cb48](https://github.com/zextras/carbonio-files-ui/commit/755cb48)), closes [#581](https://github.com/zextras/carbonio-files-ui/issues/581)
+* Merge pull request #584 from zextras/version-bumper/v2.15.2-1 ([407ff0b](https://github.com/zextras/carbonio-files-ui/commit/407ff0b)), closes [#584](https://github.com/zextras/carbonio-files-ui/issues/584)
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
