@@ -115,11 +115,11 @@ importers:
         specifier: 3.20.1
         version: 3.20.1(@babel/core@7.29.0)(@types/node@20.19.39)(graphql@16.11.0)
       '@graphql-tools/mock':
-        specifier: 9.1.5
-        version: 9.1.5(graphql@16.11.0)
+        specifier: 9.1.7
+        version: 9.1.7(graphql@16.11.0)
       '@graphql-tools/schema':
-        specifier: 10.0.31
-        version: 10.0.31(graphql@16.11.0)
+        specifier: 10.0.33
+        version: 10.0.33(graphql@16.11.0)
       '@graphql-typed-document-node/core':
         specifier: 3.2.0
         version: 3.2.0(graphql@16.11.0)
@@ -185,7 +185,7 @@ importers:
         version: 4.0.15(vitest@4.0.15)
       '@zextras/carbonio-search-ui':
         specifier: github:zextras/carbonio-search-ui#devel
-        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f6ba90e5d7adff4acbc56308f5663826193d41ec(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.17.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.17.23)
+        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/7f14f8a4077a353f9545843f11d0a841e86417e4(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.17.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.17.23)
       '@zextras/carbonio-ui-configs':
         specifier: 2.1.0
         version: 2.1.0(@testing-library/dom@10.4.1)(@types/eslint@9.6.1)(typescript@5.6.3)
@@ -1655,8 +1655,14 @@ packages:
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
 
-  '@graphql-tools/mock@9.1.5':
-    resolution: {integrity: sha512-H8ovDDR3S+WR3sxXbNrQwXaRBKE8PD5e6y68g2omEci57ohETC/gOiSdXTLS7MapRzHS9zBVfpACgUGwttYszw==}
+  '@graphql-tools/merge@9.1.9':
+    resolution: {integrity: sha512-iHUWNjRHeQRYdgIMIuChThOwoKzA9vrzYeslgfBo5eUYEyHGZCoDPjAavssoYXLwstYt1dZj2J22jSzc2DrN0Q==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+
+  '@graphql-tools/mock@9.1.7':
+    resolution: {integrity: sha512-JpsmamDwd6PO1Oj437T+pdM5tpV41XrUD3GJsdrAVEtDRljdQvbxVxmt6tXruqMHj6XAOPoS1Ny1e/G3HA7sgg==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
@@ -1673,14 +1679,8 @@ packages:
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
 
-  '@graphql-tools/schema@10.0.31':
-    resolution: {integrity: sha512-ZewRgWhXef6weZ0WiP7/MV47HXiuFbFpiDUVLQl6mgXsWSsGELKFxQsyUCBos60Qqy1JEFAIu3Ns6GGYjGkqkQ==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-
-  '@graphql-tools/schema@10.0.32':
-    resolution: {integrity: sha512-kJ1Qn20MPnlaEVH37639E6rzQ1tEtr6XTUhNdR4EKydl+FijtLhWX2WLZbGnvrYuG8XUcMxsZU9mRRYYNvK02w==}
+  '@graphql-tools/schema@10.0.33':
+    resolution: {integrity: sha512-O6P3RIftO0jafnSsFAqpjurUuUxJ43s/AdPVLQsBkI6y4Ic/tKm4C1Qm1KKQsCDTOxXPJClh/v3g7k7yLKCFBQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
@@ -1715,6 +1715,12 @@ packages:
 
   '@graphql-tools/utils@11.0.1':
     resolution: {integrity: sha512-pNyCOb95ab/z3zkkiPwIPYxigX7IcpyFVcgD1XACDEvg/7yGnKCESx3k/XHEeneKYx/aWKGzEh/uuf6M6Q8HOw==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+
+  '@graphql-tools/utils@11.1.0':
+    resolution: {integrity: sha512-PtFVG4r8Z2LEBSaPYQMusBiB3o6kjLVJyjCLbnWem/SpSuM21v6LTmgpkXfYU1qpBV2UGsFyuEnSJInl8fR1Ag==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
@@ -3195,9 +3201,9 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f6ba90e5d7adff4acbc56308f5663826193d41ec':
-    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f6ba90e5d7adff4acbc56308f5663826193d41ec}
-    version: 0.0.7
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/7f14f8a4077a353f9545843f11d0a841e86417e4':
+    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/7f14f8a4077a353f9545843f11d0a841e86417e4}
+    version: 0.0.8
     engines: {node: v22, pnpm: '>=10'}
 
   '@zextras/carbonio-shell-ui@14.0.1':
@@ -7629,6 +7635,7 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:
@@ -9335,7 +9342,7 @@ snapshots:
   '@graphql-codegen/core@5.0.2(graphql@16.11.0)':
     dependencies:
       '@graphql-codegen/plugin-helpers': 6.3.0(graphql@16.11.0)
-      '@graphql-tools/schema': 10.0.31(graphql@16.11.0)
+      '@graphql-tools/schema': 10.0.33(graphql@16.11.0)
       '@graphql-tools/utils': 11.0.1(graphql@16.11.0)
       graphql: 16.11.0
       tslib: 2.8.1
@@ -9556,7 +9563,7 @@ snapshots:
     dependencies:
       '@graphql-tools/batch-execute': 9.0.19(graphql@16.11.0)
       '@graphql-tools/executor': 1.5.2(graphql@16.11.0)
-      '@graphql-tools/schema': 10.0.31(graphql@16.11.0)
+      '@graphql-tools/schema': 10.0.33(graphql@16.11.0)
       '@graphql-tools/utils': 10.11.0(graphql@16.11.0)
       '@repeaterjs/repeater': 3.0.6
       '@whatwg-node/promise-helpers': 1.3.2
@@ -9569,7 +9576,7 @@ snapshots:
     dependencies:
       '@graphql-tools/batch-execute': 10.0.8(graphql@16.11.0)
       '@graphql-tools/executor': 1.5.2(graphql@16.11.0)
-      '@graphql-tools/schema': 10.0.31(graphql@16.11.0)
+      '@graphql-tools/schema': 10.0.33(graphql@16.11.0)
       '@graphql-tools/utils': 11.0.1(graphql@16.11.0)
       '@repeaterjs/repeater': 3.0.6
       '@whatwg-node/promise-helpers': 1.3.2
@@ -9855,7 +9862,7 @@ snapshots:
 
   '@graphql-tools/load@8.1.9(graphql@16.11.0)':
     dependencies:
-      '@graphql-tools/schema': 10.0.32(graphql@16.11.0)
+      '@graphql-tools/schema': 10.0.33(graphql@16.11.0)
       '@graphql-tools/utils': 11.0.1(graphql@16.11.0)
       graphql: 16.11.0
       p-limit: 3.1.0
@@ -9873,10 +9880,16 @@ snapshots:
       graphql: 16.11.0
       tslib: 2.8.1
 
-  '@graphql-tools/mock@9.1.5(graphql@16.11.0)':
+  '@graphql-tools/merge@9.1.9(graphql@16.11.0)':
     dependencies:
-      '@graphql-tools/schema': 10.0.31(graphql@16.11.0)
-      '@graphql-tools/utils': 11.0.1(graphql@16.11.0)
+      '@graphql-tools/utils': 11.1.0(graphql@16.11.0)
+      graphql: 16.11.0
+      tslib: 2.8.1
+
+  '@graphql-tools/mock@9.1.7(graphql@16.11.0)':
+    dependencies:
+      '@graphql-tools/schema': 10.0.33(graphql@16.11.0)
+      '@graphql-tools/utils': 11.1.0(graphql@16.11.0)
       fast-json-stable-stringify: 2.1.0
       graphql: 16.11.0
       tslib: 2.8.1
@@ -9893,17 +9906,10 @@ snapshots:
       graphql: 16.11.0
       tslib: 2.8.1
 
-  '@graphql-tools/schema@10.0.31(graphql@16.11.0)':
+  '@graphql-tools/schema@10.0.33(graphql@16.11.0)':
     dependencies:
-      '@graphql-tools/merge': 9.1.8(graphql@16.11.0)
-      '@graphql-tools/utils': 11.0.1(graphql@16.11.0)
-      graphql: 16.11.0
-      tslib: 2.8.1
-
-  '@graphql-tools/schema@10.0.32(graphql@16.11.0)':
-    dependencies:
-      '@graphql-tools/merge': 9.1.8(graphql@16.11.0)
-      '@graphql-tools/utils': 11.0.1(graphql@16.11.0)
+      '@graphql-tools/merge': 9.1.9(graphql@16.11.0)
+      '@graphql-tools/utils': 11.1.0(graphql@16.11.0)
       graphql: 16.11.0
       tslib: 2.8.1
 
@@ -9997,6 +10003,14 @@ snapshots:
       graphql: 16.11.0
       tslib: 2.8.1
 
+  '@graphql-tools/utils@11.1.0(graphql@16.11.0)':
+    dependencies:
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
+      '@whatwg-node/promise-helpers': 1.3.2
+      cross-inspect: 1.0.1
+      graphql: 16.11.0
+      tslib: 2.8.1
+
   '@graphql-tools/utils@9.2.1(graphql@16.11.0)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
@@ -10006,7 +10020,7 @@ snapshots:
   '@graphql-tools/wrap@10.1.4(graphql@16.11.0)':
     dependencies:
       '@graphql-tools/delegate': 10.2.23(graphql@16.11.0)
-      '@graphql-tools/schema': 10.0.31(graphql@16.11.0)
+      '@graphql-tools/schema': 10.0.33(graphql@16.11.0)
       '@graphql-tools/utils': 10.11.0(graphql@16.11.0)
       '@whatwg-node/promise-helpers': 1.3.2
       graphql: 16.11.0
@@ -10015,7 +10029,7 @@ snapshots:
   '@graphql-tools/wrap@11.1.14(graphql@16.11.0)':
     dependencies:
       '@graphql-tools/delegate': 12.0.14(graphql@16.11.0)
-      '@graphql-tools/schema': 10.0.31(graphql@16.11.0)
+      '@graphql-tools/schema': 10.0.33(graphql@16.11.0)
       '@graphql-tools/utils': 11.0.1(graphql@16.11.0)
       '@whatwg-node/promise-helpers': 1.3.2
       graphql: 16.11.0
@@ -11612,7 +11626,7 @@ snapshots:
       react-datepicker: 7.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f6ba90e5d7adff4acbc56308f5663826193d41ec(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.17.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.17.23)':
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/7f14f8a4077a353f9545843f11d0a841e86417e4(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.17.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.17.23)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.28)(react@18.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1)
