@@ -1,3 +1,8 @@
+## <small>2.16.1 (2026-04-30)</small>
+
+* fix(deps): update dependency lodash to v4.18.1 [security] (#594) ([9140b84](https://github.com/zextras/carbonio-files-ui/commit/9140b84)), closes [#594](https://github.com/zextras/carbonio-files-ui/issues/594)
+* chore(deps): update dependency sonarqube-scanner to v4.3.6 (#602) ([4fa3e74](https://github.com/zextras/carbonio-files-ui/commit/4fa3e74)), closes [#602](https://github.com/zextras/carbonio-files-ui/issues/602)
+
 ## 2.16.0 (2026-04-27)
 
 * build(release): migrate to semantic-release (#601) ([676e914](https://github.com/zextras/carbonio-files-ui/commit/676e914)), closes [#601](https://github.com/zextras/carbonio-files-ui/issues/601)
