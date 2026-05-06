@@ -1,3 +1,7 @@
+## <small>2.16.2 (2026-05-06)</small>
+
+* fix(deps): update dependency uuid to v11.1.1 [security] (#606) ([4071f2a](https://github.com/zextras/carbonio-files-ui/commit/4071f2a)), closes [#606](https://github.com/zextras/carbonio-files-ui/issues/606)
+
 ## <small>2.16.1 (2026-04-30)</small>
 
 * fix(deps): update dependency lodash to v4.18.1 [security] (#594) ([9140b84](https://github.com/zextras/carbonio-files-ui/commit/9140b84)), closes [#594](https://github.com/zextras/carbonio-files-ui/issues/594)
