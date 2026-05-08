@@ -196,6 +196,7 @@ export const AddPublicLinkComponent = ({
 				<>
 					<Padding vertical="small" />
 					<Input
+						autoFocus
 						backgroundColor="gray5"
 						label={t('publicLink.input.label', "Link's description")}
 						value={linkDescriptionValue}
