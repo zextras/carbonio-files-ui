@@ -295,7 +295,7 @@ export const TransferOwnershipModalContent = ({
 				</Text>
 				<Padding vertical={'large'} width={'auto'}>
 					<AccountChipInput
-						placeholder={t('transferOwnership.modal.placeholder', 'Select a new owner')}
+						placeholder={`${t('transferOwnership.modal.placeholder', 'Select a new owner')}*`}
 						onChange={chipInputOnChange}
 						value={newOwnerValue}
 						description={inputDescription}
