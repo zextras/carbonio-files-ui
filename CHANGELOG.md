@@ -1,3 +1,8 @@
+## <small>2.16.3 (2026-05-12)</small>
+
+* Merge pull request #611 from zextras/IN-1095-jfrog-cost-optimization-usage-analysis-and-mitigation-s ([64da1d6](https://github.com/zextras/carbonio-files-ui/commit/64da1d6)), closes [#611](https://github.com/zextras/carbonio-files-ui/issues/611)
+* build(release): update jenkins-lib-ui to 1.0.13 ([5ca1052](https://github.com/zextras/carbonio-files-ui/commit/5ca1052))
+
 ## <small>2.16.2 (2026-05-06)</small>
 
 * fix(deps): update dependency uuid to v11.1.1 [security] (#606) ([4071f2a](https://github.com/zextras/carbonio-files-ui/commit/4071f2a)), closes [#606](https://github.com/zextras/carbonio-files-ui/issues/606)
