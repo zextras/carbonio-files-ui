@@ -1,3 +1,7 @@
+## <small>2.16.4 (2026-05-14)</small>
+
+* fix(ci): migrate Jenkinsfile to jenkins-lib-common (#612) ([39c127f](https://github.com/zextras/carbonio-files-ui/commit/39c127f)), closes [#612](https://github.com/zextras/carbonio-files-ui/issues/612)
+
 ## <small>2.16.3 (2026-05-12)</small>
 
 * Merge pull request #611 from zextras/IN-1095-jfrog-cost-optimization-usage-analysis-and-mitigation-s ([64da1d6](https://github.com/zextras/carbonio-files-ui/commit/64da1d6)), closes [#611](https://github.com/zextras/carbonio-files-ui/issues/611)
