@@ -1,3 +1,7 @@
+## 2.17.0 (2026-05-14)
+
+* feat: add auto focus on inputs ([0225ce5](https://github.com/zextras/carbonio-files-ui/commit/0225ce5)), closes [#608](https://github.com/zextras/carbonio-files-ui/issues/608)
+
 ## <small>2.16.4 (2026-05-14)</small>
 
 * fix(ci): migrate Jenkinsfile to jenkins-lib-common (#612) ([39c127f](https://github.com/zextras/carbonio-files-ui/commit/39c127f)), closes [#612](https://github.com/zextras/carbonio-files-ui/issues/612)
