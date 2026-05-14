@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ApolloError, useApolloClient } from '@apollo/client';
 import {
@@ -62,6 +62,11 @@ export const TransferOwnershipModalContent = ({
 	const { removeNodesFromFolder } = useUpdateFolderContent();
 
 	const [newOwnerValue, setNewOwnerValue] = useState<Array<ChipItem<string>>>([]);
+	const chipInputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		chipInputRef.current?.focus();
+	}, []);
 
 	const { data, loading, error } = useGetTransferOwnershipAvailabilityQuery(
 		nodes,
@@ -295,7 +300,8 @@ export const TransferOwnershipModalContent = ({
 				</Text>
 				<Padding vertical={'large'} width={'auto'}>
 					<AccountChipInput
-						placeholder={t('transferOwnership.modal.placeholder', 'Select a new owner')}
+						inputRef={chipInputRef}
+						placeholder={`${t('transferOwnership.modal.placeholder', 'Select a new owner')}*`}
 						onChange={chipInputOnChange}
 						value={newOwnerValue}
 						description={inputDescription}

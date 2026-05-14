@@ -194,6 +194,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+	vi.clearAllTimers();
 	server.resetHandlers();
 	act(() => {
 		window.resizeTo(1024, 768);

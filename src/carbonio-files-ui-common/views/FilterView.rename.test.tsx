@@ -229,6 +229,10 @@ describe('Filter View', () => {
 				await user.click(screen.getByTestId(ICON_REGEXP.moreVertical));
 				screen.getByTestId(SELECTORS.nodeItem(element.id));
 				await renameNode(newName, user);
+				// flush async updates triggered by Apollo cache changes in the Displayer
+				await act(async () => {
+					await vi.runOnlyPendingTimersAsync();
+				});
 				// check the node. It should have the new name and be at same position
 				const nodeItem = screen.getByTestId(SELECTORS.nodeItem(element.id));
 				expect(nodeItem).toBeVisible();
