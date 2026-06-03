@@ -82,7 +82,7 @@
 		"is-ci": "4.1.0",
 		"jsdom": "27.3.0",
 		"msw": "2.11.3",
-		"npm-check-updates": "17.1.18",
+		"npm-check-updates": "20.0.2",
 		"sonarqube-scanner": "4.3.6",
 		"ts-node": "10.9.2",
 		"typescript": "5.6.3",
