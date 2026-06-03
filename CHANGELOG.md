@@ -1,3 +1,13 @@
+## <small>2.17.1 (2026-06-02)</small>
+
+* build: migrate to buildah (FQDN images + jenkins-lib-common@2.10.0) (#640) ([b5afc14](https://github.com/zextras/carbonio-files-ui/commit/b5afc14)), closes [#640](https://github.com/zextras/carbonio-files-ui/issues/640)
+* chore(deps): update @graphql-tools deps ([17bf682](https://github.com/zextras/carbonio-files-ui/commit/17bf682)), closes [#637](https://github.com/zextras/carbonio-files-ui/issues/637)
+* chore(deps): update babel deps ([e885497](https://github.com/zextras/carbonio-files-ui/commit/e885497)), closes [#636](https://github.com/zextras/carbonio-files-ui/issues/636)
+* chore(deps): update dependency @babel/preset-env to v7.29.5 (#609) ([ae7f38f](https://github.com/zextras/carbonio-files-ui/commit/ae7f38f)), closes [#609](https://github.com/zextras/carbonio-files-ui/issues/609)
+* chore(deps): update dependency @types/node to v20.19.41 (#610) ([9526f0a](https://github.com/zextras/carbonio-files-ui/commit/9526f0a)), closes [#610](https://github.com/zextras/carbonio-files-ui/issues/610)
+* chore(deps): update dependency zextras/jenkins-lib-common to v2.7.0 (#613) ([5b42b3b](https://github.com/zextras/carbonio-files-ui/commit/5b42b3b)), closes [#613](https://github.com/zextras/carbonio-files-ui/issues/613)
+* chore(deps): update dependency zextras/jenkins-lib-common to v2.8.5 ([f5bc5b6](https://github.com/zextras/carbonio-files-ui/commit/f5bc5b6)), closes [#635](https://github.com/zextras/carbonio-files-ui/issues/635)
+
 ## 2.17.0 (2026-05-14)
 
 * feat: add auto focus on inputs ([0225ce5](https://github.com/zextras/carbonio-files-ui/commit/0225ce5)), closes [#608](https://github.com/zextras/carbonio-files-ui/issues/608)
