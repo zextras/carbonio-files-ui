@@ -24,8 +24,10 @@ export type CreateFolderType = (
 	name: string
 ) => Promise<FetchResult<CreateFolderMutation>>;
 
-interface CreateFolderMutationOptions
-	extends MutationHookOptions<CreateFolderMutation, CreateFolderMutationVariables> {
+interface CreateFolderMutationOptions extends MutationHookOptions<
+	CreateFolderMutation,
+	CreateFolderMutationVariables
+> {
 	showSnackbar?: boolean;
 }
 

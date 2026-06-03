@@ -866,8 +866,8 @@ export type AddedNodeResolvers<
 
 export type CollaborationLinkResolvers<
 	ContextType = any,
-	ParentType extends
-		ResolversParentTypes['CollaborationLink'] = ResolversParentTypes['CollaborationLink']
+	ParentType extends ResolversParentTypes['CollaborationLink'] =
+		ResolversParentTypes['CollaborationLink']
 > = {
 	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -884,15 +884,17 @@ export type ConfigResolvers<
 	value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
-export interface DateTimeScalarConfig
-	extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<
+	ResolversTypes['DateTime'],
+	any
+> {
 	name: 'DateTime';
 }
 
 export type DistributionListResolvers<
 	ContextType = any,
-	ParentType extends
-		ResolversParentTypes['DistributionList'] = ResolversParentTypes['DistributionList']
+	ParentType extends ResolversParentTypes['DistributionList'] =
+		ResolversParentTypes['DistributionList']
 > = {
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1179,8 +1181,8 @@ export type NotificationResolvers<
 
 export type NotificationPageResolvers<
 	ContextType = any,
-	ParentType extends
-		ResolversParentTypes['NotificationPage'] = ResolversParentTypes['NotificationPage']
+	ParentType extends ResolversParentTypes['NotificationPage'] =
+		ResolversParentTypes['NotificationPage']
 > = {
 	last_seen?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 	notifications?: Resolver<Array<Maybe<ResolversTypes['Notification']>>, ParentType, ContextType>;
@@ -1348,8 +1350,8 @@ export type SnapshotUserResolvers<
 
 export type SucceededRecordingResolvers<
 	ContextType = any,
-	ParentType extends
-		ResolversParentTypes['SucceededRecording'] = ResolversParentTypes['SucceededRecording']
+	ParentType extends ResolversParentTypes['SucceededRecording'] =
+		ResolversParentTypes['SucceededRecording']
 > = {
 	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -1361,8 +1363,8 @@ export type SucceededRecordingResolvers<
 
 export type TransferredOwnershipResolvers<
 	ContextType = any,
-	ParentType extends
-		ResolversParentTypes['TransferredOwnership'] = ResolversParentTypes['TransferredOwnership']
+	ParentType extends ResolversParentTypes['TransferredOwnership'] =
+		ResolversParentTypes['TransferredOwnership']
 > = {
 	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
