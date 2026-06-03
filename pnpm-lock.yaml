@@ -185,7 +185,7 @@ importers:
         version: 4.0.15(vitest@4.0.15)
       '@zextras/carbonio-search-ui':
         specifier: github:zextras/carbonio-search-ui#devel
-        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)
+        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f4371d8e2c13477bd82015ff00ebc656b4e4d139(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)
       '@zextras/carbonio-ui-configs':
         specifier: 2.1.0
         version: 2.1.0(@testing-library/dom@10.4.1)(@types/eslint@9.6.1)(typescript@5.6.3)
@@ -232,8 +232,8 @@ importers:
         specifier: 2.11.3
         version: 2.11.3(@types/node@20.19.41)(typescript@5.6.3)
       npm-check-updates:
-        specifier: 17.1.18
-        version: 17.1.18
+        specifier: 21.0.3
+        version: 21.0.3
       prettier:
         specifier: 3.6.2
         version: 3.6.2
@@ -3300,8 +3300,8 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05':
-    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05}
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f4371d8e2c13477bd82015ff00ebc656b4e4d139':
+    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f4371d8e2c13477bd82015ff00ebc656b4e4d139}
     version: 0.0.11
     engines: {node: v22, pnpm: '>=10'}
 
@@ -6184,9 +6184,9 @@ packages:
     resolution: {integrity: sha512-JYc0DPlpGWB40kH5g07gGTrYuMqV653k3uBKY6uITPWds3M0ov3GaWGp9lbE3Bzngx8+XkfzgvASb9vk9JDFXQ==}
     engines: {node: '>=14.16'}
 
-  npm-check-updates@17.1.18:
-    resolution: {integrity: sha512-bkUy2g4v1i+3FeUf5fXMLbxmV95eG4/sS7lYE32GrUeVgQRfQEk39gpskksFunyaxQgTIdrvYbnuNbO/pSUSqw==}
-    engines: {node: ^18.18.0 || >=20.0.0, npm: '>=8.12.1'}
+  npm-check-updates@21.0.3:
+    resolution: {integrity: sha512-8y0fqtxdo5JhwzxcS9rZd969tvPbSZ3MzQoG5Fj8eqL42t1Jsg5tjZCz8CYuXLE8LNbbyV+1xxR/f/T4AdPmdg==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10.0.0'}
     hasBin: true
 
   npm-run-path@4.0.1:
@@ -11851,7 +11851,7 @@ snapshots:
       react-datepicker: 7.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)':
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f4371d8e2c13477bd82015ff00ebc656b4e4d139(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.28)(react@18.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1)
@@ -14979,7 +14979,7 @@ snapshots:
 
   normalize-url@8.1.1: {}
 
-  npm-check-updates@17.1.18: {}
+  npm-check-updates@21.0.3: {}
 
   npm-run-path@4.0.1:
     dependencies:
