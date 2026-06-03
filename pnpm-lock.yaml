@@ -229,8 +229,8 @@ importers:
         specifier: 2.11.3
         version: 2.11.3(@types/node@20.19.41)(typescript@5.6.3)
       npm-check-updates:
-        specifier: 17.1.18
-        version: 17.1.18
+        specifier: 22.2.1
+        version: 22.2.1
       prettier:
         specifier: 3.8.3
         version: 3.8.3
@@ -6324,9 +6324,9 @@ packages:
     resolution: {integrity: sha512-ARftfC5HdUNu9jJeL8pHj8debUIHA2b91FizCoMzY4lG6dDX13jdvTK0TBe24IBDRf2HvJSzzwEPvmbkQWHRSg==}
     engines: {node: '>=20'}
 
-  npm-check-updates@17.1.18:
-    resolution: {integrity: sha512-bkUy2g4v1i+3FeUf5fXMLbxmV95eG4/sS7lYE32GrUeVgQRfQEk39gpskksFunyaxQgTIdrvYbnuNbO/pSUSqw==}
-    engines: {node: ^18.18.0 || >=20.0.0, npm: '>=8.12.1'}
+  npm-check-updates@22.2.1:
+    resolution: {integrity: sha512-mGdIJfhtg+q0BzhbOpbOL73zhMZlgBQMG4wnBwPMMD5k96028UCuV0753YeSYk9odoh7HWK6/cY69bWxT7o+yg==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10.0.0'}
     hasBin: true
 
   npm-run-path@4.0.1:
@@ -15332,7 +15332,7 @@ snapshots:
 
   normalize-url@9.0.1: {}
 
-  npm-check-updates@17.1.18: {}
+  npm-check-updates@22.2.1: {}
 
   npm-run-path@4.0.1:
     dependencies:
