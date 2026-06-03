@@ -85,8 +85,8 @@ importers:
         specifier: 11.13.5
         version: 11.13.5
       '@faker-js/faker':
-        specifier: 9.0.3
-        version: 9.0.3
+        specifier: 10.4.0
+        version: 10.4.0
       '@graphql-codegen/add':
         specifier: 6.0.0
         version: 6.0.0(graphql@16.11.0)
@@ -185,7 +185,7 @@ importers:
         version: 4.0.15(vitest@4.0.15)
       '@zextras/carbonio-search-ui':
         specifier: github:zextras/carbonio-search-ui#devel
-        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)
+        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f4371d8e2c13477bd82015ff00ebc656b4e4d139(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)
       '@zextras/carbonio-ui-configs':
         specifier: 2.1.0
         version: 2.1.0(@testing-library/dom@10.4.1)(@types/eslint@9.6.1)(typescript@5.6.3)
@@ -1332,10 +1332,9 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@faker-js/faker@9.0.3':
-    resolution: {integrity: sha512-lWrrK4QNlFSU+13PL9jMbMKLJYXDFu3tQfayBsMXX7KL/GiQeqfB1CzHkqD5UHBUtPAuPo6XwGbMFNdVMZObRA==}
-    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
-    deprecated: Please update to a newer version
+  '@faker-js/faker@10.4.0':
+    resolution: {integrity: sha512-sDBWI3yLy8EcDzgobvJTWq1MJYzAkQdpjXuPukga9wXonhpMRvd1Izuo2Qgwey2OiEoRIBr35RMU9HJRoOHzpw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@fastify/busboy@3.2.0':
     resolution: {integrity: sha512-m9FVDXU3GT2ITSe0UaMA5rU3QkfC/UXtCU8y0gSN/GugTqtVldOBWIB5V6V3sbmenVZUIpU6f+mPEO2+m5iTaA==}
@@ -3300,8 +3299,8 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05':
-    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05}
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f4371d8e2c13477bd82015ff00ebc656b4e4d139':
+    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f4371d8e2c13477bd82015ff00ebc656b4e4d139}
     version: 0.0.11
     engines: {node: v22, pnpm: '>=10'}
 
@@ -9423,7 +9422,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@faker-js/faker@9.0.3': {}
+  '@faker-js/faker@10.4.0': {}
 
   '@fastify/busboy@3.2.0': {}
 
@@ -11851,7 +11850,7 @@ snapshots:
       react-datepicker: 7.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)':
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/f4371d8e2c13477bd82015ff00ebc656b4e4d139(@types/react@18.3.28)(@zextras/carbonio-ui-preview@4.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.1.0)(lodash@4.18.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.28)(react@18.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1)
