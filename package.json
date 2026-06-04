@@ -5,7 +5,7 @@
 	"main": "src/app.tsx",
 	"packageManager": "pnpm@10.33.0",
 	"engines": {
-		"node": "v22",
+		"node": "24.16.0",
 		"pnpm": ">=10"
 	},
 	"scripts": {
@@ -58,7 +58,7 @@
 		"@testing-library/user-event": "14.6.1",
 		"@types/core-js": "2.5.8",
 		"@types/lodash": "4.17.24",
-		"@types/node": "20.19.41",
+		"@types/node": "24.13.0",
 		"@types/react": "18.3.28",
 		"@types/react-dom": "18.3.7",
 		"@types/uuid": "10.0.0",
