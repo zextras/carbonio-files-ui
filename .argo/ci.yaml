@@ -1,0 +1,337 @@
+---
+# WorkflowTemplate: carbonio-files-ui
+# Migrated from Jenkinsfile (uiPipeline, jenkins-lib-common@v2.10.0).
+#
+# uiPipeline stage -> Argo mapping:
+#   Checkout / gitMetadata     -> ci-git-clone + ci-git-metadata
+#   Security scan (gitleaks)   -> ci-gitleaks-scan
+#   Read settings              -> ci-node-build (read-settings)
+#   Install/TypeCheck/Lint/    -> ci-node-build (build)   [type-check & lint are
+#     Unit Tests/Release/Build      non-fatal; tests use test:coverage so lcov
+#                                    is produced for Sonar]
+#   SonarQube analysis         -> ci-sonar-scan (projectKey + JS lcov via extraArgs)
+#   Package (deb/rpm)          -> ci-build-packages   [skipped on bump builds]
+#   Upload artifacts           -> ci-upload-artifacts [skipped on bump builds]
+#   Publish docker image       -> ci-docker-build     [Dockerfile present, !bump]
+#
+# Triggered by: Argo Events Sensor (GitHub push/PR). Manual run:
+#   argo submit --from workflowtemplate/carbonio-files-ui -p revision=devel -n argo
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: carbonio-files-ui
+  namespace: argo
+  labels:
+    app.kubernetes.io/part-of: carbonio-files-ui
+spec:
+  entrypoint: ci
+  serviceAccountName: argo-workflow
+
+  arguments:
+    parameters:
+      - name: repoUrl
+        value: git@github.com:zextras/carbonio-files-ui.git
+      - name: revision
+        value: devel
+      - name: changeTarget
+        value: ""
+      - name: commitSha
+        value: ""
+
+  artifactGC:
+    strategy: OnWorkflowDeletion
+
+  # Serialize builds of THIS repo (newer push waits for the prior one).
+  synchronization:
+    mutexes:
+      - name: carbonio-files-ui-ci
+
+  # GitHub Checks: report pipeline status on the commit, deep-linked to Argo.
+  hooks:
+    running:
+      expression: "workflow.status == \"Running\" && workflow.parameters.commitSha != \"\""
+      templateRef:
+        name: ci-github-checks
+        clusterScope: true
+        template: report
+      arguments:
+        parameters:
+          - name: repoFullName
+            value: zextras/carbonio-files-ui
+          - name: headSha
+            value: "{{workflow.parameters.commitSha}}"
+          - name: name
+            value: "ci/argo"
+          - name: status
+            value: in_progress
+          - name: detailsUrl
+            value: "https://next.dev.zextras.com/workflows/argo/{{workflow.name}}"
+    exit:
+      expression: "workflow.parameters.commitSha != \"\""
+      templateRef:
+        name: ci-github-checks
+        clusterScope: true
+        template: report
+      arguments:
+        parameters:
+          - name: repoFullName
+            value: zextras/carbonio-files-ui
+          - name: headSha
+            value: "{{workflow.parameters.commitSha}}"
+          - name: name
+            value: "ci/argo"
+          - name: status
+            value: completed
+          - name: conclusion
+            value: "{{=workflow.status == 'Succeeded' ? 'success' : (workflow.status == 'Failed' || workflow.status == 'Error' ? 'failure' : 'neutral')}}"
+          - name: detailsUrl
+            value: "https://next.dev.zextras.com/workflows/argo/{{workflow.name}}"
+          - name: summary
+            value: "Argo pipeline {{workflow.status}}"
+
+  templates:
+
+    - name: ci
+      steps:
+        # Step 1: clone
+        - - name: clone
+            templateRef:
+              name: ci-git-clone
+              clusterScope: true
+              template: clone
+            arguments:
+              parameters:
+                - name: repoUrl
+                  value: "{{workflow.parameters.repoUrl}}"
+                - name: revision
+                  value: "{{workflow.parameters.revision}}"
+
+        # Step 2: git metadata
+        - - name: git-metadata
+            templateRef:
+              name: ci-git-metadata
+              clusterScope: true
+              template: extract
+            arguments:
+              parameters:
+                - name: defaultBranch
+                  value: devel
+              artifacts:
+                - name: workspace
+                  from: "{{steps.clone.outputs.artifacts.workspace}}"
+
+        # Step 3: security scan (uiPipeline 'Security scan')
+        - - name: gitleaks
+            templateRef:
+              name: ci-gitleaks-scan
+              clusterScope: true
+              template: scan
+            arguments:
+              artifacts:
+                - name: workspace
+                  from: "{{steps.clone.outputs.artifacts.workspace}}"
+
+        # Step 4: read settings (uiPipeline 'Read settings')
+        - - name: read-settings
+            templateRef:
+              name: ci-node-build
+              clusterScope: true
+              template: read-settings
+            arguments:
+              parameters:
+                - name: isDefaultBranch
+                  value: "{{steps.git-metadata.outputs.parameters.isDefaultBranch}}"
+                - name: isTag
+                  value: "{{steps.git-metadata.outputs.parameters.isTag}}"
+              artifacts:
+                - name: workspace
+                  from: "{{steps.clone.outputs.artifacts.workspace}}"
+
+        # Step 5: node build — install, type-check, lint, test (with coverage so
+        # Sonar gets lcov), then build or bump-version (uiPipeline Install ..
+        # Build / Release automation). engines.node = v22 -> node:22 image.
+        - - name: node-build
+            templateRef:
+              name: ci-node-build
+              clusterScope: true
+              template: build
+            arguments:
+              parameters:
+                - name: nodeImage
+                  value: "node:22"
+                - name: testScript
+                  # test:coverage emits coverage/lcov.info for Sonar.
+                  value: "test:coverage"
+                - name: isDefaultBranch
+                  value: "{{steps.git-metadata.outputs.parameters.isDefaultBranch}}"
+                - name: isBumpBuild
+                  value: "{{steps.read-settings.outputs.parameters.isBumpBuild}}"
+              artifacts:
+                - name: workspace
+                  from: "{{steps.clone.outputs.artifacts.workspace}}"
+
+        # Step 6: SonarQube analysis (uiPipeline 'SonarQube analysis').
+        # Consumes the BUILT workspace (has coverage/lcov.info). projectKey is
+        # not in sonar-project.properties (uiPipeline defaulted it to pkgName),
+        # so inject it + the JS lcov path via extraArgs.
+        - - name: sonar-scan
+            templateRef:
+              name: ci-sonar-scan
+              clusterScope: true
+              template: scan
+            arguments:
+              parameters:
+                - name: enabled
+                  value: "true"
+                - name: branch
+                  value: "{{steps.git-metadata.outputs.parameters.branch}}"
+                - name: changeTarget
+                  value: "{{workflow.parameters.changeTarget}}"
+                - name: extraArgs
+                  value: >-
+                    -Dsonar.projectKey=carbonio-files-ui
+                    -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+              artifacts:
+                - name: workspace
+                  from: "{{steps.node-build.outputs.artifacts.workspace}}"
+
+        # Step 7: build deb/rpm (uiPipeline 'Build deb/rpm' — buildFlags '-ds',
+        # single pkg per family). Skipped on bump builds (uiPipeline gates
+        # Package on !isBumpBuild). Consumes the built workspace (dist staged).
+        - - name: build-ubuntu-jammy
+            when: "{{steps.read-settings.outputs.parameters.isBumpBuild}} != true"
+            templateRef:
+              name: ci-build-packages
+              clusterScope: true
+              template: build-single-distro
+            arguments:
+              parameters:
+                - name: distro
+                  value: ubuntu-jammy
+                - name: buildFlags
+                  value: "-ds"
+                - name: prepare
+                  value: "true"
+              artifacts:
+                - name: workspace
+                  from: "{{steps.node-build.outputs.artifacts.workspace}}"
+
+          - name: build-rocky-9
+            when: "{{steps.read-settings.outputs.parameters.isBumpBuild}} != true"
+            templateRef:
+              name: ci-build-packages
+              clusterScope: true
+              template: build-single-distro
+            arguments:
+              parameters:
+                - name: distro
+                  value: rocky-9
+                - name: buildFlags
+                  value: "-ds"
+                - name: prepare
+                  value: "true"
+              artifacts:
+                - name: workspace
+                  from: "{{steps.node-build.outputs.artifacts.workspace}}"
+
+        # Step 8: collect packages (only when packages were built).
+        - - name: collect
+            when: "{{steps.read-settings.outputs.parameters.isBumpBuild}} != true"
+            template: collect-artifacts
+            arguments:
+              artifacts:
+                - name: pkgs-ubuntu-jammy
+                  from: "{{steps.build-ubuntu-jammy.outputs.artifacts.packages}}"
+                - name: pkgs-rocky-9
+                  from: "{{steps.build-rocky-9.outputs.artifacts.packages}}"
+
+        # Step 9: upload artifacts (uiPipeline 'Upload artifacts'). Gated on
+        # default branch / playground inside the template; also skipped on bump.
+        - - name: upload
+            when: "{{steps.read-settings.outputs.parameters.isBumpBuild}} != true"
+            templateRef:
+              name: ci-upload-artifacts
+              clusterScope: true
+              template: upload
+            arguments:
+              parameters:
+                - name: repoName
+                  value: carbonio-files-ui
+                - name: gitBranch
+                  value: "{{steps.git-metadata.outputs.parameters.branch}}"
+                - name: gitTag
+                  value: "{{steps.git-metadata.outputs.parameters.tag}}"
+                - name: isDefaultBranch
+                  value: "{{steps.git-metadata.outputs.parameters.isDefaultBranch}}"
+              artifacts:
+                - name: packages
+                  from: "{{steps.collect.outputs.artifacts.all-packages}}"
+
+        # Step 10: publish docker image (uiPipeline 'Publish docker image').
+        # Dockerfile present in repo; skipped on bump builds.
+        - - name: docker-build
+            when: "{{steps.read-settings.outputs.parameters.isBumpBuild}} != true"
+            templateRef:
+              name: ci-docker-build
+              clusterScope: true
+              template: build-and-push
+            arguments:
+              parameters:
+                - name: imageName
+                  value: "{{steps.read-settings.outputs.parameters.pkgName}}"
+                - name: gitCommitShort
+                  value: "{{steps.git-metadata.outputs.parameters.commitShort}}"
+                - name: gitBranch
+                  value: "{{steps.git-metadata.outputs.parameters.branch}}"
+                - name: gitTag
+                  value: "{{steps.git-metadata.outputs.parameters.tag}}"
+                - name: gitRepo
+                  value: carbonio-files-ui
+                - name: gitCommit
+                  value: "{{workflow.parameters.commitSha}}"
+                - name: isRelease
+                  value: "{{steps.git-metadata.outputs.parameters.isTag}}"
+                - name: ocTitle
+                  value: "{{steps.read-settings.outputs.parameters.pkgName}}"
+                - name: ocDescription
+                  value: "{{steps.read-settings.outputs.parameters.pkgDescription}}"
+                - name: ocVersion
+                  value: "{{steps.read-settings.outputs.parameters.pkgVersion}}"
+              artifacts:
+                - name: workspace
+                  from: "{{steps.node-build.outputs.artifacts.workspace}}"
+
+    # ─── Inline: merge per-distro artifact dirs into one ───────────────────────
+    - name: collect-artifacts
+      inputs:
+        artifacts:
+          - name: pkgs-ubuntu-jammy
+            path: /tmp/pkgs/ubuntu-jammy
+          - name: pkgs-rocky-9
+            path: /tmp/pkgs/rocky-9
+      script:
+        image: alpine:3
+        command: [sh]
+        source: |
+          set -e
+          mkdir -p /tmp/all-packages
+          for DIR in /tmp/pkgs/*/; do
+            [ -d "$DIR" ] || continue
+            for f in "$DIR"*; do
+              [ -e "$f" ] || continue
+              base=$(basename "$f")
+              if [ -e "/tmp/all-packages/$base" ]; then
+                echo "WARNING: duplicate artifact '$base' from $DIR — keeping first"
+                continue
+              fi
+              cp "$f" /tmp/all-packages/
+            done
+          done
+          echo "All packages:"
+          ls -lh /tmp/all-packages/
+      outputs:
+        artifacts:
+          - name: all-packages
+            path: /tmp/all-packages
+            archive:
+              none: {}
