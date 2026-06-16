@@ -79,7 +79,7 @@
 		"husky": "9.1.7",
 		"identity-obj-proxy": "3.0.0",
 		"is-ci": "4.1.0",
-		"jsdom": "27.3.0",
+		"jsdom": "27.4.0",
 		"msw": "2.11.3",
 		"npm-check-updates": "22.2.1",
 		"sonarqube-scanner": "4.3.6",
