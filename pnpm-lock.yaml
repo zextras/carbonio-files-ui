@@ -175,14 +175,14 @@ importers:
         specifier: 5.1.4
         version: 5.1.4(vite@7.3.2(@types/node@20.19.41)(jiti@2.6.1)(less@4.6.4)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3))
       '@vitest/coverage-v8':
-        specifier: 4.0.15
-        version: 4.0.15(vitest@4.0.15)
+        specifier: 4.1.9
+        version: 4.1.9(vitest@4.0.15)
       '@vitest/ui':
-        specifier: 4.0.15
-        version: 4.0.15(vitest@4.0.15)
+        specifier: 4.1.9
+        version: 4.1.9(vitest@4.0.15)
       '@zextras/carbonio-search-ui':
         specifier: github:zextras/carbonio-search-ui#devel
-        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05(@types/react@18.3.28)(@zextras/carbonio-ui-preview@5.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.4(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)
+        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/d3f3093748bb1332f3ac4167250f074a4d8e21bb(@types/react@18.3.28)(@zextras/carbonio-ui-preview@5.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.4(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)
       '@zextras/carbonio-ui-configs':
         specifier: 2.1.0
         version: 2.1.0(@testing-library/dom@10.4.1)(@types/eslint@9.6.1)(typescript@5.6.3)
@@ -248,10 +248,10 @@ importers:
         version: 5.6.3
       vitest:
         specifier: 4.0.15
-        version: 4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.0.15)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3)
+        version: 4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.1.9)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3)
       vitest-fail-on-console:
         specifier: 0.10.1
-        version: 0.10.1(@vitest/utils@4.1.4)(vite@7.3.2(@types/node@20.19.41)(jiti@2.6.1)(less@4.6.4)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3))(vitest@4.0.15)
+        version: 0.10.1(@vitest/utils@4.1.9)(vite@7.3.2(@types/node@20.19.41)(jiti@2.6.1)(less@4.6.4)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3))(vitest@4.0.15)
 
 packages:
 
@@ -2419,9 +2419,6 @@ packages:
   '@posthog/types@1.369.2':
     resolution: {integrity: sha512-PJqkqPCFnnbCZslH2jHSvXlasRqvke6YAsYPhPALy4zy2hldor8A0O2wIlpAefEJ7fVz6wR5ZbRJzQP6nwujyw==}
 
-  '@posthog/types@1.369.3':
-    resolution: {integrity: sha512-Ywqvs4513PixR2TIA5O3GMEyK4F65uefwxPfsIUeHr9ruGylyXp00YJ4CEbp8U0DMzCkeF+LsMKVnHgN3pAXcA==}
-
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
 
@@ -2454,6 +2451,10 @@ packages:
 
   '@remix-run/router@1.23.2':
     resolution: {integrity: sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w==}
+    engines: {node: '>=14.0.0'}
+
+  '@remix-run/router@1.23.3':
+    resolution: {integrity: sha512-4An71tdz9X8+3sI4Qqqd2LWd9vS39J7sqd9EU4Scw7TJE/qB10Flv/UuqbPVgfQV9XoK8Np6jNquZitnZq5i+Q==}
     engines: {node: '>=14.0.0'}
 
   '@repeaterjs/repeater@3.0.4':
@@ -2580,12 +2581,6 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  '@rollup/rollup-linux-x64-gnu@4.34.8':
-    resolution: {integrity: sha512-8y7ED8gjxITUltTUEJLQdgpbPh1sUQ0kMTmufRF/Ns5tI9TNMNlhWtmPKKHCU0SilX+3MJkZ0zERYYGIVBYHIA==}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
   '@rollup/rollup-linux-x64-gnu@4.53.3':
     resolution: {integrity: sha512-3EhFi1FU6YL8HTUJZ51imGJWEX//ajQPfqWLI3BQq4TlvHy4X0MOr5q3D2Zof/ka0d5FNdPwZXm3Yyib/UEd+w==}
     cpu: [x64]
@@ -2632,11 +2627,6 @@ packages:
 
   '@rollup/rollup-win32-x64-gnu@4.60.2':
     resolution: {integrity: sha512-qdAzEULD+/hzObedtmV6iBpdL5TIbKVztGiK7O3/KYSf+HIzU257+MX1EXJcyIiDbMAqmbwaufcYPvyRryeZtA==}
-    cpu: [x64]
-    os: [win32]
-
-  '@rollup/rollup-win32-x64-msvc@4.34.8':
-    resolution: {integrity: sha512-U0FaE5O1BCpZSeE6gBl3c5ObhePQSfk9vDRToMmTkbhCOgW4jqvtS5LGyQ76L1fH8sM0keRp4uDTsbjiUyjk0g==}
     cpu: [x64]
     os: [win32]
 
@@ -3199,11 +3189,11 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@vitest/coverage-v8@4.0.15':
-    resolution: {integrity: sha512-FUJ+1RkpTFW7rQITdgTi93qOCWJobWhBirEPCeXh2SW2wsTlFxy51apDz5gzG+ZEYt/THvWeNmhdAoS9DTwpCw==}
+  '@vitest/coverage-v8@4.1.9':
+    resolution: {integrity: sha512-G9/lgqibheLVBDRuya45EbsEXTYcWoSG+TLg7i2axuzx0Eq62eXn+aWXyaVdV5vKvFSWd6ywcX8hA7la9Pvu8g==}
     peerDependencies:
-      '@vitest/browser': 4.0.15
-      vitest: 4.0.15
+      '@vitest/browser': 4.1.9
+      vitest: 4.1.9
     peerDependenciesMeta:
       '@vitest/browser':
         optional: true
@@ -3225,8 +3215,8 @@ packages:
   '@vitest/pretty-format@4.0.15':
     resolution: {integrity: sha512-SWdqR8vEv83WtZcrfLNqlqeQXlQLh2iilO1Wk1gv4eiHKjEzvgHb2OVc3mIPyhZE6F+CtfYjNlDJwP5MN6Km7A==}
 
-  '@vitest/pretty-format@4.1.4':
-    resolution: {integrity: sha512-ddmDHU0gjEUyEVLxtZa7xamrpIefdEETu3nZjWtHeZX4QxqJ7tRxSteHVXJOcr8jhiLoGAhkK4WJ3WqBpjx42A==}
+  '@vitest/pretty-format@4.1.9':
+    resolution: {integrity: sha512-s0iufns3iIFitdgm+YR7g1whCAaGtXz459VS9/PqyKDEEFgYIhsHOQmXgIgDuYCt7DeQmiZT0Qe2OA2p4ZPu5A==}
 
   '@vitest/runner@4.0.15':
     resolution: {integrity: sha512-+A+yMY8dGixUhHmNdPUxOh0la6uVzun86vAbuMT3hIDxMrAOmn5ILBHm8ajrqHE0t8R9T1dGnde1A5DTnmi3qw==}
@@ -3237,16 +3227,16 @@ packages:
   '@vitest/spy@4.0.15':
     resolution: {integrity: sha512-+EIjOJmnY6mIfdXtE/bnozKEvTC4Uczg19yeZ2vtCz5Yyb0QQ31QWVQ8hswJ3Ysx/K2EqaNsVanjr//2+P3FHw==}
 
-  '@vitest/ui@4.0.15':
-    resolution: {integrity: sha512-sxSyJMaKp45zI0u+lHrPuZM1ZJQ8FaVD35k+UxVrha1yyvQ+TZuUYllUixwvQXlB7ixoDc7skf3lQPopZIvaQw==}
+  '@vitest/ui@4.1.9':
+    resolution: {integrity: sha512-U/cRvtqfEPj27FI1n9cyUvi4vXXdcLhjJiI+InYKdk8hP4VrS6RXOjGL7rfFaeBc37iRKANsR6eEzIoC7lmgBQ==}
     peerDependencies:
-      vitest: 4.0.15
+      vitest: 4.1.9
 
   '@vitest/utils@4.0.15':
     resolution: {integrity: sha512-HXjPW2w5dxhTD0dLwtYHDnelK3j8sR8cWIaLxr22evTyY6q8pRCjZSmhRWVjBaOVXChQd6AwMzi9pucorXCPZA==}
 
-  '@vitest/utils@4.1.4':
-    resolution: {integrity: sha512-13QMT+eysM5uVGa1rG4kegGYNp6cnQcsTc67ELFbhNLQO+vgsygtYJx2khvdt4gVQqSSpC/KT5FZZxUpP3Oatw==}
+  '@vitest/utils@4.1.9':
+    resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
 
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
@@ -3340,17 +3330,6 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@zextras/carbonio-design-system@12.0.3':
-    resolution: {integrity: sha512-vtWQeAiEt1MuM2zpqOwz78mIvLPlfGhiWa3302ZB667kWxMqSxGGUkpCRSH/SVgICnlBzjk93Pzx8plL+RDRnQ==}
-    engines: {node: v22, pnpm: '>=10'}
-    peerDependencies:
-      '@emotion/react': ^11.14.0
-      '@emotion/styled': ^11.14.0
-      date-fns: ^4.1.0
-      lodash: ^4.17.23
-      react: ^18.3.1
-      react-dom: ^18.3.1
-
   '@zextras/carbonio-design-system@12.0.4':
     resolution: {integrity: sha512-fYKQGdk3X2kuT3qSZs7ACrnn4JBbapRoDy+bavi5VewiKASJHk2HVBjK2DOdfGSIWgnuxPofmsGcJ5xmvCZdkg==}
     engines: {node: v22, pnpm: '>=10'}
@@ -3362,19 +3341,19 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05':
-    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05}
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/d3f3093748bb1332f3ac4167250f074a4d8e21bb':
+    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/d3f3093748bb1332f3ac4167250f074a4d8e21bb}
     version: 0.0.11
     engines: {node: v22, pnpm: '>=10'}
 
-  '@zextras/carbonio-shell-ui@14.0.1':
-    resolution: {integrity: sha512-Hn2JZWLZcaCRel2qkVeWYZ+vP60hIjZ3JNnxcF2yA3QiIMgLhOVS73E8WVufNWiUhKtQ22rVkuMyQ90dVU2sIg==}
-    engines: {node: v22, npm: v10}
+  '@zextras/carbonio-shell-ui@14.3.1':
+    resolution: {integrity: sha512-rrw1FHlvlczSSP0chIatW7ByMPbuAeiiVdP3pdrT23/nDHzcGcBsFuiaQOQO1l3ZLrVkKDVJye/gU62v92Ow5g==}
+    engines: {node: v22, pnpm: '>=10'}
     peerDependencies:
       '@emotion/react': ^11.14.0
       '@emotion/styled': ^11.14.1
-      '@zextras/carbonio-design-system': ^11.0.0
-      '@zextras/carbonio-ui-preview': ^4.0.0
+      '@zextras/carbonio-design-system': ^12.0.0
+      '@zextras/carbonio-ui-preview': ^5.0.0
       core-js: ^3.39.0
       lodash: ^4.17.23
       react: ^18.3.1
@@ -3452,9 +3431,6 @@ packages:
     resolution: {integrity: sha512-3tVdp/JNjjtj51YP6DIO0p5nfSD9OVNaLmCucnx2kUKTh80RXbs00MjwbdEHiJiYlNHadf4k+AAWWZtkm/dZCw==}
     engines: {node: v22, pnpm: '>=9'}
     hasBin: true
-
-  '@zextras/carbonio-ui-soap-lib@1.0.4':
-    resolution: {integrity: sha512-vRaizwsMPC4fODiBXiNwVnKH9b9IlKWNhAu3uYzb+BvB+HMTzxb6OGLtgLqgW+PVvBb56x+ITIbdONBsVV69OQ==}
 
   '@zextras/carbonio-ui-soap-lib@1.2.0':
     resolution: {integrity: sha512-Z8pBHJFUuYWYq/t9Mbnbc0MB5I8dMcQMPnwnA77Tc+/Rt7bvBZik8oiEVb6GlS7fUxOY1Vyye2PCeEv55U/HNw==}
@@ -3653,8 +3629,8 @@ packages:
   ast-types-flow@0.0.8:
     resolution: {integrity: sha512-OH/2E5Fg20h2aPrbe+QL8JZQFko0YZaF+j4mnQ7BGhfavO7OpSLa8a0y9sBwomHdSbkhTS8TQNayBfnW5DwbvQ==}
 
-  ast-v8-to-istanbul@0.3.12:
-    resolution: {integrity: sha512-BRRC8VRZY2R4Z4lFIL35MwNXmwVqBityvOIwETtsCSwvjl0IdgFsy9NhdaA6j74nUdtJJlIypeRhpDam19Wq3g==}
+  ast-v8-to-istanbul@1.0.4:
+    resolution: {integrity: sha512-0bC0/4bTSrnwdhU3IsZDwEdojvuPrSg59OYZfKsLRtJZ0u8VBx9DebfqqG8bRdCC0I7vjgxmPi41P0lpkhJHtA==}
 
   async-function@1.0.0:
     resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
@@ -4159,9 +4135,6 @@ packages:
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
 
-  cross-fetch@4.0.0:
-    resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
-
   cross-fetch@4.1.0:
     resolution: {integrity: sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw==}
 
@@ -4239,9 +4212,6 @@ packages:
 
   damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
-
-  darkreader@4.9.105:
-    resolution: {integrity: sha512-DtOikawKNWNQcDy/vPi27lbmNMrd3S/jj+S6/DV12y82offMqXxlTjfh1bo61NqGJTmwovqBkJdiNyeDCsSzCg==}
 
   darkreader@4.9.117:
     resolution: {integrity: sha512-owxRPqEsL/jsV6YHbGjpy+pGy+AeOSHguHk3QUAXdgVFJH//vlX3uFxvPqW7btwS+VdIdrV2DaH9DCKgSYROWA==}
@@ -5359,9 +5329,6 @@ packages:
   i18next-chained-backend@4.6.3:
     resolution: {integrity: sha512-Yg4hAKg/98zRAMQs87vJSNevTzaPPrYF3Eb7Kpx+UEaaXLd3p69g7dulAL+hpmZQHeMQ/5gFqHVtdwva53mB0Q==}
 
-  i18next-http-backend@2.7.3:
-    resolution: {integrity: sha512-FgZxrXdRA5u44xfYsJlEBL4/KH3f2IluBpgV/7riW0YW2VEyM8FzVt2XHAOi6id0Ppj7vZvCZVpp5LrGXnc8Ig==}
-
   i18next-http-backend@3.0.5:
     resolution: {integrity: sha512-QaWHnsxieEDcqKe+vo/RFqpiIFRi/KBqlOSPcUlvinBaISCeiTRCbtrazHAjtHtsLC66oDsROAH8frWkQzfMMQ==}
 
@@ -5702,10 +5669,6 @@ packages:
 
   istanbul-lib-report@3.0.1:
     resolution: {integrity: sha512-GCfE1mtsHGOELCU8e/Z7YWzpmybrx/+dSTfLrvY8qRmaY6zXTKWn6WQIjaAFw069icm6GVMNkgu0NzI4iPZUNw==}
-    engines: {node: '>=10'}
-
-  istanbul-lib-source-maps@5.0.6:
-    resolution: {integrity: sha512-yg2d+Em4KizZC5niWhQaIomgf5WlL4vOOjZ5xGCmF8SnPE/mDWWXgvRExdcpCgh9lLRRa1/fSYp2ymmbJ1pI+A==}
     engines: {node: '>=10'}
 
   istanbul-reports@3.2.0:
@@ -6763,9 +6726,6 @@ packages:
   posthog-js@1.369.2:
     resolution: {integrity: sha512-pY+SvNvRp3C2XW80h/jwVLTgoruK15C6klo9bYYoO6DCK9EbcwS6YzjgxBHx1dIN0XBZM3KWJPmuaSimU65HQQ==}
 
-  posthog-js@1.369.3:
-    resolution: {integrity: sha512-t4vk8mgkSdhIYr8YDRdLG45uJYH58MC7bPL83lKTEeDgoejyXbJ1/G77GZB/aWVQDST055GkgjQtUtK5DiYGkg==}
-
   preact@10.29.1:
     resolution: {integrity: sha512-gQCLc/vWroE8lIpleXtdJhTFDogTdZG9AjMUpVkDf2iTCNwYNWA+u16dL41TqUDJO4gm2IgrcMv3uTpjd4Pwmg==}
 
@@ -6937,8 +6897,21 @@ packages:
       react: '>=16.8'
       react-dom: '>=16.8'
 
+  react-router-dom@6.30.4:
+    resolution: {integrity: sha512-q4HvNl+mmDdkS0g+MqiBZNteQJCuimWoOyHMy4T/RQLAn9Z29+E91QXRaxOujeMl2HTzRSS0KFPd7lxX3PjV0Q==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
   react-router@6.30.3:
     resolution: {integrity: sha512-XRnlbKMTmktBkjCLE8/XcZFlnHvr2Ltdr1eJX4idL55/9BbORzyZEaIkBFDhFGCEWBBItsVrDxwx3gnisMitdw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      react: '>=16.8'
+
+  react-router@6.30.4:
+    resolution: {integrity: sha512-SVUsDe+DybHM/WmYKIVYhZh1o5Dcuf16yM6WjG02Q9XVFMZIJyHYhwrr6bFBXZkVP6z69kNkMyBCujt8FaFLJA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
@@ -7364,6 +7337,9 @@ packages:
 
   std-env@3.10.0:
     resolution: {integrity: sha512-5GS12FdOZNliM5mAOxFRg7Ir0pWz8MdpYm6AY6VPkGpbA7ZzmbzNcBJQ0GPvvyWgcY7QAhCgf9Uy89I03faLkg==}
+
+  std-env@4.1.0:
+    resolution: {integrity: sha512-Rq7ybcX2RuC55r9oaPVEW7/xu3tj8u4GeBYHBWCychFtzMIr86A7e3PPEBPT37sHStKX3+TiX/Fr/ACmJLVlLQ==}
 
   stop-iteration-iterator@1.1.0:
     resolution: {integrity: sha512-eLoXW/DHyl62zxY4SCaIgnRhuMr6ri4juEYARS8E6sCEqzKpOiE521Ucofdx+KnDZl5xmvGYaaKCk5FEOxJCoQ==}
@@ -8305,6 +8281,24 @@ packages:
       use-sync-external-store:
         optional: true
 
+  zustand@5.0.14:
+    resolution: {integrity: sha512-/8tAspM5LMPr28b3fwLYrtdj77ECpfZviaP75CMTnwO8ISyaE4GDIG/9rDDYq/cH9D2Xw2A2RXglLInmVBQB/g==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+
 snapshots:
 
   '@acemir/cssom@0.9.31': {}
@@ -8454,7 +8448,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.7
 
   '@babel/helper-annotate-as-pure@7.29.7':
     dependencies:
@@ -8607,7 +8601,7 @@ snapshots:
 
   '@babel/parser@7.29.2':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.7
 
   '@babel/parser@7.29.7':
     dependencies:
@@ -10197,10 +10191,10 @@ snapshots:
   '@graphql-tools/graphql-tag-pluck@8.3.30(graphql@16.14.1)':
     dependencies:
       '@babel/core': 7.29.7
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.29.7
       '@babel/plugin-syntax-import-assertions': 7.28.6(@babel/core@7.29.7)
       '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.7
       '@graphql-tools/utils': 11.0.1(graphql@16.14.1)
       graphql: 16.14.1
       tslib: 2.8.1
@@ -11079,8 +11073,6 @@ snapshots:
 
   '@posthog/types@1.369.2': {}
 
-  '@posthog/types@1.369.3': {}
-
   '@protobufjs/aspromise@1.1.2': {}
 
   '@protobufjs/base64@1.1.2': {}
@@ -11105,6 +11097,8 @@ snapshots:
   '@protobufjs/utf8@1.1.0': {}
 
   '@remix-run/router@1.23.2': {}
+
+  '@remix-run/router@1.23.3': {}
 
   '@repeaterjs/repeater@3.0.4': {}
 
@@ -11179,9 +11173,6 @@ snapshots:
   '@rollup/rollup-linux-s390x-gnu@4.60.2':
     optional: true
 
-  '@rollup/rollup-linux-x64-gnu@4.34.8':
-    optional: true
-
   '@rollup/rollup-linux-x64-gnu@4.53.3':
     optional: true
 
@@ -11207,9 +11198,6 @@ snapshots:
     optional: true
 
   '@rollup/rollup-win32-x64-gnu@4.60.2':
-    optional: true
-
-  '@rollup/rollup-win32-x64-msvc@4.34.8':
     optional: true
 
   '@rollup/rollup-win32-x64-msvc@4.53.3':
@@ -11461,16 +11449,16 @@ snapshots:
 
   '@types/babel__generator@7.27.0':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.7
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.29.7
+      '@babel/types': 7.29.7
 
   '@types/babel__traverse@7.28.0':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.7
 
   '@types/body-parser@1.19.6':
     dependencies:
@@ -11857,22 +11845,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@4.0.15(vitest@4.0.15)':
+  '@vitest/coverage-v8@4.1.9(vitest@4.0.15)':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
-      '@vitest/utils': 4.0.15
-      ast-v8-to-istanbul: 0.3.12
+      '@vitest/utils': 4.1.9
+      ast-v8-to-istanbul: 1.0.4
       istanbul-lib-coverage: 3.2.2
       istanbul-lib-report: 3.0.1
-      istanbul-lib-source-maps: 5.0.6
       istanbul-reports: 3.2.0
       magicast: 0.5.2
       obug: 2.1.1
-      std-env: 3.10.0
+      std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.0.15)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3)
-    transitivePeerDependencies:
-      - supports-color
+      vitest: 4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.1.9)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3)
 
   '@vitest/expect@4.0.15':
     dependencies:
@@ -11896,7 +11881,7 @@ snapshots:
     dependencies:
       tinyrainbow: 3.1.0
 
-  '@vitest/pretty-format@4.1.4':
+  '@vitest/pretty-format@4.1.9':
     dependencies:
       tinyrainbow: 3.1.0
 
@@ -11913,25 +11898,25 @@ snapshots:
 
   '@vitest/spy@4.0.15': {}
 
-  '@vitest/ui@4.0.15(vitest@4.0.15)':
+  '@vitest/ui@4.1.9(vitest@4.0.15)':
     dependencies:
-      '@vitest/utils': 4.0.15
+      '@vitest/utils': 4.1.9
       fflate: 0.8.2
       flatted: 3.4.2
       pathe: 2.0.3
       sirv: 3.0.2
       tinyglobby: 0.2.16
       tinyrainbow: 3.1.0
-      vitest: 4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.0.15)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3)
+      vitest: 4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.1.9)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3)
 
   '@vitest/utils@4.0.15':
     dependencies:
       '@vitest/pretty-format': 4.0.15
       tinyrainbow: 3.1.0
 
-  '@vitest/utils@4.1.4':
+  '@vitest/utils@4.1.9':
     dependencies:
-      '@vitest/pretty-format': 4.1.4
+      '@vitest/pretty-format': 4.1.9
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
 
@@ -12070,20 +12055,6 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@zextras/carbonio-design-system@12.0.3(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@emotion/react': 11.14.0(@types/react@18.3.28)(react@18.3.1)
-      '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1)
-      '@floating-ui/dom': 1.6.12
-      core-js: 3.39.0
-      darkreader: 4.9.105
-      date-fns: 4.4.0
-      lodash: 4.18.1
-      polished: 4.3.1
-      react: 18.3.1
-      react-datepicker: 7.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-dom: 18.3.1(react@18.3.1)
-
   '@zextras/carbonio-design-system@12.0.4(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.28)(react@18.3.1)
@@ -12098,20 +12069,20 @@ snapshots:
       react-datepicker: 7.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/3a2ec3406e13a3aa49556428096688f3fac34b05(@types/react@18.3.28)(@zextras/carbonio-ui-preview@5.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.4(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)':
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/d3f3093748bb1332f3ac4167250f074a4d8e21bb(@types/react@18.3.28)(@zextras/carbonio-ui-preview@5.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.4(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.28)(react@18.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1)
-      '@zextras/carbonio-design-system': 12.0.3(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@zextras/carbonio-shell-ui': 14.0.1(8741cc3d47dc7a0aa1c99678163eab2d)
+      '@zextras/carbonio-design-system': 12.0.4(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@zextras/carbonio-shell-ui': 14.3.1(27e033f8a1c8f3d9eba15090f820aec3)
       core-js: 3.49.0
       i18next: 22.5.1
       immer: 10.2.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-i18next: 12.3.1(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-router-dom: 6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      zustand: 5.0.12(@types/react@18.3.28)(immer@10.2.0)(react@18.3.1)
+      react-router-dom: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zustand: 5.0.14(@types/react@18.3.28)(immer@10.2.0)(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
       - '@zextras/carbonio-ui-preview'
@@ -12122,29 +12093,29 @@ snapshots:
       - supports-color
       - use-sync-external-store
 
-  '@zextras/carbonio-shell-ui@14.0.1(8741cc3d47dc7a0aa1c99678163eab2d)':
+  '@zextras/carbonio-shell-ui@14.3.1(27e033f8a1c8f3d9eba15090f820aec3)':
     dependencies:
       '@fontsource/roboto': 5.2.10
-      '@zextras/carbonio-ui-soap-lib': 1.0.4
+      '@zextras/carbonio-ui-soap-lib': 1.3.0
       core-js: 3.49.0
       darkreader: 4.9.120
-      date-fns: 4.4.0
+      date-fns: 4.1.0
       i18next: 22.5.1
       i18next-chained-backend: 4.6.3
-      i18next-http-backend: 2.7.3
+      i18next-http-backend: 3.0.5
       immer: 10.2.0
-      posthog-js: 1.369.3
+      posthog-js: 1.369.2
       zustand: 5.0.12(@types/react@18.3.28)(immer@10.2.0)(react@18.3.1)
     optionalDependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.28)(react@18.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1)
-      '@zextras/carbonio-design-system': 12.0.3(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@zextras/carbonio-design-system': 12.0.4(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@zextras/carbonio-ui-preview': 5.0.1(@types/react@18.3.28)(@zextras/carbonio-design-system@12.0.4(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1))(@types/react@18.3.28)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       lodash: 4.18.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-i18next: 12.3.1(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-router-dom: 6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-router-dom: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
       - encoding
@@ -12254,11 +12225,6 @@ snapshots:
       - uglify-js
       - utf-8-validate
       - webpack-cli
-
-  '@zextras/carbonio-ui-soap-lib@1.0.4':
-    dependencies:
-      '@types/ua-parser-js': 0.7.39
-      ua-parser-js: 1.0.41
 
   '@zextras/carbonio-ui-soap-lib@1.2.0':
     dependencies:
@@ -12473,7 +12439,7 @@ snapshots:
 
   ast-types-flow@0.0.8: {}
 
-  ast-v8-to-istanbul@0.3.12:
+  ast-v8-to-istanbul@1.0.4:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       estree-walker: 3.0.3
@@ -13015,12 +12981,6 @@ snapshots:
 
   create-require@1.1.1: {}
 
-  cross-fetch@4.0.0:
-    dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
-
   cross-fetch@4.1.0:
     dependencies:
       node-fetch: 2.7.0
@@ -13108,13 +13068,6 @@ snapshots:
   csstype@3.2.3: {}
 
   damerau-levenshtein@1.0.8: {}
-
-  darkreader@4.9.105:
-    dependencies:
-      malevic: 0.20.2
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-gnu': 4.34.8
-      '@rollup/rollup-win32-x64-msvc': 4.34.8
 
   darkreader@4.9.117:
     dependencies:
@@ -14423,12 +14376,6 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.29.2
 
-  i18next-http-backend@2.7.3:
-    dependencies:
-      cross-fetch: 4.0.0
-    transitivePeerDependencies:
-      - encoding
-
   i18next-http-backend@3.0.5:
     dependencies:
       cross-fetch: 4.1.0
@@ -14737,14 +14684,6 @@ snapshots:
       istanbul-lib-coverage: 3.2.2
       make-dir: 4.0.0
       supports-color: 7.2.0
-
-  istanbul-lib-source-maps@5.0.6:
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      debug: 4.4.3
-      istanbul-lib-coverage: 3.2.2
-    transitivePeerDependencies:
-      - supports-color
 
   istanbul-reports@3.2.0:
     dependencies:
@@ -15058,8 +14997,8 @@ snapshots:
 
   magicast@0.5.2:
     dependencies:
-      '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/parser': 7.29.7
+      '@babel/types': 7.29.7
       source-map-js: 1.2.1
 
   make-asynchronous@1.1.0:
@@ -15709,22 +15648,6 @@ snapshots:
       query-selector-shadow-dom: 1.0.1
       web-vitals: 5.2.0
 
-  posthog-js@1.369.3:
-    dependencies:
-      '@opentelemetry/api': 1.9.1
-      '@opentelemetry/api-logs': 0.208.0
-      '@opentelemetry/exporter-logs-otlp-http': 0.208.0(@opentelemetry/api@1.9.1)
-      '@opentelemetry/resources': 2.7.0(@opentelemetry/api@1.9.1)
-      '@opentelemetry/sdk-logs': 0.208.0(@opentelemetry/api@1.9.1)
-      '@posthog/core': 1.25.2
-      '@posthog/types': 1.369.3
-      core-js: 3.49.0
-      dompurify: 3.4.0
-      fflate: 0.4.8
-      preact: 10.29.1
-      query-selector-shadow-dom: 1.0.1
-      web-vitals: 5.2.0
-
   preact@10.29.1: {}
 
   prelude-ls@1.2.1: {}
@@ -15905,9 +15828,21 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-router: 6.30.3(react@18.3.1)
 
+  react-router-dom@6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@remix-run/router': 1.23.3
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-router: 6.30.4(react@18.3.1)
+
   react-router@6.30.3(react@18.3.1):
     dependencies:
       '@remix-run/router': 1.23.2
+      react: 18.3.1
+
+  react-router@6.30.4(react@18.3.1):
+    dependencies:
+      '@remix-run/router': 1.23.3
       react: 18.3.1
 
   react@18.3.1:
@@ -16467,6 +16402,8 @@ snapshots:
   statuses@2.0.2: {}
 
   std-env@3.10.0: {}
+
+  std-env@4.1.0: {}
 
   stop-iteration-iterator@1.1.0:
     dependencies:
@@ -17059,14 +16996,14 @@ snapshots:
       terser: 5.46.1
       yaml: 2.8.3
 
-  vitest-fail-on-console@0.10.1(@vitest/utils@4.1.4)(vite@7.3.2(@types/node@20.19.41)(jiti@2.6.1)(less@4.6.4)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3))(vitest@4.0.15):
+  vitest-fail-on-console@0.10.1(@vitest/utils@4.1.9)(vite@7.3.2(@types/node@20.19.41)(jiti@2.6.1)(less@4.6.4)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3))(vitest@4.0.15):
     dependencies:
-      '@vitest/utils': 4.1.4
+      '@vitest/utils': 4.1.9
       chalk: 5.6.2
       vite: 7.3.2(@types/node@20.19.41)(jiti@2.6.1)(less@4.6.4)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3)
-      vitest: 4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.0.15)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3)
+      vitest: 4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.1.9)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3)
 
-  vitest@4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.0.15)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3):
+  vitest@4.0.15(@opentelemetry/api@1.9.1)(@types/node@20.19.41)(@vitest/ui@4.1.9)(jiti@2.6.1)(jsdom@27.3.0)(less@4.6.4)(lightningcss@1.32.0)(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(terser@5.46.1)(yaml@2.8.3):
     dependencies:
       '@vitest/expect': 4.0.15
       '@vitest/mocker': 4.0.15(msw@2.11.3(@types/node@20.19.41)(typescript@5.6.3))(vite@7.3.2(@types/node@20.19.41)(jiti@2.6.1)(less@4.6.4)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3))
@@ -17091,7 +17028,7 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
       '@types/node': 20.19.41
-      '@vitest/ui': 4.0.15(vitest@4.0.15)
+      '@vitest/ui': 4.1.9(vitest@4.0.15)
       jsdom: 27.3.0
     transitivePeerDependencies:
       - jiti
@@ -17436,6 +17373,12 @@ snapshots:
   zen-observable@0.8.15: {}
 
   zustand@5.0.12(@types/react@18.3.28)(immer@10.2.0)(react@18.3.1):
+    optionalDependencies:
+      '@types/react': 18.3.28
+      immer: 10.2.0
+      react: 18.3.1
+
+  zustand@5.0.14(@types/react@18.3.28)(immer@10.2.0)(react@18.3.1):
     optionalDependencies:
       '@types/react': 18.3.28
       immer: 10.2.0
