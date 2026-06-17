@@ -84,7 +84,7 @@
 		"npm-check-updates": "22.2.1",
 		"sonarqube-scanner": "4.3.6",
 		"ts-node": "10.9.2",
-		"typescript": "5.6.3",
+		"typescript": "5.9.3",
 		"vitest": "4.0.15",
 		"vitest-fail-on-console": "0.10.1",
 		"@semantic-release/changelog": "6.0.3",
