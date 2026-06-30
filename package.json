@@ -73,7 +73,7 @@
 		"eslint-plugin-jest-dom": "5.5.0",
 		"eslint-plugin-no-autofix": "2.1.0",
 		"eslint-plugin-notice": "1.0.0",
-		"prettier": "3.8.3",
+		"prettier": "3.9.4",
 		"graphql-tag": "2.12.6",
 		"history": "5.3.0",
 		"husky": "9.1.7",
