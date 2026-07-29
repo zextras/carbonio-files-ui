@@ -9,9 +9,13 @@ import { useCallback } from 'react';
 import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
+import { HTTP_STATUS_CODE } from '../carbonio-files-ui-common/constants';
 import { Node } from '../carbonio-files-ui-common/types/common';
 import { DeepPick } from '../carbonio-files-ui-common/types/utils';
-import { uploadToTargetModule } from '../carbonio-files-ui-common/utils/utils';
+import {
+	type UploadToTargetModuleError,
+	uploadToTargetModule
+} from '../carbonio-files-ui-common/utils/utils';
 import { getComposePrefillMessageFunction } from '../integrations/functions';
 
 type NodeItem = Node<
@@ -57,15 +61,29 @@ export function useSendViaMail(): {
 						attachments: [attachment]
 					});
 				},
-				(reason) => {
+				(reason: UploadToTargetModuleError) => {
 					console.error(reason);
-					createSnackbar({
-						key: new Date().toLocaleString(),
-						severity: 'warning',
-						label: t('errorCode.code', 'Something went wrong', { context: 'Generic' }),
-						replace: true,
-						hideButton: true
-					});
+					if (reason.status === HTTP_STATUS_CODE.fileSizeExceeded) {
+						createSnackbar({
+							key: new Date().toLocaleString(),
+							severity: 'warning',
+							label: t(
+								'snackbar.sendViaMail.error.fileSizeExceeded',
+								'This file is too large to attach. Open a new e-mail and use Add from Files to share it as a Smart Link instead.'
+							),
+							replace: true,
+							actionLabel: t('snackbar.sendViaMail.error.fileSizeExceeded.actionLabel', 'Ok'),
+							disableAutoHide: true
+						});
+					} else {
+						createSnackbar({
+							key: new Date().toLocaleString(),
+							severity: 'warning',
+							label: t('errorCode.code', 'Something went wrong', { context: 'Generic' }),
+							replace: true,
+							hideButton: true
+						});
+					}
 				}
 			);
 		},

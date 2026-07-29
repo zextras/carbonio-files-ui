@@ -693,6 +693,8 @@ export const docsHandledMimeTypes = [
 	'application/vnd.sun.xml.writer.template'
 ];
 
+export type UploadToTargetModuleError = { statusText: string; status: number };
+
 /**
  * 	Error codes:
  *	400 if target  does not match
@@ -703,7 +705,7 @@ export const docsHandledMimeTypes = [
 const uploadToCompleted = (
 	xhr: XMLHttpRequest,
 	resolve: (value: { attachmentId: string } | PromiseLike<{ attachmentId: string }>) => void,
-	reject: (reason?: { statusText: string; status: number }) => void
+	reject: (reason?: UploadToTargetModuleError) => void
 ): void => {
 	switch (xhr.status) {
 		case 200: {
