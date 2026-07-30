@@ -21,13 +21,11 @@ import { useGetNotificationsQuery } from '../../carbonio-files-ui-common/hooks/g
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
-import { FilesQuota } from '../../carbonio-files-ui-common/views/components/FilesQuota';
 import { Notifications } from '../../carbonio-files-ui-common/views/components/notifications/Notifications';
 import {
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
 } from '../../carbonio-files-ui-common/views/components/SecondaryBarItem';
-import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import { useNavigation } from '../../hooks/useNavigation';
 
 type AccordionItemWithPriority = AccordionItemType & {
@@ -47,7 +45,6 @@ interface SecondaryBarProps {
 }
 
 export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element => {
-	const isTotalQuotaEnabled = useFeatureFlag('totalQuota');
 	const { unread } = useGetNotificationsQuery();
 	const isNotificationsBadgeCounterShown = useReactiveVar(showNotificationsBadgeVar);
 	const { navigateTo } = useNavigation();
@@ -276,9 +273,8 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	]);
 
 	return expanded ? (
-		<Container mainAlignment={'space-between'}>
+		<Container>
 			<CustomAccordion height={'fit'} role="menuitem" items={items || []} />
-			{!isTotalQuotaEnabled && <FilesQuota />}
 		</Container>
 	) : (
 		<Container height={'fit'}>

@@ -36,7 +36,6 @@ export const useTracker: typeof shell.useTracker = () => ({
 	reset: noop
 });
 export const useIsCarbonioCE: typeof shell.useIsCarbonioCE = () => false;
-export const useFeatureFlag = vi.fn((): boolean => false);
 export const useAuthenticated: typeof shell.useAuthenticated = () => true;
 export const useIntegratedFunction: typeof shell.useIntegratedFunction = <T,>() => [
 	((): void => undefined) as T,
