@@ -84,6 +84,9 @@ importers:
       '@emotion/babel-plugin':
         specifier: 11.13.5
         version: 11.13.5
+      '@emotion/cache':
+        specifier: 11.14.0
+        version: 11.14.0
       '@faker-js/faker':
         specifier: 9.0.3
         version: 9.0.3

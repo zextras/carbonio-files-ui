@@ -10,6 +10,11 @@ import { LOGGED_USER_ACCOUNT } from '../../src/mocks/constants';
 
 export const useUserAccount: typeof shell.useUserAccount = () => LOGGED_USER_ACCOUNT;
 export const getUserAccount: typeof shell.getUserAccount = () => LOGGED_USER_ACCOUNT;
+export const useUserSettings: typeof shell.useUserSettings = () => ({
+	attrs: {},
+	prefs: {},
+	props: []
+});
 export const ACTION_TYPES: Partial<typeof shell.ACTION_TYPES> = {
 	NEW: 'new'
 };
