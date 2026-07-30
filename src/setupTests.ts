@@ -200,6 +200,12 @@ afterEach(() => {
 		window.resizeTo(1024, 768);
 	});
 	global.apolloClient.cache.reset();
+	// the style tags inserted by emotion are not removed when the components are unmounted: without
+	// this cleanup they pile up in the head, making every getComputedStyle of the following tests
+	// slower. Each render uses its own emotion cache, so removing them is safe (see tests/utils.tsx)
+	document.head.querySelectorAll('style[data-emotion]').forEach((style) => {
+		style.remove();
+	});
 });
 // mock a simplified crypto
 Object.defineProperty(window.crypto, 'randomUUID', {
