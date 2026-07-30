@@ -1,3 +1,9 @@
+## [2.17.3](https://github.com/zextras/carbonio-files-ui/compare/v2.17.2...v2.17.3) (2026-07-30)
+
+### Other changes
+
+* **quota:** remove V1 storages API consumers (CO-4051) ([#673](https://github.com/zextras/carbonio-files-ui/issues/673)) ([aa547d3](https://github.com/zextras/carbonio-files-ui/commit/aa547d3e014d2d1361221172bc82a95d81614cfc))
+
 ## [2.17.2](https://github.com/zextras/carbonio-files-ui/compare/v2.17.1...v2.17.2) (2026-07-30)
 
 ### Bug Fixes
