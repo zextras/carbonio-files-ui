@@ -7,6 +7,7 @@
 import { useCallback } from 'react';
 
 import { useSnackbar } from '@zextras/carbonio-design-system';
+import { useUserSettings } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 
 import { HTTP_STATUS_CODE } from '../carbonio-files-ui-common/constants';
@@ -16,6 +17,7 @@ import {
 	type UploadToTargetModuleError,
 	uploadToTargetModule
 } from '../carbonio-files-ui-common/utils/utils';
+import { BASE_64_CONVERSION_RATE } from '../constants';
 import { getComposePrefillMessageFunction } from '../integrations/functions';
 
 type NodeItem = Node<
@@ -35,9 +37,32 @@ export function useSendViaMail(): {
 } {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
+	const maxMessageSize = useUserSettings().attrs?.zimbraMtaMaxMessageSize;
+	const maxAllowedMailSize = parseInt(String(maxMessageSize), 10);
+
+	const createFileSizeExceededSnackbar = useCallback(() => {
+		createSnackbar({
+			key: new Date().toLocaleString(),
+			severity: 'warning',
+			label: t(
+				'snackbar.sendViaMail.error.fileSizeExceeded',
+				'This file is too large to attach. Open a new e-mail and use Add from Files to share it as a Smart Link instead.'
+			),
+			replace: true,
+			actionLabel: t('snackbar.sendViaMail.error.fileSizeExceeded.actionLabel', 'Ok'),
+			disableAutoHide: true
+		});
+	}, [createSnackbar, t]);
 
 	const sendViaMail = useCallback(
 		(node: FileNodeItem) => {
+			const attachmentSize = (node.size ?? 0) * BASE_64_CONVERSION_RATE;
+			// if the account has no max message size configured, rely on the server response
+			if (!Number.isNaN(maxAllowedMailSize) && attachmentSize >= maxAllowedMailSize) {
+				createFileSizeExceededSnackbar();
+				return;
+			}
+
 			uploadToTargetModule({
 				nodeId: node.id,
 				targetModule: 'MAILS'
@@ -64,17 +89,7 @@ export function useSendViaMail(): {
 				(reason: UploadToTargetModuleError) => {
 					console.error(reason);
 					if (reason.status === HTTP_STATUS_CODE.fileSizeExceeded) {
-						createSnackbar({
-							key: new Date().toLocaleString(),
-							severity: 'warning',
-							label: t(
-								'snackbar.sendViaMail.error.fileSizeExceeded',
-								'This file is too large to attach. Open a new e-mail and use Add from Files to share it as a Smart Link instead.'
-							),
-							replace: true,
-							actionLabel: t('snackbar.sendViaMail.error.fileSizeExceeded.actionLabel', 'Ok'),
-							disableAutoHide: true
-						});
+						createFileSizeExceededSnackbar();
 					} else {
 						createSnackbar({
 							key: new Date().toLocaleString(),
@@ -87,7 +102,7 @@ export function useSendViaMail(): {
 				}
 			);
 		},
-		[createSnackbar, t]
+		[createFileSizeExceededSnackbar, createSnackbar, maxAllowedMailSize, t]
 	);
 
 	return {

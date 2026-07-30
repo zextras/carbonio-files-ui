@@ -49,3 +49,9 @@ export const EMPTY_ITEM: SelectItem<SharePermission> = {
 	label: 'EMPTY',
 	value: 'EMPTY' as SharePermission
 };
+
+/**
+ * Mail attachments are base64 encoded, so they weigh more than the original file.
+ * The same rate is used by Mails to check an attachment against zimbraMtaMaxMessageSize.
+ */
+export const BASE_64_CONVERSION_RATE = 1.33;
