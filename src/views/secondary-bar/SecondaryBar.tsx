@@ -273,7 +273,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	]);
 
 	return expanded ? (
-		<Container>
+		<Container mainAlignment={'flex-start'}>
 			<CustomAccordion height={'fit'} role="menuitem" items={items || []} />
 		</Container>
 	) : (
