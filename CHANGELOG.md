@@ -1,3 +1,9 @@
+## [2.17.2](https://github.com/zextras/carbonio-files-ui/compare/v2.17.1...v2.17.2) (2026-07-30)
+
+### Bug Fixes
+
+* show specific error when file is too large to send via e-mail ([#672](https://github.com/zextras/carbonio-files-ui/issues/672)) ([0c4a828](https://github.com/zextras/carbonio-files-ui/commit/0c4a82828524aa5f76838d53cad00de229dc2385))
+
 ## <small>2.17.1 (2026-06-02)</small>
 
 * build: migrate to buildah (FQDN images + jenkins-lib-common@2.10.0) (#640) ([b5afc14](https://github.com/zextras/carbonio-files-ui/commit/b5afc14)), closes [#640](https://github.com/zextras/carbonio-files-ui/issues/640)
