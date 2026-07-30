@@ -38,7 +38,7 @@ export function useSendViaMail(): {
 	const createSnackbar = useSnackbar();
 	const [t] = useTranslation();
 	const maxMessageSize = useUserSettings().attrs?.zimbraMtaMaxMessageSize;
-	const maxAllowedMailSize = parseInt(String(maxMessageSize), 10);
+	const maxAllowedMailSize = Number.parseInt(String(maxMessageSize), 10);
 
 	const createFileSizeExceededSnackbar = useCallback(() => {
 		createSnackbar({
