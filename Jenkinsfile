@@ -14,5 +14,6 @@ library(
 )
 
 zappPipeline(
-    timeout: 30
+    timeout: 30,
+    testScript: 'test:ci'
 )
