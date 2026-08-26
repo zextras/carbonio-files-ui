@@ -1,3 +1,9 @@
+## [2.17.4](https://github.com/zextras/carbonio-files-ui/compare/v2.17.3...v2.17.4) (2026-08-26)
+
+### Bug Fixes
+
+* **ci:** run Docker build stages as root ([7c95e92](https://github.com/zextras/carbonio-files-ui/commit/7c95e92ab90919912fa64945ce83b23fceb7ea0f))
+
 ## [2.17.3](https://github.com/zextras/carbonio-files-ui/compare/v2.17.2...v2.17.3) (2026-07-30)
 
 ### Other changes
