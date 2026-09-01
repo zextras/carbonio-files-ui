@@ -71,7 +71,7 @@
 		"@vitejs/plugin-react": "5.1.4",
 		"@vitest/coverage-v8": "4.0.15",
 		"@vitest/ui": "4.0.15",
-		"@zextras/carbonio-search-ui": "github:zextras/carbonio-search-ui#devel",
+		"@zextras/carbonio-search-ui": "github:zextras/carbonio-search-ui#main",
 		"@zextras/carbonio-ui-configs": "2.1.0",
 		"@zextras/carbonio-ui-sdk": "2.3.6",
 		"babel-plugin-transform-import-meta": "2.3.3",
