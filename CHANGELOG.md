@@ -1,3 +1,9 @@
+## [2.17.5](https://github.com/zextras/carbonio-files-ui/compare/v2.17.4...v2.17.5) (2026-09-11)
+
+### Bug Fixes
+
+* **ci:** cap vitest forks to 2 and migrate to jenkins-lib-common uiPipeline ([#675](https://github.com/zextras/carbonio-files-ui/issues/675)) ([79d7452](https://github.com/zextras/carbonio-files-ui/commit/79d74527fb6a6c36fadd12edcdd40f6d1b602d90))
+
 ## [2.17.4](https://github.com/zextras/carbonio-files-ui/compare/v2.17.3...v2.17.4) (2026-08-26)
 
 ### Bug Fixes
