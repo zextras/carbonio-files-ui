@@ -13,8 +13,6 @@ import {
 	UPLOAD_PATH,
 	UPLOAD_VERSION_PATH,
 	PREVIEW_PATH,
-	STORAGES_ENDPOINT,
-	MYSELF_QUOTA_PATH,
 	HEALTH_PATH,
 	DOWNLOAD_PATH,
 	DOWNLOAD_PATH_CHECK,
@@ -50,7 +48,6 @@ import handleGetVersionsRequest from '../carbonio-files-ui-common/mocks/handleGe
 import handleHealthRequest from '../carbonio-files-ui-common/mocks/handleHealthRequest';
 import handleIntrospectionRequest from '../carbonio-files-ui-common/mocks/handleIntrospectionRequest';
 import handleMoveNodesRequest from '../carbonio-files-ui-common/mocks/handleMoveNodesRequest';
-import handleMySelfQuotaRequest from '../carbonio-files-ui-common/mocks/handleMySelfQuotaRequest';
 import handleRestoreNodesRequest from '../carbonio-files-ui-common/mocks/handleRestoreNodesRequest';
 import handleTrashNodesRequest from '../carbonio-files-ui-common/mocks/handleTrashNodesRequest';
 import handleUpdateLinkRequest from '../carbonio-files-ui-common/mocks/handleUpdateLinkRequest';
@@ -139,7 +136,6 @@ handlers.push(
 	http.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, handleUploadVersionRequest),
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:area/:thumbnail`, handleGetPreviewRequest),
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id`, handleGetPreviewRequest),
-	http.get(`${STORAGES_ENDPOINT}${MYSELF_QUOTA_PATH}`, handleMySelfQuotaRequest),
 	http.get(`${REST_ENDPOINT}${HEALTH_PATH}`, handleHealthRequest),
 	http.get(
 		`${REST_ENDPOINT}${DOWNLOAD_PATH}/:id${DOWNLOAD_PATH_CHECK}`,

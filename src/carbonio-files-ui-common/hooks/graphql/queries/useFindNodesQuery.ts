@@ -16,8 +16,10 @@ import { FindNodesQuery, FindNodesQueryVariables, NodeSort } from '../../../type
 import { useErrorHandler } from '../../useErrorHandler';
 import { useMemoCompare } from '../../useMemoCompare';
 
-export interface FindNodesQueryHookReturnType
-	extends QueryResult<FindNodesQuery, FindNodesQueryVariables> {
+export interface FindNodesQueryHookReturnType extends QueryResult<
+	FindNodesQuery,
+	FindNodesQueryVariables
+> {
 	hasMore: boolean;
 	loadMore: () => Promise<ApolloQueryResult<FindNodesQuery>>;
 	pageToken: string | null | undefined;

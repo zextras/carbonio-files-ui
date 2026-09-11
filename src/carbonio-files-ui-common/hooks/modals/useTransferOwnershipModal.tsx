@@ -32,6 +32,7 @@ export function useTransferOwnershipModal(actionCallback?: () => void): {
 					id: modalId,
 					minHeight: '25rem',
 					onClose: closeAction,
+					focusModalContent: false,
 					children: <TransferOwnershipModalContent nodes={nodes} closeAction={closeAction} />
 				},
 				true

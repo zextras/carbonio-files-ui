@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 
 import { ChipInput, ChipInputProps } from '@zextras/carbonio-design-system';
 import { filter, reduce, throttle } from 'lodash';
@@ -37,6 +37,7 @@ type AccountChipInputProps = Pick<
 	| 'description'
 	| 'hasError'
 	| 'dropdownWidth'
+	| 'inputRef'
 >;
 
 export const AccountChipInput = ({
@@ -46,7 +47,8 @@ export const AccountChipInput = ({
 	placeholder,
 	description,
 	hasError,
-	dropdownWidth
+	dropdownWidth,
+	inputRef
 }: AccountChipInputProps): React.JSX.Element => {
 	const [loading, setLoading] = useState(false);
 
@@ -129,6 +131,7 @@ export const AccountChipInput = ({
 
 	return (
 		<ChipInput
+			inputRef={inputRef}
 			placeholder={placeholder}
 			background={'gray5'}
 			maxChips={1}

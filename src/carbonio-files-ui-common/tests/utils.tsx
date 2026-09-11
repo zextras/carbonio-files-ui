@@ -8,6 +8,8 @@ import React, { ReactElement, useMemo } from 'react';
 
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import { SchemaLink } from '@apollo/client/link/schema';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 import { addMocksToSchema } from '@graphql-tools/mock';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
@@ -135,28 +137,39 @@ const Wrapper = ({ mocks, initialRouterEntries, children }: WrapperProps): React
 		return i18nFactory.getAppI18n();
 	}, []);
 
+	/*
+	 * Give each render its own emotion cache: the style tags it inserts are removed after the test,
+	 * so they don't pile up in the head. A shared cache would consider them still inserted and would
+	 * not write them again. It is also a performance matter: every getComputedStyle call (toBeVisible,
+	 * toBeEnabled, the pointer events check of userEvent) iterates over all the style tags of the
+	 * document, so leftovers of the previous tests make the following ones slower and slower.
+	 */
+	const emotionCache = useMemo(() => createCache({ key: 'css' }), []);
+
 	return (
-		<ApolloProviderWrapper mocks={mocks}>
-			<MemoryRouter
-				future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
-				initialEntries={initialRouterEntries}
-				initialIndex={
-					initialRouterEntries !== undefined && initialRouterEntries.length > 0
-						? initialRouterEntries.length - 1
-						: 0
-				}
-			>
-				<StyledWrapper>
-					<I18nextProvider i18n={i18n}>
-						<SnackbarManager>
-							<ModalManager>
-								<PreviewManager>{children}</PreviewManager>
-							</ModalManager>
-						</SnackbarManager>
-					</I18nextProvider>
-				</StyledWrapper>
-			</MemoryRouter>
-		</ApolloProviderWrapper>
+		<CacheProvider value={emotionCache}>
+			<ApolloProviderWrapper mocks={mocks}>
+				<MemoryRouter
+					future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+					initialEntries={initialRouterEntries}
+					initialIndex={
+						initialRouterEntries !== undefined && initialRouterEntries.length > 0
+							? initialRouterEntries.length - 1
+							: 0
+					}
+				>
+					<StyledWrapper>
+						<I18nextProvider i18n={i18n}>
+							<SnackbarManager>
+								<ModalManager>
+									<PreviewManager>{children}</PreviewManager>
+								</ModalManager>
+							</SnackbarManager>
+						</I18nextProvider>
+					</StyledWrapper>
+				</MemoryRouter>
+			</ApolloProviderWrapper>
+		</CacheProvider>
 	);
 };
 

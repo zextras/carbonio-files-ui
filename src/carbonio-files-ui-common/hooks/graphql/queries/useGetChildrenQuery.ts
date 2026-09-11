@@ -17,8 +17,10 @@ import { isFolder } from '../../../utils/utils';
 import { useErrorHandler } from '../../useErrorHandler';
 import { useMemoCompare } from '../../useMemoCompare';
 
-interface GetChildrenQueryHookReturnType
-	extends QueryResult<GetChildrenQuery, GetChildrenQueryVariables> {
+interface GetChildrenQueryHookReturnType extends QueryResult<
+	GetChildrenQuery,
+	GetChildrenQueryVariables
+> {
 	hasMore: boolean;
 	pageToken: string | null | undefined;
 	loadMore: () => void;

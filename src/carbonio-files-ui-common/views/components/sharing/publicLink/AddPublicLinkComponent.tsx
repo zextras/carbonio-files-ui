@@ -196,6 +196,8 @@ export const AddPublicLinkComponent = ({
 				<>
 					<Padding vertical="small" />
 					<Input
+						/* eslint-disable-next-line jsx-a11y/no-autofocus */
+						autoFocus
 						backgroundColor="gray5"
 						label={t('publicLink.input.label', "Link's description")}
 						value={linkDescriptionValue}

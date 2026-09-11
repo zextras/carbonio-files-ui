@@ -5,12 +5,14 @@
  */
 
 library(
-    identifier: 'jenkins-lib-common@v4.7.3',
+    identifier: 'jenkins-lib-common@v4.10.10',
     retriever: modernSCM([
         $class: 'GitSCMSource',
-        credentialsId: 'jenkins-integration-with-github-account',
         remote: 'git@github.com:zextras/jenkins-lib-common.git',
+        credentialsId: 'jenkins-integration-with-github-account'
     ])
 )
 
-uiPipeline()
+uiPipeline(
+    timeout: 30
+)

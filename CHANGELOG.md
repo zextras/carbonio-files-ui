@@ -1,3 +1,39 @@
+## [2.17.4](https://github.com/zextras/carbonio-files-ui/compare/v2.17.3...v2.17.4) (2026-08-26)
+
+### Bug Fixes
+
+* **ci:** run Docker build stages as root ([7c95e92](https://github.com/zextras/carbonio-files-ui/commit/7c95e92ab90919912fa64945ce83b23fceb7ea0f))
+
+## [2.17.3](https://github.com/zextras/carbonio-files-ui/compare/v2.17.2...v2.17.3) (2026-07-30)
+
+### Other changes
+
+* **quota:** remove V1 storages API consumers (CO-4051) ([#673](https://github.com/zextras/carbonio-files-ui/issues/673)) ([aa547d3](https://github.com/zextras/carbonio-files-ui/commit/aa547d3e014d2d1361221172bc82a95d81614cfc))
+
+## [2.17.2](https://github.com/zextras/carbonio-files-ui/compare/v2.17.1...v2.17.2) (2026-07-30)
+
+### Bug Fixes
+
+* show specific error when file is too large to send via e-mail ([#672](https://github.com/zextras/carbonio-files-ui/issues/672)) ([0c4a828](https://github.com/zextras/carbonio-files-ui/commit/0c4a82828524aa5f76838d53cad00de229dc2385))
+
+## <small>2.17.1 (2026-06-02)</small>
+
+* build: migrate to buildah (FQDN images + jenkins-lib-common@2.10.0) (#640) ([b5afc14](https://github.com/zextras/carbonio-files-ui/commit/b5afc14)), closes [#640](https://github.com/zextras/carbonio-files-ui/issues/640)
+* chore(deps): update @graphql-tools deps ([17bf682](https://github.com/zextras/carbonio-files-ui/commit/17bf682)), closes [#637](https://github.com/zextras/carbonio-files-ui/issues/637)
+* chore(deps): update babel deps ([e885497](https://github.com/zextras/carbonio-files-ui/commit/e885497)), closes [#636](https://github.com/zextras/carbonio-files-ui/issues/636)
+* chore(deps): update dependency @babel/preset-env to v7.29.5 (#609) ([ae7f38f](https://github.com/zextras/carbonio-files-ui/commit/ae7f38f)), closes [#609](https://github.com/zextras/carbonio-files-ui/issues/609)
+* chore(deps): update dependency @types/node to v20.19.41 (#610) ([9526f0a](https://github.com/zextras/carbonio-files-ui/commit/9526f0a)), closes [#610](https://github.com/zextras/carbonio-files-ui/issues/610)
+* chore(deps): update dependency zextras/jenkins-lib-common to v2.7.0 (#613) ([5b42b3b](https://github.com/zextras/carbonio-files-ui/commit/5b42b3b)), closes [#613](https://github.com/zextras/carbonio-files-ui/issues/613)
+* chore(deps): update dependency zextras/jenkins-lib-common to v2.8.5 ([f5bc5b6](https://github.com/zextras/carbonio-files-ui/commit/f5bc5b6)), closes [#635](https://github.com/zextras/carbonio-files-ui/issues/635)
+
+## 2.17.0 (2026-05-14)
+
+* feat: add auto focus on inputs ([0225ce5](https://github.com/zextras/carbonio-files-ui/commit/0225ce5)), closes [#608](https://github.com/zextras/carbonio-files-ui/issues/608)
+
+## <small>2.16.4 (2026-05-14)</small>
+
+* fix(ci): migrate Jenkinsfile to jenkins-lib-common (#612) ([39c127f](https://github.com/zextras/carbonio-files-ui/commit/39c127f)), closes [#612](https://github.com/zextras/carbonio-files-ui/issues/612)
+
 ## <small>2.16.3 (2026-05-12)</small>
 
 * Merge pull request #611 from zextras/IN-1095-jfrog-cost-optimization-usage-analysis-and-mitigation-s ([64da1d6](https://github.com/zextras/carbonio-files-ui/commit/64da1d6)), closes [#611](https://github.com/zextras/carbonio-files-ui/issues/611)

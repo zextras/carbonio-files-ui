@@ -336,9 +336,9 @@ export const CollaborationLinks = ({
 		() =>
 			Boolean(
 				readOnlyCollaborationLink &&
-					readAndWriteCollaborationLink &&
-					readAndShareCollaborationLink &&
-					readWriteAndShareCollaborationLink
+				readAndWriteCollaborationLink &&
+				readAndShareCollaborationLink &&
+				readWriteAndShareCollaborationLink
 			),
 		[
 			readAndShareCollaborationLink,

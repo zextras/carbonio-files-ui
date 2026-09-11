@@ -54,7 +54,7 @@ export const useCreateNewActions = (
 			event.stopPropagation();
 			openCreateFolderModal({
 				title: t('folder.create.modal.title', 'Create new folder'),
-				inputLabel: t('folder.create.modal.input.label.name', 'Folder name'),
+				inputLabel: `${t('folder.create.modal.input.label.name', 'Folder name')}*`,
 				createAction: createFolderCallback,
 				parentFolderId: currentFolderId
 			});
@@ -105,10 +105,10 @@ export const useCreateNewActions = (
 					`docs.create.modal.title.${documentGenericType}`,
 					`Create new ${documentGenericType}`
 				),
-				inputLabel: t(
+				inputLabel: `${t(
 					`docs.create.modal.input.label.name.${documentGenericType}`,
 					`${documentGenericType} Name`
-				),
+				)}*`,
 				createAction: createDocsFileAction(docsType),
 				inputCustomIcon: docsType
 					? (): React.JSX.Element => <Text>{`.${DOCS_EXTENSIONS[docsType]}`}</Text>
