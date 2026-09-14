@@ -117,6 +117,9 @@
 		"uuid": "14.0.0"
 	},
 	"pnpm": {
+		"overrides": {
+			"conventional-changelog-conventionalcommits": "9.3.1"
+		},
 		"onlyBuiltDependencies": [
 			"@zextras/carbonio-search-ui",
 			"core-js",
