@@ -1,3 +1,9 @@
+## [2.17.6](https://github.com/zextras/carbonio-files-ui/compare/v2.17.5...v2.17.6) (2026-09-14)
+
+### Other changes
+
+* **deps:** update sonarqube-scanner to 5.0.0 ([#690](https://github.com/zextras/carbonio-files-ui/issues/690)) ([4cdd61c](https://github.com/zextras/carbonio-files-ui/commit/4cdd61c66ca48f8829f6a6a1187e54e692cdacb6))
+
 ## [2.17.5](https://github.com/zextras/carbonio-files-ui/compare/v2.17.4...v2.17.5) (2026-09-11)
 
 ### Bug Fixes
