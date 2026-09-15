@@ -1,3 +1,9 @@
+## [2.17.8](https://github.com/zextras/carbonio-files-ui/compare/v2.17.7...v2.17.8) (2026-09-15)
+
+### Other changes
+
+* **deps:** update dependency vitest to v4.1.11 [security] ([#688](https://github.com/zextras/carbonio-files-ui/issues/688)) ([d9d6a37](https://github.com/zextras/carbonio-files-ui/commit/d9d6a37e438b57c54e1a3fb8aff1fc6669aeef4f))
+
 ## [2.17.7](https://github.com/zextras/carbonio-files-ui/compare/v2.17.6...v2.17.7) (2026-09-15)
 
 ### Bug Fixes
