@@ -1,3 +1,9 @@
+## [2.17.7](https://github.com/zextras/carbonio-files-ui/compare/v2.17.6...v2.17.7) (2026-09-15)
+
+### Bug Fixes
+
+* **deps:** update dependency react-router-dom to v6.30.6 [security] ([#685](https://github.com/zextras/carbonio-files-ui/issues/685)) ([cca5a28](https://github.com/zextras/carbonio-files-ui/commit/cca5a287334ac66bb673d97b507602c913ead2d0))
+
 ## [2.17.6](https://github.com/zextras/carbonio-files-ui/compare/v2.17.5...v2.17.6) (2026-09-14)
 
 ### Other changes
