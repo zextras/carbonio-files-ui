@@ -1,3 +1,9 @@
+## [2.17.9](https://github.com/zextras/carbonio-files-ui/compare/v2.17.8...v2.17.9) (2026-09-16)
+
+### Other changes
+
+* **deps-dev:** align typescript to 5.9.3 ([#692](https://github.com/zextras/carbonio-files-ui/issues/692)) ([3eddde3](https://github.com/zextras/carbonio-files-ui/commit/3eddde38eb35eb8ff8c78f734ff7264a1243b8e6))
+
 ## [2.17.8](https://github.com/zextras/carbonio-files-ui/compare/v2.17.7...v2.17.8) (2026-09-15)
 
 ### Other changes
