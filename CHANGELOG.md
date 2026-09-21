@@ -1,3 +1,9 @@
+## [2.17.12](https://github.com/zextras/carbonio-files-ui/compare/v2.17.11...v2.17.12) (2026-09-21)
+
+### Other changes
+
+* **deps:** update devdependencies (weekly) ([#698](https://github.com/zextras/carbonio-files-ui/issues/698)) ([a911421](https://github.com/zextras/carbonio-files-ui/commit/a911421c46d6d1f0a9930c9564b8e92dd572b417)), closes [mswjs/interceptors#335](https://github.com/mswjs/interceptors/issues/335)
+
 ## [2.17.11](https://github.com/zextras/carbonio-files-ui/compare/v2.17.10...v2.17.11) (2026-09-21)
 
 ### Other changes
