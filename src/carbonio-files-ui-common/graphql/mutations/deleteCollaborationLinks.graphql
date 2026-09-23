@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-mutation deleteCollaborationLinks($collaboration_link_ids: [ID!]!) {
+mutation deleteCollaborationLinks($collaboration_link_ids: [String!]!) {
 	deleteCollaborationLinks(collaboration_link_ids: $collaboration_link_ids)
 }

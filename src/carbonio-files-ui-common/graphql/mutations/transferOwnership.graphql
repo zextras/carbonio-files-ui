@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-mutation transferOwnership($node_ids: [ID!], $user_id: ID!) {
+mutation transferOwnership($node_ids: [String!], $user_id: ID!) {
 	transferOwnership(node_ids: $node_ids, user_id: $user_id) {
 		id
 		name
