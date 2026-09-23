@@ -21,6 +21,7 @@ const result: PossibleTypesResultData = {
 			'SucceededRecording',
 			'TransferredOwnership'
 		],
+		PublicNode: ['PublicFile', 'PublicFolder'],
 		SharedTarget: ['DistributionList', 'User']
 	}
 };
