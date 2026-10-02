@@ -37,6 +37,33 @@ export type ComposePrefillMessageType = (args: {
 	recipients?: Array<Partial<Participant>>;
 }) => void;
 
+export type FilesNodeToAttach = {
+	id: string;
+	name: string;
+	size: number;
+	mime_type: string;
+	__typename: 'File';
+};
+
+/**
+ * Opens the mail composer and adds the given nodes to it, as attachments or as smart links
+ * if they do not fit the max message size
+ */
+export type ComposeWithFilesNodesFn = (args: { filesNodes: Array<FilesNodeToAttach> }) => void;
+
+export function getComposeWithFilesNodesFunction(): {
+	integratedFunction: ComposeWithFilesNodesFn;
+	available: boolean;
+} {
+	const [integratedFunction, available] =
+		getIntegratedFunction<ComposeWithFilesNodesFn>('composeWithFilesNodes');
+
+	return {
+		integratedFunction,
+		available
+	};
+}
+
 export function getComposePrefillMessageFunction(): {
 	integratedFunction: ComposePrefillMessageType;
 	available: boolean;
