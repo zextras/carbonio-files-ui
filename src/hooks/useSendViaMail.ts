@@ -45,7 +45,7 @@ export function useSendViaMail(): {
 			key: new Date().toLocaleString(),
 			severity: 'warning',
 			label: t(
-				'snackbar.sendViaMail.error.fileSizeExceeded',
+				'snackbar.sendViaMail.error.fileSizeExceeded.label',
 				'This file is too large to attach. Open a new e-mail and use Add from Files to share it as a Smart Link instead.'
 			),
 			replace: true,
