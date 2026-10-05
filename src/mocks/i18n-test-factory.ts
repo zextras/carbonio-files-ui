@@ -30,6 +30,16 @@ export default class I18nTestFactory {
 								code_NODE_WRITE_ERROR: 'Error! Copy permissions failed',
 								operation_copyNodes: 'Copy action failed.',
 								operation_cloneVersion: 'Clone action failed.'
+							},
+							// mirrors the structure saved by Weblate, where a key can only be a string or a container
+							snackbar: {
+								sendViaMail: {
+									error: {
+										fileSizeExceeded: {
+											actionLabel: 'Ok'
+										}
+									}
+								}
 							}
 						}
 					}
