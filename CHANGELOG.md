@@ -1,3 +1,9 @@
+## [2.17.16](https://github.com/zextras/carbonio-files-ui/compare/v2.17.15...v2.17.16) (2026-10-05)
+
+### Bug Fixes
+
+* show the send via e-mail size snackbar text instead of an i18n error ([#710](https://github.com/zextras/carbonio-files-ui/issues/710)) ([8211686](https://github.com/zextras/carbonio-files-ui/commit/8211686e1254612cc617828f0d0968f8df0c10c9))
+
 ## [2.17.15](https://github.com/zextras/carbonio-files-ui/compare/v2.17.14...v2.17.15) (2026-09-29)
 
 ### Other changes
