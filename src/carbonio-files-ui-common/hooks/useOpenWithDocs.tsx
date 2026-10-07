@@ -77,7 +77,7 @@ export const useOpenWithDocs = (): OpenWithDocsFn => {
 								</>
 							),
 							replace: true,
-							actionLabel: t('snackbar.openWithDocs.error.exceedSizeLimit.actionLabel', 'Ok'),
+							actionLabel: t('snackbar.openWithDocs.error.actionLabel', 'Ok'),
 							disableAutoHide: true
 						});
 					} else {
