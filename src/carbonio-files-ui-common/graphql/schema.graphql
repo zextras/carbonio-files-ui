@@ -7,7 +7,7 @@ union Account = DistributionList | User
 type AddedNode {
 	added_node: SnapshotNode!
 	added_node_type: AddedNodeType!
-	created_at: DateTime!
+	created_at: BigInteger!
 	destination_folder: SnapshotNode!
 	id: ID!
 	notification_type: NotificationType!
@@ -22,7 +22,7 @@ enum AddedNodeType {
 }
 
 type CollaborationLink {
-	created_at: DateTime!
+	created_at: BigInteger!
 	id: ID!
 	node: Node!
 	permission: SharePermission!
@@ -34,7 +34,7 @@ type Config {
 	value: String
 }
 
-scalar DateTime
+scalar BigInteger
 
 type DistributionList {
 	id: ID!
@@ -45,7 +45,7 @@ type DistributionList {
 type File implements Node {
 	cloned_from_version: Int
 	collaboration_links: [CollaborationLink]!
-	created_at: DateTime!
+	created_at: BigInteger!
 	creator: User!
 	description: String!
 	digest: String!
@@ -65,14 +65,14 @@ type File implements Node {
 	shares(cursor: String, limit: Int!, sorts: [ShareSort!]): [Share]!
 	size: Float!
 	type: NodeType!
-	updated_at: DateTime!
+	updated_at: BigInteger!
 	version: Int!
 }
 
 type Folder implements Node {
 	children(limit: Int!, page_token: String, sort: NodeSort!): NodePage!
 	collaboration_links: [CollaborationLink]!
-	created_at: DateTime!
+	created_at: BigInteger!
 	creator: User!
 	description: String!
 	flagged: Boolean!
@@ -87,14 +87,14 @@ type Folder implements Node {
 	share(share_target_id: ID!): Share
 	shares(cursor: String, limit: Int!, sorts: [ShareSort!]): [Share]!
 	type: NodeType!
-	updated_at: DateTime!
+	updated_at: BigInteger!
 }
 
 type Link {
 	access_code: String
-	created_at: DateTime!
+	created_at: BigInteger!
 	description: String
-	expires_at: DateTime
+	expires_at: BigInteger
 	id: ID!
 	node: Node!
 	url: String
@@ -102,41 +102,41 @@ type Link {
 
 type Mutation {
 	cloneVersion(node_id: ID!, version: Int!): File!
-	copyNodes(destination_id: ID!, node_ids: [ID!]): [Node!]
+	copyNodes(destination_id: ID!, node_ids: [String!]): [Node!]
 	createCollaborationLink(node_id: ID!, permission: SharePermission!): CollaborationLink!
 	createFolder(destination_id: String!, name: String!): Node!
-	createLink(access_code: String, description: String, expires_at: DateTime, node_id: ID!): Link!
+	createLink(access_code: String, description: String, expires_at: BigInteger, node_id: ID!): Link!
 	createShare(
 		custom_message: String
-		expires_at: DateTime
+		expires_at: BigInteger
 		node_id: ID!
 		permission: SharePermission!
 		share_target_id: ID!
 	): Share!
 	deleteAllNodesAndBlobs(user_id: ID!): Boolean!
-	deleteCollaborationLinks(collaboration_link_ids: [ID!]!): [ID]!
-	deleteLinks(link_ids: [ID!]!): [ID]!
-	deleteNodes(node_ids: [ID!]): [ID!]
-	deleteShares(node_id: ID!, share_target_ids: [ID!]!): [ID]!
+	deleteCollaborationLinks(collaboration_link_ids: [String!]!): [ID]!
+	deleteLinks(link_ids: [String!]!): [ID]!
+	deleteNodes(node_ids: [String!]): [ID!]
+	deleteShares(node_id: ID!, share_target_ids: [String!]!): [ID]!
 	deleteVersions(node_id: ID!, versions: [Int!]): [Int]!
-	flagNodes(flag: Boolean!, node_ids: [ID!]): [ID!]
+	flagNodes(flag: Boolean!, node_ids: [String!]): [ID!]
 	keepVersions(keep_forever: Boolean!, node_id: ID!, versions: [Int!]!): [Int]!
-	moveNodes(destination_id: ID!, node_ids: [ID!]): [Node!]
-	restoreNodes(node_ids: [ID!]): [Node]
-	transferOwnership(node_ids: [ID!], user_id: ID!): Node!
-	trashNodes(node_ids: [ID!]): [ID!]
-	updateLink(access_code: String, description: String, expires_at: DateTime, link_id: ID!): Link
+	moveNodes(destination_id: ID!, node_ids: [String!]): [Node!]
+	restoreNodes(node_ids: [String!]): [Node]
+	transferOwnership(node_ids: [String!], user_id: ID!): Node!
+	trashNodes(node_ids: [String!]): [ID!]
+	updateLink(access_code: String, description: String, expires_at: BigInteger, link_id: ID!): Link
 	updateNode(description: String, flagged: Boolean, name: String, node_id: String!): Node!
 	updateShares(
-		expires_at: DateTime
+		expires_at: BigInteger
 		node_id: ID!
 		permission: SharePermission
-		share_target_ids: [ID!]!
+		share_target_ids: [String!]!
 	): [Share]!
 }
 
 type NewShare {
-	created_at: DateTime!
+	created_at: BigInteger!
 	id: ID!
 	node: SnapshotNode!
 	notification_type: NotificationType!
@@ -145,7 +145,7 @@ type NewShare {
 
 interface Node {
 	collaboration_links: [CollaborationLink]!
-	created_at: DateTime!
+	created_at: BigInteger!
 	creator: User!
 	description: String!
 	flagged: Boolean!
@@ -160,11 +160,43 @@ interface Node {
 	share(share_target_id: ID!): Share
 	shares(cursor: String, limit: Int!, sorts: [ShareSort!]): [Share]!
 	type: NodeType!
-	updated_at: DateTime!
+	updated_at: BigInteger!
 }
 
 type NodePage {
 	nodes: [Node]!
+	page_token: String
+}
+
+interface PublicNode {
+	id: ID!
+	created_at: BigInteger!
+	updated_at: BigInteger!
+	name: String!
+	type: NodeType!
+}
+
+type PublicFolder implements PublicNode {
+	id: ID!
+	created_at: BigInteger!
+	updated_at: BigInteger!
+	name: String!
+	type: NodeType!
+}
+
+type PublicFile implements PublicNode {
+	id: ID!
+	created_at: BigInteger!
+	updated_at: BigInteger!
+	name: String!
+	extension: String
+	type: NodeType!
+	mime_type: String!
+	size: Float!
+}
+
+type PublicNodePage {
+	nodes: [PublicNode]!
 	page_token: String
 }
 
@@ -200,7 +232,7 @@ enum NodeType {
 union Notification = AddedNode | NewShare | RemovedNode | SucceededRecording | TransferredOwnership
 
 type NotificationPage {
-	last_seen: DateTime!
+	last_seen: BigInteger!
 	notifications: [Notification]!
 	page_token: String
 	unread: Int!
@@ -252,13 +284,21 @@ type Query {
 	getPath(node_id: ID!): [Node]!
 	getRootsList: [Root]!
 	getShare(node_id: ID!, share_target_id: ID!): Share
-	getTransferOwnershipAvailability(node_ids: [ID!], user_id: ID!): Boolean!
+	getTransferOwnershipAvailability(node_ids: [String!], user_id: ID!): Boolean!
 	getUserById(user_id: ID!): User
 	getVersions(node_id: ID!, versions: [Int!]): [File]!
+	getPublicNode(node_link_id: String!, access_code: String): PublicNode
+	findPublicNodes(
+		folder_id: ID!
+		limit: Int
+		node_link_id: String
+		access_code: String
+		page_token: String
+	): PublicNodePage
 }
 
 type RemovedNode {
-	created_at: DateTime!
+	created_at: BigInteger!
 	id: ID!
 	notification_type: NotificationType!
 	origin_folder: SnapshotNode!
@@ -278,8 +318,8 @@ type Root {
 }
 
 type Share {
-	created_at: DateTime!
-	expires_at: DateTime
+	created_at: BigInteger!
+	expires_at: BigInteger
 	node: Node!
 	permission: SharePermission!
 	share_target: SharedTarget
@@ -306,7 +346,7 @@ enum ShareSort {
 union SharedTarget = DistributionList | User
 
 type SnapshotNode {
-	created_at: DateTime!
+	created_at: BigInteger!
 	name: String!
 	node_id: ID!
 	owner_id: ID
@@ -322,7 +362,7 @@ type SnapshotUser {
 }
 
 type SucceededRecording {
-	created_at: DateTime!
+	created_at: BigInteger!
 	id: ID!
 	notification_type: NotificationType!
 	recording_destination_node: SnapshotNode!
@@ -330,7 +370,7 @@ type SucceededRecording {
 }
 
 type TransferredOwnership {
-	created_at: DateTime!
+	created_at: BigInteger!
 	id: ID!
 	notification_type: NotificationType!
 	number_of_nodes: Int!

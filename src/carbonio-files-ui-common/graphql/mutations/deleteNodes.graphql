@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-mutation deleteNodes($node_ids: [ID!]) {
+mutation deleteNodes($node_ids: [String!]) {
 	deleteNodes(node_ids: $node_ids)
 }

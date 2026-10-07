@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-query getTransferOwnershipAvailability($node_ids: [ID!], $user_id: ID!) {
+query getTransferOwnershipAvailability($node_ids: [String!], $user_id: ID!) {
 	getTransferOwnershipAvailability(node_ids: $node_ids, user_id: $user_id)
 }

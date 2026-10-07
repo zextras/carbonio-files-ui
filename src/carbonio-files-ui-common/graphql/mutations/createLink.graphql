@@ -7,7 +7,7 @@
 mutation createLink(
 	$node_id: ID!
 	$description: String
-	$expires_at: DateTime
+	$expires_at: BigInteger
 	$access_code: String
 ) {
 	createLink(
