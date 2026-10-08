@@ -4,19 +4,22 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 
-const SRC_DIR = join(process.cwd(), 'src');
+// this file is in src
+const SRC_DIR = import.meta.dirname;
 // static keys of t('…'), t?.('…') and i18nKey="…"; keys built with a template literal are skipped
 const KEY_REGEXP = /(?:\bt(?:\?\.)?\(|i18nKey=\{?)\s*(['"`])([\w.-]+)\1/g;
 
 function collectKeys(): Set<string> {
-	const files = readdirSync(SRC_DIR, { recursive: true, encoding: 'utf8' }).filter(
-		(file) =>
-			/\.tsx?$/.test(file) &&
-			!/\.test\.tsx?$/.test(file) &&
-			!/(^|\/)(mocks|__mocks__|tests)\//.test(file)
-	);
+	const files = readdirSync(SRC_DIR, { recursive: true, encoding: 'utf8' })
+		.map((file) => file.split(sep).join('/'))
+		.filter(
+			(file) =>
+				/\.tsx?$/.test(file) &&
+				!/\.test\.tsx?$/.test(file) &&
+				!/(^|\/)(mocks|__mocks__|tests)\//.test(file)
+		);
 	return new Set(
 		files.flatMap((file) =>
 			Array.from(
@@ -39,6 +42,8 @@ describe('i18n keys', () => {
 	 */
 	it('should not use a key both as a string and as the container of other keys', () => {
 		const keys = collectKeys();
+		// an empty scan would pass without checking anything
+		expect(keys.size).toBeGreaterThan(0);
 		const collisions = Array.from(keys).flatMap((key) =>
 			key
 				.split('.')
