@@ -1,3 +1,9 @@
+## [2.17.18](https://github.com/zextras/carbonio-files-ui/compare/v2.17.17...v2.17.18) (2026-10-12)
+
+### Bug Fixes
+
+* let the open with docs and access code action labels be translated ([#712](https://github.com/zextras/carbonio-files-ui/issues/712)) ([dfd609a](https://github.com/zextras/carbonio-files-ui/commit/dfd609ac2ee1621d367ec1facdc452568565725d))
+
 ## [2.17.17](https://github.com/zextras/carbonio-files-ui/compare/v2.17.16...v2.17.17) (2026-10-06)
 
 ### Other changes
