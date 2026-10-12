@@ -51,8 +51,8 @@ export const AccessCodeComponent = ({ accessCode }: { accessCode: string }): Rea
 					{
 						id: 'show',
 						label: showAccessCode
-							? t('publicLink.accessCode.chip.tooltip.actionShow.hide', 'Hide access code')
-							: t('publicLink.accessCode.chip.tooltip.actionShow.show', 'Show access code'),
+							? t('publicLink.accessCode.chip.actionShow.hide', 'Hide access code')
+							: t('publicLink.accessCode.chip.actionShow.show', 'Show access code'),
 						type: 'button',
 						icon: showAccessCode ? 'EyeOutline' : 'EyeOffOutline',
 						onClick: showActionCallback
