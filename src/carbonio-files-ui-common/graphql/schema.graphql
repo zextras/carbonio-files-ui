@@ -21,6 +21,8 @@ enum AddedNodeType {
 	UPLOAD
 }
 
+scalar BigInteger
+
 type CollaborationLink {
 	created_at: BigInteger!
 	id: ID!
@@ -33,8 +35,6 @@ type Config {
 	name: String!
 	value: String
 }
-
-scalar BigInteger
 
 type DistributionList {
 	id: ID!
@@ -100,6 +100,9 @@ type Link {
 	url: String
 }
 
+"""
+Mutation root
+"""
 type Mutation {
 	cloneVersion(node_id: ID!, version: Int!): File!
 	copyNodes(destination_id: ID!, node_ids: [String!]): [Node!]
@@ -113,7 +116,6 @@ type Mutation {
 		permission: SharePermission!
 		share_target_id: ID!
 	): Share!
-	deleteAllNodesAndBlobs(user_id: ID!): Boolean!
 	deleteCollaborationLinks(collaboration_link_ids: [String!]!): [ID]!
 	deleteLinks(link_ids: [String!]!): [ID]!
 	deleteNodes(node_ids: [String!]): [ID!]
@@ -165,38 +167,6 @@ interface Node {
 
 type NodePage {
 	nodes: [Node]!
-	page_token: String
-}
-
-interface PublicNode {
-	id: ID!
-	created_at: BigInteger!
-	updated_at: BigInteger!
-	name: String!
-	type: NodeType!
-}
-
-type PublicFolder implements PublicNode {
-	id: ID!
-	created_at: BigInteger!
-	updated_at: BigInteger!
-	name: String!
-	type: NodeType!
-}
-
-type PublicFile implements PublicNode {
-	id: ID!
-	created_at: BigInteger!
-	updated_at: BigInteger!
-	name: String!
-	extension: String
-	type: NodeType!
-	mime_type: String!
-	size: Float!
-}
-
-type PublicNodePage {
-	nodes: [PublicNode]!
 	page_token: String
 }
 
@@ -259,6 +229,41 @@ type Permissions {
 	can_write_folder: Boolean!
 }
 
+type PublicFile implements PublicNode {
+	created_at: BigInteger!
+	extension: String
+	id: ID!
+	mime_type: String!
+	name: String!
+	size: Float!
+	type: NodeType!
+	updated_at: BigInteger!
+}
+
+type PublicFolder implements PublicNode {
+	created_at: BigInteger!
+	id: ID!
+	name: String!
+	type: NodeType!
+	updated_at: BigInteger!
+}
+
+interface PublicNode {
+	created_at: BigInteger!
+	id: ID!
+	name: String!
+	type: NodeType!
+	updated_at: BigInteger!
+}
+
+type PublicNodePage {
+	nodes: [PublicNode]!
+	page_token: String
+}
+
+"""
+Query root
+"""
 type Query {
 	findNodes(
 		cascade: Boolean
@@ -274,6 +279,13 @@ type Query {
 		sort: NodeSort
 		type: NodeType
 	): NodePage
+	findPublicNodes(
+		access_code: String
+		folder_id: ID!
+		limit: Int
+		node_link_id: String
+		page_token: String
+	): PublicNodePage
 	getAccountByEmail(email: String!): Account
 	getAccountsByEmail(emails: [String!]!): [Account]!
 	getCollaborationLinks(node_id: ID!): [CollaborationLink]!
@@ -282,19 +294,12 @@ type Query {
 	getNode(node_id: ID!, version: Int): Node
 	getNotifications(limit: Int, page_token: String, update_last_seen: Boolean!): NotificationPage
 	getPath(node_id: ID!): [Node]!
+	getPublicNode(access_code: String, node_link_id: String!): PublicNode
 	getRootsList: [Root]!
 	getShare(node_id: ID!, share_target_id: ID!): Share
 	getTransferOwnershipAvailability(node_ids: [String!], user_id: ID!): Boolean!
 	getUserById(user_id: ID!): User
 	getVersions(node_id: ID!, versions: [Int!]): [File]!
-	getPublicNode(node_link_id: String!, access_code: String): PublicNode
-	findPublicNodes(
-		folder_id: ID!
-		limit: Int
-		node_link_id: String
-		access_code: String
-		page_token: String
-	): PublicNodePage
 }
 
 type RemovedNode {
