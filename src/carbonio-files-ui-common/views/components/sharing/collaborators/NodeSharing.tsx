@@ -31,6 +31,7 @@ import { SHARE_TEXT_SIZE } from '../../../../constants';
 import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/useDeleteSharesMutation';
 import { useGetSharesQuery } from '../../../../hooks/graphql/queries/useGetSharesQuery';
 import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
+import { useSharesEnabled } from '../../../../hooks/useUserConfig';
 import { Node } from '../../../../types/common';
 import {
 	DeleteSharesMutation,
@@ -70,6 +71,7 @@ function shareTargetExists<T extends MakePartial<Pick<Share, 'share_target'>, 's
 export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 	const [t] = useTranslation();
 	const { me } = useUserInfo();
+	const sharesEnabled = useSharesEnabled();
 	const { data } = useGetSharesQuery(node.id);
 	const deleteShares = useDeleteSharesMutation();
 
@@ -256,6 +258,26 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 				background={'gray6'}
 				data-testid="node-sharing-collaborators"
 			>
+				{!sharesEnabled && (
+					<Padding bottom="large" width="100%">
+						<Container
+							orientation="horizontal"
+							background={'info'}
+							minHeight="2.5rem"
+							mainAlignment="flex-start"
+						>
+							<Padding left="small" right="medium">
+								<Icon icon="InfoOutline" size="medium" color="gray6" />
+							</Padding>
+							<Text color="gray6">
+								{t(
+									'displayer.share.sharesDisabledHeader',
+									'Sharing is disabled for your account. You can still view and remove existing collaborators.'
+								)}
+							</Text>
+						</Container>
+					</Padding>
+				)}
 				{!node.permissions.can_share && (
 					<Padding bottom="large" width="100%">
 						<Container
@@ -310,15 +332,17 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 											count: selectedIds.length
 										})}
 									</Text>
-									<EditPermissionBulkButton
-										node={node}
-										data={data}
-										me={me}
-										isAllSelected={isAllSelected}
-										allCollaboratorIds={allCollaboratorIds}
-										selectedIds={selectedIds}
-										setSelectedIds={setSelectedIds}
-									/>
+									{sharesEnabled && (
+										<EditPermissionBulkButton
+											node={node}
+											data={data}
+											me={me}
+											isAllSelected={isAllSelected}
+											allCollaboratorIds={allCollaboratorIds}
+											selectedIds={selectedIds}
+											setSelectedIds={setSelectedIds}
+										/>
+									)}
 								</Row>
 								<Tooltip
 									label={t(
@@ -348,7 +372,7 @@ export const NodeSharing = ({ node }: NodeSharingProps): React.JSX.Element => {
 						{ownerListItem}
 					</Container>
 				</Container>
-				{node.permissions.can_share && <AddSharing node={node} />}
+				{node.permissions.can_share && sharesEnabled && <AddSharing node={node} />}
 			</Container>
 			{node.permissions.can_share && (
 				<CollaborationLinks

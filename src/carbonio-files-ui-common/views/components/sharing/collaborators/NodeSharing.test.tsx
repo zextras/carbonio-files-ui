@@ -13,6 +13,8 @@ import { forEach } from 'lodash';
 import { NodeSharing } from './NodeSharing';
 import { LOGGED_USER } from '../../../../../mocks/constants';
 import * as network from '../../../../../network/network';
+import { userConfigVar } from '../../../../apollo/userConfigVar';
+import { SHARES_ENABLED_CONFIG_KEY } from '../../../../constants';
 import { ICON_REGEXP, SELECTORS } from '../../../../constants/test';
 import {
 	populateGalContact,
@@ -214,6 +216,67 @@ describe('Node Sharing', () => {
 		});
 		expect(screen.getByText('You')).toBeVisible();
 		expect(screen.queryByText('You - Owner')).not.toBeInTheDocument();
+	});
+
+	describe('when sharing is disabled for the user', () => {
+		beforeEach(() => {
+			userConfigVar({ [SHARES_ENABLED_CONFIG_KEY]: 'false' });
+		});
+
+		it('should render the banner and hide the add collaborators section', async () => {
+			const node = populateNode();
+			node.shares = [];
+			node.permissions.can_share = true;
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getShares: [node] }),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<NodeSharing node={node} />, { mocks });
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
+			expect(screen.getByText(/Sharing is disabled for your account/)).toBeVisible();
+			expect(
+				screen.queryByRole('textbox', { name: /add new people or groups/i })
+			).not.toBeInTheDocument();
+		});
+
+		it('should disable the edit collaboration buttons and keep the remove buttons enabled', async () => {
+			const node = populateNode();
+			node.owner = mockedUserLogged;
+			const user1 = populateUser();
+			const user2 = populateUser();
+			const share1 = populateShare(node, node.id, user1);
+			const share2 = populateShare(node, node.id, user2);
+			share1.permission = SharePermission.ReadOnly;
+			share2.permission = SharePermission.ReadOnly;
+			node.shares = [share1, share2];
+			node.permissions.can_share = true;
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getShares: [node] }),
+					getLinks: mockGetLinks(node.links),
+					getCollaborationLinks: mockGetCollaborationLinks([])
+				}
+			} satisfies Partial<Resolvers>;
+			setup(<NodeSharing node={node} />, { mocks });
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
+			const editButtons = screen.getAllByRoleWithIcon('button', {
+				icon: ICON_REGEXP.shareCanRead
+			});
+			expect(editButtons).toHaveLength(2);
+			editButtons.forEach((button) => expect(button).toBeDisabled());
+			const trashButtons = screen.getAllByRoleWithIcon('button', { icon: ICON_REGEXP.trash });
+			expect(trashButtons).toHaveLength(2);
+			trashButtons.forEach((button) => expect(button).toBeEnabled());
+		});
 	});
 
 	describe('Edit collaboration buttons and Remove collaboration button', () => {

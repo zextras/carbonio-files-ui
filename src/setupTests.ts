@@ -20,9 +20,11 @@ import { draggedItemsVar } from './carbonio-files-ui-common/apollo/dragAndDropVa
 import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
 import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
+import { userConfigVar } from './carbonio-files-ui-common/apollo/userConfigVar';
 import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
 import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
+import { userConfigCache } from './carbonio-files-ui-common/hooks/useUserConfig';
 import { LOGGED_USER_ACCOUNT } from './mocks/constants';
 import server from './mocks/server';
 
@@ -163,6 +165,8 @@ beforeEach(() => {
 	healthCache.healthFailed = false;
 	healthCache.docsIsLive = true;
 	healthCache.previewIsLive = true;
+	userConfigVar({});
+	userConfigCache.requested = true;
 
 	Object.defineProperty(window, 'IntersectionObserver', {
 		writable: true,

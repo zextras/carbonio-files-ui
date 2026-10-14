@@ -24,6 +24,7 @@ import buildClient from './carbonio-files-ui-common/apollo';
 import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_APP_ID, FILES_ROUTE, ROOTS } from './carbonio-files-ui-common/constants';
 import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
+import { loadUserConfig } from './carbonio-files-ui-common/hooks/useUserConfig';
 import { UploadStatus } from './carbonio-files-ui-common/types/graphql/client-types';
 import { getUploadAddTypeFromInput } from './carbonio-files-ui-common/utils/uploadUtils';
 import { inputElement } from './carbonio-files-ui-common/utils/utils';
@@ -96,6 +97,10 @@ export function AuthenticatedApp(): React.JSX.Element {
 	useEffect(() => {
 		window.addEventListener('beforeunload', beforeunloadCallback);
 	}, [beforeunloadCallback]);
+
+	useEffect(() => {
+		loadUserConfig();
+	}, []);
 	const { add } = useUpload();
 
 	const inputElementOnchange = useCallback(

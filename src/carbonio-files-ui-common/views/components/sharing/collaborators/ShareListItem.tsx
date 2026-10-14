@@ -28,6 +28,7 @@ import { useDeleteSharesMutation } from '../../../../hooks/graphql/mutations/use
 import { useUpdateSharesMutation } from '../../../../hooks/graphql/mutations/useUpdateSharesMutation';
 import { useDecreaseYourOwnSharePermissionModal } from '../../../../hooks/modals/useDecreaseYourOwnSharePermissionModal';
 import { useDeleteSharesModal } from '../../../../hooks/useDeleteSharesModal';
+import { useSharesEnabled } from '../../../../hooks/useUserConfig';
 import { Role, Node } from '../../../../types/common';
 import {
 	DeleteSharesMutation,
@@ -103,6 +104,7 @@ export const ShareListItem = ({
 	const [updateShares] = useUpdateSharesMutation();
 	const [t] = useTranslation();
 	const [popoverOpen, setPopoverOpen] = useState(false);
+	const sharesEnabled = useSharesEnabled();
 
 	const [getPermissionsLazy] = useLazyQuery<GetPermissionsQuery, GetPermissionsQueryVariables>(
 		GetPermissionsDocument,
@@ -221,10 +223,10 @@ export const ShareListItem = ({
 	);
 
 	const openPermissionsPopover = useCallback(() => {
-		if (permissions.can_share) {
+		if (permissions.can_share && sharesEnabled) {
 			setPopoverOpen((prevState) => !prevState);
 		}
-	}, [permissions]);
+	}, [permissions, sharesEnabled]);
 
 	const isSomethingChanged = useMemo(
 		() => initialActiveRow !== activeRow || initialCheckboxValue !== checkboxValue,
@@ -236,7 +238,21 @@ export const ShareListItem = ({
 		[permissions.can_share, yourself, isSelecting]
 	);
 
-	const canShare = useMemo(() => permissions.can_share, [permissions.can_share]);
+	const canShare = useMemo(
+		() => permissions.can_share && sharesEnabled,
+		[permissions.can_share, sharesEnabled]
+	);
+
+	const editDisabledTooltipLabel = useMemo(
+		() =>
+			sharesEnabled
+				? t(
+						'displayer.share.tooltip.no_edit_permission',
+						"You don't have the necessary permissions to edit collaboration"
+					)
+				: t('displayer.share.tooltip.shares_disabled', 'Sharing is disabled for your account'),
+		[sharesEnabled, t]
+	);
 
 	const anchorRef = useRef<HTMLDivElement>(null);
 
@@ -298,14 +314,7 @@ export const ShareListItem = ({
 						gap={'0.25rem'}
 					>
 						<Tooltip
-							label={
-								canShare
-									? editButtonTooltipLabel
-									: t(
-											'displayer.share.tooltip.no_edit_permission',
-											"You don't have the necessary permissions to edit collaboration"
-										)
-							}
+							label={canShare ? editButtonTooltipLabel : editDisabledTooltipLabel}
 							disabled={isSelecting}
 						>
 							<Container

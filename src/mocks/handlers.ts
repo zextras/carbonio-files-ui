@@ -14,6 +14,7 @@ import {
 	UPLOAD_VERSION_PATH,
 	PREVIEW_PATH,
 	HEALTH_PATH,
+	CONFIG_PATH,
 	DOWNLOAD_PATH,
 	DOWNLOAD_PATH_CHECK,
 	DOWNLOAD_MULTIPLE_PATH
@@ -44,6 +45,7 @@ import handleGetPermissionsRequest from '../carbonio-files-ui-common/mocks/handl
 import handleGetPreviewRequest from '../carbonio-files-ui-common/mocks/handleGetPreviewRequest';
 import handleGetRootsListRequest from '../carbonio-files-ui-common/mocks/handleGetRootsListRequest';
 import handleGetSharesRequest from '../carbonio-files-ui-common/mocks/handleGetSharesRequest';
+import handleGetUserConfigRequest from '../carbonio-files-ui-common/mocks/handleGetUserConfigRequest';
 import handleGetVersionsRequest from '../carbonio-files-ui-common/mocks/handleGetVersionsRequest';
 import handleHealthRequest from '../carbonio-files-ui-common/mocks/handleHealthRequest';
 import handleIntrospectionRequest from '../carbonio-files-ui-common/mocks/handleIntrospectionRequest';
@@ -137,6 +139,7 @@ handlers.push(
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:area/:thumbnail`, handleGetPreviewRequest),
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id`, handleGetPreviewRequest),
 	http.get(`${REST_ENDPOINT}${HEALTH_PATH}`, handleHealthRequest),
+	http.get(`${REST_ENDPOINT}${CONFIG_PATH}`, handleGetUserConfigRequest),
 	http.get(
 		`${REST_ENDPOINT}${DOWNLOAD_PATH}/:id${DOWNLOAD_PATH_CHECK}`,
 		handleDownloadCheckRequest
