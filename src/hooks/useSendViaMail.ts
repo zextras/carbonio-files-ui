@@ -18,7 +18,11 @@ import {
 	uploadToTargetModule
 } from '../carbonio-files-ui-common/utils/utils';
 import { BASE_64_CONVERSION_RATE } from '../constants';
-import { getComposePrefillMessageFunction } from '../integrations/functions';
+import {
+	type FilesNodeToAttach,
+	getComposePrefillMessageFunction,
+	getComposeWithFilesNodesFunction
+} from '../integrations/functions';
 
 type NodeItem = Node<
 	'id' | 'name' | 'rootId' | 'permissions' | 'type' | 'flagged',
@@ -31,6 +35,35 @@ type FileNodeItem = NodeItem & {
 	size?: number;
 	mime_type?: string;
 };
+
+function toFilesNodeToAttach(node: FileNodeItem): FilesNodeToAttach {
+	return {
+		id: node.id,
+		name: node.name,
+		size: node.size ?? 0,
+		mime_type: node.mime_type ?? 'application/octet-stream',
+		__typename: 'File'
+	};
+}
+
+/**
+ * Opens the mail composer with the node, and lets Mails attach it or propose a smart link.
+ * Returns false if the composer could not be opened this way
+ */
+function openComposerWithFilesNode(node: FileNodeItem): boolean {
+	const { integratedFunction: composeWithFilesNodes, available } =
+		getComposeWithFilesNodesFunction();
+	if (!available) {
+		return false;
+	}
+	try {
+		composeWithFilesNodes({ filesNodes: [toFilesNodeToAttach(node)] });
+		return true;
+	} catch (error) {
+		console.error(error);
+		return false;
+	}
+}
 
 export function useSendViaMail(): {
 	sendViaMail: (node: FileNodeItem) => void;
@@ -54,11 +87,38 @@ export function useSendViaMail(): {
 		});
 	}, [createSnackbar, t]);
 
+	const createFileSizeExceededNotShareableSnackbar = useCallback(() => {
+		createSnackbar({
+			key: new Date().toLocaleString(),
+			severity: 'warning',
+			label: t(
+				'snackbar.sendViaMail.error.fileSizeExceededNotShareable',
+				"This file is too large to attach and you don't have permission to share it as a Smart Link."
+			),
+			replace: true,
+			actionLabel: t('snackbar.sendViaMail.error.fileSizeExceeded.actionLabel', 'Ok'),
+			disableAutoHide: true
+		});
+	}, [createSnackbar, t]);
+
 	const sendViaMail = useCallback(
 		(node: FileNodeItem) => {
 			const attachmentSize = (node.size ?? 0) * BASE_64_CONVERSION_RATE;
 			// if the account has no max message size configured, rely on the server response
-			if (!Number.isNaN(maxAllowedMailSize) && attachmentSize >= maxAllowedMailSize) {
+			const exceedsMaxMessageSize =
+				!Number.isNaN(maxAllowedMailSize) && attachmentSize >= maxAllowedMailSize;
+
+			// the file can be sent neither as an attachment nor as a smart link
+			if (exceedsMaxMessageSize && !node.permissions.can_share) {
+				createFileSizeExceededNotShareableSnackbar();
+				return;
+			}
+
+			if (openComposerWithFilesNode(node)) {
+				return;
+			}
+
+			if (exceedsMaxMessageSize) {
 				createFileSizeExceededSnackbar();
 				return;
 			}
@@ -102,7 +162,13 @@ export function useSendViaMail(): {
 				}
 			);
 		},
-		[createFileSizeExceededSnackbar, createSnackbar, maxAllowedMailSize, t]
+		[
+			createFileSizeExceededNotShareableSnackbar,
+			createFileSizeExceededSnackbar,
+			createSnackbar,
+			maxAllowedMailSize,
+			t
+		]
 	);
 
 	return {
