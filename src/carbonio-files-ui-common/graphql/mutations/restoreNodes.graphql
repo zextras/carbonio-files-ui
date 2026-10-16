@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-mutation restoreNodes($node_ids: [ID!]) {
+mutation restoreNodes($node_ids: [String!]) {
 	restoreNodes(node_ids: $node_ids) {
 		id
 		rootId

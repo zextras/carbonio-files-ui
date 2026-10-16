@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-mutation deleteLinks($link_ids: [ID!]!) {
+mutation deleteLinks($link_ids: [String!]!) {
 	deleteLinks(link_ids: $link_ids)
 }

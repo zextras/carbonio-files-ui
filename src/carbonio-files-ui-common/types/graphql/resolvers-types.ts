@@ -27,7 +27,7 @@ export type Scalars = {
 	Boolean: { input: boolean; output: boolean };
 	Int: { input: number; output: number };
 	Float: { input: number; output: number };
-	DateTime: { input: number; output: number };
+	BigInteger: { input: number; output: number };
 };
 
 export type Account = DistributionList | User;
@@ -36,7 +36,7 @@ export type AddedNode = {
 	__typename: 'AddedNode';
 	added_node: SnapshotNode;
 	added_node_type: AddedNodeType;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	destination_folder: SnapshotNode;
 	id: Scalars['ID']['output'];
 	notification_type: NotificationType;
@@ -52,7 +52,7 @@ export enum AddedNodeType {
 
 export type CollaborationLink = {
 	__typename: 'CollaborationLink';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	node: File | Folder;
 	permission: SharePermission;
@@ -81,7 +81,7 @@ export type File = Node & {
 	__typename: 'File';
 	cloned_from_version: Maybe<Scalars['Int']['output']>;
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
 	digest: Scalars['String']['output'];
@@ -101,7 +101,7 @@ export type File = Node & {
 	shares: Array<Maybe<Share>>;
 	size: Scalars['Float']['output'];
 	type: NodeType;
-	updated_at: Scalars['DateTime']['output'];
+	updated_at: Scalars['BigInteger']['output'];
 	version: Scalars['Int']['output'];
 };
 
@@ -119,7 +119,7 @@ export type Folder = Node & {
 	__typename: 'Folder';
 	children: NodePage;
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
 	flagged: Scalars['Boolean']['output'];
@@ -134,7 +134,7 @@ export type Folder = Node & {
 	share: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	type: NodeType;
-	updated_at: Scalars['DateTime']['output'];
+	updated_at: Scalars['BigInteger']['output'];
 };
 
 export type FolderChildrenArgs = {
@@ -156,14 +156,15 @@ export type FolderSharesArgs = {
 export type Link = {
 	__typename: 'Link';
 	access_code: Maybe<Scalars['String']['output']>;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	description: Maybe<Scalars['String']['output']>;
-	expires_at: Maybe<Scalars['DateTime']['output']>;
+	expires_at: Maybe<Scalars['BigInteger']['output']>;
 	id: Scalars['ID']['output'];
 	node: File | Folder;
 	url: Maybe<Scalars['String']['output']>;
 };
 
+/** Mutation root */
 export type Mutation = {
 	__typename: 'Mutation';
 	cloneVersion: File;
@@ -172,7 +173,6 @@ export type Mutation = {
 	createFolder: File | Folder;
 	createLink: Link;
 	createShare: Share;
-	deleteAllNodesAndBlobs: Scalars['Boolean']['output'];
 	deleteCollaborationLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteNodes: Maybe<Array<Scalars['ID']['output']>>;
@@ -189,103 +189,118 @@ export type Mutation = {
 	updateShares: Array<Maybe<Share>>;
 };
 
+/** Mutation root */
 export type MutationCloneVersionArgs = {
 	node_id: Scalars['ID']['input'];
 	version: Scalars['Int']['input'];
 };
 
+/** Mutation root */
 export type MutationCopyNodesArgs = {
 	destination_id: Scalars['ID']['input'];
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationCreateCollaborationLinkArgs = {
 	node_id: Scalars['ID']['input'];
 	permission: SharePermission;
 };
 
+/** Mutation root */
 export type MutationCreateFolderArgs = {
 	destination_id: Scalars['String']['input'];
 	name: Scalars['String']['input'];
 };
 
+/** Mutation root */
 export type MutationCreateLinkArgs = {
 	access_code?: InputMaybe<Scalars['String']['input']>;
 	description?: InputMaybe<Scalars['String']['input']>;
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	node_id: Scalars['ID']['input'];
 };
 
+/** Mutation root */
 export type MutationCreateShareArgs = {
 	custom_message?: InputMaybe<Scalars['String']['input']>;
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	node_id: Scalars['ID']['input'];
 	permission: SharePermission;
 	share_target_id: Scalars['ID']['input'];
 };
 
-export type MutationDeleteAllNodesAndBlobsArgs = {
-	user_id: Scalars['ID']['input'];
-};
-
+/** Mutation root */
 export type MutationDeleteCollaborationLinksArgs = {
-	collaboration_link_ids: Array<Scalars['ID']['input']>;
+	collaboration_link_ids: Array<Scalars['String']['input']>;
 };
 
+/** Mutation root */
 export type MutationDeleteLinksArgs = {
-	link_ids: Array<Scalars['ID']['input']>;
+	link_ids: Array<Scalars['String']['input']>;
 };
 
+/** Mutation root */
 export type MutationDeleteNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationDeleteSharesArgs = {
 	node_id: Scalars['ID']['input'];
-	share_target_ids: Array<Scalars['ID']['input']>;
+	share_target_ids: Array<Scalars['String']['input']>;
 };
 
+/** Mutation root */
 export type MutationDeleteVersionsArgs = {
 	node_id: Scalars['ID']['input'];
 	versions?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
+/** Mutation root */
 export type MutationFlagNodesArgs = {
 	flag: Scalars['Boolean']['input'];
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationKeepVersionsArgs = {
 	keep_forever: Scalars['Boolean']['input'];
 	node_id: Scalars['ID']['input'];
 	versions: Array<Scalars['Int']['input']>;
 };
 
+/** Mutation root */
 export type MutationMoveNodesArgs = {
 	destination_id: Scalars['ID']['input'];
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationRestoreNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationTransferOwnershipArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 	user_id: Scalars['ID']['input'];
 };
 
+/** Mutation root */
 export type MutationTrashNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationUpdateLinkArgs = {
 	access_code?: InputMaybe<Scalars['String']['input']>;
 	description?: InputMaybe<Scalars['String']['input']>;
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	link_id: Scalars['ID']['input'];
 };
 
+/** Mutation root */
 export type MutationUpdateNodeArgs = {
 	description?: InputMaybe<Scalars['String']['input']>;
 	flagged?: InputMaybe<Scalars['Boolean']['input']>;
@@ -293,16 +308,17 @@ export type MutationUpdateNodeArgs = {
 	node_id: Scalars['String']['input'];
 };
 
+/** Mutation root */
 export type MutationUpdateSharesArgs = {
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	node_id: Scalars['ID']['input'];
 	permission?: InputMaybe<SharePermission>;
-	share_target_ids: Array<Scalars['ID']['input']>;
+	share_target_ids: Array<Scalars['String']['input']>;
 };
 
 export type NewShare = {
 	__typename: 'NewShare';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	node: SnapshotNode;
 	notification_type: NotificationType;
@@ -311,7 +327,7 @@ export type NewShare = {
 
 export type Node = {
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
 	flagged: Scalars['Boolean']['output'];
@@ -326,7 +342,7 @@ export type Node = {
 	share: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	type: NodeType;
-	updated_at: Scalars['DateTime']['output'];
+	updated_at: Scalars['BigInteger']['output'];
 };
 
 export type NodeShareArgs = {
@@ -383,7 +399,7 @@ export type Notification =
 
 export type NotificationPage = {
 	__typename: 'NotificationPage';
-	last_seen: Scalars['DateTime']['output'];
+	last_seen: Scalars['BigInteger']['output'];
 	notifications: Array<Maybe<Notification>>;
 	page_token: Maybe<Scalars['String']['output']>;
 	unread: Scalars['Int']['output'];
@@ -411,9 +427,46 @@ export type Permissions = {
 	can_write_folder: Scalars['Boolean']['output'];
 };
 
+export type PublicFile = PublicNode & {
+	__typename: 'PublicFile';
+	created_at: Scalars['BigInteger']['output'];
+	extension: Maybe<Scalars['String']['output']>;
+	id: Scalars['ID']['output'];
+	mime_type: Scalars['String']['output'];
+	name: Scalars['String']['output'];
+	size: Scalars['Float']['output'];
+	type: NodeType;
+	updated_at: Scalars['BigInteger']['output'];
+};
+
+export type PublicFolder = PublicNode & {
+	__typename: 'PublicFolder';
+	created_at: Scalars['BigInteger']['output'];
+	id: Scalars['ID']['output'];
+	name: Scalars['String']['output'];
+	type: NodeType;
+	updated_at: Scalars['BigInteger']['output'];
+};
+
+export type PublicNode = {
+	created_at: Scalars['BigInteger']['output'];
+	id: Scalars['ID']['output'];
+	name: Scalars['String']['output'];
+	type: NodeType;
+	updated_at: Scalars['BigInteger']['output'];
+};
+
+export type PublicNodePage = {
+	__typename: 'PublicNodePage';
+	nodes: Array<Maybe<PublicFile | PublicFolder>>;
+	page_token: Maybe<Scalars['String']['output']>;
+};
+
+/** Query root */
 export type Query = {
 	__typename: 'Query';
 	findNodes: Maybe<NodePage>;
+	findPublicNodes: Maybe<PublicNodePage>;
 	getAccountByEmail: Maybe<Account>;
 	getAccountsByEmail: Array<Maybe<Account>>;
 	getCollaborationLinks: Array<Maybe<CollaborationLink>>;
@@ -422,6 +475,7 @@ export type Query = {
 	getNode: Maybe<File | Folder>;
 	getNotifications: Maybe<NotificationPage>;
 	getPath: Array<Maybe<File | Folder>>;
+	getPublicNode: Maybe<PublicFile | PublicFolder>;
 	getRootsList: Array<Maybe<Root>>;
 	getShare: Maybe<Share>;
 	getTransferOwnershipAvailability: Scalars['Boolean']['output'];
@@ -429,6 +483,7 @@ export type Query = {
 	getVersions: Array<Maybe<File>>;
 };
 
+/** Query root */
 export type QueryFindNodesArgs = {
 	cascade?: InputMaybe<Scalars['Boolean']['input']>;
 	direct_share?: InputMaybe<Scalars['Boolean']['input']>;
@@ -444,51 +499,77 @@ export type QueryFindNodesArgs = {
 	type?: InputMaybe<NodeType>;
 };
 
+/** Query root */
+export type QueryFindPublicNodesArgs = {
+	access_code?: InputMaybe<Scalars['String']['input']>;
+	folder_id: Scalars['ID']['input'];
+	limit?: InputMaybe<Scalars['Int']['input']>;
+	node_link_id?: InputMaybe<Scalars['String']['input']>;
+	page_token?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Query root */
 export type QueryGetAccountByEmailArgs = {
 	email: Scalars['String']['input'];
 };
 
+/** Query root */
 export type QueryGetAccountsByEmailArgs = {
 	emails: Array<Scalars['String']['input']>;
 };
 
+/** Query root */
 export type QueryGetCollaborationLinksArgs = {
 	node_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetLinksArgs = {
 	node_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetNodeArgs = {
 	node_id: Scalars['ID']['input'];
 	version?: InputMaybe<Scalars['Int']['input']>;
 };
 
+/** Query root */
 export type QueryGetNotificationsArgs = {
 	limit?: InputMaybe<Scalars['Int']['input']>;
 	page_token?: InputMaybe<Scalars['String']['input']>;
 	update_last_seen: Scalars['Boolean']['input'];
 };
 
+/** Query root */
 export type QueryGetPathArgs = {
 	node_id: Scalars['ID']['input'];
 };
 
+/** Query root */
+export type QueryGetPublicNodeArgs = {
+	access_code?: InputMaybe<Scalars['String']['input']>;
+	node_link_id: Scalars['String']['input'];
+};
+
+/** Query root */
 export type QueryGetShareArgs = {
 	node_id: Scalars['ID']['input'];
 	share_target_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetTransferOwnershipAvailabilityArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 	user_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetUserByIdArgs = {
 	user_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetVersionsArgs = {
 	node_id: Scalars['ID']['input'];
 	versions?: InputMaybe<Array<Scalars['Int']['input']>>;
@@ -496,7 +577,7 @@ export type QueryGetVersionsArgs = {
 
 export type RemovedNode = {
 	__typename: 'RemovedNode';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	notification_type: NotificationType;
 	origin_folder: SnapshotNode;
@@ -518,8 +599,8 @@ export type Root = {
 
 export type Share = {
 	__typename: 'Share';
-	created_at: Scalars['DateTime']['output'];
-	expires_at: Maybe<Scalars['DateTime']['output']>;
+	created_at: Scalars['BigInteger']['output'];
+	expires_at: Maybe<Scalars['BigInteger']['output']>;
 	node: File | Folder;
 	permission: SharePermission;
 	share_target: Maybe<SharedTarget>;
@@ -547,7 +628,7 @@ export type SharedTarget = DistributionList | User;
 
 export type SnapshotNode = {
 	__typename: 'SnapshotNode';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	name: Scalars['String']['output'];
 	node_id: Scalars['ID']['output'];
 	owner_id: Maybe<Scalars['ID']['output']>;
@@ -565,7 +646,7 @@ export type SnapshotUser = {
 
 export type SucceededRecording = {
 	__typename: 'SucceededRecording';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	notification_type: NotificationType;
 	recording_destination_node: SnapshotNode;
@@ -574,7 +655,7 @@ export type SucceededRecording = {
 
 export type TransferredOwnership = {
 	__typename: 'TransferredOwnership';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	notification_type: NotificationType;
 	number_of_nodes: Scalars['Int']['output'];
@@ -713,6 +794,7 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 				share?: Maybe<_RefType['Share']>;
 				shares: Array<Maybe<_RefType['Share']>>;
 		  });
+	PublicNode: PublicFile | PublicFolder;
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -720,12 +802,12 @@ export type ResolversTypes = {
 	Account: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Account']>;
 	AddedNode: ResolverTypeWrapper<AddedNode>;
 	AddedNodeType: AddedNodeType;
+	BigInteger: ResolverTypeWrapper<Scalars['BigInteger']['output']>;
 	Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
 	CollaborationLink: ResolverTypeWrapper<
 		Omit<CollaborationLink, 'node'> & { node: ResolversTypes['Node'] }
 	>;
 	Config: ResolverTypeWrapper<Config>;
-	DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
 	DistributionList: ResolverTypeWrapper<DistributionList>;
 	File: ResolverTypeWrapper<
 		Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
@@ -766,6 +848,12 @@ export type ResolversTypes = {
 	>;
 	NotificationType: NotificationType;
 	Permissions: ResolverTypeWrapper<Permissions>;
+	PublicFile: ResolverTypeWrapper<PublicFile>;
+	PublicFolder: ResolverTypeWrapper<PublicFolder>;
+	PublicNode: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['PublicNode']>;
+	PublicNodePage: ResolverTypeWrapper<
+		Omit<PublicNodePage, 'nodes'> & { nodes: Array<Maybe<ResolversTypes['PublicNode']>> }
+	>;
 	Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
 	RemovedNode: ResolverTypeWrapper<RemovedNode>;
 	RemovedNodeType: RemovedNodeType;
@@ -791,10 +879,10 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
 	Account: ResolversUnionTypes<ResolversParentTypes>['Account'];
 	AddedNode: AddedNode;
+	BigInteger: Scalars['BigInteger']['output'];
 	Boolean: Scalars['Boolean']['output'];
 	CollaborationLink: Omit<CollaborationLink, 'node'> & { node: ResolversParentTypes['Node'] };
 	Config: Config;
-	DateTime: Scalars['DateTime']['output'];
 	DistributionList: DistributionList;
 	File: Omit<File, 'collaboration_links' | 'links' | 'parent' | 'share' | 'shares'> & {
 		collaboration_links: Array<Maybe<ResolversParentTypes['CollaborationLink']>>;
@@ -827,6 +915,12 @@ export type ResolversParentTypes = {
 		notifications: Array<Maybe<ResolversParentTypes['Notification']>>;
 	};
 	Permissions: Permissions;
+	PublicFile: PublicFile;
+	PublicFolder: PublicFolder;
+	PublicNode: ResolversInterfaceTypes<ResolversParentTypes>['PublicNode'];
+	PublicNodePage: Omit<PublicNodePage, 'nodes'> & {
+		nodes: Array<Maybe<ResolversParentTypes['PublicNode']>>;
+	};
 	Query: Record<PropertyKey, never>;
 	RemovedNode: RemovedNode;
 	Root: Root;
@@ -856,7 +950,7 @@ export type AddedNodeResolvers<
 > = {
 	added_node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
 	added_node_type?: Resolver<ResolversTypes['AddedNodeType'], ParentType, ContextType>;
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	destination_folder?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
@@ -864,12 +958,19 @@ export type AddedNodeResolvers<
 	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export interface BigIntegerScalarConfig extends GraphQLScalarTypeConfig<
+	ResolversTypes['BigInteger'],
+	any
+> {
+	name: 'BigInteger';
+}
+
 export type CollaborationLinkResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['CollaborationLink'] =
 		ResolversParentTypes['CollaborationLink']
 > = {
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	node?: Resolver<ResolversTypes['Node'], ParentType, ContextType>;
 	permission?: Resolver<ResolversTypes['SharePermission'], ParentType, ContextType>;
@@ -883,13 +984,6 @@ export type ConfigResolvers<
 	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 	value?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
-
-export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<
-	ResolversTypes['DateTime'],
-	any
-> {
-	name: 'DateTime';
-}
 
 export type DistributionListResolvers<
 	ContextType = any,
@@ -917,7 +1011,7 @@ export type FileResolvers<
 		ParentType,
 		ContextType
 	>;
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 	description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 	digest?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -947,7 +1041,7 @@ export type FileResolvers<
 	>;
 	size?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
 	type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
-	updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	updated_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -967,7 +1061,7 @@ export type FolderResolvers<
 		ParentType,
 		ContextType
 	>;
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 	description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 	flagged?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -992,7 +1086,7 @@ export type FolderResolvers<
 		RequireFields<FolderSharesArgs, 'limit'>
 	>;
 	type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
-	updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	updated_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1001,9 +1095,9 @@ export type LinkResolvers<
 	ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
 > = {
 	access_code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-	expires_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+	expires_at?: Resolver<Maybe<ResolversTypes['BigInteger']>, ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	node?: Resolver<ResolversTypes['Node'], ParentType, ContextType>;
 	url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1048,12 +1142,6 @@ export type MutationResolvers<
 		ParentType,
 		ContextType,
 		RequireFields<MutationCreateShareArgs, 'node_id' | 'permission' | 'share_target_id'>
-	>;
-	deleteAllNodesAndBlobs?: Resolver<
-		ResolversTypes['Boolean'],
-		ParentType,
-		ContextType,
-		RequireFields<MutationDeleteAllNodesAndBlobsArgs, 'user_id'>
 	>;
 	deleteCollaborationLinks?: Resolver<
 		Array<Maybe<ResolversTypes['ID']>>,
@@ -1145,7 +1233,7 @@ export type NewShareResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['NewShare'] = ResolversParentTypes['NewShare']
 > = {
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
 	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
@@ -1184,7 +1272,7 @@ export type NotificationPageResolvers<
 	ParentType extends ResolversParentTypes['NotificationPage'] =
 		ResolversParentTypes['NotificationPage']
 > = {
-	last_seen?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	last_seen?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	notifications?: Resolver<Array<Maybe<ResolversTypes['Notification']>>, ParentType, ContextType>;
 	page_token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 	unread?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1206,6 +1294,48 @@ export type PermissionsResolvers<
 	can_write_folder?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
+export type PublicFileResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['PublicFile'] = ResolversParentTypes['PublicFile']
+> = {
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
+	extension?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	mime_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+	size?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+	type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
+	updated_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PublicFolderResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['PublicFolder'] = ResolversParentTypes['PublicFolder']
+> = {
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
+	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+	type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
+	updated_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
+	__isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PublicNodeResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['PublicNode'] = ResolversParentTypes['PublicNode']
+> = {
+	__resolveType: TypeResolveFn<'PublicFile' | 'PublicFolder', ParentType, ContextType>;
+};
+
+export type PublicNodePageResolvers<
+	ContextType = any,
+	ParentType extends ResolversParentTypes['PublicNodePage'] = ResolversParentTypes['PublicNodePage']
+> = {
+	nodes?: Resolver<Array<Maybe<ResolversTypes['PublicNode']>>, ParentType, ContextType>;
+	page_token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+};
+
 export type QueryResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
@@ -1215,6 +1345,12 @@ export type QueryResolvers<
 		ParentType,
 		ContextType,
 		Partial<QueryFindNodesArgs>
+	>;
+	findPublicNodes?: Resolver<
+		Maybe<ResolversTypes['PublicNodePage']>,
+		ParentType,
+		ContextType,
+		RequireFields<QueryFindPublicNodesArgs, 'folder_id'>
 	>;
 	getAccountByEmail?: Resolver<
 		Maybe<ResolversTypes['Account']>,
@@ -1259,6 +1395,12 @@ export type QueryResolvers<
 		ContextType,
 		RequireFields<QueryGetPathArgs, 'node_id'>
 	>;
+	getPublicNode?: Resolver<
+		Maybe<ResolversTypes['PublicNode']>,
+		ParentType,
+		ContextType,
+		RequireFields<QueryGetPublicNodeArgs, 'node_link_id'>
+	>;
 	getRootsList?: Resolver<Array<Maybe<ResolversTypes['Root']>>, ParentType, ContextType>;
 	getShare?: Resolver<
 		Maybe<ResolversTypes['Share']>,
@@ -1290,7 +1432,7 @@ export type RemovedNodeResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['RemovedNode'] = ResolversParentTypes['RemovedNode']
 > = {
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
 	origin_folder?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
@@ -1312,8 +1454,8 @@ export type ShareResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['Share'] = ResolversParentTypes['Share']
 > = {
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-	expires_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
+	expires_at?: Resolver<Maybe<ResolversTypes['BigInteger']>, ParentType, ContextType>;
 	node?: Resolver<ResolversTypes['Node'], ParentType, ContextType>;
 	permission?: Resolver<ResolversTypes['SharePermission'], ParentType, ContextType>;
 	share_target?: Resolver<Maybe<ResolversTypes['SharedTarget']>, ParentType, ContextType>;
@@ -1330,7 +1472,7 @@ export type SnapshotNodeResolvers<
 	ContextType = any,
 	ParentType extends ResolversParentTypes['SnapshotNode'] = ResolversParentTypes['SnapshotNode']
 > = {
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 	node_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	owner_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
@@ -1353,7 +1495,7 @@ export type SucceededRecordingResolvers<
 	ParentType extends ResolversParentTypes['SucceededRecording'] =
 		ResolversParentTypes['SucceededRecording']
 > = {
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
 	recording_destination_node?: Resolver<ResolversTypes['SnapshotNode'], ParentType, ContextType>;
@@ -1366,7 +1508,7 @@ export type TransferredOwnershipResolvers<
 	ParentType extends ResolversParentTypes['TransferredOwnership'] =
 		ResolversParentTypes['TransferredOwnership']
 > = {
-	created_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+	created_at?: Resolver<ResolversTypes['BigInteger'], ParentType, ContextType>;
 	id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 	notification_type?: Resolver<ResolversTypes['NotificationType'], ParentType, ContextType>;
 	number_of_nodes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1389,9 +1531,9 @@ export type UserResolvers<
 export type Resolvers<ContextType = any> = {
 	Account?: AccountResolvers<ContextType>;
 	AddedNode?: AddedNodeResolvers<ContextType>;
+	BigInteger?: GraphQLScalarType;
 	CollaborationLink?: CollaborationLinkResolvers<ContextType>;
 	Config?: ConfigResolvers<ContextType>;
-	DateTime?: GraphQLScalarType;
 	DistributionList?: DistributionListResolvers<ContextType>;
 	File?: FileResolvers<ContextType>;
 	Folder?: FolderResolvers<ContextType>;
@@ -1403,6 +1545,10 @@ export type Resolvers<ContextType = any> = {
 	Notification?: NotificationResolvers<ContextType>;
 	NotificationPage?: NotificationPageResolvers<ContextType>;
 	Permissions?: PermissionsResolvers<ContextType>;
+	PublicFile?: PublicFileResolvers<ContextType>;
+	PublicFolder?: PublicFolderResolvers<ContextType>;
+	PublicNode?: PublicNodeResolvers<ContextType>;
+	PublicNodePage?: PublicNodePageResolvers<ContextType>;
 	Query?: QueryResolvers<ContextType>;
 	RemovedNode?: RemovedNodeResolvers<ContextType>;
 	Root?: RootResolvers<ContextType>;

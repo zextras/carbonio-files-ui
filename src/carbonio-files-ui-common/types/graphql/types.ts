@@ -26,7 +26,7 @@ export type Scalars = {
 	Boolean: { input: boolean; output: boolean };
 	Int: { input: number; output: number };
 	Float: { input: number; output: number };
-	DateTime: { input: number; output: number };
+	BigInteger: { input: number; output: number };
 	/** Define an upload item, with its status and all the required info */
 	UploadItem: { input: ClientTypes.UploadItem; output: ClientTypes.UploadItem };
 };
@@ -37,7 +37,7 @@ export type AddedNode = {
 	__typename: 'AddedNode';
 	added_node: SnapshotNode;
 	added_node_type: AddedNodeType;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	destination_folder: SnapshotNode;
 	id: Scalars['ID']['output'];
 	notification_type: NotificationType;
@@ -53,7 +53,7 @@ export enum AddedNodeType {
 
 export type CollaborationLink = {
 	__typename: 'CollaborationLink';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	node: File | Folder;
 	permission: SharePermission;
@@ -82,7 +82,7 @@ export type File = Node & {
 	__typename: 'File';
 	cloned_from_version: Maybe<Scalars['Int']['output']>;
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
 	digest: Scalars['String']['output'];
@@ -102,7 +102,7 @@ export type File = Node & {
 	shares: Array<Maybe<Share>>;
 	size: Scalars['Float']['output'];
 	type: NodeType;
-	updated_at: Scalars['DateTime']['output'];
+	updated_at: Scalars['BigInteger']['output'];
 	version: Scalars['Int']['output'];
 };
 
@@ -120,7 +120,7 @@ export type Folder = Node & {
 	__typename: 'Folder';
 	children: NodePage;
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
 	flagged: Scalars['Boolean']['output'];
@@ -135,7 +135,7 @@ export type Folder = Node & {
 	share: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	type: NodeType;
-	updated_at: Scalars['DateTime']['output'];
+	updated_at: Scalars['BigInteger']['output'];
 };
 
 export type FolderChildrenArgs = {
@@ -157,14 +157,15 @@ export type FolderSharesArgs = {
 export type Link = {
 	__typename: 'Link';
 	access_code: Maybe<Scalars['String']['output']>;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	description: Maybe<Scalars['String']['output']>;
-	expires_at: Maybe<Scalars['DateTime']['output']>;
+	expires_at: Maybe<Scalars['BigInteger']['output']>;
 	id: Scalars['ID']['output'];
 	node: File | Folder;
 	url: Maybe<Scalars['String']['output']>;
 };
 
+/** Mutation root */
 export type Mutation = {
 	__typename: 'Mutation';
 	cloneVersion: File;
@@ -173,7 +174,6 @@ export type Mutation = {
 	createFolder: File | Folder;
 	createLink: Link;
 	createShare: Share;
-	deleteAllNodesAndBlobs: Scalars['Boolean']['output'];
 	deleteCollaborationLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteLinks: Array<Maybe<Scalars['ID']['output']>>;
 	deleteNodes: Maybe<Array<Scalars['ID']['output']>>;
@@ -190,103 +190,118 @@ export type Mutation = {
 	updateShares: Array<Maybe<Share>>;
 };
 
+/** Mutation root */
 export type MutationCloneVersionArgs = {
 	node_id: Scalars['ID']['input'];
 	version: Scalars['Int']['input'];
 };
 
+/** Mutation root */
 export type MutationCopyNodesArgs = {
 	destination_id: Scalars['ID']['input'];
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationCreateCollaborationLinkArgs = {
 	node_id: Scalars['ID']['input'];
 	permission: SharePermission;
 };
 
+/** Mutation root */
 export type MutationCreateFolderArgs = {
 	destination_id: Scalars['String']['input'];
 	name: Scalars['String']['input'];
 };
 
+/** Mutation root */
 export type MutationCreateLinkArgs = {
 	access_code?: InputMaybe<Scalars['String']['input']>;
 	description?: InputMaybe<Scalars['String']['input']>;
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	node_id: Scalars['ID']['input'];
 };
 
+/** Mutation root */
 export type MutationCreateShareArgs = {
 	custom_message?: InputMaybe<Scalars['String']['input']>;
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	node_id: Scalars['ID']['input'];
 	permission: SharePermission;
 	share_target_id: Scalars['ID']['input'];
 };
 
-export type MutationDeleteAllNodesAndBlobsArgs = {
-	user_id: Scalars['ID']['input'];
-};
-
+/** Mutation root */
 export type MutationDeleteCollaborationLinksArgs = {
-	collaboration_link_ids: Array<Scalars['ID']['input']>;
+	collaboration_link_ids: Array<Scalars['String']['input']>;
 };
 
+/** Mutation root */
 export type MutationDeleteLinksArgs = {
-	link_ids: Array<Scalars['ID']['input']>;
+	link_ids: Array<Scalars['String']['input']>;
 };
 
+/** Mutation root */
 export type MutationDeleteNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationDeleteSharesArgs = {
 	node_id: Scalars['ID']['input'];
-	share_target_ids: Array<Scalars['ID']['input']>;
+	share_target_ids: Array<Scalars['String']['input']>;
 };
 
+/** Mutation root */
 export type MutationDeleteVersionsArgs = {
 	node_id: Scalars['ID']['input'];
 	versions?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
+/** Mutation root */
 export type MutationFlagNodesArgs = {
 	flag: Scalars['Boolean']['input'];
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationKeepVersionsArgs = {
 	keep_forever: Scalars['Boolean']['input'];
 	node_id: Scalars['ID']['input'];
 	versions: Array<Scalars['Int']['input']>;
 };
 
+/** Mutation root */
 export type MutationMoveNodesArgs = {
 	destination_id: Scalars['ID']['input'];
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationRestoreNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationTransferOwnershipArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 	user_id: Scalars['ID']['input'];
 };
 
+/** Mutation root */
 export type MutationTrashNodesArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+/** Mutation root */
 export type MutationUpdateLinkArgs = {
 	access_code?: InputMaybe<Scalars['String']['input']>;
 	description?: InputMaybe<Scalars['String']['input']>;
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	link_id: Scalars['ID']['input'];
 };
 
+/** Mutation root */
 export type MutationUpdateNodeArgs = {
 	description?: InputMaybe<Scalars['String']['input']>;
 	flagged?: InputMaybe<Scalars['Boolean']['input']>;
@@ -294,16 +309,17 @@ export type MutationUpdateNodeArgs = {
 	node_id: Scalars['String']['input'];
 };
 
+/** Mutation root */
 export type MutationUpdateSharesArgs = {
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	node_id: Scalars['ID']['input'];
 	permission?: InputMaybe<SharePermission>;
-	share_target_ids: Array<Scalars['ID']['input']>;
+	share_target_ids: Array<Scalars['String']['input']>;
 };
 
 export type NewShare = {
 	__typename: 'NewShare';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	node: SnapshotNode;
 	notification_type: NotificationType;
@@ -312,7 +328,7 @@ export type NewShare = {
 
 export type Node = {
 	collaboration_links: Array<Maybe<CollaborationLink>>;
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	creator: User;
 	description: Scalars['String']['output'];
 	flagged: Scalars['Boolean']['output'];
@@ -327,7 +343,7 @@ export type Node = {
 	share: Maybe<Share>;
 	shares: Array<Maybe<Share>>;
 	type: NodeType;
-	updated_at: Scalars['DateTime']['output'];
+	updated_at: Scalars['BigInteger']['output'];
 };
 
 export type NodeShareArgs = {
@@ -384,7 +400,7 @@ export type Notification =
 
 export type NotificationPage = {
 	__typename: 'NotificationPage';
-	last_seen: Scalars['DateTime']['output'];
+	last_seen: Scalars['BigInteger']['output'];
 	notifications: Array<Maybe<Notification>>;
 	page_token: Maybe<Scalars['String']['output']>;
 	unread: Scalars['Int']['output'];
@@ -412,9 +428,46 @@ export type Permissions = {
 	can_write_folder: Scalars['Boolean']['output'];
 };
 
+export type PublicFile = PublicNode & {
+	__typename: 'PublicFile';
+	created_at: Scalars['BigInteger']['output'];
+	extension: Maybe<Scalars['String']['output']>;
+	id: Scalars['ID']['output'];
+	mime_type: Scalars['String']['output'];
+	name: Scalars['String']['output'];
+	size: Scalars['Float']['output'];
+	type: NodeType;
+	updated_at: Scalars['BigInteger']['output'];
+};
+
+export type PublicFolder = PublicNode & {
+	__typename: 'PublicFolder';
+	created_at: Scalars['BigInteger']['output'];
+	id: Scalars['ID']['output'];
+	name: Scalars['String']['output'];
+	type: NodeType;
+	updated_at: Scalars['BigInteger']['output'];
+};
+
+export type PublicNode = {
+	created_at: Scalars['BigInteger']['output'];
+	id: Scalars['ID']['output'];
+	name: Scalars['String']['output'];
+	type: NodeType;
+	updated_at: Scalars['BigInteger']['output'];
+};
+
+export type PublicNodePage = {
+	__typename: 'PublicNodePage';
+	nodes: Array<Maybe<PublicFile | PublicFolder>>;
+	page_token: Maybe<Scalars['String']['output']>;
+};
+
+/** Query root */
 export type Query = {
 	__typename: 'Query';
 	findNodes: Maybe<NodePage>;
+	findPublicNodes: Maybe<PublicNodePage>;
 	getAccountByEmail: Maybe<Account>;
 	getAccountsByEmail: Array<Maybe<Account>>;
 	getCollaborationLinks: Array<Maybe<CollaborationLink>>;
@@ -423,6 +476,7 @@ export type Query = {
 	getNode: Maybe<File | Folder>;
 	getNotifications: Maybe<NotificationPage>;
 	getPath: Array<Maybe<File | Folder>>;
+	getPublicNode: Maybe<PublicFile | PublicFolder>;
 	getRootsList: Array<Maybe<Root>>;
 	getShare: Maybe<Share>;
 	getTransferOwnershipAvailability: Scalars['Boolean']['output'];
@@ -431,6 +485,7 @@ export type Query = {
 	getVersions: Array<Maybe<File>>;
 };
 
+/** Query root */
 export type QueryFindNodesArgs = {
 	cascade?: InputMaybe<Scalars['Boolean']['input']>;
 	direct_share?: InputMaybe<Scalars['Boolean']['input']>;
@@ -446,55 +501,82 @@ export type QueryFindNodesArgs = {
 	type?: InputMaybe<NodeType>;
 };
 
+/** Query root */
+export type QueryFindPublicNodesArgs = {
+	access_code?: InputMaybe<Scalars['String']['input']>;
+	folder_id: Scalars['ID']['input'];
+	limit?: InputMaybe<Scalars['Int']['input']>;
+	node_link_id?: InputMaybe<Scalars['String']['input']>;
+	page_token?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Query root */
 export type QueryGetAccountByEmailArgs = {
 	email: Scalars['String']['input'];
 };
 
+/** Query root */
 export type QueryGetAccountsByEmailArgs = {
 	emails: Array<Scalars['String']['input']>;
 };
 
+/** Query root */
 export type QueryGetCollaborationLinksArgs = {
 	node_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetLinksArgs = {
 	node_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetNodeArgs = {
 	node_id: Scalars['ID']['input'];
 	version?: InputMaybe<Scalars['Int']['input']>;
 };
 
+/** Query root */
 export type QueryGetNotificationsArgs = {
 	limit?: InputMaybe<Scalars['Int']['input']>;
 	page_token?: InputMaybe<Scalars['String']['input']>;
 	update_last_seen: Scalars['Boolean']['input'];
 };
 
+/** Query root */
 export type QueryGetPathArgs = {
 	node_id: Scalars['ID']['input'];
 };
 
+/** Query root */
+export type QueryGetPublicNodeArgs = {
+	access_code?: InputMaybe<Scalars['String']['input']>;
+	node_link_id: Scalars['String']['input'];
+};
+
+/** Query root */
 export type QueryGetShareArgs = {
 	node_id: Scalars['ID']['input'];
 	share_target_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetTransferOwnershipAvailabilityArgs = {
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']>>;
 	user_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetUploadItemArgs = {
 	id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetUserByIdArgs = {
 	user_id: Scalars['ID']['input'];
 };
 
+/** Query root */
 export type QueryGetVersionsArgs = {
 	node_id: Scalars['ID']['input'];
 	versions?: InputMaybe<Array<Scalars['Int']['input']>>;
@@ -502,7 +584,7 @@ export type QueryGetVersionsArgs = {
 
 export type RemovedNode = {
 	__typename: 'RemovedNode';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	notification_type: NotificationType;
 	origin_folder: SnapshotNode;
@@ -524,8 +606,8 @@ export type Root = {
 
 export type Share = {
 	__typename: 'Share';
-	created_at: Scalars['DateTime']['output'];
-	expires_at: Maybe<Scalars['DateTime']['output']>;
+	created_at: Scalars['BigInteger']['output'];
+	expires_at: Maybe<Scalars['BigInteger']['output']>;
 	node: File | Folder;
 	permission: SharePermission;
 	share_target: Maybe<SharedTarget>;
@@ -553,7 +635,7 @@ export type SharedTarget = DistributionList | User;
 
 export type SnapshotNode = {
 	__typename: 'SnapshotNode';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	name: Scalars['String']['output'];
 	node_id: Scalars['ID']['output'];
 	owner_id: Maybe<Scalars['ID']['output']>;
@@ -571,7 +653,7 @@ export type SnapshotUser = {
 
 export type SucceededRecording = {
 	__typename: 'SucceededRecording';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	notification_type: NotificationType;
 	recording_destination_node: SnapshotNode;
@@ -580,7 +662,7 @@ export type SucceededRecording = {
 
 export type TransferredOwnership = {
 	__typename: 'TransferredOwnership';
-	created_at: Scalars['DateTime']['output'];
+	created_at: Scalars['BigInteger']['output'];
 	id: Scalars['ID']['output'];
 	notification_type: NotificationType;
 	number_of_nodes: Scalars['Int']['output'];
@@ -947,7 +1029,7 @@ export type CloneVersionMutation = {
 };
 
 export type CopyNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 	destination_id: Scalars['ID']['input'];
 	shares_limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
@@ -1141,7 +1223,7 @@ export type CreateFolderMutation = {
 export type CreateLinkMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
 	description?: InputMaybe<Scalars['String']['input']>;
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	access_code?: InputMaybe<Scalars['String']['input']>;
 }>;
 
@@ -1177,26 +1259,26 @@ export type CreateShareMutation = {
 };
 
 export type DeleteCollaborationLinksMutationVariables = Exact<{
-	collaboration_link_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+	collaboration_link_ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 export type DeleteCollaborationLinksMutation = { deleteCollaborationLinks: Array<string | null> };
 
 export type DeleteLinksMutationVariables = Exact<{
-	link_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+	link_ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 export type DeleteLinksMutation = { deleteLinks: Array<string | null> };
 
 export type DeleteNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 }>;
 
 export type DeleteNodesMutation = { deleteNodes: Array<string> | null };
 
 export type DeleteSharesMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
-	share_target_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+	share_target_ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 export type DeleteSharesMutation = { deleteShares: Array<string | null> };
@@ -1209,7 +1291,7 @@ export type DeleteVersionsMutationVariables = Exact<{
 export type DeleteVersionsMutation = { deleteVersions: Array<number | null> };
 
 export type FlagNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 	flag: Scalars['Boolean']['input'];
 }>;
 
@@ -1224,7 +1306,7 @@ export type KeepVersionsMutationVariables = Exact<{
 export type KeepVersionsMutation = { keepVersions: Array<number | null> };
 
 export type MoveNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 	destination_id: Scalars['ID']['input'];
 }>;
 
@@ -1237,7 +1319,7 @@ export type MoveNodesMutation = {
 };
 
 export type RestoreNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 }>;
 
 export type RestoreNodesMutation = {
@@ -1252,7 +1334,7 @@ export type RestoreNodesMutation = {
 };
 
 export type TransferOwnershipMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 	user_id: Scalars['ID']['input'];
 }>;
 
@@ -1261,7 +1343,7 @@ export type TransferOwnershipMutation = {
 };
 
 export type TrashNodesMutationVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 }>;
 
 export type TrashNodesMutation = { trashNodes: Array<string> | null };
@@ -1269,7 +1351,7 @@ export type TrashNodesMutation = { trashNodes: Array<string> | null };
 export type UpdateLinkMutationVariables = Exact<{
 	link_id: Scalars['ID']['input'];
 	description?: InputMaybe<Scalars['String']['input']>;
-	expires_at?: InputMaybe<Scalars['DateTime']['input']>;
+	expires_at?: InputMaybe<Scalars['BigInteger']['input']>;
 	access_code?: InputMaybe<Scalars['String']['input']>;
 }>;
 
@@ -1312,7 +1394,7 @@ export type UpdateNodeDescriptionMutation = {
 
 export type UpdateSharesMutationVariables = Exact<{
 	node_id: Scalars['ID']['input'];
-	share_target_ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+	share_target_ids: Array<Scalars['String']['input']> | Scalars['String']['input'];
 	permission: SharePermission;
 }>;
 
@@ -2551,7 +2633,7 @@ export type GetSharesQuery = {
 };
 
 export type GetTransferOwnershipAvailabilityQueryVariables = Exact<{
-	node_ids?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+	node_ids?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
 	user_id: Scalars['ID']['input'];
 }>;
 
@@ -3470,7 +3552,7 @@ export const CopyNodesDocument = {
 						kind: 'ListType',
 						type: {
 							kind: 'NonNullType',
-							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 						}
 					}
 				},
@@ -4046,7 +4128,7 @@ export const CreateLinkDocument = {
 				{
 					kind: 'VariableDefinition',
 					variable: { kind: 'Variable', name: { kind: 'Name', value: 'expires_at' } },
-					type: { kind: 'NamedType', name: { kind: 'Name', value: 'DateTime' } }
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'BigInteger' } }
 				},
 				{
 					kind: 'VariableDefinition',
@@ -4255,7 +4337,7 @@ export const DeleteCollaborationLinksDocument = {
 							kind: 'ListType',
 							type: {
 								kind: 'NonNullType',
-								type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+								type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 							}
 						}
 					}
@@ -4300,7 +4382,7 @@ export const DeleteLinksDocument = {
 							kind: 'ListType',
 							type: {
 								kind: 'NonNullType',
-								type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+								type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 							}
 						}
 					}
@@ -4340,7 +4422,7 @@ export const DeleteNodesDocument = {
 						kind: 'ListType',
 						type: {
 							kind: 'NonNullType',
-							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 						}
 					}
 				}
@@ -4389,7 +4471,7 @@ export const DeleteSharesDocument = {
 							kind: 'ListType',
 							type: {
 								kind: 'NonNullType',
-								type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+								type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 							}
 						}
 					}
@@ -4486,7 +4568,7 @@ export const FlagNodesDocument = {
 						kind: 'ListType',
 						type: {
 							kind: 'NonNullType',
-							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 						}
 					}
 				},
@@ -4606,7 +4688,7 @@ export const MoveNodesDocument = {
 						kind: 'ListType',
 						type: {
 							kind: 'NonNullType',
-							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 						}
 					}
 				},
@@ -4672,7 +4754,7 @@ export const RestoreNodesDocument = {
 						kind: 'ListType',
 						type: {
 							kind: 'NonNullType',
-							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 						}
 					}
 				}
@@ -4726,7 +4808,7 @@ export const TransferOwnershipDocument = {
 						kind: 'ListType',
 						type: {
 							kind: 'NonNullType',
-							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 						}
 					}
 				},
@@ -4785,7 +4867,7 @@ export const TrashNodesDocument = {
 						kind: 'ListType',
 						type: {
 							kind: 'NonNullType',
-							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 						}
 					}
 				}
@@ -4833,7 +4915,7 @@ export const UpdateLinkDocument = {
 				{
 					kind: 'VariableDefinition',
 					variable: { kind: 'Variable', name: { kind: 'Name', value: 'expires_at' } },
-					type: { kind: 'NamedType', name: { kind: 'Name', value: 'DateTime' } }
+					type: { kind: 'NamedType', name: { kind: 'Name', value: 'BigInteger' } }
 				},
 				{
 					kind: 'VariableDefinition',
@@ -5036,7 +5118,7 @@ export const UpdateSharesDocument = {
 							kind: 'ListType',
 							type: {
 								kind: 'NonNullType',
-								type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+								type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 							}
 						}
 					}
@@ -8115,7 +8197,7 @@ export const GetTransferOwnershipAvailabilityDocument = {
 						kind: 'ListType',
 						type: {
 							kind: 'NonNullType',
-							type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } }
+							type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
 						}
 					}
 				},
