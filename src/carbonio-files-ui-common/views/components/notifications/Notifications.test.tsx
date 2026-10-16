@@ -566,5 +566,28 @@ describe('Notifications', () => {
 				});
 			});
 		});
+
+		describe('Collapsed mode', () => {
+			it('should render the bell icon button and open the popover on click', async () => {
+				const mocks = {
+					Query: {
+						getNotifications: mockGetNotifications(0, [])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notifications isCollapsed />, { mocks });
+
+				const bellButton = screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.secondaryBarNotifications
+				});
+				expect(bellButton).toBeVisible();
+
+				await user.click(bellButton);
+				expect(screen.getByText('Notifications')).toBeVisible();
+				expect(screen.getByText(/no notifications/i)).toBeVisible();
+
+				await user.click(bellButton);
+				expect(screen.queryByText(/no notifications/i)).not.toBeInTheDocument();
+			});
+		});
 	});
 });

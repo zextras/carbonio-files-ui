@@ -32,7 +32,7 @@ type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
 	completeTotalBadgeCounter?: string;
 	isUploadFailed?: boolean;
-	CustomElement?: React.ComponentType;
+	CustomElement?: React.ComponentType<{ isCollapsed?: boolean; label?: string }>;
 };
 
 const CustomAccordion = styled(Accordion)`

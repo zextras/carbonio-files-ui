@@ -100,6 +100,19 @@ describe('SecondaryBar', () => {
 			expect(screen.queryByText(unread)).not.toBeInTheDocument();
 		});
 
+		it('should open the Notifications popover when clicking the notifications item while secondary bar is collapsed', async () => {
+			const { user } = setup(<SecondaryBar expanded={false} />);
+			const bellButton = screen.getByRoleWithIcon('button', {
+				icon: ICON_REGEXP.secondaryBarNotifications
+			});
+			expect(bellButton).toBeVisible();
+			await user.click(bellButton);
+			expect(screen.getByText('Notifications')).toBeVisible();
+			expect(
+				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
+			).toBeVisible();
+		});
+
 		describe('Upload item', () => {
 			test('should render the upload item without the badge', () => {
 				setup(<SecondaryBar expanded />);
