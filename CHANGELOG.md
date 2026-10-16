@@ -1,3 +1,9 @@
+## [2.17.22](https://github.com/zextras/carbonio-files-ui/compare/v2.17.21...v2.17.22) (2026-10-16)
+
+### Other changes
+
+* **deps:** weekly update dependencies (2026-10-15) ([#716](https://github.com/zextras/carbonio-files-ui/issues/716)) ([42f9cf1](https://github.com/zextras/carbonio-files-ui/commit/42f9cf13db729b2cd33cfb04b3492d182a947827))
+
 ## [2.17.21](https://github.com/zextras/carbonio-files-ui/compare/v2.17.20...v2.17.21) (2026-10-15)
 
 ### Other changes
