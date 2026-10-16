@@ -56,15 +56,23 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	const location = useLocation();
 
 	useEffect(() => {
+		const isTrashLocation =
+			location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`) ||
+			location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
+
+		if (!isTrashLocation) {
+			setForceTrashOpen(false);
+		}
+
 		const item = secondaryBarItemVar();
-		if (expanded && item === 'trash') {
+		if (expanded && (item === 'trash' || isTrashLocation)) {
 			setForceTrashOpen(true);
 			// used this workaround because when 'expanded' prop changes the component was remounted
 			secondaryBarItemVar('');
 		} else if (expanded && item === 'filter') {
 			secondaryBarItemVar('');
 		}
-	}, [expanded]);
+	}, [expanded, location.pathname]);
 
 	const uploadsInfo = useMemo(
 		() => ({
@@ -80,6 +88,10 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	);
 
 	const items = useMemo<AccordionItemType[]>(() => {
+		const isTrashLocation =
+			location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`) ||
+			location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
+
 		const filters: AccordionItemWithPriority[] = [
 			{
 				id: 'Recents',
@@ -160,6 +172,9 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				icon: 'HardDriveOutline',
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
+					if (!expanded) {
+						secondaryBarItemVar('trash');
+					}
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -171,6 +186,9 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				icon: 'ShareOutline',
 				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
 					ev.stopPropagation();
+					if (!expanded) {
+						secondaryBarItemVar('trash');
+					}
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -229,7 +247,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 								);
 							} else {
 								acc.push({
-									open: forceTrashOpen,
+									open: forceTrashOpen || isTrashLocation,
 									id: root.id,
 									priority: 7,
 									icon: 'Trash2Outline',

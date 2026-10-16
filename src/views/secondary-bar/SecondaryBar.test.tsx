@@ -12,7 +12,7 @@ import { graphql, HttpResponse } from 'msw';
 
 import { SecondaryBar } from './SecondaryBar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
-import { ROOTS } from '../../carbonio-files-ui-common/constants';
+import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../../carbonio-files-ui-common/constants';
 import { ICON_REGEXP } from '../../carbonio-files-ui-common/constants/test';
 import {
 	populateAddedNodeNotification,
@@ -185,6 +185,17 @@ describe('SecondaryBar', () => {
 
 				await user.click(myItemsButton);
 				await user.click(sharedItemsButton);
+			});
+
+			it('should expand the trash accordion when transitioning from collapsed to expanded with an active trash item', () => {
+				const { rerender } = setup(<SecondaryBar expanded={false} />, {
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+				});
+
+				expect(screen.queryByText('Trash')).not.toBeInTheDocument();
+				rerender(<SecondaryBar expanded />);
+				expect(screen.getByText('Trash')).toBeVisible();
+				expect(screen.getByText('My items')).toBeVisible();
 			});
 		});
 	});
