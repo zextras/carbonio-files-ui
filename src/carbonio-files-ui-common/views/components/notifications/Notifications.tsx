@@ -18,6 +18,7 @@ import {
 	Divider,
 	List,
 	Padding,
+	Row,
 	Theme
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
@@ -54,7 +55,15 @@ const StyledButton = styled(Button)<{
 	padding: 0;
 `;
 
-export const Notifications = (): React.JSX.Element => {
+export interface NotificationsProps {
+	isCollapsed?: boolean;
+	label?: string;
+}
+
+export const Notifications = ({
+	isCollapsed = false,
+	label
+}: NotificationsProps = {}): React.JSX.Element => {
 	const { notifications, hasMore, loadMore, lastSeen, refetch } = useGetNotificationsQuery();
 	const lastSeenVar = useReactiveVar(lastSeenNotificationsVar);
 	const [t] = useTranslation();
@@ -74,7 +83,8 @@ export const Notifications = (): React.JSX.Element => {
 		prevOpenRef.current = open;
 	}, [nonNullNotifications, open]);
 
-	const handleClick = (): void => {
+	const handleClick = (e?: React.SyntheticEvent | KeyboardEvent): void => {
+		e?.stopPropagation?.();
 		setOpen((prevState) => !prevState);
 		showNotificationsBadgeVar(false);
 	};
@@ -99,16 +109,33 @@ export const Notifications = (): React.JSX.Element => {
 
 	return (
 		<>
-			<Padding left="small">
-				<StyledButton
-					$iconSize={'large'}
-					ref={anchorRef}
-					onClick={handleClick}
-					icon={open ? 'ChevronLeft' : 'ChevronRight'}
-					type={'ghost'}
-					color={'text'}
-				/>
-			</Padding>
+			{isCollapsed ? (
+				<Row mainAlignment="flex-start" takeAvailableSpace>
+					<Tooltip label={label ?? t('notifications.title', 'Notifications')} placement="right">
+						<Padding all="extrasmall">
+							<Button
+								size={'extralarge'}
+								icon={'BellOutline'}
+								ref={anchorRef}
+								onClick={handleClick}
+								backgroundColor={(open && 'highlight') || 'transparent'}
+								labelColor={'text'}
+							/>
+						</Padding>
+					</Tooltip>
+				</Row>
+			) : (
+				<Padding left="small">
+					<StyledButton
+						$iconSize={'large'}
+						ref={anchorRef}
+						onClick={handleClick}
+						icon={open ? 'ChevronLeft' : 'ChevronRight'}
+						type={'ghost'}
+						color={'text'}
+					/>
+				</Padding>
+			)}
 			<CustomPopover
 				open={open}
 				anchorEl={anchorRef}

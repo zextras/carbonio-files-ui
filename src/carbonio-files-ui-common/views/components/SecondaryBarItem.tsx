@@ -49,7 +49,7 @@ interface SecondaryBarItemProps {
 	item: AccordionItemType & {
 		completeTotalBadgeCounter?: string;
 		isUploadFailed?: boolean;
-		CustomElement?: React.ComponentType;
+		CustomElement?: React.ComponentType<{ isCollapsed?: boolean; label?: string }>;
 	};
 	expanded: boolean;
 }
@@ -181,22 +181,30 @@ export const SecondaryBarItem = ({ item, expanded }: SecondaryBarItemProps): Rea
 			effect={dropAction}
 			types={[DRAG_TYPES.upload, DRAG_TYPES.move, DRAG_TYPES.markForDeletion]}
 		>
-			{(dragging): React.JSX.Element =>
-				expanded ? (
-					<CustomAccordionItem item={item} ref={accordionItemRef} $dragging={dragging}>
-						<Row gap="0.25rem">
-							{item.isUploadFailed && <Icon icon="AlertCircle" size="large" color={'error'} />}
-							{item.completeTotalBadgeCounter && (
-								<Badge
-									value={item.completeTotalBadgeCounter}
-									backgroundColor={(item.badgeType === 'unread' && 'primary') || 'gray2'}
-									color={(item.badgeType === 'unread' && 'gray6') || 'gray0'}
-								/>
-							)}
-							{item.CustomElement && <item.CustomElement />}
-						</Row>
-					</CustomAccordionItem>
-				) : (
+			{(dragging): React.JSX.Element => {
+				if (expanded) {
+					return (
+						<CustomAccordionItem item={item} ref={accordionItemRef} $dragging={dragging}>
+							<Row gap="0.25rem">
+								{item.isUploadFailed && <Icon icon="AlertCircle" size="large" color={'error'} />}
+								{item.completeTotalBadgeCounter && (
+									<Badge
+										value={item.completeTotalBadgeCounter}
+										backgroundColor={(item.badgeType === 'unread' && 'primary') || 'gray2'}
+										color={(item.badgeType === 'unread' && 'gray6') || 'gray0'}
+									/>
+								)}
+								{item.CustomElement && <item.CustomElement />}
+							</Row>
+						</CustomAccordionItem>
+					);
+				}
+
+				if (item.id === 'Notifications' && item.CustomElement) {
+					return <item.CustomElement isCollapsed label={item.label} />;
+				}
+
+				return (
 					<Row mainAlignment="flex-start" takeAvailableSpace>
 						<Tooltip label={item.label} placement="right">
 							<Padding all="extrasmall">
@@ -210,8 +218,8 @@ export const SecondaryBarItem = ({ item, expanded }: SecondaryBarItemProps): Rea
 							</Padding>
 						</Tooltip>
 					</Row>
-				)
-			}
+				);
+			}}
 		</Dropzone>
 	);
 };
