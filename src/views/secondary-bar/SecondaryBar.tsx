@@ -220,20 +220,29 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 							break;
 						}
 						case ROOTS.TRASH: {
-							acc.push({
-								open: forceTrashOpen,
-								id: root.id,
-								priority: 7,
-								icon: 'Trash2Outline',
-								label: t('secondaryBar.filtersList.trash', 'Trash'),
-								onClick: (): void => {
-									if (!expanded) {
-										secondaryBarItemVar('trash');
-									}
-								},
-								items: trashItems,
-								CustomComponent: SecondaryBarItemExpanded
-							});
+							if (!expanded) {
+								acc.push(
+									...map(trashItems, (item, index) => ({
+										...item,
+										priority: 7 + index * 0.1
+									}))
+								);
+							} else {
+								acc.push({
+									open: forceTrashOpen,
+									id: root.id,
+									priority: 7,
+									icon: 'Trash2Outline',
+									label: t('secondaryBar.filtersList.trash', 'Trash'),
+									onClick: (): void => {
+										if (!expanded) {
+											secondaryBarItemVar('trash');
+										}
+									},
+									items: trashItems,
+									CustomComponent: SecondaryBarItemExpanded
+								});
+							}
 							break;
 						}
 						default: {

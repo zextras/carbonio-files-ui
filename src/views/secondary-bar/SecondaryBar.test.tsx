@@ -161,5 +161,31 @@ describe('SecondaryBar', () => {
 				expect(screen.queryByTestId(ICON_REGEXP.uploadFailed)).not.toBeInTheDocument();
 			});
 		});
+
+		describe('Trash item', () => {
+			it('should render the trash accordion when expanded', () => {
+				setup(<SecondaryBar expanded />);
+				expect(screen.getByText('Trash')).toBeVisible();
+			});
+
+			it('should split trash into My items and Shared items when collapsed and allow clicking them', async () => {
+				const { user } = setup(<SecondaryBar expanded={false} />);
+				const myItemsButton = screen.getByRoleWithIcon('button', {
+					icon: 'icon: HardDriveOutline'
+				});
+				const sharedItemsButton = screen.getByRoleWithIcon('button', {
+					icon: 'icon: ShareOutline'
+				});
+
+				expect(myItemsButton).toBeVisible();
+				expect(sharedItemsButton).toBeVisible();
+				expect(
+					screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.moveToTrash })
+				).not.toBeInTheDocument();
+
+				await user.click(myItemsButton);
+				await user.click(sharedItemsButton);
+			});
+		});
 	});
 });
