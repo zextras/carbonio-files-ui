@@ -29,8 +29,7 @@ const typescriptPluginConfig: TypeScriptPluginConfig = {
 };
 
 const config: CodegenConfig = {
-	schema:
-		'github:zextras/carbonio-files#6196c3775925907bb48c4bacb5a9bfdaf94f18a0:app/docs/schema.graphql',
+	schema: 'github:zextras/carbonio-files#v4.0.0:app/docs/schema.graphql',
 	generates: {
 		'src/carbonio-files-ui-common/graphql/schema.graphql': {
 			plugins: [

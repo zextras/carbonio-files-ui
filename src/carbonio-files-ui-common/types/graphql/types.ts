@@ -26,6 +26,7 @@ export type Scalars = {
 	Boolean: { input: boolean; output: boolean };
 	Int: { input: number; output: number };
 	Float: { input: number; output: number };
+	/** Scalar for BigInteger */
 	BigInteger: { input: number; output: number };
 	/** Define an upload item, with its status and all the required info */
 	UploadItem: { input: ClientTypes.UploadItem; output: ClientTypes.UploadItem };
