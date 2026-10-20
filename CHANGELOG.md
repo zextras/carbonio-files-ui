@@ -1,3 +1,14 @@
+## [3.0.0](https://github.com/zextras/carbonio-files-ui/compare/v2.17.23...v3.0.0) (2026-10-20)
+
+### ⚠ BREAKING CHANGES
+
+* the client sends [String!] list-id variables and the BigInteger scalar, which
+the schema-first backends reject. It requires carbonio-files-ce 3.0.0 and carbonio-files 4.0.0.
+
+### Features
+
+* align GraphQL client to carbonio-files-ce code-first migration ([#705](https://github.com/zextras/carbonio-files-ui/issues/705)) ([ef87637](https://github.com/zextras/carbonio-files-ui/commit/ef8763793b4c243424c3a3a7572365bd26202f50))
+
 ## [2.17.23](https://github.com/zextras/carbonio-files-ui/compare/v2.17.22...v2.17.23) (2026-10-19)
 
 ### Other changes
