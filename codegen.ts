@@ -14,7 +14,7 @@ const typescriptPluginConfig: TypeScriptPluginConfig = {
 	defaultScalarType: 'unknown',
 	nonOptionalTypename: true,
 	scalars: {
-		DateTime: 'number',
+		BigInteger: 'number',
 		UploadItem: 'ClientTypes.UploadItem'
 	},
 	strictScalars: true,
@@ -29,14 +29,7 @@ const typescriptPluginConfig: TypeScriptPluginConfig = {
 };
 
 const config: CodegenConfig = {
-	schema: {
-		'https://raw.githubusercontent.com/Zextras/carbonio-files-ce/develop/core/src/main/resources/api/schema.graphql':
-			{
-				headers: {
-					Cookie: ''
-				}
-			}
-	},
+	schema: 'github:zextras/carbonio-files#v4.0.0:app/docs/schema.graphql',
 	generates: {
 		'src/carbonio-files-ui-common/graphql/schema.graphql': {
 			plugins: [
