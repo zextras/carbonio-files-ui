@@ -10,6 +10,7 @@ import { useReactiveVar } from '@apollo/client';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
+	Badge,
 	Button,
 	Container,
 	Popover,
@@ -55,6 +56,19 @@ const StyledButton = styled(Button)<{
 	padding: 0;
 `;
 
+const ButtonWrapper = styled.div`
+	position: relative;
+	display: inline-flex;
+`;
+
+const BadgeWrapper = styled.div`
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	pointer-events: none;
+	z-index: 1;
+`;
+
 export interface NotificationsProps {
 	isCollapsed?: boolean;
 	label?: string;
@@ -64,12 +78,16 @@ export const Notifications = ({
 	isCollapsed = false,
 	label
 }: NotificationsProps = {}): React.JSX.Element => {
-	const { notifications, hasMore, loadMore, lastSeen, refetch } = useGetNotificationsQuery();
+	const { notifications, hasMore, loadMore, lastSeen, refetch, unread } =
+		useGetNotificationsQuery();
 	const lastSeenVar = useReactiveVar(lastSeenNotificationsVar);
+	const isNotificationsBadgeCounterShown = useReactiveVar(showNotificationsBadgeVar);
 	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
 	const prevOpenRef = useRef(open);
 	const anchorRef = useRef<HTMLDivElement>(null);
+
+	const badgeCounter = !!unread && isNotificationsBadgeCounterShown ? unread : undefined;
 
 	const nonNullNotifications = useMemo(
 		() => notifications?.filter((notification) => notification !== null),
@@ -113,14 +131,21 @@ export const Notifications = ({
 				<Row mainAlignment="flex-start" takeAvailableSpace>
 					<Tooltip label={label ?? t('notifications.title', 'Notifications')} placement="right">
 						<Padding all="extrasmall">
-							<Button
-								size={'extralarge'}
-								icon={'BellOutline'}
-								ref={anchorRef}
-								onClick={handleClick}
-								backgroundColor={(open && 'highlight') || 'transparent'}
-								labelColor={'text'}
-							/>
+							<ButtonWrapper>
+								<Button
+									size={'extralarge'}
+									icon={'BellOutline'}
+									ref={anchorRef}
+									onClick={handleClick}
+									backgroundColor={(open && 'highlight') || 'transparent'}
+									labelColor={'text'}
+								/>
+								{badgeCounter !== undefined && (
+									<BadgeWrapper>
+										<Badge value={badgeCounter} backgroundColor="primary" color="gray6" />
+									</BadgeWrapper>
+								)}
+							</ButtonWrapper>
 						</Padding>
 					</Tooltip>
 				</Row>
