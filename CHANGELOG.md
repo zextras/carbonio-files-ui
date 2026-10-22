@@ -1,3 +1,9 @@
+## [3.1.0](https://github.com/zextras/carbonio-files-ui/compare/v3.0.1...v3.1.0) (2026-10-22)
+
+### Features
+
+* open composer with Smart Link proposal for large files on send via e-mail ([#711](https://github.com/zextras/carbonio-files-ui/issues/711)) ([7027aaa](https://github.com/zextras/carbonio-files-ui/commit/7027aaa5d65638992c5dea48450cf7f725d15e89))
+
 ## [3.0.1](https://github.com/zextras/carbonio-files-ui/compare/v3.0.0...v3.0.1) (2026-10-21)
 
 ### Other changes
