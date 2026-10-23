@@ -3,10 +3,10 @@
 	"version": "3.1.1",
 	"description": "Files module",
 	"main": "src/app.tsx",
-	"packageManager": "pnpm@10.33.0",
+	"packageManager": "pnpm@10.34.8",
 	"engines": {
 		"node": "v22",
-		"pnpm": ">=10"
+		"pnpm": ">=10.34.8"
 	},
 	"scripts": {
 		"bump-version": "semantic-release",
