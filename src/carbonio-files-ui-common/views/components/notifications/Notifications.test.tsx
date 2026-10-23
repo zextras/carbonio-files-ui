@@ -6,7 +6,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { graphql, HttpResponse } from 'msw';
 import { Mock } from 'vitest';
 
@@ -14,6 +14,7 @@ import { getDateNotification } from './NotificationItem';
 import { Notifications } from './Notifications';
 import server from '../../../../mocks/server';
 import { lastSeenNotificationsVar } from '../../../apollo/lastSeenNotificationsVar';
+import { showNotificationsBadgeVar } from '../../../apollo/showNotificationsBadgeVar';
 import { NOTIFICATIONS_LOAD_LIMIT } from '../../../constants';
 import { COLORS, ICON_REGEXP, SELECTORS } from '../../../constants/test';
 import {
@@ -44,6 +45,7 @@ vi.mock('react-router-dom', async () => {
 describe('Notifications', () => {
 	beforeEach(() => {
 		lastSeenNotificationsVar(0);
+		showNotificationsBadgeVar(true);
 	});
 
 	it('should change the icon everytime the user clicks on the chevron', async () => {
@@ -564,6 +566,53 @@ describe('Notifications', () => {
 				notifications.forEach((notification) => {
 					expect(screen.getByText(notification.triggering_user.email)).toBeVisible();
 				});
+			});
+		});
+
+		describe('Collapsed mode', () => {
+			it('should render the bell icon button and open the popover on click', async () => {
+				const mocks = {
+					Query: {
+						getNotifications: mockGetNotifications(0, [])
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notifications isCollapsed />, { mocks });
+
+				const bellButton = screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.secondaryBarNotifications
+				});
+				expect(bellButton).toBeVisible();
+
+				await user.click(bellButton);
+				expect(screen.getByText('Notifications')).toBeVisible();
+				expect(screen.getByText(/no notifications/i)).toBeVisible();
+
+				await user.click(bellButton);
+				expect(screen.queryByText(/no notifications/i)).not.toBeInTheDocument();
+			});
+
+			it('should render the notifications counter badge in collapsed mode if unread notifications are present and remove it on click', async () => {
+				const unread = 2;
+				const notifications = [populateAddedNodeNotification()];
+				const mocks = {
+					Query: {
+						getNotifications: mockGetNotifications(unread, notifications)
+					}
+				} satisfies Partial<Resolvers>;
+				const { user } = setup(<Notifications isCollapsed />, { mocks });
+
+				await act(async () => {
+					await vi.advanceTimersToNextTimerAsync();
+				});
+
+				expect(screen.getByText(unread)).toBeVisible();
+
+				const bellButton = screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.secondaryBarNotifications
+				});
+				await user.click(bellButton);
+
+				expect(screen.queryByText(unread)).not.toBeInTheDocument();
 			});
 		});
 	});

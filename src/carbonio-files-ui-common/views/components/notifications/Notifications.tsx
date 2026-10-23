@@ -10,6 +10,7 @@ import { useReactiveVar } from '@apollo/client';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
+	Badge,
 	Button,
 	Container,
 	Popover,
@@ -18,6 +19,7 @@ import {
 	Divider,
 	List,
 	Padding,
+	Row,
 	Theme
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
@@ -54,13 +56,38 @@ const StyledButton = styled(Button)<{
 	padding: 0;
 `;
 
-export const Notifications = (): React.JSX.Element => {
-	const { notifications, hasMore, loadMore, lastSeen, refetch } = useGetNotificationsQuery();
+const ButtonWrapper = styled.div`
+	position: relative;
+	display: inline-flex;
+`;
+
+const BadgeWrapper = styled.div`
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	pointer-events: none;
+	z-index: 1;
+`;
+
+export interface NotificationsProps {
+	isCollapsed?: boolean;
+	label?: string;
+}
+
+export const Notifications = ({
+	isCollapsed = false,
+	label
+}: NotificationsProps = {}): React.JSX.Element => {
+	const { notifications, hasMore, loadMore, lastSeen, refetch, unread } =
+		useGetNotificationsQuery();
 	const lastSeenVar = useReactiveVar(lastSeenNotificationsVar);
+	const isNotificationsBadgeCounterShown = useReactiveVar(showNotificationsBadgeVar);
 	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
 	const prevOpenRef = useRef(open);
 	const anchorRef = useRef<HTMLDivElement>(null);
+
+	const badgeCounter = !!unread && isNotificationsBadgeCounterShown ? unread : undefined;
 
 	const nonNullNotifications = useMemo(
 		() => notifications?.filter((notification) => notification !== null),
@@ -74,7 +101,8 @@ export const Notifications = (): React.JSX.Element => {
 		prevOpenRef.current = open;
 	}, [nonNullNotifications, open]);
 
-	const handleClick = (): void => {
+	const handleClick = (e?: React.SyntheticEvent | KeyboardEvent): void => {
+		e?.stopPropagation?.();
 		setOpen((prevState) => !prevState);
 		showNotificationsBadgeVar(false);
 	};
@@ -99,16 +127,40 @@ export const Notifications = (): React.JSX.Element => {
 
 	return (
 		<>
-			<Padding left="small">
-				<StyledButton
-					$iconSize={'large'}
-					ref={anchorRef}
-					onClick={handleClick}
-					icon={open ? 'ChevronLeft' : 'ChevronRight'}
-					type={'ghost'}
-					color={'text'}
-				/>
-			</Padding>
+			{isCollapsed ? (
+				<Row mainAlignment="flex-start" takeAvailableSpace>
+					<Tooltip label={label ?? t('notifications.title', 'Notifications')} placement="right">
+						<Padding all="extrasmall">
+							<ButtonWrapper>
+								<Button
+									size={'extralarge'}
+									icon={'BellOutline'}
+									ref={anchorRef}
+									onClick={handleClick}
+									backgroundColor={(open && 'highlight') || 'transparent'}
+									labelColor={'text'}
+								/>
+								{badgeCounter !== undefined && (
+									<BadgeWrapper>
+										<Badge value={badgeCounter} backgroundColor="primary" color="gray6" />
+									</BadgeWrapper>
+								)}
+							</ButtonWrapper>
+						</Padding>
+					</Tooltip>
+				</Row>
+			) : (
+				<Padding left="small">
+					<StyledButton
+						$iconSize={'large'}
+						ref={anchorRef}
+						onClick={handleClick}
+						icon={open ? 'ChevronLeft' : 'ChevronRight'}
+						type={'ghost'}
+						color={'text'}
+					/>
+				</Padding>
+			)}
 			<CustomPopover
 				open={open}
 				anchorEl={anchorRef}
