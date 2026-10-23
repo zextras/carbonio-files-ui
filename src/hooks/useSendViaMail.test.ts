@@ -19,6 +19,7 @@ import {
 } from '../carbonio-files-ui-common/constants';
 import { populateFile } from '../carbonio-files-ui-common/mocks/mockUtils';
 import { setupHook } from '../carbonio-files-ui-common/tests/utils';
+import { ComposePrefillMessageType, ComposeWithFilesNodesFn } from '../integrations/functions';
 import server from '../mocks/server';
 
 let mockCreateSnackbar: MockedFunction<CreateSnackbarFn>;
@@ -37,6 +38,32 @@ beforeEach(() => {
 
 const FILE_SIZE_EXCEEDED_LABEL =
 	'This file is too large to attach. Open a new e-mail and use Add from Files to share it as a Smart Link instead.';
+const FILE_SIZE_EXCEEDED_NOT_SHAREABLE_LABEL =
+	"This file is too large to attach and you don't have permission to share it as a Smart Link.";
+
+/**
+ * Mock the integrated functions registered by Mails. The ones not given are not available
+ */
+function mockMailsFunctions(functions: {
+	composePrefillMessage?: ComposePrefillMessageType;
+	composeWithFilesNodes?: ComposeWithFilesNodesFn;
+}): void {
+	vi.spyOn(shell, 'getIntegratedFunction').mockImplementation(((id: string) => {
+		const fn = functions[id as keyof typeof functions];
+		return fn ? [fn, true] : [(): void => undefined, false];
+	}) as typeof shell.getIntegratedFunction);
+}
+
+/**
+ * Make the upload-to request fail the test if it is sent
+ */
+function forbidUploadTo(): MockedFunction<() => Response> {
+	const uploadTo = vi.fn(() =>
+		HttpResponse.json(null, { status: HTTP_STATUS_CODE.internalServerError })
+	);
+	server.use(http.post(`${REST_ENDPOINT}${UPLOAD_TO_PATH}`, uploadTo));
+	return uploadTo;
+}
 
 function mockMaxMessageSize(maxMessageSize: number): void {
 	vi.spyOn(shell, 'useUserSettings').mockReturnValue({
@@ -53,7 +80,7 @@ describe('useSendViaMail hook', () => {
 			http.post(`${REST_ENDPOINT}${UPLOAD_TO_PATH}`, () => HttpResponse.json({ attachmentId }))
 		);
 		const integratedFunction = vi.fn();
-		vi.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
+		mockMailsFunctions({ composePrefillMessage: integratedFunction });
 		const node = populateFile();
 
 		const { result } = setupHook(() => useSendViaMail());
@@ -82,7 +109,7 @@ describe('useSendViaMail hook', () => {
 		);
 		vi.spyOn(console, 'error').mockImplementation(() => undefined);
 		const integratedFunction = vi.fn();
-		vi.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
+		mockMailsFunctions({ composePrefillMessage: integratedFunction });
 		const node = populateFile();
 
 		const { result } = setupHook(() => useSendViaMail());
@@ -108,7 +135,7 @@ describe('useSendViaMail hook', () => {
 		);
 		vi.spyOn(console, 'error').mockImplementation(() => undefined);
 		const integratedFunction = vi.fn();
-		vi.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
+		mockMailsFunctions({ composePrefillMessage: integratedFunction });
 		const node = populateFile();
 
 		const { result } = setupHook(() => useSendViaMail());
@@ -131,9 +158,10 @@ describe('useSendViaMail hook', () => {
 			server.use(http.post(`${REST_ENDPOINT}${UPLOAD_TO_PATH}`, uploadTo));
 			mockMaxMessageSize(1000);
 			const integratedFunction = vi.fn();
-			vi.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
+			mockMailsFunctions({ composePrefillMessage: integratedFunction });
 			const node = populateFile();
 			node.size = 1000;
+			node.permissions.can_share = true;
 
 			const { result } = setupHook(() => useSendViaMail());
 			result.current.sendViaMail(node);
@@ -157,9 +185,10 @@ describe('useSendViaMail hook', () => {
 			// the file fits the limit by its own size, but not once encoded as a base64 attachment
 			mockMaxMessageSize(1200);
 			const integratedFunction = vi.fn();
-			vi.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
+			mockMailsFunctions({ composePrefillMessage: integratedFunction });
 			const node = populateFile();
 			node.size = 1000;
+			node.permissions.can_share = true;
 
 			const { result } = setupHook(() => useSendViaMail());
 			result.current.sendViaMail(node);
@@ -178,7 +207,7 @@ describe('useSendViaMail hook', () => {
 			);
 			mockMaxMessageSize(2000);
 			const integratedFunction = vi.fn();
-			vi.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
+			mockMailsFunctions({ composePrefillMessage: integratedFunction });
 			const node = populateFile();
 			node.size = 1000;
 
@@ -198,7 +227,7 @@ describe('useSendViaMail hook', () => {
 				http.post(`${REST_ENDPOINT}${UPLOAD_TO_PATH}`, () => HttpResponse.json({ attachmentId }))
 			);
 			const integratedFunction = vi.fn();
-			vi.spyOn(shell, 'getIntegratedFunction').mockReturnValue([integratedFunction, true]);
+			mockMailsFunctions({ composePrefillMessage: integratedFunction });
 			const node = populateFile();
 			node.size = faker.number.int({ min: 1000000 });
 
@@ -207,6 +236,161 @@ describe('useSendViaMail hook', () => {
 
 			await waitFor(() => expect(integratedFunction).toHaveBeenCalled());
 			expect(mockCreateSnackbar).not.toHaveBeenCalled();
+		});
+
+		it('should show a specific snackbar without requesting the upload if the attachment does not fit the max message size and the file cannot be shared', async () => {
+			const uploadTo = forbidUploadTo();
+			mockMaxMessageSize(1000);
+			const integratedFunction = vi.fn();
+			mockMailsFunctions({ composePrefillMessage: integratedFunction });
+			const node = populateFile();
+			node.size = 1000;
+			node.permissions.can_share = false;
+
+			const { result } = setupHook(() => useSendViaMail());
+			result.current.sendViaMail(node);
+
+			await waitFor(() => expect(mockCreateSnackbar).toHaveBeenCalled());
+			expect(mockCreateSnackbar).toHaveBeenCalledWith(
+				expect.objectContaining<CreateSnackbarFnArgs>({
+					label: FILE_SIZE_EXCEEDED_NOT_SHAREABLE_LABEL,
+					actionLabel: 'Ok',
+					disableAutoHide: true,
+					severity: 'warning'
+				})
+			);
+			expect(uploadTo).not.toHaveBeenCalled();
+			expect(integratedFunction).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('when Mails can open the composer with the Files nodes', () => {
+		it('should open the composer with the node without requesting the upload if the attachment fits the max message size', async () => {
+			const uploadTo = forbidUploadTo();
+			mockMaxMessageSize(2000);
+			const composeWithFilesNodes = vi.fn();
+			const composePrefillMessage = vi.fn();
+			mockMailsFunctions({ composeWithFilesNodes, composePrefillMessage });
+			const node = populateFile();
+			node.size = 1000;
+
+			const { result } = setupHook(() => useSendViaMail());
+			result.current.sendViaMail(node);
+
+			expect(composeWithFilesNodes).toHaveBeenCalledTimes(1);
+			expect(composeWithFilesNodes).toHaveBeenCalledWith<Parameters<ComposeWithFilesNodesFn>>({
+				filesNodes: [
+					{
+						id: node.id,
+						name: node.name,
+						size: node.size,
+						mime_type: node.mime_type,
+						__typename: 'File'
+					}
+				]
+			});
+			expect(uploadTo).not.toHaveBeenCalled();
+			expect(composePrefillMessage).not.toHaveBeenCalled();
+			expect(mockCreateSnackbar).not.toHaveBeenCalled();
+		});
+
+		it('should open the composer with the node if the attachment does not fit the max message size and the file can be shared', async () => {
+			const uploadTo = forbidUploadTo();
+			mockMaxMessageSize(1000);
+			const composeWithFilesNodes = vi.fn();
+			mockMailsFunctions({ composeWithFilesNodes });
+			const node = populateFile();
+			node.size = 1000;
+			node.permissions.can_share = true;
+
+			const { result } = setupHook(() => useSendViaMail());
+			result.current.sendViaMail(node);
+
+			expect(composeWithFilesNodes).toHaveBeenCalledWith<Parameters<ComposeWithFilesNodesFn>>({
+				filesNodes: [expect.objectContaining({ id: node.id, size: node.size })]
+			});
+			expect(uploadTo).not.toHaveBeenCalled();
+			expect(mockCreateSnackbar).not.toHaveBeenCalled();
+		});
+
+		it('should not open the composer if the attachment does not fit the max message size and the file cannot be shared', async () => {
+			mockMaxMessageSize(1000);
+			const composeWithFilesNodes = vi.fn();
+			mockMailsFunctions({ composeWithFilesNodes });
+			const node = populateFile();
+			node.size = 1000;
+			node.permissions.can_share = false;
+
+			const { result } = setupHook(() => useSendViaMail());
+			result.current.sendViaMail(node);
+
+			expect(mockCreateSnackbar).toHaveBeenCalledWith(
+				expect.objectContaining<CreateSnackbarFnArgs>({
+					label: FILE_SIZE_EXCEEDED_NOT_SHAREABLE_LABEL
+				})
+			);
+			expect(composeWithFilesNodes).not.toHaveBeenCalled();
+		});
+
+		it('should send a size of 0 if the node does not have it', async () => {
+			const composeWithFilesNodes = vi.fn();
+			mockMailsFunctions({ composeWithFilesNodes });
+			const node = { ...populateFile(), size: undefined };
+
+			const { result } = setupHook(() => useSendViaMail());
+			result.current.sendViaMail(node);
+
+			expect(composeWithFilesNodes).toHaveBeenCalledWith<Parameters<ComposeWithFilesNodesFn>>({
+				filesNodes: [expect.objectContaining({ id: node.id, size: 0 })]
+			});
+		});
+
+		describe('if opening the composer throws an error', () => {
+			it('should open the composer with the uploaded attachment if it fits the max message size', async () => {
+				const attachmentId = faker.string.uuid();
+				server.use(
+					http.post(`${REST_ENDPOINT}${UPLOAD_TO_PATH}`, () => HttpResponse.json({ attachmentId }))
+				);
+				vi.spyOn(console, 'error').mockImplementation(() => undefined);
+				mockMaxMessageSize(2000);
+				const composeWithFilesNodes = vi.fn(() => {
+					throw new Error('composer error');
+				});
+				const composePrefillMessage = vi.fn();
+				mockMailsFunctions({ composeWithFilesNodes, composePrefillMessage });
+				const node = populateFile();
+				node.size = 1000;
+
+				const { result } = setupHook(() => useSendViaMail());
+				result.current.sendViaMail(node);
+
+				await waitFor(() => expect(composePrefillMessage).toHaveBeenCalled());
+				expect(composePrefillMessage).toHaveBeenCalledWith(
+					expect.objectContaining({ attachments: [expect.objectContaining({ aid: attachmentId })] })
+				);
+				expect(mockCreateSnackbar).not.toHaveBeenCalled();
+			});
+
+			it('should show the file size exceeded snackbar if the attachment does not fit the max message size', async () => {
+				const uploadTo = forbidUploadTo();
+				vi.spyOn(console, 'error').mockImplementation(() => undefined);
+				mockMaxMessageSize(1000);
+				const composeWithFilesNodes = vi.fn(() => {
+					throw new Error('composer error');
+				});
+				mockMailsFunctions({ composeWithFilesNodes });
+				const node = populateFile();
+				node.size = 1000;
+				node.permissions.can_share = true;
+
+				const { result } = setupHook(() => useSendViaMail());
+				result.current.sendViaMail(node);
+
+				expect(mockCreateSnackbar).toHaveBeenCalledWith(
+					expect.objectContaining<CreateSnackbarFnArgs>({ label: FILE_SIZE_EXCEEDED_LABEL })
+				);
+				expect(uploadTo).not.toHaveBeenCalled();
+			});
 		});
 	});
 });

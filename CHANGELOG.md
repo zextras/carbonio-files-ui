@@ -1,3 +1,26 @@
+## [3.1.0](https://github.com/zextras/carbonio-files-ui/compare/v3.0.1...v3.1.0) (2026-10-22)
+
+### Features
+
+* open composer with Smart Link proposal for large files on send via e-mail ([#711](https://github.com/zextras/carbonio-files-ui/issues/711)) ([7027aaa](https://github.com/zextras/carbonio-files-ui/commit/7027aaa5d65638992c5dea48450cf7f725d15e89))
+
+## [3.0.1](https://github.com/zextras/carbonio-files-ui/compare/v3.0.0...v3.0.1) (2026-10-21)
+
+### Other changes
+
+* **deps:** update dependency zextras/jenkins-lib-common to v5 ([#719](https://github.com/zextras/carbonio-files-ui/issues/719)) ([bcad420](https://github.com/zextras/carbonio-files-ui/commit/bcad4202ae41f7dbded4e452dcda7f46efb9f8b0))
+
+## [3.0.0](https://github.com/zextras/carbonio-files-ui/compare/v2.17.23...v3.0.0) (2026-10-20)
+
+### ⚠ BREAKING CHANGES
+
+* the client sends [String!] list-id variables and the BigInteger scalar, which
+the schema-first backends reject. It requires carbonio-files-ce 3.0.0 and carbonio-files 4.0.0.
+
+### Features
+
+* align GraphQL client to carbonio-files-ce code-first migration ([#705](https://github.com/zextras/carbonio-files-ui/issues/705)) ([ef87637](https://github.com/zextras/carbonio-files-ui/commit/ef8763793b4c243424c3a3a7572365bd26202f50))
+
 ## [2.17.23](https://github.com/zextras/carbonio-files-ui/compare/v2.17.22...v2.17.23) (2026-10-19)
 
 ### Other changes

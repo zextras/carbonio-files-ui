@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-mutation flagNodes($node_ids: [ID!], $flag: Boolean!) {
+mutation flagNodes($node_ids: [String!], $flag: Boolean!) {
 	flagNodes(node_ids: $node_ids, flag: $flag)
 }
