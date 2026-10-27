@@ -2952,7 +2952,7 @@ packages:
       react-dom: ^18.3.1
 
   '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/d45b6f02b0b0f2e9d2eef1707c6460cfdb12fe13':
-    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/d45b6f02b0b0f2e9d2eef1707c6460cfdb12fe13}
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/d45b6f02b0b0f2e9d2eef1707c6460cfdb12fe13}
     version: 0.1.22
     engines: {node: v22, pnpm: '>=10'}
 
