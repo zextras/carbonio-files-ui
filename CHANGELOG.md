@@ -1,3 +1,9 @@
+## [3.1.2](https://github.com/zextras/carbonio-files-ui/compare/v3.1.1...v3.1.2) (2026-10-27)
+
+### Other changes
+
+* **deps:** lock file maintenance ([#725](https://github.com/zextras/carbonio-files-ui/issues/725)) ([8ff0518](https://github.com/zextras/carbonio-files-ui/commit/8ff0518f52cdfe14a84372ceb273ad4a6fe94954))
+
 ## [3.1.1](https://github.com/zextras/carbonio-files-ui/compare/v3.1.0...v3.1.1) (2026-10-23)
 
 ### Other changes
