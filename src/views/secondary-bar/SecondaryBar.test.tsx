@@ -12,7 +12,7 @@ import { graphql, HttpResponse } from 'msw';
 
 import { SecondaryBar } from './SecondaryBar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
-import { ROOTS } from '../../carbonio-files-ui-common/constants';
+import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../../carbonio-files-ui-common/constants';
 import { ICON_REGEXP } from '../../carbonio-files-ui-common/constants/test';
 import {
 	populateAddedNodeNotification,
@@ -100,6 +100,19 @@ describe('SecondaryBar', () => {
 			expect(screen.queryByText(unread)).not.toBeInTheDocument();
 		});
 
+		it('should open the Notifications popover when clicking the notifications item while secondary bar is collapsed', async () => {
+			const { user } = setup(<SecondaryBar expanded={false} />);
+			const bellButton = screen.getByRoleWithIcon('button', {
+				icon: ICON_REGEXP.secondaryBarNotifications
+			});
+			expect(bellButton).toBeVisible();
+			await user.click(bellButton);
+			expect(screen.getByText('Notifications')).toBeVisible();
+			expect(
+				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
+			).toBeVisible();
+		});
+
 		describe('Upload item', () => {
 			test('should render the upload item without the badge', () => {
 				setup(<SecondaryBar expanded />);
@@ -146,6 +159,43 @@ describe('SecondaryBar', () => {
 					});
 				});
 				expect(screen.queryByTestId(ICON_REGEXP.uploadFailed)).not.toBeInTheDocument();
+			});
+		});
+
+		describe('Trash item', () => {
+			it('should render the trash accordion when expanded', () => {
+				setup(<SecondaryBar expanded />);
+				expect(screen.getByText('Trash')).toBeVisible();
+			});
+
+			it('should split trash into My items and Shared items when collapsed and allow clicking them', async () => {
+				const { user } = setup(<SecondaryBar expanded={false} />);
+				const myItemsButton = screen.getByRoleWithIcon('button', {
+					icon: 'icon: HardDriveOutline'
+				});
+				const sharedItemsButton = screen.getByRoleWithIcon('button', {
+					icon: 'icon: ShareOutline'
+				});
+
+				expect(myItemsButton).toBeVisible();
+				expect(sharedItemsButton).toBeVisible();
+				expect(
+					screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.moveToTrash })
+				).not.toBeInTheDocument();
+
+				await user.click(myItemsButton);
+				await user.click(sharedItemsButton);
+			});
+
+			it('should expand the trash accordion when transitioning from collapsed to expanded with an active trash item', () => {
+				const { rerender } = setup(<SecondaryBar expanded={false} />, {
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+				});
+
+				expect(screen.queryByText('Trash')).not.toBeInTheDocument();
+				rerender(<SecondaryBar expanded />);
+				expect(screen.getByText('Trash')).toBeVisible();
+				expect(screen.getByText('My items')).toBeVisible();
 			});
 		});
 	});
