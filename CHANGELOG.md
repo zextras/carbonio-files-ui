@@ -1,3 +1,31 @@
+## [3.1.4](https://github.com/zextras/carbonio-files-ui/compare/v3.1.3...v3.1.4) (2026-11-03)
+
+### Bug Fixes
+
+* **deps:** update dependency @zextras/carbonio-ui-soap-lib to v1.3.3 ([#728](https://github.com/zextras/carbonio-files-ui/issues/728)) ([e43ee06](https://github.com/zextras/carbonio-files-ui/commit/e43ee060f69f4c77015a368dedef5eb4b2bf9303))
+
+### Other changes
+
+* **deps:** update dependency zextras/jenkins-lib-common to v5.3.1 ([#727](https://github.com/zextras/carbonio-files-ui/issues/727)) ([2f7b531](https://github.com/zextras/carbonio-files-ui/commit/2f7b53150e2831a90fd27718b00e18e8c2903f0d))
+
+## [3.1.3](https://github.com/zextras/carbonio-files-ui/compare/v3.1.2...v3.1.3) (2026-11-02)
+
+### Other changes
+
+* **deps:** lock file maintenance ([#726](https://github.com/zextras/carbonio-files-ui/issues/726)) ([9aa0e6e](https://github.com/zextras/carbonio-files-ui/commit/9aa0e6eb91f8ad7458958594c93309624dcfe712))
+
+## [3.1.2](https://github.com/zextras/carbonio-files-ui/compare/v3.1.1...v3.1.2) (2026-10-27)
+
+### Other changes
+
+* **deps:** lock file maintenance ([#725](https://github.com/zextras/carbonio-files-ui/issues/725)) ([8ff0518](https://github.com/zextras/carbonio-files-ui/commit/8ff0518f52cdfe14a84372ceb273ad4a6fe94954))
+
+## [3.1.1](https://github.com/zextras/carbonio-files-ui/compare/v3.1.0...v3.1.1) (2026-10-23)
+
+### Other changes
+
+* **deps:** update dependency zextras/jenkins-lib-common to v5.1.0 ([#720](https://github.com/zextras/carbonio-files-ui/issues/720)) ([4374aa8](https://github.com/zextras/carbonio-files-ui/commit/4374aa88e700d1a4a2e12e2c967392aa1d4e5bdd))
+
 ## [3.1.0](https://github.com/zextras/carbonio-files-ui/compare/v3.0.1...v3.1.0) (2026-10-22)
 
 ### Features
