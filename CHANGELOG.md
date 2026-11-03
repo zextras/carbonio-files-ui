@@ -1,3 +1,13 @@
+## [3.1.4](https://github.com/zextras/carbonio-files-ui/compare/v3.1.3...v3.1.4) (2026-11-03)
+
+### Bug Fixes
+
+* **deps:** update dependency @zextras/carbonio-ui-soap-lib to v1.3.3 ([#728](https://github.com/zextras/carbonio-files-ui/issues/728)) ([e43ee06](https://github.com/zextras/carbonio-files-ui/commit/e43ee060f69f4c77015a368dedef5eb4b2bf9303))
+
+### Other changes
+
+* **deps:** update dependency zextras/jenkins-lib-common to v5.3.1 ([#727](https://github.com/zextras/carbonio-files-ui/issues/727)) ([2f7b531](https://github.com/zextras/carbonio-files-ui/commit/2f7b53150e2831a90fd27718b00e18e8c2903f0d))
+
 ## [3.1.3](https://github.com/zextras/carbonio-files-ui/compare/v3.1.2...v3.1.3) (2026-11-02)
 
 ### Other changes
