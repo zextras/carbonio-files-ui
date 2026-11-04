@@ -72,22 +72,20 @@ const BadgeWrapper = styled.div`
 export interface NotificationsProps {
 	isCollapsed?: boolean;
 	label?: string;
+	badgeCounter?: number;
 }
 
 export const Notifications = ({
 	isCollapsed = false,
-	label
+	label,
+	badgeCounter
 }: NotificationsProps = {}): React.JSX.Element => {
-	const { notifications, hasMore, loadMore, lastSeen, refetch, unread } =
-		useGetNotificationsQuery();
+	const { notifications, hasMore, loadMore, lastSeen, refetch } = useGetNotificationsQuery();
 	const lastSeenVar = useReactiveVar(lastSeenNotificationsVar);
-	const isNotificationsBadgeCounterShown = useReactiveVar(showNotificationsBadgeVar);
 	const [t] = useTranslation();
 	const [open, setOpen] = useState(false);
 	const prevOpenRef = useRef(open);
 	const anchorRef = useRef<HTMLDivElement>(null);
-
-	const badgeCounter = !!unread && isNotificationsBadgeCounterShown ? unread : undefined;
 
 	const nonNullNotifications = useMemo(
 		() => notifications?.filter((notification) => notification !== null),
@@ -101,8 +99,7 @@ export const Notifications = ({
 		prevOpenRef.current = open;
 	}, [nonNullNotifications, open]);
 
-	const handleClick = (e?: React.SyntheticEvent | KeyboardEvent): void => {
-		e?.stopPropagation?.();
+	const handleClick = (): void => {
 		setOpen((prevState) => !prevState);
 		showNotificationsBadgeVar(false);
 	};

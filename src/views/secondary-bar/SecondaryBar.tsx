@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import styled from '@emotion/styled';
@@ -13,7 +13,6 @@ import { map, find, reduce, size, orderBy, filter, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
-import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secondaryBarItemVar';
 import { showNotificationsBadgeVar } from '../../carbonio-files-ui-common/apollo/showNotificationsBadgeVar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-common/constants';
@@ -21,7 +20,10 @@ import { useGetNotificationsQuery } from '../../carbonio-files-ui-common/hooks/g
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
-import { Notifications } from '../../carbonio-files-ui-common/views/components/notifications/Notifications';
+import {
+	Notifications,
+	NotificationsProps
+} from '../../carbonio-files-ui-common/views/components/notifications/Notifications';
 import {
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
@@ -32,7 +34,7 @@ type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
 	completeTotalBadgeCounter?: string;
 	isUploadFailed?: boolean;
-	CustomElement?: React.ComponentType<{ isCollapsed?: boolean; label?: string }>;
+	CustomElement?: React.ComponentType<NotificationsProps>;
 };
 
 const CustomAccordion = styled(Accordion)`
@@ -52,27 +54,21 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	const { data } = useGetRootsListQuery();
 	const uploadStatus = useReactiveVar(uploadVar);
 
-	const [forceTrashOpen, setForceTrashOpen] = useState(false);
 	const location = useLocation();
+	const isTrashLocation =
+		location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`) ||
+		location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
 
-	useEffect(() => {
-		const isTrashLocation =
-			location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`) ||
-			location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
-
-		if (!isTrashLocation) {
-			setForceTrashOpen(false);
+	// Trash accordion is opened only when the bar becomes expanded while on a trash route.
+	// It is not bound to the route afterward, so it stays as the user left it when navigating away.
+	const [forceTrashOpen, setForceTrashOpen] = useState(() => expanded && isTrashLocation);
+	const [prevExpanded, setPrevExpanded] = useState(expanded);
+	if (expanded !== prevExpanded) {
+		setPrevExpanded(expanded);
+		if (expanded) {
+			setForceTrashOpen(isTrashLocation);
 		}
-
-		const item = secondaryBarItemVar();
-		if (expanded && (item === 'trash' || isTrashLocation)) {
-			setForceTrashOpen(true);
-			// used this workaround because when 'expanded' prop changes the component was remounted
-			secondaryBarItemVar('');
-		} else if (expanded && item === 'filter') {
-			secondaryBarItemVar('');
-		}
-	}, [expanded, location.pathname]);
+	}
 
 	const uploadsInfo = useMemo(
 		() => ({
@@ -88,10 +84,6 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	);
 
 	const items = useMemo<AccordionItemType[]>(() => {
-		const isTrashLocation =
-			location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`) ||
-			location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
-
 		const filters: AccordionItemWithPriority[] = [
 			{
 				id: 'Recents',
@@ -166,9 +158,6 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				label: t('secondaryBar.filtersList.myElements', 'My items'),
 				icon: 'HardDriveOutline',
 				onClick: (): void => {
-					if (!expanded) {
-						secondaryBarItemVar('trash');
-					}
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -179,9 +168,6 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				label: t('secondaryBar.filtersList.sharedElements', 'Shared items'),
 				icon: 'ShareOutline',
 				onClick: (): void => {
-					if (!expanded) {
-						secondaryBarItemVar('trash');
-					}
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -232,7 +218,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 						case ROOTS.TRASH: {
 							if (expanded) {
 								acc.push({
-									open: forceTrashOpen || isTrashLocation,
+									open: forceTrashOpen,
 									id: root.id,
 									priority: 7,
 									icon: 'Trash2Outline',

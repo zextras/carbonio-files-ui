@@ -21,6 +21,7 @@ import {
 import { map, uniq, find, every } from 'lodash';
 
 import { Dropzone } from './Dropzone';
+import { NotificationsProps } from './notifications/Notifications';
 import { resetSelection } from './SelectionProvider';
 import { useUserInfo } from '../../../hooks/useUserInfo';
 import { DraggedItem, draggedItemsVar } from '../../apollo/dragAndDropVar';
@@ -49,7 +50,7 @@ interface SecondaryBarItemProps {
 	item: AccordionItemType & {
 		completeTotalBadgeCounter?: string;
 		isUploadFailed?: boolean;
-		CustomElement?: React.ComponentType<{ isCollapsed?: boolean; label?: string }>;
+		CustomElement?: React.ComponentType<NotificationsProps>;
 	};
 	expanded: boolean;
 }
@@ -200,8 +201,10 @@ export const SecondaryBarItem = ({ item, expanded }: SecondaryBarItemProps): Rea
 					);
 				}
 
-				if (item.id === 'Notifications' && item.CustomElement) {
-					return <item.CustomElement isCollapsed label={item.label} />;
+				if (item.CustomElement) {
+					return (
+						<item.CustomElement isCollapsed label={item.label} badgeCounter={item.badgeCounter} />
+					);
 				}
 
 				return (

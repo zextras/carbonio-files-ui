@@ -22,6 +22,7 @@ import {
 import { screen, setup } from '../../carbonio-files-ui-common/tests/utils';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetNotificationsDocument } from '../../carbonio-files-ui-common/types/graphql/types';
+import * as useNavigation from '../../hooks/useNavigation';
 import server from '../../mocks/server';
 
 vi.mock('../../hooks/useIsCarbonioCE', () => ({
@@ -100,6 +101,36 @@ describe('SecondaryBar', () => {
 			expect(screen.queryByText(unread)).not.toBeInTheDocument();
 		});
 
+		it('should show the counter badge on the bell while collapsed and remove it once the user opens the popover', async () => {
+			const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
+			const unread = 1;
+			server.use(
+				graphql.query(GetNotificationsDocument, () =>
+					HttpResponse.json({
+						data: {
+							getNotifications: {
+								__typename: 'NotificationPage',
+								last_seen: faker.date.recent().getTime(),
+								notifications,
+								page_token: null,
+								unread
+							}
+						}
+					})
+				)
+			);
+			const { user } = setup(<SecondaryBar expanded={false} />);
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
+			expect(screen.getByText(unread)).toBeVisible();
+			await user.click(
+				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.secondaryBarNotifications })
+			);
+			expect(screen.queryByText(unread)).not.toBeInTheDocument();
+		});
+
 		it('should open the Notifications popover when clicking the notifications item while secondary bar is collapsed', async () => {
 			const { user } = setup(<SecondaryBar expanded={false} />);
 			const bellButton = screen.getByRoleWithIcon('button', {
@@ -168,13 +199,19 @@ describe('SecondaryBar', () => {
 				expect(screen.getByText('Trash')).toBeVisible();
 			});
 
-			it('should split trash into My items and Shared items when collapsed and allow clicking them', async () => {
+			it('should split trash into My items and Shared items when collapsed and navigate to them on click', async () => {
+				const mockedUseNavigationHook = {
+					navigateToFolder: vi.fn(),
+					navigateTo: vi.fn(),
+					navigateBack: vi.fn()
+				};
+				vi.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
 				const { user } = setup(<SecondaryBar expanded={false} />);
 				const myItemsButton = screen.getByRoleWithIcon('button', {
-					icon: 'icon: HardDriveOutline'
+					icon: ICON_REGEXP.secondaryBarTrashMyItems
 				});
 				const sharedItemsButton = screen.getByRoleWithIcon('button', {
-					icon: 'icon: ShareOutline'
+					icon: ICON_REGEXP.secondaryBarTrashSharedItems
 				});
 
 				expect(myItemsButton).toBeVisible();
@@ -184,7 +221,14 @@ describe('SecondaryBar', () => {
 				).not.toBeInTheDocument();
 
 				await user.click(myItemsButton);
+				expect(mockedUseNavigationHook.navigateTo).toHaveBeenLastCalledWith(
+					`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`
+				);
 				await user.click(sharedItemsButton);
+				expect(mockedUseNavigationHook.navigateTo).toHaveBeenLastCalledWith(
+					`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`
+				);
+				expect(mockedUseNavigationHook.navigateTo).toHaveBeenCalledTimes(2);
 			});
 
 			it('should expand the trash accordion when transitioning from collapsed to expanded with an active trash item', () => {
@@ -196,6 +240,33 @@ describe('SecondaryBar', () => {
 				rerender(<SecondaryBar expanded />);
 				expect(screen.getByText('Trash')).toBeVisible();
 				expect(screen.getByText('My items')).toBeVisible();
+			});
+
+			it('should not open the trash accordion when expanding after navigating from a trash item to another item while collapsed', async () => {
+				const { user, rerender } = setup(<SecondaryBar expanded={false} />);
+				await user.click(
+					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.secondaryBarTrashMyItems })
+				);
+				await user.click(
+					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.secondaryBarRecents })
+				);
+
+				rerender(<SecondaryBar expanded />);
+
+				expect(screen.getByText('Trash')).toBeVisible();
+				expect(screen.queryByText('My items')).not.toBeInTheDocument();
+			});
+
+			it('should keep the trash accordion open when navigating away from a trash route while expanded', async () => {
+				const { user } = setup(<SecondaryBar expanded />, {
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+				});
+				expect(screen.getByText('My items')).toBeVisible();
+
+				await user.click(screen.getByText('Recents'));
+
+				expect(screen.getByText('My items')).toBeVisible();
+				expect(screen.getByText('Shared items')).toBeVisible();
 			});
 		});
 	});

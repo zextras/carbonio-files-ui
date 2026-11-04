@@ -6,7 +6,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { act, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { graphql, HttpResponse } from 'msw';
 import { Mock } from 'vitest';
 
@@ -591,7 +591,7 @@ describe('Notifications', () => {
 				expect(screen.queryByText(/no notifications/i)).not.toBeInTheDocument();
 			});
 
-			it('should render the notifications counter badge in collapsed mode if unread notifications are present and remove it on click', async () => {
+			it('should render the badge counter received as prop in collapsed mode and hide the badge counter on click', async () => {
 				const unread = 2;
 				const notifications = [populateAddedNodeNotification()];
 				const mocks = {
@@ -599,11 +599,7 @@ describe('Notifications', () => {
 						getNotifications: mockGetNotifications(unread, notifications)
 					}
 				} satisfies Partial<Resolvers>;
-				const { user } = setup(<Notifications isCollapsed />, { mocks });
-
-				await act(async () => {
-					await vi.advanceTimersToNextTimerAsync();
-				});
+				const { user } = setup(<Notifications isCollapsed badgeCounter={unread} />, { mocks });
 
 				expect(screen.getByText(unread)).toBeVisible();
 
@@ -612,7 +608,7 @@ describe('Notifications', () => {
 				});
 				await user.click(bellButton);
 
-				expect(screen.queryByText(unread)).not.toBeInTheDocument();
+				expect(showNotificationsBadgeVar()).toBe(false);
 			});
 		});
 	});
