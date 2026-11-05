@@ -10,7 +10,7 @@ import { faker } from '@faker-js/faker';
 import { act, screen, waitFor } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { forEach, keyBy } from 'lodash';
-import { graphql, http, HttpResponse, HttpResponseResolver, StrictResponse } from 'msw';
+import { graphql, http, HttpResponse, HttpResponseResolver } from 'msw';
 
 import { UploadListWrapper } from './UploadList.test';
 import server from '../../../mocks/server';
@@ -126,7 +126,7 @@ describe('Upload List', () => {
 						return HttpResponse.json({ nodeId: filesToUpload[1].id });
 					}
 					await delayUntil(emitter, EMITTER_CODES.never);
-					return new Response(null, { status: XMLHttpRequest.UNSENT }) as StrictResponse<null>;
+					return HttpResponse.error();
 				};
 
 				const uploadFileHandler = vi.fn(handleUploadFileRequest);
@@ -202,8 +202,9 @@ describe('Upload List', () => {
 					filesToUpload[1].name
 				);
 
-				act(() => {
+				await act(async () => {
 					emitter.emit(EMITTER_CODES.never);
+					await vi.advanceTimersToNextTimerAsync();
 				});
 			});
 
@@ -273,8 +274,9 @@ describe('Upload List', () => {
 
 					expect((localRootCachedData?.getNode as Folder).children?.nodes).toHaveLength(0);
 
-					act(() => {
+					await act(async () => {
 						emitter.emit(EMITTER_CODES.never);
+						await vi.advanceTimersToNextTimerAsync();
 					});
 				});
 
@@ -315,9 +317,7 @@ describe('Upload List', () => {
 							async () => {
 								await delayUntil(emitter, EMITTER_CODES.never);
 								uploadHandlerResolve();
-								return new Response(null, {
-									status: XMLHttpRequest.UNSENT
-								}) as StrictResponse<null>;
+								return HttpResponse.error();
 							}
 						)
 					);
@@ -350,8 +350,9 @@ describe('Upload List', () => {
 						folder.name
 					);
 
-					act(() => {
+					await act(async () => {
 						emitter.emit(EMITTER_CODES.never);
+						await vi.advanceTimersToNextTimerAsync();
 					});
 				});
 
