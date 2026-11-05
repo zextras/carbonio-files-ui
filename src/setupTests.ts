@@ -8,7 +8,7 @@ import '@testing-library/jest-dom';
 import React from 'react';
 
 import { type ApolloClient } from '@apollo/client';
-import { act, configure } from '@testing-library/react';
+import { act, cleanup, configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
 import dotenv from 'dotenv';
 import { noop } from 'lodash';
@@ -195,6 +195,14 @@ beforeEach(() => {
 
 afterEach(() => {
 	vi.clearAllTimers();
+	// RTL unmounts in its own afterEach, which runs after this one (after hooks run in reverse order).
+	// Unmount here and run the timers the unmount schedules, so that Apollo unsubscribes the queries
+	// and releases their in-flight requests before the cache reset. Otherwise the reset makes the
+	// mounted queries refetch, and the next test receives that request or shares the pending one
+	cleanup();
+	act(() => {
+		vi.runAllTimers();
+	});
 	server.resetHandlers();
 	act(() => {
 		window.resizeTo(1024, 768);
