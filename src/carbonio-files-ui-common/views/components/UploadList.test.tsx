@@ -11,7 +11,7 @@ import { faker } from '@faker-js/faker';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { forEach, find, keyBy, filter } from 'lodash';
-import { http, HttpResponse, StrictResponse } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import { SelectionProvider } from './SelectionProvider';
 import { UploadList } from './UploadList';
@@ -417,7 +417,7 @@ describe('Upload list', () => {
 							window.atob(request.headers.get('filename') as string);
 						if (fileName === uploadedFiles[0].name) {
 							await delayUntil(emitter, EMITTER_CODES.never);
-							return new Response(null, { status: XMLHttpRequest.UNSENT }) as StrictResponse<null>;
+							return HttpResponse.error();
 						}
 						await delayUntil(emitter, EMITTER_CODES.success);
 						return HttpResponse.json({ nodeId: faker.string.uuid() });
@@ -467,8 +467,9 @@ describe('Upload list', () => {
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadCompleted)).toHaveLength(3);
 			expect(screen.queryByTestId(ICON_REGEXP.uploadLoading)).not.toBeInTheDocument();
 
-			act(() => {
+			await act(async () => {
 				emitter.emit(EMITTER_CODES.never);
+				await vi.advanceTimersToNextTimerAsync();
 			});
 		});
 
