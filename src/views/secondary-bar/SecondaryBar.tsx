@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useReactiveVar } from '@apollo/client';
 import styled from '@emotion/styled';
@@ -13,7 +13,6 @@ import { map, find, reduce, size, orderBy, filter, some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
-import { secondaryBarItemVar } from '../../carbonio-files-ui-common/apollo/secondaryBarItemVar';
 import { showNotificationsBadgeVar } from '../../carbonio-files-ui-common/apollo/showNotificationsBadgeVar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
 import { INTERNAL_PATH, FILTER_TYPE, ROOTS } from '../../carbonio-files-ui-common/constants';
@@ -21,7 +20,10 @@ import { useGetNotificationsQuery } from '../../carbonio-files-ui-common/hooks/g
 import { useGetRootsListQuery } from '../../carbonio-files-ui-common/hooks/graphql/queries/useGetRootsListQuery';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetRootsListQuery } from '../../carbonio-files-ui-common/types/graphql/types';
-import { Notifications } from '../../carbonio-files-ui-common/views/components/notifications/Notifications';
+import {
+	Notifications,
+	NotificationsProps
+} from '../../carbonio-files-ui-common/views/components/notifications/Notifications';
 import {
 	SecondaryBarItemExpanded,
 	SecondaryBarItemNotExpanded
@@ -32,7 +34,7 @@ type AccordionItemWithPriority = AccordionItemType & {
 	priority?: number;
 	completeTotalBadgeCounter?: string;
 	isUploadFailed?: boolean;
-	CustomElement?: React.ComponentType;
+	CustomElement?: React.ComponentType<NotificationsProps>;
 };
 
 const CustomAccordion = styled(Accordion)`
@@ -52,19 +54,21 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 	const { data } = useGetRootsListQuery();
 	const uploadStatus = useReactiveVar(uploadVar);
 
-	const [forceTrashOpen, setForceTrashOpen] = useState(false);
 	const location = useLocation();
+	const isTrashLocation =
+		location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`) ||
+		location.pathname.includes(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
 
-	useEffect(() => {
-		const item = secondaryBarItemVar();
-		if (expanded && item === 'trash') {
-			setForceTrashOpen(true);
-			// used this workaround because when 'expanded' prop changes the component was remounted
-			secondaryBarItemVar('');
-		} else if (expanded && item === 'filter') {
-			secondaryBarItemVar('');
+	// Trash accordion is opened only when the bar becomes expanded while on a trash route.
+	// It is not bound to the route afterward, so it stays as the user left it when navigating away.
+	const [forceTrashOpen, setForceTrashOpen] = useState(() => expanded && isTrashLocation);
+	const [prevExpanded, setPrevExpanded] = useState(expanded);
+	if (expanded !== prevExpanded) {
+		setPrevExpanded(expanded);
+		if (expanded) {
+			setForceTrashOpen(isTrashLocation);
 		}
-	}, [expanded]);
+	}
 
 	const uploadsInfo = useMemo(
 		() => ({
@@ -86,8 +90,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				priority: 2,
 				icon: 'ClockOutline',
 				label: t('secondaryBar.filtersList.recents', 'Recents'),
-				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-					ev.stopPropagation();
+				onClick: (): void => {
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.recents}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -99,8 +102,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				icon: 'FlagOutline',
 				iconColor: 'error',
 				label: t('secondaryBar.filtersList.flagged', 'Flagged'),
-				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-					ev.stopPropagation();
+				onClick: (): void => {
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.flagged}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -112,8 +114,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				icon: 'ArrowCircleLeftOutline',
 				iconColor: 'linked',
 				label: t('secondaryBar.filtersList.sharedWithMe', 'Shared with me'),
-				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-					ev.stopPropagation();
+				onClick: (): void => {
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedWithMe}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -125,8 +126,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				icon: 'ArrowCircleRightOutline',
 				iconColor: 'warning',
 				label: t('secondaryBar.filtersList.sharedByMe', 'Shared by me'),
-				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-					ev.stopPropagation();
+				onClick: (): void => {
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedByMe}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -139,8 +139,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 			priority: 6,
 			label: t('secondaryBar.uploads', 'Uploads'),
 			icon: !uploadsInfo.isUploading ? 'CloudUploadOutline' : 'AnimatedUpload',
-			onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-				ev.stopPropagation();
+			onClick: (): void => {
 				navigateTo(INTERNAL_PATH.UPLOADS);
 			},
 			badgeType: 'unread',
@@ -158,8 +157,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				id: ROOTS.TRASH_MY_ELEMENTS,
 				label: t('secondaryBar.filtersList.myElements', 'My items'),
 				icon: 'HardDriveOutline',
-				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-					ev.stopPropagation();
+				onClick: (): void => {
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -169,8 +167,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 				id: ROOTS.TRASH_SHARED_ELEMENTS,
 				label: t('secondaryBar.filtersList.sharedElements', 'Shared items'),
 				icon: 'ShareOutline',
-				onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-					ev.stopPropagation();
+				onClick: (): void => {
 					navigateTo(`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`);
 				},
 				CustomComponent: SecondaryBarItemExpanded,
@@ -208,8 +205,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 								id: root.id,
 								label: t('secondaryBar.filesHome', 'Home'),
 								icon: 'FolderOutline',
-								onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-									ev.stopPropagation();
+								onClick: (): void => {
 									navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
 								},
 								CustomComponent: SecondaryBarItemExpanded,
@@ -220,20 +216,24 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 							break;
 						}
 						case ROOTS.TRASH: {
-							acc.push({
-								open: forceTrashOpen,
-								id: root.id,
-								priority: 7,
-								icon: 'Trash2Outline',
-								label: t('secondaryBar.filtersList.trash', 'Trash'),
-								onClick: (): void => {
-									if (!expanded) {
-										secondaryBarItemVar('trash');
-									}
-								},
-								items: trashItems,
-								CustomComponent: SecondaryBarItemExpanded
-							});
+							if (expanded) {
+								acc.push({
+									open: forceTrashOpen,
+									id: root.id,
+									priority: 7,
+									icon: 'Trash2Outline',
+									label: t('secondaryBar.filtersList.trash', 'Trash'),
+									items: trashItems,
+									CustomComponent: SecondaryBarItemExpanded
+								});
+							} else {
+								acc.push(
+									...map(trashItems, (item, index) => ({
+										...item,
+										priority: 7 + index * 0.1
+									}))
+								);
+							}
 							break;
 						}
 						default: {
@@ -241,8 +241,7 @@ export const SecondaryBar = ({ expanded }: SecondaryBarProps): React.JSX.Element
 								priority: idx + 4,
 								id: root.id,
 								label: root.name,
-								onClick: (ev: React.SyntheticEvent | KeyboardEvent): void => {
-									ev.stopPropagation();
+								onClick: (): void => {
 									navigateTo(`${INTERNAL_PATH.ROOT}/${root.id}`);
 								},
 								CustomComponent: SecondaryBarItemExpanded,
