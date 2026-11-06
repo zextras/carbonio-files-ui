@@ -271,7 +271,7 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		expect(screen.queryByText(/content/i)).not.toBeInTheDocument();
+		expect(screen.queryByText('Content')).not.toBeInTheDocument();
 	});
 
 	test('Content is visible for folders', async () => {
@@ -285,7 +285,7 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		expect(screen.getByText(/content/i)).toBeVisible();
+		expect(screen.getByText('Content')).toBeVisible();
 		expect(screen.getByText(children[0].name)).toBeVisible();
 		expect(screen.getByText(children[1].name)).toBeVisible();
 	});
@@ -298,7 +298,7 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		expect(screen.getByText(/path/i)).toBeVisible();
+		expect(screen.getByText('Show path')).toBeVisible();
 		expect(screen.getByText(/parent folder name/i)).toBeVisible();
 	});
 
@@ -310,7 +310,7 @@ describe('Upload Displayer Node', () => {
 			mocks: {}
 		});
 
-		expect(screen.getByText(/path/i)).toBeVisible();
+		expect(screen.getByText('Show path')).toBeVisible();
 		expect(screen.getByText(/item name/i)).toBeVisible();
 	});
 

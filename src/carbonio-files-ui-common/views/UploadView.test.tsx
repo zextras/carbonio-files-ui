@@ -98,8 +98,8 @@ describe('Upload view', () => {
 			).toBeVisible();
 			// wait for every upload to complete
 			await screen.findAllByTestId(ICON_REGEXP.uploadCompleted);
-			expect(screen.getByText(/path/i)).toBeVisible();
-			expect(screen.getByText(/content/i)).toBeVisible();
+			expect(screen.getByText('Show path')).toBeVisible();
+			expect(screen.getByText('Content')).toBeVisible();
 			expect(screen.getByText(folder.children.nodes[0]!.name)).toBeVisible();
 			expect(screen.getByText(folder.children.nodes[1]!.name)).toBeVisible();
 		});
@@ -139,8 +139,8 @@ describe('Upload view', () => {
 			expect(
 				within(screen.getByTestId(SELECTORS.displayer)).queryByText(folder.name)
 			).not.toBeInTheDocument();
-			expect(screen.queryByText(/path/i)).not.toBeInTheDocument();
-			expect(screen.queryByText(/content/i)).not.toBeInTheDocument();
+			expect(screen.queryByText('Show path')).not.toBeInTheDocument();
+			expect(screen.queryByText('Content')).not.toBeInTheDocument();
 		});
 
 		test('When the first item uploaded is a file and a folder is also uploaded, does not open displayer for this folder', async () => {
@@ -170,8 +170,8 @@ describe('Upload view', () => {
 			expect(
 				within(screen.getByTestId(SELECTORS.displayer)).queryByText(folder.name)
 			).not.toBeInTheDocument();
-			expect(screen.queryByText(/path/i)).not.toBeInTheDocument();
-			expect(screen.queryByText(/content/i)).not.toBeInTheDocument();
+			expect(screen.queryByText('Show path')).not.toBeInTheDocument();
+			expect(screen.queryByText('Content')).not.toBeInTheDocument();
 		});
 	});
 

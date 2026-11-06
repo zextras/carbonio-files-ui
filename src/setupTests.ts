@@ -8,7 +8,7 @@ import '@testing-library/jest-dom';
 import React from 'react';
 
 import { type ApolloClient } from '@apollo/client';
-import { act, configure } from '@testing-library/react';
+import { act, cleanup, configure } from '@testing-library/react';
 import { Account } from '@zextras/carbonio-shell-ui';
 import dotenv from 'dotenv';
 import { noop } from 'lodash';
@@ -24,6 +24,7 @@ import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo
 import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
 import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
+import { UploadQueue } from './carbonio-files-ui-common/utils/uploadUtils';
 import { LOGGED_USER_ACCOUNT } from './mocks/constants';
 import server from './mocks/server';
 
@@ -197,6 +198,17 @@ beforeEach(() => {
 
 afterEach(() => {
 	vi.clearAllTimers();
+	// RTL unmounts in its own afterEach, which runs after this one (after hooks run in reverse order).
+	// Unmount here and run the timers the unmount schedules, so that Apollo unsubscribes the queries
+	// and releases their in-flight requests before the cache reset. Otherwise the reset makes the
+	// mounted queries refetch, and the next test receives that request or shares the pending one
+	cleanup();
+	act(() => {
+		vi.runAllTimers();
+	});
+	// UploadQueue is a module singleton: free the slots of the uploads a failed test left pending,
+	// otherwise the uploads of the following tests in the file never start
+	UploadQueue.removeAndStartNext(...Object.keys(uploadVar()));
 	server.resetHandlers();
 	act(() => {
 		window.resizeTo(1024, 768);
