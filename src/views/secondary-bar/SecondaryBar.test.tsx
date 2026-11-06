@@ -12,7 +12,7 @@ import { graphql, HttpResponse } from 'msw';
 
 import { SecondaryBar } from './SecondaryBar';
 import { uploadVar } from '../../carbonio-files-ui-common/apollo/uploadVar';
-import { ROOTS } from '../../carbonio-files-ui-common/constants';
+import { FILTER_TYPE, INTERNAL_PATH, ROOTS } from '../../carbonio-files-ui-common/constants';
 import { ICON_REGEXP } from '../../carbonio-files-ui-common/constants/test';
 import {
 	populateAddedNodeNotification,
@@ -22,6 +22,7 @@ import {
 import { screen, setup } from '../../carbonio-files-ui-common/tests/utils';
 import { UploadStatus } from '../../carbonio-files-ui-common/types/graphql/client-types';
 import { GetNotificationsDocument } from '../../carbonio-files-ui-common/types/graphql/types';
+import * as useNavigation from '../../hooks/useNavigation';
 import server from '../../mocks/server';
 
 vi.mock('../../hooks/useIsCarbonioCE', () => ({
@@ -100,6 +101,49 @@ describe('SecondaryBar', () => {
 			expect(screen.queryByText(unread)).not.toBeInTheDocument();
 		});
 
+		it('should show the counter badge on the bell while collapsed and remove it once the user opens the popover', async () => {
+			const notifications = Array.from({ length: 3 }, () => populateAddedNodeNotification());
+			const unread = 1;
+			server.use(
+				graphql.query(GetNotificationsDocument, () =>
+					HttpResponse.json({
+						data: {
+							getNotifications: {
+								__typename: 'NotificationPage',
+								last_seen: faker.date.recent().getTime(),
+								notifications,
+								page_token: null,
+								unread
+							}
+						}
+					})
+				)
+			);
+			const { user } = setup(<SecondaryBar expanded={false} />);
+
+			await act(async () => {
+				await vi.advanceTimersToNextTimerAsync();
+			});
+			expect(screen.getByText(unread)).toBeVisible();
+			await user.click(
+				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.secondaryBarNotifications })
+			);
+			expect(screen.queryByText(unread)).not.toBeInTheDocument();
+		});
+
+		it('should open the Notifications popover when clicking the notifications item while secondary bar is collapsed', async () => {
+			const { user } = setup(<SecondaryBar expanded={false} />);
+			const bellButton = screen.getByRoleWithIcon('button', {
+				icon: ICON_REGEXP.secondaryBarNotifications
+			});
+			expect(bellButton).toBeVisible();
+			await user.click(bellButton);
+			expect(screen.getByText('Notifications')).toBeVisible();
+			expect(
+				screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.refreshNotification })
+			).toBeVisible();
+		});
+
 		describe('Upload item', () => {
 			test('should render the upload item without the badge', () => {
 				setup(<SecondaryBar expanded />);
@@ -146,6 +190,83 @@ describe('SecondaryBar', () => {
 					});
 				});
 				expect(screen.queryByTestId(ICON_REGEXP.uploadFailed)).not.toBeInTheDocument();
+			});
+		});
+
+		describe('Trash item', () => {
+			it('should render the trash accordion when expanded', () => {
+				setup(<SecondaryBar expanded />);
+				expect(screen.getByText('Trash')).toBeVisible();
+			});
+
+			it('should split trash into My items and Shared items when collapsed and navigate to them on click', async () => {
+				const mockedUseNavigationHook = {
+					navigateToFolder: vi.fn(),
+					navigateTo: vi.fn(),
+					navigateBack: vi.fn()
+				};
+				vi.spyOn(useNavigation, 'useNavigation').mockReturnValue(mockedUseNavigationHook);
+				const { user } = setup(<SecondaryBar expanded={false} />);
+				const myItemsButton = screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.secondaryBarTrashMyItems
+				});
+				const sharedItemsButton = screen.getByRoleWithIcon('button', {
+					icon: ICON_REGEXP.secondaryBarTrashSharedItems
+				});
+
+				expect(myItemsButton).toBeVisible();
+				expect(sharedItemsButton).toBeVisible();
+				expect(
+					screen.queryByRoleWithIcon('button', { icon: ICON_REGEXP.moveToTrash })
+				).not.toBeInTheDocument();
+
+				await user.click(myItemsButton);
+				expect(mockedUseNavigationHook.navigateTo).toHaveBeenLastCalledWith(
+					`${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`
+				);
+				await user.click(sharedItemsButton);
+				expect(mockedUseNavigationHook.navigateTo).toHaveBeenLastCalledWith(
+					`${INTERNAL_PATH.FILTER}${FILTER_TYPE.sharedTrash}`
+				);
+				expect(mockedUseNavigationHook.navigateTo).toHaveBeenCalledTimes(2);
+			});
+
+			it('should expand the trash accordion when transitioning from collapsed to expanded with an active trash item', () => {
+				const { rerender } = setup(<SecondaryBar expanded={false} />, {
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+				});
+
+				expect(screen.queryByText('Trash')).not.toBeInTheDocument();
+				rerender(<SecondaryBar expanded />);
+				expect(screen.getByText('Trash')).toBeVisible();
+				expect(screen.getByText('My items')).toBeVisible();
+			});
+
+			it('should not open the trash accordion when expanding after navigating from a trash item to another item while collapsed', async () => {
+				const { user, rerender } = setup(<SecondaryBar expanded={false} />);
+				await user.click(
+					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.secondaryBarTrashMyItems })
+				);
+				await user.click(
+					screen.getByRoleWithIcon('button', { icon: ICON_REGEXP.secondaryBarRecents })
+				);
+
+				rerender(<SecondaryBar expanded />);
+
+				expect(screen.getByText('Trash')).toBeVisible();
+				expect(screen.queryByText('My items')).not.toBeInTheDocument();
+			});
+
+			it('should keep the trash accordion open when navigating away from a trash route while expanded', async () => {
+				const { user } = setup(<SecondaryBar expanded />, {
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`]
+				});
+				expect(screen.getByText('My items')).toBeVisible();
+
+				await user.click(screen.getByText('Recents'));
+
+				expect(screen.getByText('My items')).toBeVisible();
+				expect(screen.getByText('Shared items')).toBeVisible();
 			});
 		});
 	});

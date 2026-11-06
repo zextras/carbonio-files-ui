@@ -19,6 +19,7 @@ import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar
 import { draggedItemsVar } from './carbonio-files-ui-common/apollo/dragAndDropVar';
 import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
+import { showNotificationsBadgeVar } from './carbonio-files-ui-common/apollo/showNotificationsBadgeVar';
 import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
 import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
@@ -157,6 +158,7 @@ beforeEach(() => {
 	viewModeVar(VIEW_MODE_DEFAULT);
 	draggedItemsVar(null);
 	destinationVar({ defaultValue: undefined, currentValue: undefined });
+	showNotificationsBadgeVar(true);
 	window.localStorage.clear();
 	healthCache.healthRequested = true;
 	healthCache.healthReceived = true;
