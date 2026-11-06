@@ -23,6 +23,7 @@ import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo
 import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
 import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
+import { UploadQueue } from './carbonio-files-ui-common/utils/uploadUtils';
 import { LOGGED_USER_ACCOUNT } from './mocks/constants';
 import server from './mocks/server';
 
@@ -203,6 +204,9 @@ afterEach(() => {
 	act(() => {
 		vi.runAllTimers();
 	});
+	// UploadQueue is a module singleton: free the slots of the uploads a failed test left pending,
+	// otherwise the uploads of the following tests in the file never start
+	UploadQueue.removeAndStartNext(...Object.keys(uploadVar()));
 	server.resetHandlers();
 	act(() => {
 		window.resizeTo(1024, 768);

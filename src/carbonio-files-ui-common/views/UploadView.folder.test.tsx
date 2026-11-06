@@ -162,7 +162,7 @@ describe('Upload View', () => {
 			const dropzone = await screen.findByText(/nothing here/i);
 
 			await uploadWithDnD(dropzone, dataTransferObj);
-			await screen.findByText(/content/i);
+			await screen.findByText('Content');
 			await screen.findByTestId(ICON_REGEXP.uploadCompleted);
 			expect(screen.getByTestId(ICON_REGEXP.uploadCompleted)).toBeVisible();
 			expect(screen.getAllByTestId(ICON_REGEXP.uploadLoading)).toHaveLength(2);
@@ -227,7 +227,7 @@ describe('Upload View', () => {
 			const dropzone = await screen.findByText(/nothing here/i);
 
 			await uploadWithDnD(dropzone, dataTransferObj);
-			await screen.findByText(/content/i);
+			await screen.findByText('Content');
 			// wait for the first 3 content items to complete
 			await screen.findAllByTestId(ICON_REGEXP.uploadCompleted);
 			// wait for the 4th one to fail (and so the folder to fail)
@@ -337,7 +337,7 @@ describe('Upload View', () => {
 
 			const dropzone = await screen.findByText(/nothing here/i);
 			await uploadWithDnD(dropzone, dataTransferObj);
-			await screen.findByText(/content/i);
+			await screen.findByText('Content');
 			await screen.findByText(level3File.name);
 			// progress of main folder
 			expect(screen.getByText('0/5')).toBeVisible();
@@ -482,7 +482,7 @@ describe('Upload View', () => {
 			const dropzone = await screen.findByText(/nothing here/i);
 
 			await uploadWithDnD(dropzone, dataTransferObj);
-			await screen.findByText(/content/i);
+			await screen.findByText('Content');
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
 				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
@@ -604,7 +604,7 @@ describe('Upload View', () => {
 			const dropzone = await screen.findByText(/nothing here/i);
 
 			await uploadWithDnD(dropzone, dataTransferObj);
-			await screen.findByText(/content/i);
+			await screen.findByText('Content');
 			await screen.findByText(level3File.name);
 			const mainFolderItem = screen
 				.getAllByTestId(SELECTORS.nodeItem(), { exact: false })
@@ -839,7 +839,7 @@ describe('Upload View', () => {
 				const dropzone = await screen.findByText(/nothing here/i);
 
 				await uploadWithDnD(dropzone, dataTransferObj);
-				await screen.findByText(/content/i);
+				await screen.findByText('Content');
 				await screen.findByText(level3File.name);
 				await screen.findByText('3/4');
 				expect(screen.getByText('3/4')).toBeVisible();
@@ -906,7 +906,7 @@ describe('Upload View', () => {
 				const dropzone = await screen.findByText(/nothing here/i);
 
 				await uploadWithDnD(dropzone, dataTransferObj);
-				await screen.findByText(/content/i);
+				await screen.findByText('Content');
 				await screen.findByText(level2Folder.name);
 				await screen.findByText('3/5');
 				expect(screen.getByText('3/5')).toBeVisible();
@@ -967,7 +967,7 @@ describe('Upload View', () => {
 				const dropzone = await screen.findByText(/nothing here/i);
 
 				await uploadWithDnD(dropzone, dataTransferObj);
-				await screen.findByText(/content/i);
+				await screen.findByText('Content');
 				await screen.findByText(level3File.name);
 				await waitFor(() =>
 					expect(screen.getAllByTestId(ICON_REGEXP.uploadFailed)).toHaveLength(5)
