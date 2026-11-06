@@ -1,3 +1,13 @@
+## [3.2.0](https://github.com/zextras/carbonio-files-ui/compare/v3.1.4...v3.2.0) (2026-11-06)
+
+### Features
+
+* support opening notifications popover in collapsed secondary bar ([e646a14](https://github.com/zextras/carbonio-files-ui/commit/e646a14e571cb33e44bc4955e224964ec2908139)), closes [#717](https://github.com/zextras/carbonio-files-ui/issues/717)
+
+### Other changes
+
+* **deps:** update devdependencies (weekly) ([#707](https://github.com/zextras/carbonio-files-ui/issues/707)) ([8193adb](https://github.com/zextras/carbonio-files-ui/commit/8193adbc80fbb615f6630a9ad4b62aebd6cf1f20))
+
 ## [3.1.4](https://github.com/zextras/carbonio-files-ui/compare/v3.1.3...v3.1.4) (2026-11-03)
 
 ### Bug Fixes
