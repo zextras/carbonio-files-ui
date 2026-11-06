@@ -10,7 +10,7 @@ import { faker } from '@faker-js/faker';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import { Button as MockButton, CollapsingActionsProps } from '@zextras/carbonio-design-system';
 import { EventEmitter } from 'events';
-import { graphql, http, HttpResponse, StrictResponse } from 'msw';
+import { graphql, http, HttpResponse } from 'msw';
 
 import UploadView from './UploadView';
 import server from '../../mocks/server';
@@ -116,8 +116,9 @@ describe('Upload View', () => {
 			expect(within(mainFolderItem).getByText('2/3')).toBeVisible();
 			expect(within(subFolderItem).getByText('1/1')).toBeVisible();
 
-			act(() => {
+			await act(async () => {
 				emitter.emit(EMITTER_CODES.never);
+				await vi.advanceTimersToNextTimerAsync();
 			});
 		});
 
@@ -822,10 +823,7 @@ describe('Upload View', () => {
 						`${REST_ENDPOINT}${UPLOAD_PATH}`,
 						async () =>
 							Promise.any([
-								delayUntil(emitter, EMITTER_CODES.never).then(
-									() =>
-										new Response(null, { status: XMLHttpRequest.UNSENT }) as StrictResponse<null>
-								)
+								delayUntil(emitter, EMITTER_CODES.never).then(() => HttpResponse.error())
 							])
 					)
 				);
