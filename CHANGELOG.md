@@ -1,3 +1,9 @@
+## [3.2.2](https://github.com/zextras/carbonio-files-ui/compare/v3.2.1...v3.2.2) (2026-11-10)
+
+### Bug Fixes
+
+* **deps:** update carbonio-shell-ui to v15.5.2 and pin carbonio-search-ui to v0.1.26 ([#734](https://github.com/zextras/carbonio-files-ui/issues/734)) ([542804a](https://github.com/zextras/carbonio-files-ui/commit/542804a954e0d3242ccc192aec86108d2d4bbea7))
+
 ## [3.2.1](https://github.com/zextras/carbonio-files-ui/compare/v3.2.0...v3.2.1) (2026-11-10)
 
 ### Other changes
