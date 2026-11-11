@@ -1,3 +1,9 @@
+## [3.2.3](https://github.com/zextras/carbonio-files-ui/compare/v3.2.2...v3.2.3) (2026-11-11)
+
+### Other changes
+
+* **deps:** update devdependencies (weekly) ([#732](https://github.com/zextras/carbonio-files-ui/issues/732)) ([1813f7f](https://github.com/zextras/carbonio-files-ui/commit/1813f7febc5d5927fd19591b40140985ffec5415))
+
 ## [3.2.2](https://github.com/zextras/carbonio-files-ui/compare/v3.2.1...v3.2.2) (2026-11-10)
 
 ### Bug Fixes
