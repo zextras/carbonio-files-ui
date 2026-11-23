@@ -160,8 +160,8 @@ importers:
         specifier: 16.3.3
         version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@testing-library/user-event':
-        specifier: 14.6.12
-        version: 14.6.12(@testing-library/dom@10.4.2)
+        specifier: 14.6.13
+        version: 14.6.13(@testing-library/dom@10.4.2)
       '@types/core-js':
         specifier: 2.5.8
         version: 2.5.8
@@ -187,8 +187,8 @@ importers:
         specifier: 4.1.12
         version: 4.1.12(vitest@4.1.12)
       '@zextras/carbonio-search-ui':
-        specifier: github:zextras/carbonio-search-ui#v0.1.27
-        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/4cdb9835ed6889f6ce209c3da129991b2e651575(@types/react@18.3.31)(@zextras/carbonio-design-system@12.2.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@zextras/carbonio-shell-ui@15.5.2(539196d269a852a99fcc470ee3db34b3))
+        specifier: github:zextras/carbonio-search-ui#v0.1.29
+        version: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/256a20fb5c0a33c5eba942fac9e4a7b49c2438ce(@types/react@18.3.31)(@zextras/carbonio-design-system@12.2.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@zextras/carbonio-shell-ui@15.5.2(539196d269a852a99fcc470ee3db34b3))
       '@zextras/carbonio-ui-configs':
         specifier: 2.1.1
         version: 2.1.1(@testing-library/dom@10.4.2)(typescript@5.9.3)
@@ -205,8 +205,8 @@ importers:
         specifier: 8.57.1
         version: 8.57.1
       eslint-plugin-jest-dom:
-        specifier: 5.10.2
-        version: 5.10.2(@testing-library/dom@10.4.2)(eslint@8.57.1)
+        specifier: 5.11.0
+        version: 5.11.0(@testing-library/dom@10.4.2)(eslint@8.57.1)
       eslint-plugin-no-autofix:
         specifier: 2.1.0
         version: 2.1.0(eslint@8.57.1)
@@ -2423,8 +2423,8 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@testing-library/user-event@14.6.12':
-    resolution: {integrity: sha512-8yQV8v+eToBhsUO4oYrZY7fzhpTEMZx4IDx0/iuER/x0Xuy0NdqQOhsaaUNlvXE03N7vQ+4RCXUieKC0NJty9w==}
+  '@testing-library/user-event@14.6.13':
+    resolution: {integrity: sha512-2LVZGptuB5un1Cu/u31o9adkCwbsUTMp4B4p04xupI7uobvTIpgKidSdShqZiReo/mQmvR9xjgdgTgge4oAbYA==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
@@ -2980,9 +2980,9 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/4cdb9835ed6889f6ce209c3da129991b2e651575':
-    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/4cdb9835ed6889f6ce209c3da129991b2e651575}
-    version: 0.1.27
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/256a20fb5c0a33c5eba942fac9e4a7b49c2438ce':
+    resolution: {tarball: https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/256a20fb5c0a33c5eba942fac9e4a7b49c2438ce}
+    version: 0.1.29
     engines: {node: v22, pnpm: '>=10'}
     peerDependencies:
       '@zextras/carbonio-design-system': ^12.0.0
@@ -4237,8 +4237,8 @@ packages:
       '@testing-library/dom':
         optional: true
 
-  eslint-plugin-jest-dom@5.10.2:
-    resolution: {integrity: sha512-Ij9pCRrBNPEUKqg0oMUv8aMjGzPKdpayOarDW3zWmYdtQ2dt7lZ7myppA2KwJMUJhhHAtSWY5Pgg7iMjC6w6JA==}
+  eslint-plugin-jest-dom@5.11.0:
+    resolution: {integrity: sha512-w6ejV2uyb9vLpII6ga8J62IKjHIbU68V4cBWkqNylTXxAPn5uAJ71OlLJhZ9kJF2UJZtAQSxcgH/SR0HjxnHtg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0, npm: '>=6', yarn: '>=1'}
     peerDependencies:
       '@testing-library/dom': ^8.0.0 || ^9.0.0 || ^10.0.0
@@ -10729,7 +10729,7 @@ snapshots:
       '@types/react': 18.3.31
       '@types/react-dom': 18.3.7(@types/react@18.3.31)
 
-  '@testing-library/user-event@14.6.12(@testing-library/dom@10.4.2)':
+  '@testing-library/user-event@14.6.13(@testing-library/dom@10.4.2)':
     dependencies:
       '@testing-library/dom': 10.4.2
 
@@ -11381,7 +11381,7 @@ snapshots:
       react-datepicker: 7.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
 
-  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/4cdb9835ed6889f6ce209c3da129991b2e651575(@types/react@18.3.31)(@zextras/carbonio-design-system@12.2.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@zextras/carbonio-shell-ui@15.5.2(539196d269a852a99fcc470ee3db34b3))':
+  '@zextras/carbonio-search-ui@https://codeload.github.com/zextras/carbonio-search-ui/tar.gz/256a20fb5c0a33c5eba942fac9e4a7b49c2438ce(@types/react@18.3.31)(@zextras/carbonio-design-system@12.2.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(date-fns@4.4.0)(lodash@4.18.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@zextras/carbonio-shell-ui@15.5.2(539196d269a852a99fcc470ee3db34b3))':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.31)(react@18.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1)
@@ -12814,7 +12814,7 @@ snapshots:
     optionalDependencies:
       '@testing-library/dom': 10.4.2
 
-  eslint-plugin-jest-dom@5.10.2(@testing-library/dom@10.4.2)(eslint@8.57.1):
+  eslint-plugin-jest-dom@5.11.0(@testing-library/dom@10.4.2)(eslint@8.57.1):
     dependencies:
       eslint: 8.57.1
       requireindex: 1.2.0
