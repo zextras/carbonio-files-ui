@@ -9,7 +9,7 @@ import React from 'react';
 import { ApolloError } from '@apollo/client';
 import { NetworkError } from '@apollo/client/errors';
 import { Theme } from '@zextras/carbonio-design-system';
-import { GraphQLError } from 'graphql';
+import { GraphQLFormattedError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
 import { findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
@@ -224,7 +224,10 @@ export function takeIfNotEmpty(value: string | null | undefined): string | undef
 	return value !== undefined && value !== null && value.trim().length > 0 ? value : undefined;
 }
 
-function decodeGraphQLErrorWithCode(error: GraphQLError, t: TFunction): string | undefined {
+function decodeGraphQLErrorWithCode(
+	error: GraphQLFormattedError,
+	t: TFunction
+): string | undefined {
 	if (!error?.extensions?.errorCode) {
 		return undefined;
 	}
