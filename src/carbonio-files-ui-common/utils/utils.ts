@@ -9,7 +9,7 @@ import React from 'react';
 import { ApolloError } from '@apollo/client';
 import { NetworkError } from '@apollo/client/errors';
 import { Theme } from '@zextras/carbonio-design-system';
-import { GraphQLFormattedError } from 'graphql';
+import type { GraphQLFormattedError } from 'graphql';
 import type { Location } from 'history';
 import { TFunction } from 'i18next';
 import { findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
