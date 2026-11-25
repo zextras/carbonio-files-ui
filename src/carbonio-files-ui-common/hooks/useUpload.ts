@@ -248,7 +248,7 @@ export const useUpload: UseUploadHook = () => {
 				item: uploadItem,
 				functions: {
 					abort: noop,
-					retry: (newFile) => startUploadAndGetAbortFunction(newFile)
+					retry: (newFile): UploadFunctions['abort'] => startUploadAndGetAbortFunction(newFile)
 				}
 			}));
 		},

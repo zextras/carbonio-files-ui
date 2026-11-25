@@ -97,7 +97,7 @@ export const DisplayerPreview = ({
 		// init state
 		handleResize();
 
-		return () => {
+		return (): void => {
 			handleResize.cancel();
 			window.removeEventListener('resize', handleResize);
 		};
@@ -123,7 +123,7 @@ export const DisplayerPreview = ({
 			imgElement.addEventListener('load', onLoadHandler);
 			imgElement.addEventListener('error', onLoadErrorHandler);
 		}
-		return () => {
+		return (): void => {
 			if (imgElement) {
 				imgElement.removeEventListener('load', onLoadHandler);
 				imgElement.removeEventListener('error', onLoadErrorHandler);

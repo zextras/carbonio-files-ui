@@ -26,8 +26,7 @@ export const ListContext = createContext<{
 export const NodeAvatarIconContext = createContext<{
 	tooltipLabel?: string;
 	tooltipDisabled:
-		| boolean
-		| (({ disabled, selectable }: { disabled: boolean; selectable: boolean }) => boolean);
+		boolean | (({ disabled, selectable }: { disabled: boolean; selectable: boolean }) => boolean);
 }>({ tooltipDisabled: true });
 
 export const ListHeaderActionContext = createContext<React.ReactNode>(null);

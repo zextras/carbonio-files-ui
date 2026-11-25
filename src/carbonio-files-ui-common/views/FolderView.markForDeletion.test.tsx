@@ -300,8 +300,7 @@ describe('Mark for deletion - trash', () => {
 				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as (
-				| File
-				| Folder
+				File | Folder
 			)[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as (File | Folder)[];
 

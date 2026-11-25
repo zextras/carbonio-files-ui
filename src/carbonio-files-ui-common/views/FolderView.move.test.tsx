@@ -125,8 +125,7 @@ describe('Move', () => {
 			destinationFolder.permissions.can_write_file = true;
 			currentFolder.children.nodes.unshift(destinationFolder);
 			const nodesToMove = [currentFolder.children.nodes[1], currentFolder.children.nodes[2]] as (
-				| File
-				| Folder
+				File | Folder
 			)[];
 			forEach(nodesToMove, (mockedNode) => {
 				mockedNode.permissions.can_write_folder = true;
@@ -214,8 +213,7 @@ describe('Move', () => {
 				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as (
-				| File
-				| Folder
+				File | Folder
 			)[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as (File | Folder)[];
 			const nodesToMove = [...firstPage];
@@ -362,8 +360,7 @@ describe('Move', () => {
 				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as (
-				| File
-				| Folder
+				File | Folder
 			)[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as (File | Folder)[];
 			const mocks = {

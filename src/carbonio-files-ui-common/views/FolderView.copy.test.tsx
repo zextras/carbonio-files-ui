@@ -176,8 +176,7 @@ describe('Copy', () => {
 			currentFolder.permissions.can_write_folder = true;
 			currentFolder.permissions.can_write_file = true;
 			const nodesToCopy = [currentFolder.children.nodes[0], currentFolder.children.nodes[1]] as (
-				| File
-				| Folder
+				File | Folder
 			)[];
 			const copiedNodes = map(nodesToCopy, (node) => ({
 				...node,

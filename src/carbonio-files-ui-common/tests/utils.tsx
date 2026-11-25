@@ -526,7 +526,7 @@ export function createUploadDataTransfer(
 		fileBlobs.push(fileBlob);
 		const fileEntry = createFileSystemEntry(node, fileBlob);
 		return {
-			webkitGetAsEntry: () => fileEntry
+			webkitGetAsEntry: (): typeof fileEntry => fileEntry
 		};
 	});
 

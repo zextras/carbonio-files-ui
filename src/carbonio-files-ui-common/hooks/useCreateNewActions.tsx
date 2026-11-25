@@ -5,6 +5,7 @@
  */
 import React, { useCallback, useEffect, useMemo } from 'react';
 
+import { FetchResult } from '@apollo/client';
 import { DropdownItem, Text } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +17,7 @@ import { ACTION_IDS, ACTION_TYPES } from '../../constants';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { NewAction, useCreateOptions } from '../../hooks/useCreateOptions';
 import { DOCS_EXTENSIONS, FILES_APP_ID } from '../constants';
-import { DocsType } from '../types/common';
+import { CreateDocsFile, DocsType } from '../types/common';
 import { GetChildrenQuery } from '../types/graphql/types';
 import { getDocumentGenericType, getNewDocumentActionLabel, isFolder } from '../utils/utils';
 
@@ -79,16 +80,17 @@ export const useCreateNewActions = (
 	const createDocsFile = useCreateDocsFile();
 
 	const createDocsFileAction = useCallback(
-		(docsType: DocsType) => async (_parentId: string, newName: string) => {
-			if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
-				const result = await createDocsFile(currentFolder.getNode, newName, docsType);
-				if (result?.data?.getNode) {
-					setActiveNode(result.data.getNode.id);
+		(docsType: DocsType) =>
+			async (_parentId: string, newName: string): Promise<FetchResult<CreateDocsFile>> => {
+				if (currentFolder?.getNode && isFolder(currentFolder.getNode)) {
+					const result = await createDocsFile(currentFolder.getNode, newName, docsType);
+					if (result?.data?.getNode) {
+						setActiveNode(result.data.getNode.id);
+					}
+					return result ?? {};
 				}
-				return result ?? {};
-			}
-			return Promise.reject(new Error('cannot create folder: invalid node or file type'));
-		},
+				return Promise.reject(new Error('cannot create folder: invalid node or file type'));
+			},
 		[createDocsFile, currentFolder?.getNode, setActiveNode]
 	);
 
@@ -97,7 +99,7 @@ export const useCreateNewActions = (
 	const createDocsAction = useCallback<
 		(docsType: DocsType) => (event: React.SyntheticEvent | KeyboardEvent) => void
 	>(
-		(docsType) => () => {
+		(docsType) => (): void => {
 			const documentGenericType = getDocumentGenericType(docsType);
 
 			openCreateFileModal({
@@ -126,7 +128,7 @@ export const useCreateNewActions = (
 			return [
 				{
 					id: ACTION_IDS.CREATE_DOCS_DOCUMENT,
-					execute: () => undefined,
+					execute: (): void => undefined,
 					label: t('create.options.new.document', 'New document'),
 					icon: 'FileTextOutline',
 					items: [
@@ -144,7 +146,7 @@ export const useCreateNewActions = (
 				},
 				{
 					id: ACTION_IDS.CREATE_DOCS_SPREADSHEET,
-					execute: () => undefined,
+					execute: (): void => undefined,
 					label: t('create.options.new.spreadsheet', 'New spreadsheet'),
 					icon: 'FileCalcOutline',
 					items: [
@@ -162,7 +164,7 @@ export const useCreateNewActions = (
 				},
 				{
 					id: ACTION_IDS.CREATE_DOCS_PRESENTATION,
-					execute: () => undefined,
+					execute: (): void => undefined,
 					label: t('create.options.new.presentation', 'New presentation'),
 					icon: 'FilePresentationOutline',
 					items: [
@@ -192,7 +194,7 @@ export const useCreateNewActions = (
 		const createActions = actions.map((action) => ({
 			type: ACTION_TYPES.NEW,
 			id: action.id,
-			action: () => ({
+			action: (): NewAction => ({
 				group: FILES_APP_ID,
 				...action
 			})
