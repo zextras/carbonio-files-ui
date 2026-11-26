@@ -21,6 +21,7 @@ import {
 import { useTranslation } from 'react-i18next';
 
 import buildClient from './carbonio-files-ui-common/apollo';
+import { isCarbonioCEVar } from './carbonio-files-ui-common/apollo/isCarbonioCEVar';
 import { uploadVar } from './carbonio-files-ui-common/apollo/uploadVar';
 import { FILES_APP_ID, FILES_ROUTE, ROOTS } from './carbonio-files-ui-common/constants';
 import { useUpload } from './carbonio-files-ui-common/hooks/useUpload';
@@ -30,6 +31,7 @@ import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
 import { PrimaryBadgeUpdater } from './components/PrimaryBadgeUpdater';
 import { Spinner } from './components/Spinner';
+import { useIsCarbonioCE } from './hooks/useIsCarbonioCE';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
@@ -68,6 +70,7 @@ const SearchView = (props: SearchViewProps): React.JSX.Element => (
 
 export function AuthenticatedApp(): React.JSX.Element {
 	const [t] = useTranslation();
+	const isCarbonioCE = useIsCarbonioCE();
 	const [addSearchView, isAddSearchViewAvailable] = useIntegratedFunction('search-add-view');
 	const [removeSearchView, isRemoveSearchViewAvailable] =
 		useIntegratedFunction('search-remove-view');
@@ -92,6 +95,10 @@ export function AuthenticatedApp(): React.JSX.Element {
 			e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
 		}
 	}, []);
+
+	useEffect(() => {
+		isCarbonioCEVar(isCarbonioCE);
+	}, [isCarbonioCE]);
 
 	useEffect(() => {
 		window.addEventListener('beforeunload', beforeunloadCallback);

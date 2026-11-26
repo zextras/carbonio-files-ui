@@ -17,6 +17,7 @@ import failOnConsole from 'vitest-fail-on-console';
 import buildClient from './carbonio-files-ui-common/apollo';
 import { destinationVar } from './carbonio-files-ui-common/apollo/destinationVar';
 import { draggedItemsVar } from './carbonio-files-ui-common/apollo/dragAndDropVar';
+import { isCarbonioCEVar } from './carbonio-files-ui-common/apollo/isCarbonioCEVar';
 import { nodeSortVar } from './carbonio-files-ui-common/apollo/nodeSortVar';
 import { searchParamsVar } from './carbonio-files-ui-common/apollo/searchVar';
 import { showNotificationsBadgeVar } from './carbonio-files-ui-common/apollo/showNotificationsBadgeVar';
@@ -160,6 +161,7 @@ beforeEach(() => {
 	draggedItemsVar(null);
 	destinationVar({ defaultValue: undefined, currentValue: undefined });
 	showNotificationsBadgeVar(true);
+	isCarbonioCEVar(undefined);
 	window.localStorage.clear();
 	healthCache.healthRequested = true;
 	healthCache.healthReceived = true;

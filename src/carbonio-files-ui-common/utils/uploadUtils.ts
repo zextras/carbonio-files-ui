@@ -7,10 +7,12 @@ import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import { debounce, forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
+import { getFilesApiVersion } from './filesApiVersion';
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 import { QUOTA_CHANGED_EVENT } from '../../constants';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
 import {
+	FILES_API_VERSION_HEADER,
 	REST_ENDPOINT,
 	SHARES_LOAD_LIMIT,
 	UPLOAD_PATH,
@@ -456,6 +458,7 @@ export function upload(
 	const url = `${REST_ENDPOINT}${UPLOAD_PATH}`;
 	xhr.open('POST', url, true);
 
+	xhr.setRequestHeader(FILES_API_VERSION_HEADER, getFilesApiVersion());
 	xhr.setRequestHeader('Filename', encodeBase64(fileEnriched.file.name));
 	xhr.setRequestHeader('ParentId', fileEnriched.parentNodeId);
 
@@ -499,6 +502,7 @@ export function uploadVersion(
 	const url = `${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`;
 	xhr.open('POST', url, true);
 
+	xhr.setRequestHeader(FILES_API_VERSION_HEADER, getFilesApiVersion());
 	xhr.setRequestHeader('NodeId', fileEnriched.nodeId);
 	xhr.setRequestHeader('Filename', encodeBase64(fileEnriched.file.name));
 	xhr.setRequestHeader('OverwriteVersion', `${overwriteVersion}`);

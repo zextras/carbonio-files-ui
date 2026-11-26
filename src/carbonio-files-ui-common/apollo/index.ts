@@ -4,11 +4,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
+import {
+	ApolloClient,
+	ApolloLink,
+	HttpLink,
+	InMemoryCache,
+	NormalizedCacheObject
+} from '@apollo/client';
 
 import { typePolicies } from './typePolicies';
 import { GRAPHQL_ENDPOINT } from '../constants';
 import introspection from '../types/graphql/possible-types';
+import { getFilesApiVersionHeaders } from '../utils/filesApiVersion';
 
 const cache = new InMemoryCache({
 	possibleTypes: introspection.possibleTypes,
@@ -16,6 +23,13 @@ const cache = new InMemoryCache({
 });
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
+
+const filesApiVersionLink = new ApolloLink((operation, forward) => {
+	operation.setContext(({ headers }: { headers?: Record<string, string> }) => ({
+		headers: { ...headers, ...getFilesApiVersionHeaders() }
+	}));
+	return forward(operation);
+});
 
 const buildClient: () => ApolloClient<NormalizedCacheObject> = () => {
 	const uri = process.env.NODE_ENV === 'test' ? 'http://localhost:9000' : '';
@@ -28,7 +42,7 @@ const buildClient: () => ApolloClient<NormalizedCacheObject> = () => {
 		apolloClient = new ApolloClient<NormalizedCacheObject>({
 			cache,
 			connectToDevTools: process.env.NODE_ENV !== 'production',
-			link: httpLink
+			link: ApolloLink.from([filesApiVersionLink, httpLink])
 		});
 	}
 	return apolloClient;

@@ -164,6 +164,12 @@ export const UPLOAD_VERSION_PATH = '/upload-version';
 export const CREATE_FILE_PATH = '/files/create';
 export const HEALTH_PATH = '/health';
 export const PREVIEW_PATH = '/preview';
+export const FILES_API_VERSION_HEADER = 'X-FILES-API-VERSION';
+// the Files API version of each edition this UI speaks: 'current' tracks the server it runs against
+export const FILES_API_VERSION: Record<'ce' | 'advanced', string> = {
+	ce: 'current',
+	advanced: 'current'
+};
 export const PREVIEW_TYPE = {
 	IMAGE: 'image',
 	PDF: 'pdf',
