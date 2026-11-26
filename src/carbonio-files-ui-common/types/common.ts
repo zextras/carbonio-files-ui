@@ -112,25 +112,26 @@ export enum OrderType {
 }
 
 export type SearchParams = {
-	[K in keyof Pick<
-		FindNodesQueryVariables,
-		| 'flagged'
-		| 'shared_by_me'
-		| 'shared_with_me'
-		| 'folder_id'
-		| 'cascade'
-		| 'keywords'
-		| 'direct_share'
-		| 'owner_id'
-		| 'type'
-	> as SnakeToCamelCase<K & string>]: FindNodesQueryVariables[K];
+	[
+		K in keyof Pick<
+			FindNodesQueryVariables,
+			| 'flagged'
+			| 'shared_by_me'
+			| 'shared_with_me'
+			| 'folder_id'
+			| 'cascade'
+			| 'keywords'
+			| 'direct_share'
+			| 'owner_id'
+			| 'type'
+		> as SnakeToCamelCase<K & string>
+	]: FindNodesQueryVariables[K];
 };
 
 export type AdvancedFilters = {
-	[P in keyof Omit<
-		SearchParams,
-		'keywords' | 'cascade' | 'sharedWithMe' | 'directShare'
-	>]: SearchChip & {
+	[
+		P in keyof Omit<SearchParams, 'keywords' | 'cascade' | 'sharedWithMe' | 'directShare'>
+	]: SearchChip & {
 		value: SearchParams[P];
 	};
 } & {

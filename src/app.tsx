@@ -152,7 +152,7 @@ export function AuthenticatedApp(): React.JSX.Element {
 			});
 		}
 
-		return () => {
+		return (): void => {
 			if (isRemoveSearchViewAvailable) {
 				removeSearchView();
 			}

@@ -17,8 +17,7 @@ export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> =
 	[_ in K]?: never;
 };
 export type Incremental<T> =
-	| T
-	| { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+	T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
 	ID: { input: string; output: string };
@@ -393,11 +392,7 @@ export enum NodeType {
 }
 
 export type Notification =
-	| AddedNode
-	| NewShare
-	| RemovedNode
-	| SucceededRecording
-	| TransferredOwnership;
+	AddedNode | NewShare | RemovedNode | SucceededRecording | TransferredOwnership;
 
 export type NotificationPage = {
 	__typename: 'NotificationPage';
@@ -918,8 +913,7 @@ export type ChildWithParent_Folder_Fragment = {
 } & { __typename: 'Folder' };
 
 export type ChildWithParentFragment =
-	| ChildWithParent_File_Fragment
-	| ChildWithParent_Folder_Fragment;
+	ChildWithParent_File_Fragment | ChildWithParent_Folder_Fragment;
 
 export type CollaborationLinkFragment = {
 	id: string;
@@ -1051,8 +1045,7 @@ export type CopyNodesMutation = {
 				parent: ({ id: string; name: string } & { __typename: 'File' | 'Folder' }) | null;
 				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				last_editor:
-					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-					| null;
+					({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
@@ -1088,8 +1081,7 @@ export type CopyNodesMutation = {
 				parent: ({ id: string; name: string } & { __typename: 'File' | 'Folder' }) | null;
 				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				last_editor:
-					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-					| null;
+					({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
@@ -1155,8 +1147,7 @@ export type CreateFolderMutation = {
 				parent: ({ id: string; name: string } & { __typename: 'File' | 'Folder' }) | null;
 				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				last_editor:
-					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-					| null;
+					({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
@@ -1192,8 +1183,7 @@ export type CreateFolderMutation = {
 				parent: ({ id: string; name: string } & { __typename: 'File' | 'Folder' }) | null;
 				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				last_editor:
-					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-					| null;
+					({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
@@ -1453,11 +1443,9 @@ export type FindNodesQuery = {
 							flagged: boolean;
 							rootId: string | null;
 							owner:
-								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-								| null;
+								({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 							last_editor:
-								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-								| null;
+								({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 							shares: Array<
 								| ({
 										permission: SharePermission;
@@ -1514,11 +1502,9 @@ export type FindNodesQuery = {
 							flagged: boolean;
 							rootId: string | null;
 							owner:
-								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-								| null;
+								({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 							last_editor:
-								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-								| null;
+								({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 							shares: Array<
 								| ({
 										permission: SharePermission;
@@ -1759,8 +1745,7 @@ export type GetChildQuery = {
 				rootId: string | null;
 				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				last_editor:
-					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-					| null;
+					({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
@@ -1780,8 +1765,7 @@ export type GetChildQuery = {
 							type: NodeType;
 							rootId: string | null;
 							owner:
-								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-								| null;
+								({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 							permissions: {
 								can_read: boolean;
 								can_write_file: boolean;
@@ -1818,8 +1802,7 @@ export type GetChildQuery = {
 				rootId: string | null;
 				owner: ({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				last_editor:
-					| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-					| null;
+					({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 				shares: Array<
 					| ({
 							permission: SharePermission;
@@ -1839,8 +1822,7 @@ export type GetChildQuery = {
 							type: NodeType;
 							rootId: string | null;
 							owner:
-								| ({ id: string; full_name: string; email: string } & { __typename: 'User' })
-								| null;
+								({ id: string; full_name: string; email: string } & { __typename: 'User' }) | null;
 							permissions: {
 								can_read: boolean;
 								can_write_file: boolean;
@@ -2160,8 +2142,7 @@ export type GetNodeQuery = {
 				owner: ({ id: string; email: string; full_name: string } & { __typename: 'User' }) | null;
 				creator: { id: string; email: string; full_name: string } & { __typename: 'User' };
 				last_editor:
-					| ({ id: string; email: string; full_name: string } & { __typename: 'User' })
-					| null;
+					({ id: string; email: string; full_name: string } & { __typename: 'User' }) | null;
 				parent:
 					| ({
 							id: string;
@@ -2357,8 +2338,7 @@ export type GetNodeQuery = {
 				owner: ({ id: string; email: string; full_name: string } & { __typename: 'User' }) | null;
 				creator: { id: string; email: string; full_name: string } & { __typename: 'User' };
 				last_editor:
-					| ({ id: string; email: string; full_name: string } & { __typename: 'User' })
-					| null;
+					({ id: string; email: string; full_name: string } & { __typename: 'User' }) | null;
 				parent:
 					| ({
 							id: string;
@@ -2654,8 +2634,7 @@ export type GetVersionsQuery = {
 				keep_forever: boolean;
 				cloned_from_version: number | null;
 				last_editor:
-					| ({ full_name: string; email: string; id: string } & { __typename: 'User' })
-					| null;
+					({ full_name: string; email: string; id: string } & { __typename: 'User' }) | null;
 		  } & { __typename: 'File' })
 		| null
 	>;

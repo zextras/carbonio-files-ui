@@ -327,8 +327,7 @@ describe('Header Breadcrumbs', () => {
 				Mutation: {
 					moveNodes: vi.fn(
 						mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] }))) as () => (
-							| File
-							| Folder
+							File | Folder
 						)[]
 					)
 				}
@@ -587,8 +586,7 @@ describe('Header Breadcrumbs', () => {
 				Mutation: {
 					moveNodes: vi.fn(
 						mockMoveNodes(movingNodes.map((node) => ({ ...node, parent: path[0] }))) as () => (
-							| File
-							| Folder
+							File | Folder
 						)[]
 					)
 				}

@@ -59,7 +59,7 @@ export const useIntegrations = (): void => {
 			}
 		};
 		window.addEventListener(QUOTA_CHANGED_EVENT, handler);
-		return () => {
+		return (): void => {
 			window.removeEventListener(QUOTA_CHANGED_EVENT, handler);
 		};
 	}, []);

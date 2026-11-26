@@ -52,19 +52,18 @@ export const useUploadFileNewAction = (isAvailable: boolean, destinationId: stri
 		() => ({
 			type: ACTION_TYPES.NEW,
 			id: ACTION_IDS.UPLOAD_FILE,
-			action: () =>
-				({
-					group: FILES_APP_ID,
-					id: ACTION_IDS.UPLOAD_FILE,
-					primary: true,
-					label: t('create.options.new.upload', 'Upload'),
-					icon: 'CloudUploadOutline',
-					execute: (event): void => {
-						event?.stopPropagation();
-						inputElement.click();
-						inputElement.onchange = inputElementOnchange;
-					}
-				}) satisfies NewAction
+			action: (): NewAction => ({
+				group: FILES_APP_ID,
+				id: ACTION_IDS.UPLOAD_FILE,
+				primary: true,
+				label: t('create.options.new.upload', 'Upload'),
+				icon: 'CloudUploadOutline',
+				execute: (event): void => {
+					event?.stopPropagation();
+					inputElement.click();
+					inputElement.onchange = inputElementOnchange;
+				}
+			})
 		}),
 		[inputElementOnchange, t]
 	);

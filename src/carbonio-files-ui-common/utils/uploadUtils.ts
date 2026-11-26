@@ -41,8 +41,7 @@ export function isUploadFolderItem(item: Partial<UploadItem>): item is UploadFol
 }
 
 type UploadActionUpdateValueType = { id: string } & (
-	| Partial<UploadItem>
-	| Partial<UploadFolderItem>
+	Partial<UploadItem> | Partial<UploadFolderItem>
 );
 
 type UploadAction =

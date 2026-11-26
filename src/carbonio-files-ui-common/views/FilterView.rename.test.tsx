@@ -416,8 +416,7 @@ describe('Filter View', () => {
 				});
 
 				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies
-					| File
-					| Folder;
+					File | Folder;
 				const newPosition = addNodeInSortedList(
 					parentFolder.children.nodes,
 					nodeWithNewName,
@@ -523,8 +522,7 @@ describe('Filter View', () => {
 				});
 
 				const nodeWithNewName = { ...element, name: newName, parent: parentFolder } satisfies
-					| File
-					| Folder;
+					File | Folder;
 				const mocks = {
 					Query: {
 						findNodes: mockFindNodes(currentFilter),

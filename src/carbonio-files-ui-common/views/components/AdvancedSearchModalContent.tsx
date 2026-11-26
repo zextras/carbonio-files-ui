@@ -247,7 +247,7 @@ export const AdvancedSearchModalContent = ({
 		if (folderChipInputInputElement) {
 			folderChipInputInputElement.addEventListener('focus', removeFocus);
 		}
-		return () => {
+		return (): void => {
 			if (folderChipInputInputElement) {
 				folderChipInputInputElement.removeEventListener('focus', removeFocus);
 			}
