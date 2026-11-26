@@ -89,7 +89,7 @@ export const useCreateNewActions = (
 					}
 					return result ?? {};
 				}
-				return Promise.reject(new Error('cannot create folder: invalid node or file type'));
+				return Promise.reject(new Error('cannot create docs file: invalid node or file type'));
 			},
 		[createDocsFile, currentFolder?.getNode, setActiveNode]
 	);
