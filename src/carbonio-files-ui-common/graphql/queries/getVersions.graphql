@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 query getVersions($node_id: ID!, $versions: [Int!]) {
-	# eslint-disable @graphql-eslint/require-selections
+	# eslint-disable-next-line @graphql-eslint/require-selections
 	getVersions(node_id: $node_id, versions: $versions) {
 		version
 		size
