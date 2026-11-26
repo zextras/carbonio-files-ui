@@ -1,3 +1,9 @@
+## [3.2.6](https://github.com/zextras/carbonio-files-ui/compare/v3.2.5...v3.2.6) (2026-11-26)
+
+### Other changes
+
+* **deps-dev:** bump @graphql-eslint/eslint-plugin to v4 ([#744](https://github.com/zextras/carbonio-files-ui/issues/744)) ([46d6d56](https://github.com/zextras/carbonio-files-ui/commit/46d6d567929353fa30cb666fdb9754dcf0d96e17))
+
 ## [3.2.5](https://github.com/zextras/carbonio-files-ui/compare/v3.2.4...v3.2.5) (2026-11-26)
 
 ### Other changes
