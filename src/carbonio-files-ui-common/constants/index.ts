@@ -138,6 +138,7 @@ export const HTTP_STATUS_CODE = {
 	/** aborted or blocked request */
 	aborted: 0,
 	overQuota: 422,
+	unprocessableEntity: 422,
 	docsFileSizeExceeded: 403,
 	/** file size exceeded quota */
 	fileSizeExceeded: 413
@@ -145,7 +146,8 @@ export const HTTP_STATUS_CODE = {
 
 export const ERROR_CODE = {
 	overQuotaReached: 'OVER_QUOTA_REACHED',
-	nodeWriteError: 'NODE_WRITE_ERROR'
+	nodeWriteError: 'NODE_WRITE_ERROR',
+	unsupportedApiVersion: 'UNSUPPORTED_API_VERSION'
 } as const;
 
 // endpoint

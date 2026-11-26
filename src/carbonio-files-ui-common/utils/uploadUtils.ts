@@ -7,7 +7,7 @@ import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import { debounce, forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { sendWithFilesApiVersion } from './filesApiVersion';
+import { isUnsupportedVersionXhr, resetFilesApi, sendWithFilesApiVersion } from './filesApiVersion';
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 import { QUOTA_CHANGED_EVENT } from '../../constants';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
@@ -412,9 +412,17 @@ export function uploadCompleted(
 			loadItemAsChild(nodeId, fileEnriched.parentNodeId, apolloClient, nodeSort, addNodeToFolder);
 		}
 	} else {
+		const versionRejected = isUnsupportedVersionXhr(xhr);
+		if (versionRejected) {
+			resetFilesApi();
+		}
 		uploadVarReducer({
 			type: 'update',
-			value: { id: fileEnriched.id, status: UploadStatus.FAILED, statusCode: xhr.status }
+			value: {
+				id: fileEnriched.id,
+				status: UploadStatus.FAILED,
+				statusCode: versionRejected ? HTTP_STATUS_CODE.internalServerError : xhr.status
+			}
 		});
 		incrementAllParentsFailedCount(fileEnriched);
 
@@ -425,7 +433,11 @@ export function uploadCompleted(
 			HTTP_STATUS_CODE.overQuota,
 			HTTP_STATUS_CODE.fileSizeExceeded
 		];
-		if (xhr.readyState !== XMLHttpRequest.UNSENT && !handledStatuses.includes(xhr.status)) {
+		if (
+			!versionRejected &&
+			xhr.readyState !== XMLHttpRequest.UNSENT &&
+			!handledStatuses.includes(xhr.status)
+		) {
 			console.error('upload error: unhandled status', xhr.status, fileEnriched);
 		}
 	}

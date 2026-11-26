@@ -14,7 +14,12 @@ import type { Location } from 'history';
 import { TFunction } from 'i18next';
 import { findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
 
-import { getFilesApiVersionHeaders, sendWithFilesApiVersion } from './filesApiVersion';
+import {
+	fetchWithFilesApiVersion,
+	isUnsupportedVersionXhr,
+	resetFilesApi,
+	sendWithFilesApiVersion
+} from './filesApiVersion';
 import { generateAccessCodeFallback, generateAccessCodeWithCrypto } from './utils.accessCode';
 import { getUserAccount } from '../../utils/utils';
 import {
@@ -321,7 +326,7 @@ export const copyToClipboard = (text: string): Promise<void> => {
 
 export const downloadNode = async (id: string, version?: number): Promise<Response> => {
 	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${DOWNLOAD_PATH_CHECK}`;
-	const response = await fetch(urlCheck, { headers: await getFilesApiVersionHeaders() });
+	const response = await fetchWithFilesApiVersion(urlCheck);
 
 	if (response.ok) {
 		const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${
@@ -408,12 +413,9 @@ function secureIframeDownload(nodeIds: string[]): void {
 
 export const downloadMultipleNodes = async (nodeIds: string[]): Promise<Response> => {
 	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_MULTIPLE_PATH}${DOWNLOAD_PATH_CHECK}`;
-	const response = await fetch(urlCheck, {
+	const response = await fetchWithFilesApiVersion(urlCheck, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			...(await getFilesApiVersionHeaders())
-		},
+		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ nodeIds })
 	});
 
@@ -709,6 +711,9 @@ const uploadToCompleted = (
 	resolve: (value: { attachmentId: string } | PromiseLike<{ attachmentId: string }>) => void,
 	reject: (reason?: UploadToTargetModuleError) => void
 ): void => {
+	if (isUnsupportedVersionXhr(xhr)) {
+		resetFilesApi();
+	}
 	switch (xhr.status) {
 		case 200: {
 			const response = JSON.parse(xhr.response);

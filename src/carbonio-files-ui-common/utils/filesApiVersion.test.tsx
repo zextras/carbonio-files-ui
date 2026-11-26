@@ -7,7 +7,12 @@ import React from 'react';
 
 import { graphql, http, HttpResponse } from 'msw';
 
-import { FilesApiServerVersions, getFilesApi, negotiateVersion } from './filesApiVersion';
+import {
+	compareVersions,
+	FilesApiServerVersions,
+	getFilesApi,
+	negotiateVersion
+} from './filesApiVersion';
 import { mockGetConfigs, mockGetNode, mockGetVersions } from './resolverMocks';
 import { downloadMultipleNodes, downloadNode, uploadToTargetModule } from './utils';
 import server from '../../mocks/server';
@@ -17,7 +22,9 @@ import {
 	DOWNLOAD_PATH,
 	DOWNLOAD_PATH_CHECK,
 	FILES_API_VERSION_HEADER,
+	ERROR_CODE,
 	FILES_API_VERSIONS_PATH,
+	HTTP_STATUS_CODE,
 	REST_ENDPOINT,
 	UPLOAD_PATH,
 	UPLOAD_TO_PATH,
@@ -45,8 +52,82 @@ function serverAt(versions: FilesApiServerVersions): ReturnType<typeof vi.fn> {
 	return discovered;
 }
 
+const versionRejection = (): Response =>
+	new Response(
+		JSON.stringify({
+			code: ERROR_CODE.unsupportedApiVersion,
+			message: 'unsupported',
+			received: '3.0.14',
+			oldestSupported: '3.0.15',
+			current: '3.0.15'
+		}),
+		{
+			status: HTTP_STATUS_CODE.unprocessableEntity,
+			headers: { 'Content-Type': 'application/json' }
+		}
+	);
+
+function versionsSequence(sequence: FilesApiServerVersions[]): ReturnType<typeof vi.fn> {
+	const discovered = vi.fn();
+	server.use(
+		http.get(`${REST_ENDPOINT}${FILES_API_VERSIONS_PATH}`, () => {
+			const versions = sequence[Math.min(discovered.mock.calls.length, sequence.length - 1)];
+			discovered();
+			return HttpResponse.json(versionsResponse(versions));
+		})
+	);
+	return discovered;
+}
+
 describe('Files API version', () => {
+	describe('ordering', () => {
+		it('puts current above every version', () => {
+			expect(compareVersions('current', '9.9.9')).toBeGreaterThan(0);
+			expect(compareVersions('3.0.14-SNAPSHOT', 'current')).toBeLessThan(0);
+		});
+
+		it('compares X.Y.Z numerically', () => {
+			expect(compareVersions('3.0.9', '3.0.14')).toBeLessThan(0);
+			expect(compareVersions('3.1.0', '3.0.14-SNAPSHOT')).toBeGreaterThan(0);
+		});
+
+		it('puts a local snapshot above its release', () => {
+			expect(compareVersions('3.0.14-SNAPSHOT', '3.0.14')).toBeGreaterThan(0);
+		});
+
+		it('puts a CI snapshot above its X.Y.Z', () => {
+			expect(compareVersions(SNAPSHOT, '3.0.15')).toBeGreaterThan(0);
+			expect(compareVersions(SNAPSHOT, '3.0.14')).toBeGreaterThan(0);
+		});
+
+		it('puts a snapshot above a release candidate of the same X.Y.Z', () => {
+			expect(compareVersions('3.0.14-SNAPSHOT', '3.0.14-rc.1')).toBeGreaterThan(0);
+		});
+
+		it('puts a release candidate below its release', () => {
+			expect(compareVersions('3.0.14-rc.1', '3.0.14')).toBeLessThan(0);
+		});
+
+		it('orders CI snapshots by commit count', () => {
+			expect(
+				compareVersions('3.0.15-187.abc1234-SNAPSHOT', '3.0.15-190.def5678-SNAPSHOT')
+			).toBeLessThan(0);
+			expect(
+				compareVersions('3.0.15-1000.abc1234-SNAPSHOT', '3.0.15-190.def5678-SNAPSHOT')
+			).toBeGreaterThan(0);
+		});
+	});
+
 	describe('negotiation', () => {
+		it('finds a version with a local snapshot server', () => {
+			expect(
+				negotiateVersion(
+					{ oldest: '3.0.14', newest: 'current' },
+					{ current: '3.0.14-SNAPSHOT', oldestSupported: '3.0.14' }
+				)
+			).toBe('3.0.14-SNAPSHOT');
+		});
+
 		it('is the newest version of the server for a client that follows current', () => {
 			expect(
 				negotiateVersion(
@@ -221,6 +302,179 @@ describe('Files API version', () => {
 			);
 			await downloadMultipleNodes(['node']);
 			expect(sent).toHaveBeenCalledWith(SNAPSHOT);
+		});
+	});
+
+	describe('after a rejected version', () => {
+		const older: FilesApiServerVersions = {
+			edition: 'ce',
+			current: '3.0.14',
+			oldestSupported: '3.0.14'
+		};
+		const newer: FilesApiServerVersions = {
+			edition: 'ce',
+			current: '3.0.15',
+			oldestSupported: '3.0.14'
+		};
+
+		it('retries a GraphQL operation once with the rediscovered version', async () => {
+			const discovered = versionsSequence([older, newer]);
+			const sent = vi.fn();
+			server.use(
+				graphql.query(GetConfigsDocument, ({ request }) => {
+					const version = request.headers.get(FILES_API_VERSION_HEADER);
+					sent(version);
+					return version === '3.0.15'
+						? HttpResponse.json({ data: { getConfigs: [] } })
+						: versionRejection();
+				})
+			);
+			await global.apolloClient.query({ query: GetConfigsDocument, fetchPolicy: 'network-only' });
+			expect(sent.mock.calls).toEqual([['3.0.14'], ['3.0.15']]);
+			expect(discovered).toHaveBeenCalledTimes(2);
+		});
+
+		it('does not retry a GraphQL operation after a second consecutive rejection', async () => {
+			versionsSequence([older, newer]);
+			const sent = vi.fn();
+			server.use(
+				graphql.query(GetConfigsDocument, () => {
+					sent();
+					return versionRejection();
+				})
+			);
+			await expect(
+				global.apolloClient.query({ query: GetConfigsDocument, fetchPolicy: 'network-only' })
+			).rejects.toThrow();
+			expect(sent).toHaveBeenCalledTimes(2);
+		});
+
+		it('does not retry a GraphQL 422 without the version rejection code', async () => {
+			const discovered = versionsSequence([older]);
+			const sent = vi.fn();
+			server.use(
+				graphql.query(GetConfigsDocument, () => {
+					sent();
+					return new Response(JSON.stringify({ code: 'OVER_QUOTA_REACHED' }), {
+						status: HTTP_STATUS_CODE.unprocessableEntity,
+						headers: { 'Content-Type': 'application/json' }
+					});
+				})
+			);
+			await expect(
+				global.apolloClient.query({ query: GetConfigsDocument, fetchPolicy: 'network-only' })
+			).rejects.toThrow();
+			expect(sent).toHaveBeenCalledTimes(1);
+			expect(discovered).toHaveBeenCalledTimes(1);
+		});
+
+		it('retries the check of a download once with the rediscovered version', async () => {
+			versionsSequence([older, newer]);
+			const sent = vi.fn();
+			server.use(
+				http.get(`${REST_ENDPOINT}${DOWNLOAD_PATH}/:id${DOWNLOAD_PATH_CHECK}`, ({ request }) => {
+					const version = request.headers.get(FILES_API_VERSION_HEADER);
+					sent(version);
+					return version === '3.0.15'
+						? HttpResponse.json(null, { status: 404 })
+						: versionRejection();
+				})
+			);
+			const response = await downloadNode('node');
+			expect(sent.mock.calls).toEqual([['3.0.14'], ['3.0.15']]);
+			expect(response.status).toBe(404);
+		});
+
+		it('retries the check of a download only once', async () => {
+			versionsSequence([older, newer]);
+			const sent = vi.fn();
+			server.use(
+				http.get(`${REST_ENDPOINT}${DOWNLOAD_PATH}/:id${DOWNLOAD_PATH_CHECK}`, () => {
+					sent();
+					return versionRejection();
+				})
+			);
+			const response = await downloadNode('node');
+			expect(sent).toHaveBeenCalledTimes(2);
+			expect(response.status).toBe(HTTP_STATUS_CODE.unprocessableEntity);
+		});
+
+		it('marks an upload as failed without over quota and negotiates again on the next call', async () => {
+			const discovered = versionsSequence([older, newer]);
+			const localRoot = populateLocalRoot();
+			const node = populateFile();
+			node.parent = localRoot;
+			const sent = vi.fn();
+			server.use(
+				http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, () => {
+					sent();
+					return versionRejection();
+				})
+			);
+			setup(<UploadView />);
+			const dropzone = await screen.findByText(/nothing here/i);
+			await uploadWithDnD(dropzone, createUploadDataTransfer([node]));
+			expect(await screen.findByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
+			expect(screen.queryByText(/quota exceeded/i)).not.toBeInTheDocument();
+			expect(sent).toHaveBeenCalledTimes(1);
+			await expect(getFilesApi()).resolves.toEqual({ edition: 'ce', version: '3.0.15' });
+			expect(discovered.mock.calls.length).toBeGreaterThanOrEqual(2);
+		});
+
+		it('still shows the over quota feedback for a 422 without the version rejection code', async () => {
+			const discovered = versionsSequence([older]);
+			const localRoot = populateLocalRoot();
+			const node = populateFile();
+			node.parent = localRoot;
+			server.use(
+				http.post(`${REST_ENDPOINT}${UPLOAD_PATH}`, () =>
+					HttpResponse.json(null, { status: HTTP_STATUS_CODE.overQuota })
+				)
+			);
+			setup(<UploadView />);
+			const dropzone = await screen.findByText(/nothing here/i);
+			await uploadWithDnD(dropzone, createUploadDataTransfer([node]));
+			expect(await screen.findByText(/Quota exceeded/i)).toBeVisible();
+			await getFilesApi();
+			expect(discovered).toHaveBeenCalledTimes(1);
+		});
+
+		it('rejects an upload to another module and negotiates again on the next call', async () => {
+			const discovered = versionsSequence([older, newer]);
+			server.use(http.post(`${REST_ENDPOINT}${UPLOAD_TO_PATH}`, () => versionRejection()));
+			await expect(uploadToTargetModule({ nodeId: 'node', targetModule: 'MAILS' })).rejects.toEqual(
+				{ statusText: expect.any(String), status: HTTP_STATUS_CODE.unprocessableEntity }
+			);
+			await expect(getFilesApi()).resolves.toEqual({ edition: 'ce', version: '3.0.15' });
+			expect(discovered).toHaveBeenCalledTimes(2);
+		});
+
+		it('marks the upload of a version as failed without over quota', async () => {
+			versionsSequence([older, newer]);
+			const localRoot = populateLocalRoot();
+			const fileVersion = populateFile();
+			fileVersion.parent = localRoot;
+			fileVersion.permissions.can_write_file = true;
+			server.use(http.post(`${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`, () => versionRejection()));
+			const mocks = {
+				Query: {
+					getNode: mockGetNode({ getBaseNode: [localRoot] }),
+					getConfigs: mockGetConfigs(),
+					getVersions: mockGetVersions([fileVersion])
+				}
+			} satisfies Partial<Resolvers>;
+			const { user } = setup(
+				<>
+					<UploadVersionButton node={fileVersion} disabled={false} />
+					<UploadView />
+				</>,
+				{ mocks }
+			);
+			await user.click(await screen.findByRole('button', { name: /upload version/i }));
+			const file = new File(['(⌐□_□)'], fileVersion.name, { type: fileVersion.mime_type });
+			await user.upload(await screen.findByAltText(/Hidden file input/i), file);
+			expect(await screen.findByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
+			expect(screen.queryByText(/quota exceeded/i)).not.toBeInTheDocument();
 		});
 	});
 

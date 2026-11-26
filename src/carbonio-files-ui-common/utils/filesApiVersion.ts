@@ -4,13 +4,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { forEach } from 'lodash';
-import { compare } from 'semver';
+import { SemVer } from 'semver';
 
 import { isCarbonioCEVar } from '../apollo/isCarbonioCEVar';
 import {
+	ERROR_CODE,
 	FILES_API_VERSION_HEADER,
 	FILES_API_VERSIONS,
 	FILES_API_VERSIONS_PATH,
+	HTTP_STATUS_CODE,
 	REST_ENDPOINT
 } from '../constants';
 import { FilesEdition } from '../types/common';
@@ -30,7 +32,12 @@ export class UnsupportedFilesApiError extends Error {}
 
 const CURRENT = 'current';
 
-const compareVersions = (a: string, b: string): number => {
+const isSnapshot = (version: SemVer): boolean => {
+	const last = version.prerelease[version.prerelease.length - 1];
+	return typeof last === 'string' && last.endsWith('SNAPSHOT');
+};
+
+export const compareVersions = (a: string, b: string): number => {
 	if (a === b) {
 		return 0;
 	}
@@ -40,8 +47,48 @@ const compareVersions = (a: string, b: string): number => {
 	if (b === CURRENT) {
 		return -1;
 	}
-	return compare(a, b);
+	const versionA = new SemVer(a);
+	const versionB = new SemVer(b);
+	const main = versionA.compareMain(versionB);
+	if (main !== 0) {
+		return main;
+	}
+	const snapshotA = isSnapshot(versionA);
+	const snapshotB = isSnapshot(versionB);
+	if (snapshotA !== snapshotB) {
+		return snapshotA ? 1 : -1;
+	}
+	return versionA.comparePre(versionB);
 };
+
+const hasUnsupportedVersionCode = (body: unknown): boolean =>
+	typeof body === 'object' &&
+	body !== null &&
+	'code' in body &&
+	body.code === ERROR_CODE.unsupportedApiVersion;
+
+export const isUnsupportedVersionBody = (text: string | null | undefined): boolean => {
+	try {
+		return hasUnsupportedVersionCode(JSON.parse(text ?? ''));
+	} catch {
+		return false;
+	}
+};
+
+export const isUnsupportedVersionResponse = async (response: Response): Promise<boolean> => {
+	if (response.status !== HTTP_STATUS_CODE.unprocessableEntity) {
+		return false;
+	}
+	try {
+		return hasUnsupportedVersionCode(await response.clone().json());
+	} catch {
+		return false;
+	}
+};
+
+export const isUnsupportedVersionXhr = (xhr: XMLHttpRequest): boolean =>
+	xhr.status === HTTP_STATUS_CODE.unprocessableEntity &&
+	isUnsupportedVersionBody(typeof xhr.response === 'string' ? xhr.response : xhr.responseText);
 
 export const negotiateVersion = (
 	client: { oldest: string; newest: string },
@@ -92,6 +139,20 @@ export const getFilesApiVersionHeaders = async (): Promise<Record<string, string
 		throw new UnsupportedFilesApiError('No Files API version in common with the server');
 	}
 	return { [FILES_API_VERSION_HEADER]: version };
+};
+
+export const fetchWithFilesApiVersion = async (
+	url: string,
+	init: RequestInit & { headers?: Record<string, string> } = {}
+): Promise<Response> => {
+	const send = async (): Promise<Response> =>
+		fetch(url, { ...init, headers: { ...init.headers, ...(await getFilesApiVersionHeaders()) } });
+	const response = await send();
+	if (await isUnsupportedVersionResponse(response)) {
+		resetFilesApi();
+		return send();
+	}
+	return response;
 };
 
 export const sendWithFilesApiVersion = (
