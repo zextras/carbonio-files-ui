@@ -1,3 +1,9 @@
+## [3.2.7](https://github.com/zextras/carbonio-files-ui/compare/v3.2.6...v3.2.7) (2026-11-26)
+
+### Bug Fixes
+
+* name the docs file action in its error message ([#745](https://github.com/zextras/carbonio-files-ui/issues/745)) ([f23150f](https://github.com/zextras/carbonio-files-ui/commit/f23150f72eeb7b7f93b44796f25df7356b563049))
+
 ## [3.2.6](https://github.com/zextras/carbonio-files-ui/compare/v3.2.5...v3.2.6) (2026-11-26)
 
 ### Other changes
