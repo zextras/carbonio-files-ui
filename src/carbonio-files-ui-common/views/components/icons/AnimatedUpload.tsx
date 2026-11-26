@@ -41,7 +41,7 @@ const AnimatedSvg = styled.svg`
 	}
 `;
 
-interface AnimatedUploadProps extends React.SVGProps<SVGSVGElement> {}
+type AnimatedUploadProps = React.SVGProps<SVGSVGElement>;
 
 export const AnimatedUpload = (props: AnimatedUploadProps): React.JSX.Element => (
 	<AnimatedSvg

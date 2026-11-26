@@ -98,8 +98,7 @@ describe('useUpdateFolderContent', () => {
 			// notLoadedElements[0] is the element that will be created
 			// notLoadedElements[1] is the next neighbor
 			const notLoadedElements = folder.children.nodes.splice(NODES_LOAD_LIMIT, 2) as (
-				| File
-				| Folder
+				File | Folder
 			)[];
 
 			prepareCache(folder);

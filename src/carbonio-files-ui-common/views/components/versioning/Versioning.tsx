@@ -162,25 +162,26 @@ export const Versioning = ({ node }: VersioningProps): React.JSX.Element => {
 	);
 
 	const deleteDisabledTooltip = useMemo(
-		() => (version: Version) => {
-			if (!node.permissions.can_write_file) {
-				return disabledByPermissionLabel;
-			}
-			if (version.keep_forever) {
-				return t(
-					'displayer.version.actions.tooltip.disabledByVersionKeepForever',
-					'Versions marked to be kept forever cannot be deleted'
-				);
-			}
-			if (lastVersion.length > 0 && version.version === lastVersion[0]?.version) {
-				return t(
-					'displayer.version.actions.tooltip.disabledByDeleteCurrent',
-					'Current version cannot be deleted'
-				);
-			}
+		() =>
+			(version: Version): string | undefined => {
+				if (!node.permissions.can_write_file) {
+					return disabledByPermissionLabel;
+				}
+				if (version.keep_forever) {
+					return t(
+						'displayer.version.actions.tooltip.disabledByVersionKeepForever',
+						'Versions marked to be kept forever cannot be deleted'
+					);
+				}
+				if (lastVersion.length > 0 && version.version === lastVersion[0]?.version) {
+					return t(
+						'displayer.version.actions.tooltip.disabledByDeleteCurrent',
+						'Current version cannot be deleted'
+					);
+				}
 
-			return undefined;
-		},
+				return undefined;
+			},
 		[disabledByPermissionLabel, lastVersion, node.permissions.can_write_file, t]
 	);
 

@@ -214,7 +214,7 @@ export const NodesSelectionModalContent = ({
 	);
 
 	useEffect(
-		() => () => {
+		() => (): void => {
 			hideCreateFolderInputDebounced.cancel();
 		},
 		[hideCreateFolderInputDebounced]

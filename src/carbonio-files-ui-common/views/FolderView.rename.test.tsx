@@ -317,8 +317,7 @@ describe('Rename', () => {
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(
 				sortNodes(populateNodes(NODES_LOAD_LIMIT * 2, 'File'), NODES_SORT_DEFAULT) as (
-					| File
-					| Folder
+					File | Folder
 				)[]
 			);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
@@ -329,8 +328,7 @@ describe('Rename', () => {
 				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as (
-				| File
-				| Folder
+				File | Folder
 			)[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as (File | Folder)[];
 
@@ -388,8 +386,7 @@ describe('Rename', () => {
 			const currentFolder = populateFolder();
 			currentFolder.children = populateNodePage(
 				sortNodes(populateNodes(NODES_LOAD_LIMIT * 2, 'File'), NODES_SORT_DEFAULT) as (
-					| File
-					| Folder
+					File | Folder
 				)[]
 			);
 			forEach(currentFolder.children.nodes, (mockedNode) => {
@@ -400,8 +397,7 @@ describe('Rename', () => {
 				}
 			});
 			const firstPage = currentFolder.children.nodes.slice(0, NODES_LOAD_LIMIT) as (
-				| File
-				| Folder
+				File | Folder
 			)[];
 			const secondPage = currentFolder.children.nodes.slice(NODES_LOAD_LIMIT) as (File | Folder)[];
 
