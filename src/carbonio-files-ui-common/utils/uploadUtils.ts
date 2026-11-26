@@ -7,7 +7,12 @@ import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import { debounce, forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { isUnsupportedVersionXhr, resetFilesApi, sendWithFilesApiVersion } from './filesApiVersion';
+import {
+	filesApiNewerThan,
+	isUnsupportedVersionXhr,
+	resetFilesApi,
+	sendWithFilesApiVersion
+} from './filesApiVersion';
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 import { QUOTA_CHANGED_EVENT } from '../../constants';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
@@ -16,6 +21,7 @@ import {
 	SHARES_LOAD_LIMIT,
 	UPLOAD_PATH,
 	HTTP_STATUS_CODE,
+	UPLOAD_DESTINATION_ID_AFTER,
 	UPLOAD_VERSION_PATH
 } from '../constants';
 import GET_CHILD from '../graphql/queries/getChild.graphql';
@@ -385,11 +391,12 @@ export function uploadCompleted(
 	apolloClient: ApolloClient<object>,
 	nodeSort: NodeSort,
 	addNodeToFolder: UpdateFolderContentType['addNodeToFolder'],
-	isUploadVersion: boolean
+	isUploadVersion: boolean,
+	nodeIdKey: 'nodeId' | 'node_id' = 'nodeId'
 ): void {
 	if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === HTTP_STATUS_CODE.success) {
-		const response = JSON.parse(xhr.response);
-		const { nodeId } = response;
+		const response: Record<typeof nodeIdKey, string> = JSON.parse(xhr.response);
+		const nodeId = response[nodeIdKey];
 		if (isUploadVersion) {
 			addVersionToCache(apolloClient, nodeId);
 		}
@@ -465,13 +472,23 @@ export function upload(
 		}
 	});
 
+	const { file, parentNodeId } = fileEnriched;
 	const xhr = new XMLHttpRequest();
 	const url = `${REST_ENDPOINT}${UPLOAD_PATH}`;
+	let destinationIdContract = false;
 
 	xhr.upload.addEventListener('progress', (ev: ProgressEvent) => updateProgress(ev, fileEnriched));
 
 	const uploadCompletedListener = (): void =>
-		uploadCompleted(xhr, fileEnriched, apolloClient, nodeSort, addNodeToFolder, false);
+		uploadCompleted(
+			xhr,
+			fileEnriched,
+			apolloClient,
+			nodeSort,
+			addNodeToFolder,
+			false,
+			destinationIdContract ? 'node_id' : 'nodeId'
+		);
 
 	xhr.addEventListener('load', uploadCompletedListener);
 	xhr.addEventListener('error', uploadCompletedListener);
@@ -483,11 +500,14 @@ export function upload(
 	sendWithFilesApiVersion(
 		xhr,
 		url,
-		{
-			Filename: encodeBase64(fileEnriched.file.name),
-			ParentId: fileEnriched.parentNodeId
+		(api) => {
+			destinationIdContract = filesApiNewerThan(api, UPLOAD_DESTINATION_ID_AFTER);
+			return {
+				Filename: encodeBase64(file.name),
+				[destinationIdContract ? 'DestinationId' : 'ParentId']: parentNodeId
+			};
 		},
-		fileEnriched.file
+		file
 	);
 
 	return (): void => {

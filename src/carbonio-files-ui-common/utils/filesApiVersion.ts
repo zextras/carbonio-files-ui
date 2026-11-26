@@ -133,6 +133,16 @@ export const resetFilesApi = (): void => {
 	negotiation = undefined;
 };
 
+export const filesApiNewerThan = (
+	{ edition, version }: FilesApi,
+	after: Partial<Record<FilesEdition, string>>
+): boolean => {
+	const threshold = after[edition];
+	return (
+		threshold !== undefined && version !== undefined && compareVersions(version, threshold) > 0
+	);
+};
+
 export const getFilesApiVersionHeaders = async (): Promise<Record<string, string>> => {
 	const { version } = await getFilesApi();
 	if (version === undefined) {
@@ -158,14 +168,21 @@ export const fetchWithFilesApiVersion = async (
 export const sendWithFilesApiVersion = (
 	xhr: XMLHttpRequest,
 	url: string,
-	headers: Record<string, string>,
+	headers: Record<string, string> | ((api: FilesApi) => Record<string, string>),
 	body: XMLHttpRequestBodyInit
 ): void => {
-	getFilesApiVersionHeaders()
-		.then((versionHeaders) => {
+	getFilesApi()
+		.then((api) => {
+			if (api.version === undefined) {
+				throw new UnsupportedFilesApiError('No Files API version in common with the server');
+			}
 			xhr.open('POST', url, true);
-			forEach({ ...versionHeaders, ...headers }, (value, name) =>
-				xhr.setRequestHeader(name, value)
+			forEach(
+				{
+					[FILES_API_VERSION_HEADER]: api.version,
+					...(typeof headers === 'function' ? headers(api) : headers)
+				},
+				(value, name) => xhr.setRequestHeader(name, value)
 			);
 			xhr.send(body);
 		})

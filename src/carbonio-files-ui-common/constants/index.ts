@@ -170,8 +170,12 @@ export const FILES_API_VERSIONS_PATH = '/versions';
 export const FILES_API_VERSION_HEADER = 'X-FILES-API-VERSION';
 // the Files API versions this UI speaks, per edition: a newest of 'current' follows the server it runs against
 export const FILES_API_VERSIONS: Record<FilesEdition, { oldest: string; newest: string }> = {
-	ce: { oldest: '3.0.14', newest: '3.0.14' },
-	advanced: { oldest: '4.0.14', newest: '4.0.14' }
+	ce: { oldest: '3.0.14', newest: 'current' },
+	advanced: { oldest: '4.0.14', newest: 'current' }
+};
+// unreleased change: after the backend release the gate becomes ">= the stamped version"
+export const UPLOAD_DESTINATION_ID_AFTER: Partial<Record<FilesEdition, string>> = {
+	ce: '3.0.14'
 };
 export const PREVIEW_TYPE = {
 	IMAGE: 'image',
