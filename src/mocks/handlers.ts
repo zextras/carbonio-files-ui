@@ -31,7 +31,6 @@ import handleDownloadCheckRequest from '../carbonio-files-ui-common/mocks/handle
 import handleDownloadMultipleCheckRequest from '../carbonio-files-ui-common/mocks/handleDownloadMultipleCheckRequest';
 import handleFindNodesRequest from '../carbonio-files-ui-common/mocks/handleFindNodesRequest';
 import handleFlagNodesRequest from '../carbonio-files-ui-common/mocks/handleFlagNodesRequest';
-import handleGetAccountByEmailRequest from '../carbonio-files-ui-common/mocks/handleGetAccountByEmailRequest';
 import handleGetBaseNodeRequest from '../carbonio-files-ui-common/mocks/handleGetBaseNodeRequest';
 import handleGetChildrenRequest from '../carbonio-files-ui-common/mocks/handleGetChildrenRequest';
 import handleGetChildRequest from '../carbonio-files-ui-common/mocks/handleGetChildRequest';
@@ -67,7 +66,6 @@ import {
 	DeleteSharesDocument,
 	FindNodesDocument,
 	FlagNodesDocument,
-	GetAccountByEmailDocument,
 	GetBaseNodeDocument,
 	GetCeNotificationsDocument,
 	GetChildDocument,
@@ -97,7 +95,6 @@ const handlers: RequestHandler[] = [];
 handlers.push(
 	graphql.query('IntrospectionQuery', handleIntrospectionRequest),
 	graphql.query(FindNodesDocument, handleFindNodesRequest),
-	graphql.query(GetAccountByEmailDocument, handleGetAccountByEmailRequest),
 	graphql.query(GetBaseNodeDocument, handleGetBaseNodeRequest),
 	graphql.query(GetChildDocument, handleGetChildRequest),
 	graphql.query(GetChildrenDocument, handleGetChildrenRequest),

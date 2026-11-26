@@ -41,7 +41,7 @@ import { AutocompleteResponse } from '../types/network';
 import {
 	mockCreateShare,
 	mockDeleteShares,
-	mockGetAccountByEmail,
+	mockGetAccountsByEmail,
 	mockGetCollaborationLinks,
 	mockGetLinks,
 	mockGetNode,
@@ -434,7 +434,7 @@ describe('Folder View', () => {
 						getNode: [folder, subFolder, subSubFile, folderWithShares, subFolderWithShares]
 					}),
 					getPath: mockGetPath([localRoot], [localRoot, folder], [localRoot, folder, subFolder]),
-					getAccountByEmail: mockGetAccountByEmail(userAccount),
+					getAccountsByEmail: mockGetAccountsByEmail([userAccount]),
 					getCollaborationLinks: mockGetCollaborationLinks([], [], []),
 					getLinks: mockGetLinks([], [], [])
 				},

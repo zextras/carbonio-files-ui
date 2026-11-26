@@ -19,6 +19,7 @@ import {
 	map,
 	uniq,
 	filter,
+	find,
 	reduce,
 	size,
 	some,
@@ -34,8 +35,8 @@ import { AddCollaboratorPermission } from './AddCollaboratorPermission';
 import { EMAIL_REGEXP } from '../../../../../constants';
 import { isRawErrorSoapResponse, soapFetch } from '../../../../../network/network';
 import { useCreateShareMutation } from '../../../../hooks/graphql/mutations/useCreateShareMutation';
-import { useGetAccountByEmailQuery } from '../../../../hooks/graphql/queries/useGetAccountByEmailQuery';
 import { useGetAccountsByEmailQuery } from '../../../../hooks/graphql/queries/useGetAccountsByEmailQuery';
+import { useErrorHandler } from '../../../../hooks/useErrorHandler';
 import { Contact, Node, Role, ShareChip } from '../../../../types/common';
 import { Account, Maybe, Share, User } from '../../../../types/graphql/types';
 import {
@@ -151,8 +152,8 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 		setSharingAllowed((prev) => !prev);
 	}, []);
 	const [createShare] = useCreateShareMutation();
-	const getAccountByEmailLazyQuery = useGetAccountByEmailQuery();
 	const getAccountsByEmailLazyQuery = useGetAccountsByEmailQuery();
+	const handleGetAccountError = useErrorHandler(undefined, 'GET_ACCOUNT_BY_EMAIL');
 
 	const [mailTextValue, setMailTextValue] = useState('');
 
@@ -210,17 +211,19 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 			setSearchResult([]);
 			const alreadyInChips = some(chips, ['email', contact.email]);
 			if (!alreadyInChips && contact.email) {
-				getAccountByEmailLazyQuery({
+				getAccountsByEmailLazyQuery({
 					variables: {
-						email: contact.email
+						emails: [contact.email]
 					}
 				})
 					.then((result) => {
-						if (result?.data?.getAccountByEmail) {
+						handleGetAccountError(result?.error);
+						const account = find(result?.data?.getAccountsByEmail, (acc) => acc !== null);
+						if (account) {
 							const contactWithId: ShareChip = {
 								value: {
 									...contact,
-									id: result.data.getAccountByEmail.id,
+									id: account.id,
 									node
 								},
 								label: getChipLabel(contact)
@@ -231,7 +234,7 @@ export const AddSharing = ({ node }: AddSharingProps): React.JSX.Element => {
 					.catch(() => null); // FIXME: this catch shouldn't be necessary but for some reason it is
 			}
 		},
-		[chips, getAccountByEmailLazyQuery, node]
+		[chips, getAccountsByEmailLazyQuery, handleGetAccountError, node]
 	);
 
 	const addShareContactGroup = useCallback(

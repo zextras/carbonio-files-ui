@@ -34,7 +34,7 @@ import {
 	getNodeVariables,
 	mockCreateShare,
 	mockDeleteShares,
-	mockGetAccountByEmail,
+	mockGetAccountsByEmail,
 	mockGetCollaborationLinks,
 	mockGetLinks,
 	mockGetNode
@@ -652,7 +652,7 @@ describe('Node Sharing', () => {
 					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks([]),
 					getCollaborationLinks: mockGetCollaborationLinks([]),
-					getAccountByEmail: mockGetAccountByEmail(userAccount)
+					getAccountsByEmail: mockGetAccountsByEmail([userAccount])
 				},
 				Mutation: {
 					createShare: mockCreateShare(shareToCreate)
@@ -743,7 +743,7 @@ describe('Node Sharing', () => {
 					getNode: mockGetNode({ getShares: [node] }),
 					getLinks: mockGetLinks([]),
 					getCollaborationLinks: mockGetCollaborationLinks([]),
-					getAccountByEmail: mockGetAccountByEmail(userAccount1, userAccount2)
+					getAccountsByEmail: mockGetAccountsByEmail([userAccount1], [userAccount2])
 				},
 				Mutation: {
 					createShare: mockCreateShare(shareToCreate1, shareToCreate2)
@@ -835,7 +835,7 @@ describe('Node Sharing', () => {
 				getNode: mockGetNode({ getShares: [node] }),
 				getLinks: mockGetLinks([]),
 				getCollaborationLinks: mockGetCollaborationLinks([]),
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
+				getAccountsByEmail: mockGetAccountsByEmail([userAccount])
 			},
 			Mutation: {
 				createShare: mockCreateShare(shareToCreate)

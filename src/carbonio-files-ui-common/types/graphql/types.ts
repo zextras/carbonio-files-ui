@@ -1559,14 +1559,6 @@ export type FindNodesQuery = {
 		| null;
 };
 
-export type GetAccountByEmailQueryVariables = Exact<{
-	email: Scalars['String']['input'];
-}>;
-
-export type GetAccountByEmailQuery = {
-	getAccountByEmail: ({ id: string } & { __typename: 'DistributionList' | 'User' }) | null;
-};
-
 export type GetAccountsByEmailQueryVariables = Exact<{
 	emails: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
@@ -5628,66 +5620,6 @@ export const FindNodesDocument = {
 		}
 	]
 } as unknown as DocumentNode<FindNodesQuery, FindNodesQueryVariables>;
-export const GetAccountByEmailDocument = {
-	kind: 'Document',
-	definitions: [
-		{
-			kind: 'OperationDefinition',
-			operation: 'query',
-			name: { kind: 'Name', value: 'getAccountByEmail' },
-			variableDefinitions: [
-				{
-					kind: 'VariableDefinition',
-					variable: { kind: 'Variable', name: { kind: 'Name', value: 'email' } },
-					type: {
-						kind: 'NonNullType',
-						type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } }
-					}
-				}
-			],
-			selectionSet: {
-				kind: 'SelectionSet',
-				selections: [
-					{
-						kind: 'Field',
-						name: { kind: 'Name', value: 'getAccountByEmail' },
-						arguments: [
-							{
-								kind: 'Argument',
-								name: { kind: 'Name', value: 'email' },
-								value: { kind: 'Variable', name: { kind: 'Name', value: 'email' } }
-							}
-						],
-						selectionSet: {
-							kind: 'SelectionSet',
-							selections: [
-								{
-									kind: 'InlineFragment',
-									typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
-									selectionSet: {
-										kind: 'SelectionSet',
-										selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
-									}
-								},
-								{
-									kind: 'InlineFragment',
-									typeCondition: {
-										kind: 'NamedType',
-										name: { kind: 'Name', value: 'DistributionList' }
-									},
-									selectionSet: {
-										kind: 'SelectionSet',
-										selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }]
-									}
-								}
-							]
-						}
-					}
-				]
-			}
-		}
-	]
-} as unknown as DocumentNode<GetAccountByEmailQuery, GetAccountByEmailQueryVariables>;
 export const GetAccountsByEmailDocument = {
 	kind: 'Document',
 	definitions: [

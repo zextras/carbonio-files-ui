@@ -184,24 +184,6 @@ export function mockUpdateShares(
 	return () => [shiftData(updateShares)];
 }
 
-export function mockGetAccountByEmail(
-	...accounts: GQLTypes.Account[]
-): QueryMock<GQLTypes.GetAccountByEmailQuery> {
-	return (parent, args) => {
-		const matchIndex = findIndex(
-			accounts,
-			(account) => account.__typename === 'User' && account.email === args.email
-		);
-		if (matchIndex >= 0) {
-			const results = accounts.splice(matchIndex, 1);
-			if (results.length > 0) {
-				return results[0];
-			}
-		}
-		throw new GraphQLError('no more responses provided for resolver');
-	};
-}
-
 export function mockGetAccountsByEmail(
 	...accounts: GQLTypes.Account[][]
 ): QueryMock<GQLTypes.GetAccountsByEmailQuery> {

@@ -31,7 +31,7 @@ import {
 	getNodeVariables,
 	mockCreateShare,
 	mockErrorResolver,
-	mockGetAccountByEmail
+	mockGetAccountsByEmail
 } from '../../../../utils/resolverMocks';
 
 const mockedSoapFetch = vi.fn();
@@ -57,7 +57,7 @@ describe('Add Sharing', () => {
 		userAccount.email = userAccount.email.toLowerCase();
 		const mocks = {
 			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
+				getAccountsByEmail: mockGetAccountsByEmail([userAccount])
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -98,7 +98,7 @@ describe('Add Sharing', () => {
 		node.shares = [share];
 		const mocks = {
 			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
+				getAccountsByEmail: mockGetAccountsByEmail([userAccount])
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -216,7 +216,7 @@ describe('Add Sharing', () => {
 		share.permission = SharePermission.ReadOnly;
 		const mocks = {
 			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
+				getAccountsByEmail: mockGetAccountsByEmail([userAccount])
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -255,7 +255,7 @@ describe('Add Sharing', () => {
 		share.permission = SharePermission.ReadAndShare;
 		const mocks = {
 			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
+				getAccountsByEmail: mockGetAccountsByEmail([userAccount])
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -307,7 +307,7 @@ describe('Add Sharing', () => {
 		share.permission = SharePermission.ReadOnly;
 		const mocks = {
 			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
+				getAccountsByEmail: mockGetAccountsByEmail([userAccount])
 			},
 			Mutation: {
 				createShare: vi.fn(mockCreateShare(share) as (...args: unknown[]) => Share)
@@ -353,7 +353,7 @@ describe('Add Sharing', () => {
 		share.permission = SharePermission.ReadOnly;
 		const mocks = {
 			Query: {
-				getAccountByEmail: mockGetAccountByEmail(userAccount)
+				getAccountsByEmail: mockGetAccountsByEmail([userAccount])
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
@@ -392,7 +392,7 @@ describe('Add Sharing', () => {
 		const error = generateError('account not found');
 		const mocks = {
 			Query: {
-				getAccountByEmail: mockErrorResolver(error)
+				getAccountsByEmail: mockErrorResolver(error)
 			}
 		} satisfies Partial<Resolvers>;
 		// mock soap fetch implementation
