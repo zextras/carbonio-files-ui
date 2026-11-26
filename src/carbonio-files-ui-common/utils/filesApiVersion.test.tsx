@@ -40,6 +40,7 @@ import UploadVersionButton from '../views/components/versioning/UploadVersionBut
 import UploadView from '../views/UploadView';
 
 const SNAPSHOT = '3.0.15-187.abc1234-SNAPSHOT';
+const NEGOTIATED = '3.0.14';
 
 function serverAt(versions: FilesApiServerVersions): ReturnType<typeof vi.fn> {
 	const discovered = vi.fn();
@@ -213,7 +214,7 @@ describe('Files API version', () => {
 				})
 			);
 			await global.apolloClient.query({ query: GetConfigsDocument, fetchPolicy: 'network-only' });
-			expect(sent).toHaveBeenCalledWith(SNAPSHOT);
+			expect(sent).toHaveBeenCalledWith(NEGOTIATED);
 		});
 
 		it('is sent on an upload', async () => {
@@ -230,7 +231,7 @@ describe('Files API version', () => {
 			setup(<UploadView />);
 			const dropzone = await screen.findByText(/nothing here/i);
 			await uploadWithDnD(dropzone, createUploadDataTransfer([node]));
-			await vi.waitFor(() => expect(sent).toHaveBeenCalledWith(SNAPSHOT));
+			await vi.waitFor(() => expect(sent).toHaveBeenCalledWith(NEGOTIATED));
 		});
 
 		it('is sent on the upload of a version', async () => {
@@ -262,7 +263,7 @@ describe('Files API version', () => {
 			await user.click(await screen.findByRole('button', { name: /upload version/i }));
 			const file = new File(['(⌐□_□)'], fileVersion.name, { type: fileVersion.mime_type });
 			await user.upload(await screen.findByAltText(/Hidden file input/i), file);
-			await vi.waitFor(() => expect(sent).toHaveBeenCalledWith(SNAPSHOT));
+			await vi.waitFor(() => expect(sent).toHaveBeenCalledWith(NEGOTIATED));
 		});
 
 		it('is sent on an upload to another module', async () => {
@@ -274,7 +275,7 @@ describe('Files API version', () => {
 				})
 			);
 			await uploadToTargetModule({ nodeId: 'node', targetModule: 'MAILS' });
-			expect(sent).toHaveBeenCalledWith(SNAPSHOT);
+			expect(sent).toHaveBeenCalledWith(NEGOTIATED);
 		});
 
 		it('is sent on the check of a download', async () => {
@@ -286,7 +287,7 @@ describe('Files API version', () => {
 				})
 			);
 			await downloadNode('node');
-			expect(sent).toHaveBeenCalledWith(SNAPSHOT);
+			expect(sent).toHaveBeenCalledWith(NEGOTIATED);
 		});
 
 		it('is sent on the check of a multiple download', async () => {
@@ -301,7 +302,7 @@ describe('Files API version', () => {
 				)
 			);
 			await downloadMultipleNodes(['node']);
-			expect(sent).toHaveBeenCalledWith(SNAPSHOT);
+			expect(sent).toHaveBeenCalledWith(NEGOTIATED);
 		});
 	});
 
@@ -324,13 +325,13 @@ describe('Files API version', () => {
 				graphql.query(GetConfigsDocument, ({ request }) => {
 					const version = request.headers.get(FILES_API_VERSION_HEADER);
 					sent(version);
-					return version === '3.0.15'
+					return sent.mock.calls.length > 1
 						? HttpResponse.json({ data: { getConfigs: [] } })
 						: versionRejection();
 				})
 			);
 			await global.apolloClient.query({ query: GetConfigsDocument, fetchPolicy: 'network-only' });
-			expect(sent.mock.calls).toEqual([['3.0.14'], ['3.0.15']]);
+			expect(sent.mock.calls).toEqual([['3.0.14'], ['3.0.14']]);
 			expect(discovered).toHaveBeenCalledTimes(2);
 		});
 
@@ -369,19 +370,20 @@ describe('Files API version', () => {
 		});
 
 		it('retries the check of a download once with the rediscovered version', async () => {
-			versionsSequence([older, newer]);
+			const discovered = versionsSequence([older, newer]);
 			const sent = vi.fn();
 			server.use(
 				http.get(`${REST_ENDPOINT}${DOWNLOAD_PATH}/:id${DOWNLOAD_PATH_CHECK}`, ({ request }) => {
 					const version = request.headers.get(FILES_API_VERSION_HEADER);
 					sent(version);
-					return version === '3.0.15'
+					return sent.mock.calls.length > 1
 						? HttpResponse.json(null, { status: 404 })
 						: versionRejection();
 				})
 			);
 			const response = await downloadNode('node');
-			expect(sent.mock.calls).toEqual([['3.0.14'], ['3.0.15']]);
+			expect(sent.mock.calls).toEqual([['3.0.14'], ['3.0.14']]);
+			expect(discovered).toHaveBeenCalledTimes(2);
 			expect(response.status).toBe(404);
 		});
 
@@ -417,7 +419,7 @@ describe('Files API version', () => {
 			expect(await screen.findByTestId(ICON_REGEXP.uploadFailed)).toBeVisible();
 			expect(screen.queryByText(/quota exceeded/i)).not.toBeInTheDocument();
 			expect(sent).toHaveBeenCalledTimes(1);
-			await expect(getFilesApi()).resolves.toEqual({ edition: 'ce', version: '3.0.15' });
+			await expect(getFilesApi()).resolves.toEqual({ edition: 'ce', version: '3.0.14' });
 			expect(discovered.mock.calls.length).toBeGreaterThanOrEqual(2);
 		});
 
@@ -445,7 +447,7 @@ describe('Files API version', () => {
 			await expect(uploadToTargetModule({ nodeId: 'node', targetModule: 'MAILS' })).rejects.toEqual(
 				{ statusText: expect.any(String), status: HTTP_STATUS_CODE.unprocessableEntity }
 			);
-			await expect(getFilesApi()).resolves.toEqual({ edition: 'ce', version: '3.0.15' });
+			await expect(getFilesApi()).resolves.toEqual({ edition: 'ce', version: '3.0.14' });
 			expect(discovered).toHaveBeenCalledTimes(2);
 		});
 
