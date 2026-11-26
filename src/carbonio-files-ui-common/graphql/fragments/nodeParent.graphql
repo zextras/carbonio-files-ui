@@ -4,6 +4,7 @@
 
 #import "./parent.graphql"
 
+# eslint-disable-next-line @graphql-eslint/require-selections -- spread only next to id
 fragment NodeParent on Node {
 	parent {
 		...Parent

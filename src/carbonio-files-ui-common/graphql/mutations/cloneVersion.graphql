@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 mutation cloneVersion($node_id: ID!, $version: Int!) {
-	# eslint-disable @graphql-eslint/require-id-when-available
+	# eslint-disable-next-line @graphql-eslint/require-selections
 	cloneVersion(node_id: $node_id, version: $version) {
 		version
 		size

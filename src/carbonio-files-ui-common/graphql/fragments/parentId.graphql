@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
+# eslint-disable-next-line @graphql-eslint/require-selections -- spread only next to id
 fragment ParentId on Node {
 	parent {
 		id

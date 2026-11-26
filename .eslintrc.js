@@ -120,11 +120,13 @@ module.exports = {
 		}
 	],
 	parserOptions: {
-		schema: [
-			'src/carbonio-files-ui-common/graphql/schema.graphql',
-			'src/carbonio-files-ui-common/graphql/client-schema.graphql'
-		],
-		operations: 'src/carbonio-files-ui-common/graphql/**/*.graphql'
+		graphQLConfig: {
+			schema: [
+				'src/carbonio-files-ui-common/graphql/schema.graphql',
+				'src/carbonio-files-ui-common/graphql/client-schema.graphql'
+			],
+			documents: 'src/carbonio-files-ui-common/graphql/**/*.graphql'
+		}
 	},
 	rules: {
 		'no-param-reassign': [
