@@ -69,6 +69,7 @@
 		"@types/node": "20.19.43",
 		"@types/react": "18.3.31",
 		"@types/react-dom": "18.3.7",
+		"@types/semver": "7.8.0",
 		"@vitejs/plugin-react": "5.2.0",
 		"@vitest/coverage-v8": "4.1.12",
 		"@vitest/ui": "4.1.12",
@@ -114,6 +115,7 @@
 		"react-dom": "18.3.1",
 		"react-i18next": "12.3.1",
 		"react-router-dom": "6.30.6",
+		"semver": "7.8.6",
 		"uuid": "14.0.3"
 	},
 	"pnpm": {

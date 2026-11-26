@@ -11,6 +11,7 @@ import {
 	InMemoryCache,
 	NormalizedCacheObject
 } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
 import { typePolicies } from './typePolicies';
 import { GRAPHQL_ENDPOINT } from '../constants';
@@ -24,12 +25,9 @@ const cache = new InMemoryCache({
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
-const filesApiVersionLink = new ApolloLink((operation, forward) => {
-	operation.setContext(({ headers }: { headers?: Record<string, string> }) => ({
-		headers: { ...headers, ...getFilesApiVersionHeaders() }
-	}));
-	return forward(operation);
-});
+const filesApiVersionLink = setContext(async (_, { headers }) => ({
+	headers: { ...headers, ...(await getFilesApiVersionHeaders()) }
+}));
 
 const buildClient: () => ApolloClient<NormalizedCacheObject> = () => {
 	const uri = process.env.NODE_ENV === 'test' ? 'http://localhost:9000' : '';

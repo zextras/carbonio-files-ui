@@ -232,6 +232,8 @@ export type URLParams = {
 
 export type TargetModule = 'MAILS' | 'CONTACTS' | 'CALENDARS' | 'CHATS';
 
+export type FilesEdition = 'ce' | 'advanced';
+
 export interface ShareChip extends ChipItem {
 	value: {
 		id: string | undefined;

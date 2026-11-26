@@ -14,7 +14,7 @@ import type { Location } from 'history';
 import { TFunction } from 'i18next';
 import { findIndex, forEach, map, reduce, toLower, trim } from 'lodash';
 
-import { getFilesApiVersion, getFilesApiVersionHeaders } from './filesApiVersion';
+import { getFilesApiVersionHeaders, sendWithFilesApiVersion } from './filesApiVersion';
 import { generateAccessCodeFallback, generateAccessCodeWithCrypto } from './utils.accessCode';
 import { getUserAccount } from '../../utils/utils';
 import {
@@ -23,7 +23,6 @@ import {
 	DOWNLOAD_MULTIPLE_PATH,
 	DOWNLOAD_PATH,
 	DOWNLOAD_PATH_CHECK,
-	FILES_API_VERSION_HEADER,
 	INTERNAL_PATH,
 	REST_ENDPOINT,
 	ROOTS,
@@ -322,7 +321,7 @@ export const copyToClipboard = (text: string): Promise<void> => {
 
 export const downloadNode = async (id: string, version?: number): Promise<Response> => {
 	const urlCheck = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${DOWNLOAD_PATH_CHECK}`;
-	const response = await fetch(urlCheck, { headers: getFilesApiVersionHeaders() });
+	const response = await fetch(urlCheck, { headers: await getFilesApiVersionHeaders() });
 
 	if (response.ok) {
 		const url = `${REST_ENDPOINT}${DOWNLOAD_PATH}/${encodeURIComponent(id)}${
@@ -413,7 +412,7 @@ export const downloadMultipleNodes = async (nodeIds: string[]): Promise<Response
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			...getFilesApiVersionHeaders()
+			...(await getFilesApiVersionHeaders())
 		},
 		body: JSON.stringify({ nodeIds })
 	});
@@ -802,9 +801,6 @@ export function uploadToTargetModule(args: {
 	return new Promise<{ attachmentId: string }>((resolve, reject) => {
 		const xhr = new XMLHttpRequest();
 		const url = `${REST_ENDPOINT}${UPLOAD_TO_PATH}`;
-		xhr.open('POST', url, true);
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.setRequestHeader(FILES_API_VERSION_HEADER, getFilesApiVersion());
 		const body = {
 			nodeId,
 			targetModule,
@@ -819,7 +815,7 @@ export function uploadToTargetModule(args: {
 		});
 		xhr.addEventListener('error', () => uploadToCompleted(xhr, resolve, reject));
 		xhr.addEventListener('abort', () => uploadToCompleted(xhr, resolve, reject));
-		xhr.send(JSON.stringify(body));
+		sendWithFilesApiVersion(xhr, url, { 'Content-Type': 'application/json' }, JSON.stringify(body));
 	});
 }
 

@@ -14,6 +14,7 @@ import {
 	UPLOAD_VERSION_PATH,
 	PREVIEW_PATH,
 	HEALTH_PATH,
+	FILES_API_VERSIONS_PATH,
 	DOWNLOAD_PATH,
 	DOWNLOAD_PATH_CHECK,
 	DOWNLOAD_MULTIPLE_PATH
@@ -55,6 +56,7 @@ import handleUpdateNodeRequest from '../carbonio-files-ui-common/mocks/handleUpd
 import handleUpdateSharesRequest from '../carbonio-files-ui-common/mocks/handleUpdateSharesRequest';
 import handleUploadFileRequest from '../carbonio-files-ui-common/mocks/handleUploadFileRequest';
 import handleUploadVersionRequest from '../carbonio-files-ui-common/mocks/handleUploadVersionRequest';
+import handleVersionsRequest from '../carbonio-files-ui-common/mocks/handleVersionsRequest';
 import {
 	CopyNodesDocument,
 	CreateFolderDocument,
@@ -137,6 +139,7 @@ handlers.push(
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id/:area/:thumbnail`, handleGetPreviewRequest),
 	http.get(`${REST_ENDPOINT}${PREVIEW_PATH}/:type/:id`, handleGetPreviewRequest),
 	http.get(`${REST_ENDPOINT}${HEALTH_PATH}`, handleHealthRequest),
+	http.get(`${REST_ENDPOINT}${FILES_API_VERSIONS_PATH}`, handleVersionsRequest),
 	http.get(
 		`${REST_ENDPOINT}${DOWNLOAD_PATH}/:id${DOWNLOAD_PATH_CHECK}`,
 		handleDownloadCheckRequest

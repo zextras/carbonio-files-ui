@@ -7,12 +7,11 @@ import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import { debounce, forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-import { getFilesApiVersion } from './filesApiVersion';
+import { sendWithFilesApiVersion } from './filesApiVersion';
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
 import { QUOTA_CHANGED_EVENT } from '../../constants';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
 import {
-	FILES_API_VERSION_HEADER,
 	REST_ENDPOINT,
 	SHARES_LOAD_LIMIT,
 	UPLOAD_PATH,
@@ -456,11 +455,6 @@ export function upload(
 
 	const xhr = new XMLHttpRequest();
 	const url = `${REST_ENDPOINT}${UPLOAD_PATH}`;
-	xhr.open('POST', url, true);
-
-	xhr.setRequestHeader(FILES_API_VERSION_HEADER, getFilesApiVersion());
-	xhr.setRequestHeader('Filename', encodeBase64(fileEnriched.file.name));
-	xhr.setRequestHeader('ParentId', fileEnriched.parentNodeId);
 
 	xhr.upload.addEventListener('progress', (ev: ProgressEvent) => updateProgress(ev, fileEnriched));
 
@@ -474,7 +468,15 @@ export function upload(
 		xhr.addEventListener('loadstart', () => resolve(xhr));
 	});
 
-	xhr.send(fileEnriched.file);
+	sendWithFilesApiVersion(
+		xhr,
+		url,
+		{
+			Filename: encodeBase64(fileEnriched.file.name),
+			ParentId: fileEnriched.parentNodeId
+		},
+		fileEnriched.file
+	);
 
 	return (): void => {
 		loadStart.then((xhrResult) => {
@@ -500,12 +502,6 @@ export function uploadVersion(
 	}
 	const xhr = new XMLHttpRequest();
 	const url = `${REST_ENDPOINT}${UPLOAD_VERSION_PATH}`;
-	xhr.open('POST', url, true);
-
-	xhr.setRequestHeader(FILES_API_VERSION_HEADER, getFilesApiVersion());
-	xhr.setRequestHeader('NodeId', fileEnriched.nodeId);
-	xhr.setRequestHeader('Filename', encodeBase64(fileEnriched.file.name));
-	xhr.setRequestHeader('OverwriteVersion', `${overwriteVersion}`);
 
 	// check for upload existence in order to be able to test the upload with msw
 	// see https://github.com/mswjs/interceptors/issues/187
@@ -523,7 +519,16 @@ export function uploadVersion(
 	xhr.addEventListener('abort', () =>
 		uploadCompleted(xhr, fileEnriched, apolloClient, nodeSort, addNodeToFolder, true)
 	);
-	xhr.send(fileEnriched.file);
+	sendWithFilesApiVersion(
+		xhr,
+		url,
+		{
+			NodeId: fileEnriched.nodeId,
+			Filename: encodeBase64(fileEnriched.file.name),
+			OverwriteVersion: `${overwriteVersion}`
+		},
+		fileEnriched.file
+	);
 
 	return (): void => {
 		xhr.abort();

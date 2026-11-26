@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { DocsType, RootsType, SearchParams, URLParams } from '../types/common';
+import { DocsType, FilesEdition, RootsType, SearchParams, URLParams } from '../types/common';
 import { NodeSort } from '../types/graphql/types';
 
 export const NODES_LOAD_LIMIT = 25;
@@ -164,11 +164,12 @@ export const UPLOAD_VERSION_PATH = '/upload-version';
 export const CREATE_FILE_PATH = '/files/create';
 export const HEALTH_PATH = '/health';
 export const PREVIEW_PATH = '/preview';
+export const FILES_API_VERSIONS_PATH = '/versions';
 export const FILES_API_VERSION_HEADER = 'X-FILES-API-VERSION';
-// the Files API version of each edition this UI speaks: 'current' tracks the server it runs against
-export const FILES_API_VERSION: Record<'ce' | 'advanced', string> = {
-	ce: 'current',
-	advanced: 'current'
+// the Files API versions this UI speaks, per edition: a newest of 'current' follows the server it runs against
+export const FILES_API_VERSIONS: Record<FilesEdition, { oldest: string; newest: string }> = {
+	ce: { oldest: '3.0.14', newest: 'current' },
+	advanced: { oldest: '4.0.14', newest: 'current' }
 };
 export const PREVIEW_TYPE = {
 	IMAGE: 'image',

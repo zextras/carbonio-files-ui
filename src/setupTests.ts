@@ -25,6 +25,7 @@ import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo
 import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
 import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
+import { resetFilesApi } from './carbonio-files-ui-common/utils/filesApiVersion';
 import { UploadQueue } from './carbonio-files-ui-common/utils/uploadUtils';
 import { LOGGED_USER_ACCOUNT } from './mocks/constants';
 import server from './mocks/server';
@@ -162,6 +163,7 @@ beforeEach(() => {
 	destinationVar({ defaultValue: undefined, currentValue: undefined });
 	showNotificationsBadgeVar(true);
 	isCarbonioCEVar(undefined);
+	resetFilesApi();
 	window.localStorage.clear();
 	healthCache.healthRequested = true;
 	healthCache.healthReceived = true;
