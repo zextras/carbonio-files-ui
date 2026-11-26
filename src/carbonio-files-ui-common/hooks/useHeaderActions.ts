@@ -8,11 +8,11 @@ import { useCallback } from 'react';
 import { PreviewWrapperProps } from '@zextras/carbonio-ui-preview';
 import { useTranslation } from 'react-i18next';
 
+import { useDownloadNodes } from './useDownloadNodes';
 import { useHealthInfo } from './useHealthInfo';
 import { useOpenWithDocs } from './useOpenWithDocs';
 import { useActiveNode } from '../../hooks/useActiveNode';
 import { DISPLAYER_TABS } from '../constants';
-import { useDownloadNodes } from './useDownloadNodes';
 import { File } from '../types/graphql/types';
 import { canEdit, canOpenWithDocs } from '../utils/ActionsFactory';
 

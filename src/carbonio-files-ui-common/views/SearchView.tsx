@@ -8,11 +8,11 @@ import React, { useMemo, useState } from 'react';
 
 import { Container } from '@zextras/carbonio-design-system';
 
+import { ROOTS, VIEW_MODE } from '../constants';
+import { ListContext } from '../contexts';
 import { Displayer } from './components/Displayer';
 import { SearchList } from './components/SearchList';
 import { ViewLayout } from './ViewLayout';
-import { ROOTS, VIEW_MODE } from '../constants';
-import { ListContext } from '../contexts';
 import { useUploadFileNewAction } from '../hooks/useUploadFileNewAction';
 
 interface SearchViewProps {

@@ -11,6 +11,7 @@ import { graphql } from 'msw';
 import { Route, Routes } from 'react-router-dom';
 
 import FilterView from './FilterView';
+import { QUOTA_CHANGED_EVENT } from '../../constants';
 import server from '../../mocks/server';
 import {
 	FILTER_TYPE,
@@ -136,6 +137,51 @@ describe('Filter view', () => {
 			expect(deletePermanentlyConfirm).not.toBeInTheDocument();
 			expect(within(displayer).queryByText(node.name)).not.toBeInTheDocument();
 			expect(deletePermanentlyAction).not.toBeInTheDocument();
+		});
+
+		test('Delete permanently dispatch a debounced quota-changed event', async () => {
+			const nodes = populateNodes(2);
+			nodes.forEach((node) => {
+				node.rootId = ROOTS.TRASH;
+				node.permissions.can_write_file = true;
+				node.permissions.can_write_folder = true;
+				node.permissions.can_delete = true;
+			});
+			const nodesIds = nodes.map((node) => node.id);
+			const mocks = {
+				Query: {
+					findNodes: mockFindNodes(nodes)
+				},
+				Mutation: {
+					deleteNodes: mockDeletePermanently(nodesIds)
+				}
+			} satisfies Partial<Resolvers>;
+			const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
+			const countQuotaEvents = (): number =>
+				dispatchEventSpy.mock.calls.filter(([event]) => event.type === QUOTA_CHANGED_EVENT).length;
+			const { user } = setup(
+				<Routes>
+					<Route path={`filter/:filter`} element={<FilterView />} />
+				</Routes>,
+				{
+					initialRouterEntries: [`/${INTERNAL_PATH.FILTER}${FILTER_TYPE.myTrash}`],
+					mocks
+				}
+			);
+			await screen.findAllByTestId(SELECTORS.nodeItem(), { exact: false });
+			await selectNodes(nodesIds, user);
+			await user.click(
+				within(screen.getByTestId(SELECTORS.listHeaderSelectionMode)).getByTestId(
+					ICON_REGEXP.deletePermanently
+				)
+			);
+			await user.click(
+				await screen.findByRole('button', { name: ACTION_REGEXP.deletePermanently })
+			);
+			await screen.findByText(/success/i);
+			// the event is debounced, so it is not dispatched right after the deletion
+			expect(countQuotaEvents()).toBe(0);
+			await waitFor(() => expect(countQuotaEvents()).toBe(1), { timeout: 4000 });
 		});
 
 		test('in trash filter only restore and delete permanently actions are visible', async () => {

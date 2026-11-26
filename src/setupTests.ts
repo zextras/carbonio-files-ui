@@ -23,6 +23,7 @@ import { uploadFunctionsVar, uploadVar } from './carbonio-files-ui-common/apollo
 import { viewModeVar } from './carbonio-files-ui-common/apollo/viewModeVar';
 import { NODES_SORT_DEFAULT, VIEW_MODE_DEFAULT } from './carbonio-files-ui-common/constants';
 import { healthCache } from './carbonio-files-ui-common/hooks/useHealthInfo';
+import { debouncedRefreshQuota } from './carbonio-files-ui-common/utils/quotaUtils';
 import { LOGGED_USER_ACCOUNT } from './mocks/constants';
 import server from './mocks/server';
 
@@ -163,6 +164,8 @@ beforeEach(() => {
 	healthCache.healthFailed = false;
 	healthCache.docsIsLive = true;
 	healthCache.previewIsLive = true;
+	// drop pending debounced calls of the previous test
+	debouncedRefreshQuota.cancel();
 
 	Object.defineProperty(window, 'IntersectionObserver', {
 		writable: true,

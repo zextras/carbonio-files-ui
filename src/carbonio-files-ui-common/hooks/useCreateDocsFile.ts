@@ -11,7 +11,6 @@ import { useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import { QUOTA_CHANGED_EVENT } from '../../constants';
-import { useUpdateFolderContent } from './graphql/useUpdateFolderContent';
 import { nodeSortVar } from '../apollo/nodeSortVar';
 import {
 	DOCS_ENDPOINT,
@@ -20,6 +19,7 @@ import {
 	SHARES_LOAD_LIMIT,
 	HTTP_STATUS_CODE
 } from '../constants';
+import { useUpdateFolderContent } from './graphql/useUpdateFolderContent';
 import { CreateDocsFile, DocsType } from '../types/common';
 import {
 	Folder,

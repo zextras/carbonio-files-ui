@@ -20,6 +20,7 @@ import {
 	DeleteNodesMutationVariables,
 	FindNodesQuery
 } from '../../../types/graphql/types';
+import { debouncedRefreshQuota } from '../../../utils/quotaUtils';
 import { useErrorHandler } from '../../useErrorHandler';
 import { useUpdateFilterContent } from '../useUpdateFilterContent';
 import { isQueryResult } from '../utils';
@@ -85,6 +86,9 @@ export function useDeleteNodesMutation(): DeleteNodesType {
 					return observableQuery.reobserve();
 				}
 			}).then((value) => {
+				if (value.data?.deleteNodes && value.data.deleteNodes.length > 0) {
+					debouncedRefreshQuota();
+				}
 				createSnackbar({
 					key: new Date().toLocaleString(),
 					severity: 'success',

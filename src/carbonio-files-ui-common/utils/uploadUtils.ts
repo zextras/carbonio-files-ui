@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
-import { debounce, forEach, map, find, filter, reduce, pull } from 'lodash';
+import { forEach, map, find, filter, reduce, pull } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
+import { debouncedRefreshQuota } from './quotaUtils';
 import { encodeBase64, isFileSystemDirectoryEntry, isFolder, TreeNode } from './utils';
-import { QUOTA_CHANGED_EVENT } from '../../constants';
 import { UploadFunctions, uploadFunctionsVar, UploadRecord, uploadVar } from '../apollo/uploadVar';
 import {
 	REST_ENDPOINT,
@@ -311,10 +311,6 @@ function loadItemAsChild(
 	}
 	return Promise.resolve();
 }
-
-const debouncedRefreshQuota = debounce((): void => {
-	window.dispatchEvent(new CustomEvent(QUOTA_CHANGED_EVENT));
-}, 2000);
 
 export function canBeProcessed(id: string): boolean {
 	return uploadVar()[id].parentNodeId !== null;
