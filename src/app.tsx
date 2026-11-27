@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { lazy, Suspense, useCallback, useEffect, useMemo } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ApolloProvider } from '@apollo/client';
 import { ModalManager } from '@zextras/carbonio-design-system';
@@ -30,7 +30,9 @@ import { inputElement } from './carbonio-files-ui-common/utils/utils';
 import { AppErrorCatcher } from './components/AppErrorCatcher';
 import { PrimaryBadgeUpdater } from './components/PrimaryBadgeUpdater';
 import { Spinner } from './components/Spinner';
+import { useIsCarbonioCE } from './hooks/useIsCarbonioCE';
 import { IntegrationsRegisterer } from './integrations/IntegrationsRegisterer';
+import { getFilesLicense } from './network/getFilesLicense';
 
 const LazyAppView = lazy(() => import(/* webpackChunkName: "appView" */ './views/AppView'));
 
@@ -177,10 +179,31 @@ export function AuthenticatedApp(): React.JSX.Element {
 	);
 }
 
+function LicenseGate(): React.JSX.Element | null {
+	const [isLicensed, setIsLicensed] = useState<boolean | null>(null);
+
+	useEffect(() => {
+		getFilesLicense()
+			.then((response) => {
+				setIsLicensed(response.licensed);
+			})
+			.catch(() => {
+				setIsLicensed(true);
+			});
+	}, []);
+
+	return isLicensed ? <AuthenticatedApp /> : null;
+}
+
 function App(): React.JSX.Element | null {
 	const isAuthenticated = useAuthenticated();
+	const isCarbonioCE = useIsCarbonioCE();
 
-	return isAuthenticated ? <AuthenticatedApp /> : null;
+	if (!isAuthenticated) {
+		return null;
+	}
+
+	return isCarbonioCE ? <AuthenticatedApp /> : <LicenseGate />;
 }
 
 export default App;
